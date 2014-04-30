@@ -1,0 +1,3 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<outputEventAdaptor name="DefaultLoggerOutputAdaptor"
+  statistics="disable" trace="disable" type="logger" xmlns="http://wso2.org/carbon/eventadaptormanager"/>
