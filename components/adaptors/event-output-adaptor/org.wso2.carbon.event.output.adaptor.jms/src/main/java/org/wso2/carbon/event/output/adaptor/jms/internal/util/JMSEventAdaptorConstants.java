@@ -28,8 +28,8 @@ public final class JMSEventAdaptorConstants {
     public static final String JNDI_INITIAL_CONTEXT_FACTORY_CLASS_HINT = "java.naming.factory.initial.hint";
     public static final String JAVA_NAMING_PROVIDER_URL = "java.naming.provider.url";
     public static final String JAVA_NAMING_PROVIDER_URL_HINT = "java.naming.provider.url.hint";
-    public static final String JAVA_NAMING_SECURITY_PRINCIPAL = "java.naming.security.principal";
-    public static final String JAVA_NAMING_SECURITY_CREDENTIALS = "java.naming.security.credentials";
+    public static final String ADAPTOR_JMS_USERNAME = "transport.jms.UserName";
+    public static final String ADAPTOR_JMS_PASSWORD = "transport.jms.Password";
     public static final String ADAPTOR_JMS_CONNECTION_FACTORY_JNDINAME = "transport.jms.ConnectionFactoryJNDIName";
     public static final String ADAPTOR_JMS_CONNECTION_FACTORY_JNDINAME_HINT = "transport.jms.ConnectionFactoryJNDIName.hint";
     public static final String ADAPTOR_JMS_DESTINATION_TYPE = "transport.jms.DestinationType";

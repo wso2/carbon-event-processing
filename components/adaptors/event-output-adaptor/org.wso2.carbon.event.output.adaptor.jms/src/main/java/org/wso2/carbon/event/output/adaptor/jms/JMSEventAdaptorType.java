@@ -115,17 +115,17 @@ public final class JMSEventAdaptorType extends AbstractOutputEventAdaptor {
 
 
         // JNDI Username
-        Property userNameProperty = new Property(JMSEventAdaptorConstants.JAVA_NAMING_SECURITY_PRINCIPAL);
+        Property userNameProperty = new Property(JMSEventAdaptorConstants.ADAPTOR_JMS_USERNAME);
         userNameProperty.setDisplayName(
-                resourceBundle.getString(JMSEventAdaptorConstants.JAVA_NAMING_SECURITY_PRINCIPAL));
+                resourceBundle.getString(JMSEventAdaptorConstants.ADAPTOR_JMS_USERNAME));
         propertyList.add(userNameProperty);
 
 
         // JNDI Password
-        Property passwordProperty = new Property(JMSEventAdaptorConstants.JAVA_NAMING_SECURITY_CREDENTIALS);
+        Property passwordProperty = new Property(JMSEventAdaptorConstants.ADAPTOR_JMS_PASSWORD);
         passwordProperty.setSecured(true);
         passwordProperty.setDisplayName(
-                resourceBundle.getString(JMSEventAdaptorConstants.JAVA_NAMING_SECURITY_CREDENTIALS));
+                resourceBundle.getString(JMSEventAdaptorConstants.ADAPTOR_JMS_PASSWORD));
         propertyList.add(passwordProperty);
 
         // Connection Factory JNDI Name
