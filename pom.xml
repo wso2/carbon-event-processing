@@ -380,6 +380,14 @@
 
             <dependency>
                 <groupId>org.wso2.carbon</groupId>
+                <artifactId>org.wso2.carbon.event.simulator.ui</artifactId>
+                <version>${carbon.event.processing.version}</version>
+
+            </dependency>
+
+
+            <dependency>
+                <groupId>org.wso2.carbon</groupId>
                 <artifactId>org.wso2.carbon.event.simulator.stub</artifactId>
                 <version>${carbon.event.processing.version}</version>
 
@@ -721,6 +729,20 @@
             <dependency>
                 <groupId>org.wso2.carbon</groupId>
                 <artifactId>org.wso2.carbon.event.processor.ui.feature</artifactId>
+                <version>${carbon.event.processing.version}</version>
+                <type>zip</type>
+            </dependency>
+
+            <dependency>
+                <groupId>org.wso2.carbon</groupId>
+                <artifactId>org.wso2.carbon.event.simulator.server.feature</artifactId>
+                <version>${carbon.event.processing.version}</version>
+                <type>zip</type>
+            </dependency>
+
+            <dependency>
+                <groupId>org.wso2.carbon</groupId>
+                <artifactId>org.wso2.carbon.event.simulator.ui.feature</artifactId>
                 <version>${carbon.event.processing.version}</version>
                 <type>zip</type>
             </dependency>
