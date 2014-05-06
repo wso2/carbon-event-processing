@@ -1108,7 +1108,7 @@
 
         <!-- Misc -->
         <jxl.wso2.version>2.6.8.wso2v1</jxl.wso2.version>
-        <junit.version>3.8.2</junit.version>
+        <junit.version>4.10</junit.version>
         <quartz2.orbit.version>2.1.1.wso2v1</quartz2.orbit.version>
         <jaxen.version>1.1.1</jaxen.version>
         <woodstox.version>3.2.9</woodstox.version>
