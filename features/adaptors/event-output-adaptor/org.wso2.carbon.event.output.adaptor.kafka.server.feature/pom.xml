@@ -43,7 +43,7 @@
                             </adviceFile>
                             <bundles>
                                 <bundleDef>
-                                    org.wso2.carbon:org.wso2.carbon.event.output.adaptor.kafka:1.0.0
+                                    org.wso2.carbon:org.wso2.carbon.event.output.adaptor.kafka:${carbon.event.processing.version}
                                 </bundleDef>
                             </bundles>
                             <importFeatures>

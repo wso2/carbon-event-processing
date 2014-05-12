@@ -47,7 +47,7 @@
                             </adviceFile>
                             <bundles>
                                 <bundleDef>
-                                    org.wso2.carbon:org.wso2.carbon.event.input.adaptor.file:1.0.0
+                                    org.wso2.carbon:org.wso2.carbon.event.input.adaptor.file:${carbon.event.processing.version}
                                 </bundleDef>
                             </bundles>
                             <importFeatures>

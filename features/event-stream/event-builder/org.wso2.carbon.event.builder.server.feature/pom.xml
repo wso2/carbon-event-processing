@@ -141,7 +141,7 @@
     </build>
 
     <properties>
-        <cep.component.version.100>1.0.0</cep.component.version.100>
+        <!--<cep.component.version.100>1.0.0</cep.component.version.100>-->
         <jsonpath.version>0.9.1</jsonpath.version>
         <slf4j.version>1.7.5</slf4j.version>
         <jsonsmart.version>1.2</jsonsmart.version>
