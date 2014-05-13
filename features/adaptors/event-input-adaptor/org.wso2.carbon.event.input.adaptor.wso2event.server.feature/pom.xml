@@ -59,7 +59,7 @@
                                 <importFeatureDef>org.wso2.carbon.core.server:${carbon.version}
                                 </importFeatureDef>
                                 <importFeatureDef>
-                                    org.wso2.carbon.databridge.datareceiver:4.2.1
+                                    org.wso2.carbon.databridge.datareceiver:${databridge.version}
                                 </importFeatureDef>
                             </importFeatures>
                         </configuration>
