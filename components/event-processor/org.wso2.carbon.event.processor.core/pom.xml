@@ -152,7 +152,7 @@
     </build>
 
     <properties>
-        <siddhi.version>2.1.0-wso2v1</siddhi.version>
+        <siddhi.version>3.0.0-SNAPSHOT</siddhi.version>
     </properties>
 </project>
 
