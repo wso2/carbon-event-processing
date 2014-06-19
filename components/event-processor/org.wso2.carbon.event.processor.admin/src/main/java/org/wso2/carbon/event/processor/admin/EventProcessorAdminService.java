@@ -9,6 +9,7 @@ import org.wso2.carbon.core.AbstractAdmin;
 import org.wso2.carbon.databridge.commons.StreamDefinition;
 import org.wso2.carbon.event.processor.admin.internal.ds.EventProcessorAdminValueHolder;
 import org.wso2.carbon.event.processor.admin.internal.util.EventProcessorAdminUtil;
+import org.wso2.carbon.event.processor.admin.internal.util.EventProcessorConstants;
 import org.wso2.carbon.event.processor.core.EventProcessorService;
 import org.wso2.carbon.event.processor.core.ExecutionPlanConfiguration;
 import org.wso2.carbon.event.processor.core.ExecutionPlanConfigurationFile;
@@ -310,7 +311,7 @@ public class EventProcessorAdminService extends AbstractAdmin {
             String[] convertedAttributes = new String[attributeList.size()];
             int i = 0;
             for (org.wso2.carbon.databridge.commons.Attribute attribute : attributeList) {
-                convertedAttributes[i] = attribute.getName() + " " + attribute.getType();
+                convertedAttributes[i] = attribute.getName() + " " + EventProcessorConstants.STRING_ATTRIBUTE_TYPE_MAP.get(attribute.getType());
                 i++;
             }
             return convertedAttributes;
