@@ -29,6 +29,7 @@ import org.wso2.carbon.event.output.adaptor.core.OutputEventAdaptorService;
 import org.wso2.carbon.event.output.adaptor.core.Property;
 import org.wso2.carbon.event.output.adaptor.core.config.InternalOutputEventAdaptorConfiguration;
 import org.wso2.carbon.event.output.adaptor.core.config.OutputEventAdaptorConfiguration;
+import org.wso2.carbon.event.output.adaptor.core.exception.TestConnectionUnavailableException;
 import org.wso2.carbon.event.output.adaptor.manager.admin.internal.util.OutputEventAdaptorHolder;
 import org.wso2.carbon.event.output.adaptor.manager.admin.internal.util.OutputEventAdaptorManagerHolder;
 import org.wso2.carbon.event.output.adaptor.manager.core.OutputEventAdaptorFile;
@@ -414,7 +415,9 @@ public class OutputEventAdaptorManagerAdminService extends AbstractAdmin {
 
             outputEventAdaptorHolder.getEventAdaptorService().testConnection(eventAdaptorConfiguration);
 
-        } catch (Exception e) {
+        }catch (TestConnectionUnavailableException e){
+            throw new AxisFault(e.getMessage());
+        }catch (Exception e) {
             log.error(e.getMessage(), e);
             throw new AxisFault(e.getMessage());
         }
