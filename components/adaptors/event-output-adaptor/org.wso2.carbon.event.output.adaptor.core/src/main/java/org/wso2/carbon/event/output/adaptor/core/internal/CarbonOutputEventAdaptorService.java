@@ -24,6 +24,7 @@ import org.wso2.carbon.event.output.adaptor.core.OutputEventAdaptorDto;
 import org.wso2.carbon.event.output.adaptor.core.OutputEventAdaptorService;
 import org.wso2.carbon.event.output.adaptor.core.config.OutputEventAdaptorConfiguration;
 import org.wso2.carbon.event.output.adaptor.core.exception.OutputEventAdaptorEventProcessingException;
+import org.wso2.carbon.event.output.adaptor.core.exception.TestConnectionUnavailableException;
 import org.wso2.carbon.event.output.adaptor.core.internal.ds.OutputEventAdaptorServiceValueHolder;
 import org.wso2.carbon.event.output.adaptor.core.message.MessageDto;
 import org.wso2.carbon.event.output.adaptor.core.message.config.OutputEventAdaptorMessageConfiguration;
@@ -100,7 +101,9 @@ public class CarbonOutputEventAdaptorService implements OutputEventAdaptorServic
         int tenantId = PrivilegedCarbonContext.getThreadLocalCarbonContext().getTenantId();
         try {
             outputEventAdaptor.testConnection(outputEventAdaptorConfiguration, tenantId);
-        } catch (OutputEventAdaptorEventProcessingException e) {
+        } catch (TestConnectionUnavailableException e) {
+            throw new TestConnectionUnavailableException(e.getMessage(), e);
+        }catch (OutputEventAdaptorEventProcessingException e) {
             log.error(e.getMessage(), e);
             throw new OutputEventAdaptorEventProcessingException(e.getMessage(), e);
         }
