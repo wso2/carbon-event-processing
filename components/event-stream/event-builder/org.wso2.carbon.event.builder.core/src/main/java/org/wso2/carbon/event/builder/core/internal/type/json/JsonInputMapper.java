@@ -58,13 +58,7 @@ public class JsonInputMapper implements InputMapper {
         if (eventBuilderConfiguration != null && eventBuilderConfiguration.getInputMapping() instanceof JsonInputMapping) {
             JsonInputMapping jsonInputMapping = (JsonInputMapping) eventBuilderConfiguration.getInputMapping();
             if (jsonInputMapping.isCustomMappingEnabled()) {
-                for (InputMappingAttribute inputMappingAttribute : jsonInputMapping.getInputMappingAttributes()) {
-                    String jsonPathExpr = inputMappingAttribute.getFromElementKey();
-                    String defaultValue = inputMappingAttribute.getDefaultValue();
-                    JsonPath compiledJsonPath = JsonPath.compile(jsonPathExpr);
-                    AttributeType type = inputMappingAttribute.getToElementType();
-                    attributeJsonPathDataList.add(new JsonPathData(compiledJsonPath, type, defaultValue));
-                }
+                createAttributeJsonPathList(streamDefinition,jsonInputMapping.getInputMappingAttributes());
             } else {
                 this.noMetaData = streamDefinition.getMetaData() != null ? streamDefinition.getMetaData().size() : 0;
                 this.noCorrelationData += streamDefinition.getCorrelationData() != null ? streamDefinition.getCorrelationData().size() : 0;
@@ -193,7 +187,7 @@ public class JsonInputMapper implements InputMapper {
                     }
                     for (Map.Entry<Object, Object> eventAttribute : eventMap.entrySet()) {
                         if (eventAttribute.getKey().equals(metaData.getName())) {
-                            attributeArray[attributeCount++] = getPropertyValue(eventAttribute.getValue(),metaData.getType());
+                            attributeArray[attributeCount++] = getPropertyValue(eventAttribute.getValue(), metaData.getType());
                         }
                     }
 
@@ -209,7 +203,7 @@ public class JsonInputMapper implements InputMapper {
                     for (Map.Entry<Object, Object> eventAttribute : eventMap.entrySet()) {
 
                         if (eventAttribute.getKey().equals(correlationData.getName())) {
-                            attributeArray[attributeCount++] = getPropertyValue(eventAttribute.getValue(),correlationData.getType());
+                            attributeArray[attributeCount++] = getPropertyValue(eventAttribute.getValue(), correlationData.getType());
                         }
                     }
 
@@ -225,7 +219,7 @@ public class JsonInputMapper implements InputMapper {
                     for (Map.Entry<Object, Object> eventAttribute : eventMap.entrySet()) {
 
                         if (eventAttribute.getKey().equals(payloadData.getName())) {
-                            attributeArray[attributeCount++] = getPropertyValue(eventAttribute.getValue(),payloadData.getType());
+                            attributeArray[attributeCount++] = getPropertyValue(eventAttribute.getValue(), payloadData.getType());
                         }
                     }
 
@@ -277,6 +271,45 @@ public class JsonInputMapper implements InputMapper {
         private AttributeType getType() {
             return type;
         }
+    }
+
+    private void createAttributeJsonPathList(StreamDefinition streamDefinition,
+                                             List<InputMappingAttribute> inputMappingAttributeList) {
+        if (streamDefinition.getMetaData() != null && streamDefinition.getMetaData().size() > 0) {
+            for (Attribute metaData : streamDefinition.getMetaData()) {
+                InputMappingAttribute inputMappingAttribute = getInputMappingAttribute(EventBuilderConstants.META_DATA_PREFIX + metaData.getName(), inputMappingAttributeList);
+                attributeJsonPathDataList.add(new JsonPathData(JsonPath.compile(inputMappingAttribute.getFromElementKey()), inputMappingAttribute.getToElementType(), inputMappingAttribute.getDefaultValue()));
+            }
+        }
+
+        if (streamDefinition.getCorrelationData() != null &&streamDefinition.getCorrelationData().size() > 0) {
+            for (Attribute correlationData : streamDefinition.getCorrelationData()) {
+                InputMappingAttribute inputMappingAttribute = getInputMappingAttribute(EventBuilderConstants.CORRELATION_DATA_PREFIX + correlationData.getName(), inputMappingAttributeList);
+                attributeJsonPathDataList.add(new JsonPathData(JsonPath.compile(inputMappingAttribute.getFromElementKey()), inputMappingAttribute.getToElementType(), inputMappingAttribute.getDefaultValue()));
+
+            }
+        }
+
+        if (streamDefinition.getPayloadData() != null && streamDefinition.getPayloadData().size() > 0) {
+            for (Attribute payloadData : streamDefinition.getPayloadData()) {
+                InputMappingAttribute inputMappingAttribute = getInputMappingAttribute(payloadData.getName(), inputMappingAttributeList);
+                attributeJsonPathDataList.add(new JsonPathData(JsonPath.compile(inputMappingAttribute.getFromElementKey()), inputMappingAttribute.getToElementType(), inputMappingAttribute.getDefaultValue()));
+
+            }
+        }
+    }
+
+
+    private InputMappingAttribute getInputMappingAttribute(String mappingAttribute,
+                                                           List<InputMappingAttribute> inputMappingAttributeList) {
+        for (InputMappingAttribute inputMappingAttribute : inputMappingAttributeList) {
+            if (inputMappingAttribute.getToElementKey().equals(mappingAttribute)) {
+                return inputMappingAttribute;
+            }
+        }
+
+        log.error("Json input mapping attribute not found");
+        return null;
     }
 
 }
