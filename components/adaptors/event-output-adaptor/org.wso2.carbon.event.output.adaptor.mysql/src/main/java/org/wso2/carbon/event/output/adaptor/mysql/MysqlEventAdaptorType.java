@@ -340,7 +340,9 @@ public final class MysqlEventAdaptorType extends AbstractOutputEventAdaptor {
                     case Types.FLOAT:
                         type = AttributeType.FLOAT;
                         break;
+                    case Types.TINYINT:
                     case Types.BOOLEAN:
+                    case MysqlEventAdaptorConstants.TINYINT_MYSQL_VALUE:
                         type = AttributeType.BOOL;
                         break;
 

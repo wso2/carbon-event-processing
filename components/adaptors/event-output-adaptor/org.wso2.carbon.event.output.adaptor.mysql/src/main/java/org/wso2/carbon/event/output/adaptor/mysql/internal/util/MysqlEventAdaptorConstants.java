@@ -34,5 +34,6 @@ public final class MysqlEventAdaptorConstants {
     public static final String ADAPTOR_MYSQL_UPDATE_KEYS_HINT = "update.keys.hint";
 
     public static final String ADAPTOR_TYPE_MYSQL = "mysql";
+    public static final int TINYINT_MYSQL_VALUE = -7;
 
 }
