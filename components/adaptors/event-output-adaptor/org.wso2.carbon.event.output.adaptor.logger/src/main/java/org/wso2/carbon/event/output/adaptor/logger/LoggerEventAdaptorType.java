@@ -23,6 +23,7 @@ import org.wso2.carbon.event.output.adaptor.core.MessageType;
 import org.wso2.carbon.event.output.adaptor.core.Property;
 import org.wso2.carbon.event.output.adaptor.core.config.OutputEventAdaptorConfiguration;
 import org.wso2.carbon.event.output.adaptor.core.exception.OutputEventAdaptorEventProcessingException;
+import org.wso2.carbon.event.output.adaptor.core.exception.TestConnectionUnavailableException;
 import org.wso2.carbon.event.output.adaptor.core.message.config.OutputEventAdaptorMessageConfiguration;
 import org.wso2.carbon.event.output.adaptor.logger.internal.util.LoggerEventAdaptorConstants;
 
@@ -127,7 +128,7 @@ public final class LoggerEventAdaptorType extends AbstractOutputEventAdaptor {
     @Override
     public void testConnection(
             OutputEventAdaptorConfiguration outputEventAdaptorConfiguration, int tenantId) {
-        throw new OutputEventAdaptorEventProcessingException("not-available");
+        throw new TestConnectionUnavailableException("not-available");
 
     }
 

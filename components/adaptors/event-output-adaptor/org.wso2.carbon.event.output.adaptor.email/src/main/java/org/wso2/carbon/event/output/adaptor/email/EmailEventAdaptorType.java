@@ -35,6 +35,7 @@ import org.wso2.carbon.event.output.adaptor.core.MessageType;
 import org.wso2.carbon.event.output.adaptor.core.Property;
 import org.wso2.carbon.event.output.adaptor.core.config.OutputEventAdaptorConfiguration;
 import org.wso2.carbon.event.output.adaptor.core.exception.OutputEventAdaptorEventProcessingException;
+import org.wso2.carbon.event.output.adaptor.core.exception.TestConnectionUnavailableException;
 import org.wso2.carbon.event.output.adaptor.core.message.config.OutputEventAdaptorMessageConfiguration;
 import org.wso2.carbon.event.output.adaptor.email.internal.ds.EmailEventAdaptorServiceValueHolder;
 import org.wso2.carbon.event.output.adaptor.email.internal.util.EmailEventAdaptorConstants;
@@ -161,7 +162,7 @@ public final class EmailEventAdaptorType extends AbstractOutputEventAdaptor {
     @Override
     public void testConnection(
             OutputEventAdaptorConfiguration outputEventtAdaptorConfiguration, int tenantId) {
-        throw new OutputEventAdaptorEventProcessingException("not-available");
+        throw new TestConnectionUnavailableException("not-available");
     }
 
     @Override

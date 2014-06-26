@@ -1,5 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<cepHAManager  xmlns="http://wso2.org/carbon/ha/management">
-    <!--<hostName>localhost</hostName>-->
-    <port>11224</port>
-</cepHAManager>
