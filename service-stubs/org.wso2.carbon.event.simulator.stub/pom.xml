@@ -81,7 +81,7 @@
                         <Bundle-Name>${project.artifactId}</Bundle-Name>
                         <Carbon-Component>UIBundle</Carbon-Component>
                         <Export-Package>
-                            org.wso2.carbon.event.simulator.stub.*;version="${carbon.platform.package.export.version}",
+                            org.wso2.carbon.event.simulator.stub.*;version="${carbon.event.processing.version}",
                         </Export-Package>
                         <Import-Package>
                             !javax.xml.namespace,

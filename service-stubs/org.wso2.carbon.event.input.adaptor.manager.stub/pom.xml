@@ -97,7 +97,7 @@
                         <Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
                         <Bundle-Name>${project.artifactId}</Bundle-Name>
                         <Export-Package>
-                            org.wso2.carbon.event.input.adaptor.manager.stub.*;version="1.0.1",
+                            org.wso2.carbon.event.input.adaptor.manager.stub.*;version="${carbon.event.processing.version}",
                         </Export-Package>
                         <Import-Package>
                             !javax.xml.namespace,

@@ -62,6 +62,7 @@
         <module>org.wso2.carbon.event.input.adaptor.file</module>
         <module>org.wso2.carbon.event.input.adaptor.wso2event</module>
         <module>org.wso2.carbon.event.input.adaptor.http</module>
+        <module>org.wso2.carbon.event.input.adaptor.mqtt</module>
         <module>org.wso2.carbon.event.input.adaptor.kafka</module>
         <module>org.wso2.carbon.event.input.adaptor.email</module>
         <module>org.wso2.carbon.event.input.adaptor.soap</module>

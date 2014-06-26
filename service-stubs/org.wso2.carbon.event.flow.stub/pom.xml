@@ -96,7 +96,7 @@
                         <Bundle-Name>${project.artifactId}</Bundle-Name>
                         <Export-Package>
                             org.wso2.carbon.event.flow.stub.*;
-                            version="${carbon.platform.package.export.version}"
+                            version="${carbon.event.processing.version}"
                         </Export-Package>
                         <_nouse>true</_nouse>
                         <Carbon-Component>UIBundle</Carbon-Component>
