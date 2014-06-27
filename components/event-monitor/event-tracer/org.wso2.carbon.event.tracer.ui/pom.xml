@@ -47,8 +47,8 @@
                             org.wso2.carbon.event.tracer.ui.*
                         </Export-Package>
                         <Import-Package>
-                            org.wso2.carbon.event.tracer.stub.*; version="${carbon.platform.package.export.version}",
-                            org.wso2.carbon.event.tracer.stub.client.*; version="${carbon.platform.package.export.version}"
+                            org.wso2.carbon.event.tracer.stub.*; version="${carbon.event.processing.version}",
+                            org.wso2.carbon.event.tracer.stub.client.*; version="${carbon.event.processing.version}"
                         </Import-Package>
                         <DynamicImport-Package>*</DynamicImport-Package>
                     </instructions>
