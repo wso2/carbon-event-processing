@@ -16,26 +16,64 @@
 
 package org.wso2.carbon.event.input.adaptor.mqtt.internal.ds;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.osgi.service.http.HttpService;
+import org.wso2.carbon.event.input.adaptor.mqtt.internal.LateStartAdaptorListener;
+import org.wso2.carbon.event.input.adaptor.mqtt.internal.util.MQTTEventAdaptorConstants;
 import org.wso2.carbon.user.core.service.RealmService;
+import org.wso2.carbon.utils.ConfigurationContextService;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * common place to hold some OSGI service references.
  */
 public final class MQTTEventAdaptorServiceValueHolder {
 
-    private static HttpService httpService;
+    private static ConfigurationContextService configurationContextService;
+    private static List<LateStartAdaptorListener> lateStartAdaptorListeners = new ArrayList<LateStartAdaptorListener>();
+    private static final Log log = LogFactory.getLog(MQTTEventAdaptorServiceValueHolder.class);
+
 
     private MQTTEventAdaptorServiceValueHolder() {
     }
 
-    public static void registerHTTPService(
-            HttpService httpService) {
-        MQTTEventAdaptorServiceValueHolder.httpService = httpService;
+    public static void registerConfigurationContextService(
+            ConfigurationContextService configurationContextService) {
+        MQTTEventAdaptorServiceValueHolder.configurationContextService = configurationContextService;
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    log.info("MQTT input event adaptor waiting for dependent configurations to load");
+                    Thread.sleep(MQTTEventAdaptorConstants.AXIS_TIME_INTERVAL_IN_MILLISECONDS * 4);
+                    loadLateStartEventAdaptors();
+                } catch (InterruptedException e) {
+                    log.error(e.getMessage(), e);
+                }
+            }
+        }).start();
     }
 
-    public static HttpService getHTTPService() {
-        return httpService;
+    public static void unregisterConfigurationContextService(
+            ConfigurationContextService configurationContextService) {
+        MQTTEventAdaptorServiceValueHolder.configurationContextService = configurationContextService;
+    }
+
+    public static ConfigurationContextService getConfigurationContextService() {
+        return configurationContextService;
+    }
+
+    public static void addLateStartAdaptorListener(LateStartAdaptorListener lateStartAdaptorListener) {
+        lateStartAdaptorListeners.add(lateStartAdaptorListener);
+    }
+
+    public static void loadLateStartEventAdaptors(){
+        for (LateStartAdaptorListener lateStartAdaptorListener : lateStartAdaptorListeners){
+            lateStartAdaptorListener.tryStartAdaptor();
+        }
     }
 
 

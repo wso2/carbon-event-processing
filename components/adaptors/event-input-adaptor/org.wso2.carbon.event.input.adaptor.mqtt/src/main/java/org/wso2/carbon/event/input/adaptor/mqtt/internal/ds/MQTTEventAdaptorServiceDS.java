@@ -21,10 +21,14 @@ import org.apache.commons.logging.LogFactory;
 import org.osgi.service.component.ComponentContext;
 import org.wso2.carbon.event.input.adaptor.core.InputEventAdaptorFactory;
 import org.wso2.carbon.event.input.adaptor.mqtt.MQTTEventAdaptorFactory;
+import org.wso2.carbon.utils.ConfigurationContextService;
 
 
 /**
  * @scr.component name="input.mqttEventAdaptorService.component" immediate="true"
+ * @scr.reference name="configurationcontext.service"
+ * interface="org.wso2.carbon.utils.ConfigurationContextService" cardinality="1..1"
+ * policy="dynamic" bind="setConfigurationContextService" unbind="unsetConfigurationContextService"
  */
 
 
@@ -44,6 +48,16 @@ public class MQTTEventAdaptorServiceDS {
         } catch (RuntimeException e) {
             log.error("Can not create the input MQTT adaptor service ", e);
         }
+    }
+
+    protected void setConfigurationContextService(
+            ConfigurationContextService configurationContextService) {
+        MQTTEventAdaptorServiceValueHolder.registerConfigurationContextService(configurationContextService);
+    }
+
+    protected void unsetConfigurationContextService(
+            ConfigurationContextService configurationContextService) {
+        MQTTEventAdaptorServiceValueHolder.unregisterConfigurationContextService(configurationContextService);
     }
 
 }

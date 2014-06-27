@@ -4,7 +4,8 @@ public class MQTTBrokerConnectionConfiguration {
 
     private String brokerUsername = null;
     private String brokerPassword = null;
-    private boolean cleanSession = false;
+    private boolean cleanSession = true;
+    private int keepAlive = 0;
     private String brokerUrl;
 
     public String getBrokerPassword() {
@@ -40,11 +41,25 @@ public class MQTTBrokerConnectionConfiguration {
         this.brokerUrl = brokerUrl;
     }
 
+    public int getKeepAlive() {
+        return keepAlive;
+    }
+
+    public void setKeepAlive(int keepAlive) {
+        this.keepAlive = keepAlive;
+    }
+
     public MQTTBrokerConnectionConfiguration(String brokerUrl, String brokerUsername,
-                                             String brokerPassword, boolean cleanSession) {
+                                             String brokerPassword, String cleanSession,
+                                             String keepAlive) {
         this.brokerUsername = brokerUsername;
         this.brokerPassword = brokerPassword;
         this.brokerUrl = brokerUrl;
-        this.cleanSession = cleanSession;
+        if (cleanSession != null) {
+            this.cleanSession = Boolean.parseBoolean(cleanSession);
+        }
+        if (keepAlive != null) {
+            this.keepAlive = Integer.parseInt(keepAlive);
+        }
     }
 }
