@@ -20,6 +20,7 @@ public class MQTTAdaptorListener implements MqttCallback{
     private MqttClient mqttClient;
     private MqttConnectOptions connectionOptions;
     private boolean cleanSession;
+    private int keepAlive;
     private MQTTBrokerConnectionConfiguration mqttBrokerConnectionConfiguration;
     private String mqttClientId;
     private String topic;
@@ -34,6 +35,7 @@ public class MQTTAdaptorListener implements MqttCallback{
         this.mqttBrokerConnectionConfiguration = mqttBrokerConnectionConfiguration;
         this.mqttClientId = mqttClientId;
         this.cleanSession = mqttBrokerConnectionConfiguration.isCleanSession();
+        this.keepAlive = mqttBrokerConnectionConfiguration.getKeepAlive();
         this.topic = topic;
         eventAdaptorListener = inputEventAdaptorListener;
 
@@ -47,6 +49,7 @@ public class MQTTAdaptorListener implements MqttCallback{
             // such as cleanSession and LWT
             connectionOptions = new MqttConnectOptions();
             connectionOptions.setCleanSession(cleanSession);
+            connectionOptions.setKeepAliveInterval(keepAlive);
             if (this.mqttBrokerConnectionConfiguration.getBrokerPassword() != null) {
                 connectionOptions.setPassword(this.mqttBrokerConnectionConfiguration.getBrokerPassword().toCharArray());
             }
@@ -55,7 +58,7 @@ public class MQTTAdaptorListener implements MqttCallback{
             }
 
             // Construct an MQTT blocking mode client
-            mqttClient = new MqttClient(this.mqttBrokerConnectionConfiguration.getBrokerUrl(), mqttClientId, dataStore);
+            mqttClient = new MqttClient(this.mqttBrokerConnectionConfiguration.getBrokerUrl(), this.mqttClientId, dataStore);
 
             // Set this wrapper as the callback handler
             mqttClient.setCallback(this);

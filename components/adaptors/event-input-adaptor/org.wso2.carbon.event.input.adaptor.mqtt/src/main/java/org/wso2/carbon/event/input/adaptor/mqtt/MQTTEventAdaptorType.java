@@ -28,6 +28,8 @@ import org.wso2.carbon.event.input.adaptor.core.Property;
 import org.wso2.carbon.event.input.adaptor.core.config.InputEventAdaptorConfiguration;
 import org.wso2.carbon.event.input.adaptor.core.exception.InputEventAdaptorEventProcessingException;
 import org.wso2.carbon.event.input.adaptor.core.message.config.InputEventAdaptorMessageConfiguration;
+import org.wso2.carbon.event.input.adaptor.mqtt.internal.LateStartAdaptorListener;
+import org.wso2.carbon.event.input.adaptor.mqtt.internal.ds.MQTTEventAdaptorServiceValueHolder;
 import org.wso2.carbon.event.input.adaptor.mqtt.internal.util.MQTTAdaptorListener;
 import org.wso2.carbon.event.input.adaptor.mqtt.internal.util.MQTTBrokerConnectionConfiguration;
 import org.wso2.carbon.event.input.adaptor.mqtt.internal.util.MQTTEventAdaptorConstants;
@@ -39,22 +41,18 @@ import java.util.Map;
 import java.util.ResourceBundle;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.LinkedBlockingQueue;
-import java.util.concurrent.ThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
 
-public final class MQTTEventAdaptorType extends AbstractInputEventAdaptor {
+public final class MQTTEventAdaptorType extends AbstractInputEventAdaptor implements
+                                                                          LateStartAdaptorListener {
 
+    private boolean readyToPoll = false;
     private static final Log log = LogFactory.getLog(MQTTEventAdaptorType.class);
     private static MQTTEventAdaptorType MQTTEventAdaptor = new MQTTEventAdaptorType();
     private ResourceBundle resourceBundle;
     public static ConcurrentHashMap<Integer, Map<String, ConcurrentHashMap<String, ConcurrentHashMap<String, MQTTAdaptorListener>>>> inputEventAdaptorListenerMap =
             new ConcurrentHashMap<Integer, Map<String, ConcurrentHashMap<String, ConcurrentHashMap<String, MQTTAdaptorListener>>>>();
 
-    public static ExecutorService executorService = new ThreadPoolExecutor(MQTTEventAdaptorConstants.ADAPTER_MIN_THREAD_POOL_SIZE,
-                                                                           MQTTEventAdaptorConstants.ADAPTER_MAX_THREAD_POOL_SIZE, MQTTEventAdaptorConstants.DEFAULT_KEEP_ALIVE_TIME, TimeUnit.SECONDS,
-                                                                           new LinkedBlockingQueue<Runnable>(MQTTEventAdaptorConstants.ADAPTER_EXECUTOR_JOB_QUEUE_SIZE));
+    List<LateStartAdaptorConfig> lateStartAdaptorConfigList = new ArrayList<LateStartAdaptorConfig>();
 
     private MQTTEventAdaptorType() {
 
@@ -65,6 +63,8 @@ public final class MQTTEventAdaptorType extends AbstractInputEventAdaptor {
     protected List<String> getSupportedInputMessageTypes() {
         List<String> supportInputMessageTypes = new ArrayList<String>();
         supportInputMessageTypes.add(MessageType.TEXT);
+        supportInputMessageTypes.add(MessageType.JSON);
+        supportInputMessageTypes.add(MessageType.XML);
 
         return supportInputMessageTypes;
     }
@@ -91,6 +91,7 @@ public final class MQTTEventAdaptorType extends AbstractInputEventAdaptor {
     @Override
     protected void init() {
         resourceBundle = ResourceBundle.getBundle("org.wso2.carbon.event.input.adaptor.mqtt.i18n.Resources", Locale.getDefault());
+        MQTTEventAdaptorServiceValueHolder.addLateStartAdaptorListener(this);
     }
 
     /**
@@ -126,6 +127,25 @@ public final class MQTTEventAdaptorType extends AbstractInputEventAdaptor {
         password.setHint(
                 resourceBundle.getString(MQTTEventAdaptorConstants.ADAPTOR_CONF_PASSWORD_HINT));
         propertyList.add(password);
+
+
+        //Broker clear session
+        Property clearSession = new Property(MQTTEventAdaptorConstants.ADAPTOR_CONF_CLEAN_SESSION);
+        clearSession.setDisplayName(
+                resourceBundle.getString(MQTTEventAdaptorConstants.ADAPTOR_CONF_CLEAN_SESSION));
+        clearSession.setRequired(false);
+        clearSession.setOptions(new String[]{"true","false"});
+        clearSession.setDefaultValue("true");
+        clearSession.setHint(
+                resourceBundle.getString(MQTTEventAdaptorConstants.ADAPTOR_CONF_CLEAN_SESSION_HINT));
+        propertyList.add(clearSession);
+
+        //Broker clear session
+        Property keepAlive = new Property(MQTTEventAdaptorConstants.ADAPTOR_CONF_KEEP_ALIVE);
+        keepAlive.setDisplayName(
+                resourceBundle.getString(MQTTEventAdaptorConstants.ADAPTOR_CONF_KEEP_ALIVE));
+        keepAlive.setRequired(false);
+        propertyList.add(keepAlive);
 
         return propertyList;
     }
@@ -163,41 +183,17 @@ public final class MQTTEventAdaptorType extends AbstractInputEventAdaptor {
             AxisConfiguration axisConfiguration) {
 
         String subscriptionId = UUID.randomUUID().toString();
-
-        String topic = inputEventAdaptorMessageConfiguration.getInputMessageProperties().get(MQTTEventAdaptorConstants.ADAPTOR_MESSAGE_TOPIC);
         int tenantId = PrivilegedCarbonContext.getThreadLocalCarbonContext().getTenantId();
-        Map<String, ConcurrentHashMap<String, ConcurrentHashMap<String, MQTTAdaptorListener>>> tenantSpecificListenerMap = inputEventAdaptorListenerMap.get(tenantId);
-        if (tenantSpecificListenerMap == null) {
-            tenantSpecificListenerMap = new ConcurrentHashMap<String, ConcurrentHashMap<String, ConcurrentHashMap<String, MQTTAdaptorListener>>>();
-            inputEventAdaptorListenerMap.put(tenantId, tenantSpecificListenerMap);
+        if (!readyToPoll) {
+            lateStartAdaptorConfigList.add(new LateStartAdaptorConfig(inputEventAdaptorMessageConfiguration, inputEventAdaptorListener, inputEventAdaptorConfiguration, axisConfiguration, subscriptionId, tenantId));
+        } else {
+            createMQTTAdaptorListener(inputEventAdaptorMessageConfiguration, inputEventAdaptorListener, inputEventAdaptorConfiguration, axisConfiguration, subscriptionId, tenantId);
         }
 
-        ConcurrentHashMap<String, ConcurrentHashMap<String, MQTTAdaptorListener>> adaptorSpecificListenerMap = tenantSpecificListenerMap.get(inputEventAdaptorConfiguration.getName());
-
-        if (adaptorSpecificListenerMap == null) {
-            adaptorSpecificListenerMap = new ConcurrentHashMap<String, ConcurrentHashMap<String, MQTTAdaptorListener>>();
-            if (null != tenantSpecificListenerMap.put(inputEventAdaptorConfiguration.getName(), adaptorSpecificListenerMap)) {
-                adaptorSpecificListenerMap = tenantSpecificListenerMap.get(inputEventAdaptorConfiguration.getName());
-            }
-        }
-
-        ConcurrentHashMap<String, MQTTAdaptorListener> topicSpecificListenMap = adaptorSpecificListenerMap.get(topic);
-        if (topicSpecificListenMap == null) {
-            topicSpecificListenMap = new ConcurrentHashMap<String, MQTTAdaptorListener>();
-            if (null != adaptorSpecificListenerMap.putIfAbsent(topic, topicSpecificListenMap)) {
-                topicSpecificListenMap = adaptorSpecificListenerMap.get(topic);
-            }
-        }
-
-        MQTTBrokerConnectionConfiguration mqttBrokerConnectionConfiguration = new MQTTBrokerConnectionConfiguration(inputEventAdaptorConfiguration.getInputProperties().get(MQTTEventAdaptorConstants.ADAPTOR_CONF_URL), inputEventAdaptorConfiguration.getInputProperties().get(MQTTEventAdaptorConstants.ADAPTOR_CONF_USERNAME), inputEventAdaptorConfiguration.getInputProperties().get(MQTTEventAdaptorConstants.ADAPTOR_CONF_PASSWORD), false);
-        MQTTAdaptorListener mqttAdaptorListener = new MQTTAdaptorListener(mqttBrokerConnectionConfiguration, inputEventAdaptorMessageConfiguration.getInputMessageProperties().get(MQTTEventAdaptorConstants.ADAPTOR_MESSAGE_TOPIC), inputEventAdaptorMessageConfiguration.getInputMessageProperties().get(MQTTEventAdaptorConstants.ADAPTOR_MESSAGE_CLIENTID), inputEventAdaptorListener);
-        try {
-            mqttAdaptorListener.startListener();
-        } catch (MqttException e) {
-            throw new InputEventAdaptorEventProcessingException(e);
-        }
-        topicSpecificListenMap.put(topic, mqttAdaptorListener);
         return subscriptionId;
+
+
+
 
     }
 
@@ -237,5 +233,130 @@ public final class MQTTEventAdaptorType extends AbstractInputEventAdaptor {
 
     }
 
+    @Override
+    public void tryStartAdaptor() {
+        log.info("MQTT input event adaptor loading listeners ");
+        readyToPoll = true;
+        for (LateStartAdaptorConfig lateStartAdaptorConfig : lateStartAdaptorConfigList) {
+            this.createMQTTAdaptorListener(lateStartAdaptorConfig.getInputEventAdaptorMessageConfiguration(), lateStartAdaptorConfig.getInputEventAdaptorListener(), lateStartAdaptorConfig.getInputEventAdaptorConfiguration(), lateStartAdaptorConfig.getAxisConfiguration(), lateStartAdaptorConfig.getSubscriptionId(), lateStartAdaptorConfig.getTenantId());
+        }
+    }
+
+
+    private void createMQTTAdaptorListener(
+            InputEventAdaptorMessageConfiguration inputEventAdaptorMessageConfiguration,
+            InputEventAdaptorListener inputEventAdaptorListener,
+            InputEventAdaptorConfiguration inputEventAdaptorConfiguration,
+            AxisConfiguration axisConfiguration, String subscriptionId, int tenantId) {
+
+        String topic = inputEventAdaptorMessageConfiguration.getInputMessageProperties().get(MQTTEventAdaptorConstants.ADAPTOR_MESSAGE_TOPIC);
+        Map<String, ConcurrentHashMap<String, ConcurrentHashMap<String, MQTTAdaptorListener>>> tenantSpecificListenerMap = inputEventAdaptorListenerMap.get(tenantId);
+        if (tenantSpecificListenerMap == null) {
+            tenantSpecificListenerMap = new ConcurrentHashMap<String, ConcurrentHashMap<String, ConcurrentHashMap<String, MQTTAdaptorListener>>>();
+            inputEventAdaptorListenerMap.put(tenantId, tenantSpecificListenerMap);
+        }
+
+        ConcurrentHashMap<String, ConcurrentHashMap<String, MQTTAdaptorListener>> adaptorSpecificListenerMap = tenantSpecificListenerMap.get(inputEventAdaptorConfiguration.getName());
+
+        if (adaptorSpecificListenerMap == null) {
+            adaptorSpecificListenerMap = new ConcurrentHashMap<String, ConcurrentHashMap<String, MQTTAdaptorListener>>();
+            if (null != tenantSpecificListenerMap.put(inputEventAdaptorConfiguration.getName(), adaptorSpecificListenerMap)) {
+                adaptorSpecificListenerMap = tenantSpecificListenerMap.get(inputEventAdaptorConfiguration.getName());
+            }
+        }
+
+        ConcurrentHashMap<String, MQTTAdaptorListener> topicSpecificListenMap = adaptorSpecificListenerMap.get(topic);
+        if (topicSpecificListenMap == null) {
+            topicSpecificListenMap = new ConcurrentHashMap<String, MQTTAdaptorListener>();
+            if (null != adaptorSpecificListenerMap.putIfAbsent(topic, topicSpecificListenMap)) {
+                topicSpecificListenMap = adaptorSpecificListenerMap.get(topic);
+            }
+        }
+
+        MQTTBrokerConnectionConfiguration mqttBrokerConnectionConfiguration = new MQTTBrokerConnectionConfiguration(inputEventAdaptorConfiguration.getInputProperties().get(MQTTEventAdaptorConstants.ADAPTOR_CONF_URL), inputEventAdaptorConfiguration.getInputProperties().get(MQTTEventAdaptorConstants.ADAPTOR_CONF_USERNAME), inputEventAdaptorConfiguration.getInputProperties().get(MQTTEventAdaptorConstants.ADAPTOR_CONF_PASSWORD), inputEventAdaptorConfiguration.getInputProperties().get(MQTTEventAdaptorConstants.ADAPTOR_CONF_CLEAN_SESSION),inputEventAdaptorConfiguration.getInputProperties().get(MQTTEventAdaptorConstants.ADAPTOR_CONF_KEEP_ALIVE));
+        MQTTAdaptorListener mqttAdaptorListener = new MQTTAdaptorListener(mqttBrokerConnectionConfiguration, inputEventAdaptorMessageConfiguration.getInputMessageProperties().get(MQTTEventAdaptorConstants.ADAPTOR_MESSAGE_TOPIC), inputEventAdaptorMessageConfiguration.getInputMessageProperties().get(MQTTEventAdaptorConstants.ADAPTOR_MESSAGE_CLIENTID), inputEventAdaptorListener);
+        try {
+            mqttAdaptorListener.startListener();
+        } catch (MqttException e) {
+            throw new InputEventAdaptorEventProcessingException(e);
+        }
+        topicSpecificListenMap.put(subscriptionId, mqttAdaptorListener);
+
+    }
 }
+
+class LateStartAdaptorConfig {
+    InputEventAdaptorMessageConfiguration inputEventAdaptorMessageConfiguration;
+    InputEventAdaptorListener inputEventAdaptorListener;
+    InputEventAdaptorConfiguration inputEventAdaptorConfiguration;
+    AxisConfiguration axisConfiguration;
+    String subscriptionId;
+    int tenantId;
+
+
+    public LateStartAdaptorConfig(
+            InputEventAdaptorMessageConfiguration inputEventAdaptorMessageConfiguration,
+            InputEventAdaptorListener inputEventAdaptorListener,
+            InputEventAdaptorConfiguration inputEventAdaptorConfiguration,
+            AxisConfiguration axisConfiguration, String subscriptionId, int tenantId) {
+        this.inputEventAdaptorMessageConfiguration = inputEventAdaptorMessageConfiguration;
+        this.inputEventAdaptorListener = inputEventAdaptorListener;
+        this.inputEventAdaptorConfiguration = inputEventAdaptorConfiguration;
+        this.axisConfiguration = axisConfiguration;
+        this.subscriptionId = subscriptionId;
+        this.tenantId = tenantId;
+    }
+
+    public InputEventAdaptorMessageConfiguration getInputEventAdaptorMessageConfiguration() {
+        return inputEventAdaptorMessageConfiguration;
+    }
+
+    public void setInputEventAdaptorMessageConfiguration(
+            InputEventAdaptorMessageConfiguration inputEventAdaptorMessageConfiguration) {
+        this.inputEventAdaptorMessageConfiguration = inputEventAdaptorMessageConfiguration;
+    }
+
+    public InputEventAdaptorListener getInputEventAdaptorListener() {
+        return inputEventAdaptorListener;
+    }
+
+    public void setInputEventAdaptorListener(
+            InputEventAdaptorListener inputEventAdaptorListener) {
+        this.inputEventAdaptorListener = inputEventAdaptorListener;
+    }
+
+    public InputEventAdaptorConfiguration getInputEventAdaptorConfiguration() {
+        return inputEventAdaptorConfiguration;
+    }
+
+    public void setInputEventAdaptorConfiguration(
+            InputEventAdaptorConfiguration inputEventAdaptorConfiguration) {
+        this.inputEventAdaptorConfiguration = inputEventAdaptorConfiguration;
+    }
+
+    public AxisConfiguration getAxisConfiguration() {
+        return axisConfiguration;
+    }
+
+    public void setAxisConfiguration(AxisConfiguration axisConfiguration) {
+        this.axisConfiguration = axisConfiguration;
+    }
+
+    public String getSubscriptionId() {
+        return subscriptionId;
+    }
+
+    public void setSubscriptionId(String subscriptionId) {
+        this.subscriptionId = subscriptionId;
+    }
+
+    public int getTenantId() {
+        return tenantId;
+    }
+
+    public void setTenantId(int tenantId) {
+        this.tenantId = tenantId;
+    }
+}
+
 

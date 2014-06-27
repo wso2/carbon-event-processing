@@ -31,10 +31,10 @@ public final class MQTTEventAdaptorConstants {
     public static final String ADAPTOR_CONF_URL_HINT = "url.hint";
     public static final String ADAPTOR_MESSAGE_TOPIC = "topic";
     public static final String ADAPTOR_MESSAGE_CLIENTID = "clientId";
+    public static final int AXIS_TIME_INTERVAL_IN_MILLISECONDS = 10000;
+    public static final String ADAPTOR_CONF_CLEAN_SESSION = "cleanSession";
+    public static final String ADAPTOR_CONF_CLEAN_SESSION_HINT = "cleanSession.hint";
+    public static final String ADAPTOR_CONF_KEEP_ALIVE = "keepAlive";
 
-    public static final int ADAPTER_MIN_THREAD_POOL_SIZE = 8;
-    public static final int ADAPTER_MAX_THREAD_POOL_SIZE = 100;
-    public static final int ADAPTER_EXECUTOR_JOB_QUEUE_SIZE = 10000;
-    public static final long DEFAULT_KEEP_ALIVE_TIME = 20;
 
 }
