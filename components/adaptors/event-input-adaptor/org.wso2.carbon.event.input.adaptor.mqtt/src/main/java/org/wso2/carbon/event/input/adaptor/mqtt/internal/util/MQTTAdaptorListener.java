@@ -13,7 +13,7 @@ import org.wso2.carbon.event.input.adaptor.core.InputEventAdaptorListener;
 import org.wso2.carbon.event.input.adaptor.core.exception.InputEventAdaptorEventProcessingException;
 
 
-public class MQTTAdaptorListener implements MqttCallback{
+public class MQTTAdaptorListener implements MqttCallback {
 
     private static final Log log = LogFactory.getLog(MQTTAdaptorListener.class);
 
@@ -29,7 +29,7 @@ public class MQTTAdaptorListener implements MqttCallback{
 
 
     public MQTTAdaptorListener(MQTTBrokerConnectionConfiguration mqttBrokerConnectionConfiguration,
-                               String topic,String mqttClientId,
+                               String topic, String mqttClientId,
                                InputEventAdaptorListener inputEventAdaptorListener) {
 
         this.mqttBrokerConnectionConfiguration = mqttBrokerConnectionConfiguration;
@@ -64,7 +64,11 @@ public class MQTTAdaptorListener implements MqttCallback{
             mqttClient.setCallback(this);
 
         } catch (MqttException e) {
-            e.printStackTrace();
+            log.error("Exception occurred while subscribing to MQTT broker" + e);
+            throw new InputEventAdaptorEventProcessingException(e);
+        } catch (Throwable e) {
+            log.error("Exception occurred while subscribing to MQTT broker" + e);
+            throw new InputEventAdaptorEventProcessingException(e);
         }
 
     }

@@ -191,10 +191,6 @@ public final class MQTTEventAdaptorType extends AbstractInputEventAdaptor implem
         }
 
         return subscriptionId;
-
-
-
-
     }
 
     public void unsubscribe(
