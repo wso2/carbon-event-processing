@@ -588,6 +588,13 @@
 
             <dependency>
                 <groupId>org.wso2.carbon</groupId>
+                <artifactId>org.wso2.carbon.event.input.adaptor.mqtt.server.feature</artifactId>
+                <version>${carbon.event.processing.version}</version>
+                <type>zip</type>
+            </dependency>
+
+            <dependency>
+                <groupId>org.wso2.carbon</groupId>
                 <artifactId>org.wso2.carbon.event.input.adaptor.kafka.server.feature</artifactId>
                 <version>${carbon.event.processing.version}</version>
                 <type>zip</type>
@@ -652,6 +659,13 @@
             <dependency>
                 <groupId>org.wso2.carbon</groupId>
                 <artifactId>org.wso2.carbon.event.output.adaptor.jms.server.feature</artifactId>
+                <version>${carbon.event.processing.version}</version>
+                <type>zip</type>
+            </dependency>
+
+            <dependency>
+                <groupId>org.wso2.carbon</groupId>
+                <artifactId>org.wso2.carbon.event.output.adaptor.mqtt.server.feature</artifactId>
                 <version>${carbon.event.processing.version}</version>
                 <type>zip</type>
             </dependency>

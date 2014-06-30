@@ -18,10 +18,8 @@ package org.wso2.carbon.event.input.adaptor.mqtt.internal.ds;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.osgi.service.http.HttpService;
 import org.wso2.carbon.event.input.adaptor.mqtt.internal.LateStartAdaptorListener;
 import org.wso2.carbon.event.input.adaptor.mqtt.internal.util.MQTTEventAdaptorConstants;
-import org.wso2.carbon.user.core.service.RealmService;
 import org.wso2.carbon.utils.ConfigurationContextService;
 
 import java.util.ArrayList;
@@ -66,12 +64,13 @@ public final class MQTTEventAdaptorServiceValueHolder {
         return configurationContextService;
     }
 
-    public static void addLateStartAdaptorListener(LateStartAdaptorListener lateStartAdaptorListener) {
+    public static void addLateStartAdaptorListener(
+            LateStartAdaptorListener lateStartAdaptorListener) {
         lateStartAdaptorListeners.add(lateStartAdaptorListener);
     }
 
-    public static void loadLateStartEventAdaptors(){
-        for (LateStartAdaptorListener lateStartAdaptorListener : lateStartAdaptorListeners){
+    public static void loadLateStartEventAdaptors() {
+        for (LateStartAdaptorListener lateStartAdaptorListener : lateStartAdaptorListeners) {
             lateStartAdaptorListener.tryStartAdaptor();
         }
     }

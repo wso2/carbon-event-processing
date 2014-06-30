@@ -60,28 +60,38 @@ public class MQTTAdaptorPublisher {
 
     }
 
-    public void publish(int qos, String payload) throws MqttException {
+    public void publish(int qos, String payload) throws OutputEventAdaptorEventProcessingException {
+        try {
+            // Create and configure a message
+            MqttMessage message = new MqttMessage(payload.getBytes());
+            message.setQos(qos);
 
-        // Create and configure a message
-        MqttMessage message = new MqttMessage(payload.getBytes());
-        message.setQos(qos);
-
-        // Send the message to the server, control is not returned until
-        // it has been delivered to the server meeting the specified
-        // quality of service.
-        mqttClient.publish(topic, message);
+            // Send the message to the server, control is not returned until
+            // it has been delivered to the server meeting the specified
+            // quality of service.
+            mqttClient.publish(topic, message);
+        } catch (MqttException e) {
+            throw new OutputEventAdaptorEventProcessingException(e);
+        }
     }
 
-    public void publish(String payload) throws MqttException {
-
-        // Create and configure a message
-        MqttMessage message = new MqttMessage(payload.getBytes());
-        mqttClient.publish(topic, message);
+    public void publish(String payload) throws OutputEventAdaptorEventProcessingException {
+        try {
+            // Create and configure a message
+            MqttMessage message = new MqttMessage(payload.getBytes());
+            mqttClient.publish(topic, message);
+        } catch (MqttException e) {
+            throw new OutputEventAdaptorEventProcessingException(e);
+        }
     }
 
-    public void close() throws MqttException {
-        mqttClient.disconnect(1000);
-        mqttClient.close();
+    public void close() throws OutputEventAdaptorEventProcessingException {
+        try {
+            mqttClient.disconnect(1000);
+            mqttClient.close();
+        } catch (MqttException e) {
+            throw new OutputEventAdaptorEventProcessingException(e);
+        }
     }
 
 }
