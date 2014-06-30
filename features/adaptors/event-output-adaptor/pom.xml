@@ -37,6 +37,7 @@
     <modules>
         <module>org.wso2.carbon.event.output.adaptor.server.feature</module>
         <module>org.wso2.carbon.event.output.adaptor.jms.server.feature</module>
+        <module>org.wso2.carbon.event.output.adaptor.mqtt.server.feature</module>
         <module>org.wso2.carbon.event.output.adaptor.wso2event.server.feature</module>
         <module>org.wso2.carbon.event.output.adaptor.email.server.feature</module>
         <module>org.wso2.carbon.event.output.adaptor.sms.server.feature</module>
