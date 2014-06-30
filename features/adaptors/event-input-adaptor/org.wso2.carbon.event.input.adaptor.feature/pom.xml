@@ -55,6 +55,12 @@
         </dependency>
         <dependency>
             <groupId>org.wso2.carbon</groupId>
+            <artifactId>org.wso2.carbon.event.input.adaptor.mqtt.server.feature</artifactId>
+
+            <type>zip</type>
+        </dependency>
+        <dependency>
+            <groupId>org.wso2.carbon</groupId>
             <artifactId>org.wso2.carbon.event.input.adaptor.http.server.feature</artifactId>
             
             <type>zip</type>
@@ -133,6 +139,9 @@
                                 </includedFeatureDef>
                                 <includedFeatureDef>
                                     org.wso2.carbon:org.wso2.carbon.event.input.adaptor.jms.server.feature:${carbon.event.processing.version}
+                                </includedFeatureDef>
+                                <includedFeatureDef>
+                                    org.wso2.carbon:org.wso2.carbon.event.input.adaptor.mqtt.server.feature:${carbon.event.processing.version}
                                 </includedFeatureDef>
                                 <includedFeatureDef>
                                     org.wso2.carbon:org.wso2.carbon.event.input.adaptor.http.server.feature:${carbon.event.processing.version}
