@@ -18,7 +18,6 @@ package org.wso2.carbon.event.output.adaptor.mqtt;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.eclipse.paho.client.mqttv3.MqttException;
 import org.wso2.carbon.event.output.adaptor.core.AbstractOutputEventAdaptor;
 import org.wso2.carbon.event.output.adaptor.core.MessageType;
 import org.wso2.carbon.event.output.adaptor.core.Property;
@@ -216,7 +215,7 @@ public final class MQTTEventAdaptorType extends AbstractOutputEventAdaptor {
             } else {
                 mqttAdaptorPublisher.publish(Integer.parseInt(qos), message.toString());
             }
-        } catch (MqttException ex) {
+        } catch (OutputEventAdaptorEventProcessingException ex) {
             log.error(ex);
             topicSpecificEventPublisherMap.remove(topic);
             throw new OutputEventAdaptorEventProcessingException(ex);
@@ -250,7 +249,7 @@ public final class MQTTEventAdaptorType extends AbstractOutputEventAdaptor {
                 if (mqttAdaptorPublisher != null) {
                     try {
                         mqttAdaptorPublisher.close();
-                    } catch (MqttException e) {
+                    } catch (OutputEventAdaptorEventProcessingException e) {
                         throw new OutputEventAdaptorEventProcessingException(e);
                     }
                 }
