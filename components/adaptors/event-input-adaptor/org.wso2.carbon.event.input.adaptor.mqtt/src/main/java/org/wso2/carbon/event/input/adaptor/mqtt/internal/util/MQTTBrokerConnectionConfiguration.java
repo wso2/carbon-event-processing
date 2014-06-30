@@ -5,7 +5,7 @@ public class MQTTBrokerConnectionConfiguration {
     private String brokerUsername = null;
     private String brokerPassword = null;
     private boolean cleanSession = true;
-    private int keepAlive = 0;
+    private int keepAlive = 60000;
     private String brokerUrl;
 
     public String getBrokerPassword() {

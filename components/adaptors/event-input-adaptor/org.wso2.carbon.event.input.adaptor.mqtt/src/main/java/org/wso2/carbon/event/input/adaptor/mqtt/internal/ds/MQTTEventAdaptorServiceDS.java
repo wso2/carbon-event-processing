@@ -47,6 +47,8 @@ public class MQTTEventAdaptorServiceDS {
 
         } catch (RuntimeException e) {
             log.error("Can not create the input MQTT adaptor service ", e);
+        } catch (Exception ex) {
+            log.error(ex);
         }
     }
 

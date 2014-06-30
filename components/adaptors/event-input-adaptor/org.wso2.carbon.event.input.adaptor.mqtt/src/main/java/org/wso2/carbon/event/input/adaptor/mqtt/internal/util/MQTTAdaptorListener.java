@@ -13,7 +13,7 @@ import org.wso2.carbon.event.input.adaptor.core.InputEventAdaptorListener;
 import org.wso2.carbon.event.input.adaptor.core.exception.InputEventAdaptorEventProcessingException;
 
 
-public class MQTTAdaptorListener implements MqttCallback{
+public class MQTTAdaptorListener implements MqttCallback {
 
     private static final Log log = LogFactory.getLog(MQTTAdaptorListener.class);
 
@@ -29,7 +29,7 @@ public class MQTTAdaptorListener implements MqttCallback{
 
 
     public MQTTAdaptorListener(MQTTBrokerConnectionConfiguration mqttBrokerConnectionConfiguration,
-                               String topic,String mqttClientId,
+                               String topic, String mqttClientId,
                                InputEventAdaptorListener inputEventAdaptorListener) {
 
         this.mqttBrokerConnectionConfiguration = mqttBrokerConnectionConfiguration;
@@ -64,30 +64,40 @@ public class MQTTAdaptorListener implements MqttCallback{
             mqttClient.setCallback(this);
 
         } catch (MqttException e) {
-            e.printStackTrace();
+            log.error("Exception occurred while subscribing to MQTT broker" + e);
+            throw new InputEventAdaptorEventProcessingException(e);
+        } catch (Throwable e) {
+            log.error("Exception occurred while subscribing to MQTT broker" + e);
+            throw new InputEventAdaptorEventProcessingException(e);
         }
 
     }
 
-    public void startListener() throws MqttException {
+    public void startListener() throws InputEventAdaptorEventProcessingException {
+        try {
+            // Connect to the MQTT server
+            mqttClient.connect(connectionOptions);
 
-        // Connect to the MQTT server
-        mqttClient.connect(connectionOptions);
-
-        // Subscribe to the requested topic
-        // The QoS specified is the maximum level that messages will be sent to the client at.
-        // For instance if QoS 1 is specified, any messages originally published at QoS 2 will
-        // be downgraded to 1 when delivering to the client but messages published at 1 and 0
-        // will be received at the same level they were published at.
-        mqttClient.subscribe(topic);
+            // Subscribe to the requested topic
+            // The QoS specified is the maximum level that messages will be sent to the client at.
+            // For instance if QoS 1 is specified, any messages originally published at QoS 2 will
+            // be downgraded to 1 when delivering to the client but messages published at 1 and 0
+            // will be received at the same level they were published at.
+            mqttClient.subscribe(topic);
+        } catch (MqttException e) {
+            throw new InputEventAdaptorEventProcessingException(e);
+        }
 
     }
 
-    public void stopListener() throws MqttException {
-
-        // Disconnect to the MQTT server
-        mqttClient.disconnect(3000);
-        mqttClient.unsubscribe(topic);
+    public void stopListener(String adaptorName) throws InputEventAdaptorEventProcessingException {
+        try {
+            // Disconnect to the MQTT server
+            mqttClient.disconnect(3000);
+            mqttClient.unsubscribe(topic);
+        } catch (MqttException e) {
+            throw new InputEventAdaptorEventProcessingException("Can not unsubscribe from the destination " + topic + " with the event adaptor " + adaptorName, e);
+        }
     }
 
     @Override
@@ -98,7 +108,6 @@ public class MQTTAdaptorListener implements MqttCallback{
     @Override
     public void messageArrived(String s, MqttMessage mqttMessage) throws Exception {
         try {
-            log.info("message arrived " + mqttMessage.toString());
             String msgText = mqttMessage.toString();
             eventAdaptorListener.onEventCall(msgText);
         } catch (InputEventAdaptorEventProcessingException e) {
