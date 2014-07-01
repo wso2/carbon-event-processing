@@ -19,15 +19,15 @@
 package org.wso2.carbon.event.simulator.admin;
 
 
-public class EventStreamInfoDto {
+public class StreamDefinitionInfoDto {
 
     private String streamName;
     private String streamVersion;
     private String streamDefinition;
     private String streamDescription;
-    private EventStreamAttributeDto[] metaAttributes;
-    private EventStreamAttributeDto[] correlationAttributes;
-    private EventStreamAttributeDto[] payloadAttributes;
+    private StreamAttributeDto[] metaAttributes;
+    private StreamAttributeDto[] correlationAttributes;
+    private StreamAttributeDto[] payloadAttributes;
 
     public String getStreamDescription() {
         return streamDescription;
@@ -61,35 +61,35 @@ public class EventStreamInfoDto {
         this.streamVersion = streamVersion;
     }
 
-    public EventStreamInfoDto(String streamName, String streamVersion) {
+    public StreamDefinitionInfoDto(String streamName, String streamVersion) {
         this.streamName = streamName;
         this.streamVersion = streamVersion;
     }
 
-    public EventStreamInfoDto() {
+    public StreamDefinitionInfoDto() {
     }
 
-    public EventStreamAttributeDto[] getMetaAttributes() {
+    public StreamAttributeDto[] getMetaAttributes() {
         return metaAttributes;
     }
 
-    public void setMetaAttributes(EventStreamAttributeDto[] metaAttributes) {
+    public void setMetaAttributes(StreamAttributeDto[] metaAttributes) {
         this.metaAttributes = metaAttributes;
     }
 
-    public EventStreamAttributeDto[] getCorrelationAttributes() {
+    public StreamAttributeDto[] getCorrelationAttributes() {
         return correlationAttributes;
     }
 
-    public void setCorrelationAttributes(EventStreamAttributeDto[] correlationAttributes) {
+    public void setCorrelationAttributes(StreamAttributeDto[] correlationAttributes) {
         this.correlationAttributes = correlationAttributes;
     }
 
-    public EventStreamAttributeDto[] getPayloadAttributes() {
+    public StreamAttributeDto[] getPayloadAttributes() {
         return payloadAttributes;
     }
 
-    public void setPayloadAttributes(EventStreamAttributeDto[] payloadAttributes) {
+    public void setPayloadAttributes(StreamAttributeDto[] payloadAttributes) {
         this.payloadAttributes = payloadAttributes;
     }
 }

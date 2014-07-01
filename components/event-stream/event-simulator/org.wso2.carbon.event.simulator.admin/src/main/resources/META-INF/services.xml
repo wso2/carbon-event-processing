@@ -13,13 +13,43 @@
                 /permission/admin/manage/eventSimulator
             </parameter>
         </operation>
-        <operation name="getEventDetails">
+        <operation name="sendEvent">
+            <parameter name="AuthorizationAction" locked="false">
+                /permission/admin/manage/eventSimulator
+            </parameter>
+        </operation>
+
+        <operation name="uploadService">
+            <parameter name="AuthorizationAction" locked="false">
+                /permission/admin/manage/eventSimulator
+            </parameter>
+        </operation>
+
+        <operation name="getAllCSVFileInfo">
+            <parameter name="AuthorizationAction" locked="false">
+                /permission/admin/manage/eventSimulator
+            </parameter>
+        </operation>
+
+        <operation name="sendConfigDetails">
+            <parameter name="AuthorizationAction" locked="false">
+                /permission/admin/manage/eventSimulator
+            </parameter>
+        </operation>
+
+        <operation name="sendEventsViaFile">
+            <parameter name="AuthorizationAction" locked="false">
+                /permission/admin/manage/eventSimulator
+            </parameter>
+        </operation>
+
+        <operation name="deleteFile">
             <parameter name="AuthorizationAction" locked="false">
                 /permission/admin/manage/eventSimulator
             </parameter>
         </operation>
     </service>
 
-    <parameter name="adminService" locked="true">true</parameter>
-    <parameter name="hiddenService" locked="true">true</parameter>
+    <parameter name="adminService" locked="true">false</parameter>
+    <parameter name="hiddenService" locked="true">false</parameter>
 </serviceGroup>

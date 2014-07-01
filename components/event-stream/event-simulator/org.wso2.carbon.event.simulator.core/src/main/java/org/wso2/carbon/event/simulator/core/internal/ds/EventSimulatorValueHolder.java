@@ -18,10 +18,13 @@
 
 package org.wso2.carbon.event.simulator.core.internal.ds;
 
+import org.wso2.carbon.event.simulator.core.EventSimulator;
 import org.wso2.carbon.event.stream.manager.core.EventStreamService;
 
 public class EventSimulatorValueHolder {
     private static EventStreamService eventstreamservice;
+
+    private static CarbonEventSimulator eventSimulator;
 
     private EventSimulatorValueHolder() {
 
@@ -39,5 +42,11 @@ public class EventSimulatorValueHolder {
         return EventSimulatorValueHolder.eventstreamservice;
     }
 
+    public static void setEventSimulator(CarbonEventSimulator eventSimulator){
+        EventSimulatorValueHolder.eventSimulator=eventSimulator;
+    }
 
+    public static CarbonEventSimulator getEventSimulator(){
+        return EventSimulatorValueHolder.eventSimulator;
+    }
 }

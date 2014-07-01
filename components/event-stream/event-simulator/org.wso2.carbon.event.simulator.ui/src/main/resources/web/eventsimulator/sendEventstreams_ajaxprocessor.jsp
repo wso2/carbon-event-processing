@@ -3,7 +3,7 @@
 <%@ page import="org.json.JSONObject" %>
 <%@ page import="org.json.JSONArray" %>
 <%@ page import="org.wso2.carbon.event.simulator.stub.types.EventDto" %>
-<%@ page import="org.wso2.carbon.event.simulator.stub.types.EventStreamAttributeValuesDto" %>
+
 <%
 
     String msg = null;
@@ -14,28 +14,23 @@
 
 
         JSONObject eventDetail = new JSONObject(jsonData);
-        String eventName = eventDetail.getString("EventStreamName");
+        String eventStreamId = eventDetail.getString("EventStreamName");
 
         JSONArray attributes = eventDetail.getJSONArray("attributes");
 
 
         EventDto event = new EventDto();
-        EventStreamAttributeValuesDto[] attributesArray = new EventStreamAttributeValuesDto[attributes.length()];
 
+        String[] attributeValues=new String[attributes.length()];
 
         for (int i = 0; i < attributes.length(); i++) {
 
-            attributesArray[i] = new EventStreamAttributeValuesDto();
-            attributesArray[i].setAttributeName(attributes.getJSONObject(i).getString("name"));
-            attributesArray[i].setValue(attributes.getJSONObject(i).getString("value"));
-            attributesArray[i].setType(attributes.getJSONObject(i).getString("type"));
+            attributeValues[i]=attributes.getJSONObject(i).getString("value");
 
         }
 
-
-        event.setEventStreamName(eventName);
-
-        event.setAttributes(attributesArray);
+        event.setEventStreamId(eventStreamId);
+        event.setAttributeValues(attributeValues);
 
         stub.sendEvent(event);
 

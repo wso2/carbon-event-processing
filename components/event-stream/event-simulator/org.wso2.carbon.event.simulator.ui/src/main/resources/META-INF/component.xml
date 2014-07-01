@@ -29,4 +29,13 @@
         <!--</menu>-->
 
     </menus>
+
+    <FileUploadConfig>
+        <Mapping>
+            <Actions>
+                <Action>csv</Action>
+            </Actions>
+            <Class>org.wso2.carbon.event.simulator.ui.fileupload.CSVUploadExecutor</Class>
+        </Mapping>
+    </FileUploadConfig>
 </component>
