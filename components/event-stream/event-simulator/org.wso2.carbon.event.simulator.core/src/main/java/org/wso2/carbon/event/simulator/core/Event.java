@@ -16,36 +16,28 @@
  *  under the License.
  */
 
-package org.wso2.carbon.event.simulator.admin;
+package org.wso2.carbon.event.simulator.core;
 
+import org.wso2.carbon.databridge.commons.StreamDefinition;
 
-public class EventStreamAttributeValuesDto {
+public class Event {
 
-    private String attributeName;
-    private String value;
-    private  String type;
+    private StreamDefinition streamDefinition;
+    private String[] attributeValues;
 
-    public String getAttributeName() {
-        return attributeName;
+    public String[] getAttributeValues() {
+        return attributeValues;
     }
 
-    public void setAttributeName(String attributeName) {
-        this.attributeName = attributeName;
+    public void setAttributeValues(String[] attributeValues) {
+        this.attributeValues = attributeValues;
     }
 
-    public String getValue() {
-        return value;
+    public StreamDefinition getStreamDefinition() {
+        return streamDefinition;
     }
 
-    public void setValue(String value) {
-        this.value = value;
-    }
-
-    public String getType() {
-        return type;
-    }
-
-    public void setType(String type) {
-        this.type = type;
+    public void setStreamDefinition(StreamDefinition streamDefinition) {
+        this.streamDefinition = streamDefinition;
     }
 }

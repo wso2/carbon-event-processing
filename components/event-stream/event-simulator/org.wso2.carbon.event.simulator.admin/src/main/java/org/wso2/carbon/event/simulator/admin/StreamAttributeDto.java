@@ -18,7 +18,7 @@
 
 package org.wso2.carbon.event.simulator.admin;
 
-public class EventStreamAttributeDto {
+public class StreamAttributeDto {
 
     /**
      * Name of the attribute

@@ -18,9 +18,12 @@
 
 package org.wso2.carbon.event.simulator.core;
 
+import org.apache.axis2.AxisFault;
+import org.apache.axis2.engine.AxisConfiguration;
 import org.wso2.carbon.databridge.commons.StreamDefinition;
 
 import java.util.Collection;
+import java.util.List;
 
 
 public interface EventSimulator {
@@ -28,9 +31,15 @@ public interface EventSimulator {
 
     public Collection<StreamDefinition> getAllEventStreamDefinitions();
 
-    public void sendEventDetails(EventsDetail eventDetail);
+    public void sendEvent(Event eventDetail)throws AxisFault;
 
+    public List<CSVFileInfo> getAllCSVFileInfo();
 
+    public void sendEvents(String fileName)throws AxisFault;
 
+    public void uploadService(UploadedFileItem[] fileItems,AxisConfiguration axisConfiguration)throws AxisFault;
 
+    public void createConfigurationXML(String fileName,String streamId,String separateChar,AxisConfiguration axisConfiguration);
+
+    public void deleteFile(String fileName,AxisConfiguration axisConfiguration)throws AxisFault;
 }

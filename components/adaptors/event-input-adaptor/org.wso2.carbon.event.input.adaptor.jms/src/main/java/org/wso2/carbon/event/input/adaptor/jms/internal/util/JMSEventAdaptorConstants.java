@@ -36,7 +36,6 @@ public final class JMSEventAdaptorConstants {
     public static final String ADAPTOR_JMS_DURABLE_SUBSCRIBER_NAME = "transport.jms.DurableSubscriberName";
     public static final String ADAPTOR_JMS_DURABLE_SUBSCRIBER_NAME_HINT = "transport.jms.DurableSubscriberName.hint";
     public static final String ADAPTOR_JMS_SUBSCRIPTION_DURABLE = "transport.jms.SubscriptionDurable";
-    public static final String ADAPTOR_JMS_SUBSCRIPTION_DURABLE_HINT = "transport.jms.SubscriptionDurable.hint";
     public static final String ADAPTOR_JMS_DESTINATION_TYPE = "transport.jms.DestinationType";
     public static final String ADAPTOR_JMS_DESTINATION_TYPE_HINT = "transport.jms.DestinationType.hint";
 

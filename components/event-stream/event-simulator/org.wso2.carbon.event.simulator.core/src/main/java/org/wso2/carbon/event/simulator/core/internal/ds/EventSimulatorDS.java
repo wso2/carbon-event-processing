@@ -40,15 +40,18 @@ public class EventSimulatorDS {
 
     protected void activate(ComponentContext context) {
         try {
-            EventSimulator eventsimulator = createEventSimulator();
 
-            context.getBundleContext().registerService(EventSimulator.class.getName(), eventsimulator, null);
+            CarbonEventSimulator carbonEventSimulator=createEventSimulator();
+            setEventSimulator(carbonEventSimulator);
+            context.getBundleContext().registerService(EventSimulator.class.getName(), carbonEventSimulator, null);
             if (log.isDebugEnabled()) {
                 log.debug("Successfully deployed EventSimulator");
             }
+
         } catch (RuntimeException e) {
             log.error("Could not create EventSimulator : " + e.getMessage(), e);
         }
+
 
 
     }
@@ -64,4 +67,9 @@ public class EventSimulatorDS {
     private CarbonEventSimulator createEventSimulator() {
         return new CarbonEventSimulator();
     }
+
+    protected void setEventSimulator(CarbonEventSimulator carbonEventSimulator){
+        EventSimulatorValueHolder.setEventSimulator(carbonEventSimulator);
+    }
+
 }

@@ -16,35 +16,39 @@
  *  under the License.
  */
 
+
 package org.wso2.carbon.event.simulator.core;
 
-public class EventDetailsValue {
+import javax.activation.DataHandler;
 
-    private String attributeName;
-    private String value;
-    private  String type;
 
-    public String getAttributeName() {
-        return attributeName;
+public class UploadedFileItem {
+
+    private String fileName;
+    private String fileType;
+    private DataHandler dataHandler;
+
+    public String getFileName() {
+        return fileName;
     }
 
-    public void setAttributeName(String attributeName) {
-        this.attributeName = attributeName;
+    public void setFileName(String fileName) {
+        this.fileName = fileName;
     }
 
-    public String getValue() {
-        return value;
+    public String getFileType() {
+        return fileType;
     }
 
-    public void setValue(String value) {
-        this.value = value;
+    public void setFileType(String fileType) {
+        this.fileType = fileType;
     }
 
-    public String getType() {
-        return type;
+    public DataHandler getDataHandler() {
+        return dataHandler;
     }
 
-    public void setType(String type) {
-        this.type = type;
+    public void setDataHandler(DataHandler dataHandler) {
+        this.dataHandler = dataHandler;
     }
 }

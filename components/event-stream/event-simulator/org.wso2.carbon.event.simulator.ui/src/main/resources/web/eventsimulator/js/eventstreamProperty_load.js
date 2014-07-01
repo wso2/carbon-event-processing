@@ -42,19 +42,16 @@ function showEventProperties() {
 
                 var streamID = eventName + ":" + eventVersion;
 
-                // tableRow1.innerHTML='<tr><td><input type="hidden" id="eventName" value="'+streamID+'"> </td></tr>'
-
 
                 tableRow1.innerHTML = '<tr><td colspan="2"><div id="innerDiv4"><table class="styledLeft noBorders spacer-bot" id="streamAttributeTable" style="width:100%"><tbody><tr name="streamAttributes"><td colspan="2" class="middle-header">Stream Attributes</td></tr></tbody></table></div></td></tr>';
 
 
                 var streamAttributeTable = document.getElementById("streamAttributeTable");
 
-                // tableRow3.innerHTML='<tr><td><b>Stream Attributes<b> </td></tr>';
 
                 var index = 0;
                 if (metaData[0] != null) {
-                    //var tableRow4=eventStreamTable.insertRow(eventStreamTable.rows.length);
+
                     var tableRow4 = streamAttributeTable.insertRow(streamAttributeTable.rows.length);
 
                     tableRow4.innerHTML = '<tr><td colspan="2"><h6>Meta Attributes</h6></td></tr>';
@@ -62,7 +59,7 @@ function showEventProperties() {
 
                 for (var i = 0; i < metaData.length; i++) {
                     if (metaData[i] != null) {
-                        // var tableRow=eventStreamTable.insertRow(eventStreamTable.rows.length);
+
                         var tableRow = streamAttributeTable.insertRow(streamAttributeTable.rows.length);
 
                         var attributeType = metaData[i].localAttributeType;
@@ -75,7 +72,7 @@ function showEventProperties() {
                 }
 
                 if (correlationData[0] != null) {
-                    //var tableRow5=eventStreamTable.insertRow(eventStreamTable.rows.length);
+
                     var tableRow5 = streamAttributeTable.insertRow(streamAttributeTable.rows.length);
 
                     tableRow5.innerHTML = '<tr><td colspan="2"><h6>Correlation Attributes</h6></td></tr>';
@@ -83,7 +80,7 @@ function showEventProperties() {
 
                 for (var j = 0; j < correlationData.length; j++) {
                     if (correlationData[j] != null) {
-                        //var tableRow=eventStreamTable.insertRow(eventStreamTable.rows.length);
+
                         var tableRow = streamAttributeTable.insertRow(streamAttributeTable.rows.length);
 
                         var attributeType = correlationData[j].localAttributeType;
@@ -96,7 +93,7 @@ function showEventProperties() {
                 }
 
                 if (payloadData[0] != null) {
-                    //var tableRow6=eventStreamTable.insertRow(eventStreamTable.rows.length);
+
                     var tableRow6 = streamAttributeTable.insertRow(streamAttributeTable.rows.length);
 
                     tableRow6.innerHTML = '<tr><td colspan="2"><h6>Payload Attributes</h6></td></tr>';
@@ -104,7 +101,7 @@ function showEventProperties() {
 
                 for (var k = 0; k < payloadData.length; k++) {
                     if (payloadData[k] != null) {
-                        //var tableRow=eventStreamTable.insertRow(eventStreamTable.rows.length);
+
                         var tableRow = streamAttributeTable.insertRow(streamAttributeTable.rows.length);
 
                         var attributeType = payloadData[k].localAttributeType;
@@ -115,7 +112,7 @@ function showEventProperties() {
                     }
                 }
 
-                //var hiddenRow=eventStreamTable.insertRow(eventStreamTable.rows.length);
+
                 var hiddenRow = streamAttributeTable.insertRow(streamAttributeTable.rows.length);
                 hiddenRow.innerHTML = '<tr><td colspan="2"><input type="hidden" id="formFields" value="' + index + '"> </td></tr>';
 
@@ -128,12 +125,11 @@ function showEventProperties() {
 }
 
 function sendEvent(form) {
-    //if(validate()==true)
-    {
+    if (validate() == true) {
         var selectIndex = document.getElementById("EventStreamID").selectedIndex;
         var eventStreamName = document.getElementById("EventStreamID").options[selectIndex].text;
 
-        //var eventStreamName=document.getElementById("eventName").value;
+
         var index = document.getElementById("formFields").value;
 
         var jsonString = "{\"EventStreamName\":\"" + eventStreamName + "\",\"attributes\":[";
@@ -147,7 +143,7 @@ function sendEvent(form) {
             }
             else {
                 var fieldInput = document.getElementById(i);
-                //attributes=attributes+"\""+fieldInput.name+"\":"+"\""+fieldInput.value+"\"";
+
                 jsonAttribute = jsonAttribute + "{\"name\":\"" + fieldInput.name + "\",\"value\":\"" + fieldInput.value + "\",\"type\":\"" + fieldInput.getAttribute("attributeType") + "\"}";
             }
         }
@@ -163,7 +159,7 @@ function sendEvent(form) {
 
 
                 if (msg != null && msg.trim() == "Success") {
-                    CARBON.showInfoDialog("Event is successfuly sent");
+                    CARBON.showInfoDialog("Event is successfully sent");
 
                     for (var j = 0; j < index; j++) {
                         var inputField = document.getElementById(j);
@@ -173,7 +169,8 @@ function sendEvent(form) {
                     }
                 }
                 else {
-                    CARBON.showErrorDialog("ERROR - " + msg);
+                    CARBON.showErrorDialog("Error sending event -"+"\n\n" + msg);
+
                 }
             }
 
@@ -184,9 +181,6 @@ function sendEvent(form) {
     }
 }
 
-function uploadCSV() {
-
-}
 
 function validate() {
     var index = document.getElementById("formFields").value;
@@ -198,25 +192,30 @@ function validate() {
 
         if (val == undefined || val == "") {
 
-            CARBON.showErrorDialog("Please fill all the fields");
+            CARBON.showErrorDialog("Empty input fields are not allowed");
             return;
-        }
-        else if (typ == "INT" || typ == "LONG" || typ == "FLOAT" || typ == "DOUBLE") {
-
-            if (isNaN(val)) {
-                CARBON.showErrorDialog("Field value is not suit for the given type");
-                return;
-            }
-        }
-        else if (typ == "BOOLEAN") {
-
-            if (typ != "true" || typ != "false") {
-                CARBON.showErrorDialog("Boolean value should be true or false");
-                return;
-            }
         }
 
 
     }
     return true;
+}
+
+function validateUpload() {
+
+
+    if (document.getElementById('csvFile').value != "") {
+        var filename = document.getElementById('csvFile').value;
+
+        if (filename.lastIndexOf(".csv") == -1) {
+            CARBON.showWarningDialog('Please select a .csv file');
+        } else {
+            document.getElementById('csvFileForm').submit();
+        }
+
+    } else {
+        CARBON.showWarningDialog('Please select required fields to upload a csv file');
+    }
+
+
 }

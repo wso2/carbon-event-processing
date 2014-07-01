@@ -21,23 +21,22 @@ package org.wso2.carbon.event.simulator.admin;
 
 public class EventDto {
 
-    private String EventStreamName;
-    private EventStreamAttributeValuesDto[] attributes;
+    private String eventStreamId;
+    private String[] attributeValues;
 
-
-    public String getEventStreamName() {
-        return EventStreamName;
+    public String[] getAttributeValues() {
+        return attributeValues;
     }
 
-    public void setEventStreamName(String eventStreamName) {
-        EventStreamName = eventStreamName;
+    public void setAttributeValues(String[] attributeValues) {
+        this.attributeValues = attributeValues;
     }
 
-    public EventStreamAttributeValuesDto[] getAttributes() {
-        return attributes;
+    public String getEventStreamId() {
+        return eventStreamId;
     }
 
-    public void setAttributes(EventStreamAttributeValuesDto[] attributes) {
-        this.attributes = attributes;
+    public void setEventStreamId(String eventStreamId) {
+        this.eventStreamId = eventStreamId;
     }
 }
