@@ -1,0 +1,55 @@
+<serviceGroup>
+    <service name="EventSimulatorAdminService" scope="transportsession">
+        <transports>
+            <transport>https</transport>
+        </transports>
+        <parameter name="ServiceClass">org.wso2.carbon.event.simulator.admin.EventSimulatorAdminService</parameter>
+
+        <parameter name="AuthorizationAction" locked="false">
+            /permission/admin/manage/eventSimulator
+        </parameter>
+        <operation name="getAllEventStreamInfoDto">
+            <parameter name="AuthorizationAction" locked="false">
+                /permission/admin/manage/eventSimulator
+            </parameter>
+        </operation>
+        <operation name="sendEvent">
+            <parameter name="AuthorizationAction" locked="false">
+                /permission/admin/manage/eventSimulator
+            </parameter>
+        </operation>
+
+        <operation name="uploadService">
+            <parameter name="AuthorizationAction" locked="false">
+                /permission/admin/manage/eventSimulator
+            </parameter>
+        </operation>
+
+        <operation name="getAllCSVFileInfo">
+            <parameter name="AuthorizationAction" locked="false">
+                /permission/admin/manage/eventSimulator
+            </parameter>
+        </operation>
+
+        <operation name="sendConfigDetails">
+            <parameter name="AuthorizationAction" locked="false">
+                /permission/admin/manage/eventSimulator
+            </parameter>
+        </operation>
+
+        <operation name="sendEventsViaFile">
+            <parameter name="AuthorizationAction" locked="false">
+                /permission/admin/manage/eventSimulator
+            </parameter>
+        </operation>
+
+        <operation name="deleteFile">
+            <parameter name="AuthorizationAction" locked="false">
+                /permission/admin/manage/eventSimulator
+            </parameter>
+        </operation>
+    </service>
+
+    <parameter name="adminService" locked="true">false</parameter>
+    <parameter name="hiddenService" locked="true">false</parameter>
+</serviceGroup>

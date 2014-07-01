@@ -1,0 +1,13 @@
+<component name="libraryTable">
+  <library name="Maven: org.apache.ws.commons.axiom.wso2:axiom:1.2.11.wso2v5-SNAPSHOT">
+    <CLASSES>
+      <root url="jar://$MAVEN_REPOSITORY$/org/apache/ws/commons/axiom/wso2/axiom/1.2.11.wso2v5-SNAPSHOT/axiom-1.2.11.wso2v5-SNAPSHOT.jar!/" />
+    </CLASSES>
+    <JAVADOC>
+      <root url="jar://$MAVEN_REPOSITORY$/org/apache/ws/commons/axiom/wso2/axiom/1.2.11.wso2v5-SNAPSHOT/axiom-1.2.11.wso2v5-SNAPSHOT-javadoc.jar!/" />
+    </JAVADOC>
+    <SOURCES>
+      <root url="jar://$MAVEN_REPOSITORY$/org/apache/ws/commons/axiom/wso2/axiom/1.2.11.wso2v5-SNAPSHOT/axiom-1.2.11.wso2v5-SNAPSHOT-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

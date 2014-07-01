@@ -1,0 +1,88 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+    <parent>
+        <groupId>org.wso2.carbon</groupId>
+        <artifactId>event-simulator</artifactId>
+        <version>2.0.0-SNAPSHOT</version>
+
+    </parent>
+
+    <modelVersion>4.0.0</modelVersion>
+    <version>2.0.0-SNAPSHOT</version>
+    <artifactId>org.wso2.carbon.event.simulator.core</artifactId>
+    <packaging>bundle</packaging>
+    <name>WSO2 Carbon - Event Simulator Core</name>
+    <description>org.wso2.carbon.event.simulator.core provides the back-end
+        functionalities
+    </description>
+    <url>http://wso2.org</url>
+
+    <dependencies>
+
+        <dependency>
+            <groupId>org.wso2.carbon</groupId>
+            <artifactId>org.wso2.carbon.databridge.core</artifactId>
+
+        </dependency>
+        <dependency>
+            <groupId>org.wso2.carbon</groupId>
+            <artifactId>org.wso2.carbon.core</artifactId>
+
+        </dependency>
+        <dependency>
+            <groupId>org.wso2.carbon</groupId>
+            <artifactId>org.wso2.carbon.event.stream.manager.core</artifactId>
+
+        </dependency>
+    </dependencies>
+
+    <build>
+        <plugins>
+
+            <plugin>
+                <groupId>org.apache.felix</groupId>
+                <artifactId>maven-scr-plugin</artifactId>
+                <version>1.7.4</version>
+                <executions>
+                    <execution>
+                        <id>generate-scr-scrdescriptor</id>
+                        <goals>
+                            <goal>scr</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>2.3</version>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.felix</groupId>
+                <artifactId>maven-bundle-plugin</artifactId>
+
+                <extensions>true</extensions>
+                <configuration>
+                    <instructions>
+                        <Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
+                        <Bundle-Name>${project.artifactId}</Bundle-Name>
+
+                        <Private-Package>org.wso2.carbon.event.simulator.core.internal.*
+                        </Private-Package>
+
+                        <Export-Package>!org.wso2.carbon.event.simulator.core.internal,
+                            org.wso2.carbon.event.simulator.core.*
+                        </Export-Package>
+                        <Import-Package>
+                        </Import-Package>
+                        <DynamicImport-Package>*</DynamicImport-Package>
+                    </instructions>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+
+</project>
+

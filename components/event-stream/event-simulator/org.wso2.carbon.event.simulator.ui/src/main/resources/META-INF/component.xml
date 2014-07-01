@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+
+<component xmlns="http://products.wso2.org/carbon">
+    <menus>
+
+        <menu>
+            <id>event_simulator_menu</id>
+            <i18n-key>event.simulator</i18n-key>
+            <i18n-bundle>org.wso2.carbon.event.simulator.ui.i18n.Resources</i18n-bundle>
+            <parent-menu>tools_menu</parent-menu>
+            <link>../eventsimulator/index.jsp</link>
+            <region>region5</region>
+            <order>40</order>
+            <style-class>home</style-class>
+            <icon>../eventsimulator/images/event-simulator.png</icon>
+            <require-permission>/permission/admin/login</require-permission>
+        </menu>
+        <!--<menu>-->
+            <!--<id>event_simulator_inner_menu</id>-->
+            <!--<i18n-key>event.simulator</i18n-key>-->
+            <!--<i18n-bundle>org.wso2.carbon.eventsimulator.ui.i18n.Resources</i18n-bundle>-->
+            <!--<parent-menu>event_simulator_menu</parent-menu>-->
+            <!--<link>../eventsimulator/index.jsp</link>-->
+            <!--<region>region5</region>-->
+            <!--<order>40</order>-->
+            <!--<style-class>home</style-class>-->
+            <!--<icon>../admin/images/delete.gif</icon>-->
+            <!--<require-permission>/permission/admin/login</require-permission>-->
+        <!--</menu>-->
+
+    </menus>
+
+    <FileUploadConfig>
+        <Mapping>
+            <Actions>
+                <Action>csv</Action>
+            </Actions>
+            <Class>org.wso2.carbon.event.simulator.ui.fileupload.CSVUploadExecutor</Class>
+        </Mapping>
+    </FileUploadConfig>
+</component>
