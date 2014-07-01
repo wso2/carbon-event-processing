@@ -28,7 +28,11 @@ import org.w3c.dom.Element;
 import org.wso2.carbon.context.PrivilegedCarbonContext;
 import org.wso2.carbon.databridge.commons.Attribute;
 import org.wso2.carbon.databridge.commons.StreamDefinition;
-import org.wso2.carbon.event.simulator.core.*;
+import org.wso2.carbon.event.simulator.core.CSVFileInfo;
+import org.wso2.carbon.event.simulator.core.Event;
+import org.wso2.carbon.event.simulator.core.EventSimulator;
+import org.wso2.carbon.event.simulator.core.EventSimulatorConstant;
+import org.wso2.carbon.event.simulator.core.UploadedFileItem;
 import org.wso2.carbon.event.stream.manager.core.EventStreamService;
 import org.wso2.carbon.event.stream.manager.core.exception.EventStreamConfigurationException;
 import org.wso2.carbon.utils.CarbonUtils;
@@ -42,7 +46,14 @@ import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
-import java.io.*;
+import java.io.BufferedInputStream;
+import java.io.Closeable;
+import java.io.DataInputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -167,10 +178,12 @@ public class CarbonEventSimulator implements EventSimulator {
     public List<CSVFileInfo> getAllCSVFileInfo() {
         int tenantID = PrivilegedCarbonContext.getThreadLocalCarbonContext().getTenantId();
         HashMap<String, CSVFileInfo> csvFileInfoMap = tenantSpecificCSVFileInfoMap.get(tenantID);
+        if (csvFileInfoMap != null) {
+            return new ArrayList<CSVFileInfo>(csvFileInfoMap.values());
+        }else {
+            return null;
+        }
 
-        List<CSVFileInfo> CSVFileInfoList = new ArrayList<CSVFileInfo>(csvFileInfoMap.values());
-
-        return CSVFileInfoList;
     }
 
 
@@ -190,7 +203,8 @@ public class CarbonEventSimulator implements EventSimulator {
         }
     }
 
-    public void addEventMappingConfiguration(String fileName, String streamId, String separateChar) {
+    public void addEventMappingConfiguration(String fileName, String streamId,
+                                             String separateChar) {
 
         int tenantID = PrivilegedCarbonContext.getThreadLocalCarbonContext().getTenantId();
         HashMap<String, CSVFileInfo> csvFileInfoMap = tenantSpecificCSVFileInfoMap.get(tenantID);
@@ -201,7 +215,8 @@ public class CarbonEventSimulator implements EventSimulator {
     }
 
     @Override
-    public void createConfigurationXML(String fileName, String streamId, String separateChar, AxisConfiguration axisConfiguration) {
+    public void createConfigurationXML(String fileName, String streamId, String separateChar,
+                                       AxisConfiguration axisConfiguration) {
 
         String repo = axisConfiguration.getRepository().getPath();
         String path = repo + EventSimulatorConstant.DEPLOY_DIRECTORY_PATH;
@@ -285,7 +300,8 @@ public class CarbonEventSimulator implements EventSimulator {
     }
 
     @Override
-    public void uploadService(UploadedFileItem[] fileItems, AxisConfiguration axisConfiguration) throws AxisFault {
+    public void uploadService(UploadedFileItem[] fileItems, AxisConfiguration axisConfiguration)
+            throws AxisFault {
 
         String repo = axisConfiguration.getRepository().getPath();
 
@@ -324,8 +340,8 @@ public class CarbonEventSimulator implements EventSimulator {
                 }
             } else {
                 throw new AxisFault("Invalid file type : " + uploadedFile.getFileType() + " ." +
-                        "csv" +
-                        " file type is expected");
+                                    "csv" +
+                                    " file type is expected");
             }
         }
 
@@ -357,7 +373,7 @@ public class CarbonEventSimulator implements EventSimulator {
         boolean isDeleted = tempDestFile.delete();
         if (!isDeleted) {
             log.warn("temp file: " + tempDestFile.getAbsolutePath() +
-                    " deletion failed, scheduled deletion on server exit.");
+                     " deletion failed, scheduled deletion on server exit.");
             tempDestFile.deleteOnExit();
         }
     }
@@ -434,7 +450,8 @@ public class CarbonEventSimulator implements EventSimulator {
         return streamDefinition;
     }
 
-    private boolean validateAttributeValues(List<Attribute> attributeList, String[] valueArray) throws AxisFault {
+    private boolean validateAttributeValues(List<Attribute> attributeList, String[] valueArray)
+            throws AxisFault {
 
         if (attributeList.size() != valueArray.length) {
             throw new AxisFault("Failed configuration of event stream in this file or file is corrupted ");
