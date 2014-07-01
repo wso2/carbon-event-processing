@@ -1,0 +1,379 @@
+<wsdl:definitions xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:ax2116="http://admin.simulator.event.carbon.wso2.org/xsd" xmlns:ns1="http://org.apache.axis2/xsd" xmlns:ns="http://admin.simulator.event.carbon.wso2.org" xmlns:wsaw="http://www.w3.org/2006/05/addressing/wsdl" xmlns:http="http://schemas.xmlsoap.org/wsdl/http/" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" targetNamespace="http://admin.simulator.event.carbon.wso2.org">
+    <wsdl:documentation>EventSimulatorAdminService</wsdl:documentation>
+    <wsdl:types>
+        <xs:schema attributeFormDefault="qualified" elementFormDefault="qualified" targetNamespace="http://admin.simulator.event.carbon.wso2.org/xsd">
+            <xs:complexType name="UploadedFileItemDto">
+                <xs:sequence>
+                    <xs:element minOccurs="0" name="dataHandler" nillable="true" type="xs:base64Binary"/>
+                    <xs:element minOccurs="0" name="fileName" nillable="true" type="xs:string"/>
+                    <xs:element minOccurs="0" name="fileType" nillable="true" type="xs:string"/>
+                </xs:sequence>
+            </xs:complexType>
+            <xs:complexType name="EventDto">
+                <xs:sequence>
+                    <xs:element maxOccurs="unbounded" minOccurs="0" name="attributeValues" nillable="true" type="xs:string"/>
+                    <xs:element minOccurs="0" name="eventStreamId" nillable="true" type="xs:string"/>
+                </xs:sequence>
+            </xs:complexType>
+            <xs:complexType name="StreamDefinitionInfoDto">
+                <xs:sequence>
+                    <xs:element maxOccurs="unbounded" minOccurs="0" name="correlationAttributes" nillable="true" type="ax2116:StreamAttributeDto"/>
+                    <xs:element maxOccurs="unbounded" minOccurs="0" name="metaAttributes" nillable="true" type="ax2116:StreamAttributeDto"/>
+                    <xs:element maxOccurs="unbounded" minOccurs="0" name="payloadAttributes" nillable="true" type="ax2116:StreamAttributeDto"/>
+                    <xs:element minOccurs="0" name="streamDefinition" nillable="true" type="xs:string"/>
+                    <xs:element minOccurs="0" name="streamDescription" nillable="true" type="xs:string"/>
+                    <xs:element minOccurs="0" name="streamName" nillable="true" type="xs:string"/>
+                    <xs:element minOccurs="0" name="streamVersion" nillable="true" type="xs:string"/>
+                </xs:sequence>
+            </xs:complexType>
+            <xs:complexType name="StreamAttributeDto">
+                <xs:sequence>
+                    <xs:element minOccurs="0" name="attributeName" nillable="true" type="xs:string"/>
+                    <xs:element minOccurs="0" name="attributeType" nillable="true" type="xs:string"/>
+                </xs:sequence>
+            </xs:complexType>
+            <xs:complexType name="CSVFileInfoDto">
+                <xs:sequence>
+                    <xs:element minOccurs="0" name="fileName" nillable="true" type="xs:string"/>
+                    <xs:element minOccurs="0" name="filePath" nillable="true" type="xs:string"/>
+                    <xs:element minOccurs="0" name="streamID" nillable="true" type="xs:string"/>
+                </xs:sequence>
+            </xs:complexType>
+        </xs:schema>
+        <xs:schema xmlns:ax2117="http://admin.simulator.event.carbon.wso2.org/xsd" attributeFormDefault="qualified" elementFormDefault="qualified" targetNamespace="http://admin.simulator.event.carbon.wso2.org">
+            <xs:import namespace="http://admin.simulator.event.carbon.wso2.org/xsd"/>
+            <xs:element name="uploadService">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element maxOccurs="unbounded" minOccurs="0" name="fileItems" nillable="true" type="ax2116:UploadedFileItemDto"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="sendEventsViaFile">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element minOccurs="0" name="fileName" nillable="true" type="xs:string"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="sendEvent">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element minOccurs="0" name="eventDto" nillable="true" type="ax2116:EventDto"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="sendConfigDetails">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element minOccurs="0" name="fileName" nillable="true" type="xs:string"/>
+                        <xs:element minOccurs="0" name="streamId" nillable="true" type="xs:string"/>
+                        <xs:element minOccurs="0" name="separateChar" nillable="true" type="xs:string"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="getAllEventStreamInfoDto">
+                <xs:complexType>
+                    <xs:sequence/>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="getAllEventStreamInfoDtoResponse">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element maxOccurs="unbounded" minOccurs="0" name="return" nillable="true" type="ax2116:StreamDefinitionInfoDto"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="getAllCSVFileInfo">
+                <xs:complexType>
+                    <xs:sequence/>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="getAllCSVFileInfoResponse">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element maxOccurs="unbounded" minOccurs="0" name="return" nillable="true" type="ax2116:CSVFileInfoDto"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="deleteFile">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element minOccurs="0" name="fileName" nillable="true" type="xs:string"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+        </xs:schema>
+    </wsdl:types>
+    <wsdl:message name="getAllCSVFileInfoRequest">
+        <wsdl:part name="parameters" element="ns:getAllCSVFileInfo"/>
+    </wsdl:message>
+    <wsdl:message name="getAllCSVFileInfoResponse">
+        <wsdl:part name="parameters" element="ns:getAllCSVFileInfoResponse"/>
+    </wsdl:message>
+    <wsdl:message name="sendEventsViaFileRequest">
+        <wsdl:part name="parameters" element="ns:sendEventsViaFile"/>
+    </wsdl:message>
+    <wsdl:message name="sendEventsViaFileResponse"/>
+    <wsdl:message name="getAllEventStreamInfoDtoRequest">
+        <wsdl:part name="parameters" element="ns:getAllEventStreamInfoDto"/>
+    </wsdl:message>
+    <wsdl:message name="getAllEventStreamInfoDtoResponse">
+        <wsdl:part name="parameters" element="ns:getAllEventStreamInfoDtoResponse"/>
+    </wsdl:message>
+    <wsdl:message name="deleteFileRequest">
+        <wsdl:part name="parameters" element="ns:deleteFile"/>
+    </wsdl:message>
+    <wsdl:message name="deleteFileResponse"/>
+    <wsdl:message name="sendConfigDetailsRequest">
+        <wsdl:part name="parameters" element="ns:sendConfigDetails"/>
+    </wsdl:message>
+    <wsdl:message name="sendConfigDetailsResponse"/>
+    <wsdl:message name="uploadServiceRequest">
+        <wsdl:part name="parameters" element="ns:uploadService"/>
+    </wsdl:message>
+    <wsdl:message name="uploadServiceResponse"/>
+    <wsdl:message name="sendEventRequest">
+        <wsdl:part name="parameters" element="ns:sendEvent"/>
+    </wsdl:message>
+    <wsdl:message name="sendEventResponse"/>
+    <wsdl:portType name="EventSimulatorAdminServicePortType">
+        <wsdl:operation name="getAllCSVFileInfo">
+            <wsdl:input message="ns:getAllCSVFileInfoRequest" wsaw:Action="urn:getAllCSVFileInfo"/>
+            <wsdl:output message="ns:getAllCSVFileInfoResponse" wsaw:Action="urn:getAllCSVFileInfoResponse"/>
+        </wsdl:operation>
+        <wsdl:operation name="sendEventsViaFile">
+            <wsdl:input message="ns:sendEventsViaFileRequest" wsaw:Action="urn:sendEventsViaFile"/>
+            <wsdl:output message="ns:sendEventsViaFileResponse" wsaw:Action="urn:sendEventsViaFileResponse"/>
+        </wsdl:operation>
+        <wsdl:operation name="getAllEventStreamInfoDto">
+            <wsdl:input message="ns:getAllEventStreamInfoDtoRequest" wsaw:Action="urn:getAllEventStreamInfoDto"/>
+            <wsdl:output message="ns:getAllEventStreamInfoDtoResponse" wsaw:Action="urn:getAllEventStreamInfoDtoResponse"/>
+        </wsdl:operation>
+        <wsdl:operation name="deleteFile">
+            <wsdl:input message="ns:deleteFileRequest" wsaw:Action="urn:deleteFile"/>
+            <wsdl:output message="ns:deleteFileResponse" wsaw:Action="urn:deleteFileResponse"/>
+        </wsdl:operation>
+        <wsdl:operation name="sendConfigDetails">
+            <wsdl:input message="ns:sendConfigDetailsRequest" wsaw:Action="urn:sendConfigDetails"/>
+            <wsdl:output message="ns:sendConfigDetailsResponse" wsaw:Action="urn:sendConfigDetailsResponse"/>
+        </wsdl:operation>
+        <wsdl:operation name="uploadService">
+            <wsdl:input message="ns:uploadServiceRequest" wsaw:Action="urn:uploadService"/>
+            <wsdl:output message="ns:uploadServiceResponse" wsaw:Action="urn:uploadServiceResponse"/>
+        </wsdl:operation>
+        <wsdl:operation name="sendEvent">
+            <wsdl:input message="ns:sendEventRequest" wsaw:Action="urn:sendEvent"/>
+            <wsdl:output message="ns:sendEventResponse" wsaw:Action="urn:sendEventResponse"/>
+        </wsdl:operation>
+    </wsdl:portType>
+    <wsdl:binding name="EventSimulatorAdminServiceSoap11Binding" type="ns:EventSimulatorAdminServicePortType">
+        <soap:binding transport="http://schemas.xmlsoap.org/soap/http" style="document"/>
+        <wsdl:operation name="getAllCSVFileInfo">
+            <soap:operation soapAction="urn:getAllCSVFileInfo" style="document"/>
+            <wsdl:input>
+                <soap:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal"/>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="sendEventsViaFile">
+            <soap:operation soapAction="urn:sendEventsViaFile" style="document"/>
+            <wsdl:input>
+                <soap:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal"/>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="getAllEventStreamInfoDto">
+            <soap:operation soapAction="urn:getAllEventStreamInfoDto" style="document"/>
+            <wsdl:input>
+                <soap:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal"/>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="deleteFile">
+            <soap:operation soapAction="urn:deleteFile" style="document"/>
+            <wsdl:input>
+                <soap:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal"/>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="sendConfigDetails">
+            <soap:operation soapAction="urn:sendConfigDetails" style="document"/>
+            <wsdl:input>
+                <soap:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal"/>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="uploadService">
+            <soap:operation soapAction="urn:uploadService" style="document"/>
+            <wsdl:input>
+                <soap:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal"/>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="sendEvent">
+            <soap:operation soapAction="urn:sendEvent" style="document"/>
+            <wsdl:input>
+                <soap:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal"/>
+            </wsdl:output>
+        </wsdl:operation>
+    </wsdl:binding>
+    <wsdl:binding name="EventSimulatorAdminServiceSoap12Binding" type="ns:EventSimulatorAdminServicePortType">
+        <soap12:binding transport="http://schemas.xmlsoap.org/soap/http" style="document"/>
+        <wsdl:operation name="getAllCSVFileInfo">
+            <soap12:operation soapAction="urn:getAllCSVFileInfo" style="document"/>
+            <wsdl:input>
+                <soap12:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap12:body use="literal"/>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="sendEventsViaFile">
+            <soap12:operation soapAction="urn:sendEventsViaFile" style="document"/>
+            <wsdl:input>
+                <soap12:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap12:body use="literal"/>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="getAllEventStreamInfoDto">
+            <soap12:operation soapAction="urn:getAllEventStreamInfoDto" style="document"/>
+            <wsdl:input>
+                <soap12:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap12:body use="literal"/>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="deleteFile">
+            <soap12:operation soapAction="urn:deleteFile" style="document"/>
+            <wsdl:input>
+                <soap12:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap12:body use="literal"/>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="sendConfigDetails">
+            <soap12:operation soapAction="urn:sendConfigDetails" style="document"/>
+            <wsdl:input>
+                <soap12:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap12:body use="literal"/>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="uploadService">
+            <soap12:operation soapAction="urn:uploadService" style="document"/>
+            <wsdl:input>
+                <soap12:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap12:body use="literal"/>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="sendEvent">
+            <soap12:operation soapAction="urn:sendEvent" style="document"/>
+            <wsdl:input>
+                <soap12:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap12:body use="literal"/>
+            </wsdl:output>
+        </wsdl:operation>
+    </wsdl:binding>
+    <wsdl:binding name="EventSimulatorAdminServiceHttpBinding" type="ns:EventSimulatorAdminServicePortType">
+        <http:binding verb="POST"/>
+        <wsdl:operation name="getAllCSVFileInfo">
+            <http:operation location="getAllCSVFileInfo"/>
+            <wsdl:input>
+                <mime:content type="text/xml" part="parameters"/>
+            </wsdl:input>
+            <wsdl:output>
+                <mime:content type="text/xml" part="parameters"/>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="sendEventsViaFile">
+            <http:operation location="sendEventsViaFile"/>
+            <wsdl:input>
+                <mime:content type="text/xml" part="parameters"/>
+            </wsdl:input>
+            <wsdl:output>
+                <mime:content type="text/xml" part="parameters"/>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="getAllEventStreamInfoDto">
+            <http:operation location="getAllEventStreamInfoDto"/>
+            <wsdl:input>
+                <mime:content type="text/xml" part="parameters"/>
+            </wsdl:input>
+            <wsdl:output>
+                <mime:content type="text/xml" part="parameters"/>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="deleteFile">
+            <http:operation location="deleteFile"/>
+            <wsdl:input>
+                <mime:content type="text/xml" part="parameters"/>
+            </wsdl:input>
+            <wsdl:output>
+                <mime:content type="text/xml" part="parameters"/>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="sendConfigDetails">
+            <http:operation location="sendConfigDetails"/>
+            <wsdl:input>
+                <mime:content type="text/xml" part="parameters"/>
+            </wsdl:input>
+            <wsdl:output>
+                <mime:content type="text/xml" part="parameters"/>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="uploadService">
+            <http:operation location="uploadService"/>
+            <wsdl:input>
+                <mime:content type="text/xml" part="parameters"/>
+            </wsdl:input>
+            <wsdl:output>
+                <mime:content type="text/xml" part="parameters"/>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="sendEvent">
+            <http:operation location="sendEvent"/>
+            <wsdl:input>
+                <mime:content type="text/xml" part="parameters"/>
+            </wsdl:input>
+            <wsdl:output>
+                <mime:content type="text/xml" part="parameters"/>
+            </wsdl:output>
+        </wsdl:operation>
+    </wsdl:binding>
+    <wsdl:service name="EventSimulatorAdminService">
+        <wsdl:port name="EventSimulatorAdminServiceHttpsSoap11Endpoint" binding="ns:EventSimulatorAdminServiceSoap11Binding">
+            <soap:address location="https://10.100.4.53:9446/services/EventSimulatorAdminService.EventSimulatorAdminServiceHttpsSoap11Endpoint/"/>
+        </wsdl:port>
+        <wsdl:port name="EventSimulatorAdminServiceHttpsSoap12Endpoint" binding="ns:EventSimulatorAdminServiceSoap12Binding">
+            <soap12:address location="https://10.100.4.53:9446/services/EventSimulatorAdminService.EventSimulatorAdminServiceHttpsSoap12Endpoint/"/>
+        </wsdl:port>
+        <wsdl:port name="EventSimulatorAdminServiceHttpsEndpoint" binding="ns:EventSimulatorAdminServiceHttpBinding">
+            <http:address location="https://10.100.4.53:9446/services/EventSimulatorAdminService.EventSimulatorAdminServiceHttpsEndpoint/"/>
+        </wsdl:port>
+    </wsdl:service>
+</wsdl:definitions>
