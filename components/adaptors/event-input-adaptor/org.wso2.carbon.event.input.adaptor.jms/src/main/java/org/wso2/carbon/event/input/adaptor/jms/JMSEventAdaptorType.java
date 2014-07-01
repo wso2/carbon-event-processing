@@ -26,6 +26,7 @@ import org.wso2.carbon.event.input.adaptor.core.InputEventAdaptorListener;
 import org.wso2.carbon.event.input.adaptor.core.MessageType;
 import org.wso2.carbon.event.input.adaptor.core.Property;
 import org.wso2.carbon.event.input.adaptor.core.config.InputEventAdaptorConfiguration;
+import org.wso2.carbon.event.input.adaptor.core.config.InternalInputEventAdaptorConfiguration;
 import org.wso2.carbon.event.input.adaptor.core.exception.InputEventAdaptorEventProcessingException;
 import org.wso2.carbon.event.input.adaptor.core.message.config.InputEventAdaptorMessageConfiguration;
 import org.wso2.carbon.event.input.adaptor.jms.internal.LateStartAdaptorListener;
@@ -158,16 +159,6 @@ public final class JMSEventAdaptorType extends AbstractInputEventAdaptor impleme
         destinationTypeProperty.setHint(resourceBundle.getString(JMSEventAdaptorConstants.ADAPTOR_JMS_DESTINATION_TYPE_HINT));
         propertyList.add(destinationTypeProperty);
 
-        // Enable Durable Subscription
-        Property isDurableSubscriptionProperty = new Property(JMSEventAdaptorConstants.ADAPTOR_JMS_SUBSCRIPTION_DURABLE);
-        isDurableSubscriptionProperty.setRequired(false);
-        isDurableSubscriptionProperty.setDisplayName(
-                resourceBundle.getString(JMSEventAdaptorConstants.ADAPTOR_JMS_SUBSCRIPTION_DURABLE));
-        isDurableSubscriptionProperty.setHint(resourceBundle.getString(JMSEventAdaptorConstants.ADAPTOR_JMS_SUBSCRIPTION_DURABLE_HINT));
-        isDurableSubscriptionProperty.setOptions(new String[]{"true", "false"});
-        isDurableSubscriptionProperty.setDefaultValue("false");
-        propertyList.add(isDurableSubscriptionProperty);
-
         // Connection Factory JNDI Name
         Property subscriberNameProperty = new Property(JMSEventAdaptorConstants.ADAPTOR_JMS_DURABLE_SUBSCRIBER_NAME);
         subscriberNameProperty.setRequired(false);
@@ -298,6 +289,16 @@ public final class JMSEventAdaptorType extends AbstractInputEventAdaptor impleme
 
 
         Map<String, String> adaptorProperties = new HashMap<String, String>();
+        if(inputEventAdaptorConfiguration.getInputProperties().get(JMSEventAdaptorConstants.ADAPTOR_JMS_DURABLE_SUBSCRIBER_NAME) != null){
+            InternalInputEventAdaptorConfiguration internalInputEventAdaptorConfiguration = inputEventAdaptorConfiguration.getInputConfiguration();
+            internalInputEventAdaptorConfiguration.addEventAdaptorProperty(JMSEventAdaptorConstants.ADAPTOR_JMS_SUBSCRIPTION_DURABLE,"true");
+            inputEventAdaptorConfiguration.setInputConfiguration(internalInputEventAdaptorConfiguration);
+        }else {
+            InternalInputEventAdaptorConfiguration internalInputEventAdaptorConfiguration = inputEventAdaptorConfiguration.getInputConfiguration();
+            internalInputEventAdaptorConfiguration.addEventAdaptorProperty(JMSEventAdaptorConstants.ADAPTOR_JMS_SUBSCRIPTION_DURABLE,"false");
+            inputEventAdaptorConfiguration.setInputConfiguration(internalInputEventAdaptorConfiguration);
+        }
+
         adaptorProperties.putAll(inputEventAdaptorConfiguration.getInputProperties());
 
         JMSConnectionFactory jmsConnectionFactory = new JMSConnectionFactory(new Hashtable<String, String>(adaptorProperties), inputEventAdaptorConfiguration.getName());
