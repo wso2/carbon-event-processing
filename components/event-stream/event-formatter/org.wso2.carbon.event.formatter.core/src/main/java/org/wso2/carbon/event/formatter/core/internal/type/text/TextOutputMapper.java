@@ -42,7 +42,7 @@ public class TextOutputMapper implements OutputMapper {
     public TextOutputMapper(EventFormatterConfiguration eventFormatterConfiguration,
                             Map<String, Integer> propertyPositionMap, int tenantId,
                             StreamDefinition streamDefinition) throws
-            EventFormatterConfigurationException {
+                                                               EventFormatterConfigurationException {
         this.eventFormatterConfiguration = eventFormatterConfiguration;
         this.propertyPositionMap = propertyPositionMap;
         this.streamDefinition = streamDefinition;
@@ -120,7 +120,8 @@ public class TextOutputMapper implements OutputMapper {
     }
 
     @Override
-    public Object convertToTypedInputEvent(Object[] eventData) throws EventFormatterConfigurationException {
+    public Object convertToTypedInputEvent(Object[] eventData)
+            throws EventFormatterConfigurationException {
         return convertToMappedInputEvent(eventData);
     }
 
@@ -128,7 +129,10 @@ public class TextOutputMapper implements OutputMapper {
     private String getPropertyValue(Object[] eventData, String mappingProperty) {
         if (eventData.length != 0) {
             int position = propertyPositionMap.get(mappingProperty);
-            return eventData[position].toString();
+            Object data = eventData[position];
+            if (data != null) {
+                return data.toString();
+            }
         }
         return "";
     }
