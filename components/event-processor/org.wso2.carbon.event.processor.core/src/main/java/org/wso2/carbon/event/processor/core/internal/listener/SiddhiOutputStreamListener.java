@@ -81,6 +81,30 @@ public class SiddhiOutputStreamListener extends StreamCallback implements EventP
         }
     }
 
+    public void sendEventData(Object[] eventData){
+        try {
+            /**
+             * Setting tenant id here because sometimes Siddhi creates its own threads, which does not
+             * have tenant information initialized. These method calls can be a performance hit,
+             * which needs to be profiled properly. Please update this comment one day after the
+             * profiling is done properly.
+             */
+            PrivilegedCarbonContext.startTenantFlow();
+            PrivilegedCarbonContext privilegedCarbonContext = PrivilegedCarbonContext.getThreadLocalCarbonContext();
+            privilegedCarbonContext.setTenantId(this.tenantId);
+
+            if (traceEnabled) {
+                trace.info(tracerPrefix + eventData);
+            }
+            if (statisticsEnabled) {
+                statisticsMonitor.incrementResponse();
+            }
+            eventProducerCallback.sendEventData(eventData);
+        } finally {
+            PrivilegedCarbonContext.endTenantFlow();
+        }
+    }
+
     public String getStreamId() {
         return streamId;
     }
