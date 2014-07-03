@@ -18,15 +18,15 @@ package org.wso2.carbon.event.output.adaptor.websocket.internal.ds;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.osgi.service.component.ComponentContext;
-import org.wso2.carbon.dashboard.websocket.server.WebsocketService;
-import org.wso2.carbon.dashboard.websocket.server.internal.ds.WebsocketServiceValueHolder;
+
+import org.wso2.carbon.event.adaptor.utils.websocket.server.WebsocketService;
 import org.wso2.carbon.event.output.adaptor.core.OutputEventAdaptorFactory;
 import org.wso2.carbon.event.output.adaptor.websocket.WebsocketEventAdaptorFactory;
 
 /**
  * @scr.component name="output.adaptor.websocket.component" immediate="true"
  * @scr.reference name="server.WebsocketService"
- * interface="org.wso2.carbon.dashboard.websocket.server.WebsocketService" cardinality="1..1"
+ * interface="org.wso2.carbon.event.adaptor.utils.websocket.server.WebsocketService" cardinality="1..1"
  * policy="dynamic" bind="setWebsocketService" unbind="unsetWebsocketService"
  */
 public class WebsocketEventAdaptorServiceDS {

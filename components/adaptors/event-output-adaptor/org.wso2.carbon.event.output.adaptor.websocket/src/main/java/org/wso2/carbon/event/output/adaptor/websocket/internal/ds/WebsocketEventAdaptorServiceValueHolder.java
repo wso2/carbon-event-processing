@@ -16,7 +16,8 @@
 
 package org.wso2.carbon.event.output.adaptor.websocket.internal.ds;
 
-import org.wso2.carbon.dashboard.websocket.server.WebsocketService;
+
+import org.wso2.carbon.event.adaptor.utils.websocket.server.WebsocketService;
 
 /**
  * Creates a holder of type WebsocketService, for invoking OSGI services exposed by org.wso2.carbon.dashboard.websocket.server component.

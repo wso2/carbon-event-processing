@@ -13,7 +13,7 @@ import org.eclipse.jetty.websocket.api.Session;
 import org.eclipse.jetty.websocket.client.ClientUpgradeRequest;
 import org.eclipse.jetty.websocket.client.WebSocketClient;
 import org.eclipse.jetty.websocket.common.WebSocketSession;
-import org.wso2.carbon.dashboard.websocket.server.WebsocketService;
+import org.wso2.carbon.event.adaptor.utils.websocket.server.WebsocketService;
 import org.wso2.carbon.event.output.adaptor.core.AbstractOutputEventAdaptor;
 import org.wso2.carbon.event.output.adaptor.core.MessageType;
 import org.wso2.carbon.event.output.adaptor.core.Property;
