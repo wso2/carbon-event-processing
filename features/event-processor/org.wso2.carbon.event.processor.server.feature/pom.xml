@@ -145,7 +145,7 @@
                                     org.wso2.siddhi:siddhi-query:${siddhi.version}
                                 </bundleDef>
                                 <bundleDef>
-                                    org.wso2.carbon:org.wso2.carbon.event.processor.storm.common:1.0.0-SNAPSHOT
+                                    org.wso2.carbon:org.wso2.carbon.event.processor.storm.common:2.0.0-SNAPSHOT
                                 </bundleDef>
                             </bundles>
                             <importFeatures>
