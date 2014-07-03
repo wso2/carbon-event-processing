@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<service name="CEPManagerService" scope="application">
+    <description>
+        CEP Manager Service
+    </description>
+    <operation name="registerStormReceiver">
+        <messageReceiver class="org.apache.axis2.receivers.RawXMLINOnlyMessageReceiver"/>
+    </operation>
+    <operation name="registerCepPublisher">
+        <messageReceiver class="org.apache.axis2.receivers.RawXMLINOnlyMessageReceiver"/>
+    </operation>
+    <operation name="getStormReceiver">
+        <messageReceiver class="org.apache.axis2.receivers.RawXMLINOutMessageReceiver"/>
+    </operation>
+    <operation name="getCEPPublisher">
+        <messageReceiver class="org.apache.axis2.receivers.RawXMLINOutMessageReceiver"/>
+    </operation>
+    <parameter name="ServiceClass">org.wso2.carbon.event.processor.storm.manager.ManagerService</parameter>
+</service>
