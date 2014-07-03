@@ -61,6 +61,7 @@
         <module>org.wso2.carbon.event.output.adaptor.jms</module>
         <module>org.wso2.carbon.event.output.adaptor.mqtt</module>
         <module>org.wso2.carbon.event.output.adaptor.logger</module>
+        <module>org.wso2.carbon.event.output.adaptor.websocket</module>
         <module>org.wso2.carbon.event.output.adaptor.kafka</module>
         <module>org.wso2.carbon.event.output.adaptor.wso2event</module>
         <module>org.wso2.carbon.event.output.adaptor.cassandra</module>
