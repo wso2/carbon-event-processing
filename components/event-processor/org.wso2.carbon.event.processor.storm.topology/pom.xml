@@ -120,7 +120,7 @@
     </build>
 
     <properties>
-        <storm.version>0.9.2-incubating-SNAPSHOT</storm.version>
+        <storm.version>0.9.2-incubating</storm.version>
     </properties>
 
 </project>
