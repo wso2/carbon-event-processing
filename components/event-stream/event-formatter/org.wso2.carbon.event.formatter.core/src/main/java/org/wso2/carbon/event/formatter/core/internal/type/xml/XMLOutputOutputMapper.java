@@ -92,7 +92,7 @@ public class XMLOutputOutputMapper implements OutputMapper {
         for (; mappingTextListIterator.hasNext(); ) {
             String property = mappingTextListIterator.next();
             if (!propertyPositionMap.containsKey(property)) {
-                throw new EventFormatterStreamValidationException("Property " + property + " is not in the input stream definition.",eventFormatterConfiguration.getFromStreamName()+":"+eventFormatterConfiguration.getFromStreamVersion());
+                throw new EventFormatterStreamValidationException("Property " + property + " is not in the input stream definition.", eventFormatterConfiguration.getFromStreamName() + ":" + eventFormatterConfiguration.getFromStreamVersion());
             }
         }
     }
@@ -101,7 +101,10 @@ public class XMLOutputOutputMapper implements OutputMapper {
         Object[] inputObjArray = (Object[]) obj;
         if (inputObjArray.length != 0) {
             int position = propertyPositionMap.get(mappingProperty);
-            return inputObjArray[position].toString();
+            Object data = inputObjArray[position];
+            if (data != null) {
+                return data.toString();
+            }
         }
         return "";
     }
@@ -164,7 +167,8 @@ public class XMLOutputOutputMapper implements OutputMapper {
     }
 
     @Override
-    public Object convertToTypedInputEvent(Object[] eventData) throws EventFormatterConfigurationException {
+    public Object convertToTypedInputEvent(Object[] eventData)
+            throws EventFormatterConfigurationException {
         return convertToMappedInputEvent(eventData);
     }
 
@@ -178,24 +182,25 @@ public class XMLOutputOutputMapper implements OutputMapper {
 
         List<Attribute> metaDatAttributes = streamDefinition.getMetaData();
         if (metaDatAttributes != null && metaDatAttributes.size() > 0) {
-            templateEventElement.addChild(createPropertyElement(factory, EventFormatterConstants.PROPERTY_META_PREFIX,metaDatAttributes, EventFormatterConstants.EVENT_META_TAG));
+            templateEventElement.addChild(createPropertyElement(factory, EventFormatterConstants.PROPERTY_META_PREFIX, metaDatAttributes, EventFormatterConstants.EVENT_META_TAG));
         }
 
         List<Attribute> correlationAttributes = streamDefinition.getCorrelationData();
         if (correlationAttributes != null && correlationAttributes.size() > 0) {
-            templateEventElement.addChild(createPropertyElement(factory, EventFormatterConstants.PROPERTY_CORRELATION_PREFIX,correlationAttributes, EventFormatterConstants.EVENT_CORRELATION_TAG));
+            templateEventElement.addChild(createPropertyElement(factory, EventFormatterConstants.PROPERTY_CORRELATION_PREFIX, correlationAttributes, EventFormatterConstants.EVENT_CORRELATION_TAG));
         }
 
         List<Attribute> payloadAttributes = streamDefinition.getPayloadData();
         if (payloadAttributes != null && payloadAttributes.size() > 0) {
-            templateEventElement.addChild(createPropertyElement(factory, "",payloadAttributes, EventFormatterConstants.EVENT_PAYLOAD_TAG));
+            templateEventElement.addChild(createPropertyElement(factory, "", payloadAttributes, EventFormatterConstants.EVENT_PAYLOAD_TAG));
         }
 
         outputXMLText = templateEventElement.toString();
 
     }
 
-    private static OMElement createPropertyElement(OMFactory factory, String dataPrefix ,List<Attribute> attributeList,
+    private static OMElement createPropertyElement(OMFactory factory, String dataPrefix,
+                                                   List<Attribute> attributeList,
                                                    String propertyTag) {
         OMElement parentPropertyElement = factory.createOMElement(new QName(
                 propertyTag));
@@ -205,7 +210,7 @@ public class XMLOutputOutputMapper implements OutputMapper {
             OMElement propertyElement = factory.createOMElement(new QName(
                     attribute.getName()));
             propertyElement.declareDefaultNamespace(EventFormatterConstants.EVENT_DEFAULT_NAMESPACE);
-            propertyElement.setText(EventFormatterConstants.TEMPLATE_EVENT_ATTRIBUTE_PREFIX + dataPrefix+attribute.getName() + EventFormatterConstants.TEMPLATE_EVENT_ATTRIBUTE_POSTFIX);
+            propertyElement.setText(EventFormatterConstants.TEMPLATE_EVENT_ATTRIBUTE_PREFIX + dataPrefix + attribute.getName() + EventFormatterConstants.TEMPLATE_EVENT_ATTRIBUTE_POSTFIX);
             parentPropertyElement.addChild(propertyElement);
         }
         return parentPropertyElement;

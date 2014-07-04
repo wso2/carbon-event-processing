@@ -98,11 +98,10 @@ public class JSONOutputMapper implements OutputMapper {
         }
 
         try {
-            new JSONObject(eventText.toString());
+            return new JSONObject(eventText.toString()).toString();
         } catch (JSONException e) {
             throw new EventFormatterConfigurationException("Not valid JSON object : " + e.getMessage(), e);
         }
-        return eventText.toString();
     }
 
     @Override
@@ -136,9 +135,12 @@ public class JSONOutputMapper implements OutputMapper {
     private String getPropertyValue(Object[] eventData, String mappingProperty) {
         if (eventData.length != 0) {
             int position = propertyPositionMap.get(mappingProperty);
-            return eventData[position].toString();
+            Object data = eventData[position];
+            if (data != null) {
+                return data.toString();
+            }
         }
-        return "";
+        return "\"\"";
     }
 
     private void generateJsonEventTemplate(StreamDefinition streamDefinition) {

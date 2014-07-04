@@ -21,89 +21,34 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.log4j.Logger;
 import org.wso2.carbon.event.processor.core.ExecutionPlanConfiguration;
-import org.wso2.carbon.event.processor.core.internal.ds.EventProcessorValueHolder;
 import org.wso2.carbon.event.processor.core.internal.util.EventProcessorConstants;
-import org.wso2.carbon.event.statistics.EventStatisticsMonitor;
-import org.wso2.carbon.event.stream.manager.core.SiddhiEventConsumer;
 import org.wso2.siddhi.core.event.Event;
 import org.wso2.siddhi.core.stream.input.InputHandler;
 
-import java.util.Arrays;
-
-public class SiddhiInputEventDispatcher implements SiddhiEventConsumer {
+/**
+ * Feed incoming events to Siddhi engine through Siddhi input handler
+ */
+public class SiddhiInputEventDispatcher extends AbstractSiddhiInputEventDispatcher {
     private Logger trace = Logger.getLogger(EventProcessorConstants.EVENT_TRACE_LOGGER);
     private static Log log = LogFactory.getLog(SiddhiInputEventDispatcher.class);
 
-    private final String streamId;
+    /**
+     * Siddhi Input event handler
+     */
     protected InputHandler inputHandler;
-    private Object owner;
-    private final int tenantId;
-    private final boolean traceEnabled;
-    private final boolean statisticsEnabled;
-    private EventStatisticsMonitor statisticsMonitor;
-    private String tracerPrefix = "";
 
     public SiddhiInputEventDispatcher(String streamId, InputHandler inputHandler, ExecutionPlanConfiguration executionPlanConfiguration, int tenantId) {
-        this.streamId = streamId;
+        super(streamId, inputHandler.getStreamId(), executionPlanConfiguration, tenantId);
         this.inputHandler = inputHandler;
-        this.owner = executionPlanConfiguration;
-        this.tenantId = tenantId;
-        this.traceEnabled = executionPlanConfiguration.isTracingEnabled();
-        this.statisticsEnabled = executionPlanConfiguration.isStatisticsEnabled();
-        if (statisticsEnabled) {
-            statisticsMonitor = EventProcessorValueHolder.getEventStatisticsService().getEventStatisticMonitor(tenantId, EventProcessorConstants.EVENT_PROCESSOR, executionPlanConfiguration.getName(), streamId + " (" + inputHandler.getStreamId() + ")");
-        }
-        if (traceEnabled) {
-            this.tracerPrefix = "TenantId=" + tenantId + " : " + EventProcessorConstants.EVENT_PROCESSOR + " : " + executionPlanConfiguration.getName() + "," + streamId + " (" + inputHandler.getStreamId() + "), before processing " + System.getProperty("line.separator");
-        }
     }
 
     @Override
-    public String getStreamId() {
-        return streamId;
+    public void sendEvent(Event event) throws InterruptedException {
+        sendEvent(event.getData());
     }
 
     @Override
-    public void consumeEvents(Event[] events) {
-
-        if (traceEnabled) {
-            trace.info(tracerPrefix + Arrays.deepToString(events));
-        }
-        for (Event event : events) {
-            try {
-
-                if (statisticsEnabled) {
-                    statisticsMonitor.incrementRequest();
-                }
-                sendEvent(event.getData());
-            } catch (InterruptedException e) {
-                log.error("Error in dispatching events " + Arrays.deepToString(events) + " to Siddhi stream :" + inputHandler.getStreamId());
-            }
-        }
-    }
-
-    @Override
-    public void consumeEventData(Object[] eventData) {
-
-        try {
-            if (traceEnabled) {
-                trace.info(tracerPrefix + Arrays.deepToString(eventData));
-            }
-            if (statisticsEnabled) {
-                statisticsMonitor.incrementRequest();
-            }
-            sendEvent(eventData);
-        } catch (InterruptedException e) {
-            log.error("Error in dispatching event data " + Arrays.deepToString(eventData) + " to Siddhi stream :" + inputHandler.getStreamId());
-        }
-    }
-
-    protected void sendEvent(Event event) throws InterruptedException {
-        inputHandler.send(event);
-    }
-
-
-    protected void sendEvent(Object[] eventData) throws InterruptedException {
+    public void sendEvent(Object[] eventData) throws InterruptedException {
         inputHandler.send(eventData);
     }
 
