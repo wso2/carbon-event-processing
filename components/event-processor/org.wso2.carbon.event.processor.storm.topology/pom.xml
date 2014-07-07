@@ -8,6 +8,7 @@
         <version>4.3.0-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
+    <name>WSO2 Carbon - Storm Topology Module</name>
     <artifactId>org.wso2.carbon.event.processor.storm.topology</artifactId>
     <version>1.0.0-SNAPSHOT</version>
     <packaging>jar</packaging>
