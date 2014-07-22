@@ -205,7 +205,7 @@ public final class MQTTEventAdaptorType extends AbstractOutputEventAdaptor {
         if (mqttAdaptorPublisher == null) {
             MQTTBrokerConnectionConfiguration mqttBrokerConnectionConfiguration = new MQTTBrokerConnectionConfiguration(outputEventAdaptorConfiguration.getOutputProperties().get(MQTTEventAdaptorConstants.ADAPTOR_CONF_URL), outputEventAdaptorConfiguration.getOutputProperties().get(MQTTEventAdaptorConstants.ADAPTOR_CONF_USERNAME), outputEventAdaptorConfiguration.getOutputProperties().get(MQTTEventAdaptorConstants.ADAPTOR_CONF_PASSWORD), outputEventAdaptorConfiguration.getOutputProperties().get(MQTTEventAdaptorConstants.ADAPTOR_CONF_CLEAN_SESSION), outputEventAdaptorConfiguration.getOutputProperties().get(MQTTEventAdaptorConstants.ADAPTOR_CONF_KEEP_ALIVE));
             mqttAdaptorPublisher = new MQTTAdaptorPublisher(mqttBrokerConnectionConfiguration, outputEventAdaptorMessageConfiguration.getOutputMessageProperties().get(MQTTEventAdaptorConstants.ADAPTOR_MESSAGE_TOPIC), outputEventAdaptorMessageConfiguration.getOutputMessageProperties().get(MQTTEventAdaptorConstants.ADAPTOR_MESSAGE_CLIENTID));
-
+            topicSpecificEventPublisherMap.put(topic,mqttAdaptorPublisher);
         }
         String qos = outputEventAdaptorMessageConfiguration.getOutputMessageProperties().get(MQTTEventAdaptorConstants.ADAPTOR_MESSAGE_QOS);
 

@@ -216,11 +216,9 @@ public final class MQTTEventAdaptorType extends AbstractInputEventAdaptor implem
         }
 
         MQTTAdaptorListener mqttAdaptorListener = subscriptionsMap.get(subscriptionId);
-        if (mqttAdaptorListener == null) {
-            throw new InputEventAdaptorEventProcessingException("There is no subscription for " + topic + " for the subscriptionId:" + subscriptionId);
+        if (mqttAdaptorListener != null) {
+            mqttAdaptorListener.stopListener(inputEventAdaptorConfiguration.getName());
         }
-
-        mqttAdaptorListener.stopListener(inputEventAdaptorConfiguration.getName());
 
     }
 
