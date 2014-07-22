@@ -85,9 +85,20 @@ public class MQTTAdaptorListener implements MqttCallback {
             // will be received at the same level they were published at.
             mqttClient.subscribe(topic);
         } catch (MqttException e) {
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        log.info("Trying to reconnect with MQTT server");
+                        Thread.sleep(3000);
+                        startListener();
+                    } catch (InterruptedException e) {
+                        log.error(e.getMessage(), e);
+                    }
+                }
+            }).start();
             throw new InputEventAdaptorEventProcessingException(e);
         }
-
     }
 
     public void stopListener(String adaptorName) throws InputEventAdaptorEventProcessingException {
@@ -102,6 +113,20 @@ public class MQTTAdaptorListener implements MqttCallback {
 
     @Override
     public void connectionLost(Throwable throwable) {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    log.info("Trying to reconnect with MQTT server");
+                    Thread.sleep(3000);
+                    startListener();
+                } catch (InterruptedException e) {
+                    log.error(e.getMessage(), e);
+                }
+            }
+        }).start();
+
+        throw new InputEventAdaptorEventProcessingException("MQTT connection not reachable "+throwable);
 
     }
 
