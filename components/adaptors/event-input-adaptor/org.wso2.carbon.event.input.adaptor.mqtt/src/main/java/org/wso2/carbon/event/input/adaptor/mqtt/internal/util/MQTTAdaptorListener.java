@@ -13,7 +13,8 @@ import org.wso2.carbon.event.input.adaptor.core.InputEventAdaptorListener;
 import org.wso2.carbon.event.input.adaptor.core.exception.InputEventAdaptorEventProcessingException;
 
 
-public class MQTTAdaptorListener implements MqttCallback {
+public class MQTTAdaptorListener implements MqttCallback,Runnable {
+
 
     private static final Log log = LogFactory.getLog(MQTTAdaptorListener.class);
 
@@ -24,6 +25,7 @@ public class MQTTAdaptorListener implements MqttCallback {
     private MQTTBrokerConnectionConfiguration mqttBrokerConnectionConfiguration;
     private String mqttClientId;
     private String topic;
+    private boolean connectionSucceeded = false;
 
     private InputEventAdaptorListener eventAdaptorListener = null;
 
@@ -73,61 +75,39 @@ public class MQTTAdaptorListener implements MqttCallback {
 
     }
 
-    public void startListener() throws InputEventAdaptorEventProcessingException {
-        try {
-            // Connect to the MQTT server
-            mqttClient.connect(connectionOptions);
+    public void startListener() throws MqttException {
+        // Connect to the MQTT server
+        mqttClient.connect(connectionOptions);
 
-            // Subscribe to the requested topic
-            // The QoS specified is the maximum level that messages will be sent to the client at.
-            // For instance if QoS 1 is specified, any messages originally published at QoS 2 will
-            // be downgraded to 1 when delivering to the client but messages published at 1 and 0
-            // will be received at the same level they were published at.
-            mqttClient.subscribe(topic);
-        } catch (MqttException e) {
-            new Thread(new Runnable() {
-                @Override
-                public void run() {
-                    try {
-                        log.info("Trying to reconnect with MQTT server");
-                        Thread.sleep(3000);
-                        startListener();
-                    } catch (InterruptedException e) {
-                        log.error(e.getMessage(), e);
-                    }
-                }
-            }).start();
-            throw new InputEventAdaptorEventProcessingException(e);
-        }
+        // Subscribe to the requested topic
+        // The QoS specified is the maximum level that messages will be sent to the client at.
+        // For instance if QoS 1 is specified, any messages originally published at QoS 2 will
+        // be downgraded to 1 when delivering to the client but messages published at 1 and 0
+        // will be received at the same level they were published at.
+        mqttClient.subscribe(topic);
+
+
     }
 
     public void stopListener(String adaptorName) throws InputEventAdaptorEventProcessingException {
-        try {
-            // Disconnect to the MQTT server
-            mqttClient.disconnect(3000);
-            mqttClient.unsubscribe(topic);
-        } catch (MqttException e) {
-            throw new InputEventAdaptorEventProcessingException("Can not unsubscribe from the destination " + topic + " with the event adaptor " + adaptorName, e);
+        if(connectionSucceeded){
+            try {
+                // Disconnect to the MQTT server
+                mqttClient.unsubscribe(topic);
+                mqttClient.disconnect(3000);
+            } catch (MqttException e) {
+                throw new InputEventAdaptorEventProcessingException("Can not unsubscribe from the destination " + topic + " with the event adaptor " + adaptorName, e);
+            }
         }
+        //This is to stop all running reconnection threads
+        connectionSucceeded = true;
     }
 
     @Override
     public void connectionLost(Throwable throwable) {
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    log.info("Trying to reconnect with MQTT server");
-                    Thread.sleep(3000);
-                    startListener();
-                } catch (InterruptedException e) {
-                    log.error(e.getMessage(), e);
-                }
-            }
-        }).start();
-
-        throw new InputEventAdaptorEventProcessingException("MQTT connection not reachable "+throwable);
-
+        log.error("MQTT connection not reachable " + throwable);
+        connectionSucceeded = false;
+        new Thread(this).start();
     }
 
     @Override
@@ -136,11 +116,36 @@ public class MQTTAdaptorListener implements MqttCallback {
             String msgText = mqttMessage.toString();
             eventAdaptorListener.onEventCall(msgText);
         } catch (InputEventAdaptorEventProcessingException e) {
+            throw new InputEventAdaptorEventProcessingException(e);
         }
     }
 
     @Override
     public void deliveryComplete(IMqttDeliveryToken iMqttDeliveryToken) {
 
+    }
+
+
+    @Override
+    public void run() {
+        while (!connectionSucceeded) {
+            try {
+                Thread.sleep(3000);
+                startListener();
+                connectionSucceeded = true;
+                log.info("MQTT Connection successful");
+            } catch (InterruptedException e) {
+                log.error(e.getMessage(), e);
+            } catch (MqttException e) {
+                log.error(e.getMessage(), e);
+
+            }
+
+        }
+    }
+
+
+    public void createConnection() {
+        new Thread(this).start();
     }
 }

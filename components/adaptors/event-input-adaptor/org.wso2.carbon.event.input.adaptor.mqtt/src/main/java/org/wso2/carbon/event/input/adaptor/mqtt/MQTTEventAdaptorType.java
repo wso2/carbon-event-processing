@@ -218,8 +218,8 @@ public final class MQTTEventAdaptorType extends AbstractInputEventAdaptor implem
         MQTTAdaptorListener mqttAdaptorListener = subscriptionsMap.get(subscriptionId);
         if (mqttAdaptorListener != null) {
             mqttAdaptorListener.stopListener(inputEventAdaptorConfiguration.getName());
+            subscriptionsMap.remove(subscriptionId);
         }
-
     }
 
     @Override
@@ -264,8 +264,8 @@ public final class MQTTEventAdaptorType extends AbstractInputEventAdaptor implem
 
         MQTTBrokerConnectionConfiguration mqttBrokerConnectionConfiguration = new MQTTBrokerConnectionConfiguration(inputEventAdaptorConfiguration.getInputProperties().get(MQTTEventAdaptorConstants.ADAPTOR_CONF_URL), inputEventAdaptorConfiguration.getInputProperties().get(MQTTEventAdaptorConstants.ADAPTOR_CONF_USERNAME), inputEventAdaptorConfiguration.getInputProperties().get(MQTTEventAdaptorConstants.ADAPTOR_CONF_PASSWORD), inputEventAdaptorConfiguration.getInputProperties().get(MQTTEventAdaptorConstants.ADAPTOR_CONF_CLEAN_SESSION), inputEventAdaptorConfiguration.getInputProperties().get(MQTTEventAdaptorConstants.ADAPTOR_CONF_KEEP_ALIVE));
         MQTTAdaptorListener mqttAdaptorListener = new MQTTAdaptorListener(mqttBrokerConnectionConfiguration, inputEventAdaptorMessageConfiguration.getInputMessageProperties().get(MQTTEventAdaptorConstants.ADAPTOR_MESSAGE_TOPIC), inputEventAdaptorMessageConfiguration.getInputMessageProperties().get(MQTTEventAdaptorConstants.ADAPTOR_MESSAGE_CLIENTID), inputEventAdaptorListener);
-        mqttAdaptorListener.startListener();
         topicSpecificListenMap.put(subscriptionId, mqttAdaptorListener);
+        mqttAdaptorListener.createConnection();
 
     }
 }
