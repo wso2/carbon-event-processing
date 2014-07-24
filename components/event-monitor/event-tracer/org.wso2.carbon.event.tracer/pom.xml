@@ -63,7 +63,7 @@
         </dependency>
         <dependency>
             <groupId>org.wso2.carbon</groupId>
-            <artifactId>org.wso2.carbon.logging</artifactId>
+            <artifactId>org.wso2.carbon.utils.logging</artifactId>
         </dependency>
         <dependency>
             <groupId>commons-lang.wso2</groupId>
