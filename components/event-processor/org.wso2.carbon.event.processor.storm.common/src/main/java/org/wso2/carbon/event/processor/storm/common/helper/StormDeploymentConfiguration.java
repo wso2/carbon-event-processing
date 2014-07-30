@@ -1,3 +1,21 @@
+/*
+ * Copyright (c) 2005-2014, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
+ *
+ *  WSO2 Inc. licenses this file to you under the Apache License,
+ *  Version 2.0 (the "License"); you may not use this file except
+ *  in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing,
+ *  software distributed under the License is distributed on an
+ *  "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ *  KIND, either express or implied.  See the License for the
+ *  specific language governing permissions and limitations
+ *  under the License.
+ */
+
 package org.wso2.carbon.event.processor.storm.common.helper;
 
 import org.apache.axiom.om.OMElement;
@@ -14,12 +32,17 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 
-/**
- * Created by sajith on 7/1/14.
- */
-public class StormDeploymentConfigurations {
-    private static String CONFIG_FILE_NAME = "storm-deployment-config.xml";
-    private static Log log = LogFactory.getLog(StormDeploymentConfigurations.class);
+public class StormDeploymentConfiguration {
+    private static final String CONFIG_FILE_NAME = "storm-deployment-config.xml";
+    private static Log log = LogFactory.getLog(StormDeploymentConfiguration.class);
+    private static boolean isRunningOnStorm = false;
+    private static String cepManagerHost = "localhost";
+    private static String keyStorePath = System.getProperty("user.home") + File.separator + "wso2carbon.jks";
+    private static String trustStorePath = System.getProperty("user.home") + File.separator + "client-truststore.jks";
+    private static int cepManagerPort = 9773;
+    private static int reconnectInterval = 10;
+    private static int maxListeningPort = 15100;
+    private static int minListingPort = 15000;
 
     public static boolean isRunningOnStorm() {
         return isRunningOnStorm;
@@ -53,21 +76,9 @@ public class StormDeploymentConfigurations {
         return trustStorePath;
     }
 
-
-    private static boolean isRunningOnStorm = false;
-    private static String cepManagerHost = "localhost";
-    private static String keyStorePath =  System.getProperty("user.home") + File.separator + "wso2carbon.jks";
-    private static String trustStorePath = System.getProperty("user.home") + File.separator  + "client-truststore.jks";
-    private static int cepManagerPort = 9773;
-    private static int reconnectInterval = 10;
-
-
-    private static int maxListeningPort = 15100;
-    private static int minListingPort = 15000;
-
-    public static void LoadConfigurations(){
+    public static void loadConfigurations() {
         String carbonHome = System.getProperty("carbon.config.dir.path");
-        String path = carbonHome + File.separator + StormDeploymentConfigurations.CONFIG_FILE_NAME;
+        String path = carbonHome + File.separator + StormDeploymentConfiguration.CONFIG_FILE_NAME;
 
         OMElement configurationElement;
         BufferedInputStream inputStream = null;
@@ -81,17 +92,17 @@ public class StormDeploymentConfigurations {
             readConfigurationValue(configurationElement);
         } catch (XMLStreamException e) {
             log.error("Error while reading storm deployment configurations", e);
-        }catch (FileNotFoundException e) {
+        } catch (FileNotFoundException e) {
             log.error("Failed to find " + CONFIG_FILE_NAME + ". Using default value for storm deployment", e);
         }
     }
 
-    private static void readConfigurationValue(OMElement configurations){
+    private static void readConfigurationValue(OMElement configurations) {
         // Checking if CEP is running on storm
         String stormEnabledValue = configurations.getFirstChildWithName(new QName("stormEnabled")).getText();
         isRunningOnStorm = (stormEnabledValue.equalsIgnoreCase("true")) ? true : false;
 
-        if (isRunningOnStorm){
+        if (isRunningOnStorm) {
             log.info("CEP is Running on Storm");
             // Reading CEP manager host details
             OMElement cepManagerConfigurations = configurations.getFirstChildWithName(new QName("cepManager"));
@@ -99,10 +110,10 @@ public class StormDeploymentConfigurations {
             cepManagerPort = Integer.parseInt(cepManagerConfigurations.getFirstChildWithName(new QName("port")).getText());
             reconnectInterval = Integer.parseInt(cepManagerConfigurations.getFirstChildWithName(new QName("reconnectionInterval")).getText());
 
-            log.info("Storm Deployment CEP Manger host configurations [Host=" + cepManagerHost   + ", Port=" + cepManagerPort + ", ReconnectInterval=" + reconnectInterval + "]");
+            log.info("Storm Deployment CEP Manger host configurations [Host=" + cepManagerHost + ", Port=" + cepManagerPort + ", ReconnectInterval=" + reconnectInterval + "]");
 
             // Reading storm receiver/listener port range
-            OMElement receiverPortRange  = configurations.getFirstChildWithName(new QName("receiverPortRange"));
+            OMElement receiverPortRange = configurations.getFirstChildWithName(new QName("receiverPortRange"));
             maxListeningPort = Integer.parseInt(receiverPortRange.getFirstChildWithName(new QName("max")).getText());
             minListingPort = Integer.parseInt(receiverPortRange.getFirstChildWithName(new QName("min")).getText());
 

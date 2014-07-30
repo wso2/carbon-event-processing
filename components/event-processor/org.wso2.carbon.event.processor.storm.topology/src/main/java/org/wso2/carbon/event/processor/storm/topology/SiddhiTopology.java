@@ -1,9 +1,27 @@
+/*
+ * Copyright (c) 2005-2014, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
+ *
+ *  WSO2 Inc. licenses this file to you under the Apache License,
+ *  Version 2.0 (the "License"); you may not use this file except
+ *  in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing,
+ *  software distributed under the License is distributed on an
+ *  "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ *  KIND, either express or implied.  See the License for the
+ *  specific language governing permissions and limitations
+ *  under the License.
+ */
+
 package org.wso2.carbon.event.processor.storm.topology;
 
 import backtype.storm.Config;
-import backtype.storm.LocalCluster;
+import backtype.storm.StormSubmitter;
 import backtype.storm.topology.TopologyBuilder;
-import org.wso2.carbon.event.processor.storm.common.helper.StormDeploymentConfigurations;
+import org.wso2.carbon.event.processor.storm.common.helper.StormDeploymentConfiguration;
 import org.wso2.carbon.event.processor.storm.topology.component.EventPublisherBolt;
 import org.wso2.carbon.event.processor.storm.topology.component.EventReceiverSpout;
 import org.wso2.carbon.event.processor.storm.topology.component.SiddhiBolt;
@@ -14,7 +32,7 @@ import org.wso2.siddhi.core.SiddhiManager;
  */
 public class SiddhiTopology {
     public static void main(String[] args) throws Exception {
-        StormDeploymentConfigurations.LoadConfigurations();
+        StormDeploymentConfiguration.loadConfigurations();
 
         String authStreamStreamDef = "define stream authStream (username string, ipAddress string, browser string);";
         String query = "from every a1 = authStream " +
@@ -30,12 +48,12 @@ public class SiddhiTopology {
 
         String[] importedStreams = new String[1];
         importedStreams[0] = authStreamStreamDef;
-        int maxListenerPort = StormDeploymentConfigurations.getMaxListeningPort();
-        int minListenerPort = StormDeploymentConfigurations.getMinListingPort();
-        String keyStorePath = StormDeploymentConfigurations.getKeyStorePath();
-        String trustStroePath = StormDeploymentConfigurations.getTrustStorePath();
-        String cepManagerHost = StormDeploymentConfigurations.getCepManagerHost();
-        int cepManagerPort = StormDeploymentConfigurations.getCepManagerPort();
+        int maxListenerPort = StormDeploymentConfiguration.getMaxListeningPort();
+        int minListenerPort = StormDeploymentConfiguration.getMinListingPort();
+        String keyStorePath = StormDeploymentConfiguration.getKeyStorePath();
+        String trustStroePath = StormDeploymentConfiguration.getTrustStorePath();
+        String cepManagerHost = StormDeploymentConfiguration.getCepManagerHost();
+        int cepManagerPort = StormDeploymentConfiguration.getCepManagerPort();
 
         TopologyBuilder builder = new TopologyBuilder();
 
@@ -47,7 +65,11 @@ public class SiddhiTopology {
         conf.setDebug(true);
 
         conf.setMaxTaskParallelism(3);
+        conf.setNumWorkers(3);
+        StormSubmitter.submitTopology(args[0], conf, builder.createTopology());
+/*
         LocalCluster cluster = new LocalCluster();
-        cluster.submitTopology("TriftTopology", conf, builder.createTopology());
+        cluster.submitTopology("SiddhiTopology", conf, builder.createTopology());
+*/
     }
 }

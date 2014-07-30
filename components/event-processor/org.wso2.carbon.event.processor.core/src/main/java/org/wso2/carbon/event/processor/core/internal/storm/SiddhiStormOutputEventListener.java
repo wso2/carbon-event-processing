@@ -1,3 +1,21 @@
+/*
+ * Copyright (c) 2005-2014, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
+ *
+ *  WSO2 Inc. licenses this file to you under the Apache License,
+ *  Version 2.0 (the "License"); you may not use this file except
+ *  in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing,
+ *  software distributed under the License is distributed on an
+ *  "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ *  KIND, either express or implied.  See the License for the
+ *  specific language governing permissions and limitations
+ *  under the License.
+ */
+
 package org.wso2.carbon.event.processor.core.internal.storm;
 
 import org.apache.log4j.Logger;
@@ -16,7 +34,7 @@ import org.wso2.carbon.databridge.receiver.thrift.ThriftDataReceiverFactory;
 import org.wso2.carbon.event.processor.core.ExecutionPlanConfiguration;
 import org.wso2.carbon.event.processor.core.internal.listener.SiddhiOutputStreamListener;
 import org.wso2.carbon.event.processor.storm.common.client.ManagerServiceClient;
-import org.wso2.carbon.event.processor.storm.common.helper.StormDeploymentConfigurations;
+import org.wso2.carbon.event.processor.storm.common.helper.StormDeploymentConfiguration;
 import org.wso2.carbon.event.processor.storm.common.util.StormUtils;
 import org.wso2.carbon.user.api.UserStoreException;
 
@@ -30,21 +48,21 @@ import java.util.List;
  * received from storm, the event  will be directed to the relevant output stream listener depending on the stream to forward
  * the event to the relevant output adaptor for the stream.
  */
-public class SindhiStormOutputEventListener implements AgentCallback {
-    private static Logger log = Logger.getLogger(SindhiStormOutputEventListener.class);
+public class SiddhiStormOutputEventListener implements AgentCallback {
+    private static Logger log = Logger.getLogger(SiddhiStormOutputEventListener.class);
     private ExecutionPlanConfiguration executionPlanConfiguration;
     private ThriftDataReceiver thriftDataReceiver;
     private int listeningPort;
     private int tenantId;
     private String thisHostIp;
-    private int cepMangerPort = StormDeploymentConfigurations.getCepManagerPort();
-    private String cepMangerHost = StormDeploymentConfigurations.getCepManagerHost();
+    private int cepMangerPort = StormDeploymentConfiguration.getCepManagerPort();
+    private String cepMangerHost = StormDeploymentConfiguration.getCepManagerHost();
     private HashMap<String, SiddhiOutputStreamListener> streamNameToOutputStreamListener = new HashMap<String, SiddhiOutputStreamListener>();
     private static final String DEFAULT_STREAM_VERSION = "1.0.0";
-    private int minListeningPort = StormDeploymentConfigurations.getMinListingPort();
-    private int maxListeningPort = StormDeploymentConfigurations.getMaxListeningPort();
+    private int minListeningPort = StormDeploymentConfiguration.getMinListingPort();
+    private int maxListeningPort = StormDeploymentConfiguration.getMaxListeningPort();
 
-    public SindhiStormOutputEventListener(ExecutionPlanConfiguration executionPlanConfiguration, int tenantId){
+    public SiddhiStormOutputEventListener(ExecutionPlanConfiguration executionPlanConfiguration, int tenantId){
         this.executionPlanConfiguration = executionPlanConfiguration;
         this.tenantId = tenantId;
         init();
@@ -83,7 +101,7 @@ public class SindhiStormOutputEventListener implements AgentCallback {
     private void registerWithCepMangerService(){
         log.info("Registering CEP Publisher for " + executionPlanConfiguration.getName() + ":" + tenantId + " at " + thisHostIp + ":" + listeningPort);
         ManagerServiceClient client = new ManagerServiceClient(cepMangerHost, cepMangerPort, null);
-        client.registerCepPublisher(executionPlanConfiguration.getName(), tenantId, thisHostIp, listeningPort, StormDeploymentConfigurations.getReconnectInterval());
+        client.registerCepPublisher(executionPlanConfiguration.getName(), tenantId, thisHostIp, listeningPort, StormDeploymentConfiguration.getReconnectInterval());
     }
 
     private void init(){
