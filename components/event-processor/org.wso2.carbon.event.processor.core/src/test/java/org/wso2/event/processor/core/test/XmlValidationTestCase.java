@@ -24,6 +24,7 @@ import org.apache.axiom.om.impl.builder.StAXOMBuilder;
 import org.apache.axis2.deployment.DeploymentException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.wso2.carbon.event.processor.core.ExecutionPlanConfiguration;
 import org.wso2.carbon.event.processor.core.exception.ExecutionPlanConfigurationException;
@@ -38,6 +39,7 @@ import java.io.InputStream;
 public class XmlValidationTestCase {
     private static final Log log = LogFactory.getLog(XmlValidationTestCase.class);
 
+    @Ignore
     @Test
     public void testOMElementParsing() throws DeploymentException, ExecutionPlanConfigurationException {
         OMElement om = getExecutionPlanOMElement(xmlFile);
