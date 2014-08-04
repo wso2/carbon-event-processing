@@ -20,11 +20,17 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
     <parent>
         <groupId>org.wso2.carbon</groupId>
         <artifactId>event-processor</artifactId>
         <version>2.0.0-SNAPSHOT</version>
+<<<<<<< HEAD
+=======
+        <relativePath>../pom.xml</relativePath>
+>>>>>>> 0369a12e6de020a74609fd3ade73bf1cd164f6af
     </parent>
+
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>org.wso2.carbon.event.processor.storm.common</artifactId>
