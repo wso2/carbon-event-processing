@@ -43,7 +43,7 @@ public class TenantDataReceiverEndpoint extends DataReceiverEndpoint {
     @OnMessage
     public void onMessage (Session session, String message, @PathParam("topic") String topic, @PathParam("tdomain") String tdomain, @PathParam("adaptorname") String adaptorName){
         if (log.isDebugEnabled()) {
-            log.debug("Received message: " + message+", for session id: "+session.getId()+", for tenant domain"+tdomain+", for the adaptor:"+adaptorName+", for the topic:"+topic);
+                log.debug("Received message: " + message+", for session id: "+session.getId()+", for tenant domain"+tdomain+", for the adaptor:"+adaptorName+", for the topic:"+topic);
         }
         websocketLocalInputService.invokeListener(tenantId, adaptorName, topic, message);
     }
