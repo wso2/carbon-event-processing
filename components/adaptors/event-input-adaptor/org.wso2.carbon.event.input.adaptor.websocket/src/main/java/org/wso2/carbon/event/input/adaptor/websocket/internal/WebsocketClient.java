@@ -31,7 +31,6 @@ import java.util.logging.Logger;
  */
 public class WebsocketClient extends Endpoint {
 
-    private Logger logger = Logger.getLogger(this.getClass().getName());
     private static final Log log = LogFactory.getLog(WebsocketClient.class);
     private InputEventAdaptorListener inputEventAdaptorListener;
 
@@ -62,7 +61,7 @@ public class WebsocketClient extends Endpoint {
 
     @Override
     public void onError(javax.websocket.Session session, java.lang.Throwable thr) {
-        log.error("Error occured during session ID:"+session.getId()+", for request URI - "+session.getRequestURI()+", Reason: "+thr);   //TODO: log everything   - done
+        log.error("Error occured during session ID:"+session.getId()+", for request URI - "+session.getRequestURI()+", Reason: "+thr);
     }
 
 }
