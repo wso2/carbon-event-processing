@@ -172,26 +172,28 @@ public final class MysqlEventAdaptorType extends AbstractOutputEventAdaptor {
                 Map<String, Object> map = (Map<String, Object>) message;
 
                 boolean executeInsert = true;
-                if (tableInfo.isUpdateMode()) {
-                    stmt = con.prepareStatement(tableInfo.getPreparedExistenceCheckStatement());
-                    boolean success = populateStatement(map, stmt, tableInfo.getExistenceCheckColumnOrder(), true);
-                    if (!success) {
-                        log.debug("Null value detected in the composite keys. Can't proceed to update the DB.");
-                        return;
+                synchronized (this) {
+                    if (tableInfo.isUpdateMode()) {
+                        stmt = con.prepareStatement(tableInfo.getPreparedExistenceCheckStatement());
+                        boolean success = populateStatement(map, stmt, tableInfo.getExistenceCheckColumnOrder(), true);
+                        if (!success) {
+                            log.debug("Null value detected in the composite keys. Can't proceed to update the DB.");
+                            return;
+                        }
+                        ResultSet rs = stmt.executeQuery();
+                        if (rs.next()) {
+                            executeInsert = false;
+                            stmt = con.prepareStatement(tableInfo.getPreparedUpdateStatement());
+                            populateStatement(map, stmt, tableInfo.getUpdateColumnOrder(), false);
+                            stmt.execute();
+                        }
                     }
-                    ResultSet rs = stmt.executeQuery();
-                    if (rs.next()) {
-                        executeInsert = false;
-                        stmt = con.prepareStatement(tableInfo.getPreparedUpdateStatement());
-                        populateStatement(map, stmt, tableInfo.getUpdateColumnOrder(), false);
+
+                    if (executeInsert) {
+                        stmt = con.prepareStatement(tableInfo.getPreparedInsertStatement());
+                        populateStatement(map, stmt, tableInfo.getInsertColumnOrder(), false);
                         stmt.execute();
                     }
-                }
-
-                if (executeInsert) {
-                    stmt = con.prepareStatement(tableInfo.getPreparedInsertStatement());
-                    populateStatement(map, stmt, tableInfo.getInsertColumnOrder(), false);
-                    stmt.execute();
                 }
             }
         } catch (SQLException e) {
@@ -409,14 +411,15 @@ public final class MysqlEventAdaptorType extends AbstractOutputEventAdaptor {
                     }
                 }
                 updateQueryBuilder.append(" WHERE ");
-                appendComma = false;
+                boolean appendAnd = false;
                 for (Attribute at : tableInfo.getExistenceCheckColumnOrder()) {
-                    if (appendComma) {
+                    if (appendAnd) {
                         updateQueryBuilder.append(" AND ");
                     }
                     updateQueryBuilder.append(at.getName());
                     updateQueryBuilder.append(" = ? ");
                     updateAttributes.add(at);
+                    appendAnd = true;
                 }
                 tableInfo.setUpdateColumnOrder(updateAttributes);
                 tableInfo.setPreparedUpdateStatement(updateQueryBuilder.toString());

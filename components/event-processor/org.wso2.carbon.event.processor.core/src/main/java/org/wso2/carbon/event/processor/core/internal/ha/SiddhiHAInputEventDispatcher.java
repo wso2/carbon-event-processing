@@ -42,12 +42,12 @@ public class SiddhiHAInputEventDispatcher extends SiddhiInputEventDispatcher {
 
     }
 
-    protected void sendEvent(Event event) throws InterruptedException {
+    public void sendEvent(Event event) throws InterruptedException {
         sendEvent(event.getData());
     }
 
 
-    protected void sendEvent(Object[] eventData) throws InterruptedException {
+    public void sendEvent(Object[] eventData) throws InterruptedException {
         eventQueue.put(eventData);
     }
 

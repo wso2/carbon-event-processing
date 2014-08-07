@@ -1,17 +1,19 @@
-/**
- * Copyright (c) 2005 - 2013, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
- * <p/>
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- * <p/>
- * http://www.apache.org/licenses/LICENSE-2.0
- * <p/>
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+/*
+ * Copyright (c) 2005-2014, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
+ *
+ *  WSO2 Inc. licenses this file to you under the Apache License,
+ *  Version 2.0 (the "License"); you may not use this file except
+ *  in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing,
+ *  software distributed under the License is distributed on an
+ *  "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ *  KIND, either express or implied.  See the License for the
+ *  specific language governing permissions and limitations
+ *  under the License.
  */
 
 package org.wso2.carbon.event.processor.core.internal;
@@ -35,15 +37,19 @@ import org.wso2.carbon.event.processor.core.internal.ha.CEPMembership;
 import org.wso2.carbon.event.processor.core.internal.ha.HAManager;
 import org.wso2.carbon.event.processor.core.internal.ha.SiddhiHAInputEventDispatcher;
 import org.wso2.carbon.event.processor.core.internal.ha.SiddhiHAOutputStreamListener;
+import org.wso2.carbon.event.processor.core.internal.listener.AbstractSiddhiInputEventDispatcher;
 import org.wso2.carbon.event.processor.core.internal.listener.SiddhiInputEventDispatcher;
 import org.wso2.carbon.event.processor.core.internal.listener.SiddhiOutputStreamListener;
 import org.wso2.carbon.event.processor.core.internal.persistence.CassandraPersistenceStore;
+import org.wso2.carbon.event.processor.core.internal.storm.SiddhiStormInputEventDispatcher;
+import org.wso2.carbon.event.processor.core.internal.storm.SiddhiStormOutputEventListener;
 import org.wso2.carbon.event.processor.core.internal.util.EventProcessorConfigurationFilesystemInvoker;
 import org.wso2.carbon.event.processor.core.internal.util.EventProcessorConstants;
 import org.wso2.carbon.event.processor.core.internal.util.EventProcessorUtil;
 import org.wso2.carbon.event.processor.core.internal.util.helper.CassandraConnectionValidator;
 import org.wso2.carbon.event.processor.core.internal.util.helper.EventProcessorConfigurationHelper;
 import org.wso2.carbon.event.processor.core.internal.util.helper.SiddhiExtensionLoader;
+import org.wso2.carbon.event.processor.storm.common.helper.StormDeploymentConfiguration;
 import org.wso2.carbon.event.stream.manager.core.EventProducer;
 import org.wso2.carbon.event.stream.manager.core.SiddhiEventConsumer;
 import org.wso2.carbon.event.stream.manager.core.exception.EventStreamConfigurationException;
@@ -69,11 +75,13 @@ public class CarbonEventProcessorService implements EventProcessorService {
     // not distinguishing between deployed vs failed here.
     private Map<Integer, List<ExecutionPlanConfigurationFile>> tenantSpecificExecutionPlanFiles;
     private CEPMembership currentCepMembershipInfo;
-
+    private final boolean isRunningOnStorm;
 
     public CarbonEventProcessorService() {
         tenantSpecificExecutionPlans = new ConcurrentHashMap<Integer, Map<String, ExecutionPlan>>();
         tenantSpecificExecutionPlanFiles = new ConcurrentHashMap<Integer, List<ExecutionPlanConfigurationFile>>();
+        StormDeploymentConfiguration.loadConfigurations();
+        isRunningOnStorm = StormDeploymentConfiguration.isRunningOnStorm();
     }
 
     private static void populateAttributes(
@@ -315,6 +323,10 @@ public class CarbonEventProcessorService implements EventProcessorService {
         tenantExecutionPlans.put(executionPlanConfiguration.getName(), executionPlan);
 
         //subscribe output to junction
+        SiddhiStormOutputEventListener stormOutputListener = null;
+        if (isRunningOnStorm){
+            stormOutputListener = new SiddhiStormOutputEventListener(executionPlanConfiguration, tenantId);
+        }
         for (StreamConfiguration exportedStreamConfiguration : executionPlanConfiguration.getExportedStreams()) {
 
             SiddhiOutputStreamListener streamCallback;
@@ -324,6 +336,10 @@ public class CarbonEventProcessorService implements EventProcessorService {
                 haManager.addStreamCallback((SiddhiHAOutputStreamListener) streamCallback);
             } else {
                 streamCallback = new SiddhiOutputStreamListener(exportedStreamConfiguration.getSiddhiStreamName(), exportedStreamConfiguration.getStreamId(), executionPlanConfiguration, tenantId);
+
+                if (isRunningOnStorm){
+                    stormOutputListener.registerOutputStreamListener(exportedStreamConfiguration.getSiddhiStreamName(), streamCallback);
+                }
             }
             siddhiManager.addCallback(exportedStreamConfiguration.getSiddhiStreamName(), streamCallback);
             try {
@@ -338,13 +354,22 @@ public class CarbonEventProcessorService implements EventProcessorService {
         for (StreamConfiguration importedStreamConfiguration : executionPlanConfiguration.getImportedStreams()) {
             InputHandler inputHandler = inputHandlerMap.get(importedStreamConfiguration.getStreamId());
 
-            SiddhiInputEventDispatcher eventDispatcher;
+            AbstractSiddhiInputEventDispatcher eventDispatcher = null;
             if (haManager != null) {
                 eventDispatcher = new SiddhiHAInputEventDispatcher(importedStreamConfiguration.getStreamId(), inputHandler, executionPlanConfiguration, tenantId, haManager.getProcessThreadPoolExecutor(), haManager.getThreadBarrier());
                 haManager.addInputEventDispatcher(importedStreamConfiguration.getStreamId(), (SiddhiHAInputEventDispatcher) eventDispatcher);
-            } else {
+            } else if (isRunningOnStorm){
+                StreamDefinition streamDefinition = null;
+                try {
+                    streamDefinition = EventProcessorValueHolder.getEventStreamService().getStreamDefinition(importedStreamConfiguration.getStreamId(), tenantId);
+                } catch (EventStreamConfigurationException e) {
+                    // Ignore as this would never happen
+                }
+                eventDispatcher = new SiddhiStormInputEventDispatcher(streamDefinition, importedStreamConfiguration.getSiddhiStreamName(), executionPlanConfiguration, tenantId);
+            }else{
                 eventDispatcher = new SiddhiInputEventDispatcher(importedStreamConfiguration.getStreamId(), inputHandler, executionPlanConfiguration, tenantId);
             }
+
             try {
                 EventProcessorValueHolder.getEventStreamService().subscribe(eventDispatcher, tenantId);
                 executionPlan.addConsumer(eventDispatcher);
