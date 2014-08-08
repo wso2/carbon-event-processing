@@ -136,14 +136,23 @@ public class EventBuilderUtil {
     private static String generateFilePath(String eventBuilderName, String repositoryPath) throws EventBuilderConfigurationException {
         File repoDir = new File(repositoryPath);
         if (!repoDir.exists()) {
-            if (repoDir.mkdir()) {
-                throw new EventBuilderConfigurationException("Cannot create directory to add tenant specific event builder :" + eventBuilderName);
+            synchronized (repositoryPath.intern()) {
+                if (!repoDir.exists()) {
+                    if (!repoDir.mkdir()) {
+                        throw new EventBuilderConfigurationException("Cannot create directory to add tenant specific event builder :" + eventBuilderName);
+                    }
+                }
             }
         }
-        File subDir = new File(repoDir.getAbsolutePath() + File.separator + EventBuilderConstants.EB_CONFIG_DIRECTORY);
+        String path = repoDir.getAbsolutePath() + File.separator + EventBuilderConstants.EB_CONFIG_DIRECTORY;
+        File subDir = new File(path);
         if (!subDir.exists()) {
-            if (!subDir.mkdir()) {
-                throw new EventBuilderConfigurationException("Cannot create directory " + EventBuilderConstants.EB_CONFIG_DIRECTORY + " to add tenant specific event builder :" + eventBuilderName);
+            synchronized (path.intern()) {
+                if (!subDir.exists()) {
+                    if (!subDir.mkdir()) {
+                        throw new EventBuilderConfigurationException("Cannot create directory " + EventBuilderConstants.EB_CONFIG_DIRECTORY + " to add tenant specific event builder :" + eventBuilderName);
+                    }
+                }
             }
         }
         return subDir.getAbsolutePath() + File.separator + eventBuilderName + EventBuilderConstants.EB_CONFIG_FILE_EXTENSION_WITH_DOT;
