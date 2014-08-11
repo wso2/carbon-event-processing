@@ -30,7 +30,6 @@
     <url>http://wso2.org</url>
 
     <modules>
-        <module>event-adaptor-utils</module>
         <module>event-input-adaptor</module>
         <module>event-output-adaptor</module>
     </modules>
