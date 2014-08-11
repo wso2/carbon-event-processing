@@ -66,6 +66,8 @@
         <module>org.wso2.carbon.event.input.adaptor.kafka</module>
         <module>org.wso2.carbon.event.input.adaptor.email</module>
         <module>org.wso2.carbon.event.input.adaptor.soap</module>
+        <module>org.wso2.carbon.event.input.adaptor.websocket</module>
+        <module>org.wso2.carbon.event.input.adaptor.websocket.local</module>
         <!--<module>org.wso2.carbon.event.input.adaptor.local</module>-->
         <module>org.wso2.carbon.event.input.adaptor.manager.core</module>
         <module>org.wso2.carbon.event.input.adaptor.manager.ui</module>
