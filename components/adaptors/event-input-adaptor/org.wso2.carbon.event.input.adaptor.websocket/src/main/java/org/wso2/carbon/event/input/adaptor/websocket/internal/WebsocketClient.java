@@ -61,7 +61,7 @@ public class WebsocketClient extends Endpoint {
 
     @Override
     public void onError(javax.websocket.Session session, java.lang.Throwable thr) {
-        log.error("Error occured during session ID:"+session.getId()+", for request URI - "+session.getRequestURI()+", Reason: "+thr);   //TODO: log everything   - done
+        log.error("Error occured during session ID:"+session.getId()+", for request URI - "+session.getRequestURI()+", Reason: "+thr);
     }
 
 }
