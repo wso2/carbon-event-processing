@@ -68,6 +68,7 @@
         <module>org.wso2.carbon.event.output.adaptor.http</module>
         <module>org.wso2.carbon.event.output.adaptor.websocket</module>
         <module>org.wso2.carbon.event.output.adaptor.websocket.local</module>
+        <module>org.wso2.carbon.event.output.adaptor.websocket.local/org.wso2.carbon.event.output.adaptor.websocket.endpoint</module>
         <module>org.wso2.carbon.event.output.adaptor.manager.core</module>
         <module>org.wso2.carbon.event.output.adaptor.manager.ui</module>
         <module>org.wso2.carbon.event.output.adaptor.manager.admin</module>
