@@ -73,13 +73,17 @@ public class EventReceiverSpout extends BaseRichSpout implements AgentCallback {
 
     private String logPrefix;
 
+    private String keyStorePath;
+    private String keyStorePassword;
+
     private int minListeningPort;
     private int maxListeningPort;
 
     /**
      * Receives events from the CEP Receiver through Thrift using data bridge and pass through the events
      * to a downstream component as tupels.
-     * @param listeningPort - port of the Thrift server
+     * @param minListeningPort - the lower bound of the range of listening ports of the Thrift server
+     * @param maxListeningPort - the upper bound for the range of listening ports allocated for this Thrift server
      * @param incomingStreamDefinitions - Incoming Siddhi stream definitions
      */
     public EventReceiverSpout(int minListeningPort, int maxListeningPort, String keyStorePath, String cepManagerHost, int cepManagerPort, String[] incomingStreamDefinitions){
@@ -88,10 +92,10 @@ public class EventReceiverSpout extends BaseRichSpout implements AgentCallback {
         this.cepMangerHost = cepManagerHost;
         this.cepMangerPort = cepManagerPort;
         this.incomingStreamDefinitions = incomingStreamDefinitions;
-        logPrefix = "{" + executionPlanName + ":" + tenantId + "}";
+        this.keyStorePath = keyStorePath;
+        this.keyStorePassword = "wso2carbon";
+        this.logPrefix = "{" + executionPlanName + ":" + tenantId + "}";
 
-        System.setProperty("Security.KeyStore.Location", keyStorePath); //"/home/sajith/wso2cep-4.0.0-SNAPSHOT/samples/producers/performance-test/src/main/resources/wso2carbon.jks");
-        System.setProperty("Security.KeyStore.Password", "wso2carbon");
     }
 
     @Override
@@ -133,6 +137,9 @@ public class EventReceiverSpout extends BaseRichSpout implements AgentCallback {
     public void open(Map map, TopologyContext topologyContext, SpoutOutputCollector spoutOutputCollector) {
         this.spoutOutputCollector = spoutOutputCollector;
         this.storedEvents = new ConcurrentLinkedQueue<Event>();
+        System.setProperty("Security.KeyStore.Location", keyStorePath); //"/home/sajith/wso2cep-4.0.0-SNAPSHOT/samples/producers/performance-test/src/main/resources/wso2carbon.jks");
+        System.setProperty("Security.KeyStore.Password", keyStorePassword);
+
 
         DataBridge databridge = new DataBridge(new AuthenticationHandler() {
             @Override
