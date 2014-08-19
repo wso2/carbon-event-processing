@@ -301,9 +301,7 @@ public final class WSO2EventEventAdaptorType extends AbstractInputEventAdaptor {
                     }
                     for (EventAdaptorConf eventAdaptorConf : eventAdaptorListeners.values()) {
                         try {
-                            if (credentials.getTenantId() == eventAdaptorConf.tenantId) {
-                                eventAdaptorConf.inputEventAdaptorListener.onEventCall(event);
-                            }
+                            eventAdaptorConf.inputEventAdaptorListener.onEventCall(event);
                         } catch (InputEventAdaptorEventProcessingException e) {
                             log.error("Cannot send event to a eventAdaptorListener subscribed to " +
                                       event.getStreamId(), e);
