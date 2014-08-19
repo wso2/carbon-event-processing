@@ -19,17 +19,16 @@
     <menus>
         <menu>
             <id>event_flow_menu</id>
-            <i18n-key>eventflowmenutext</i18n-key>
+            <i18n-key>event.flow.menu.text</i18n-key>
             <i18n-bundle>org.wso2.carbon.event.flow.ui.i18n.Resources</i18n-bundle>
-            <parent-menu>monitor_menu</parent-menu>
+            <parent-menu>event_processor_menu</parent-menu>
             <link>../event-flow/index.jsp</link>
-            <region>region4</region>
-            <order>18</order>
-            <style-class>tools</style-class>
+            <region>region1</region>
+            <order>5</order>
+            <style-class>home</style-class>
             <icon>../event-flow/images/flow.gif</icon>
-            <require-permission>/permission/admin/monitor/event-streams</require-permission>
+            <require-permission>/permission/admin/manage/event-processor</require-permission>
             <!--<require-super-tenant>true</require-super-tenant>-->
         </menu>
     </menus>
-
 </component>

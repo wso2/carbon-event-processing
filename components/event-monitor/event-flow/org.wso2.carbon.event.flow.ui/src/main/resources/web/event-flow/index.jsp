@@ -29,51 +29,105 @@
 		topPage="true"
 		request="<%=request%>" />
 <script src="../carbon/global-params.js" type="text/javascript"></script>
-<script type="text/javascript" src="js/d3.v3.js"></script>
+<script type="text/javascript" src="js/d3.v3.min.js"></script>
 <script type="text/javascript" src="js/dagre-d3.min.js"></script>
 <script type="text/javascript" src="js/graphlib-dot.min.js"></script>
 
 <style>
 
-    g.type-ES > rect {
-        fill: #00e8ba;
+    .type-ES {
+        background-color: #54c082;
     }
 
-    g.type-EP > rect {
-        fill: #c0699e;
+    .type-EP  {
+        background-color: #a33c74;
     }
 
-    g.type-IEA > rect {
-        fill: #4395cb;
+    .type-IEA  {
+        background-color: #3d35d5;
     }
 
-    g.type-OEA > rect {
-        fill: #4cb5f4;
+    .type-OEA {
+        background-color: #4cb5f4;
     }
 
-    g.type-EB > rect {
-        fill: #e3b217;
+    .type-EB  {
+        background-color: #FF8A3C;
     }
 
-    g.type-EF > rect {
-        fill: #ffc719;
+    .type-EF {
+        background-color: #ffc719;
+    }
+
+
+    .type-ES-info {
+        background-image: url(../eventstream/images/event-stream.png);
+    }
+
+    .type-EP-info   {
+        background-image: url(../eventprocessor/images/executionPlan.gif);
+
+    }
+
+    .type-IEA-info   {
+        background-image: url(../inputeventadaptormanager/images/eventAdaptor.gif);
+    }
+
+    .type-OEA-info  {
+        background-image: url(../outputeventadaptormanager/images/eventAdaptor.gif);
+    }
+
+    .type-EB-info   {
+        background-image:url(../eventstream/images/eventBuilder.gif);
+    }
+
+    .type-EF-info  {
+        background-image:url(../eventstream/images/event_formatter.gif);
+    }
+
+    .node g div {
+        height: 30px;
+        line-height: 30px;
+    }
+
+    .name-info{
+        white-space:nowrap;
+        font-weight: bold;
+    }
+
+    .name{
+        white-space:nowrap;
+    }
+
+    .type {
+        height: 30px;
+        width: 10px;
+        display: block;
+        float: left;
+        border-top-left-radius: 5px;
+        border-bottom-left-radius: 5px;
+        margin-right: 4px;
+    }
+
+    .infoType {
+        background-repeat: no-repeat;
+        background-position: 5px 50%;
+        width: 25px;
     }
 
     svg {
-        border: 1px solid #999;
         overflow: hidden;
     }
 
     text {
         font-weight: 300;
         font-family: "Helvetica Neue", Helvetica, Arial, sans-serf;
-        font-size: 14px;
     }
 
     .node rect {
-        stroke: #999;
         stroke-width: 1px;
-        fill: #fff;
+        stroke: #707070;
+        fill: #F0F0F0 ;
     }
 
     .edgeLabel rect {
@@ -119,8 +173,6 @@
     }
 %>
 
-
-
 <script type="text/javascript">
 
 
@@ -128,32 +180,76 @@ wso2.wsf.Util.initURLs();
 
 var frondendURL = wso2.wsf.Util.getServerURL() + "/";
 
-window.onload=function(){tryDraw();};
+window.onload=function(){tryDrawProcessingFlowInfo();tryDraw();removeMargins();};
+
+function tryDrawProcessingFlowInfo() {
+
+    var g = new dagreD3.Digraph();
+
+    g.addNode("InputEventAdaptors", { label: '<div ><span class="infoType type type-IEA  type-IEA-info"></span><span name="nameElement" style="margin-right: 25px;" class="name-info" ><fmt:message key="input.event.adaptors"/></span></div>' });
+    g.addNode("EventBuilders", { label: '<div ><span class="infoType type type-EB  type-EB-info"></span><span name="nameElement" style="margin-right: 25px;" class="name-info" ><fmt:message key="event.builders"/></span></div>' });
+    g.addNode("EventStreams", { label: '<div ><span class="infoType type type-ES  type-ES-info"></span><span name="nameElement" style="margin-right: 25px;" class="name-info" ><fmt:message key="event.streams"/></span></div>' });
+    g.addNode("EventFormatters", { label: '<div ><span class="infoType type type-EF  type-EF-info"></span><span name="nameElement" style="margin-right: 25px;" class="name-info" ><fmt:message key="event.formatters"/></span></div>' });
+    g.addNode("OutputEventAdaptors", { label: '<div ><span class="infoType type type-OEA  type-OEA-info"></span><span name="nameElement" style="margin-right: 25px;" class="name-info" ><fmt:message key="output.event.adaptors"/></span></div>' });
+    g.addNode("ExecutionPlans", { label: '<div ><span class="infoType type type-EP type-EP-info"></span><span name="nameElement" style="margin-right: 25px;" class="name-info" ><fmt:message key="execution.plans"/></span></div>' });
+
+    g.addEdge(null, "InputEventAdaptors", "EventBuilders", { style: 'stroke: #7a0177; stroke-width: 2px;' });
+    g.addEdge(null, "EventBuilders", "EventStreams", { style: 'stroke: #7a0177; stroke-width: 2px;' });
+    g.addEdge(null, "EventStreams", "EventFormatters", { style: 'stroke: #7a0177; stroke-width: 2px;' });
+    g.addEdge(null, "EventFormatters", "OutputEventAdaptors", { style: 'stroke: #7a0177; stroke-width: 2px;' });
+    g.addEdge(null, "EventStreams", "ExecutionPlans", { style: 'stroke: #7a0177; stroke-width: 2px;' });
+    g.addEdge(null, "ExecutionPlans", "EventStreams", { style: 'stroke: #7a0177; stroke-width: 2px;' });
+
+    var renderer = new dagreD3.Renderer();
+
+    var svg = d3.select("#flowInfo");
+    var svgGroup = d3.select("#flowInfo g");
+
+    renderer.zoom(false);
+
+    var layout = dagreD3.layout()
+            .nodeSep(5)
+            .edgeSep(30)
+            .rankSep(40)
+            .rankDir("LR");
+    renderer.layout(layout);
+
+    layout = renderer.run(g, svgGroup);
+
+    svg.attr("width", layout.graph().width).attr("height", layout.graph().height);
+
+}
 
 function tryDraw() {
-    var g = new dagreD3.Digraph();
-    var nodes= eventFlow.nodes;
-    for (var i=0; i<nodes.length;i++){
-        g.addNode(nodes[i].id, { label: "<div style='padding: 10px;'>"+nodes[i].label+"</div>" , nodeclass: "type-"+nodes[i].nodeclass });
 
+    var g = new dagreD3.Digraph();
+
+    var nodes = eventFlow.nodes;
+    for (var i = 0; i < nodes.length; i++) {
+        g.addNode(nodes[i].id, { label: '<div><span class="type type-' + nodes[i].nodeclass + '"></span><span name="nameElement" class="name" style="margin-right: 10px;">' + nodes[i].label + '</span></div>' });
     }
 
-    var edges= eventFlow.edges;
-    for (i=0; i<edges.length;i++){
+    var edges = eventFlow.edges;
+    for (i = 0; i < edges.length; i++) {
         g.addEdge(null, edges[i].from, edges[i].to);
     }
 
     var renderer = new dagreD3.Renderer();
-    var oldDrawNodes = renderer.drawNodes();
-    renderer.drawNodes(function (graph, root) {
-        var svgNodes = oldDrawNodes(graph, root);
-        svgNodes.each(function (u) {
-            d3.select(this).classed(graph.node(u).nodeclass, true);
-        });
-        return svgNodes;
-    });
 
-    var svg = d3.select("svg");
+    var svg = d3.select("#flowData");
+    var svgGroup = d3.select("#flowData g");
+
+    // Set initial zoom to 75%
+    var initialScale = 0.75;
+    var oldZoom = renderer.zoom();
+    renderer.zoom(function (graph, svg) {
+        var zoom = oldZoom(graph, svg);
+
+        // We must set the zoom and then trigger the zoom event to synchronize
+        // D3 and the DOM.
+        zoom.scale(initialScale).event(svg);
+        return zoom;
+    });
 
     var layout = dagreD3.layout()
             .nodeSep(10)
@@ -163,18 +259,20 @@ function tryDraw() {
 
     renderer.transition(transition);
 
-      var layout = renderer.run(g, d3.select("svg g"));
+    layout = renderer.run(g, svgGroup);
 
-    transition(d3.select("svg"))
-            .attr("width", layout.graph().width + 40)
-            .attr("height", layout.graph().height + 40);
+    transition(svg)
+            .attr("width", layout.graph().width * initialScale + 40)
+            .attr("height", layout.graph().height * initialScale + 40);
 
-    d3.select("svg")
-            .call(d3.behavior.zoom().on("zoom", function () {
-                var ev = d3.event;
-                svg.select("g")
-                        .attr("transform", "translate(" + ev.translate + ") scale(" + ev.scale + ")");
-            }));
+}
+
+function removeMargins() {
+
+    var nameElements = document.getElementsByName("nameElement");
+    for (var i = 0; i < nameElements.length; i++) {
+        nameElements[i].style.cssText = "margin-right: 0px; ";
+    }
 
 }
 
@@ -189,9 +287,16 @@ function transition(selection) {
     <h2><fmt:message key="event.flow"/></h2>
 
     <div id="workArea">
+        <div id="flowdivInfo">
+            <svg id="flowInfo" width=100% height=100%>
+                <g transform="translate(0,0)scale(0.75)"></g>
+            </svg>
+
+        </div>
+       <h2></h2>
         <div id="flowdiv">
-            <svg width=100% height=600>
-                <g transform="translate(20, 20)"/>
+            <svg id="flowData" style="border: 1px solid #999;">
+                <g transform="translate(20, 20)"></g>
             </svg>
         </div>
     </div>
