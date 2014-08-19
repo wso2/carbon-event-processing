@@ -257,8 +257,6 @@ function tryDraw() {
             .rankDir("LR");
     renderer.layout(layout);
 
-    renderer.transition(transition);
-
     layout = renderer.run(g, svgGroup);
 
     svg.transition().duration(500)
