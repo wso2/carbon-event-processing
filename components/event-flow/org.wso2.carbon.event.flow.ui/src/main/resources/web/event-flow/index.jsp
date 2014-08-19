@@ -261,7 +261,7 @@ function tryDraw() {
 
     layout = renderer.run(g, svgGroup);
 
-    transition(svg)
+    svg.transition().duration(500)
             .attr("width", layout.graph().width * initialScale + 40)
             .attr("height", layout.graph().height * initialScale + 40);
 
@@ -274,11 +274,6 @@ function removeMargins() {
         nameElements[i].style.cssText = "margin-right: 0px; ";
     }
 
-}
-
-// Custom transition function
-function transition(selection) {
-    return selection.transition().duration(500);
 }
 
 </script>
@@ -295,7 +290,7 @@ function transition(selection) {
         </div>
        <h2></h2>
         <div id="flowdiv">
-            <svg id="flowData" style="border: 1px solid #999;">
+            <svg id="flowData" width=100% height=100% style="border: 1px solid #999;">
                 <g transform="translate(20, 20)"></g>
             </svg>
         </div>
