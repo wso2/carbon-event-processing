@@ -186,12 +186,12 @@ function tryDrawProcessingFlowInfo() {
 
     var g = new dagreD3.Digraph();
 
-    g.addNode("InputEventAdaptors", { label: '<div ><span class="infoType type type-IEA  type-IEA-info"></span><span name="nameElement" style="margin-right: 25px;" class="name-info" ><fmt:message key="input.event.adaptors"/></span></div>' });
-    g.addNode("EventBuilders", { label: '<div ><span class="infoType type type-EB  type-EB-info"></span><span name="nameElement" style="margin-right: 25px;" class="name-info" ><fmt:message key="event.builders"/></span></div>' });
-    g.addNode("EventStreams", { label: '<div ><span class="infoType type type-ES  type-ES-info"></span><span name="nameElement" style="margin-right: 25px;" class="name-info" ><fmt:message key="event.streams"/></span></div>' });
-    g.addNode("EventFormatters", { label: '<div ><span class="infoType type type-EF  type-EF-info"></span><span name="nameElement" style="margin-right: 25px;" class="name-info" ><fmt:message key="event.formatters"/></span></div>' });
-    g.addNode("OutputEventAdaptors", { label: '<div ><span class="infoType type type-OEA  type-OEA-info"></span><span name="nameElement" style="margin-right: 25px;" class="name-info" ><fmt:message key="output.event.adaptors"/></span></div>' });
-    g.addNode("ExecutionPlans", { label: '<div ><span class="infoType type type-EP type-EP-info"></span><span name="nameElement" style="margin-right: 25px;" class="name-info" ><fmt:message key="execution.plans"/></span></div>' });
+    g.addNode("InputEventAdaptors", { label: '<div onclick="location.href = \'../inputeventadaptormanager/index.jsp \';" onmouseover="" style="cursor: pointer;" ><span class="infoType type type-IEA  type-IEA-info"></span><span name="nameElement" style="margin-right: 25px;" class="name-info" ><fmt:message key="input.event.adaptors"/></span></div>' });
+    g.addNode("EventBuilders", { label: '<div onclick="location.href = \'../outputeventadaptormanager/index.jsp \';" onmouseover="" style="cursor: pointer;"><span class="infoType type type-EB  type-EB-info"></span><span name="nameElement" style="margin-right: 25px;" class="name-info" ><fmt:message key="event.builders"/></span></div>' });
+    g.addNode("EventStreams", { label: '<div onclick="location.href = \'../eventstream/index.jsp \';" onmouseover="" style="cursor: pointer;"><span class="infoType type type-ES  type-ES-info"></span><span name="nameElement" style="margin-right: 25px;" class="name-info" ><fmt:message key="event.streams"/></span></div>' });
+    g.addNode("EventFormatters", { label: '<div onclick="location.href = \'../inputeventadaptormanager/index.jsp \';" onmouseover="" style="cursor: pointer;"><span class="infoType type type-EF  type-EF-info"></span><span name="nameElement" style="margin-right: 25px;" class="name-info" ><fmt:message key="event.formatters"/></span></div>' });
+    g.addNode("OutputEventAdaptors", { label: '<div onclick="location.href = \'../outputeventadaptormanager/index.jsp \';" onmouseover="" style="cursor: pointer;"><span class="infoType type type-OEA  type-OEA-info"></span><span name="nameElement" style="margin-right: 25px;" class="name-info" ><fmt:message key="output.event.adaptors"/></span></div>' });
+    g.addNode("ExecutionPlans", { label: '<div onclick="location.href = \'../inputeventadaptormanager/index.jsp \';" onmouseover="" style="cursor: pointer;"><span class="infoType type type-EP type-EP-info"></span><span name="nameElement" style="margin-right: 25px;" class="name-info" ><fmt:message key="execution.plans"/></span></div>' });
 
     g.addEdge(null, "InputEventAdaptors", "EventBuilders", { style: 'stroke: #7a0177; stroke-width: 2px;' });
     g.addEdge(null, "EventBuilders", "EventStreams", { style: 'stroke: #7a0177; stroke-width: 2px;' });
