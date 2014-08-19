@@ -18,7 +18,6 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-
     <parent>
         <groupId>org.wso2.carbon</groupId>
         <artifactId>event-flow-feature</artifactId>
@@ -28,19 +27,26 @@
 
     <version>2.0.0-SNAPSHOT</version>
     <modelVersion>4.0.0</modelVersion>
-    <artifactId>org.wso2.carbon.event.flow.server.feature</artifactId>
+    <artifactId>org.wso2.carbon.event.flow.ui.feature</artifactId>
     <packaging>pom</packaging>
-    <name>WSO2 Carbon - Event Flow Core Feature</name>
+    <name>WSO2 Carbon - Event Flow UI Feature</name>
     <url>http://wso2.org</url>
-    <description>This feature contains the core bundles required for Back-end Event Flow functionality</description>
+    <description>This feature contains the bundles required for Front-end Event Flow
+        functionality
+    </description>
 
-    <dependencies>
-        <dependency>
-            <groupId>org.wso2.carbon</groupId>
-            <artifactId>org.wso2.carbon.event.flow</artifactId>
-            
-        </dependency>
-    </dependencies>
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>org.wso2.carbon</groupId>
+                <artifactId>org.wso2.carbon.event.flow.ui</artifactId>
+            </dependency>
+            <dependency>
+                <groupId>org.wso2.carbon</groupId>
+                <artifactId>org.wso2.carbon.event.flow.stub</artifactId>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
 
     <build>
         <plugins>
@@ -56,16 +62,21 @@
                             <goal>p2-feature-gen</goal>
                         </goals>
                         <configuration>
-                            <id>org.wso2.carbon.event.flow.server</id>
+                            <id>org.wso2.carbon.event.flow.ui</id>
                             <propertiesFile>../../../../etc/feature.properties</propertiesFile>
                             <adviceFile>
                                 <properties>
-                                    <propertyDef>org.wso2.carbon.p2.category.type:server</propertyDef>
-                                    <propertyDef>org.eclipse.equinox.p2.type.group:false</propertyDef>
+                                    <propertyDef>org.wso2.carbon.p2.category.type:console
+                                    </propertyDef>
+                                    <propertyDef>org.eclipse.equinox.p2.type.group:false
+                                    </propertyDef>
                                 </properties>
                             </adviceFile>
                             <bundles>
-                                <bundleDef>org.wso2.carbon:org.wso2.carbon.event.flow:${carbon.event.processing.version}</bundleDef>
+                                <bundleDef>org.wso2.carbon:org.wso2.carbon.event.flow.ui:2.0.0-SNAPSHOT
+                                </bundleDef>
+                                <bundleDef>org.wso2.carbon:org.wso2.carbon.event.flow.stub:2.0.0-SNAPSHOT
+                                </bundleDef>
                             </bundles>
                         </configuration>
                     </execution>

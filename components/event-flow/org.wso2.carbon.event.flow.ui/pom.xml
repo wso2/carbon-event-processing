@@ -26,47 +26,29 @@
 
     <version>2.0.0-SNAPSHOT</version>
     <modelVersion>4.0.0</modelVersion>
-    <groupId>org.wso2.carbon</groupId>
-    <artifactId>org.wso2.carbon.event.flow</artifactId>
+    <artifactId>org.wso2.carbon.event.flow.ui</artifactId>
     <packaging>bundle</packaging>
-    <name>WSO2 Carbon - Event Flow BE</name>
+    <name>WSO2 Carbon - Event Flow UI</name>
     <url>http://wso2.org</url>
 
     <build>
         <plugins>
             <plugin>
                 <groupId>org.apache.felix</groupId>
-                <artifactId>maven-scr-plugin</artifactId>
-                <version>1.7.4</version>
-                <executions>
-                    <execution>
-                        <id>generate-scr-scrdescriptor</id>
-                        <goals>
-                            <goal>scr</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.felix</groupId>
                 <artifactId>maven-bundle-plugin</artifactId>
+
                 <extensions>true</extensions>
                 <configuration>
                     <instructions>
                         <Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
                         <Bundle-Name>${project.artifactId}</Bundle-Name>
-                        <Private-Package>
-                            org.wso2.carbon.event.flow.internal*
-                        </Private-Package>
+                        <Carbon-Component>UIBundle</Carbon-Component>
                         <Export-Package>
-                            !org.wso2.carbon.event.flow.internal,
-                            org.wso2.carbon.event.flow.*
+                            org.wso2.carbon.event.flow.ui.*
                         </Export-Package>
                         <Import-Package>
-                            org.apache.log4j; version="0.0.0",
-                            org.apache.log4j.spi; version="0.0.0",
-                            org.wso2.carbon.logging.appenders; version="0.0.0",
-                            *;resolution:=optional
+                            org.wso2.carbon.event.flow.stub.*; version="${carbon.event.processing.version}",
+                            org.wso2.carbon.event.flow.stub.client.*; version="${carbon.event.processing.version}"
                         </Import-Package>
                         <DynamicImport-Package>*</DynamicImport-Package>
                     </instructions>
@@ -78,49 +60,19 @@
     <dependencies>
         <dependency>
             <groupId>org.wso2.carbon</groupId>
-            <artifactId>org.wso2.carbon.utils</artifactId>
+            <artifactId>org.wso2.carbon.ui</artifactId>
         </dependency>
         <dependency>
             <groupId>org.wso2.carbon</groupId>
             <artifactId>org.wso2.carbon.logging</artifactId>
         </dependency>
         <dependency>
-            <groupId>commons-lang.wso2</groupId>
-            <artifactId>commons-lang</artifactId>
+            <groupId>org.wso2.carbon</groupId>
+            <artifactId>org.wso2.carbon.utils</artifactId>
         </dependency>
         <dependency>
             <groupId>org.wso2.carbon</groupId>
-            <artifactId>org.wso2.carbon.core</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.wso2.carbon</groupId>
-            <artifactId>org.wso2.carbon.event.input.adaptor.manager.core</artifactId>
-            
-        </dependency>
-        <dependency>
-            <groupId>org.wso2.carbon</groupId>
-            <artifactId>org.wso2.carbon.event.output.adaptor.manager.core</artifactId>
-            
-        </dependency>
-        <dependency>
-            <groupId>org.wso2.carbon</groupId>
-            <artifactId>org.wso2.carbon.event.builder.core</artifactId>
-            
-        </dependency>
-        <dependency>
-            <groupId>org.wso2.carbon</groupId>
-            <artifactId>org.wso2.carbon.event.formatter.core</artifactId>
-            
-        </dependency>
-        <dependency>
-            <groupId>org.wso2.carbon</groupId>
-            <artifactId>org.wso2.carbon.event.processor.core</artifactId>
-            
-        </dependency>
-        <dependency>
-            <groupId>org.wso2.carbon</groupId>
-            <artifactId>org.wso2.carbon.event.stream.manager.core</artifactId>
-            
+            <artifactId>org.wso2.carbon.event.flow.stub</artifactId>
         </dependency>
     </dependencies>
 

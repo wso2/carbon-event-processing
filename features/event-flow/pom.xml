@@ -15,8 +15,9 @@
  ~ limitations under the License.
 -->
 
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
     <parent>
         <artifactId>carbon-event-processing</artifactId>
@@ -26,20 +27,18 @@
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
-    <groupId>org.wso2.carbon</groupId>
-    <artifactId>event-processor-feature</artifactId>
+    <artifactId>event-flow-feature</artifactId>
     <version>2.0.0-SNAPSHOT</version>
     <packaging>pom</packaging>
-    <name>WSO2 Carbon - Event Processor Aggregate Feature</name>
-    <url>http://maven.apache.org</url>
-
+    <name>WSO2 Carbon - Event Flow Feature Aggregator Module</name>
+    <url>http://wso2.org</url>
 
     <modules>
-        <module>org.wso2.carbon.event.processor.feature</module>
-        <module>org.wso2.carbon.event.processor.ui.feature</module>
-        <module>org.wso2.carbon.event.processor.server.feature</module>
-
+        <module>org.wso2.carbon.event.flow.feature</module>
+        <module>org.wso2.carbon.event.flow.server.feature</module>
+        <module>org.wso2.carbon.event.flow.ui.feature</module>
     </modules>
 
 
 </project>
+
