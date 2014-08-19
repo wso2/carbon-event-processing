@@ -216,6 +216,11 @@ public class HTTPMessageServlet extends HttpServlet {
             try {
                 PrivilegedCarbonContext.startTenantFlow();
                 PrivilegedCarbonContext.getThreadLocalCarbonContext().setTenantId(tenantId);
+
+                if(log.isDebugEnabled()){
+                    log.debug("Event received in HTTP Event Adaptor - "+payload);
+                }
+
                 if (payload.trim() != null) {
                     inputEventAdaptorListener.onEventCall(payload);
                 }else {

@@ -299,6 +299,11 @@ public final class WSO2EventEventAdaptorType extends AbstractInputEventAdaptor {
                             return;
                         }
                     }
+
+                    if(log.isDebugEnabled()){
+                        log.debug("Event received in wso2Event Adaptor - "+event);
+                    }
+
                     for (EventAdaptorConf eventAdaptorConf : eventAdaptorListeners.values()) {
                         try {
                             eventAdaptorConf.inputEventAdaptorListener.onEventCall(event);

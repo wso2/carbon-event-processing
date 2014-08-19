@@ -138,6 +138,11 @@ public class MQTTAdaptorListener implements MqttCallback, Runnable {
             }
             PrivilegedCarbonContext.startTenantFlow();
             PrivilegedCarbonContext.getThreadLocalCarbonContext().setTenantId(tenantId);
+
+            if(log.isDebugEnabled()){
+                log.debug("Event received in MQTT Event Adaptor - "+msgText);
+            }
+
             eventAdaptorListener.onEventCall(msgText);
         } catch (InputEventAdaptorEventProcessingException e) {
             throw new InputEventAdaptorEventProcessingException(e);
