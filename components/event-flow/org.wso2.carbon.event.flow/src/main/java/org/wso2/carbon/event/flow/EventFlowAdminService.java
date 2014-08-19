@@ -47,27 +47,33 @@ public class EventFlowAdminService extends AbstractAdmin {
             List<String> streamIds = EventFlowServiceValueHolder.getEventStreamService().getStreamIds(tenantId);
             Map<String, ExecutionPlanConfiguration> executionPlanConfigurations = EventFlowServiceValueHolder.getEventProcessorService().getAllActiveExecutionConfigurations(tenantId);
 
-            StringBuilder eventFlow = new StringBuilder( " '{ \"nodes\": [ ");
+            StringBuilder eventFlow = new StringBuilder(" '{ \"nodes\": [ ");
             for (InputEventAdaptorConfiguration inputEventAdaptorConfiguration : inputEventAdaptors) {
-                eventFlow.append("  { \"id\" : \"").append(inputEventAdaptorConfiguration.getName().toUpperCase()).append("_IEA").append("\", \"label\":\"").append(inputEventAdaptorConfiguration.getName()).append("\", \"nodeclass\": \"IEA\" },");
+                String url = "../inputeventadaptormanager/event_details.jsp?ordinal=1&eventName=" + inputEventAdaptorConfiguration.getName() + "&eventType=" + inputEventAdaptorConfiguration.getType();
+                eventFlow.append("  { \"id\" : \"").append(inputEventAdaptorConfiguration.getName().toUpperCase()).append("_IEA").append("\", \"label\":\"").append(inputEventAdaptorConfiguration.getName()).append("\", \"url\":\"").append(url).append("\", \"nodeclass\": \"IEA\" },");
             }
             for (OutputEventAdaptorConfiguration outputEventAdaptorConfiguration : outputEventAdaptors) {
-                eventFlow.append("  { \"id\": \"").append(outputEventAdaptorConfiguration.getName().toUpperCase()).append("_OEA").append("\", \"label\":\"").append(outputEventAdaptorConfiguration.getName()).append("\", \"nodeclass\": \"OEA\" },");
+                String url = "../outputeventadaptormanager/event_details.jsp?ordinal=1&eventName=" + outputEventAdaptorConfiguration.getName() + "&eventType=" + outputEventAdaptorConfiguration.getType();
+                eventFlow.append("  { \"id\": \"").append(outputEventAdaptorConfiguration.getName().toUpperCase()).append("_OEA").append("\", \"label\":\"").append(outputEventAdaptorConfiguration.getName()).append("\", \"url\":\"").append(url).append("\", \"nodeclass\": \"OEA\" },");
             }
             for (EventBuilderConfiguration eventBuilderConfiguration : eventBuilderConfigurations) {
-                eventFlow.append("  { \"id\": \"").append(eventBuilderConfiguration.getEventBuilderName().toUpperCase()).append("_EB").append("\", \"label\":\"").append(eventBuilderConfiguration.getEventBuilderName()).append("\", \"nodeclass\": \"EB\" },");
+                String url = "../eventbuilder/eventbuilder_details.jsp?ordinal=1&eventBuilderName=" + eventBuilderConfiguration.getEventBuilderName();
+                eventFlow.append("  { \"id\": \"").append(eventBuilderConfiguration.getEventBuilderName().toUpperCase()).append("_EB").append("\", \"label\":\"").append(eventBuilderConfiguration.getEventBuilderName()).append("\", \"url\":\"").append(url).append("\", \"nodeclass\": \"EB\" },");
             }
             for (String name : executionPlanConfigurations.keySet()) {
-                eventFlow.append("  { \"id\": \"").append(name.toUpperCase()).append("_EP").append("\", \"label\":\"").append(name).append("\", \"nodeclass\": \"EP\" },");
+                String url = "../eventprocessor/execution_plan_details.jsp?ordinal=1&execPlan=" + name;
+                eventFlow.append("  { \"id\": \"").append(name.toUpperCase()).append("_EP").append("\", \"label\":\"").append(name).append("\", \"url\":\"").append(url).append("\", \"nodeclass\": \"EP\" },");
             }
             for (EventFormatterConfiguration formatterConfiguration : eventFormatterConfigurations) {
-                eventFlow.append("  { \"id\": \"").append(formatterConfiguration.getEventFormatterName().toUpperCase()).append("_EF").append("\", \"label\":\"").append(formatterConfiguration.getEventFormatterName()).append("\", \"nodeclass\": \"EF\" },");
+                String url = "../eventformatter/eventFormatter_details.jsp?ordinal=1&eventFormatterName=" + formatterConfiguration.getEventFormatterName();
+                eventFlow.append("  { \"id\": \"").append(formatterConfiguration.getEventFormatterName().toUpperCase()).append("_EF").append("\", \"label\":\"").append(formatterConfiguration.getEventFormatterName()).append("\", \"url\":\"").append(url).append("\", \"nodeclass\": \"EF\" },");
             }
             for (String streamId : streamIds) {
-                eventFlow.append("  { \"id\": \"").append(streamId.replaceAll("\\.", "_").replaceAll(":", "_").toUpperCase()).append("_ES").append("\", \"label\":\"").append(streamId).append("\", \"nodeclass\": \"ES\" },");
+                String url = "../eventstream/eventStreamDetails.jsp?ordinal=1&eventStreamWithVersion=" + streamId;
+                eventFlow.append("  { \"id\": \"").append(streamId.replaceAll("\\.", "_").replaceAll(":", "_").toUpperCase()).append("_ES").append("\", \"label\":\"").append(streamId).append("\", \"url\":\"").append(url).append("\", \"nodeclass\": \"ES\" },");
             }
 
-            eventFlow =new StringBuilder(eventFlow.substring(0,eventFlow.length() - 1)) ;
+            eventFlow = new StringBuilder(eventFlow.substring(0, eventFlow.length() - 1));
             eventFlow.append("], \"edges\": [ ");
 
 
@@ -88,7 +94,7 @@ public class EventFlowAdminService extends AbstractAdmin {
                 }
             }
 
-            eventFlow =new StringBuilder(eventFlow.substring(0,eventFlow.length() - 1)) ;
+            eventFlow = new StringBuilder(eventFlow.substring(0, eventFlow.length() - 1));
 
             eventFlow.append("]}'");
 
