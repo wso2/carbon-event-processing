@@ -1,17 +1,19 @@
-/**
- * Copyright (c) 2005 - 2013, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
- * <p/>
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- * <p/>
- * http://www.apache.org/licenses/LICENSE-2.0
- * <p/>
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+/*
+ * Copyright (c) 2005-2014, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
+ *
+ *  WSO2 Inc. licenses this file to you under the Apache License,
+ *  Version 2.0 (the "License"); you may not use this file except
+ *  in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing,
+ *  software distributed under the License is distributed on an
+ *  "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ *  KIND, either express or implied.  See the License for the
+ *  specific language governing permissions and limitations
+ *  under the License.
  */
 
 package org.wso2.carbon.event.processor.core.internal;
@@ -40,14 +42,14 @@ import org.wso2.carbon.event.processor.core.internal.listener.SiddhiInputEventDi
 import org.wso2.carbon.event.processor.core.internal.listener.SiddhiOutputStreamListener;
 import org.wso2.carbon.event.processor.core.internal.persistence.CassandraPersistenceStore;
 import org.wso2.carbon.event.processor.core.internal.storm.SiddhiStormInputEventDispatcher;
-import org.wso2.carbon.event.processor.core.internal.storm.SindhiStormOutputEventListener;
+import org.wso2.carbon.event.processor.core.internal.storm.SiddhiStormOutputEventListener;
 import org.wso2.carbon.event.processor.core.internal.util.EventProcessorConfigurationFilesystemInvoker;
 import org.wso2.carbon.event.processor.core.internal.util.EventProcessorConstants;
 import org.wso2.carbon.event.processor.core.internal.util.EventProcessorUtil;
 import org.wso2.carbon.event.processor.core.internal.util.helper.CassandraConnectionValidator;
 import org.wso2.carbon.event.processor.core.internal.util.helper.EventProcessorConfigurationHelper;
 import org.wso2.carbon.event.processor.core.internal.util.helper.SiddhiExtensionLoader;
-import org.wso2.carbon.event.processor.storm.common.helper.StormDeploymentConfigurations;
+import org.wso2.carbon.event.processor.storm.common.helper.StormDeploymentConfiguration;
 import org.wso2.carbon.event.stream.manager.core.EventProducer;
 import org.wso2.carbon.event.stream.manager.core.SiddhiEventConsumer;
 import org.wso2.carbon.event.stream.manager.core.exception.EventStreamConfigurationException;
@@ -73,13 +75,13 @@ public class CarbonEventProcessorService implements EventProcessorService {
     // not distinguishing between deployed vs failed here.
     private Map<Integer, List<ExecutionPlanConfigurationFile>> tenantSpecificExecutionPlanFiles;
     private CEPMembership currentCepMembershipInfo;
-    private boolean isRunningOnStorm = false;
+    private final boolean isRunningOnStorm;
 
     public CarbonEventProcessorService() {
         tenantSpecificExecutionPlans = new ConcurrentHashMap<Integer, Map<String, ExecutionPlan>>();
         tenantSpecificExecutionPlanFiles = new ConcurrentHashMap<Integer, List<ExecutionPlanConfigurationFile>>();
-        StormDeploymentConfigurations.LoadConfigurations();
-        isRunningOnStorm = StormDeploymentConfigurations.isRunningOnStorm();
+        StormDeploymentConfiguration.loadConfigurations();
+        isRunningOnStorm = StormDeploymentConfiguration.isRunningOnStorm();
     }
 
     private static void populateAttributes(
@@ -321,9 +323,9 @@ public class CarbonEventProcessorService implements EventProcessorService {
         tenantExecutionPlans.put(executionPlanConfiguration.getName(), executionPlan);
 
         //subscribe output to junction
-        SindhiStormOutputEventListener stormOutputListener = null;
+        SiddhiStormOutputEventListener stormOutputListener = null;
         if (isRunningOnStorm){
-            stormOutputListener = new SindhiStormOutputEventListener(executionPlanConfiguration, tenantId);
+            stormOutputListener = new SiddhiStormOutputEventListener(executionPlanConfiguration, tenantId);
         }
         for (StreamConfiguration exportedStreamConfiguration : executionPlanConfiguration.getExportedStreams()) {
 
