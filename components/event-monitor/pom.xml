@@ -31,7 +31,6 @@
     <modules>
         <module>event-statistics</module>
         <module>event-tracer</module>
-        <module>event-flow</module>
     </modules>
 
     
