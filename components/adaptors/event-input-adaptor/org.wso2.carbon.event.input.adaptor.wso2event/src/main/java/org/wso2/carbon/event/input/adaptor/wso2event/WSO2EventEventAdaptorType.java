@@ -1,17 +1,19 @@
 /*
- * Copyright 2004,2005 The Apache Software Foundation.
+ * Copyright (c) 2005-2014, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ *  WSO2 Inc. licenses this file to you under the Apache License,
+ *  Version 2.0 (the "License"); you may not use this file except
+ *  in compliance with the License.
+ *  You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *  Unless required by applicable law or agreed to in writing,
+ *  software distributed under the License is distributed on an
+ *  "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ *  KIND, either express or implied.  See the License for the
+ *  specific language governing permissions and limitations
+ *  under the License.
  */
 
 package org.wso2.carbon.event.input.adaptor.wso2event;
@@ -50,12 +52,12 @@ public final class WSO2EventEventAdaptorType extends AbstractInputEventAdaptor {
     private static final Log log = LogFactory.getLog(WSO2EventEventAdaptorType.class);
     private static WSO2EventEventAdaptorType wso2EventAdaptor = new WSO2EventEventAdaptorType();
     private ResourceBundle resourceBundle;
-    private Map<InputEventAdaptorMessageConfiguration, Map<String, EventAdaptorConf>> inputEventAdaptorListenerMap =
-            new ConcurrentHashMap<InputEventAdaptorMessageConfiguration, Map<String, EventAdaptorConf>>();
-    private Map<InputEventAdaptorMessageConfiguration, StreamDefinition> inputStreamDefinitionMap =
-            new ConcurrentHashMap<InputEventAdaptorMessageConfiguration, StreamDefinition>();
-    private Map<String, Map<String, EventAdaptorConf>> streamIdEventAdaptorListenerMap =
-            new ConcurrentHashMap<String, Map<String, EventAdaptorConf>>();
+    private ConcurrentHashMap<Integer, ConcurrentHashMap<InputEventAdaptorMessageConfiguration, ConcurrentHashMap<String, EventAdaptorConf>>> inputEventAdaptorListenerMap =
+            new ConcurrentHashMap<Integer, ConcurrentHashMap<InputEventAdaptorMessageConfiguration, ConcurrentHashMap<String, EventAdaptorConf>>>();
+    private ConcurrentHashMap<Integer, ConcurrentHashMap<InputEventAdaptorMessageConfiguration, StreamDefinition>> inputStreamDefinitionMap =
+            new ConcurrentHashMap<Integer, ConcurrentHashMap<InputEventAdaptorMessageConfiguration, StreamDefinition>>();
+    private ConcurrentHashMap<Integer, ConcurrentHashMap<String, ConcurrentHashMap<String, EventAdaptorConf>>> streamIdEventAdaptorListenerMap =
+            new ConcurrentHashMap<Integer, ConcurrentHashMap<String, ConcurrentHashMap<String, EventAdaptorConf>>>();
 
     private WSO2EventEventAdaptorType() {
 
@@ -138,17 +140,23 @@ public final class WSO2EventEventAdaptorType extends AbstractInputEventAdaptor {
             InputEventAdaptorConfiguration inputEventAdaptorConfiguration,
             AxisConfiguration axisConfiguration) {
         String subscriptionId = UUID.randomUUID().toString();
-        EventAdaptorConf eventAdaptorConf = new EventAdaptorConf(inputEventAdaptorListener, PrivilegedCarbonContext.getThreadLocalCarbonContext().getTenantId(), PrivilegedCarbonContext.getThreadLocalCarbonContext().getTenantDomain());
-        if (!inputEventAdaptorListenerMap.keySet().contains(inputEventAdaptorMessageConfiguration)) {
-            Map<String, EventAdaptorConf> map = new HashMap<String, EventAdaptorConf>();
+        int tenantId = PrivilegedCarbonContext.getThreadLocalCarbonContext().getTenantId(true);
+        EventAdaptorConf eventAdaptorConf = new EventAdaptorConf(inputEventAdaptorListener, tenantId, PrivilegedCarbonContext.getThreadLocalCarbonContext().getTenantDomain());
+
+        ConcurrentHashMap<InputEventAdaptorMessageConfiguration, ConcurrentHashMap<String, EventAdaptorConf>> tenantSpecificAdaptorListenerMap = inputEventAdaptorListenerMap.get(tenantId);
+        if (tenantSpecificAdaptorListenerMap == null) {
+            tenantSpecificAdaptorListenerMap = new ConcurrentHashMap<InputEventAdaptorMessageConfiguration, ConcurrentHashMap<String, EventAdaptorConf>>();
+            inputEventAdaptorListenerMap.put(tenantId, tenantSpecificAdaptorListenerMap);
+        }
+
+        if (!tenantSpecificAdaptorListenerMap.keySet().contains(inputEventAdaptorMessageConfiguration)) {
+            ConcurrentHashMap<String, EventAdaptorConf> map = new ConcurrentHashMap<String, WSO2EventEventAdaptorType.EventAdaptorConf>();
             map.put(subscriptionId, eventAdaptorConf);
-            inputEventAdaptorListenerMap.put(inputEventAdaptorMessageConfiguration, map);
+            tenantSpecificAdaptorListenerMap.put(inputEventAdaptorMessageConfiguration, map);
         } else {
-            inputEventAdaptorListenerMap.get(inputEventAdaptorMessageConfiguration).put(subscriptionId, eventAdaptorConf);
-            StreamDefinition streamDefinition = inputStreamDefinitionMap.get(inputEventAdaptorMessageConfiguration);
+            tenantSpecificAdaptorListenerMap.get(inputEventAdaptorMessageConfiguration).put(subscriptionId, eventAdaptorConf);
+            StreamDefinition streamDefinition = inputStreamDefinitionMap.get(tenantId).get(inputEventAdaptorMessageConfiguration);
             if (streamDefinition != null) {
-//                PrivilegedCarbonContext.getThreadLocalCarbonContext().setTenantId(eventAdaptorConf.tenantId);
-//                PrivilegedCarbonContext.getThreadLocalCarbonContext().setTenantDomain(eventAdaptorConf.tenantDomain);
                 inputEventAdaptorListener.addEventDefinitionCall(streamDefinition);
             }
 
@@ -161,9 +169,13 @@ public final class WSO2EventEventAdaptorType extends AbstractInputEventAdaptor {
             InputEventAdaptorMessageConfiguration inputEventAdaptorMessageConfiguration,
             InputEventAdaptorConfiguration inputEventAdaptorConfiguration,
             AxisConfiguration axisConfiguration, String subscriptionId) {
-        Map<String, EventAdaptorConf> map = inputEventAdaptorListenerMap.get(inputEventAdaptorMessageConfiguration);
-        if (map != null) {
-            map.remove(subscriptionId);
+
+        ConcurrentHashMap<InputEventAdaptorMessageConfiguration, ConcurrentHashMap<String, EventAdaptorConf>> tenantSpecificAdaptorListenerMap = inputEventAdaptorListenerMap.get(PrivilegedCarbonContext.getThreadLocalCarbonContext().getTenantId(true));
+        if (tenantSpecificAdaptorListenerMap != null) {
+            Map<String, EventAdaptorConf> map = tenantSpecificAdaptorListenerMap.get(inputEventAdaptorMessageConfiguration);
+            if (map != null) {
+                map.remove(subscriptionId);
+            }
         }
 
     }
@@ -171,38 +183,59 @@ public final class WSO2EventEventAdaptorType extends AbstractInputEventAdaptor {
 
     private class AgentTransportCallback implements AgentCallback {
 
-
         @Override
         public void removeStream(StreamDefinition streamDefinition, int tenantId) {
-            inputStreamDefinitionMap.remove(createTopic(streamDefinition));
-            Map<String, EventAdaptorConf> inputEventAdaptorListenerMap = WSO2EventEventAdaptorType.this.inputEventAdaptorListenerMap.get(createTopic(streamDefinition));
-            if (inputEventAdaptorListenerMap != null) {
-                for (EventAdaptorConf eventAdaptorConf : inputEventAdaptorListenerMap.values()) {
-                    try {
-                        PrivilegedCarbonContext.startTenantFlow();
-                        PrivilegedCarbonContext.getThreadLocalCarbonContext().setTenantId(eventAdaptorConf.tenantId);
-                        PrivilegedCarbonContext.getThreadLocalCarbonContext().setTenantDomain(eventAdaptorConf.tenantDomain);
-                        eventAdaptorConf.inputEventAdaptorListener.removeEventDefinitionCall(streamDefinition);
-                    } catch (InputEventAdaptorEventProcessingException e) {
-                        log.error("Cannot remove Stream Definition from a eventAdaptorListener subscribed to " +
-                                streamDefinition.getStreamId(), e);
-                    } finally {
-                        PrivilegedCarbonContext.endTenantFlow();
+            ConcurrentHashMap<InputEventAdaptorMessageConfiguration, StreamDefinition> tenantSpecificSteamDefinitionMap = inputStreamDefinitionMap.get(tenantId);
+            if (tenantSpecificSteamDefinitionMap != null) {
+                tenantSpecificSteamDefinitionMap.remove(createTopic(streamDefinition));
+            }
+
+            ConcurrentHashMap<InputEventAdaptorMessageConfiguration, ConcurrentHashMap<String, EventAdaptorConf>> tenantSpecificAdaptorListenerMap = WSO2EventEventAdaptorType.this.inputEventAdaptorListenerMap.get(tenantId);
+            if (tenantSpecificAdaptorListenerMap != null) {
+                ConcurrentHashMap<String, EventAdaptorConf> inputEventAdaptorListenerMap = tenantSpecificAdaptorListenerMap.get(createTopic(streamDefinition));
+                if (inputEventAdaptorListenerMap != null) {
+                    for (EventAdaptorConf eventAdaptorConf : inputEventAdaptorListenerMap.values()) {
+                        try {
+                            PrivilegedCarbonContext.startTenantFlow();
+                            PrivilegedCarbonContext.getThreadLocalCarbonContext().setTenantId(eventAdaptorConf.tenantId);
+                            PrivilegedCarbonContext.getThreadLocalCarbonContext().setTenantDomain(eventAdaptorConf.tenantDomain);
+                            eventAdaptorConf.inputEventAdaptorListener.removeEventDefinitionCall(streamDefinition);
+                        } catch (InputEventAdaptorEventProcessingException e) {
+                            log.error("Cannot remove Stream Definition from a eventAdaptorListener subscribed to " +
+                                      streamDefinition.getStreamId(), e);
+                        } finally {
+                            PrivilegedCarbonContext.endTenantFlow();
+                        }
                     }
                 }
             }
-            streamIdEventAdaptorListenerMap.remove(streamDefinition.getStreamId());
+
+            ConcurrentHashMap<String, ConcurrentHashMap<String, EventAdaptorConf>> tenantSpecificAdaptorMap = streamIdEventAdaptorListenerMap.get(PrivilegedCarbonContext.getThreadLocalCarbonContext().getTenantId(true));
+            if (tenantSpecificAdaptorMap != null) {
+                tenantSpecificAdaptorMap.remove(streamDefinition.getStreamId());
+            }
         }
 
         @Override
         public void definedStream(StreamDefinition streamDefinition, int tenantId) {
             InputEventAdaptorMessageConfiguration inputEventAdaptorMessageConfiguration = createTopic(streamDefinition);
 
-            inputStreamDefinitionMap.put(inputEventAdaptorMessageConfiguration, streamDefinition);
-            Map<String, EventAdaptorConf> eventAdaptorListeners = inputEventAdaptorListenerMap.get(inputEventAdaptorMessageConfiguration);
+            ConcurrentHashMap<InputEventAdaptorMessageConfiguration, StreamDefinition> tenantSpecificStreamDefinitionMap = inputStreamDefinitionMap.get(tenantId);
+            if (tenantSpecificStreamDefinitionMap == null) {
+                tenantSpecificStreamDefinitionMap = new ConcurrentHashMap<InputEventAdaptorMessageConfiguration, StreamDefinition>();
+                inputStreamDefinitionMap.put(tenantId, tenantSpecificStreamDefinitionMap);
+            }
+            tenantSpecificStreamDefinitionMap.put(inputEventAdaptorMessageConfiguration, streamDefinition);
+
+            ConcurrentHashMap<InputEventAdaptorMessageConfiguration, ConcurrentHashMap<String, EventAdaptorConf>> tenantSpecificAdaptorListenerMap = inputEventAdaptorListenerMap.get(tenantId);
+            if (tenantSpecificAdaptorListenerMap == null) {
+                tenantSpecificAdaptorListenerMap = new ConcurrentHashMap<InputEventAdaptorMessageConfiguration, ConcurrentHashMap<String, EventAdaptorConf>>();
+                inputEventAdaptorListenerMap.put(tenantId, tenantSpecificAdaptorListenerMap);
+            }
+            ConcurrentHashMap<String, EventAdaptorConf> eventAdaptorListeners = tenantSpecificAdaptorListenerMap.get(inputEventAdaptorMessageConfiguration);
             if (eventAdaptorListeners == null) {
-                eventAdaptorListeners = new HashMap<String, EventAdaptorConf>();
-                inputEventAdaptorListenerMap.put(inputEventAdaptorMessageConfiguration, eventAdaptorListeners);
+                eventAdaptorListeners = new ConcurrentHashMap<String, EventAdaptorConf>();
+                tenantSpecificAdaptorListenerMap.put(inputEventAdaptorMessageConfiguration, eventAdaptorListeners);
 
             }
 
@@ -214,12 +247,18 @@ public final class WSO2EventEventAdaptorType extends AbstractInputEventAdaptor {
                     eventAdaptorConf.inputEventAdaptorListener.addEventDefinitionCall(streamDefinition);
                 } catch (InputEventAdaptorEventProcessingException e) {
                     log.error("Cannot send Stream Definition to a eventAdaptorListener subscribed to " +
-                            streamDefinition.getStreamId(), e);
+                              streamDefinition.getStreamId(), e);
                 } finally {
                     PrivilegedCarbonContext.endTenantFlow();
                 }
             }
-            streamIdEventAdaptorListenerMap.put(streamDefinition.getStreamId(), inputEventAdaptorListenerMap.get(inputEventAdaptorMessageConfiguration));
+
+            ConcurrentHashMap<String, ConcurrentHashMap<String, EventAdaptorConf>> tenantSpecificAdaptorMap = streamIdEventAdaptorListenerMap.get(PrivilegedCarbonContext.getThreadLocalCarbonContext().getTenantId(true));
+            if (tenantSpecificAdaptorMap == null) {
+                tenantSpecificAdaptorMap = new ConcurrentHashMap<String, ConcurrentHashMap<String, EventAdaptorConf>>();
+                streamIdEventAdaptorListenerMap.put(PrivilegedCarbonContext.getThreadLocalCarbonContext().getTenantId(true), tenantSpecificAdaptorMap);
+            }
+            tenantSpecificAdaptorMap.put(streamDefinition.getStreamId(), inputEventAdaptorListenerMap.get(tenantId).get(inputEventAdaptorMessageConfiguration));
         }
 
         private InputEventAdaptorMessageConfiguration createTopic(
@@ -241,20 +280,20 @@ public final class WSO2EventEventAdaptorType extends AbstractInputEventAdaptor {
                 PrivilegedCarbonContext.getThreadLocalCarbonContext().setTenantId(credentials.getTenantId());
                 PrivilegedCarbonContext.getThreadLocalCarbonContext().setTenantDomain(credentials.getDomainName());
                 for (Event event : events) {
-                    Map<String, EventAdaptorConf> eventAdaptorListeners = streamIdEventAdaptorListenerMap.get(event.getStreamId());
+                    Map<String, EventAdaptorConf> eventAdaptorListeners = streamIdEventAdaptorListenerMap.get(credentials.getTenantId()).get(event.getStreamId());
                     if (eventAdaptorListeners == null) {
                         try {
-                            definedStream(WSO2EventAdaptorServiceValueHolder.getDataBridgeSubscriberService().getStreamDefinition(event.getStreamId(),credentials.getTenantId()), credentials.getTenantId());
+                            definedStream(WSO2EventAdaptorServiceValueHolder.getDataBridgeSubscriberService().getStreamDefinition(event.getStreamId(), credentials.getTenantId()), credentials.getTenantId());
                         } catch (StreamDefinitionNotFoundException e) {
                             log.error("No Stream definition store found for the event " +
-                                    event.getStreamId(), e);
+                                      event.getStreamId(), e);
                             return;
                         } catch (StreamDefinitionStoreException e) {
                             log.error("No Stream definition store found when checking stream definition for " +
-                                    event.getStreamId(), e);
+                                      event.getStreamId(), e);
                             return;
                         }
-                        eventAdaptorListeners = streamIdEventAdaptorListenerMap.get(event.getStreamId());
+                        eventAdaptorListeners = streamIdEventAdaptorListenerMap.get(credentials.getTenantId()).get(event.getStreamId());
                         if (eventAdaptorListeners == null) {
                             log.error("No event adaptor listeners for  " + event.getStreamId());
                             return;
@@ -267,7 +306,7 @@ public final class WSO2EventEventAdaptorType extends AbstractInputEventAdaptor {
                             }
                         } catch (InputEventAdaptorEventProcessingException e) {
                             log.error("Cannot send event to a eventAdaptorListener subscribed to " +
-                                    event.getStreamId(), e);
+                                      event.getStreamId(), e);
                         }
                     }
 
