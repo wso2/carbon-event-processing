@@ -25,7 +25,7 @@
     <artifactId>carbon-event-processing</artifactId>
     <packaging>pom</packaging>
     <version>4.3.0-SNAPSHOT</version>
-    <name>WSO2 Carbon - Platform Aggregator Pom</name>
+    <name>WSO2 Carbon - Carbon Event Processing Aggregator Module</name>
     <url>http://wso2.org</url>
 
     <modules>
@@ -33,12 +33,13 @@
         <module>components/adaptors</module>
         <module>components/event-processor</module>
         <module>components/event-stream</module>
-
+        <module>components/event-flow</module>
         <module>components/event-monitor</module>
         <module>features/adaptors</module>
         <module>features/event-processor</module>
         <module>features/event-monitor</module>
         <module>features/event-stream</module>
+        <module>features/event-flow</module>
     </modules>
 
     <dependencyManagement>
