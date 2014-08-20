@@ -34,20 +34,24 @@ public class SiddhiTopology {
     public static void main(String[] args) throws Exception {
         StormDeploymentConfiguration.loadConfigurations();
 
-        String authStreamStreamDef = "define stream authStream (username string, ipAddress string, browser string);";
-        String query = "from every a1 = authStream " +
-                       "-> b1 = authStream[username == a1.username and ipAddress != a1.ipAddress] " +
-                       "within 10000 " +
-                       "select a1.username as username, a1.ipAddress as ip1, b1.ipAddress as ip2 " +
-                       "insert into alertStream;";
+        //String authStreamStreamDef = "define stream authStream (username string, ipAddress string, browser string);";
+        String analyticsStreamDef = "define stream analyticsStats (meta_ipAdd string, meta_index long, meta_timestamp long, meta_nanoTime long,userID string, searchTerms string);";
+        String query2 = "from analyticsStats[meta_ipAdd != '192.168.1.1']#window.time(5 min) " +
+                "select meta_ipAdd, meta_index, meta_timestamp, meta_nanoTime, userID " +
+                "insert into filteredStatStream;";
+       //String query = "from every a1 = authStream " +
+       //                "-> b1 = authStream[username == a1.username and ipAddress != a1.ipAddress] " +
+       //                "within 10000 " +
+       //                "select a1.username as username, a1.ipAddress as ip1, b1.ipAddress as ip2 " +
+       //                "insert into alertStream;";
 
 
         SiddhiManager siddhiManager = new SiddhiManager();
-        siddhiManager.defineStream(authStreamStreamDef);
-        siddhiManager.addQuery(query);
+        siddhiManager.defineStream(analyticsStreamDef);
+        siddhiManager.addQuery(query2);
 
         String[] importedStreams = new String[1];
-        importedStreams[0] = authStreamStreamDef;
+        importedStreams[0] = analyticsStreamDef;
         int maxListenerPort = StormDeploymentConfiguration.getMaxListeningPort();
         int minListenerPort = StormDeploymentConfiguration.getMinListingPort();
         String keyStorePath = StormDeploymentConfiguration.getKeyStorePath();
@@ -57,15 +61,15 @@ public class SiddhiTopology {
 
         TopologyBuilder builder = new TopologyBuilder();
 
-        builder.setSpout("EventReceiverSpout", new EventReceiverSpout(minListenerPort, maxListenerPort, keyStorePath, cepManagerHost, cepManagerPort, importedStreams), 1);
-        builder.setBolt("Siddhibolt", new SiddhiBolt(importedStreams, new String[]{query}, new String[]{"alertStream"})).allGrouping("EventReceiverSpout", "authStream");
-        builder.setBolt("EventPublisherBolt", new EventPublisherBolt(cepManagerHost, cepManagerPort, trustStroePath, importedStreams, new String[]{query}, new String[]{"alertStream"})).allGrouping("Siddhibolt", "alertStream");
+        builder.setSpout("EventReceiverSpout", new EventReceiverSpout(minListenerPort, maxListenerPort, keyStorePath, cepManagerHost, cepManagerPort, importedStreams, "PreprocessStats"), 1);
+        builder.setBolt("Siddhibolt", new SiddhiBolt(importedStreams, new String[]{query2}, new String[]{"filteredStatStream"}), 3).allGrouping("EventReceiverSpout", "analyticsStats");
+        builder.setBolt("EventPublisherBolt", new EventPublisherBolt(cepManagerHost, cepManagerPort, trustStroePath, importedStreams, new String[]{query2}, new String[]{"filteredStatStream"}, "PreprocessStats")).allGrouping("Siddhibolt", "filteredStatStream");
 
         Config conf = new Config();
         conf.setDebug(true);
 
-        conf.setMaxTaskParallelism(3);
-        conf.setNumWorkers(3);
+        conf.setMaxTaskParallelism(8);
+        conf.setNumWorkers(8);
         StormSubmitter.submitTopology(args[0], conf, builder.createTopology());
 /*
         LocalCluster cluster = new LocalCluster();
