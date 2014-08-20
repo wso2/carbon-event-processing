@@ -155,9 +155,12 @@ public final class WSO2EventEventAdaptorType extends AbstractInputEventAdaptor {
             tenantSpecificAdaptorListenerMap.put(inputEventAdaptorMessageConfiguration, map);
         } else {
             tenantSpecificAdaptorListenerMap.get(inputEventAdaptorMessageConfiguration).put(subscriptionId, eventAdaptorConf);
-            StreamDefinition streamDefinition = inputStreamDefinitionMap.get(tenantId).get(inputEventAdaptorMessageConfiguration);
-            if (streamDefinition != null) {
-                inputEventAdaptorListener.addEventDefinitionCall(streamDefinition);
+            ConcurrentHashMap<InputEventAdaptorMessageConfiguration, StreamDefinition> tenantSpecificInputStreamDefinitionMap = inputStreamDefinitionMap.get(tenantId);
+            if (tenantSpecificInputStreamDefinitionMap != null) {
+                StreamDefinition streamDefinition = tenantSpecificInputStreamDefinitionMap.get(inputEventAdaptorMessageConfiguration);
+                if (streamDefinition != null) {
+                    inputEventAdaptorListener.addEventDefinitionCall(streamDefinition);
+                }
             }
 
         }
