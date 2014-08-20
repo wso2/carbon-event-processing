@@ -35,6 +35,18 @@
     <url>http://wso2.org</url>
     <description>This feature contains the bundles required for Websocket Event Adaptor functionality</description>
 
+    <dependencies>
+        <dependency>
+            <groupId>org.apache.servicemix.bundles</groupId>
+            <artifactId>org.apache.servicemix.bundles.jaxb-api-2.0</artifactId>
+            <version>4.0-m1</version>
+        </dependency>
+        <dependency>
+            <groupId>org.glassfish.tyrus.bundles.wso2</groupId>
+            <artifactId>tyrus-standalone-client</artifactId>
+            <version>1.7-wso2v1</version>
+        </dependency>
+    </dependencies>
     <build>
         <plugins>
             <plugin>
@@ -62,6 +74,13 @@
                             <bundles>
                                 <bundleDef>
                                     org.wso2.carbon:org.wso2.carbon.event.output.adaptor.websocket:${carbon.event.processing.version}
+                                </bundleDef>
+                                <bundleDef>
+                                    org.glassfish.tyrus.bundles.wso2:tyrus-standalone-client:1.7-wso2v1
+                                </bundleDef>
+                                <bundleDef>
+                                    <!--javax.xml.bind:jaxb-api:2.1-->
+                                    org.apache.servicemix.bundles:org.apache.servicemix.bundles.jaxb-api-2.0:4.0-m1
                                 </bundleDef>
                             </bundles>
                             <importFeatures>

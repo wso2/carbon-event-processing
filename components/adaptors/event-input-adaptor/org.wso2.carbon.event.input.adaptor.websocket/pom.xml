@@ -82,6 +82,7 @@
                 <groupId>org.apache.felix</groupId>
                 <artifactId>maven-bundle-plugin</artifactId>
 
+
                 <extensions>true</extensions>
                 <configuration>
                     <instructions>
@@ -99,6 +100,7 @@
                         <Import-Package>
                             org.wso2.carbon.event.input.adaptor.core,
                             org.wso2.carbon.event.input.adaptor.core.*,
+                            <!--org.glassfish.tyrus.client.*,-->     <!--Commenting this out since dynamic import is enabled.-->
                             !javax.xml.namespace,
                             javax.xml.namespace; version=0.0.0,
                             *;resolution:=optional,
