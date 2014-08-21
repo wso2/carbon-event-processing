@@ -67,7 +67,7 @@ public class EventPublisherBolt extends BaseBasicBolt implements ManagerServiceC
 
     private transient AsyncDataPublisher dataPublisher = null;
 
-    private String executionPlanName = "Login_Info_Analyzer";
+    private String executionPlanName;
 
     private String logPrefix;
 
@@ -81,17 +81,21 @@ public class EventPublisherBolt extends BaseBasicBolt implements ManagerServiceC
      */
     private int cepManagerPort;
 
-    SiddhiManager siddhiManager;
+    private String trustStorePath;
+    private String trustStorePassword;
 
-    public EventPublisherBolt(String cepManagerHost, int cepManagerPort, String trustStorePath, String[] streamDefinitions, String[] queries, String[] exportedStreamIDs){
+    private SiddhiManager siddhiManager;
+
+    public EventPublisherBolt(String cepManagerHost, int cepManagerPort, String trustStorePath, String[] streamDefinitions, String[] queries, String[] exportedStreamIDs, String executionPlanName){
         this.exportedStreamIDs = exportedStreamIDs;
         this.streamDefinitions = streamDefinitions;
         this.cepManagerHost = cepManagerHost;
         this.cepManagerPort = cepManagerPort;
         this.queries = queries;
+        this.executionPlanName = executionPlanName;
+        this.trustStorePath = trustStorePath;
+        this.trustStorePassword = "wso2carbon";
         logPrefix = "{" + executionPlanName + ":" + tenantId +"}";
-        System.setProperty("javax.net.ssl.trustStore", trustStorePath);//"/home/sajith/wso2cep-4.0.0-SNAPSHOT/samples/producers/performance-test/src/main/resources/client-truststore.jks");
-        System.setProperty("javax.net.ssl.trustStorePassword", "wso2carbon");
     }
 
     @Override
@@ -135,6 +139,9 @@ public class EventPublisherBolt extends BaseBasicBolt implements ManagerServiceC
         // TODO : remove siddhi related stream definitions. Use only exported streams
         log = Logger.getLogger(EventPublisherBolt.class);
         siddhiManager = new SiddhiManager(new SiddhiConfiguration());
+        System.setProperty("javax.net.ssl.trustStore", trustStorePath);//"/home/sajith/wso2cep-4.0.0-SNAPSHOT/samples/producers/performance-test/src/main/resources/client-truststore.jks");
+        System.setProperty("javax.net.ssl.trustStorePassword", trustStorePassword);
+
 
         if(streamDefinitions != null){
             for(String definition: streamDefinitions){

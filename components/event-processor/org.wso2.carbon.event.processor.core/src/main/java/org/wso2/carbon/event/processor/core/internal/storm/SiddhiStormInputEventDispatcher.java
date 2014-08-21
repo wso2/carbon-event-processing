@@ -20,6 +20,7 @@ package org.wso2.carbon.event.processor.core.internal.storm;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.wso2.carbon.databridge.agent.thrift.AgentHolder;
 import org.wso2.carbon.databridge.agent.thrift.AsyncDataPublisher;
 import org.wso2.carbon.databridge.agent.thrift.exception.AgentException;
 import org.wso2.carbon.databridge.commons.Attribute;
@@ -106,7 +107,7 @@ public class SiddhiStormInputEventDispatcher extends AbstractSiddhiInputEventDis
     @Override
     public void onResponseReceived(Pair<String, Integer> endpoint) {
         synchronized (this){
-            dataPublisher = new AsyncDataPublisher("tcp://" + endpoint.getOne() + ":" + endpoint.getTwo(), "admin", "admin");
+            dataPublisher = new AsyncDataPublisher("tcp://" + endpoint.getOne() + ":" + endpoint.getTwo(), "admin", "admin", AgentHolder.getOrCreateAgent());
             dataPublisher.addStreamDefinition(flattenedStreamDefinition);
         }
 

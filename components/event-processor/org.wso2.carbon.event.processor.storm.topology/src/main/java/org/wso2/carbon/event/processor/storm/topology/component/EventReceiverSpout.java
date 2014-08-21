@@ -1,3 +1,22 @@
+
+/*
+ * Copyright (c) 2005-2014, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
+ *
+ *  WSO2 Inc. licenses this file to you under the Apache License,
+ *  Version 2.0 (the "License"); you may not use this file except
+ *  in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing,
+ *  software distributed under the License is distributed on an
+ *  "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ *  KIND, either express or implied.  See the License for the
+ *  specific language governing permissions and limitations
+ *  under the License.
+ */
+
 package org.wso2.carbon.event.processor.storm.topology.component;
 
 import backtype.storm.spout.SpoutOutputCollector;
@@ -39,12 +58,11 @@ public class EventReceiverSpout extends BaseRichSpout implements AgentCallback {
      * Listening port of the thrift receiver
      */
     int listeningPort;
-
     private String thisHostIp;
 
-     /**
-      * Siddhi stream definitions of all incoming streams. Required to declare output fields
-      */
+    /**
+     * Siddhi stream definitions of all incoming streams. Required to declare output fields
+     */
     private String[] incomingStreamDefinitions;
 
     /**
@@ -58,46 +76,45 @@ public class EventReceiverSpout extends BaseRichSpout implements AgentCallback {
      * runs on the worker thread of spout.
      */
     private transient ConcurrentLinkedQueue<Event> storedEvents = null;
-
     private transient ThriftDataReceiver thriftDataReceiver = null;
 
     private SpoutOutputCollector spoutOutputCollector = null;
 
-    private String executionPlanName = "Login_Info_Analyzer";
-
+    private String executionPlanName;
     private int tenantId = -1234;
-
     private int cepMangerPort;
-
     private String cepMangerHost;
-
     private String logPrefix;
-
+    private String keyStorePath;
+    private String keyStorePassword;
     private int minListeningPort;
     private int maxListeningPort;
 
     /**
      * Receives events from the CEP Receiver through Thrift using data bridge and pass through the events
      * to a downstream component as tupels.
-     * @param listeningPort - port of the Thrift server
+     *
+     * @param minListeningPort          - the lower bound of the range of listening ports of the Thrift server
+     * @param maxListeningPort          - the upper bound for the range of listening ports allocated for this Thrift server
      * @param incomingStreamDefinitions - Incoming Siddhi stream definitions
      */
-    public EventReceiverSpout(int minListeningPort, int maxListeningPort, String keyStorePath, String cepManagerHost, int cepManagerPort, String[] incomingStreamDefinitions){
+    public EventReceiverSpout(int minListeningPort, int maxListeningPort, String keyStorePath, String cepManagerHost, int cepManagerPort, String[] incomingStreamDefinitions, String executionPlanName) {
         this.minListeningPort = minListeningPort;
         this.maxListeningPort = maxListeningPort;
         this.cepMangerHost = cepManagerHost;
         this.cepMangerPort = cepManagerPort;
         this.incomingStreamDefinitions = incomingStreamDefinitions;
-        logPrefix = "{" + executionPlanName + ":" + tenantId + "}";
+        this.executionPlanName = executionPlanName;
+        this.keyStorePath = keyStorePath;
+        this.keyStorePassword = "wso2carbon";
+        this.logPrefix = "{" + executionPlanName + ":" + tenantId + "} - ";
 
-        System.setProperty("Security.KeyStore.Location", keyStorePath); //"/home/sajith/wso2cep-4.0.0-SNAPSHOT/samples/producers/performance-test/src/main/resources/wso2carbon.jks");
-        System.setProperty("Security.KeyStore.Password", "wso2carbon");
     }
 
     @Override
     public void definedStream(org.wso2.carbon.databridge.commons.StreamDefinition streamDefinition, int tenantId) {
         // Streams must be defined when submitting the topology. Storm does not support dynamic stream definitions.
-        log.info(logPrefix + streamDefinition.getStreamId() + "Internal data bridge stream defined for tenant " + tenantId + " by CEP Receiver");
+        log.info(logPrefix + streamDefinition.getStreamId() + " - Internal data bridge stream defined for tenant " + tenantId + " by CEP Receiver");
     }
 
     @Override
@@ -120,7 +137,7 @@ public class EventReceiverSpout extends BaseRichSpout implements AgentCallback {
     public void declareOutputFields(OutputFieldsDeclarer outputFieldsDeclarer) {
         // Declaring all incoming streams as output streams because this spouts role is to pass through all the incoming events as tuples.
         List<StreamDefinition> streamDefinitions = SiddhiUtils.toSiddhiStreamDefinitions(incomingStreamDefinitions);
-        for (StreamDefinition siddhiStreamDefinition : streamDefinitions){
+        for (StreamDefinition siddhiStreamDefinition : streamDefinitions) {
             Fields fields = new Fields(siddhiStreamDefinition.getAttributeNameArray());
             outputFieldsDeclarer.declareStream(siddhiStreamDefinition.getStreamId(), fields);
 
@@ -133,18 +150,33 @@ public class EventReceiverSpout extends BaseRichSpout implements AgentCallback {
     public void open(Map map, TopologyContext topologyContext, SpoutOutputCollector spoutOutputCollector) {
         this.spoutOutputCollector = spoutOutputCollector;
         this.storedEvents = new ConcurrentLinkedQueue<Event>();
+        System.setProperty("Security.KeyStore.Location", keyStorePath); //"/home/sajith/wso2cep-4.0.0-SNAPSHOT/samples/producers/performance-test/src/main/resources/wso2carbon.jks");
+        System.setProperty("Security.KeyStore.Password", keyStorePassword);
+
 
         DataBridge databridge = new DataBridge(new AuthenticationHandler() {
             @Override
-            public boolean authenticate(String userName, String password) { return true;}
+            public boolean authenticate(String userName, String password) {
+                return true;
+            }
+
             @Override
-            public String getTenantDomain(String userName) { return "admin";}
+            public String getTenantDomain(String userName) {
+                return "admin";
+            }
+
             @Override
-            public int getTenantId(String s) throws UserStoreException { return -1234;}
+            public int getTenantId(String s) throws UserStoreException {
+                return -1234;
+            }
+
             @Override
-            public void initContext(AgentSession agentSession) {}
+            public void initContext(AgentSession agentSession) {
+            }
+
             @Override
-            public void destroyContext(AgentSession agentSession) {}
+            public void destroyContext(AgentSession agentSession) {
+            }
         }, new InMemoryStreamDefinitionStore());
 
         databridge.subscribe(this);
@@ -162,7 +194,7 @@ public class EventReceiverSpout extends BaseRichSpout implements AgentCallback {
         }
     }
 
-    private void registerWithCepMangerService(){
+    private void registerWithCepMangerService() {
         log.info("Registering Storm receiver for " + executionPlanName + ":" + tenantId + " at " + thisHostIp + ":" + listeningPort);
         ManagerServiceClient client = new ManagerServiceClient(cepMangerHost, cepMangerPort, null);
         client.registerStormReceiver(executionPlanName, tenantId, thisHostIp, listeningPort, 20);
@@ -171,23 +203,23 @@ public class EventReceiverSpout extends BaseRichSpout implements AgentCallback {
     @Override
     public void nextTuple() {
         Event event = storedEvents.poll();
-        if (event != null){
+        if (event != null) {
             final String siddhiStreamName = SiddhiUtils.getSiddhiStreamName(event.getStreamId());
 
-            if (incomingStreamIDs.contains(siddhiStreamName)){
-                if (log.isDebugEnabled()){
+            if (incomingStreamIDs.contains(siddhiStreamName)) {
+                if (log.isDebugEnabled()) {
                     log.debug(logPrefix + "Sending event : " + siddhiStreamName + "=>" + event.toString());
                 }
                 spoutOutputCollector.emit(siddhiStreamName, Arrays.asList(event.getPayloadData()));
-            }else{
+            } else {
                 log.warn(logPrefix + "Event received for unknown stream : " + siddhiStreamName);
             }
-         }
+        }
     }
 
-    private void selectPort(){
-        for (int i = minListeningPort; i <= maxListeningPort; i++){
-            if (!StormUtils.isPortUsed(i)){
+    private void selectPort() {
+        for (int i = minListeningPort; i <= maxListeningPort; i++) {
+            if (!StormUtils.isPortUsed(i)) {
                 listeningPort = i;
                 break;
             }

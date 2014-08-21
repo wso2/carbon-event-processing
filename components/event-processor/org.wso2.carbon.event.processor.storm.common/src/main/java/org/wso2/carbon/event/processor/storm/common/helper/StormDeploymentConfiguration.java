@@ -33,9 +33,13 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 
 public class StormDeploymentConfiguration {
+    public static final String RECEIVER_NODE_TYPE_ID = "receiver";
+    public static final String PUBLISHER_NODE_TYPE_ID = "publisher";
     private static final String CONFIG_FILE_NAME = "storm-deployment-config.xml";
     private static Log log = LogFactory.getLog(StormDeploymentConfiguration.class);
     private static boolean isRunningOnStorm = false;
+    private static boolean receiverNode = false;
+    private static boolean publisherNode = false;
     private static String cepManagerHost = "localhost";
     private static String keyStorePath = System.getProperty("user.home") + File.separator + "wso2carbon.jks";
     private static String trustStorePath = System.getProperty("user.home") + File.separator + "client-truststore.jks";
@@ -78,6 +82,10 @@ public class StormDeploymentConfiguration {
 
     public static void loadConfigurations() {
         String carbonHome = System.getProperty("carbon.config.dir.path");
+        StormDeploymentConfiguration.loadConfigurations(carbonHome);
+    }
+
+    public static void loadConfigurations(String carbonHome) {
         String path = carbonHome + File.separator + StormDeploymentConfiguration.CONFIG_FILE_NAME;
 
         OMElement configurationElement;
@@ -89,7 +97,7 @@ public class StormDeploymentConfiguration {
             StAXOMBuilder builder = new StAXOMBuilder(parser);
             configurationElement = builder.getDocumentElement();
             configurationElement.build();
-            readConfigurationValue(configurationElement);
+            readConfigurationValues(configurationElement);
         } catch (XMLStreamException e) {
             log.error("Error while reading storm deployment configurations", e);
         } catch (FileNotFoundException e) {
@@ -97,10 +105,10 @@ public class StormDeploymentConfiguration {
         }
     }
 
-    private static void readConfigurationValue(OMElement configurations) {
+    private static void readConfigurationValues(OMElement configurations) {
         // Checking if CEP is running on storm
         String stormEnabledValue = configurations.getFirstChildWithName(new QName("stormEnabled")).getText();
-        isRunningOnStorm = (stormEnabledValue.equalsIgnoreCase("true")) ? true : false;
+        isRunningOnStorm = stormEnabledValue.equalsIgnoreCase("true");
 
         if (isRunningOnStorm) {
             log.info("CEP is Running on Storm");
@@ -123,6 +131,26 @@ public class StormDeploymentConfiguration {
 
             log.info("Storm Deployment CEP Manger Listening port Range [Max=" + maxListeningPort + ", Min=" + minListingPort + "]");
 
+            OMElement nodeTypesOmElement = configurations.getFirstChildWithName(new QName("nodeType"));
+            if(nodeTypesOmElement != null) {
+                String nodeTypes[] = nodeTypesOmElement.getText().split(",");
+                for (String nodeType : nodeTypes) {
+                    if (RECEIVER_NODE_TYPE_ID.equalsIgnoreCase(nodeType)) {
+                        receiverNode = true;
+                    }
+                    if (PUBLISHER_NODE_TYPE_ID.equalsIgnoreCase(nodeType)) {
+                        publisherNode = true;
+                    }
+                }
+            }
         }
+    }
+
+    public static boolean isReceiverNode() {
+        return receiverNode;
+    }
+
+    public static boolean isPublisherNode() {
+        return publisherNode;
     }
 }
