@@ -161,7 +161,8 @@ public class MQTTAdaptorListener implements MqttCallback, Runnable {
     public void run() {
         while (!connectionSucceeded) {
             try {
-                Thread.sleep(3000);
+                MQTTEventAdaptorConstants.initialReconnectDuration = MQTTEventAdaptorConstants.initialReconnectDuration * MQTTEventAdaptorConstants.reconnectionProgressionFactor;
+                Thread.sleep(MQTTEventAdaptorConstants.initialReconnectDuration);
                 startListener();
                 connectionSucceeded = true;
                 log.info("MQTT Connection successful");

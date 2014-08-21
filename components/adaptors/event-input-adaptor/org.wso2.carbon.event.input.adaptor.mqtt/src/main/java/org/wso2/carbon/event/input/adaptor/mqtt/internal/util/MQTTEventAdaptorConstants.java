@@ -38,5 +38,8 @@ public final class MQTTEventAdaptorConstants {
     public static final String ADAPTOR_CONF_CLEAN_SESSION_HINT = "cleanSession.hint";
     public static final String ADAPTOR_CONF_KEEP_ALIVE = "keepAlive";
 
+    public static int initialReconnectDuration = 10000;
+    public static final int reconnectionProgressionFactor = 2;
+
 
 }

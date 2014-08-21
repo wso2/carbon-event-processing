@@ -59,7 +59,6 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 
-
 public class CarbonEventSimulator implements EventSimulator {
 
     private static final Log log = LogFactory.getLog(CarbonEventSimulator.class);
@@ -67,7 +66,6 @@ public class CarbonEventSimulator implements EventSimulator {
     private HashMap<Integer, HashMap<String, CSVFileInfo>> tenantSpecificCSVFileInfoMap;
 
     public CarbonEventSimulator() {
-
         eventProducerMap = new HashMap<String, EventStreamProducer>();
         tenantSpecificCSVFileInfoMap = new HashMap<Integer, HashMap<String, CSVFileInfo>>();
     }
@@ -188,7 +186,6 @@ public class CarbonEventSimulator implements EventSimulator {
 
 
     public void addCSVFileInfo(CSVFileInfo csvFileInfo) {
-
 
         int tenantID = PrivilegedCarbonContext.getThreadLocalCarbonContext().getTenantId();
         if (tenantSpecificCSVFileInfoMap.containsKey(tenantID)) {
@@ -522,9 +519,15 @@ public class CarbonEventSimulator implements EventSimulator {
                     log.error(e);
                 } finally {
                     try {
-                        fis.close();
-                        bis.close();
-                        dis.close();
+                        if(fis!=null) {
+                            fis.close();
+                        }
+                        if (bis != null) {
+                            bis.close();
+                        }
+                        if (dis != null) {
+                            dis.close();
+                        }
                     } catch (IOException ex) {
                         ex.printStackTrace();
                     }

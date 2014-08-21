@@ -35,9 +35,7 @@ public class EventStreamProducer implements EventProducer {
 
     @Override
     public void setCallBack(EventProducerCallback eventProducerCallback) {
-
         this.eventProducerCallback = eventProducerCallback;
-
     }
 
     public void setStreamID(String streamID) {
