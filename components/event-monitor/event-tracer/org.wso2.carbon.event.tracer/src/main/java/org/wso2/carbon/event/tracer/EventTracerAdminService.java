@@ -23,7 +23,9 @@ import org.apache.log4j.Appender;
 import org.apache.log4j.Layout;
 import org.apache.log4j.Logger;
 import org.apache.log4j.spi.LoggingEvent;
-import org.wso2.carbon.logging.appenders.MemoryAppender;
+// MemoryAppender should not be used here,
+// this should be handled using a logging provider
+import org.wso2.carbon.utils.logging.appenders.MemoryAppender;
 
 import java.util.ArrayList;
 import java.util.List;
