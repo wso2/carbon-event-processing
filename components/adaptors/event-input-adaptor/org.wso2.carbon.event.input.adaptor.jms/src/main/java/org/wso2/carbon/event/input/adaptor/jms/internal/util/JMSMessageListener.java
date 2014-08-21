@@ -100,6 +100,8 @@ public class JMSMessageListener implements MessageListener {
                     bytes = new byte[(int) bytesMessage.getBodyLength()];
                     bytesMessage.readBytes(bytes);
                     eventAdaptorListener.onEventCall(new String(bytes, "UTF-8"));
+                }else{
+                    log.warn("Event dropped due to unsupported message type");
                 }
             } else {
                 log.warn("Dropping the empty/null event received through jms adaptor");
