@@ -237,12 +237,14 @@ public final class JMSEventAdaptorType extends AbstractInputEventAdaptor impleme
         SubscriptionDetails subscriptionDetails = subscriptionsMap.get(subscriptionId);
         if (subscriptionDetails == null) {
             throw new InputEventAdaptorEventProcessingException("There is no subscription for " + destination + " for the subscriptionId:" + subscriptionId);
-        }
+        }else{
 
-        try {
-            subscriptionDetails.close();
-        } catch (JMSException e) {
-            throw new InputEventAdaptorEventProcessingException("Can not unsubscribe from the destination " + destination + " with the event adaptor " + inputEventAdaptorConfiguration.getName(), e);
+            try {
+                subscriptionDetails.close();
+                subscriptionsMap.remove(subscriptionId);
+            } catch (JMSException e) {
+                throw new InputEventAdaptorEventProcessingException("Can not unsubscribe from the destination " + destination + " with the event adaptor " + inputEventAdaptorConfiguration.getName(), e);
+            }
         }
 
     }
