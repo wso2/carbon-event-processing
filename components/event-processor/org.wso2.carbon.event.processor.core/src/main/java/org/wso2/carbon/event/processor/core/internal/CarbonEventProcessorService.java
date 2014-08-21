@@ -324,7 +324,7 @@ public class CarbonEventProcessorService implements EventProcessorService {
 
         //subscribe output to junction
         SiddhiStormOutputEventListener stormOutputListener = null;
-        if (isRunningOnStorm){
+        if (isRunningOnStorm && StormDeploymentConfiguration.isPublisherNode()){
             stormOutputListener = new SiddhiStormOutputEventListener(executionPlanConfiguration, tenantId);
         }
         for (StreamConfiguration exportedStreamConfiguration : executionPlanConfiguration.getExportedStreams()) {
@@ -337,7 +337,7 @@ public class CarbonEventProcessorService implements EventProcessorService {
             } else {
                 streamCallback = new SiddhiOutputStreamListener(exportedStreamConfiguration.getSiddhiStreamName(), exportedStreamConfiguration.getStreamId(), executionPlanConfiguration, tenantId);
 
-                if (isRunningOnStorm){
+                if (isRunningOnStorm  && StormDeploymentConfiguration.isPublisherNode()){
                     stormOutputListener.registerOutputStreamListener(exportedStreamConfiguration.getSiddhiStreamName(), streamCallback);
                 }
             }
@@ -358,7 +358,7 @@ public class CarbonEventProcessorService implements EventProcessorService {
             if (haManager != null) {
                 eventDispatcher = new SiddhiHAInputEventDispatcher(importedStreamConfiguration.getStreamId(), inputHandler, executionPlanConfiguration, tenantId, haManager.getProcessThreadPoolExecutor(), haManager.getThreadBarrier());
                 haManager.addInputEventDispatcher(importedStreamConfiguration.getStreamId(), (SiddhiHAInputEventDispatcher) eventDispatcher);
-            } else if (isRunningOnStorm){
+            } else if (isRunningOnStorm && StormDeploymentConfiguration.isReceiverNode()){
                 StreamDefinition streamDefinition = null;
                 try {
                     streamDefinition = EventProcessorValueHolder.getEventStreamService().getStreamDefinition(importedStreamConfiguration.getStreamId(), tenantId);

@@ -135,7 +135,11 @@
                     <instructions>
                         <Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
                         <Bundle-Name>${project.artifactId}</Bundle-Name>
+                        <Private-Package>org.wso2.carbon.event.processor.core.internal.*
+                        </Private-Package>
+
                         <Export-Package>
+                            !org.wso2.carbon.event.processor.core.internal,
                             org.wso2.carbon.event.processor.core.*
                         </Export-Package>
                         <Import-Package>
@@ -144,6 +148,7 @@
                             org.wso2.siddhi.*,
                             junit.framework.*,
                             org.junit.*,
+                            org.wso2.carbon.event.processor.storm.common.*,
                             *;resolution:=optional
                         </Import-Package>
                         <DynamicImport-Package>*</DynamicImport-Package>
