@@ -26,11 +26,13 @@ import org.wso2.carbon.context.PrivilegedCarbonContext;
 import org.wso2.carbon.event.input.adaptor.core.InputEventAdaptorListener;
 import org.wso2.carbon.event.input.adaptor.core.exception.InputEventAdaptorEventProcessingException;
 
+import javax.jms.BytesMessage;
 import javax.jms.JMSException;
 import javax.jms.MapMessage;
 import javax.jms.Message;
 import javax.jms.MessageListener;
 import javax.jms.TextMessage;
+import java.io.UnsupportedEncodingException;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
@@ -92,10 +94,20 @@ public class JMSMessageListener implements MessageListener {
                     } catch (InputEventAdaptorEventProcessingException e) {
                         log.error("Can not send the message to broker ", e);
                     }
+                } else if (message instanceof BytesMessage) {
+                    BytesMessage bytesMessage = (BytesMessage) message;
+                    byte[] bytes;
+                    bytes = new byte[(int) bytesMessage.getBodyLength()];
+                    bytesMessage.readBytes(bytes);
+                    eventAdaptorListener.onEventCall(new String(bytes, "UTF-8"));
                 }
             } else {
                 log.warn("Dropping the empty/null event received through jms adaptor");
             }
+        } catch (JMSException e) {
+            log.error(e);
+        } catch (UnsupportedEncodingException e) {
+            log.error(e);
         } finally {
             PrivilegedCarbonContext.endTenantFlow();
         }
