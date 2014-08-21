@@ -15,9 +15,7 @@
  *  specific language governing permissions and limitations
  *  under the License.
  */
-
 package org.wso2.carbon.event.simulator.core;
-
 
 import java.io.File;
 
@@ -37,7 +35,5 @@ public class EventSimulatorConstant {
     public static final String SEPARATE_CHAR_ELEMENT="separateChar";
     public static final String CONFIGURATION_XML_PREFIX="_streamConfiguration.xml";
     public static final String TEMP_DIR_PATH=File.separator + "tmp" ;
-
-
 
 }

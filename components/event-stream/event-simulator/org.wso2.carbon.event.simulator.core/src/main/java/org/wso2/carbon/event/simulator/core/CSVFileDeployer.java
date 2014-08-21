@@ -16,9 +16,7 @@
  *  specific language governing permissions and limitations
  *  under the License.
  */
-
 package org.wso2.carbon.event.simulator.core;
-
 
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.deployment.AbstractDeployer;
@@ -44,8 +42,6 @@ public class CSVFileDeployer extends AbstractDeployer {
     @Override
     public void init(ConfigurationContext configurationContext) {
         this.configurationContext = configurationContext;
-
-
     }
 
     public void deploy(DeploymentFileData deploymentFileData) throws DeploymentException {

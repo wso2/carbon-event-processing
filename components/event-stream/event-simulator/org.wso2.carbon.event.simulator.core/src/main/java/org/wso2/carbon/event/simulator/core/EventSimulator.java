@@ -15,7 +15,6 @@
  *  specific language governing permissions and limitations
  *  under the License.
  */
-
 package org.wso2.carbon.event.simulator.core;
 
 import org.apache.axis2.AxisFault;
@@ -25,9 +24,7 @@ import org.wso2.carbon.databridge.commons.StreamDefinition;
 import java.util.Collection;
 import java.util.List;
 
-
 public interface EventSimulator {
-
 
     public Collection<StreamDefinition> getAllEventStreamDefinitions();
 
