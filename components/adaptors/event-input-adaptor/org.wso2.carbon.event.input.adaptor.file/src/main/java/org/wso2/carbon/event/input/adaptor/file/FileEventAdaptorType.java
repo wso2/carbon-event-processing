@@ -1,17 +1,19 @@
 /*
- * Copyright 2004-2014 The Apache Software Foundation.
+ * Copyright (c) 2005-2014, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ *  WSO2 Inc. licenses this file to you under the Apache License,
+ *  Version 2.0 (the "License"); you may not use this file except
+ *  in compliance with the License.
+ *  You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *  Unless required by applicable law or agreed to in writing,
+ *  software distributed under the License is distributed on an
+ *  "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ *  KIND, either express or implied.  See the License for the
+ *  specific language governing permissions and limitations
+ *  under the License.
  */
 
 package org.wso2.carbon.event.input.adaptor.file;
@@ -20,6 +22,7 @@ import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.commons.io.input.Tailer;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.wso2.carbon.context.PrivilegedCarbonContext;
 import org.wso2.carbon.event.input.adaptor.core.AbstractInputEventAdaptor;
 import org.wso2.carbon.event.input.adaptor.core.InputEventAdaptorListener;
 import org.wso2.carbon.event.input.adaptor.core.MessageType;
@@ -50,7 +53,7 @@ public final class FileEventAdaptorType extends AbstractInputEventAdaptor
     private boolean readyToPoll = false;
     private static final Log log = LogFactory.getLog(FileEventAdaptorType.class);
     private ResourceBundle resourceBundle;
-    private ConcurrentHashMap<String, ConcurrentHashMap<String, FileTailerManager>> tailerMap = new ConcurrentHashMap<String, ConcurrentHashMap<String, FileTailerManager>>();
+    private ConcurrentHashMap<Integer, ConcurrentHashMap<String, ConcurrentHashMap<String, FileTailerManager>>> tailerMap = new ConcurrentHashMap<Integer, ConcurrentHashMap<String, ConcurrentHashMap<String, FileTailerManager>>>();
     private ThreadPoolExecutor threadPoolExecutor = new ThreadPoolExecutor(FileEventAdaptorConstants.MIN_THREAD, FileEventAdaptorConstants.MAX_THREAD, FileEventAdaptorConstants.DEFAULT_KEEP_ALIVE_TIME, TimeUnit.SECONDS, new LinkedBlockingQueue<Runnable>(1000));
     List<LateStartAdaptorConfig> lateStartAdaptorConfigList = new ArrayList<LateStartAdaptorConfig>();
 
@@ -99,11 +102,13 @@ public final class FileEventAdaptorType extends AbstractInputEventAdaptor
             InputEventAdaptorConfiguration inputEventAdaptorConfiguration,
             AxisConfiguration axisConfiguration) {
 
+        int tenantId = PrivilegedCarbonContext.getThreadLocalCarbonContext().getTenantId(true);
+
         String subscriptionId = UUID.randomUUID().toString();
-        if (! readyToPoll) {
-            lateStartAdaptorConfigList.add(new LateStartAdaptorConfig(inputEventAdaptorMessageConfiguration, inputEventAdaptorListener, inputEventAdaptorConfiguration, axisConfiguration, subscriptionId));
+        if (!readyToPoll) {
+            lateStartAdaptorConfigList.add(new LateStartAdaptorConfig(inputEventAdaptorMessageConfiguration, inputEventAdaptorListener, inputEventAdaptorConfiguration, axisConfiguration, subscriptionId, tenantId));
         } else {
-            createFileAdaptorListener(inputEventAdaptorMessageConfiguration, inputEventAdaptorListener, inputEventAdaptorConfiguration, axisConfiguration, subscriptionId);
+            createFileAdaptorListener(inputEventAdaptorMessageConfiguration, inputEventAdaptorListener, inputEventAdaptorConfiguration, axisConfiguration, subscriptionId, tenantId);
         }
         return subscriptionId;
     }
@@ -113,17 +118,21 @@ public final class FileEventAdaptorType extends AbstractInputEventAdaptor
             InputEventAdaptorMessageConfiguration inputEventAdaptorMessageConfiguration,
             InputEventAdaptorConfiguration inputEventAdaptorConfiguration,
             AxisConfiguration axisConfiguration, String subscriptionId) {
-        ConcurrentHashMap<String, FileTailerManager> tailerManagerConcurrentHashMap = tailerMap.get(inputEventAdaptorConfiguration.getName());
-        FileTailerManager fileTailerManager = null;
-        if (tailerManagerConcurrentHashMap != null) {
-            fileTailerManager = tailerManagerConcurrentHashMap.get(inputEventAdaptorMessageConfiguration.getInputMessageProperties().get(FileEventAdaptorConstants.EVENT_ADAPTOR_CONF_FILEPATH));
-        }
 
-        if (fileTailerManager != null) {
-            fileTailerManager.getListener().removeListener(subscriptionId);
-            if (fileTailerManager.getListener().hasNoSubscriber()) {
-                fileTailerManager.getTailer().stop();
-                tailerMap.remove(inputEventAdaptorConfiguration.getName());
+        int tenantId = PrivilegedCarbonContext.getThreadLocalCarbonContext().getTenantId(true);
+        ConcurrentHashMap<String, ConcurrentHashMap<String, FileTailerManager>> tenantSpecificAdaptorMap = tailerMap.get(tenantId);
+        if (tenantSpecificAdaptorMap != null) {
+            ConcurrentHashMap<String, FileTailerManager> tailerManagerConcurrentHashMap = tenantSpecificAdaptorMap.get(inputEventAdaptorConfiguration.getName());
+            FileTailerManager fileTailerManager = null;
+            if (tailerManagerConcurrentHashMap != null) {
+                fileTailerManager = tailerManagerConcurrentHashMap.get(inputEventAdaptorMessageConfiguration.getInputMessageProperties().get(FileEventAdaptorConstants.EVENT_ADAPTOR_CONF_FILEPATH));
+            }
+            if (fileTailerManager != null) {
+                fileTailerManager.getListener().removeListener(subscriptionId);
+                if (fileTailerManager.getListener().hasNoSubscriber()) {
+                    fileTailerManager.getTailer().stop();
+                    tenantSpecificAdaptorMap.remove(inputEventAdaptorConfiguration.getName());
+                }
             }
         }
     }
@@ -134,7 +143,7 @@ public final class FileEventAdaptorType extends AbstractInputEventAdaptor
         log.info("File input event adaptor loading listeners ");
         readyToPoll = true;
         for (LateStartAdaptorConfig lateStartAdaptorConfig : lateStartAdaptorConfigList) {
-            this.createFileAdaptorListener(lateStartAdaptorConfig.getInputEventAdaptorMessageConfiguration(), lateStartAdaptorConfig.getInputEventAdaptorListener(), lateStartAdaptorConfig.getInputEventAdaptorConfiguration(), lateStartAdaptorConfig.getAxisConfiguration(), lateStartAdaptorConfig.getSubscriptionId());
+            this.createFileAdaptorListener(lateStartAdaptorConfig.getInputEventAdaptorMessageConfiguration(), lateStartAdaptorConfig.getInputEventAdaptorListener(), lateStartAdaptorConfig.getInputEventAdaptorConfiguration(), lateStartAdaptorConfig.getAxisConfiguration(), lateStartAdaptorConfig.getSubscriptionId(), lateStartAdaptorConfig.getTenantId());
         }
     }
 
@@ -142,14 +151,22 @@ public final class FileEventAdaptorType extends AbstractInputEventAdaptor
             InputEventAdaptorMessageConfiguration inputEventAdaptorMessageConfiguration,
             InputEventAdaptorListener inputEventAdaptorListener,
             InputEventAdaptorConfiguration inputEventAdaptorConfiguration,
-            AxisConfiguration axisConfiguration, String subscriptionId) {
+            AxisConfiguration axisConfiguration, String subscriptionId, int tenantId) {
         log.info("New subscriber added for " + inputEventAdaptorConfiguration.getName());
 
-        ConcurrentHashMap<String, FileTailerManager> tailerManagerConcurrentHashMap = tailerMap.get(inputEventAdaptorConfiguration.getName());
+
+        ConcurrentHashMap<String, ConcurrentHashMap<String, FileTailerManager>> tenantSpecificAdaptorMap = tailerMap.get(tenantId);
+
+        if (tenantSpecificAdaptorMap == null) {
+            tenantSpecificAdaptorMap = new ConcurrentHashMap<String, ConcurrentHashMap<String, FileTailerManager>>();
+            tailerMap.putIfAbsent(tenantId, tenantSpecificAdaptorMap);
+        }
+
+        ConcurrentHashMap<String, FileTailerManager> tailerManagerConcurrentHashMap = tenantSpecificAdaptorMap.get(inputEventAdaptorConfiguration.getName());
         if (tailerManagerConcurrentHashMap == null) {
             tailerManagerConcurrentHashMap = new ConcurrentHashMap<String, FileTailerManager>();
-            if (null != tailerMap.putIfAbsent(inputEventAdaptorConfiguration.getName(), tailerManagerConcurrentHashMap)) {
-                tailerManagerConcurrentHashMap = tailerMap.get(inputEventAdaptorConfiguration.getName());
+            if (null != tenantSpecificAdaptorMap.putIfAbsent(inputEventAdaptorConfiguration.getName(), tailerManagerConcurrentHashMap)) {
+                tailerManagerConcurrentHashMap = tenantSpecificAdaptorMap.get(inputEventAdaptorConfiguration.getName());
             }
         }
 
@@ -161,6 +178,7 @@ public final class FileEventAdaptorType extends AbstractInputEventAdaptor
             Tailer tailer = new Tailer(new File(filepath), listener);
             fileTailerManager = new FileTailerManager(tailer, listener);
             listener.addListener(subscriptionId, inputEventAdaptorListener);
+            listener.setTenantId(tenantId);
             tailerManagerConcurrentHashMap.put(filepath, fileTailerManager);
             threadPoolExecutor.execute(tailer);
         } else {
@@ -174,18 +192,20 @@ public final class FileEventAdaptorType extends AbstractInputEventAdaptor
         InputEventAdaptorConfiguration inputEventAdaptorConfiguration;
         AxisConfiguration axisConfiguration;
         String subscriptionId;
+        int tenantId;
 
 
         public LateStartAdaptorConfig(
                 InputEventAdaptorMessageConfiguration inputEventAdaptorMessageConfiguration,
                 InputEventAdaptorListener inputEventAdaptorListener,
                 InputEventAdaptorConfiguration inputEventAdaptorConfiguration,
-                AxisConfiguration axisConfiguration, String subscriptionId) {
+                AxisConfiguration axisConfiguration, String subscriptionId, int tenantId) {
             this.inputEventAdaptorMessageConfiguration = inputEventAdaptorMessageConfiguration;
             this.inputEventAdaptorListener = inputEventAdaptorListener;
             this.inputEventAdaptorConfiguration = inputEventAdaptorConfiguration;
             this.axisConfiguration = axisConfiguration;
             this.subscriptionId = subscriptionId;
+            this.tenantId = tenantId;
         }
 
         public InputEventAdaptorMessageConfiguration getInputEventAdaptorMessageConfiguration() {
@@ -229,6 +249,14 @@ public final class FileEventAdaptorType extends AbstractInputEventAdaptor
 
         public void setSubscriptionId(String subscriptionId) {
             this.subscriptionId = subscriptionId;
+        }
+
+        public int getTenantId() {
+            return tenantId;
+        }
+
+        public void setTenantId(int tenantId) {
+            this.tenantId = tenantId;
         }
     }
 }

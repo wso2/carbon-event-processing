@@ -140,6 +140,10 @@ public class HTTPMessageServlet extends HttpServlet {
                 res.getOutputStream().write(AUTH_FAILURE_RESPONSE.getBytes());
                 log.error("Authentication failed for the request");
                 return;
+            }else if(tenantId != this.tenantId){
+                res.getOutputStream().write(AUTH_FAILURE_RESPONSE.getBytes());
+                log.error("Authentication failed for the request");
+                return;
             }
         }
 
