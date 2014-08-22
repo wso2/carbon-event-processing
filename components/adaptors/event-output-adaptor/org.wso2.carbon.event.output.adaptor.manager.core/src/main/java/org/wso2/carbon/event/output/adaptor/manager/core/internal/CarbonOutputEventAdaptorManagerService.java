@@ -77,16 +77,23 @@ public class CarbonOutputEventAdaptorManagerService
         OMElement omElement = OutputEventAdaptorConfigurationHelper.eventAdaptorConfigurationToOM(eventAdaptorConfiguration);
 
         if (OutputEventAdaptorConfigurationHelper.validateEventAdaptorConfiguration(OutputEventAdaptorConfigurationHelper.fromOM(omElement))) {
-            File directory = new File(axisConfiguration.getRepository().getPath());
+            String repoPath = axisConfiguration.getRepository().getPath();
+            File directory = new File(repoPath);
             if (!directory.exists()) {
-                if (directory.mkdir()) {
-                    throw new OutputEventAdaptorManagerConfigurationException("Cannot create directory to add tenant specific Output Event Adaptor :" + eventAdaptorName);
+                synchronized (repoPath.intern()) {
+                    if (!directory.mkdir()) {
+                        throw new OutputEventAdaptorManagerConfigurationException("Cannot create directory to add tenant specific Output Event Adaptor :" + eventAdaptorName);
+                    }
                 }
             }
-            directory = new File(directory.getAbsolutePath() + File.separator + OutputEventAdaptorManagerConstants.OEA_ELE_DIRECTORY);
+
+            String outputAdaptorConfigPath = directory.getAbsolutePath() + File.separator + OutputEventAdaptorManagerConstants.OEA_ELE_DIRECTORY;
+            directory = new File(outputAdaptorConfigPath);
             if (!directory.exists()) {
-                if (!directory.mkdir()) {
-                    throw new OutputEventAdaptorManagerConfigurationException("Cannot create directory " + OutputEventAdaptorManagerConstants.OEA_ELE_DIRECTORY + " to add tenant specific Output Event Adaptor :" + eventAdaptorName);
+                synchronized (outputAdaptorConfigPath.intern()) {
+                    if (!directory.mkdir()) {
+                        throw new OutputEventAdaptorManagerConfigurationException("Cannot create directory " + OutputEventAdaptorManagerConstants.OEA_ELE_DIRECTORY + " to add tenant specific Output Event Adaptor :" + eventAdaptorName);
+                    }
                 }
             }
             validateToRemoveInactiveEventAdaptorConfiguration(eventAdaptorName, axisConfiguration);
