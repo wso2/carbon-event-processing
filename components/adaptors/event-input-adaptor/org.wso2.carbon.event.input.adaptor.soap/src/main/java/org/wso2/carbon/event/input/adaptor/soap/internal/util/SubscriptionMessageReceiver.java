@@ -66,7 +66,7 @@ public class SubscriptionMessageReceiver extends AbstractInMessageReceiver {
         OMElement bodyElement = soapEnvelope.getBody().getFirstElement();
 
         if(log.isDebugEnabled()){
-            log.debug(bodyElement);
+            log.debug("Event received in Soap Event Adaptor - "+bodyElement);
         }
 
         try {

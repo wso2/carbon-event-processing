@@ -51,7 +51,7 @@ public class JMSMessageListener implements MessageListener {
             if (message != null) {
 
                 if (log.isDebugEnabled()) {
-                    log.debug(message);
+                    log.debug("Event received in JMS Event Adaptor - "+message);
                 }
 
                 if (message instanceof TextMessage) {
