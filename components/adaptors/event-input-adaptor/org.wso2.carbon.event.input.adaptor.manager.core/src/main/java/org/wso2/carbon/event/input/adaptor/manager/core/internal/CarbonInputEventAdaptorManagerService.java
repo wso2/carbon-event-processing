@@ -73,16 +73,23 @@ public class CarbonInputEventAdaptorManagerService
         OMElement omElement = InputEventAdaptorConfigurationHelper.eventAdaptorConfigurationToOM(eventAdaptorConfiguration);
 
         if (InputEventAdaptorConfigurationHelper.validateEventAdaptorConfiguration(InputEventAdaptorConfigurationHelper.fromOM(omElement))) {
-            File directory = new File(axisConfiguration.getRepository().getPath());
+            String repoPath = axisConfiguration.getRepository().getPath();
+            File directory = new File(repoPath);
             if (!directory.exists()) {
-                if (directory.mkdir()) {
-                    throw new InputEventAdaptorManagerConfigurationException("Cannot create directory to add tenant specific Input Event Adaptor :" + eventAdaptorName);
+                synchronized (repoPath.intern()) {
+                    if (!directory.mkdir()) {
+                        throw new InputEventAdaptorManagerConfigurationException("Cannot create directory to add tenant specific Input Event Adaptor :" + eventAdaptorName);
+                    }
                 }
             }
-            directory = new File(directory.getAbsolutePath() + File.separator + InputEventAdaptorManagerConstants.IEA_ELE_DIRECTORY);
+
+            String inputAdaptorsConfigPath = directory.getAbsolutePath() + File.separator + InputEventAdaptorManagerConstants.IEA_ELE_DIRECTORY;
+            directory = new File(inputAdaptorsConfigPath);
             if (!directory.exists()) {
-                if (!directory.mkdir()) {
-                    throw new InputEventAdaptorManagerConfigurationException("Cannot create directory " + InputEventAdaptorManagerConstants.IEA_ELE_DIRECTORY + " to add tenant specific Input Event Adaptor :" + eventAdaptorName);
+                synchronized (inputAdaptorsConfigPath.intern()) {
+                    if (!directory.mkdir()) {
+                        throw new InputEventAdaptorManagerConfigurationException("Cannot create directory " + InputEventAdaptorManagerConstants.IEA_ELE_DIRECTORY + " to add tenant specific Input Event Adaptor :" + eventAdaptorName);
+                    }
                 }
             }
 

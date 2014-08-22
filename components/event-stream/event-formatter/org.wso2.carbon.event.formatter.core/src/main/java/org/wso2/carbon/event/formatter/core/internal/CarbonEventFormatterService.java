@@ -61,18 +61,25 @@ public class CarbonEventFormatterService
         OMElement omElement = FormatterConfigurationBuilder.eventFormatterConfigurationToOM(eventFormatterConfiguration);
         EventFormatterConfigurationHelper.validateEventFormatterConfiguration(omElement);
         if (EventFormatterConfigurationHelper.getOutputMappingType(omElement) != null) {
-
-            File directory = new File(axisConfiguration.getRepository().getPath());
+            String repoPath = axisConfiguration.getRepository().getPath();
+            File directory = new File(repoPath);
             if (!directory.exists()) {
-                if (directory.mkdir()) {
-                    throw new EventFormatterConfigurationException("Cannot create directory to add tenant specific Event Formatter : " + eventFormatterName);
+                synchronized (repoPath.intern()) {
+                    if (!directory.mkdir()) {
+                        throw new EventFormatterConfigurationException("Cannot create directory to add tenant specific Event Formatter : " + eventFormatterName);
+                    }
                 }
             }
-            directory = new File(directory.getAbsolutePath() + File.separator + EventFormatterConstants.TM_ELE_DIRECTORY);
+
+            String eventFormatterConfigPath = directory.getAbsolutePath() + File.separator + EventFormatterConstants.TM_ELE_DIRECTORY;
+            directory = new File(eventFormatterConfigPath);
             if (!directory.exists()) {
-                if (!directory.mkdir()) {
-                    throw new EventFormatterConfigurationException("Cannot create directory " + EventFormatterConstants.TM_ELE_DIRECTORY + " to add tenant specific event adaptor :" + eventFormatterName);
+                synchronized (eventFormatterConfigPath.intern()) {
+                    if (!directory.mkdir()) {
+                        throw new EventFormatterConfigurationException("Cannot create directory " + EventFormatterConstants.TM_ELE_DIRECTORY + " to add tenant specific event adaptor :" + eventFormatterName);
+                    }
                 }
+
             }
             validateToRemoveInactiveEventFormatterConfiguration(eventFormatterName, axisConfiguration);
             EventFormatterConfigurationFilesystemInvoker.save(omElement, eventFormatterName + ".xml", axisConfiguration);
@@ -356,7 +363,7 @@ public class CarbonEventFormatterService
         OutputEventAdaptorManagerService outputEventAdaptorManagerService = EventFormatterServiceValueHolder.getOutputEventAdaptorManagerService();
         try {
             String defaultFormatterFilename = streamId.replaceAll(EventFormatterConstants.STREAM_ID_SEPERATOR, EventFormatterConstants.NORMALIZATION_STRING)
-                    + EventFormatterConstants.DEFAULT_EVENT_FORMATTER_POSTFIX + EventFormatterConstants.EF_CONFIG_FILE_EXTENSION_WITH_DOT;
+                                              + EventFormatterConstants.DEFAULT_EVENT_FORMATTER_POSTFIX + EventFormatterConstants.EF_CONFIG_FILE_EXTENSION_WITH_DOT;
             if (!EventFormatterConfigurationFilesystemInvoker.isEventFormatterConfigurationFileExists(defaultFormatterFilename, axisConfiguration)) {
                 String eventAdaptorName = outputEventAdaptorManagerService.getDefaultLoggerEventAdaptor(axisConfiguration);
                 EventFormatterConfiguration defaultEventFormatterConfiguration =
@@ -445,7 +452,8 @@ public class CarbonEventFormatterService
         }
     }
 
-    public void activateInactiveEventFormatterConfigurationForAdaptor(int tenantId, String dependency)
+    public void activateInactiveEventFormatterConfigurationForAdaptor(int tenantId,
+                                                                      String dependency)
             throws EventFormatterConfigurationException {
 
         List<EventFormatterConfigurationFile> fileList = new ArrayList<EventFormatterConfigurationFile>();
@@ -495,7 +503,8 @@ public class CarbonEventFormatterService
         }
     }
 
-    public void deactivateActiveEventFormatterConfigurationForAdaptor(int tenantId, String dependency)
+    public void deactivateActiveEventFormatterConfigurationForAdaptor(int tenantId,
+                                                                      String dependency)
             throws EventFormatterConfigurationException {
         OutputEventAdaptorService eventAdaptorService = EventFormatterServiceValueHolder.getOutputEventAdaptorService();
         List<EventFormatterConfigurationFile> fileList = new ArrayList<EventFormatterConfigurationFile>();
