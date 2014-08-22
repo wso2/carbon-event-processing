@@ -17,10 +17,8 @@
 */
 package org.wso2.carbon.event.input.adaptor.websocket;
 
-
 import org.wso2.carbon.event.input.adaptor.core.AbstractInputEventAdaptor;
 import org.wso2.carbon.event.input.adaptor.core.InputEventAdaptorFactory;
-
 
 public class WebsocketEventAdaptorFactory implements InputEventAdaptorFactory {
 

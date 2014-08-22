@@ -25,7 +25,6 @@ import javax.websocket.Endpoint;
 import javax.websocket.EndpointConfig;
 import javax.websocket.MessageHandler;
 import javax.websocket.Session;
-import java.util.logging.Logger;
 
 /**
  * An instance of this class is used, when we connect to a user-given socket-server, as a client - to send events.
