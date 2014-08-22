@@ -15,7 +15,6 @@
  ~ specific language governing permissions and limitations
  ~ under the License.
 -->
-
 <project xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
@@ -141,112 +140,96 @@
                 <groupId>commons-lang.wso2</groupId>
                 <artifactId>commons-lang</artifactId>
                 <version>${orbit.version.commons.lang}</version>
-
             </dependency>
 
             <dependency>
                 <groupId>commons-logging</groupId>
                 <artifactId>commons-logging</artifactId>
                 <version>${commons-logging.version}</version>
-
             </dependency>
 
             <dependency>
                 <groupId>junit</groupId>
                 <artifactId>junit</artifactId>
                 <version>${junit.version}</version>
-
             </dependency>
 
             <dependency>
                 <groupId>org.apache.axis2.wso2</groupId>
                 <artifactId>axis2-client</artifactId>
                 <version>${orbit.version.axis2}</version>
-
             </dependency>
 
             <dependency>
                 <groupId>org.apache.neethi.wso2</groupId>
                 <artifactId>neethi</artifactId>
                 <version>${neethi.osgi.version}</version>
-
             </dependency>
 
             <dependency>
                 <groupId>org.apache.ws.commons.axiom.wso2</groupId>
                 <artifactId>axiom</artifactId>
                 <version>${axiom.wso2.version}</version>
-
             </dependency>
 
             <dependency>
                 <groupId>org.eclipse.osgi</groupId>
                 <artifactId>org.eclipse.osgi.services</artifactId>
                 <version>${version.equinox.osgi.services}</version>
-
             </dependency>
 
             <dependency>
                 <groupId>org.eclipse.osgi</groupId>
                 <artifactId>org.eclipse.osgi</artifactId>
                 <version>${org.eclipse.osgi.version}</version>
-
             </dependency>
 
             <dependency>
                 <groupId>org.wso2.carbon</groupId>
                 <artifactId>org.wso2.carbon.cassandra.dataaccess</artifactId>
                 <version>4.3.0-SNAPSHOT</version>
-
             </dependency>
 
             <dependency>
                 <groupId>org.wso2.carbon</groupId>
                 <artifactId>org.wso2.carbon.databridge.core</artifactId>
                 <version>${databridge.version}</version>
-
             </dependency>
 
             <dependency>
                 <groupId>org.wso2.carbon</groupId>
                 <artifactId>org.wso2.carbon.event.builder.admin</artifactId>
                 <version>${carbon.event.processing.version}</version>
-
             </dependency>
 
             <dependency>
                 <groupId>org.wso2.carbon</groupId>
                 <artifactId>org.wso2.carbon.event.builder.core</artifactId>
                 <version>${carbon.event.processing.version}</version>
-
             </dependency>
 
             <dependency>
                 <groupId>org.wso2.carbon</groupId>
                 <artifactId>org.wso2.carbon.event.builder.stub</artifactId>
                 <version>${carbon.event.processing.version}</version>
-
             </dependency>
 
             <dependency>
                 <groupId>org.wso2.carbon</groupId>
                 <artifactId>org.wso2.carbon.event.builder.ui</artifactId>
                 <version>${carbon.event.processing.version}</version>
-
             </dependency>
 
             <dependency>
                 <groupId>org.wso2.carbon</groupId>
                 <artifactId>org.wso2.carbon.event.flow</artifactId>
                 <version>${carbon.event.processing.version}</version>
-
             </dependency>
 
             <dependency>
                 <groupId>org.wso2.carbon</groupId>
                 <artifactId>org.wso2.carbon.event.formatter.admin</artifactId>
                 <version>${carbon.event.processing.version}</version>
-
             </dependency>
 
             <dependency>
@@ -267,40 +250,34 @@
                 <version>${carbon.event.processing.version}</version>
             </dependency>
 
-
             <dependency>
                 <groupId>org.wso2.carbon</groupId>
                 <artifactId>org.wso2.carbon.event.formatter.ui</artifactId>
                 <version>${carbon.event.processing.version}</version>
-
             </dependency>
 
             <dependency>
                 <groupId>org.wso2.carbon</groupId>
                 <artifactId>org.wso2.carbon.event.input.adaptor.core</artifactId>
                 <version>${carbon.event.processing.version}</version>
-
             </dependency>
 
             <dependency>
                 <groupId>org.wso2.carbon</groupId>
                 <artifactId>org.wso2.carbon.event.input.adaptor.manager.admin</artifactId>
                 <version>${carbon.event.processing.version}</version>
-
             </dependency>
 
             <dependency>
                 <groupId>org.wso2.carbon</groupId>
                 <artifactId>org.wso2.carbon.event.input.adaptor.manager.core</artifactId>
                 <version>${carbon.event.processing.version}</version>
-
             </dependency>
 
             <dependency>
                 <groupId>org.wso2.carbon</groupId>
                 <artifactId>org.wso2.carbon.event.input.adaptor.manager.stub</artifactId>
                 <version>${carbon.event.processing.version}</version>
-
             </dependency>
 
             <dependency>
@@ -321,113 +298,96 @@
                 <groupId>org.wso2.carbon</groupId>
                 <artifactId>org.wso2.carbon.event.output.adaptor.manager.admin</artifactId>
                 <version>${carbon.event.processing.version}</version>
-
             </dependency>
 
             <dependency>
                 <groupId>org.wso2.carbon</groupId>
                 <artifactId>org.wso2.carbon.event.output.adaptor.manager.core</artifactId>
                 <version>${carbon.event.processing.version}</version>
-
             </dependency>
 
             <dependency>
                 <groupId>org.wso2.carbon</groupId>
                 <artifactId>org.wso2.carbon.event.output.adaptor.manager.stub</artifactId>
                 <version>${carbon.event.processing.version}</version>
-
             </dependency>
 
             <dependency>
                 <groupId>org.wso2.carbon</groupId>
                 <artifactId>org.wso2.carbon.event.output.adaptor.manager.ui</artifactId>
                 <version>${carbon.event.processing.version}</version>
-
             </dependency>
 
             <dependency>
                 <groupId>org.wso2.carbon</groupId>
                 <artifactId>org.wso2.carbon.event.processor.admin</artifactId>
                 <version>${carbon.event.processing.version}</version>
-
             </dependency>
 
             <dependency>
                 <groupId>org.wso2.carbon</groupId>
                 <artifactId>org.wso2.carbon.event.processor.core</artifactId>
                 <version>${carbon.event.processing.version}</version>
-
             </dependency>
 
             <dependency>
                 <groupId>org.wso2.carbon</groupId>
                 <artifactId>org.wso2.carbon.event.processor.siddhi.extension</artifactId>
                 <version>${carbon.event.processing.version}</version>
-
             </dependency>
 
             <dependency>
                 <groupId>org.wso2.carbon</groupId>
                 <artifactId>org.wso2.carbon.event.processor.stub</artifactId>
                 <version>${carbon.event.processing.version}</version>
-
             </dependency>
 
             <dependency>
                 <groupId>org.wso2.carbon</groupId>
                 <artifactId>org.wso2.carbon.event.processor.ui</artifactId>
                 <version>${carbon.event.processing.version}</version>
-
             </dependency>
 
             <dependency>
                 <groupId>org.wso2.carbon</groupId>
                 <artifactId>org.wso2.carbon.event.simulator.admin</artifactId>
                 <version>${carbon.event.processing.version}</version>
-
             </dependency>
 
             <dependency>
                 <groupId>org.wso2.carbon</groupId>
                 <artifactId>org.wso2.carbon.event.simulator.core</artifactId>
                 <version>${carbon.event.processing.version}</version>
-
             </dependency>
 
             <dependency>
                 <groupId>org.wso2.carbon</groupId>
                 <artifactId>org.wso2.carbon.event.simulator.ui</artifactId>
                 <version>${carbon.event.processing.version}</version>
-
             </dependency>
-
 
             <dependency>
                 <groupId>org.wso2.carbon</groupId>
                 <artifactId>org.wso2.carbon.event.simulator.stub</artifactId>
                 <version>${carbon.event.processing.version}</version>
-
             </dependency>
 
             <dependency>
                 <groupId>org.wso2.carbon</groupId>
                 <artifactId>org.wso2.carbon.event.statistics.stub</artifactId>
                 <version>${carbon.event.processing.version}</version>
-
             </dependency>
 
             <dependency>
                 <groupId>org.wso2.carbon</groupId>
                 <artifactId>org.wso2.carbon.event.statistics.ui</artifactId>
                 <version>${carbon.event.processing.version}</version>
-
             </dependency>
 
             <dependency>
                 <groupId>org.wso2.carbon</groupId>
                 <artifactId>org.wso2.carbon.event.statistics</artifactId>
                 <version>${carbon.event.processing.version}</version>
-
             </dependency>
 
             <dependency>
@@ -898,6 +858,26 @@
                     <execution>
                         <goals>
                             <goal>incremental-build</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.rat</groupId>
+                <artifactId>apache-rat-plugin</artifactId>
+                <version>0.10</version>
+                <configuration>
+                    <excludes>
+                        <exclude>**/*.iml</exclude>
+                        <exclude>**/*.min.js</exclude>
+                        <exclude>**/p2.inf</exclude>
+                    </excludes>
+                </configuration>
+                <executions>
+                    <execution>
+                        <phase>verify</phase>
+                        <goals>
+                            <goal>check</goal>
                         </goals>
                     </execution>
                 </executions>
