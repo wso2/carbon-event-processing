@@ -70,22 +70,6 @@ public class EventBuilderConfigurationFileSystemInvoker {
         }
     }
 
-    public static void save(String eventBuilderConfigXml, String fileName)
-            throws EventBuilderConfigurationException {
-        String filePath = getFilePathFromFilename(fileName);
-        try {
-            /* save contents to .xml file */
-            BufferedWriter out = new BufferedWriter(new FileWriter(filePath));
-            String xmlContent = XmlFormatter.format(eventBuilderConfigXml);
-            out.write(xmlContent);
-            out.close();
-            log.info("Event builder configuration saved to the filesystem :" + fileName);
-        } catch (IOException e) {
-            log.error("Error while saving event builder configuration: " + fileName, e);
-        }
-
-    }
-
     public static void delete(String fileName, AxisConfiguration axisConfiguration)
             throws EventBuilderConfigurationException {
 

@@ -33,6 +33,7 @@ import org.wso2.carbon.event.input.adaptor.manager.core.InputEventAdaptorManager
 import org.wso2.carbon.event.statistics.EventStatisticsService;
 import org.wso2.carbon.event.stream.manager.core.EventStreamService;
 import org.wso2.carbon.registry.core.service.RegistryService;
+import org.wso2.carbon.utils.ConfigurationContextService;
 
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -45,6 +46,7 @@ public class EventBuilderServiceValueHolder {
     private static EventStreamService eventStreamService;
     private static ConcurrentHashMap<String, InputMapperFactory> mappingFactoryMap;
     private static DataBridgeReceiverService dataBridgeReceiverService;
+    private static ConfigurationContextService configurationContextService;
 
     static {
         mappingFactoryMap = new ConcurrentHashMap<String, InputMapperFactory>();
@@ -123,12 +125,22 @@ public class EventBuilderServiceValueHolder {
         return EventBuilderServiceValueHolder.eventStreamService;
     }
 
-    public static void registerDataBridgeReceiverService(DataBridgeReceiverService dataBridgeReceiverService) {
+    public static void registerDataBridgeReceiverService(
+            DataBridgeReceiverService dataBridgeReceiverService) {
         EventBuilderServiceValueHolder.dataBridgeReceiverService = dataBridgeReceiverService;
     }
 
     public static DataBridgeReceiverService getDataBridgeReceiverService() {
         return dataBridgeReceiverService;
+    }
+
+    public static ConfigurationContextService getConfigurationContextService() {
+        return configurationContextService;
+    }
+
+    public static void setConfigurationContextService(
+            ConfigurationContextService configurationContextService) {
+        EventBuilderServiceValueHolder.configurationContextService = configurationContextService;
     }
 
 }

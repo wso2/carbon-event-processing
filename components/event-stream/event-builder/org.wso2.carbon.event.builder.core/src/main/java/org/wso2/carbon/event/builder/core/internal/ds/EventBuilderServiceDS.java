@@ -34,6 +34,7 @@ import org.wso2.carbon.event.statistics.EventStatisticsService;
 import org.wso2.carbon.event.stream.manager.core.EventStreamService;
 import org.wso2.carbon.registry.core.exceptions.RegistryException;
 import org.wso2.carbon.registry.core.service.RegistryService;
+import org.wso2.carbon.utils.ConfigurationContextService;
 
 
 /**
@@ -56,6 +57,9 @@ import org.wso2.carbon.registry.core.service.RegistryService;
  * @scr.reference name="databridge.receiver.service"
  * interface="org.wso2.carbon.databridge.core.DataBridgeReceiverService" cardinality="1..1"
  * policy="dynamic" bind="setDataBridgeReceiverService" unbind="unSetDataBridgeReceiverService"
+ * @scr.reference name="config.context.service"
+ * interface="org.wso2.carbon.utils.ConfigurationContextService" cardinality="0..1" policy="dynamic"
+ * bind="setConfigurationContextService" unbind="unsetConfigurationContextService"
  */
 public class EventBuilderServiceDS {
     private static final Log log = LogFactory.getLog(EventBuilderServiceDS.class);
@@ -131,6 +135,17 @@ public class EventBuilderServiceDS {
 
     protected void unsetEventStreamService(EventStreamService eventStreamService) {
         EventBuilderServiceValueHolder.registerEventStreamService(null);
+    }
+
+    protected void setConfigurationContextService(
+            ConfigurationContextService configurationContextService) {
+        EventBuilderServiceValueHolder.setConfigurationContextService(configurationContextService);
+    }
+
+    protected void unsetConfigurationContextService(
+            ConfigurationContextService configurationContextService) {
+        EventBuilderServiceValueHolder.setConfigurationContextService(null);
+
     }
 
 }
