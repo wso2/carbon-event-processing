@@ -871,6 +871,7 @@
                         <exclude>**/*.iml</exclude>
                         <exclude>**/*.min.js</exclude>
                         <exclude>**/p2.inf</exclude>
+                        <exclude>**/target/*</exclude>
                     </excludes>
                 </configuration>
                 <executions>
