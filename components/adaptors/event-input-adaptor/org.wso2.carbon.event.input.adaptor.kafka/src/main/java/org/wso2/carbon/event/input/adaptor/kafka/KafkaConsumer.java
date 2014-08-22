@@ -21,6 +21,8 @@ package org.wso2.carbon.event.input.adaptor.kafka;
 
 import kafka.consumer.ConsumerIterator;
 import kafka.consumer.KafkaStream;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.wso2.carbon.event.input.adaptor.core.InputEventAdaptorListener;
 
 public class KafkaConsumer implements Runnable {
@@ -28,6 +30,7 @@ public class KafkaConsumer implements Runnable {
     private KafkaStream m_stream;
     private InputEventAdaptorListener m_brokerListener;
     private String evento;
+    private Log log = LogFactory.getLog(KafkaConsumer.class);
 
     public KafkaConsumer(KafkaStream a_stream, InputEventAdaptorListener a_brokerListener) {
         m_stream = a_stream;
@@ -39,6 +42,9 @@ public class KafkaConsumer implements Runnable {
             ConsumerIterator<byte[], byte[]> it = m_stream.iterator();
             while (it.hasNext()) {
                 evento = new String(it.next().message());
+                if(log.isDebugEnabled()){
+                    log.debug("Event received in Kafka Event Adaptor - "+evento);
+                }
                 m_brokerListener.onEventCall(evento);
             }
         } catch (Throwable t) {

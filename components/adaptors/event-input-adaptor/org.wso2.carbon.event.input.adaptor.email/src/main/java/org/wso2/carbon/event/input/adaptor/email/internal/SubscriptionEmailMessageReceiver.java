@@ -72,6 +72,9 @@ public class SubscriptionEmailMessageReceiver extends AbstractInMessageReceiver 
                 if (emailBody.trim() == null) {
                     log.warn("Dropping the empty/null event received through email adaptor");
                 } else {
+                    if(log.isDebugEnabled()){
+                        log.debug("Event received in email Event Adaptor - "+bodyElement.getText());
+                    }
                     eventAdaptorListener.onEventCall(bodyElement.getText());
                 }
             }

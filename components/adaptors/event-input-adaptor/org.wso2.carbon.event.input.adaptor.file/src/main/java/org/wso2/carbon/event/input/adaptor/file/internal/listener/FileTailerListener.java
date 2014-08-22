@@ -56,6 +56,10 @@ public class FileTailerListener extends TailerListenerAdapter {
         }
         isFileFound = true;
 
+        if(log.isDebugEnabled()){
+            log.debug("Event received in File Event Adaptor - "+line);
+        }
+
         PrivilegedCarbonContext.startTenantFlow();
         PrivilegedCarbonContext.getThreadLocalCarbonContext().setTenantId(tenantId);
         for (InputEventAdaptorListener id : inputEventAdaptorListeners) {
