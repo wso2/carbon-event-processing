@@ -590,4 +590,20 @@ public class CarbonInputEventAdaptorManagerService
 
     }
 
+
+    public boolean isInputEventAdaptorFileAlreadyExist(int tenantId, String eventAdaptorFileName) {
+
+        if (eventAdaptorFileMap.size() > 0) {
+            List<InputEventAdaptorFile> inputEventAdaptorFileList = eventAdaptorFileMap.get(tenantId);
+            if (inputEventAdaptorFileList != null) {
+                for (InputEventAdaptorFile inputEventAdaptorFile : inputEventAdaptorFileList) {
+                    if ((inputEventAdaptorFile.getFileName().equals(eventAdaptorFileName))) {
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
+    }
+
 }

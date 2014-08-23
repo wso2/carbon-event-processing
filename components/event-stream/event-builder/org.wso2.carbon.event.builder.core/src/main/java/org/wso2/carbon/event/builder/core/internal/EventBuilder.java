@@ -23,6 +23,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.log4j.Logger;
 import org.wso2.carbon.context.PrivilegedCarbonContext;
+import org.wso2.carbon.databridge.commons.Event;
 import org.wso2.carbon.databridge.commons.StreamDefinition;
 import org.wso2.carbon.event.builder.core.config.EventBuilderConfiguration;
 import org.wso2.carbon.event.builder.core.config.InputMapper;
@@ -42,6 +43,7 @@ import org.wso2.carbon.event.stream.manager.core.EventProducer;
 import org.wso2.carbon.event.stream.manager.core.EventProducerCallback;
 
 import java.util.Arrays;
+import java.util.List;
 
 public class EventBuilder implements EventProducer {
 
@@ -191,28 +193,33 @@ public class EventBuilder implements EventProducer {
         this.subscriptionId = null;
     }
 
-    protected void processMappedEvent(Object obj) {
+    protected void processMappedEvent(Object object) {
         if (traceEnabled) {
-            trace.info(beforeTracerPrefix + obj.toString());
+            trace.info(beforeTracerPrefix + object.toString());
         }
 
         try {
-            Object convertedEvent = this.inputMapper.convertToMappedInputEvent(obj);
-            if (convertedEvent != null) {
-                if (convertedEvent instanceof Object[][]) {
-                    Object[][] arrayOfEvents = (Object[][]) convertedEvent;
-                    for (Object[] outObjArray : arrayOfEvents) {
-                        sendEvent(outObjArray);
+            if (object instanceof List) {
+                sendEventList((List<Event>) object);
+            } else {
+                Object convertedEvent = this.inputMapper.convertToMappedInputEvent(object);
+                if (convertedEvent != null) {
+                    if (convertedEvent instanceof Object[][]) {
+                        Object[][] arrayOfEvents = (Object[][]) convertedEvent;
+                        for (Object[] outObjArray : arrayOfEvents) {
+                            sendEvent(outObjArray);
+                        }
+                    } else {
+                        sendEvent((Object[]) convertedEvent);
                     }
                 } else {
-                    sendEvent((Object[]) convertedEvent);
+                    log.warn("Dropping the empty/null event, Event does not matched with mapping");
                 }
-            } else {
-                log.warn("Dropping the empty/null event, Event does not matched with mapping");
             }
         } catch (EventBuilderProcessingException e) {
             log.error("Dropping event, Error processing event : " + e.getMessage(), e);
         }
+
     }
 
     protected void processTypedEvent(Object obj) {
@@ -221,15 +228,18 @@ public class EventBuilder implements EventProducer {
         }
         Object convertedEvent = null;
         try {
-            convertedEvent = this.inputMapper.convertToTypedInputEvent(obj);
-
-            if (convertedEvent instanceof Object[][]) {
-                Object[][] arrayOfEvents = (Object[][]) convertedEvent;
-                for (Object[] outObjArray : arrayOfEvents) {
-                    sendEvent(outObjArray);
-                }
+            if (obj instanceof List) {
+                sendEventList((List<Event>) obj);
             } else {
-                sendEvent((Object[]) convertedEvent);
+                convertedEvent = this.inputMapper.convertToTypedInputEvent(obj);
+                if (convertedEvent instanceof Object[][]) {
+                    Object[][] arrayOfEvents = (Object[][]) convertedEvent;
+                    for (Object[] outObjArray : arrayOfEvents) {
+                        sendEvent(outObjArray);
+                    }
+                } else {
+                    sendEvent((Object[]) convertedEvent);
+                }
             }
         } catch (EventBuilderProcessingException e) {
             log.error("Dropping event, Error processing event: " + e.getMessage(), e);
@@ -244,6 +254,16 @@ public class EventBuilder implements EventProducer {
             statisticsMonitor.incrementRequest();
         }
         this.callBack.sendEventData(outObjArray);
+    }
+
+    protected void sendEventList(List<Event> events) {
+        if (traceEnabled) {
+            trace.info(afterTracerPrefix + events);
+        }
+        if (statisticsEnabled) {
+            statisticsMonitor.incrementRequest();
+        }
+        this.callBack.sendEvents(events);
     }
 
     protected void defineEventStream(Object definition) throws EventBuilderConfigurationException {
@@ -266,7 +286,7 @@ public class EventBuilder implements EventProducer {
 
     @Override
     public String getStreamId() {
-          return exportedStreamDefinition.getStreamId();
+        return exportedStreamDefinition.getStreamId();
     }
 
     @Override

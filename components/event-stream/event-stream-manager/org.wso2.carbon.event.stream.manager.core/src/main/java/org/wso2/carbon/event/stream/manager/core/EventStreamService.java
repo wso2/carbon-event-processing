@@ -87,6 +87,8 @@ public interface EventStreamService {
 
     public void subscribe(WSO2EventConsumer wso2EventConsumer, int tenantId) throws EventStreamConfigurationException;
 
+    public void subscribe(WSO2EventListConsumer wso2EventListConsumer, int tenantId) throws EventStreamConfigurationException;
+
     public void unsubscribe(SiddhiEventConsumer siddhiEventConsumer, int tenantId);
 
     public void unsubscribe(RawEventConsumer rawEventConsumer, int tenantId);
@@ -94,5 +96,7 @@ public interface EventStreamService {
     public void unsubscribe(EventProducer eventProducer, int tenantId);
 
     public void unsubscribe(WSO2EventConsumer wso2EventConsumer, int tenantId);
+
+    public void unsubscribe(WSO2EventListConsumer wso2EventConsumer, int tenantId);
 
 }

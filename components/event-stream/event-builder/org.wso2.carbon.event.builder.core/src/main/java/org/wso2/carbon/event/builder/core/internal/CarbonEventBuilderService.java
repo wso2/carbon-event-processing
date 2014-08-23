@@ -131,7 +131,7 @@ public class CarbonEventBuilderService
 
         if (exportedStreamDefinition == null) {
             throw new EventBuilderStreamValidationException("Stream " + eventBuilderConfiguration.getToStreamName() + ":" + eventBuilderConfiguration.getToStreamVersion() + " does not exist",
-                                                            eventBuilderConfiguration.getToStreamName() + ":" + eventBuilderConfiguration.getToStreamVersion()
+                    eventBuilderConfiguration.getToStreamName() + ":" + eventBuilderConfiguration.getToStreamVersion()
             );
         }
         Map<String, List<EventBuilder>> eventBuilderListMap
@@ -294,8 +294,7 @@ public class CarbonEventBuilderService
     }
 
     @Override
-    public void deployEventBuilderConfiguration(String eventBuilderConfigXml,
-                                                AxisConfiguration axisConfiguration)
+    public void deployEventBuilderConfiguration(String eventBuilderConfigXml, AxisConfiguration axisConfiguration)
             throws EventBuilderConfigurationException {
         OMElement omElement;
         try {
@@ -331,11 +330,12 @@ public class CarbonEventBuilderService
                         getServerConfigContext().getAxisConfiguration();
             } else {
                 axisConfiguration = TenantAxisUtils.getTenantAxisConfiguration(CarbonContext.
-                        getThreadLocalCarbonContext().getTenantDomain(), EventBuilderServiceValueHolder.getConfigurationContextService().
-                        getServerConfigContext());
+                        getThreadLocalCarbonContext().getTenantDomain(),
+                        EventBuilderServiceValueHolder.getConfigurationContextService().
+                                getServerConfigContext());
             }
             EventBuilderConfigurationFileSystemInvoker.saveAndDeploy(omElement.toString(),
-                                                                     new File(filePath).getName(), axisConfiguration);
+                    new File(filePath).getName(), axisConfiguration);
         } else {
             throw new EventBuilderConfigurationException("Mapping type of the Event Builder " + eventBuilderConfiguration.getEventBuilderName() + " cannot be null");
         }
@@ -403,8 +403,7 @@ public class CarbonEventBuilderService
         }
     }
 
-    public void saveDefaultEventBuilder(String streamId, int tenantId)
-            throws EventBuilderConfigurationException {
+    public void saveDefaultEventBuilder(String streamId, int tenantId) throws EventBuilderConfigurationException {
         try {
             InputEventAdaptorManagerService inputEventAdaptorManagerService = EventBuilderServiceValueHolder.getInputEventAdaptorManagerService();
             String defaultWso2EventAdaptorName = inputEventAdaptorManagerService.getDefaultWso2EventAdaptor();
@@ -417,7 +416,10 @@ public class CarbonEventBuilderService
 
                 if (!EventBuilderConfigurationFileSystemInvoker.isFileExists(filename)) {
                     for (EventBuilderConfiguration eventBuilderConfiguration : getAllActiveEventBuilderConfigurations(tenantId)) {
-                        if (eventBuilderConfiguration.getInputStreamConfiguration().getInputEventAdaptorName().equals(defaultWso2EventAdaptorName) && (eventBuilderConfiguration.getToStreamName() + ":" + eventBuilderConfiguration.getToStreamVersion()).equals(streamId)) {
+
+                        //TODO - We have to decide about default builder handeling -- If there is a builder which send events to the specific stream then there is no default builder created
+                        //eventBuilderConfiguration.getInputStreamConfiguration().getInputEventAdaptorName().equals(defaultWso2EventAdaptorName) &&
+                        if ((eventBuilderConfiguration.getToStreamName() + ":" + eventBuilderConfiguration.getToStreamVersion()).equals(streamId)) {
                             log.info("Skipping defining default event builder " + defaultEventBuilderConfiguration.getEventBuilderName() + " as " + eventBuilderConfiguration.getEventBuilderName() + " already exist");
                             return;
                         }
@@ -571,8 +573,7 @@ public class CarbonEventBuilderService
     }
 
     public void activateInactiveEventBuilderConfigurationsForStream(String streamNameWithVersion,
-                                                                    int tenantId)
-            throws EventBuilderConfigurationException {
+                                                                    int tenantId) throws EventBuilderConfigurationException {
         List<EventBuilderConfigurationFile> fileList = new ArrayList<EventBuilderConfigurationFile>();
 
         if (tenantSpecificEventBuilderConfigFileMap != null && tenantSpecificEventBuilderConfigFileMap.size() > 0) {
@@ -581,7 +582,7 @@ public class CarbonEventBuilderService
             if (eventBuilderConfigurationFiles != null) {
                 for (EventBuilderConfigurationFile eventBuilderConfigurationFile : eventBuilderConfigurationFiles) {
                     if (EventBuilderConfigurationFile.DeploymentStatus.WAITING_FOR_STREAM_DEPENDENCY.equals(eventBuilderConfigurationFile.getDeploymentStatus())
-                        && streamNameWithVersion.equalsIgnoreCase(eventBuilderConfigurationFile.getDependency())) {
+                            && streamNameWithVersion.equalsIgnoreCase(eventBuilderConfigurationFile.getDependency())) {
                         fileList.add(eventBuilderConfigurationFile);
                     }
                 }
@@ -665,7 +666,7 @@ public class CarbonEventBuilderService
             if (eventBuilderConfigurationFiles != null) {
                 for (EventBuilderConfigurationFile eventBuilderConfigurationFile : eventBuilderConfigurationFiles) {
                     if ((eventBuilderConfigurationFile.getEventBuilderName().equals(eventBuilderName))
-                        && eventBuilderConfigurationFile.getDeploymentStatus().equals(EventBuilderConfigurationFile.DeploymentStatus.DEPLOYED)) {
+                            && eventBuilderConfigurationFile.getDeploymentStatus().equals(EventBuilderConfigurationFile.DeploymentStatus.DEPLOYED)) {
                         return eventBuilderConfigurationFile.getFileName();
                     }
                 }
@@ -681,7 +682,7 @@ public class CarbonEventBuilderService
             if (eventBuilderConfigurationFiles != null) {
                 for (EventBuilderConfigurationFile eventBuilderConfigurationFile : eventBuilderConfigurationFiles) {
                     if ((eventBuilderConfigurationFile.getEventBuilderName().equals(eventBuilderName))
-                        && (eventBuilderConfigurationFile.getDeploymentStatus().equals(EventBuilderConfigurationFile.DeploymentStatus.DEPLOYED))) {
+                            && (eventBuilderConfigurationFile.getDeploymentStatus().equals(EventBuilderConfigurationFile.DeploymentStatus.DEPLOYED))) {
                         return true;
                     }
                 }
@@ -723,5 +724,20 @@ public class CarbonEventBuilderService
         }
 
     }
+
+    public boolean isEventBuilderFileAlreadyExist(String eventBuilderFileName, int tenantId) {
+        if (tenantSpecificEventBuilderConfigFileMap.size() > 0) {
+            List<EventBuilderConfigurationFile> eventBuilderConfigurationFiles = tenantSpecificEventBuilderConfigFileMap.get(tenantId);
+            if (eventBuilderConfigurationFiles != null) {
+                for (EventBuilderConfigurationFile eventBuilderConfigurationFile : eventBuilderConfigurationFiles) {
+                    if ((eventBuilderConfigurationFile.getFileName().equals(eventBuilderFileName))) {
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
+    }
+
 
 }

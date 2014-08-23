@@ -120,73 +120,77 @@ public class EventProcessorDeployer extends AbstractDeployer {
         File executionPlanFile = deploymentFileData.getFile();
         int tenantId = PrivilegedCarbonContext.getThreadLocalCarbonContext().getTenantId();
         ExecutionPlanConfigurationFile executionPlanConfigurationFile = new ExecutionPlanConfigurationFile();
-        String executionPlanName = "";
-        try {
-            OMElement executionPlanOMElement = getExecutionPlanOMElement(executionPlanFile);
-            if (!(executionPlanOMElement.getQName().getLocalPart()).equals(EventProcessorConstants.EP_ELE_ROOT_ELEMENT)) {
-                throw new ExecutionPlanConfigurationException("Wrong event formatter configuration file, Invalid root element " + executionPlanOMElement.getQName()+" in "+executionPlanFile.getName());
+        if (!carbonEventProcessorService.isExecutionPlanFileAlreadyExist(executionPlanFile.getName(), tenantId)) {
+            String executionPlanName = "";
+            try {
+                OMElement executionPlanOMElement = getExecutionPlanOMElement(executionPlanFile);
+                if (!(executionPlanOMElement.getQName().getLocalPart()).equals(EventProcessorConstants.EP_ELE_ROOT_ELEMENT)) {
+                    throw new ExecutionPlanConfigurationException("Wrong event formatter configuration file, Invalid root element " + executionPlanOMElement.getQName() + " in " + executionPlanFile.getName());
+                }
+                ExecutionPlanConfiguration executionPlanConfiguration = EventProcessorConfigurationHelper.fromOM(executionPlanOMElement);
+
+                if (executionPlanConfiguration.getName() == null || executionPlanConfiguration.getName().trim().isEmpty()) {
+                    throw new ExecutionPlanConfigurationException(executionPlanFile.getName() + " is not a valid execution plan configuration file, does not contain a valid execution plan name");
+                }
+
+                executionPlanName = executionPlanConfiguration.getName();
+                EventProcessorConfigurationHelper.validateExecutionPlanConfiguration(executionPlanOMElement, tenantId);
+                carbonEventProcessorService.addExecutionPlanConfiguration(executionPlanConfiguration, configurationContext.getAxisConfiguration());
+                executionPlanConfigurationFile.setStatus(ExecutionPlanConfigurationFile.Status.DEPLOYED);
+                executionPlanConfigurationFile.setExecutionPlanName(executionPlanConfiguration.getName());
+                executionPlanConfigurationFile.setAxisConfiguration(configurationContext.getAxisConfiguration());
+                executionPlanConfigurationFile.setFileName(deploymentFileData.getName());
+                carbonEventProcessorService.addExecutionPlanConfigurationFile(executionPlanConfigurationFile, PrivilegedCarbonContext.getThreadLocalCarbonContext().getTenantId());
+
+                checkForDuplicatedStreams(executionPlanConfiguration);
+
+                log.info("Execution plan is deployed successfully and in active state  : " + executionPlanConfiguration.getName());
+
+            } catch (ServiceDependencyValidationException ex) {
+                executionPlanConfigurationFile.setDependency(ex.getDependency());
+                executionPlanConfigurationFile.setDeploymentStatusMessage(ex.getMessage());
+                executionPlanConfigurationFile.setStatus(ExecutionPlanConfigurationFile.Status.WAITING_FOR_OSGI_SERVICE);
+                executionPlanConfigurationFile.setExecutionPlanName(executionPlanName);
+                executionPlanConfigurationFile.setAxisConfiguration(configurationContext.getAxisConfiguration());
+                executionPlanConfigurationFile.setFileName(deploymentFileData.getName());
+                carbonEventProcessorService.addExecutionPlanConfigurationFile(executionPlanConfigurationFile, PrivilegedCarbonContext.getThreadLocalCarbonContext().getTenantId());
+
+                log.info("Execution plan deployment held back and in inactive state : " + executionPlanName + ", waiting for dependency : " + ex.getDependency());
+
+            } catch (ExecutionPlanDependencyValidationException ex) {
+                executionPlanConfigurationFile.setDependency(ex.getDependency());
+                executionPlanConfigurationFile.setDeploymentStatusMessage(ex.getMessage());
+                executionPlanConfigurationFile.setStatus(ExecutionPlanConfigurationFile.Status.WAITING_FOR_DEPENDENCY);
+                executionPlanConfigurationFile.setExecutionPlanName(executionPlanName);
+                executionPlanConfigurationFile.setAxisConfiguration(configurationContext.getAxisConfiguration());
+                executionPlanConfigurationFile.setFileName(deploymentFileData.getName());
+                carbonEventProcessorService.addExecutionPlanConfigurationFile(executionPlanConfigurationFile, PrivilegedCarbonContext.getThreadLocalCarbonContext().getTenantId());
+
+                log.info("Execution plan deployment held back and in inactive state : " + executionPlanName + ", waiting for dependency : " + ex.getDependency());
+
+            } catch (ExecutionPlanConfigurationException ex) {
+                executionPlanConfigurationFile.setDeploymentStatusMessage(ex.getMessage());
+                executionPlanConfigurationFile.setStatus(ExecutionPlanConfigurationFile.Status.ERROR);
+                executionPlanConfigurationFile.setExecutionPlanName(executionPlanName);
+                executionPlanConfigurationFile.setAxisConfiguration(configurationContext.getAxisConfiguration());
+                executionPlanConfigurationFile.setFileName(deploymentFileData.getName());
+                carbonEventProcessorService.addExecutionPlanConfigurationFile(executionPlanConfigurationFile, PrivilegedCarbonContext.getThreadLocalCarbonContext().getTenantId());
+
+                log.error("Execution plan is not deployed and in inactive state : " + executionPlanFile.getName(), ex);
+                throw new ExecutionPlanConfigurationException(ex.getMessage(), ex);
+            } catch (DeploymentException ex) {
+                executionPlanConfigurationFile.setDeploymentStatusMessage(ex.getMessage());
+                executionPlanConfigurationFile.setStatus(ExecutionPlanConfigurationFile.Status.ERROR);
+                executionPlanConfigurationFile.setExecutionPlanName(executionPlanName);
+                executionPlanConfigurationFile.setAxisConfiguration(configurationContext.getAxisConfiguration());
+                executionPlanConfigurationFile.setFileName(deploymentFileData.getName());
+                carbonEventProcessorService.addExecutionPlanConfigurationFile(executionPlanConfigurationFile, PrivilegedCarbonContext.getThreadLocalCarbonContext().getTenantId());
+
+                log.error("Execution plan is not deployed and in inactive state : " + executionPlanConfigurationFile.getFileName() + ", " + ex.getMessage(), ex);
+                throw new ExecutionPlanConfigurationException(ex.getMessage(), ex);
             }
-            ExecutionPlanConfiguration executionPlanConfiguration = EventProcessorConfigurationHelper.fromOM(executionPlanOMElement);
-
-            if (executionPlanConfiguration.getName() == null || executionPlanConfiguration.getName().trim().isEmpty()) {
-                throw new ExecutionPlanConfigurationException(executionPlanFile.getName() + " is not a valid execution plan configuration file, does not contain a valid execution plan name");
-            }
-
-            executionPlanName = executionPlanConfiguration.getName();
-            EventProcessorConfigurationHelper.validateExecutionPlanConfiguration(executionPlanOMElement,tenantId);
-            carbonEventProcessorService.addExecutionPlanConfiguration(executionPlanConfiguration, configurationContext.getAxisConfiguration());
-            executionPlanConfigurationFile.setStatus(ExecutionPlanConfigurationFile.Status.DEPLOYED);
-            executionPlanConfigurationFile.setExecutionPlanName(executionPlanConfiguration.getName());
-            executionPlanConfigurationFile.setAxisConfiguration(configurationContext.getAxisConfiguration());
-            executionPlanConfigurationFile.setFileName(deploymentFileData.getName());
-            carbonEventProcessorService.addExecutionPlanConfigurationFile(executionPlanConfigurationFile, PrivilegedCarbonContext.getThreadLocalCarbonContext().getTenantId());
-
-            checkForDuplicatedStreams(executionPlanConfiguration);
-
-            log.info("Execution plan is deployed successfully and in active state  : " + executionPlanConfiguration.getName());
-
-        } catch (ServiceDependencyValidationException ex) {
-            executionPlanConfigurationFile.setDependency(ex.getDependency());
-            executionPlanConfigurationFile.setDeploymentStatusMessage(ex.getMessage());
-            executionPlanConfigurationFile.setStatus(ExecutionPlanConfigurationFile.Status.WAITING_FOR_OSGI_SERVICE);
-            executionPlanConfigurationFile.setExecutionPlanName(executionPlanName);
-            executionPlanConfigurationFile.setAxisConfiguration(configurationContext.getAxisConfiguration());
-            executionPlanConfigurationFile.setFileName(deploymentFileData.getName());
-            carbonEventProcessorService.addExecutionPlanConfigurationFile(executionPlanConfigurationFile, PrivilegedCarbonContext.getThreadLocalCarbonContext().getTenantId());
-
-            log.info("Execution plan deployment held back and in inactive state : " + executionPlanName + ", waiting for dependency : " + ex.getDependency());
-
-        } catch (ExecutionPlanDependencyValidationException ex) {
-            executionPlanConfigurationFile.setDependency(ex.getDependency());
-            executionPlanConfigurationFile.setDeploymentStatusMessage(ex.getMessage());
-            executionPlanConfigurationFile.setStatus(ExecutionPlanConfigurationFile.Status.WAITING_FOR_DEPENDENCY);
-            executionPlanConfigurationFile.setExecutionPlanName(executionPlanName);
-            executionPlanConfigurationFile.setAxisConfiguration(configurationContext.getAxisConfiguration());
-            executionPlanConfigurationFile.setFileName(deploymentFileData.getName());
-            carbonEventProcessorService.addExecutionPlanConfigurationFile(executionPlanConfigurationFile, PrivilegedCarbonContext.getThreadLocalCarbonContext().getTenantId());
-
-            log.info("Execution plan deployment held back and in inactive state : " + executionPlanName + ", waiting for dependency : " + ex.getDependency());
-
-        } catch (ExecutionPlanConfigurationException ex) {
-            executionPlanConfigurationFile.setDeploymentStatusMessage(ex.getMessage());
-            executionPlanConfigurationFile.setStatus(ExecutionPlanConfigurationFile.Status.ERROR);
-            executionPlanConfigurationFile.setExecutionPlanName(executionPlanName);
-            executionPlanConfigurationFile.setAxisConfiguration(configurationContext.getAxisConfiguration());
-            executionPlanConfigurationFile.setFileName(deploymentFileData.getName());
-            carbonEventProcessorService.addExecutionPlanConfigurationFile(executionPlanConfigurationFile, PrivilegedCarbonContext.getThreadLocalCarbonContext().getTenantId());
-
-            log.error("Execution plan is not deployed and in inactive state : " + executionPlanFile.getName(), ex);
-            throw new ExecutionPlanConfigurationException(ex.getMessage(), ex);
-        } catch (DeploymentException ex) {
-            executionPlanConfigurationFile.setDeploymentStatusMessage(ex.getMessage());
-            executionPlanConfigurationFile.setStatus(ExecutionPlanConfigurationFile.Status.ERROR);
-            executionPlanConfigurationFile.setExecutionPlanName(executionPlanName);
-            executionPlanConfigurationFile.setAxisConfiguration(configurationContext.getAxisConfiguration());
-            executionPlanConfigurationFile.setFileName(deploymentFileData.getName());
-            carbonEventProcessorService.addExecutionPlanConfigurationFile(executionPlanConfigurationFile, PrivilegedCarbonContext.getThreadLocalCarbonContext().getTenantId());
-
-            log.error("Execution plan is not deployed and in inactive state : " + executionPlanConfigurationFile.getFileName() + ", " + ex.getMessage(), ex);
-            throw new ExecutionPlanConfigurationException(ex.getMessage(), ex);
+        } else {
+            log.info("Execution plan " + executionPlanFile.getName() + " is already registered with this tenant (" + tenantId + "), hence ignoring redeployment");
         }
 
     }
