@@ -1,19 +1,20 @@
 /*
- * Copyright 2004,2005 The Apache Software Foundation.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
+*  Copyright (c) 2005-2014, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
+*
+*  WSO2 Inc. licenses this file to you under the Apache License,
+*  Version 2.0 (the "License"); you may not use this file except
+*  in compliance with the License.
+*  You may obtain a copy of the License at
+*
+*    http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing,
+* software distributed under the License is distributed on an
+* "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+* KIND, either express or implied.  See the License for the
+* specific language governing permissions and limitations
+* under the License.
+*/
 package org.wso2.carbon.event.input.adaptor.manager.core.internal;
 
 import org.apache.axiom.om.OMElement;
@@ -35,11 +36,7 @@ import org.wso2.carbon.event.input.adaptor.manager.core.internal.util.helper.Inp
 
 import javax.xml.stream.XMLStreamException;
 import java.io.File;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -73,16 +70,23 @@ public class CarbonInputEventAdaptorManagerService
         OMElement omElement = InputEventAdaptorConfigurationHelper.eventAdaptorConfigurationToOM(eventAdaptorConfiguration);
 
         if (InputEventAdaptorConfigurationHelper.validateEventAdaptorConfiguration(InputEventAdaptorConfigurationHelper.fromOM(omElement))) {
-            File directory = new File(axisConfiguration.getRepository().getPath());
+            String repoPath = axisConfiguration.getRepository().getPath();
+            File directory = new File(repoPath);
             if (!directory.exists()) {
-                if (directory.mkdir()) {
-                    throw new InputEventAdaptorManagerConfigurationException("Cannot create directory to add tenant specific Input Event Adaptor :" + eventAdaptorName);
+                synchronized (repoPath.intern()) {
+                    if (!directory.mkdir()) {
+                        throw new InputEventAdaptorManagerConfigurationException("Cannot create directory to add tenant specific Input Event Adaptor :" + eventAdaptorName);
+                    }
                 }
             }
-            directory = new File(directory.getAbsolutePath() + File.separator + InputEventAdaptorManagerConstants.IEA_ELE_DIRECTORY);
+
+            String inputAdaptorsConfigPath = directory.getAbsolutePath() + File.separator + InputEventAdaptorManagerConstants.IEA_ELE_DIRECTORY;
+            directory = new File(inputAdaptorsConfigPath);
             if (!directory.exists()) {
-                if (!directory.mkdir()) {
-                    throw new InputEventAdaptorManagerConfigurationException("Cannot create directory " + InputEventAdaptorManagerConstants.IEA_ELE_DIRECTORY + " to add tenant specific Input Event Adaptor :" + eventAdaptorName);
+                synchronized (inputAdaptorsConfigPath.intern()) {
+                    if (!directory.mkdir()) {
+                        throw new InputEventAdaptorManagerConfigurationException("Cannot create directory " + InputEventAdaptorManagerConstants.IEA_ELE_DIRECTORY + " to add tenant specific Input Event Adaptor :" + eventAdaptorName);
+                    }
                 }
             }
 
@@ -584,6 +588,22 @@ public class CarbonInputEventAdaptorManagerService
             }
         }
 
+    }
+
+
+    public boolean isInputEventAdaptorFileAlreadyExist(int tenantId, String eventAdaptorFileName) {
+
+        if (eventAdaptorFileMap.size() > 0) {
+            List<InputEventAdaptorFile> inputEventAdaptorFileList = eventAdaptorFileMap.get(tenantId);
+            if (inputEventAdaptorFileList != null) {
+                for (InputEventAdaptorFile inputEventAdaptorFile : inputEventAdaptorFileList) {
+                    if ((inputEventAdaptorFile.getFileName().equals(eventAdaptorFileName))) {
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
     }
 
 }

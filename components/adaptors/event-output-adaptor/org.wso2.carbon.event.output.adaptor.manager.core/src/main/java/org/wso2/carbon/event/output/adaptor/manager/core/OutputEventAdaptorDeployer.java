@@ -1,21 +1,20 @@
 /*
- *  Licensed to the Apache Software Foundation (ASF) under one
- *  or more contributor license agreements.  See the NOTICE file
- *  distributed with this work for additional information
- *  regarding copyright ownership.  The ASF licenses this file
- *  to you under the Apache License, Version 2.0 (the
- *  "License"); you may not use this file except in compliance
- *  with the License.  You may obtain a copy of the License at
- *
- *   http://www.apache.org/licenses/LICENSE-2.0
- *
- *  Unless required by applicable law or agreed to in writing,
- *  software distributed under the License is distributed on an
- *   * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- *  KIND, either express or implied.  See the License for the
- *  specific language governing permissions and limitations
- *  under the License.
- */
+*  Copyright (c) 2005-2014, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
+*
+*  WSO2 Inc. licenses this file to you under the Apache License,
+*  Version 2.0 (the "License"); you may not use this file except
+*  in compliance with the License.
+*  You may obtain a copy of the License at
+*
+*    http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing,
+* software distributed under the License is distributed on an
+* "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+* KIND, either express or implied.  See the License for the
+* specific language governing permissions and limitations
+* under the License.
+*/
 package org.wso2.carbon.event.output.adaptor.manager.core;
 
 import org.apache.axiom.om.OMElement;
@@ -40,11 +39,7 @@ import javax.xml.namespace.QName;
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
-import java.io.BufferedInputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
+import java.io.*;
 import java.util.Collections;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
@@ -155,46 +150,50 @@ public class OutputEventAdaptorDeployer extends AbstractDeployer {
         int tenantId = PrivilegedCarbonContext.getThreadLocalCarbonContext().getTenantId();
 
         String eventAdaptorName = "";
-        try {
-            OMElement eventAdaptorOMElement = getEventAdaptorOMElement(eventAdaptorFile);
-            OutputEventAdaptorConfiguration eventAdaptorConfiguration = OutputEventAdaptorConfigurationHelper.fromOM(eventAdaptorOMElement);
+        if(!carbonEventAdaptorManagerService.isOutputEventAdaptorFileAlreadyExist(tenantId, eventAdaptorFile.getName())) {
+            try {
+                OMElement eventAdaptorOMElement = getEventAdaptorOMElement(eventAdaptorFile);
+                OutputEventAdaptorConfiguration eventAdaptorConfiguration = OutputEventAdaptorConfigurationHelper.fromOM(eventAdaptorOMElement);
 
-            if (!(eventAdaptorOMElement.getQName().getLocalPart()).equals(OutputEventAdaptorManagerConstants.OEA_ELE_ROOT_ELEMENT)) {
-                throw new DeploymentException("Wrong output event adaptor configuration file, Invalid root element " + eventAdaptorOMElement.getQName().getLocalPart() + " in " + eventAdaptorFile.getName());
-            }
+                if (!(eventAdaptorOMElement.getQName().getLocalPart()).equals(OutputEventAdaptorManagerConstants.OEA_ELE_ROOT_ELEMENT)) {
+                    throw new DeploymentException("Wrong output event adaptor configuration file, Invalid root element " + eventAdaptorOMElement.getQName().getLocalPart() + " in " + eventAdaptorFile.getName());
+                }
 
-            if (eventAdaptorConfiguration.getName() == null || eventAdaptorConfiguration.getType() == null || eventAdaptorConfiguration.getName().trim().isEmpty()) {
-                throw new DeploymentException(eventAdaptorFile.getName() + " is not a valid output event adaptor configuration file");
-            }
+                if (eventAdaptorConfiguration.getName() == null || eventAdaptorConfiguration.getType() == null || eventAdaptorConfiguration.getName().trim().isEmpty()) {
+                    throw new DeploymentException(eventAdaptorFile.getName() + " is not a valid output event adaptor configuration file");
+                }
 
-            eventAdaptorName = eventAdaptorOMElement.getAttributeValue(new QName(OutputEventAdaptorManagerConstants.OEA_ATTR_NAME));
+                eventAdaptorName = eventAdaptorOMElement.getAttributeValue(new QName(OutputEventAdaptorManagerConstants.OEA_ATTR_NAME));
 
-            if (OutputEventAdaptorConfigurationHelper.validateEventAdaptorConfiguration(OutputEventAdaptorConfigurationHelper.fromOM(eventAdaptorOMElement))) {
-                if (carbonEventAdaptorManagerService.checkAdaptorValidity(tenantId, eventAdaptorName)) {
-                    carbonEventAdaptorManagerService.addOutputEventAdaptorConfiguration(tenantId, eventAdaptorConfiguration);
-                    carbonEventAdaptorManagerService.addOutputEventAdaptorConfigurationFile(tenantId, createOutputEventAdaptorFile(eventAdaptorName, deploymentFileData.getName(), OutputEventAdaptorFile.Status.DEPLOYED, null, null, null));
+                if (OutputEventAdaptorConfigurationHelper.validateEventAdaptorConfiguration(OutputEventAdaptorConfigurationHelper.fromOM(eventAdaptorOMElement))) {
+                    if (carbonEventAdaptorManagerService.checkAdaptorValidity(tenantId, eventAdaptorName)) {
+                        carbonEventAdaptorManagerService.addOutputEventAdaptorConfiguration(tenantId, eventAdaptorConfiguration);
+                        carbonEventAdaptorManagerService.addOutputEventAdaptorConfigurationFile(tenantId, createOutputEventAdaptorFile(eventAdaptorName, deploymentFileData.getName(), OutputEventAdaptorFile.Status.DEPLOYED, null, null, null));
 
-                    log.info("Output Event Adaptor successfully deployed and in active state : " + eventAdaptorName);
-                    if (carbonEventAdaptorManagerService.outputEventAdaptorNotificationListener != null) {
-                        for (OutputEventAdaptorNotificationListener outputEventAdaptorNotificationListener : carbonEventAdaptorManagerService.outputEventAdaptorNotificationListener) {
-                            outputEventAdaptorNotificationListener.configurationAdded(tenantId, eventAdaptorName);
+                        log.info("Output Event Adaptor successfully deployed and in active state : " + eventAdaptorName);
+                        if (carbonEventAdaptorManagerService.outputEventAdaptorNotificationListener != null) {
+                            for (OutputEventAdaptorNotificationListener outputEventAdaptorNotificationListener : carbonEventAdaptorManagerService.outputEventAdaptorNotificationListener) {
+                                outputEventAdaptorNotificationListener.configurationAdded(tenantId, eventAdaptorName);
+                            }
                         }
+                    } else {
+                        throw new OutputEventAdaptorManagerConfigurationException(eventAdaptorName + " is already registered for this tenant");
                     }
                 } else {
-                    throw new OutputEventAdaptorManagerConfigurationException(eventAdaptorName + " is already registered for this tenant");
+                    carbonEventAdaptorManagerService.addOutputEventAdaptorConfigurationFile(tenantId, createOutputEventAdaptorFile(eventAdaptorName, deploymentFileData.getName(), OutputEventAdaptorFile.Status.WAITING_FOR_DEPENDENCY, configurationContext.getAxisConfiguration(), "Event Adaptor type is not found", eventAdaptorConfiguration.getType()));
+                    log.info("Output Event Adaptor deployment held back and in inactive state : " + eventAdaptorName + ", waiting for output event adaptor type dependency : " + eventAdaptorConfiguration.getType());
                 }
-            } else {
-                carbonEventAdaptorManagerService.addOutputEventAdaptorConfigurationFile(tenantId, createOutputEventAdaptorFile(eventAdaptorName, deploymentFileData.getName(), OutputEventAdaptorFile.Status.WAITING_FOR_DEPENDENCY, configurationContext.getAxisConfiguration(), "Event Adaptor type is not found", eventAdaptorConfiguration.getType()));
-                log.info("Output Event Adaptor deployment held back and in inactive state : " + eventAdaptorName + ", waiting for output event adaptor type dependency : " + eventAdaptorConfiguration.getType());
+            } catch (OutputEventAdaptorManagerConfigurationException ex) {
+                carbonEventAdaptorManagerService.addOutputEventAdaptorConfigurationFile(tenantId, createOutputEventAdaptorFile(eventAdaptorName, deploymentFileData.getName(), OutputEventAdaptorFile.Status.ERROR, null, null, null));
+                log.error("Output Event Adaptor not deployed and in inactive state : " + eventAdaptorFile.getName() + " , " + ex.getMessage(), ex);
+                throw new OutputEventAdaptorManagerConfigurationException(ex);
+            } catch (DeploymentException e) {
+                carbonEventAdaptorManagerService.addOutputEventAdaptorConfigurationFile(tenantId, createOutputEventAdaptorFile(eventAdaptorName, deploymentFileData.getName(), OutputEventAdaptorFile.Status.ERROR, configurationContext.getAxisConfiguration(), "Deployment exception occurred", null));
+                log.error("Output Event Adaptor not deployed and in inactive state : " + eventAdaptorFile.getName() + " , " + e.getMessage(), e);
+                throw new DeploymentException(e);
             }
-        } catch (OutputEventAdaptorManagerConfigurationException ex) {
-            carbonEventAdaptorManagerService.addOutputEventAdaptorConfigurationFile(tenantId, createOutputEventAdaptorFile(eventAdaptorName, deploymentFileData.getName(), OutputEventAdaptorFile.Status.ERROR, null, null, null));
-            log.error("Output Event Adaptor not deployed and in inactive state : " + eventAdaptorFile.getName() + " , " + ex.getMessage(), ex);
-            throw new OutputEventAdaptorManagerConfigurationException(ex);
-        } catch (DeploymentException e) {
-            carbonEventAdaptorManagerService.addOutputEventAdaptorConfigurationFile(tenantId, createOutputEventAdaptorFile(eventAdaptorName, deploymentFileData.getName(), OutputEventAdaptorFile.Status.ERROR, configurationContext.getAxisConfiguration(), "Deployment exception occurred", null));
-            log.error("Output Event Adaptor not deployed and in inactive state : " + eventAdaptorFile.getName() + " , " + e.getMessage(), e);
-            throw new DeploymentException(e);
+        } else {
+            log.info("Output Event adaptor " + eventAdaptorName + " is already registered with this tenant ("+tenantId+"), hence ignoring redeployment");
         }
 
     }
