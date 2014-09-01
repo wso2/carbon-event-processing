@@ -1,24 +1,27 @@
 /*
- * Copyright 2004,2005 The Apache Software Foundation.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+*  Copyright (c) 2005-2014, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
+*
+*  WSO2 Inc. licenses this file to you under the Apache License,
+*  Version 2.0 (the "License"); you may not use this file except
+*  in compliance with the License.
+*  You may obtain a copy of the License at
+*
+*    http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing,
+* software distributed under the License is distributed on an
+* "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+* KIND, either express or implied.  See the License for the
+* specific language governing permissions and limitations
+* under the License.
+*/
 package org.wso2.carbon.event.input.adaptor.kafka;
 
 import kafka.consumer.ConsumerConfig;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.wso2.carbon.context.PrivilegedCarbonContext;
 import org.wso2.carbon.event.input.adaptor.core.AbstractInputEventAdaptor;
 import org.wso2.carbon.event.input.adaptor.core.InputEventAdaptorListener;
 import org.wso2.carbon.event.input.adaptor.core.MessageType;
@@ -29,14 +32,8 @@ import org.wso2.carbon.event.input.adaptor.kafka.internal.LateStartAdaptorListen
 import org.wso2.carbon.event.input.adaptor.kafka.internal.ds.KafkaEventAdaptorServiceHolder;
 import org.wso2.carbon.event.input.adaptor.kafka.internal.util.ConsumerKafkaConstants;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Properties;
-import java.util.ResourceBundle;
-import java.util.UUID;
+import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 public final class KafkaEventAdaptorType extends AbstractInputEventAdaptor implements
                                                                            LateStartAdaptorListener {
@@ -45,7 +42,7 @@ public final class KafkaEventAdaptorType extends AbstractInputEventAdaptor imple
     private static final Log log = LogFactory.getLog(KafkaEventAdaptorType.class);
     private ResourceBundle resourceBundle;
     private static KafkaEventAdaptorType kafkaAdaptorEventAdaptor = new KafkaEventAdaptorType();
-    Map<String, ConsumerKafkaAdaptor> consumerAdaptorMap = new HashMap<String, ConsumerKafkaAdaptor>();
+    ConcurrentHashMap<Integer, ConcurrentHashMap<String, ConsumerKafkaAdaptor>> consumerAdaptorMap = new ConcurrentHashMap<Integer, ConcurrentHashMap<String, ConsumerKafkaAdaptor>>();
     List<LateStartAdaptorConfig> lateStartAdaptorConfigList = new ArrayList<LateStartAdaptorConfig>();
 
     private KafkaEventAdaptorType() {
@@ -130,11 +127,12 @@ public final class KafkaEventAdaptorType extends AbstractInputEventAdaptor imple
             InputEventAdaptorConfiguration inputEventAdaptorConfiguration,
             AxisConfiguration axisConfiguration) {
 
+        int tenantId = PrivilegedCarbonContext.getThreadLocalCarbonContext().getTenantId(true);
         String subscriptionId = UUID.randomUUID().toString();
         if (!readyToPoll) {
-            lateStartAdaptorConfigList.add(new LateStartAdaptorConfig(inputEventAdaptorMessageConfiguration, inputEventAdaptorListener, inputEventAdaptorConfiguration, axisConfiguration, subscriptionId));
+            lateStartAdaptorConfigList.add(new LateStartAdaptorConfig(inputEventAdaptorMessageConfiguration, inputEventAdaptorListener, inputEventAdaptorConfiguration, axisConfiguration, subscriptionId, tenantId));
         } else {
-            createKafkaAdaptorListener(inputEventAdaptorMessageConfiguration, inputEventAdaptorListener, inputEventAdaptorConfiguration, axisConfiguration, subscriptionId);
+            createKafkaAdaptorListener(inputEventAdaptorMessageConfiguration, inputEventAdaptorListener, inputEventAdaptorConfiguration, axisConfiguration, subscriptionId, tenantId);
         }
         return subscriptionId;
     }
@@ -145,9 +143,14 @@ public final class KafkaEventAdaptorType extends AbstractInputEventAdaptor imple
             InputEventAdaptorConfiguration inputEventAdaptorConfiguration,
             AxisConfiguration axisConfiguration, String subscriptionId) {
         if (consumerAdaptorMap != null) {
-            ConsumerKafkaAdaptor consumerKafkaAdaptor = consumerAdaptorMap.get(subscriptionId);
-            if (consumerKafkaAdaptor != null) {
-                consumerKafkaAdaptor.shutdown();
+            int tenantId = PrivilegedCarbonContext.getThreadLocalCarbonContext().getTenantId(true);
+            ConcurrentHashMap<String, ConsumerKafkaAdaptor> tenantSpecificAdaptorMap = consumerAdaptorMap.get(tenantId);
+            if (tenantSpecificAdaptorMap != null) {
+                ConsumerKafkaAdaptor consumerKafkaAdaptor = tenantSpecificAdaptorMap.get(subscriptionId);
+                if (consumerKafkaAdaptor != null) {
+                    consumerKafkaAdaptor.shutdown();
+                    tenantSpecificAdaptorMap.remove(subscriptionId);
+                }
             }
         }
     }
@@ -180,7 +183,7 @@ public final class KafkaEventAdaptorType extends AbstractInputEventAdaptor imple
         log.info("Kafka input event adaptor loading listeners ");
         readyToPoll = true;
         for (LateStartAdaptorConfig lateStartAdaptorConfig : lateStartAdaptorConfigList) {
-            this.createKafkaAdaptorListener(lateStartAdaptorConfig.getInputEventAdaptorMessageConfiguration(), lateStartAdaptorConfig.getInputEventAdaptorListener(), lateStartAdaptorConfig.getInputEventAdaptorConfiguration(), lateStartAdaptorConfig.getAxisConfiguration(), lateStartAdaptorConfig.getSubscriptionId());
+            this.createKafkaAdaptorListener(lateStartAdaptorConfig.getInputEventAdaptorMessageConfiguration(), lateStartAdaptorConfig.getInputEventAdaptorListener(), lateStartAdaptorConfig.getInputEventAdaptorConfiguration(), lateStartAdaptorConfig.getAxisConfiguration(), lateStartAdaptorConfig.getSubscriptionId(), lateStartAdaptorConfig.getTenantId());
         }
     }
 
@@ -188,7 +191,7 @@ public final class KafkaEventAdaptorType extends AbstractInputEventAdaptor imple
             InputEventAdaptorMessageConfiguration inputEventAdaptorMessageConfiguration,
             InputEventAdaptorListener inputEventAdaptorListener,
             InputEventAdaptorConfiguration inputEventAdaptorConfiguration,
-            AxisConfiguration axisConfiguration, String subscriptionId) {
+            AxisConfiguration axisConfiguration, String subscriptionId, int tenantId) {
         Map<String, String> brokerProperties = new HashMap<String, String>();
         brokerProperties.putAll(inputEventAdaptorConfiguration.getInputProperties());
         String zkConnect = brokerProperties.get(ConsumerKafkaConstants.ADAPTOR_SUSCRIBER_ZOOKEEPER_CONNECT);
@@ -200,9 +203,14 @@ public final class KafkaEventAdaptorType extends AbstractInputEventAdaptor imple
         String topic = inputEventAdaptorMessageConfiguration.getInputMessageProperties().get(ConsumerKafkaConstants.ADAPTOR_SUSCRIBER_TOPIC);
 
         ConsumerKafkaAdaptor consumerAdaptor = new ConsumerKafkaAdaptor(topic,
-                                                   KafkaEventAdaptorType.createConsumerConfig(zkConnect, groupID, optionalConfiguration));
+                                                                        KafkaEventAdaptorType.createConsumerConfig(zkConnect, groupID, optionalConfiguration));
+        ConcurrentHashMap<String, ConsumerKafkaAdaptor> tenantSpecificConsumerMap = consumerAdaptorMap.get(tenantId);
+        if (tenantSpecificConsumerMap == null) {
+            tenantSpecificConsumerMap = new ConcurrentHashMap<String, ConsumerKafkaAdaptor>();
+            consumerAdaptorMap.put(tenantId, tenantSpecificConsumerMap);
+        }
+        tenantSpecificConsumerMap.put(subscriptionId, consumerAdaptor);
         consumerAdaptor.run(threads, inputEventAdaptorListener);
-        consumerAdaptorMap.put(subscriptionId,consumerAdaptor);
     }
 
     class LateStartAdaptorConfig {
@@ -211,18 +219,20 @@ public final class KafkaEventAdaptorType extends AbstractInputEventAdaptor imple
         InputEventAdaptorConfiguration inputEventAdaptorConfiguration;
         AxisConfiguration axisConfiguration;
         String subscriptionId;
+        int tenantId;
 
 
         public LateStartAdaptorConfig(
                 InputEventAdaptorMessageConfiguration inputEventAdaptorMessageConfiguration,
                 InputEventAdaptorListener inputEventAdaptorListener,
                 InputEventAdaptorConfiguration inputEventAdaptorConfiguration,
-                AxisConfiguration axisConfiguration, String subscriptionId) {
+                AxisConfiguration axisConfiguration, String subscriptionId, int tenantId) {
             this.inputEventAdaptorMessageConfiguration = inputEventAdaptorMessageConfiguration;
             this.inputEventAdaptorListener = inputEventAdaptorListener;
             this.inputEventAdaptorConfiguration = inputEventAdaptorConfiguration;
             this.axisConfiguration = axisConfiguration;
             this.subscriptionId = subscriptionId;
+            this.tenantId = tenantId;
         }
 
         public InputEventAdaptorMessageConfiguration getInputEventAdaptorMessageConfiguration() {
@@ -266,6 +276,14 @@ public final class KafkaEventAdaptorType extends AbstractInputEventAdaptor imple
 
         public void setSubscriptionId(String subscriptionId) {
             this.subscriptionId = subscriptionId;
+        }
+
+        public int getTenantId() {
+            return tenantId;
+        }
+
+        public void setTenantId(int tenantId) {
+            this.tenantId = tenantId;
         }
     }
 

@@ -1,18 +1,20 @@
-/**
- * Copyright (c) 2009, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
- * <p/>
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- * <p/>
- * http://www.apache.org/licenses/LICENSE-2.0
- * <p/>
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+/*
+*  Copyright (c) 2005-2014, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
+*
+*  WSO2 Inc. licenses this file to you under the Apache License,
+*  Version 2.0 (the "License"); you may not use this file except
+*  in compliance with the License.
+*  You may obtain a copy of the License at
+*
+*    http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing,
+* software distributed under the License is distributed on an
+* "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+* KIND, either express or implied.  See the License for the
+* specific language governing permissions and limitations
+* under the License.
+*/
 package org.wso2.carbon.event.input.adaptor.jms.internal.util;
 
 import org.apache.axis2.engine.AxisConfiguration;
@@ -22,11 +24,8 @@ import org.wso2.carbon.context.PrivilegedCarbonContext;
 import org.wso2.carbon.event.input.adaptor.core.InputEventAdaptorListener;
 import org.wso2.carbon.event.input.adaptor.core.exception.InputEventAdaptorEventProcessingException;
 
-import javax.jms.JMSException;
-import javax.jms.MapMessage;
-import javax.jms.Message;
-import javax.jms.MessageListener;
-import javax.jms.TextMessage;
+import javax.jms.*;
+import java.io.UnsupportedEncodingException;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
@@ -50,6 +49,11 @@ public class JMSMessageListener implements MessageListener {
             PrivilegedCarbonContext.getThreadLocalCarbonContext().setTenantId(tenantId);
             PrivilegedCarbonContext.getThreadLocalCarbonContext().setTenantDomain(tenantDomain);
             if (message != null) {
+
+                if (log.isDebugEnabled()) {
+                    log.debug("Event received in JMS Event Adaptor - "+message);
+                }
+
                 if (message instanceof TextMessage) {
                     TextMessage textMessage = (TextMessage) message;
                     // Send the text of the message. Conversion to any type (XML,JSON) should
@@ -83,10 +87,22 @@ public class JMSMessageListener implements MessageListener {
                     } catch (InputEventAdaptorEventProcessingException e) {
                         log.error("Can not send the message to broker ", e);
                     }
+                } else if (message instanceof BytesMessage) {
+                    BytesMessage bytesMessage = (BytesMessage) message;
+                    byte[] bytes;
+                    bytes = new byte[(int) bytesMessage.getBodyLength()];
+                    bytesMessage.readBytes(bytes);
+                    eventAdaptorListener.onEventCall(new String(bytes, "UTF-8"));
+                }else{
+                    log.warn("Event dropped due to unsupported message type");
                 }
             } else {
                 log.warn("Dropping the empty/null event received through jms adaptor");
             }
+        } catch (JMSException e) {
+            log.error(e);
+        } catch (UnsupportedEncodingException e) {
+            log.error(e);
         } finally {
             PrivilegedCarbonContext.endTenantFlow();
         }

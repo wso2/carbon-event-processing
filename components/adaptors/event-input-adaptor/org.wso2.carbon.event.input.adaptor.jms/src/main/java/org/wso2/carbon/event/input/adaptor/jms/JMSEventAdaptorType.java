@@ -1,19 +1,20 @@
 /*
- * Copyright 2004,2005 The Apache Software Foundation.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
+*  Copyright (c) 2005-2014, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
+*
+*  WSO2 Inc. licenses this file to you under the Apache License,
+*  Version 2.0 (the "License"); you may not use this file except
+*  in compliance with the License.
+*  You may obtain a copy of the License at
+*
+*    http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing,
+* software distributed under the License is distributed on an
+* "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+* KIND, either express or implied.  See the License for the
+* specific language governing permissions and limitations
+* under the License.
+*/
 package org.wso2.carbon.event.input.adaptor.jms;
 
 import org.apache.axis2.engine.AxisConfiguration;
@@ -31,23 +32,10 @@ import org.wso2.carbon.event.input.adaptor.core.exception.InputEventAdaptorEvent
 import org.wso2.carbon.event.input.adaptor.core.message.config.InputEventAdaptorMessageConfiguration;
 import org.wso2.carbon.event.input.adaptor.jms.internal.LateStartAdaptorListener;
 import org.wso2.carbon.event.input.adaptor.jms.internal.ds.JMSEventAdaptorServiceHolder;
-import org.wso2.carbon.event.input.adaptor.jms.internal.util.JMSConnectionFactory;
-import org.wso2.carbon.event.input.adaptor.jms.internal.util.JMSConstants;
-import org.wso2.carbon.event.input.adaptor.jms.internal.util.JMSEventAdaptorConstants;
-import org.wso2.carbon.event.input.adaptor.jms.internal.util.JMSListener;
-import org.wso2.carbon.event.input.adaptor.jms.internal.util.JMSMessageListener;
-import org.wso2.carbon.event.input.adaptor.jms.internal.util.JMSTaskManager;
-import org.wso2.carbon.event.input.adaptor.jms.internal.util.JMSTaskManagerFactory;
+import org.wso2.carbon.event.input.adaptor.jms.internal.util.*;
 
 import javax.jms.JMSException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Hashtable;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.ResourceBundle;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 public final class JMSEventAdaptorType extends AbstractInputEventAdaptor implements
@@ -235,12 +223,14 @@ public final class JMSEventAdaptorType extends AbstractInputEventAdaptor impleme
         SubscriptionDetails subscriptionDetails = subscriptionsMap.get(subscriptionId);
         if (subscriptionDetails == null) {
             throw new InputEventAdaptorEventProcessingException("There is no subscription for " + destination + " for the subscriptionId:" + subscriptionId);
-        }
+        }else{
 
-        try {
-            subscriptionDetails.close();
-        } catch (JMSException e) {
-            throw new InputEventAdaptorEventProcessingException("Can not unsubscribe from the destination " + destination + " with the event adaptor " + inputEventAdaptorConfiguration.getName(), e);
+            try {
+                subscriptionDetails.close();
+                subscriptionsMap.remove(subscriptionId);
+            } catch (JMSException e) {
+                throw new InputEventAdaptorEventProcessingException("Can not unsubscribe from the destination " + destination + " with the event adaptor " + inputEventAdaptorConfiguration.getName(), e);
+            }
         }
 
     }

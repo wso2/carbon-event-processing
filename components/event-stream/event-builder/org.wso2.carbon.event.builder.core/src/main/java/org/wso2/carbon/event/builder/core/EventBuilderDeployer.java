@@ -1,21 +1,20 @@
 /*
- * Copyright (c) 2005-2013, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
- *
- *  WSO2 Inc. licenses this file to you under the Apache License,
- *  Version 2.0 (the "License"); you may not use this file except
- *  in compliance with the License.
- *  You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- *  Unless required by applicable law or agreed to in writing,
- *  software distributed under the License is distributed on an
- *  "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- *  KIND, either express or implied.  See the License for the
- *  specific language governing permissions and limitations
- *  under the License.
- */
-
+*  Copyright (c) 2005-2014, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
+*
+*  WSO2 Inc. licenses this file to you under the Apache License,
+*  Version 2.0 (the "License"); you may not use this file except
+*  in compliance with the License.
+*  You may obtain a copy of the License at
+*
+*    http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing,
+* software distributed under the License is distributed on an
+* "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+* KIND, either express or implied.  See the License for the
+* specific language governing permissions and limitations
+* under the License.
+*/
 package org.wso2.carbon.event.builder.core;
 
 import org.apache.axiom.om.OMElement;
@@ -163,45 +162,49 @@ public class EventBuilderDeployer extends AbstractDeployer {
         String streamNameWithVersion = null;
         AxisConfiguration currentAxisConfiguration = configurationContext.getAxisConfiguration();
         OMElement ebConfigOMElement = null;
-        try {
-            ebConfigOMElement = getEbConfigOMElement(ebConfigXmlFile);
-            if(!ebConfigOMElement.getLocalName().equals(EventBuilderConstants.EB_ELEMENT_ROOT_ELEMENT)){
+        if(!carbonEventBuilderService.isEventBuilderFileAlreadyExist(ebConfigXmlFile.getName(),tenantId)) {
+            try {
+                ebConfigOMElement = getEbConfigOMElement(ebConfigXmlFile);
+                if (!ebConfigOMElement.getLocalName().equals(EventBuilderConstants.EB_ELEMENT_ROOT_ELEMENT)) {
                     throw new EventBuilderConfigurationException("Wrong event builder configuration file, Invalid root element " + ebConfigOMElement.getQName() + " in " + ebConfigXmlFile.getName());
-            }
-            eventBuilderName = ebConfigOMElement.getAttributeValue(new QName(EventBuilderConstants.EB_ATTR_NAME));
-            String inputMappingType = EventBuilderConfigHelper.getInputMappingType(ebConfigOMElement);
+                }
+                eventBuilderName = ebConfigOMElement.getAttributeValue(new QName(EventBuilderConstants.EB_ATTR_NAME));
+                String inputMappingType = EventBuilderConfigHelper.getInputMappingType(ebConfigOMElement);
 
-            if (eventBuilderName == null || eventBuilderName.trim().isEmpty()) {
-                throw new EventBuilderConfigurationException(ebConfigXmlFile.getName() + " is not a valid event builder configuration file, does not contain a valid event-builder name");
-            }
+                if (eventBuilderName == null || eventBuilderName.trim().isEmpty()) {
+                    throw new EventBuilderConfigurationException(ebConfigXmlFile.getName() + " is not a valid event builder configuration file, does not contain a valid event-builder name");
+                }
 
-            EventBuilderConfiguration eventBuilderConfiguration = EventBuilderConfigBuilder.getEventBuilderConfiguration(ebConfigOMElement, inputMappingType, tenantId);
-            if (eventBuilderConfiguration != null && (!carbonEventBuilderService.isEventBuilderAlreadyExists(tenantId, eventBuilderName))) {
-                streamNameWithVersion = eventBuilderConfiguration.getToStreamName() + EventBuilderConstants.STREAM_NAME_VER_DELIMITER + eventBuilderConfiguration.getToStreamVersion();
-                carbonEventBuilderService.addEventBuilder(eventBuilderConfiguration, configurationContext.getAxisConfiguration());
-                carbonEventBuilderService.addEventBuilderConfigurationFile(eventBuilderName, fileName, EventBuilderConfigurationFile.DeploymentStatus.DEPLOYED,
-                        eventBuilderName + " successfully deployed.", null, streamNameWithVersion, ebConfigOMElement, currentAxisConfiguration);
-                log.info("Event Builder deployed successfully and in active state : " + eventBuilderName);
-            } else {
-                throw new EventBuilderConfigurationException("Event Builder not deployed and in inactive state, since there is a event builder registered with the same name in this tenant :" + eventBuilderName);
+                EventBuilderConfiguration eventBuilderConfiguration = EventBuilderConfigBuilder.getEventBuilderConfiguration(ebConfigOMElement, inputMappingType, tenantId);
+                if (eventBuilderConfiguration != null && (!carbonEventBuilderService.isEventBuilderAlreadyExists(tenantId, eventBuilderName))) {
+                    streamNameWithVersion = eventBuilderConfiguration.getToStreamName() + EventBuilderConstants.STREAM_NAME_VER_DELIMITER + eventBuilderConfiguration.getToStreamVersion();
+                    carbonEventBuilderService.addEventBuilder(eventBuilderConfiguration, configurationContext.getAxisConfiguration());
+                    carbonEventBuilderService.addEventBuilderConfigurationFile(eventBuilderName, fileName, EventBuilderConfigurationFile.DeploymentStatus.DEPLOYED,
+                            eventBuilderName + " successfully deployed.", null, streamNameWithVersion, ebConfigOMElement, currentAxisConfiguration);
+                    log.info("Event Builder deployed successfully and in active state : " + eventBuilderName);
+                } else {
+                    throw new EventBuilderConfigurationException("Event Builder not deployed and in inactive state, since there is a event builder registered with the same name in this tenant :" + eventBuilderName);
+                }
+            } catch (EventBuilderValidationException e) {
+                carbonEventBuilderService.addEventBuilderConfigurationFile(eventBuilderName, fileName, EventBuilderConfigurationFile.DeploymentStatus.WAITING_FOR_DEPENDENCY,
+                        e.getMessage(), e.getDependency(), streamNameWithVersion, ebConfigOMElement, currentAxisConfiguration);
+                log.info("Event builder deployment held back and in inactive state :" + eventBuilderName + ", Waiting for Input Event Adaptor dependency :" + e.getDependency());
+            } catch (EventBuilderStreamValidationException e) {
+                carbonEventBuilderService.addEventBuilderConfigurationFile(eventBuilderName, fileName, EventBuilderConfigurationFile.DeploymentStatus.WAITING_FOR_STREAM_DEPENDENCY,
+                        e.getMessage(), e.getDependency(), streamNameWithVersion, ebConfigOMElement, currentAxisConfiguration);
+                log.info("Event builder deployment held back and in inactive state :" + eventBuilderName + ", Stream validation exception : " + e.getMessage());
+            } catch (EventBuilderConfigurationException e) {
+                carbonEventBuilderService.addEventBuilderConfigurationFile(eventBuilderName, fileName, EventBuilderConfigurationFile.DeploymentStatus.ERROR,
+                        "Exception when deploying event builder configuration file:\n" + e.getMessage(), null, streamNameWithVersion, ebConfigOMElement, currentAxisConfiguration);
+                throw new EventBuilderConfigurationException(e.getMessage(), e);
+            } catch (Throwable e) {
+                log.error("Invalid configuration in event builder configuration file :" + ebConfigXmlFile.getName(), e);
+                carbonEventBuilderService.addEventBuilderConfigurationFile(eventBuilderName, fileName, EventBuilderConfigurationFile.DeploymentStatus.ERROR,
+                        "Deployment exception: " + e.getMessage(), null, streamNameWithVersion, ebConfigOMElement, currentAxisConfiguration);
+                throw new DeploymentException(e);
             }
-        } catch (EventBuilderValidationException e) {
-            carbonEventBuilderService.addEventBuilderConfigurationFile(eventBuilderName, fileName, EventBuilderConfigurationFile.DeploymentStatus.WAITING_FOR_DEPENDENCY,
-                    e.getMessage(), e.getDependency(), streamNameWithVersion, ebConfigOMElement, currentAxisConfiguration);
-            log.info("Event builder deployment held back and in inactive state :" + eventBuilderName + ", Waiting for Input Event Adaptor dependency :" + e.getDependency());
-        } catch (EventBuilderStreamValidationException e) {
-            carbonEventBuilderService.addEventBuilderConfigurationFile(eventBuilderName, fileName, EventBuilderConfigurationFile.DeploymentStatus.WAITING_FOR_STREAM_DEPENDENCY,
-                    e.getMessage(), e.getDependency(), streamNameWithVersion, ebConfigOMElement, currentAxisConfiguration);
-            log.info("Event builder deployment held back and in inactive state :" + eventBuilderName + ", Stream validation exception : " + e.getMessage());
-        } catch (EventBuilderConfigurationException e) {
-            carbonEventBuilderService.addEventBuilderConfigurationFile(eventBuilderName, fileName, EventBuilderConfigurationFile.DeploymentStatus.ERROR,
-                    "Exception when deploying event builder configuration file:\n" + e.getMessage(), null, streamNameWithVersion, ebConfigOMElement, currentAxisConfiguration);
-            throw new EventBuilderConfigurationException(e.getMessage(), e);
-        } catch (Throwable e) {
-            log.error("Invalid configuration in event builder configuration file :" + ebConfigXmlFile.getName(), e);
-            carbonEventBuilderService.addEventBuilderConfigurationFile(eventBuilderName, fileName, EventBuilderConfigurationFile.DeploymentStatus.ERROR,
-                    "Deployment exception: " + e.getMessage(), null, streamNameWithVersion, ebConfigOMElement, currentAxisConfiguration);
-            throw new DeploymentException(e);
+        } else {
+            log.info("Event builder " + eventBuilderName + " is already registered with this tenant (" + tenantId + "), hence ignoring redeployment");
         }
     }
 

@@ -32,13 +32,13 @@ import org.wso2.carbon.event.input.adaptor.core.message.config.InputEventAdaptor
 import org.wso2.carbon.event.input.adaptor.websocket.internal.WebsocketClient;
 import org.wso2.carbon.event.input.adaptor.websocket.internal.util.WebsocketEventAdaptorConstants;
 
+import javax.websocket.ClientEndpointConfig;
+import javax.websocket.DeploymentException;
 import java.io.IOException;
 import java.net.URI;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
-
-import javax.websocket.*;
 
 public final class WebsocketEventAdaptorType extends AbstractInputEventAdaptor {
 

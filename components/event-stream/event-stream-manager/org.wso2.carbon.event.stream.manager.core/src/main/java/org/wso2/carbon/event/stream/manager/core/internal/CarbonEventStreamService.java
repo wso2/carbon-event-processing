@@ -1,8 +1,24 @@
+/*
+*  Copyright (c) 2005-2014, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
+*
+*  WSO2 Inc. licenses this file to you under the Apache License,
+*  Version 2.0 (the "License"); you may not use this file except
+*  in compliance with the License.
+*  You may obtain a copy of the License at
+*
+*    http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing,
+* software distributed under the License is distributed on an
+* "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+* KIND, either express or implied.  See the License for the
+* specific language governing permissions and limitations
+* under the License.
+*/
 package org.wso2.carbon.event.stream.manager.core.internal;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.wso2.carbon.context.PrivilegedCarbonContext;
 import org.wso2.carbon.databridge.commons.StreamDefinition;
 import org.wso2.carbon.databridge.commons.exception.DifferentStreamDefinitionAlreadyDefinedException;
 import org.wso2.carbon.databridge.commons.utils.DataBridgeCommonsUtils;
@@ -18,7 +34,6 @@ import org.wso2.carbon.event.stream.manager.core.internal.util.SampleEventGenera
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
-
 
 public class CarbonEventStreamService implements EventStreamService {
 
@@ -65,19 +80,8 @@ public class CarbonEventStreamService implements EventStreamService {
     @Override
     public void addEventStreamDefinition(StreamDefinition streamDefinition, int tenantId)
             throws EventStreamConfigurationException {
-
-        StreamDefinition existingDefinition;
-        existingDefinition = getStreamDefinition(streamDefinition.getName(), streamDefinition.getVersion(), tenantId);
-
-        if (existingDefinition == null) {
-            saveStreamDefinitionToStore(streamDefinition, tenantId);
+       		saveStreamDefinitionToStore(streamDefinition, tenantId);
             log.info("Stream definition - " + streamDefinition.getStreamId() + " added to registry successfully");
-            return;
-        }
-        if (!existingDefinition.equals(streamDefinition)) {
-            throw new EventStreamConfigurationException("Another Stream with same name and version exist : "
-                    + EventDefinitionConverterUtils.convertToJson(existingDefinition));
-        }
     }
 
 
@@ -191,6 +195,12 @@ public class CarbonEventStreamService implements EventStreamService {
     }
 
     @Override
+    public void subscribe(WSO2EventListConsumer wso2EventListConsumer, int tenantId) throws EventStreamConfigurationException {
+        EventJunction eventJunction = getOrConstructEventJunction(tenantId, wso2EventListConsumer.getStreamId());
+        eventJunction.addConsumer(wso2EventListConsumer);
+    }
+
+    @Override
     public void unsubscribe(SiddhiEventConsumer siddhiEventConsumer, int tenantId) {
         Map<String, EventJunction> eventJunctionMap = tenantSpecificEventJunctions.get(tenantId);
         if (eventJunctionMap != null) {
@@ -234,6 +244,17 @@ public class CarbonEventStreamService implements EventStreamService {
         }
     }
 
+    @Override
+    public void unsubscribe(WSO2EventListConsumer wso2EventListConsumer, int tenantId) {
+        Map<String, EventJunction> eventJunctionMap = tenantSpecificEventJunctions.get(tenantId);
+        if (eventJunctionMap != null) {
+            EventJunction eventJunction = eventJunctionMap.get(wso2EventListConsumer.getStreamId());
+            if (eventJunction != null) {
+                eventJunction.removeConsumer(wso2EventListConsumer);
+            }
+        }
+    }
+
     private EventJunction getOrConstructEventJunction(int tenantId, String streamId) throws EventStreamConfigurationException {
         Map<String, EventJunction> eventJunctionMap = tenantSpecificEventJunctions.get(tenantId);
         if (eventJunctionMap == null) {
@@ -265,7 +286,7 @@ public class CarbonEventStreamService implements EventStreamService {
             streamDefinitionStore.saveStreamDefinition(streamDefinition, tenantId);
         } catch (DifferentStreamDefinitionAlreadyDefinedException ex) {
             log.error(ex.getMessage());
-            throw new EventStreamConfigurationException("Error in saving Stream Definition " + streamDefinition, ex);
+            throw new EventStreamConfigurationException(ex.getMessage(), ex);
         } catch (StreamDefinitionStoreException e) {
             log.error("Error in saving Stream Definition " + streamDefinition);
             throw new EventStreamConfigurationException("Error in saving Stream Definition " + streamDefinition, e);

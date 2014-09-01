@@ -1,21 +1,20 @@
 /*
- * Copyright (c) 2005-2013, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
- *
- *  WSO2 Inc. licenses this file to you under the Apache License,
- *  Version 2.0 (the "License"); you may not use this file except
- *  in compliance with the License.
- *  You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- *  Unless required by applicable law or agreed to in writing,
- *  software distributed under the License is distributed on an
- *  "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- *  KIND, either express or implied.  See the License for the
- *  specific language governing permissions and limitations
- *  under the License.
- */
-
+*  Copyright (c) 2005-2014, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
+*
+*  WSO2 Inc. licenses this file to you under the Apache License,
+*  Version 2.0 (the "License"); you may not use this file except
+*  in compliance with the License.
+*  You may obtain a copy of the License at
+*
+*    http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing,
+* software distributed under the License is distributed on an
+* "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+* KIND, either express or implied.  See the License for the
+* specific language governing permissions and limitations
+* under the License.
+*/
 package org.wso2.carbon.event.builder.core.internal;
 
 import org.apache.axiom.om.OMElement;
@@ -23,7 +22,9 @@ import org.apache.axiom.om.util.AXIOMUtil;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.wso2.carbon.context.CarbonContext;
 import org.wso2.carbon.context.PrivilegedCarbonContext;
+import org.wso2.carbon.core.multitenancy.utils.TenantAxisUtils;
 import org.wso2.carbon.databridge.commons.StreamDefinition;
 import org.wso2.carbon.event.builder.core.EventBuilderService;
 import org.wso2.carbon.event.builder.core.config.EventBuilderConfiguration;
@@ -43,6 +44,7 @@ import org.wso2.carbon.event.input.adaptor.core.config.InputEventAdaptorConfigur
 import org.wso2.carbon.event.input.adaptor.manager.core.InputEventAdaptorManagerService;
 import org.wso2.carbon.event.input.adaptor.manager.core.exception.InputEventAdaptorManagerConfigurationException;
 import org.wso2.carbon.event.stream.manager.core.exception.EventStreamConfigurationException;
+import org.wso2.carbon.utils.multitenancy.MultitenantConstants;
 
 import javax.xml.stream.XMLStreamException;
 import java.io.File;
@@ -108,7 +110,7 @@ public class CarbonEventBuilderService
             }
             if (removedCount == 0) {
                 throw new EventBuilderConfigurationException("Could not find the specified event builder '"
-                        + eventBuilderConfiguration.getEventBuilderName() + "' for removal for the given axis configuration");
+                                                             + eventBuilderConfiguration.getEventBuilderName() + "' for removal for the given axis configuration");
             }
         }
     }
@@ -322,7 +324,18 @@ public class CarbonEventBuilderService
         ConfigurationValidator.validateEventBuilderConfiguration(omElement);
         String mappingType = EventBuilderConfigHelper.getInputMappingType(omElement);
         if (mappingType != null) {
-            EventBuilderConfigurationFileSystemInvoker.save(omElement.toString(), new File(filePath).getName());
+            AxisConfiguration axisConfiguration;
+            if (CarbonContext.getThreadLocalCarbonContext().getTenantId() == MultitenantConstants.SUPER_TENANT_ID) {
+                axisConfiguration = EventBuilderServiceValueHolder.getConfigurationContextService().
+                        getServerConfigContext().getAxisConfiguration();
+            } else {
+                axisConfiguration = TenantAxisUtils.getTenantAxisConfiguration(CarbonContext.
+                        getThreadLocalCarbonContext().getTenantDomain(),
+                        EventBuilderServiceValueHolder.getConfigurationContextService().
+                                getServerConfigContext());
+            }
+            EventBuilderConfigurationFileSystemInvoker.saveAndDeploy(omElement.toString(),
+                    new File(filePath).getName(), axisConfiguration);
         } else {
             throw new EventBuilderConfigurationException("Mapping type of the Event Builder " + eventBuilderConfiguration.getEventBuilderName() + " cannot be null");
         }
@@ -390,7 +403,7 @@ public class CarbonEventBuilderService
         }
     }
 
-    public void saveDefaultEventBuilder(String streamId,int tenantId) throws EventBuilderConfigurationException {
+    public void saveDefaultEventBuilder(String streamId, int tenantId) throws EventBuilderConfigurationException {
         try {
             InputEventAdaptorManagerService inputEventAdaptorManagerService = EventBuilderServiceValueHolder.getInputEventAdaptorManagerService();
             String defaultWso2EventAdaptorName = inputEventAdaptorManagerService.getDefaultWso2EventAdaptor();
@@ -403,8 +416,11 @@ public class CarbonEventBuilderService
 
                 if (!EventBuilderConfigurationFileSystemInvoker.isFileExists(filename)) {
                     for (EventBuilderConfiguration eventBuilderConfiguration : getAllActiveEventBuilderConfigurations(tenantId)) {
-                        if (eventBuilderConfiguration.getInputStreamConfiguration().getInputEventAdaptorName().equals(defaultWso2EventAdaptorName) && (eventBuilderConfiguration.getToStreamName() + ":" + eventBuilderConfiguration.getToStreamVersion()).equals(streamId)) {
-                            log.info("Skipping defining default event builder "+defaultEventBuilderConfiguration.getEventBuilderName()+" as "+eventBuilderConfiguration.getEventBuilderName()+" already exist");
+
+                        //TODO - We have to decide about default builder handeling -- If there is a builder which send events to the specific stream then there is no default builder created
+                        //eventBuilderConfiguration.getInputStreamConfiguration().getInputEventAdaptorName().equals(defaultWso2EventAdaptorName) &&
+                        if ((eventBuilderConfiguration.getToStreamName() + ":" + eventBuilderConfiguration.getToStreamVersion()).equals(streamId)) {
+                            log.info("Skipping defining default event builder " + defaultEventBuilderConfiguration.getEventBuilderName() + " as " + eventBuilderConfiguration.getEventBuilderName() + " already exist");
                             return;
                         }
                     }
@@ -708,5 +724,20 @@ public class CarbonEventBuilderService
         }
 
     }
+
+    public boolean isEventBuilderFileAlreadyExist(String eventBuilderFileName, int tenantId) {
+        if (tenantSpecificEventBuilderConfigFileMap.size() > 0) {
+            List<EventBuilderConfigurationFile> eventBuilderConfigurationFiles = tenantSpecificEventBuilderConfigFileMap.get(tenantId);
+            if (eventBuilderConfigurationFiles != null) {
+                for (EventBuilderConfigurationFile eventBuilderConfigurationFile : eventBuilderConfigurationFiles) {
+                    if ((eventBuilderConfigurationFile.getFileName().equals(eventBuilderFileName))) {
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
+    }
+
 
 }

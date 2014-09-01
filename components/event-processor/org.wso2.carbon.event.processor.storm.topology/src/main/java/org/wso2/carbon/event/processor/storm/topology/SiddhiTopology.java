@@ -1,21 +1,20 @@
 /*
- * Copyright (c) 2005-2014, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
- *
- *  WSO2 Inc. licenses this file to you under the Apache License,
- *  Version 2.0 (the "License"); you may not use this file except
- *  in compliance with the License.
- *  You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- *  Unless required by applicable law or agreed to in writing,
- *  software distributed under the License is distributed on an
- *  "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- *  KIND, either express or implied.  See the License for the
- *  specific language governing permissions and limitations
- *  under the License.
- */
-
+*  Copyright (c) 2005-2014, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
+*
+*  WSO2 Inc. licenses this file to you under the Apache License,
+*  Version 2.0 (the "License"); you may not use this file except
+*  in compliance with the License.
+*  You may obtain a copy of the License at
+*
+*    http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing,
+* software distributed under the License is distributed on an
+* "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+* KIND, either express or implied.  See the License for the
+* specific language governing permissions and limitations
+* under the License.
+*/
 package org.wso2.carbon.event.processor.storm.topology;
 
 import backtype.storm.Config;
@@ -32,15 +31,26 @@ import org.wso2.siddhi.core.SiddhiManager;
  */
 public class SiddhiTopology {
     public static void main(String[] args) throws Exception {
-        StormDeploymentConfiguration.loadConfigurations();
+        if(args.length >= 2) {
+            String carbonHome = args[1];
+            StormDeploymentConfiguration.loadConfigurations(carbonHome);
+        } else {
+            StormDeploymentConfiguration.loadConfigurations();
+        }
 
         String authStreamStreamDef = "define stream authStream (username string, ipAddress string, browser string);";
+//        String analyticsStreamDef = "define stream analyticsStats (meta_ipAdd string, meta_index long, meta_timestamp long, meta_nanoTime long,userID string, searchTerms string);";
+//        String query2 = "from analyticsStats[meta_ipAdd != '192.168.1.1']#window.time(5 min) " +
+//                "select meta_ipAdd, meta_index, meta_timestamp, meta_nanoTime, userID " +
+//                "insert into filteredStatStream;";
         String query = "from every a1 = authStream " +
-                       "-> b1 = authStream[username == a1.username and ipAddress != a1.ipAddress] " +
-                       "within 10000 " +
-                       "select a1.username as username, a1.ipAddress as ip1, b1.ipAddress as ip2 " +
-                       "insert into alertStream;";
-
+                "-> b1 = authStream[username == a1.username and ipAddress != a1.ipAddress] " +
+                "within 10000 " +
+                "select a1.username as username, a1.ipAddress as ip1, b1.ipAddress as ip2 " +
+                "insert into alertStream;";
+        String exeucutionPlanName = "Login_Info_Analyzer";
+        String inputStream = "authStream";
+        String outputStream = "alertStream";
 
         SiddhiManager siddhiManager = new SiddhiManager();
         siddhiManager.defineStream(authStreamStreamDef);
@@ -57,15 +67,16 @@ public class SiddhiTopology {
 
         TopologyBuilder builder = new TopologyBuilder();
 
-        builder.setSpout("EventReceiverSpout", new EventReceiverSpout(minListenerPort, maxListenerPort, keyStorePath, cepManagerHost, cepManagerPort, importedStreams), 1);
-        builder.setBolt("Siddhibolt", new SiddhiBolt(importedStreams, new String[]{query}, new String[]{"alertStream"})).allGrouping("EventReceiverSpout", "authStream");
-        builder.setBolt("EventPublisherBolt", new EventPublisherBolt(cepManagerHost, cepManagerPort, trustStroePath, importedStreams, new String[]{query}, new String[]{"alertStream"})).allGrouping("Siddhibolt", "alertStream");
+        builder.setSpout("EventReceiverSpout", new EventReceiverSpout(minListenerPort, maxListenerPort, keyStorePath, cepManagerHost, cepManagerPort, importedStreams, exeucutionPlanName), 1);
+        builder.setBolt("Siddhibolt", new SiddhiBolt(importedStreams, new String[]{query}, new String[]{outputStream}), 2).allGrouping("EventReceiverSpout", inputStream);
+        builder.setBolt("EventPublisherBolt", new EventPublisherBolt(cepManagerHost, cepManagerPort, trustStroePath,
+                importedStreams, new String[]{query}, new String[]{outputStream}, exeucutionPlanName)).allGrouping("Siddhibolt", outputStream);
 
         Config conf = new Config();
         conf.setDebug(true);
 
-        conf.setMaxTaskParallelism(3);
-        conf.setNumWorkers(3);
+        conf.setMaxTaskParallelism(4);
+        conf.setNumWorkers(4);
         StormSubmitter.submitTopology(args[0], conf, builder.createTopology());
 /*
         LocalCluster cluster = new LocalCluster();

@@ -1,21 +1,20 @@
 /*
- * Copyright (c) 2005-2014, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
- *
- *  WSO2 Inc. licenses this file to you under the Apache License,
- *  Version 2.0 (the "License"); you may not use this file except
- *  in compliance with the License.
- *  You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- *  Unless required by applicable law or agreed to in writing,
- *  software distributed under the License is distributed on an
- *  "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- *  KIND, either express or implied.  See the License for the
- *  specific language governing permissions and limitations
- *  under the License.
- */
-
+*  Copyright (c) 2005-2014, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
+*
+*  WSO2 Inc. licenses this file to you under the Apache License,
+*  Version 2.0 (the "License"); you may not use this file except
+*  in compliance with the License.
+*  You may obtain a copy of the License at
+*
+*    http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing,
+* software distributed under the License is distributed on an
+* "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+* KIND, either express or implied.  See the License for the
+* specific language governing permissions and limitations
+* under the License.
+*/
 package org.wso2.carbon.event.processor.storm.topology.component;
 
 import backtype.storm.task.TopologyContext;
@@ -38,8 +37,6 @@ import org.wso2.siddhi.query.api.definition.StreamDefinition;
 import java.net.SocketException;
 import java.util.HashMap;
 import java.util.Map;
-
-;
 
 /**
  * Publish events processed by Siddhi engine to CEP publisher
@@ -67,7 +64,7 @@ public class EventPublisherBolt extends BaseBasicBolt implements ManagerServiceC
 
     private transient AsyncDataPublisher dataPublisher = null;
 
-    private String executionPlanName = "Login_Info_Analyzer";
+    private String executionPlanName;
 
     private String logPrefix;
 
@@ -81,17 +78,21 @@ public class EventPublisherBolt extends BaseBasicBolt implements ManagerServiceC
      */
     private int cepManagerPort;
 
-    SiddhiManager siddhiManager;
+    private String trustStorePath;
+    private String trustStorePassword;
 
-    public EventPublisherBolt(String cepManagerHost, int cepManagerPort, String trustStorePath, String[] streamDefinitions, String[] queries, String[] exportedStreamIDs){
+    private SiddhiManager siddhiManager;
+
+    public EventPublisherBolt(String cepManagerHost, int cepManagerPort, String trustStorePath, String[] streamDefinitions, String[] queries, String[] exportedStreamIDs, String executionPlanName){
         this.exportedStreamIDs = exportedStreamIDs;
         this.streamDefinitions = streamDefinitions;
         this.cepManagerHost = cepManagerHost;
         this.cepManagerPort = cepManagerPort;
         this.queries = queries;
+        this.executionPlanName = executionPlanName;
+        this.trustStorePath = trustStorePath;
+        this.trustStorePassword = "wso2carbon";
         logPrefix = "{" + executionPlanName + ":" + tenantId +"}";
-        System.setProperty("javax.net.ssl.trustStore", trustStorePath);//"/home/sajith/wso2cep-4.0.0-SNAPSHOT/samples/producers/performance-test/src/main/resources/client-truststore.jks");
-        System.setProperty("javax.net.ssl.trustStorePassword", "wso2carbon");
     }
 
     @Override
@@ -135,6 +136,9 @@ public class EventPublisherBolt extends BaseBasicBolt implements ManagerServiceC
         // TODO : remove siddhi related stream definitions. Use only exported streams
         log = Logger.getLogger(EventPublisherBolt.class);
         siddhiManager = new SiddhiManager(new SiddhiConfiguration());
+        System.setProperty("javax.net.ssl.trustStore", trustStorePath);//"/home/sajith/wso2cep-4.0.0-SNAPSHOT/samples/producers/performance-test/src/main/resources/client-truststore.jks");
+        System.setProperty("javax.net.ssl.trustStorePassword", trustStorePassword);
+
 
         if(streamDefinitions != null){
             for(String definition: streamDefinitions){
