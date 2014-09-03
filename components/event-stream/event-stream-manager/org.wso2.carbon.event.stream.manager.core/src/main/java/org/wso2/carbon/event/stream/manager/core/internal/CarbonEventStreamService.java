@@ -80,19 +80,8 @@ public class CarbonEventStreamService implements EventStreamService {
     @Override
     public void addEventStreamDefinition(StreamDefinition streamDefinition, int tenantId)
             throws EventStreamConfigurationException {
-
-        StreamDefinition existingDefinition;
-        existingDefinition = getStreamDefinition(streamDefinition.getName(), streamDefinition.getVersion(), tenantId);
-
-        if (existingDefinition == null) {
-            saveStreamDefinitionToStore(streamDefinition, tenantId);
+       		saveStreamDefinitionToStore(streamDefinition, tenantId);
             log.info("Stream definition - " + streamDefinition.getStreamId() + " added to registry successfully");
-            return;
-        }
-        if (!existingDefinition.equals(streamDefinition)) {
-            throw new EventStreamConfigurationException("Another Stream with same name and version exist : "
-                    + EventDefinitionConverterUtils.convertToJson(existingDefinition));
-        }
     }
 
 
@@ -206,6 +195,12 @@ public class CarbonEventStreamService implements EventStreamService {
     }
 
     @Override
+    public void subscribe(WSO2EventListConsumer wso2EventListConsumer, int tenantId) throws EventStreamConfigurationException {
+        EventJunction eventJunction = getOrConstructEventJunction(tenantId, wso2EventListConsumer.getStreamId());
+        eventJunction.addConsumer(wso2EventListConsumer);
+    }
+
+    @Override
     public void unsubscribe(SiddhiEventConsumer siddhiEventConsumer, int tenantId) {
         Map<String, EventJunction> eventJunctionMap = tenantSpecificEventJunctions.get(tenantId);
         if (eventJunctionMap != null) {
@@ -249,6 +244,17 @@ public class CarbonEventStreamService implements EventStreamService {
         }
     }
 
+    @Override
+    public void unsubscribe(WSO2EventListConsumer wso2EventListConsumer, int tenantId) {
+        Map<String, EventJunction> eventJunctionMap = tenantSpecificEventJunctions.get(tenantId);
+        if (eventJunctionMap != null) {
+            EventJunction eventJunction = eventJunctionMap.get(wso2EventListConsumer.getStreamId());
+            if (eventJunction != null) {
+                eventJunction.removeConsumer(wso2EventListConsumer);
+            }
+        }
+    }
+
     private EventJunction getOrConstructEventJunction(int tenantId, String streamId) throws EventStreamConfigurationException {
         Map<String, EventJunction> eventJunctionMap = tenantSpecificEventJunctions.get(tenantId);
         if (eventJunctionMap == null) {
@@ -280,7 +286,7 @@ public class CarbonEventStreamService implements EventStreamService {
             streamDefinitionStore.saveStreamDefinition(streamDefinition, tenantId);
         } catch (DifferentStreamDefinitionAlreadyDefinedException ex) {
             log.error(ex.getMessage());
-            throw new EventStreamConfigurationException("Error in saving Stream Definition " + streamDefinition, ex);
+            throw new EventStreamConfigurationException(ex.getMessage(), ex);
         } catch (StreamDefinitionStoreException e) {
             log.error("Error in saving Stream Definition " + streamDefinition);
             throw new EventStreamConfigurationException("Error in saving Stream Definition " + streamDefinition, e);

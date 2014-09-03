@@ -19,6 +19,8 @@ package org.wso2.carbon.event.stream.manager.core;
 
 import org.wso2.carbon.databridge.commons.Event;
 
+import java.util.List;
+
 /**
  * Represents sources that feed events to the event junction.
  */
@@ -27,6 +29,8 @@ public interface EventProducerCallback {
     public void sendEventData(Object[] data);
 
     public void sendEvent(Event event);
+
+    public void sendEvents(List<Event> events);
 
     public void sendEvents(org.wso2.siddhi.core.event.Event[] events);
 

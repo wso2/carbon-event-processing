@@ -591,4 +591,18 @@ public class CarbonOutputEventAdaptorManagerService
 
     }
 
+    public boolean isOutputEventAdaptorFileAlreadyExist(int tenantId, String eventAdaptorFileName) {
+
+        if (eventAdaptorFileMap.size() > 0) {
+            List<OutputEventAdaptorFile> inputEventAdaptorFileList = eventAdaptorFileMap.get(tenantId);
+            if (inputEventAdaptorFileList != null) {
+                for (OutputEventAdaptorFile inputEventAdaptorFile : inputEventAdaptorFileList) {
+                    if ((inputEventAdaptorFile.getFileName().equals(eventAdaptorFileName))) {
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
+    }
 }

@@ -39,7 +39,11 @@ import javax.xml.namespace.QName;
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
-import java.io.*;
+import java.io.BufferedInputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.Collections;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
@@ -150,46 +154,50 @@ public class InputEventAdaptorDeployer extends AbstractDeployer {
         int tenantId = PrivilegedCarbonContext.getThreadLocalCarbonContext().getTenantId();
 
         String eventAdaptorName = "";
-        try {
-            OMElement eventAdaptorOMElement = getEventAdaptorOMElement(eventAdaptorFile);
-            InputEventAdaptorConfiguration eventAdaptorConfiguration = InputEventAdaptorConfigurationHelper.fromOM(eventAdaptorOMElement);
+        if(!carbonEventAdaptorManagerService.isInputEventAdaptorFileAlreadyExist(tenantId,eventAdaptorFile.getName())) {
+            try {
+                OMElement eventAdaptorOMElement = getEventAdaptorOMElement(eventAdaptorFile);
+                InputEventAdaptorConfiguration eventAdaptorConfiguration = InputEventAdaptorConfigurationHelper.fromOM(eventAdaptorOMElement);
 
-            if (!(eventAdaptorOMElement.getQName().getLocalPart()).equals(InputEventAdaptorManagerConstants.IEA_ELE_ROOT_ELEMENT)) {
-                throw new DeploymentException("Wrong input event adaptor configuration file, Invalid root element " + eventAdaptorOMElement.getQName().getLocalPart() + " in " + eventAdaptorFile.getName());
-            }
+                if (!(eventAdaptorOMElement.getQName().getLocalPart()).equals(InputEventAdaptorManagerConstants.IEA_ELE_ROOT_ELEMENT)) {
+                    throw new DeploymentException("Wrong input event adaptor configuration file, Invalid root element " + eventAdaptorOMElement.getQName().getLocalPart() + " in " + eventAdaptorFile.getName());
+                }
 
-            if (eventAdaptorConfiguration.getName() == null || eventAdaptorConfiguration.getType() == null || eventAdaptorConfiguration.getName().trim().isEmpty()) {
-                throw new DeploymentException(eventAdaptorFile.getName() + " is not a valid input event adaptor configuration file");
-            }
+                if (eventAdaptorConfiguration.getName() == null || eventAdaptorConfiguration.getType() == null || eventAdaptorConfiguration.getName().trim().isEmpty()) {
+                    throw new DeploymentException(eventAdaptorFile.getName() + " is not a valid input event adaptor configuration file");
+                }
 
-            eventAdaptorName = eventAdaptorOMElement.getAttributeValue(new QName(InputEventAdaptorManagerConstants.IEA_ATTR_NAME));
+                eventAdaptorName = eventAdaptorOMElement.getAttributeValue(new QName(InputEventAdaptorManagerConstants.IEA_ATTR_NAME));
 
-            if (InputEventAdaptorConfigurationHelper.validateEventAdaptorConfiguration(InputEventAdaptorConfigurationHelper.fromOM(eventAdaptorOMElement))) {
-                if (carbonEventAdaptorManagerService.checkAdaptorValidity(tenantId, eventAdaptorName)) {
-                    carbonEventAdaptorManagerService.addInputEventAdaptorConfiguration(tenantId, eventAdaptorConfiguration);
-                    carbonEventAdaptorManagerService.addInputEventAdaptorConfigurationFile(tenantId, createInputEventAdaptorFile(eventAdaptorName, eventAdaptorFile.getName(), InputEventAdaptorFile.Status.DEPLOYED, null, null, null));
+                if (InputEventAdaptorConfigurationHelper.validateEventAdaptorConfiguration(InputEventAdaptorConfigurationHelper.fromOM(eventAdaptorOMElement))) {
+                    if (carbonEventAdaptorManagerService.checkAdaptorValidity(tenantId, eventAdaptorName)) {
+                        carbonEventAdaptorManagerService.addInputEventAdaptorConfiguration(tenantId, eventAdaptorConfiguration);
+                        carbonEventAdaptorManagerService.addInputEventAdaptorConfigurationFile(tenantId, createInputEventAdaptorFile(eventAdaptorName, eventAdaptorFile.getName(), InputEventAdaptorFile.Status.DEPLOYED, null, null, null));
 
-                    log.info("Input Event Adaptor deployed successfully and in active state : " + eventAdaptorName);
-                    if (carbonEventAdaptorManagerService.inputEventAdaptorNotificationListener != null) {
-                        for (InputEventAdaptorNotificationListener inputEventAdaptorNotificationListener : carbonEventAdaptorManagerService.inputEventAdaptorNotificationListener) {
-                            inputEventAdaptorNotificationListener.configurationAdded(tenantId, eventAdaptorName);
+                        log.info("Input Event Adaptor deployed successfully and in active state : " + eventAdaptorName);
+                        if (carbonEventAdaptorManagerService.inputEventAdaptorNotificationListener != null) {
+                            for (InputEventAdaptorNotificationListener inputEventAdaptorNotificationListener : carbonEventAdaptorManagerService.inputEventAdaptorNotificationListener) {
+                                inputEventAdaptorNotificationListener.configurationAdded(tenantId, eventAdaptorName);
+                            }
                         }
+                    } else {
+                        throw new InputEventAdaptorManagerConfigurationException(eventAdaptorName + " is already registered for this tenant");
                     }
                 } else {
-                    throw new InputEventAdaptorManagerConfigurationException(eventAdaptorName + " is already registered for this tenant");
+                    carbonEventAdaptorManagerService.addInputEventAdaptorConfigurationFile(tenantId, createInputEventAdaptorFile(eventAdaptorName, eventAdaptorFile.getName(), InputEventAdaptorFile.Status.WAITING_FOR_DEPENDENCY, configurationContext.getAxisConfiguration(), "Event Adaptor type is not found", eventAdaptorConfiguration.getType()));
+                    log.info("Input Event Adaptor deployment held back and in inactive state : " + eventAdaptorName + ", waiting for input event adaptor type dependency " + eventAdaptorConfiguration.getType());
                 }
-            } else {
-                carbonEventAdaptorManagerService.addInputEventAdaptorConfigurationFile(tenantId, createInputEventAdaptorFile(eventAdaptorName, eventAdaptorFile.getName(), InputEventAdaptorFile.Status.WAITING_FOR_DEPENDENCY, configurationContext.getAxisConfiguration(), "Event Adaptor type is not found", eventAdaptorConfiguration.getType()));
-                log.info("Input Event Adaptor deployment held back and in inactive state : " + eventAdaptorName + ", waiting for input event adaptor type dependency " + eventAdaptorConfiguration.getType());
+            } catch (InputEventAdaptorManagerConfigurationException ex) {
+                carbonEventAdaptorManagerService.addInputEventAdaptorConfigurationFile(tenantId, createInputEventAdaptorFile(eventAdaptorName, eventAdaptorFile.getName(), InputEventAdaptorFile.Status.ERROR, null, null, null));
+                log.error("Input Event Adaptor not deployed and in inactive state : " + eventAdaptorFile.getName() + " , " + ex.getMessage(), ex);
+                throw new InputEventAdaptorManagerConfigurationException(ex.getMessage(), ex);
+            } catch (DeploymentException e) {
+                carbonEventAdaptorManagerService.addInputEventAdaptorConfigurationFile(tenantId, createInputEventAdaptorFile(eventAdaptorName, eventAdaptorFile.getName(), InputEventAdaptorFile.Status.ERROR, configurationContext.getAxisConfiguration(), "Deployment exception occurred", null));
+                log.error("Input Event Adaptor not deployed and in inactive state : " + eventAdaptorFile.getName() + " , " + e.getMessage(), e);
+                throw new DeploymentException(e.getMessage(), e);
             }
-        } catch (InputEventAdaptorManagerConfigurationException ex) {
-            carbonEventAdaptorManagerService.addInputEventAdaptorConfigurationFile(tenantId, createInputEventAdaptorFile(eventAdaptorName, eventAdaptorFile.getName(), InputEventAdaptorFile.Status.ERROR, null, null, null));
-            log.error("Input Event Adaptor not deployed and in inactive state : " + eventAdaptorFile.getName() + " , " + ex.getMessage(), ex);
-            throw new InputEventAdaptorManagerConfigurationException(ex.getMessage(), ex);
-        } catch (DeploymentException e) {
-            carbonEventAdaptorManagerService.addInputEventAdaptorConfigurationFile(tenantId, createInputEventAdaptorFile(eventAdaptorName, eventAdaptorFile.getName(), InputEventAdaptorFile.Status.ERROR, configurationContext.getAxisConfiguration(), "Deployment exception occurred", null));
-            log.error("Input Event Adaptor not deployed and in inactive state : " + eventAdaptorFile.getName() + " , " + e.getMessage(), e);
-            throw new DeploymentException(e.getMessage(), e);
+        }else {
+            log.info("Input Event adaptor " + eventAdaptorName + " is already registered with this tenant ("+tenantId+"), hence ignoring redeployment");
         }
 
     }

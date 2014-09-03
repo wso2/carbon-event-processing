@@ -672,4 +672,19 @@ public class CarbonEventFormatterService
 
     }
 
+    public boolean isEventFormatterFileAlreadyExist(String eventFormatterFileName, int tenantId) {
+        if (eventFormatterConfigurationFileMap.size() > 0) {
+            List<EventFormatterConfigurationFile> eventFormatterConfigurationFiles = eventFormatterConfigurationFileMap.get(tenantId);
+            if (eventFormatterConfigurationFiles != null) {
+                for (EventFormatterConfigurationFile eventFormatterConfigurationFile : eventFormatterConfigurationFiles) {
+                    if ((eventFormatterConfigurationFile.getFileName().equals(eventFormatterFileName))) {
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
+    }
+
+
 }

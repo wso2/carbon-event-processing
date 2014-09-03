@@ -902,6 +902,22 @@ public class CarbonEventProcessorService implements EventProcessorService {
         return true;
     }
 
+    public boolean isExecutionPlanFileAlreadyExist(String executionPlanFileName, int tenantId)
+            throws ExecutionPlanConfigurationException {
+
+        if (tenantSpecificExecutionPlanFiles.size() > 0) {
+            List<ExecutionPlanConfigurationFile> executionPlanConfigurationFileList = tenantSpecificExecutionPlanFiles.get(tenantId);
+            if (executionPlanConfigurationFileList != null) {
+                for (ExecutionPlanConfigurationFile executionPlanConfigurationFile : executionPlanConfigurationFileList) {
+                    if ((executionPlanConfigurationFile.getExecutionPlanName().equals(executionPlanFileName))) {
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
+    }
+
     public void addCurrentCEPMembership(CEPMembership cepMembership) {
 
         currentCepMembershipInfo = cepMembership;

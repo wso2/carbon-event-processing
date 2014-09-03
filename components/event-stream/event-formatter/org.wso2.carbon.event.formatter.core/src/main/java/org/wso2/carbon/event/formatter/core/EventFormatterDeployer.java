@@ -148,53 +148,57 @@ public class EventFormatterDeployer extends AbstractDeployer {
         CarbonEventFormatterService carbonEventFormatterService = EventFormatterServiceValueHolder.getCarbonEventFormatterService();
         int tenantId = PrivilegedCarbonContext.getThreadLocalCarbonContext().getTenantId();
         String eventFormatterName = "";
-        try {
-            OMElement eventFormatterOMElement = getEventFormatterOMElement(eventFormatterFile);
-            if (!(eventFormatterOMElement.getQName().getLocalPart()).equals(EventFormatterConstants.EF_ELE_ROOT_ELEMENT)) {
-                throw new DeploymentException("Wrong event formatter configuration file, Invalid root element " + eventFormatterOMElement.getQName() + " in " + eventFormatterFile.getName());
-            }
-
-            EventFormatterConfigurationHelper.validateEventFormatterConfiguration(eventFormatterOMElement);
-            String mappingType = EventFormatterConfigurationHelper.getOutputMappingType(eventFormatterOMElement);
-            if (mappingType != null) {
-                mappingType = mappingType.toLowerCase();
-                EventFormatterConfiguration eventFormatterConfiguration = FormatterConfigurationBuilder.getEventFormatterConfiguration(eventFormatterOMElement, tenantId, mappingType);
-                eventFormatterName = eventFormatterConfiguration.getEventFormatterName();
-                if (carbonEventFormatterService.checkEventFormatterValidity(tenantId, eventFormatterName)) {
-                    carbonEventFormatterService.addEventFormatterConfiguration(eventFormatterConfiguration);
-                    carbonEventFormatterService.addEventFormatterConfigurationFile(tenantId, createEventFormatterConfigurationFile(eventFormatterName,
-                            deploymentFileData.getName(), EventFormatterConfigurationFile.Status.DEPLOYED, axisConfiguration, null, null));
-                    log.info("Event Formatter configuration successfully deployed and in active state : " + eventFormatterName);
-                } else {
-                    throw new EventFormatterConfigurationException("Event Formatter not deployed and in inactive state," +
-                            " since there is a event formatter registered with the same name in this tenant :" + eventFormatterFile.getName());
+        if(!carbonEventFormatterService.isEventFormatterFileAlreadyExist(eventFormatterFile.getName(),tenantId)) {
+            try {
+                OMElement eventFormatterOMElement = getEventFormatterOMElement(eventFormatterFile);
+                if (!(eventFormatterOMElement.getQName().getLocalPart()).equals(EventFormatterConstants.EF_ELE_ROOT_ELEMENT)) {
+                    throw new DeploymentException("Wrong event formatter configuration file, Invalid root element " + eventFormatterOMElement.getQName() + " in " + eventFormatterFile.getName());
                 }
-            } else {
-                throw new EventFormatterConfigurationException("Event Formatter not deployed and in inactive state, " +
-                        "since it does not contain a proper mapping type : " + eventFormatterFile.getName());
+
+                EventFormatterConfigurationHelper.validateEventFormatterConfiguration(eventFormatterOMElement);
+                String mappingType = EventFormatterConfigurationHelper.getOutputMappingType(eventFormatterOMElement);
+                if (mappingType != null) {
+                    mappingType = mappingType.toLowerCase();
+                    EventFormatterConfiguration eventFormatterConfiguration = FormatterConfigurationBuilder.getEventFormatterConfiguration(eventFormatterOMElement, tenantId, mappingType);
+                    eventFormatterName = eventFormatterConfiguration.getEventFormatterName();
+                    if (carbonEventFormatterService.checkEventFormatterValidity(tenantId, eventFormatterName)) {
+                        carbonEventFormatterService.addEventFormatterConfiguration(eventFormatterConfiguration);
+                        carbonEventFormatterService.addEventFormatterConfigurationFile(tenantId, createEventFormatterConfigurationFile(eventFormatterName,
+                                deploymentFileData.getName(), EventFormatterConfigurationFile.Status.DEPLOYED, axisConfiguration, null, null));
+                        log.info("Event Formatter configuration successfully deployed and in active state : " + eventFormatterName);
+                    } else {
+                        throw new EventFormatterConfigurationException("Event Formatter not deployed and in inactive state," +
+                                " since there is a event formatter registered with the same name in this tenant :" + eventFormatterFile.getName());
+                    }
+                } else {
+                    throw new EventFormatterConfigurationException("Event Formatter not deployed and in inactive state, " +
+                            "since it does not contain a proper mapping type : " + eventFormatterFile.getName());
+                }
+            } catch (EventFormatterConfigurationException ex) {
+                log.error("Event Formatter not deployed and in inactive state, " + ex.getMessage(), ex);
+                carbonEventFormatterService.addEventFormatterConfigurationFile(tenantId,
+                        createEventFormatterConfigurationFile(eventFormatterName, deploymentFileData.getName(), EventFormatterConfigurationFile.Status.ERROR, null, null, null));
+                throw new EventFormatterConfigurationException(ex.getMessage(), ex);
+            } catch (EventFormatterValidationException ex) {
+                carbonEventFormatterService.addEventFormatterConfigurationFile(tenantId,
+                        createEventFormatterConfigurationFile(eventFormatterName, deploymentFileData.getName(),
+                                EventFormatterConfigurationFile.Status.WAITING_FOR_DEPENDENCY, axisConfiguration, ex.getMessage(), ex.getDependency())
+                );
+                log.info("Event Formatter deployment held back and in inactive state : " + eventFormatterFile.getName() + ", waiting for dependency : " + ex.getDependency());
+            } catch (EventFormatterStreamValidationException e) {
+                carbonEventFormatterService.addEventFormatterConfigurationFile(tenantId,
+                        createEventFormatterConfigurationFile(eventFormatterName, deploymentFileData.getName(),
+                                EventFormatterConfigurationFile.Status.WAITING_FOR_STREAM_DEPENDENCY, axisConfiguration, e.getMessage(), e.getDependency())
+                );
+                log.info("Event Formatter deployment held back and in inactive state :" + eventFormatterFile.getName() + ", Stream validation exception : " + e.getMessage());
+            } catch (DeploymentException e) {
+                log.error("Event Formatter not deployed and in inactive state : " + eventFormatterFile.getName() + " , " + e.getMessage(), e);
+                carbonEventFormatterService.addEventFormatterConfigurationFile(tenantId, createEventFormatterConfigurationFile(eventFormatterName,
+                        deploymentFileData.getName(), EventFormatterConfigurationFile.Status.ERROR, null, "Deployment exception occurred", null));
+                throw new EventFormatterConfigurationException(e.getMessage(), e);
             }
-        } catch (EventFormatterConfigurationException ex) {
-            log.error("Event Formatter not deployed and in inactive state, " + ex.getMessage(), ex);
-            carbonEventFormatterService.addEventFormatterConfigurationFile(tenantId,
-                    createEventFormatterConfigurationFile(eventFormatterName, deploymentFileData.getName(), EventFormatterConfigurationFile.Status.ERROR, null, null, null));
-            throw new EventFormatterConfigurationException(ex.getMessage(), ex);
-        } catch (EventFormatterValidationException ex) {
-            carbonEventFormatterService.addEventFormatterConfigurationFile(tenantId,
-                    createEventFormatterConfigurationFile(eventFormatterName, deploymentFileData.getName(),
-                            EventFormatterConfigurationFile.Status.WAITING_FOR_DEPENDENCY, axisConfiguration, ex.getMessage(), ex.getDependency())
-            );
-            log.info("Event Formatter deployment held back and in inactive state : " + eventFormatterFile.getName() + ", waiting for dependency : " + ex.getDependency());
-        } catch (EventFormatterStreamValidationException e) {
-            carbonEventFormatterService.addEventFormatterConfigurationFile(tenantId,
-                    createEventFormatterConfigurationFile(eventFormatterName, deploymentFileData.getName(),
-                            EventFormatterConfigurationFile.Status.WAITING_FOR_STREAM_DEPENDENCY, axisConfiguration,  e.getMessage(), e.getDependency())
-            );
-            log.info("Event Formatter deployment held back and in inactive state :" + eventFormatterFile.getName() + ", Stream validation exception : " + e.getMessage());
-        } catch (DeploymentException e) {
-            log.error("Event Formatter not deployed and in inactive state : " + eventFormatterFile.getName() + " , " + e.getMessage(), e);
-            carbonEventFormatterService.addEventFormatterConfigurationFile(tenantId, createEventFormatterConfigurationFile(eventFormatterName,
-                    deploymentFileData.getName(), EventFormatterConfigurationFile.Status.ERROR, null, "Deployment exception occurred", null));
-            throw new EventFormatterConfigurationException(e.getMessage(), e);
+        } else {
+            log.info("Event Formatter " + eventFormatterName + " is already registered with this tenant ("+tenantId+"), hence ignoring redeployment");
         }
     }
 
