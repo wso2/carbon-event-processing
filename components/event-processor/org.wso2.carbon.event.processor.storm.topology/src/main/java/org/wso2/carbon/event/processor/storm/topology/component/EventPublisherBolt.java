@@ -1,20 +1,20 @@
 /*
-*  Copyright (c) 2005-2014, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
-*
-*  WSO2 Inc. licenses this file to you under the Apache License,
-*  Version 2.0 (the "License"); you may not use this file except
-*  in compliance with the License.
-*  You may obtain a copy of the License at
-*
-*    http://www.apache.org/licenses/LICENSE-2.0
-*
-* Unless required by applicable law or agreed to in writing,
-* software distributed under the License is distributed on an
-* "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
-* KIND, either express or implied.  See the License for the
-* specific language governing permissions and limitations
-* under the License.
-*/
+ * Copyright (c) 2005-2014, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
+ *
+ *  WSO2 Inc. licenses this file to you under the Apache License,
+ *  Version 2.0 (the "License"); you may not use this file except
+ *  in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing,
+ *  software distributed under the License is distributed on an
+ *  "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ *  KIND, either express or implied.  See the License for the
+ *  specific language governing permissions and limitations
+ *  under the License.
+ */
 package org.wso2.carbon.event.processor.storm.topology.component;
 
 import backtype.storm.task.TopologyContext;
@@ -52,7 +52,7 @@ public class EventPublisherBolt extends BaseBasicBolt implements ManagerServiceC
      */
     private String[] streamDefinitions;
     /**
-     * Quarries processed by Siddhi engine. Required to extract field definitions of implicitly declared stream
+     * Queries processed by Siddhi engine. Required to extract field definitions of implicitly declared stream
      * definitions
      */
     private String[] queries;
@@ -92,7 +92,7 @@ public class EventPublisherBolt extends BaseBasicBolt implements ManagerServiceC
         this.executionPlanName = executionPlanName;
         this.trustStorePath = trustStorePath;
         this.trustStorePassword = "wso2carbon";
-        logPrefix = "{" + executionPlanName + ":" + tenantId +"}";
+        this.logPrefix = "{" + executionPlanName + ":" + tenantId +"}";
     }
 
     @Override
@@ -182,7 +182,8 @@ public class EventPublisherBolt extends BaseBasicBolt implements ManagerServiceC
 
             for (Map.Entry<String, org.wso2.carbon.databridge.commons.StreamDefinition> entry :  siddhiStreamIdToDataBridgeStream.entrySet()){
                 dataPublisher.addStreamDefinition(entry.getValue());
-                log.info(logPrefix + "Data bridge stream '" + entry.getValue().getStreamId() + "' defined for Siddhi stream '" + entry.getValue().getStreamId() + "'");
+                log.info(logPrefix + "Data bridge stream '" + entry.getValue().getStreamId() + "' defined for Siddhi stream '"
+                        + entry.getValue().getStreamId() + "' on host " + endpoint.getOne() + ":" + endpoint.getTwo());
             }
             log.info(logPrefix + "EventPublisherBolt connecting to CEP Publisher at " + endpoint.getOne() + ":" + endpoint.getTwo());
         }
