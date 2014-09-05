@@ -40,45 +40,6 @@ public class SiddhiUtils {
         return siddhiManager.getStreamDefinitions();
     }
 
-    public static List<org.wso2.carbon.event.processor.storm.common.event.server.StreamDefinition> toInternalStreamDefinitions(List<StreamDefinition> siddhiStreamDefinitions) {
-        List<org.wso2.carbon.event.processor.storm.common.event.server.StreamDefinition> internalStreamDefinitions = new ArrayList<org.wso2.carbon.event.processor.storm.common.event.server.StreamDefinition>();
-
-        for (StreamDefinition siddhiStreamDefinition : siddhiStreamDefinitions) {
-            internalStreamDefinitions.add(convertToInternalStream(siddhiStreamDefinition));
-        }
-
-        return internalStreamDefinitions;
-    }
-
-    public static org.wso2.carbon.event.processor.storm.common.event.server.StreamDefinition convertToInternalStream(org.wso2.siddhi.query.api.definition.StreamDefinition siddhiStreamDefinition) {
-        org.wso2.carbon.event.processor.storm.common.event.server.StreamDefinition internalStreamDefn = new org.wso2.carbon.event.processor.storm.common.event.server.StreamDefinition();
-        internalStreamDefn.setStreamId(siddhiStreamDefinition.getStreamId());
-        for (org.wso2.siddhi.query.api.definition.Attribute attribute : siddhiStreamDefinition.getAttributeList()) {
-            internalStreamDefn.addAttribute(attribute.getName(), convertAttributeType(attribute.getType()));
-        }
-        return internalStreamDefn;
-    }
-
-    private static org.wso2.carbon.event.processor.storm.common.event.server.StreamDefinition.Type convertAttributeType(org.wso2.siddhi.query.api.definition.Attribute.Type type) {
-        switch (type) {
-            case INT:
-                return org.wso2.carbon.event.processor.storm.common.event.server.StreamDefinition.Type.INTEGER;
-            case LONG:
-                return org.wso2.carbon.event.processor.storm.common.event.server.StreamDefinition.Type.LONG;
-            case BOOL:
-                return org.wso2.carbon.event.processor.storm.common.event.server.StreamDefinition.Type.BOOLEAN;
-            case FLOAT:
-                return org.wso2.carbon.event.processor.storm.common.event.server.StreamDefinition.Type.FLOAT;
-            case DOUBLE:
-                return org.wso2.carbon.event.processor.storm.common.event.server.StreamDefinition.Type.DOUBLE;
-            case STRING:
-                return org.wso2.carbon.event.processor.storm.common.event.server.StreamDefinition.Type.STRING;
-            default:
-                return null;
-        }
-    }
-
-
     public static org.wso2.carbon.databridge.commons.StreamDefinition toFlatDataBridgeStreamDefinition(StreamDefinition siddhiStreamDefinition) {
         org.wso2.carbon.databridge.commons.StreamDefinition databridgeStreamDefinition = new
                 org.wso2.carbon.databridge.commons.StreamDefinition(siddhiStreamDefinition.getStreamId());

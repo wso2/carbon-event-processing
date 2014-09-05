@@ -18,15 +18,14 @@
 
 package org.wso2.carbon.event.processor.storm.common.event.server;
 
-/**
- * Created by suho on 4/18/14.
- */
+import org.wso2.siddhi.query.api.definition.Attribute;
+
 public class StreamRuntimeInfo {
     private String streamId;
     private int fixedMessageSize;
     private int noOfStringAttributes;
     private int noOfAttributes;
-    private StreamDefinition.Type[] attributes;
+    private Attribute.Type[] attributes;
 
     public StreamRuntimeInfo(String streamId) {
         this.streamId = streamId;
@@ -52,19 +51,19 @@ public class StreamRuntimeInfo {
         this.noOfStringAttributes = noOfStringAttributes;
     }
 
-    public void setNoOfAttributes(int noOfAttributes) {
-        this.noOfAttributes = noOfAttributes;
-    }
-
     public int getNoOfAttributes() {
         return noOfAttributes;
     }
 
-    public void setAttributeTypes(StreamDefinition.Type[] attributes) {
-        this.attributes = attributes;
+    public void setNoOfAttributes(int noOfAttributes) {
+        this.noOfAttributes = noOfAttributes;
     }
 
-    public StreamDefinition.Type[] getAttributeTypes() {
+    public Attribute.Type[] getAttributeTypes() {
         return attributes;
+    }
+
+    public void setAttributeTypes(Attribute.Type[] attributes) {
+        this.attributes = attributes;
     }
 }

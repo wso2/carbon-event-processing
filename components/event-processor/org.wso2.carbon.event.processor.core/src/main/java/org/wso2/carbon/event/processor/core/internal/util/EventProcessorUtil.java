@@ -201,32 +201,4 @@ public class EventProcessorUtil {
         return streamId.split(EventProcessorConstants.STREAM_SEPARATOR)[0];
     }
 
-    public static org.wso2.carbon.event.processor.storm.common.event.server.StreamDefinition convertToInternalStream(org.wso2.siddhi.query.api.definition.StreamDefinition siddhiStreamDefinition) throws ExecutionPlanConfigurationException {
-        org.wso2.carbon.event.processor.storm.common.event.server.StreamDefinition internalStreamDefn = new org.wso2.carbon.event.processor.storm.common.event.server.StreamDefinition();
-        internalStreamDefn.setStreamId(siddhiStreamDefinition.getStreamId());
-        for (org.wso2.siddhi.query.api.definition.Attribute attribute : siddhiStreamDefinition.getAttributeList()) {
-            internalStreamDefn.addAttribute(attribute.getName(), convertAttributeType(attribute.getType()));
-        }
-        return internalStreamDefn;
-    }
-
-    public static org.wso2.carbon.event.processor.storm.common.event.server.StreamDefinition.Type convertAttributeType(org.wso2.siddhi.query.api.definition.Attribute.Type type) throws ExecutionPlanConfigurationException {
-        switch (type) {
-            case INT:
-                return org.wso2.carbon.event.processor.storm.common.event.server.StreamDefinition.Type.INTEGER;
-            case LONG:
-                return org.wso2.carbon.event.processor.storm.common.event.server.StreamDefinition.Type.LONG;
-            case BOOL:
-                return org.wso2.carbon.event.processor.storm.common.event.server.StreamDefinition.Type.BOOLEAN;
-            case FLOAT:
-                return org.wso2.carbon.event.processor.storm.common.event.server.StreamDefinition.Type.FLOAT;
-            case DOUBLE:
-                return org.wso2.carbon.event.processor.storm.common.event.server.StreamDefinition.Type.DOUBLE;
-            case STRING:
-                return org.wso2.carbon.event.processor.storm.common.event.server.StreamDefinition.Type.STRING;
-            default:
-                throw new ExecutionPlanConfigurationException("Incompatible types when converting from Siddhi type to internal type");
-        }
-    }
-
 }

@@ -18,9 +18,9 @@
 
 package org.wso2.carbon.event.processor.storm.common.event.server;
 
-/**
- * Created by suho on 6/5/14.
- */
+import org.wso2.siddhi.query.api.definition.Attribute;
+import org.wso2.siddhi.query.api.definition.StreamDefinition;
+
 public class EventServerUtils {
 
 
@@ -29,37 +29,37 @@ public class EventServerUtils {
 
         int messageSize=0;
         int stringAttributes=0;
-        StreamDefinition.Type[] attributeTypes=new StreamDefinition.Type[streamDefinition.getAttributeList().size()];
+        Attribute.Type[] attributeTypes=new Attribute.Type[streamDefinition.getAttributeList().size()];
 
-        java.util.List<StreamDefinition.Attribute> attributeList = streamDefinition.getAttributeList();
+        java.util.List<Attribute> attributeList = streamDefinition.getAttributeList();
         for (int i = 0; i < attributeList.size(); i++) {
-            StreamDefinition.Attribute attribute = attributeList.get(i);
+            Attribute attribute = attributeList.get(i);
             switch (attribute.getType()) {
 
-                case INTEGER:
+                case INT:
                     messageSize += 4;
-                    attributeTypes[i]= StreamDefinition.Type.INTEGER;
+                    attributeTypes[i]= Attribute.Type.INT;
                     break;
                 case LONG:
                     messageSize += 8;
-                    attributeTypes[i]= StreamDefinition.Type.LONG;
+                    attributeTypes[i]= Attribute.Type.LONG;
                     break;
-                case BOOLEAN:
+                case BOOL:
                     messageSize += 1;
-                    attributeTypes[i]= StreamDefinition.Type.BOOLEAN;
+                    attributeTypes[i]= Attribute.Type.BOOL;
                     break;
                 case FLOAT:
                     messageSize += 4;
-                    attributeTypes[i]= StreamDefinition.Type.FLOAT;
+                    attributeTypes[i]= Attribute.Type.FLOAT;
                     break;
                 case DOUBLE:
                     messageSize += 8;
-                    attributeTypes[i]= StreamDefinition.Type.DOUBLE;
+                    attributeTypes[i]= Attribute.Type.DOUBLE;
                     break;
                 case STRING:
                     messageSize += 2;
                     stringAttributes++;
-                    attributeTypes[i]= StreamDefinition.Type.STRING;
+                    attributeTypes[i]= Attribute.Type.STRING;
                     break;
             }
         }

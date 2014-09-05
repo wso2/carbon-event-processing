@@ -22,7 +22,6 @@ import org.apache.commons.logging.LogFactory;
 import org.wso2.carbon.databridge.commons.StreamDefinition;
 import org.wso2.carbon.event.processor.core.ExecutionPlanConfiguration;
 import org.wso2.carbon.event.processor.core.StreamConfiguration;
-import org.wso2.carbon.event.processor.core.exception.ExecutionPlanConfigurationException;
 import org.wso2.carbon.event.processor.core.internal.ha.server.utils.HostAddressFinder;
 import org.wso2.carbon.event.processor.core.internal.listener.AbstractSiddhiInputEventDispatcher;
 import org.wso2.carbon.event.processor.core.internal.util.EventProcessorUtil;
@@ -47,7 +46,7 @@ public class SiddhiStormInputEventDispatcher extends AbstractSiddhiInputEventDis
     private String streamVersion;
     private String cepManagerHost = StormDeploymentConfiguration.getCepManagerHost();
     private int cepManagerPort = StormDeploymentConfiguration.getCepManagerPort();
-    private org.wso2.carbon.event.processor.storm.common.event.server.StreamDefinition internalStreamDefinition;
+    private org.wso2.siddhi.query.api.definition.StreamDefinition siddhiStreamDefinition;
 
     public SiddhiStormInputEventDispatcher(StreamDefinition streamDefinition,
                                            String siddhiStreamName,
@@ -67,14 +66,7 @@ public class SiddhiStormInputEventDispatcher extends AbstractSiddhiInputEventDis
         // Creating a data bridge stream equivalent to the Siddhi stream handled by this input event dispatcher
         // by creating a data bridge stream which has name as the Siddhi stream name, and all fields as payload
         // fields just like in Siddhi streams.
-        org.wso2.siddhi.query.api.definition.StreamDefinition siddhiStreamDefinition =
-                EventProcessorUtil.convertToSiddhiStreamDefinition(streamDefinition, new StreamConfiguration(streamDefinition.getName(), streamDefinition.getVersion()));
-        try {
-            internalStreamDefinition = EventProcessorUtil.convertToInternalStream(siddhiStreamDefinition);
-        } catch (ExecutionPlanConfigurationException e) {
-            log.error("Error initializing SiddhiStormInputEventDispatcher:" + e.getMessage(), e);
-        }
-
+        this.siddhiStreamDefinition = EventProcessorUtil.convertToSiddhiStreamDefinition(streamDefinition, new StreamConfiguration(streamDefinition.getName(), streamDefinition.getVersion()));
         ManagerServiceClient client = new ManagerServiceClient(cepManagerHost, cepManagerPort, this);
         client.getStormReceiver(super.getExecutionPlanName(), super.tenantId, StormDeploymentConfiguration.getReconnectInterval(), thisHostIp);
     }
@@ -101,11 +93,10 @@ public class SiddhiStormInputEventDispatcher extends AbstractSiddhiInputEventDis
     public void onResponseReceived(Pair<String, Integer> endpoint) {
         synchronized (this) {
             try {
-                eventClient = new EventClient("tcp://" + endpoint.getOne() + ":" + endpoint.getTwo(), internalStreamDefinition);
+                eventClient = new EventClient("tcp://" + endpoint.getOne() + ":" + endpoint.getTwo(), siddhiStreamDefinition);
             } catch (Exception e) {
                 log.error("Error while creating event client");
             }
-            //eventClient.addStreamDefinition(internalStreamDefinition);
         }
 
         log.info("[CEP Receiver]Storm input dispatcher connecting to Storm event receiver at " + endpoint.getOne() + ":" + endpoint.getTwo()

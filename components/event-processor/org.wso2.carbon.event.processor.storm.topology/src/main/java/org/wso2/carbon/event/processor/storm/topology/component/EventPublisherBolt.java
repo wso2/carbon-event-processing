@@ -180,7 +180,7 @@ public class EventPublisherBolt extends BaseBasicBolt implements ManagerServiceC
         synchronized (this) {
             try {
                 for (Map.Entry<String, org.wso2.carbon.databridge.commons.StreamDefinition> entry : siddhiStreamIdToDataBridgeStreamMap.entrySet()) {
-                    eventClient = new EventClient("tcp://" + endpoint.getOne() + ":" + endpoint.getTwo(), SiddhiUtils.convertToInternalStream(siddhiManager.getStreamDefinition(entry.getValue().getStreamId())));
+                    eventClient = new EventClient("tcp://" + endpoint.getOne() + ":" + endpoint.getTwo(), siddhiManager.getStreamDefinition(entry.getValue().getStreamId()));
                     log.error("Error while creating event client");
                 }
             } catch (Exception e) {

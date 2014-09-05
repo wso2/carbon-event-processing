@@ -18,9 +18,6 @@
 
 package org.wso2.carbon.event.processor.storm.common.event.server;
 
-/**
- * Created by suho on 6/5/14.
- */
 public interface StreamCallback {
 
     void receive(Object[] event);

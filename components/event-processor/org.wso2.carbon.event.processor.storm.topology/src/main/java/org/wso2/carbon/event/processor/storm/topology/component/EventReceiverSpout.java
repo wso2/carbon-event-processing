@@ -47,7 +47,7 @@ public class EventReceiverSpout extends BaseRichSpout implements StreamCallback 
     /**
      * Listening port of the thrift receiver
      */
-    int listeningPort;
+    private int listeningPort;
     private String thisHostIp;
 
     /**
@@ -122,7 +122,7 @@ public class EventReceiverSpout extends BaseRichSpout implements StreamCallback 
 
         try {
             selectPort();
-            EventServer eventServer = new EventServer(new EventServerConfig(listeningPort), SiddhiUtils.convertToInternalStream(SiddhiUtils.toSiddhiStreamDefinitions(incomingStreamDefinitions).get(0)), this);
+            EventServer eventServer = new EventServer(new EventServerConfig(listeningPort), SiddhiUtils.toSiddhiStreamDefinitions(incomingStreamDefinitions).get(0), this);
             eventServer.start();
             log.info(logPrefix + "EventReceiverSpout starting to listen for events on port " + listeningPort);
             registerWithCepMangerService();

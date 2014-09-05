@@ -18,9 +18,11 @@
 
 package org.wso2.carbon.event.processor.storm.common.event.client;
 
+import org.apache.log4j.Logger;
 import org.wso2.carbon.event.processor.storm.common.event.server.EventServerUtils;
-import org.wso2.carbon.event.processor.storm.common.event.server.StreamDefinition;
 import org.wso2.carbon.event.processor.storm.common.event.server.StreamRuntimeInfo;
+import org.wso2.siddhi.query.api.definition.Attribute;
+import org.wso2.siddhi.query.api.definition.StreamDefinition;
 
 import java.io.BufferedOutputStream;
 import java.io.IOException;
@@ -29,8 +31,8 @@ import java.net.Socket;
 import java.nio.ByteBuffer;
 
 public class EventClient {
-
     public static final String DEFAULT_CHARSET = "UTF-8";
+    private static Logger log = Logger.getLogger(EventClient.class);
     private final String hostUrl;
     private final StreamDefinition streamDefinition;
     private final StreamRuntimeInfo streamRuntimeInfo;
@@ -43,22 +45,20 @@ public class EventClient {
         this.streamDefinition = streamDefinition;
         this.streamRuntimeInfo = EventServerUtils.createStreamRuntimeInfo(streamDefinition);
 
-        System.out.println("Sending to " + hostUrl);
+        log.info("Client configured to send events to " + hostUrl);
         String[] hp = hostUrl.split(":");
         String host = hp[0];
         int port = Integer.parseInt(hp[1]);
-        clientSocket = new Socket(host, port);
-//	    clientSocket = new Socket("184.72.186.131", 7611);
-        outputStream = new BufferedOutputStream(clientSocket.getOutputStream());
+        this.clientSocket = new Socket(host, port);
+        this.outputStream = new BufferedOutputStream(this.clientSocket.getOutputStream());
     }
 
     public void close() {
         try {
             outputStream.flush();
             clientSocket.close();
-        } catch (Throwable e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+        } catch (IOException e) {
+            log.warn("Error while closing stream for sending events: " + e.getMessage(), e);
         }
     }
 
@@ -70,17 +70,17 @@ public class EventClient {
         ByteBuffer buf = ByteBuffer.allocate(streamRuntimeInfo.getFixedMessageSize());
         int[] stringDataIndex = new int[streamRuntimeInfo.getNoOfStringAttributes()];
         int stringIndex = 0;
-        StreamDefinition.Type[] types = streamRuntimeInfo.getAttributeTypes();
+        Attribute.Type[] types = streamRuntimeInfo.getAttributeTypes();
         for (int i = 0, typesLength = types.length; i < typesLength; i++) {
-            StreamDefinition.Type type = types[i];
+            Attribute.Type type = types[i];
             switch (type) {
-                case INTEGER:
+                case INT:
                     buf.putInt((Integer) event[i]);
                     continue;
                 case LONG:
                     buf.putLong((Long) event[i]);
                     continue;
-                case BOOLEAN:
+                case BOOL:
                     buf.put((byte) (((Boolean) event[i]) ? 1 : 0));
                     continue;
                 case FLOAT:

@@ -18,12 +18,10 @@
 
 package org.wso2.carbon.event.processor.storm.common.event.server;
 
-/**
- * Created by suho on 6/5/14.
- */
 public class EventServerConfig {
 
-    private int numberOfThreads=10;
+    public static final int DEFAULT_THREAD_POOL_SIZE = 10;
+    private int numberOfThreads = DEFAULT_THREAD_POOL_SIZE;
     private int port;
 
     public EventServerConfig(int port) {

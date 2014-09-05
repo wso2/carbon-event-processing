@@ -18,6 +18,10 @@
 
 package org.wso2.carbon.event.processor.storm.common.event.server;
 
+import org.apache.log4j.Logger;
+import org.wso2.siddhi.query.api.definition.Attribute;
+import org.wso2.siddhi.query.api.definition.StreamDefinition;
+
 import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.net.ServerSocket;
@@ -28,7 +32,7 @@ import java.util.concurrent.Executors;
 
 //TODO: Improve event server to handle multiple event streams
 public class EventServer {
-
+    private static Logger log = Logger.getLogger(EventServer.class);
     private EventServerConfig eventServerConfig = new EventServerConfig(7211);
     private StreamDefinition streamDefinition;
     private StreamCallback streamCallback;
@@ -40,16 +44,16 @@ public class EventServer {
         this.streamDefinition = streamDefinition;
         this.streamCallback = streamCallback;
         this.streamRuntimeInfo = EventServerUtils.createStreamRuntimeInfo(streamDefinition);
-        pool = Executors.newFixedThreadPool(eventServerConfig.getNumberOfThreads());
+        this.pool = Executors.newFixedThreadPool(eventServerConfig.getNumberOfThreads());
     }
 
 
-    public void start() throws Exception {
-        System.out.println("Starting on " + eventServerConfig.getPort());
-        ServerSocket welcomeSocket = new ServerSocket(eventServerConfig.getPort());
+    public void start() throws IOException {
+        log.info("Starting event listener on " + eventServerConfig.getPort());
+        ServerSocket receiverSocket = new ServerSocket(eventServerConfig.getPort());
         while (true) {
             try {
-                final Socket connectionSocket = welcomeSocket.accept();
+                final Socket connectionSocket = receiverSocket.accept();
                 pool.submit(new Runnable() {
 
                     @Override
@@ -66,17 +70,17 @@ public class EventServer {
                                 byte[] fixedMessageData = loadData(in, new byte[streamRuntimeInfo.getFixedMessageSize()]);
 
                                 ByteBuffer bbuf = ByteBuffer.wrap(fixedMessageData, 0, fixedMessageData.length);
-                                StreamDefinition.Type[] attributeTypes = streamRuntimeInfo.getAttributeTypes();
+                                Attribute.Type[] attributeTypes = streamRuntimeInfo.getAttributeTypes();
                                 for (int i = 0; i < attributeTypes.length; i++) {
-                                    StreamDefinition.Type type = attributeTypes[i];
+                                    Attribute.Type type = attributeTypes[i];
                                     switch (type) {
-                                        case INTEGER:
+                                        case INT:
                                             event[i] = bbuf.getInt();
                                             continue;
                                         case LONG:
                                             event[i] = bbuf.getLong();
                                             continue;
-                                        case BOOLEAN:
+                                        case BOOL:
                                             event[i] = bbuf.get() == 1;
                                             continue;
                                         case FLOAT:
@@ -95,14 +99,12 @@ public class EventServer {
                                 streamCallback.receive(event);
                             }
                         } catch (IOException e) {
-                            // TODO Auto-generated catch block
-                            e.printStackTrace();
+                            log.error("Error reading data from receiver socket:" + e.getMessage(), e);
                         }
                     }
                 });
             } catch (Throwable e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
+                log.error("Error while listening for data on socket: " + e.getMessage(), e);
             }
         }
 

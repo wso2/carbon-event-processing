@@ -25,9 +25,9 @@ import org.wso2.carbon.event.processor.storm.common.client.ManagerServiceClient;
 import org.wso2.carbon.event.processor.storm.common.event.server.EventServer;
 import org.wso2.carbon.event.processor.storm.common.event.server.EventServerConfig;
 import org.wso2.carbon.event.processor.storm.common.event.server.StreamCallback;
-import org.wso2.carbon.event.processor.storm.common.event.server.StreamDefinition;
 import org.wso2.carbon.event.processor.storm.common.helper.StormDeploymentConfiguration;
 import org.wso2.carbon.event.processor.storm.common.util.StormUtils;
+import org.wso2.siddhi.query.api.definition.StreamDefinition;
 
 import java.util.HashMap;
 
@@ -85,7 +85,7 @@ public class SiddhiStormOutputEventListener implements StreamCallback {
             eventServer.start();
             registerWithCepMangerService();
         } catch (Exception e) {
-            log.error("Failed to start Event serverfor execution plan :" + executionPlanConfiguration.getName(), e);
+            log.error("Failed to start event listener for execution plan :" + executionPlanConfiguration.getName(), e);
         }
     }
 

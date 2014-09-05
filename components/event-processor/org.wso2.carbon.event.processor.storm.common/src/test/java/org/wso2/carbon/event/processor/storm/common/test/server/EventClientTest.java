@@ -19,24 +19,22 @@
 package org.wso2.carbon.event.processor.storm.common.test.server;
 
 import org.wso2.carbon.event.processor.storm.common.event.client.EventClient;
-import org.wso2.carbon.event.processor.storm.common.event.server.StreamDefinition;
+import org.wso2.siddhi.query.api.definition.Attribute;
+import org.wso2.siddhi.query.api.definition.StreamDefinition;
 
 import java.util.Random;
 
 public class EventClientTest {
 
-
     public static void main(String[] args) throws Exception {
 
-        StreamDefinition streamDefinition = new StreamDefinition();
-        streamDefinition.setStreamId("TestStream");
-        streamDefinition.addAttribute("att1", StreamDefinition.Type.INTEGER);
-        streamDefinition.addAttribute("att2", StreamDefinition.Type.FLOAT);
-        streamDefinition.addAttribute("att3", StreamDefinition.Type.STRING);
-        streamDefinition.addAttribute("att4", StreamDefinition.Type.INTEGER);
+        StreamDefinition streamDefinition = new StreamDefinition().name("TestStream")
+                .attribute("att1", Attribute.Type.INT)
+                .attribute("att2", Attribute.Type.FLOAT)
+                .attribute("att3", Attribute.Type.STRING)
+                .attribute("att4", Attribute.Type.INT);
 
         EventClient eventClient = new EventClient("localhost:7612", streamDefinition);
-
 
         Thread.sleep(1000);
         System.out.println("Start testing");
@@ -44,7 +42,6 @@ public class EventClientTest {
 
         for (int i = 0; i < 100; i++) {
             eventClient.sendEvent(new Object[]{random.nextInt(), random.nextFloat(), "Abcdefghijklmnop" + random.nextLong(), random.nextInt()});
-
         }
     }
 }

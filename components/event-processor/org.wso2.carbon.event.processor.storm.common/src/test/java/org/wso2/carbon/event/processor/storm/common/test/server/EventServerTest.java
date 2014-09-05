@@ -21,7 +21,8 @@ package org.wso2.carbon.event.processor.storm.common.test.server;
 import org.wso2.carbon.event.processor.storm.common.event.server.EventServer;
 import org.wso2.carbon.event.processor.storm.common.event.server.EventServerConfig;
 import org.wso2.carbon.event.processor.storm.common.event.server.StreamCallback;
-import org.wso2.carbon.event.processor.storm.common.event.server.StreamDefinition;
+import org.wso2.siddhi.query.api.definition.Attribute;
+import org.wso2.siddhi.query.api.definition.StreamDefinition;
 
 import java.util.Arrays;
 
@@ -30,12 +31,11 @@ public class EventServerTest {
 
     public static void main(String[] args) throws Exception {
 
-        StreamDefinition streamDefinition = new StreamDefinition();
-        streamDefinition.setStreamId("TestStream");
-        streamDefinition.addAttribute("att1", StreamDefinition.Type.INTEGER);
-        streamDefinition.addAttribute("att2", StreamDefinition.Type.FLOAT);
-        streamDefinition.addAttribute("att3", StreamDefinition.Type.STRING);
-        streamDefinition.addAttribute("att4", StreamDefinition.Type.INTEGER);
+        StreamDefinition streamDefinition = new StreamDefinition().name("TestStream")
+                .attribute("att1", Attribute.Type.INT)
+                .attribute("att2", Attribute.Type.FLOAT)
+                .attribute("att3", Attribute.Type.STRING)
+                .attribute("att4", Attribute.Type.INT);
 
         EventServer eventServer = new EventServer(new EventServerConfig(7612), streamDefinition, new StreamCallback() {
             @Override
