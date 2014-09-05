@@ -18,18 +18,22 @@
 
 package org.wso2.carbon.event.processor.storm.common.test.server;
 
+import org.junit.Test;
+import org.wso2.carbon.event.processor.storm.common.event.client.EventClient;
 import org.wso2.carbon.event.processor.storm.common.event.server.BinaryTransportEventServer;
 import org.wso2.carbon.event.processor.storm.common.event.server.EventServerConfig;
 import org.wso2.carbon.event.processor.storm.common.event.server.StreamCallback;
 import org.wso2.siddhi.query.api.definition.Attribute;
 import org.wso2.siddhi.query.api.definition.StreamDefinition;
 
+import java.io.IOException;
 import java.util.Arrays;
+import java.util.Random;
 
-public class EventServerTest {
+public class BinaryTransportEventSendingTestCase {
 
-
-    public static void main(String[] args) throws Exception {
+    @Test
+    public void testEventSendingToServer() {
 
         StreamDefinition streamDefinition = new StreamDefinition().name("TestStream")
                 .attribute("att1", Attribute.Type.INT)
@@ -44,11 +48,40 @@ public class EventServerTest {
                 System.out.println("Event: " + Arrays.deepToString(event));
             }
         });
-        binaryTransportEventServer.subscribe(streamDefinition);
-        binaryTransportEventServer.start();
+        try {
+            binaryTransportEventServer.subscribe(streamDefinition);
+            binaryTransportEventServer.start();
+            Thread.sleep(1000);
+            sendEventsViaClient();
+            Thread.sleep(5000);
+            System.out.println("Shutting down server...");
+            binaryTransportEventServer.shutdown();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
 
-        Thread.sleep(100000);
-        System.out.println("Shutting down server...");
-        binaryTransportEventServer.shutdown();
+    private void sendEventsViaClient() {
+        StreamDefinition streamDefinition = new StreamDefinition().name("TestStream")
+                .attribute("att1", Attribute.Type.INT)
+                .attribute("att2", Attribute.Type.FLOAT)
+                .attribute("att3", Attribute.Type.STRING)
+                .attribute("att4", Attribute.Type.INT);
+
+        EventClient eventClient = null;
+        try {
+            eventClient = new EventClient("localhost:7612", streamDefinition);
+            Thread.sleep(1000);
+            System.out.println("Start testing");
+            Random random = new Random();
+
+            for (int i = 0; i < 100; i++) {
+                eventClient.sendEvent(new Object[]{random.nextInt(), random.nextFloat(), "Abcdefghijklmnop" + random.nextLong(), random.nextInt()});
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 }

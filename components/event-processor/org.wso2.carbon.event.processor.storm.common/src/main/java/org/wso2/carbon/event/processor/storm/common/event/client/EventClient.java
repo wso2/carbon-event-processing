@@ -40,7 +40,7 @@ public class EventClient {
     private Socket clientSocket;
 
 
-    public EventClient(String hostUrl, StreamDefinition streamDefinition) throws Exception {
+    public EventClient(String hostUrl, StreamDefinition streamDefinition) throws IOException {
         this.hostUrl = hostUrl;
         this.streamDefinition = streamDefinition;
         this.streamRuntimeInfo = EventServerUtils.createStreamRuntimeInfo(streamDefinition);
