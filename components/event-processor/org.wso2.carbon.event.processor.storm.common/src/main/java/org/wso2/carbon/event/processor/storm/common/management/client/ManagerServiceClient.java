@@ -16,7 +16,7 @@
 * under the License.
 */
 
-package org.wso2.carbon.event.processor.storm.common.client;
+package org.wso2.carbon.event.processor.storm.common.management.client;
 
 import org.apache.axiom.om.OMElement;
 import org.apache.axis2.AxisFault;
@@ -25,6 +25,8 @@ import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.client.Options;
 import org.apache.axis2.client.ServiceClient;
 import org.apache.log4j.Logger;
+import org.wso2.carbon.event.processor.storm.common.management.ManagerServiceConstants;
+import org.wso2.carbon.event.processor.storm.common.management.ManagerServiceMessageCreator;
 import org.wso2.siddhi.core.util.collection.Pair;
 
 import javax.xml.namespace.QName;

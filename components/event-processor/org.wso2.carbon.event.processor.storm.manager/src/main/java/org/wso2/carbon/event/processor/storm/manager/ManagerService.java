@@ -19,7 +19,7 @@ package org.wso2.carbon.event.processor.storm.manager;
 
 import org.apache.axiom.om.*;
 import org.apache.log4j.Logger;
-import org.wso2.carbon.event.processor.storm.common.client.ManagerServiceConstants;
+import org.wso2.carbon.event.processor.storm.common.management.ManagerServiceConstants;
 
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;

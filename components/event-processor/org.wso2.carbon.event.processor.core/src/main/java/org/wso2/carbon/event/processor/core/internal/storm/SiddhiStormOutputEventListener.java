@@ -21,11 +21,10 @@ import org.apache.log4j.Logger;
 import org.wso2.carbon.databridge.commons.thrift.utils.HostAddressFinder;
 import org.wso2.carbon.event.processor.core.ExecutionPlanConfiguration;
 import org.wso2.carbon.event.processor.core.internal.listener.SiddhiOutputStreamListener;
-import org.wso2.carbon.event.processor.storm.common.client.ManagerServiceClient;
-import org.wso2.carbon.event.processor.storm.common.event.server.BinaryTransportEventServer;
 import org.wso2.carbon.event.processor.storm.common.event.server.EventServerConfig;
 import org.wso2.carbon.event.processor.storm.common.event.server.StreamCallback;
 import org.wso2.carbon.event.processor.storm.common.helper.StormDeploymentConfiguration;
+import org.wso2.carbon.event.processor.storm.common.management.client.ManagerServiceClient;
 import org.wso2.carbon.event.processor.storm.common.util.StormUtils;
 
 import java.util.HashMap;

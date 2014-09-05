@@ -25,10 +25,10 @@ import org.wso2.carbon.event.processor.core.StreamConfiguration;
 import org.wso2.carbon.event.processor.core.internal.ha.server.utils.HostAddressFinder;
 import org.wso2.carbon.event.processor.core.internal.listener.AbstractSiddhiInputEventDispatcher;
 import org.wso2.carbon.event.processor.core.internal.util.EventProcessorUtil;
-import org.wso2.carbon.event.processor.storm.common.client.ManagerServiceClient;
-import org.wso2.carbon.event.processor.storm.common.client.ManagerServiceClientCallback;
 import org.wso2.carbon.event.processor.storm.common.event.client.EventClient;
 import org.wso2.carbon.event.processor.storm.common.helper.StormDeploymentConfiguration;
+import org.wso2.carbon.event.processor.storm.common.management.client.ManagerServiceClient;
+import org.wso2.carbon.event.processor.storm.common.management.client.ManagerServiceClientCallback;
 import org.wso2.siddhi.core.event.Event;
 import org.wso2.siddhi.core.util.collection.Pair;
 
