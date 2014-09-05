@@ -16,14 +16,16 @@
  *  under the License.
  */
 
-package org.wso2.event.processor.core.test.event.server;
+package org.wso2.carbon.event.processor.storm.common.test.server;
 
-import org.wso2.carbon.event.processor.core.internal.event.client.EventClient;
-import org.wso2.carbon.event.processor.core.internal.event.server.StreamDefinition;
+import org.wso2.carbon.event.processor.storm.common.event.server.EventServer;
+import org.wso2.carbon.event.processor.storm.common.event.server.EventServerConfig;
+import org.wso2.carbon.event.processor.storm.common.event.server.StreamCallback;
+import org.wso2.carbon.event.processor.storm.common.event.server.StreamDefinition;
 
-import java.util.Random;
+import java.util.Arrays;
 
-public class EventClientTest {
+public class EventServerTest {
 
 
     public static void main(String[] args) throws Exception {
@@ -35,16 +37,15 @@ public class EventClientTest {
         streamDefinition.addAttribute("att3", StreamDefinition.Type.STRING);
         streamDefinition.addAttribute("att4", StreamDefinition.Type.INTEGER);
 
-        EventClient eventClient = new EventClient("localhost:7612", streamDefinition);
+        EventServer eventServer = new EventServer(new EventServerConfig(7612), streamDefinition, new StreamCallback() {
+            @Override
+            public void receive(Object[] event) {
+                System.out.println(Arrays.deepToString(event));
+            }
+        });
 
+        eventServer.start();
 
-        Thread.sleep(1000);
-        System.out.println("Start testing");
-        Random random = new Random();
-
-        for (int i = 0; i < 100; i++) {
-            eventClient.sendEvent(new Object[]{random.nextInt(), random.nextFloat(), "Abcdefghijklmnop" + random.nextLong(), random.nextInt()});
-
-        }
+        Thread.sleep(10000);
     }
 }

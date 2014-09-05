@@ -16,11 +16,11 @@
  *  under the License.
  */
 
-package org.wso2.carbon.event.processor.core.internal.event.client;
+package org.wso2.carbon.event.processor.storm.common.event.client;
 
-import org.wso2.carbon.event.processor.core.internal.event.server.EventServerUtils;
-import org.wso2.carbon.event.processor.core.internal.event.server.StreamDefinition;
-import org.wso2.carbon.event.processor.core.internal.event.server.StreamRuntimeInfo;
+import org.wso2.carbon.event.processor.storm.common.event.server.EventServerUtils;
+import org.wso2.carbon.event.processor.storm.common.event.server.StreamDefinition;
+import org.wso2.carbon.event.processor.storm.common.event.server.StreamRuntimeInfo;
 
 import java.io.BufferedOutputStream;
 import java.io.IOException;

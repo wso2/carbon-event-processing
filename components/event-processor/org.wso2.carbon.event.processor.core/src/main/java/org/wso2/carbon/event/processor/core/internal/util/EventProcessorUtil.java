@@ -1,20 +1,20 @@
 /*
-*  Copyright (c) 2005-2014, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
-*
-*  WSO2 Inc. licenses this file to you under the Apache License,
-*  Version 2.0 (the "License"); you may not use this file except
-*  in compliance with the License.
-*  You may obtain a copy of the License at
-*
-*    http://www.apache.org/licenses/LICENSE-2.0
-*
-* Unless required by applicable law or agreed to in writing,
-* software distributed under the License is distributed on an
-* "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
-* KIND, either express or implied.  See the License for the
-* specific language governing permissions and limitations
-* under the License.
-*/
+ * Copyright (c) 2005-2014, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
+ *
+ *  WSO2 Inc. licenses this file to you under the Apache License,
+ *  Version 2.0 (the "License"); you may not use this file except
+ *  in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing,
+ *  software distributed under the License is distributed on an
+ *  "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ *  KIND, either express or implied.  See the License for the
+ *  specific language governing permissions and limitations
+ *  under the License.
+ */
 package org.wso2.carbon.event.processor.core.internal.util;
 
 import org.apache.commons.logging.Log;
@@ -200,4 +200,33 @@ public class EventProcessorUtil {
     public static String getStreamName(String streamId) {
         return streamId.split(EventProcessorConstants.STREAM_SEPARATOR)[0];
     }
+
+    public static org.wso2.carbon.event.processor.storm.common.event.server.StreamDefinition convertToInternalStream(org.wso2.siddhi.query.api.definition.StreamDefinition siddhiStreamDefinition) throws ExecutionPlanConfigurationException {
+        org.wso2.carbon.event.processor.storm.common.event.server.StreamDefinition internalStreamDefn = new org.wso2.carbon.event.processor.storm.common.event.server.StreamDefinition();
+        internalStreamDefn.setStreamId(siddhiStreamDefinition.getStreamId());
+        for (org.wso2.siddhi.query.api.definition.Attribute attribute : siddhiStreamDefinition.getAttributeList()) {
+            internalStreamDefn.addAttribute(attribute.getName(), convertAttributeType(attribute.getType()));
+        }
+        return internalStreamDefn;
+    }
+
+    public static org.wso2.carbon.event.processor.storm.common.event.server.StreamDefinition.Type convertAttributeType(org.wso2.siddhi.query.api.definition.Attribute.Type type) throws ExecutionPlanConfigurationException {
+        switch (type) {
+            case INT:
+                return org.wso2.carbon.event.processor.storm.common.event.server.StreamDefinition.Type.INTEGER;
+            case LONG:
+                return org.wso2.carbon.event.processor.storm.common.event.server.StreamDefinition.Type.LONG;
+            case BOOL:
+                return org.wso2.carbon.event.processor.storm.common.event.server.StreamDefinition.Type.BOOLEAN;
+            case FLOAT:
+                return org.wso2.carbon.event.processor.storm.common.event.server.StreamDefinition.Type.FLOAT;
+            case DOUBLE:
+                return org.wso2.carbon.event.processor.storm.common.event.server.StreamDefinition.Type.DOUBLE;
+            case STRING:
+                return org.wso2.carbon.event.processor.storm.common.event.server.StreamDefinition.Type.STRING;
+            default:
+                throw new ExecutionPlanConfigurationException("Incompatible types when converting from Siddhi type to internal type");
+        }
+    }
+
 }

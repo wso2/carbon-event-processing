@@ -20,12 +20,12 @@ package org.wso2.carbon.event.processor.core.internal.storm;
 import org.apache.log4j.Logger;
 import org.wso2.carbon.databridge.receiver.thrift.ThriftDataReceiver;
 import org.wso2.carbon.event.processor.core.ExecutionPlanConfiguration;
-import org.wso2.carbon.event.processor.core.internal.event.server.EventServer;
-import org.wso2.carbon.event.processor.core.internal.event.server.EventServerConfig;
-import org.wso2.carbon.event.processor.core.internal.event.server.StreamCallback;
-import org.wso2.carbon.event.processor.core.internal.event.server.StreamDefinition;
 import org.wso2.carbon.event.processor.core.internal.listener.SiddhiOutputStreamListener;
 import org.wso2.carbon.event.processor.storm.common.client.ManagerServiceClient;
+import org.wso2.carbon.event.processor.storm.common.event.server.EventServer;
+import org.wso2.carbon.event.processor.storm.common.event.server.EventServerConfig;
+import org.wso2.carbon.event.processor.storm.common.event.server.StreamCallback;
+import org.wso2.carbon.event.processor.storm.common.event.server.StreamDefinition;
 import org.wso2.carbon.event.processor.storm.common.helper.StormDeploymentConfiguration;
 import org.wso2.carbon.event.processor.storm.common.util.StormUtils;
 

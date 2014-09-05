@@ -16,7 +16,7 @@
  *  under the License.
  */
 
-package org.wso2.carbon.event.processor.core.internal.event.server;
+package org.wso2.carbon.event.processor.storm.common.event.server;
 
 import java.io.BufferedInputStream;
 import java.io.IOException;
