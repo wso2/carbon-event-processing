@@ -18,21 +18,20 @@
 package org.wso2.carbon.event.processor.core.internal.storm;
 
 import org.apache.log4j.Logger;
-import org.wso2.carbon.databridge.receiver.thrift.ThriftDataReceiver;
+import org.wso2.carbon.databridge.commons.thrift.utils.HostAddressFinder;
 import org.wso2.carbon.event.processor.core.ExecutionPlanConfiguration;
 import org.wso2.carbon.event.processor.core.internal.listener.SiddhiOutputStreamListener;
 import org.wso2.carbon.event.processor.storm.common.client.ManagerServiceClient;
-import org.wso2.carbon.event.processor.storm.common.event.server.EventServer;
+import org.wso2.carbon.event.processor.storm.common.event.server.BinaryTransportEventServer;
 import org.wso2.carbon.event.processor.storm.common.event.server.EventServerConfig;
 import org.wso2.carbon.event.processor.storm.common.event.server.StreamCallback;
 import org.wso2.carbon.event.processor.storm.common.helper.StormDeploymentConfiguration;
 import org.wso2.carbon.event.processor.storm.common.util.StormUtils;
-import org.wso2.siddhi.query.api.definition.StreamDefinition;
 
 import java.util.HashMap;
 
 /**
- * Receives events from the Event publisher bolt running on storm. There will be one SindhiStormOutputEventListener instance
+ * Receives events from the Event publisher bolt running on storm. There will be one SiddhiStormOutputEventListener instance
  * per execution plan per tenant (all exported streams of execution plan are handled form a single instance). When events are
  * received from storm, the event  will be directed to the relevant output stream listener depending on the stream to forward
  * the event to the relevant output adaptor for the stream.
@@ -41,7 +40,6 @@ public class SiddhiStormOutputEventListener implements StreamCallback {
     private static final String DEFAULT_STREAM_VERSION = "1.0.0";
     private static Logger log = Logger.getLogger(SiddhiStormOutputEventListener.class);
     private ExecutionPlanConfiguration executionPlanConfiguration;
-    private ThriftDataReceiver thriftDataReceiver;
     private int listeningPort;
     private int tenantId;
     private String thisHostIp;
@@ -50,10 +48,6 @@ public class SiddhiStormOutputEventListener implements StreamCallback {
     private HashMap<String, SiddhiOutputStreamListener> streamNameToOutputStreamListenerMap = new HashMap<String, SiddhiOutputStreamListener>();
     private int minListeningPort = StormDeploymentConfiguration.getMinListingPort();
     private int maxListeningPort = StormDeploymentConfiguration.getMaxListeningPort();
-    private StreamDefinition streamDefinition;
-
-    //TODO: This is to hardcode for one stream: Please fix
-    private String streamId;
 
     public SiddhiStormOutputEventListener(ExecutionPlanConfiguration executionPlanConfiguration, int tenantId) {
         this.executionPlanConfiguration = executionPlanConfiguration;
@@ -61,12 +55,9 @@ public class SiddhiStormOutputEventListener implements StreamCallback {
         init();
     }
 
-    //TODO: Improve event server to handle multiple event streams
-    public void registerOutputStreamListener(String siddhiStreamName, StreamDefinition streamDefinition, SiddhiOutputStreamListener outputStreamListener) {
+    public void registerOutputStreamListener(String siddhiStreamName, SiddhiOutputStreamListener outputStreamListener) {
         log.info("Registering Output stream listener for Siddhi stream " + siddhiStreamName);
-        this.streamDefinition = streamDefinition;
-        this.streamId = siddhiStreamName + ":" + DEFAULT_STREAM_VERSION;
-        streamNameToOutputStreamListenerMap.put(this.streamId, outputStreamListener);
+        streamNameToOutputStreamListenerMap.put(siddhiStreamName + ":" + DEFAULT_STREAM_VERSION, outputStreamListener);
     }
 
     private void registerWithCepMangerService() {
@@ -81,8 +72,9 @@ public class SiddhiStormOutputEventListener implements StreamCallback {
 
         try {
             selectPort();
-            EventServer eventServer = new EventServer(new EventServerConfig(listeningPort), streamDefinition, this);
-            eventServer.start();
+            thisHostIp = HostAddressFinder.findAddress("localhost");
+            BinaryTransportEventServer binaryTransportEventServer = new BinaryTransportEventServer(new EventServerConfig(listeningPort), this);
+            binaryTransportEventServer.start();
             registerWithCepMangerService();
         } catch (Exception e) {
             log.error("Failed to start event listener for execution plan :" + executionPlanConfiguration.getName(), e);
@@ -100,14 +92,13 @@ public class SiddhiStormOutputEventListener implements StreamCallback {
 
 
     @Override
-    public void receive(Object[] event) {
-        //TODO: this is hardcoded for one stream. Please fix.
-        SiddhiOutputStreamListener outputStreamListener = streamNameToOutputStreamListenerMap.get(this.streamId);
+    public void receive(String streamId, Object[] event) {
+        SiddhiOutputStreamListener outputStreamListener = streamNameToOutputStreamListenerMap.get(streamId);
 
         if (outputStreamListener != null) {
             outputStreamListener.sendEventData(event);
         } else {
-            log.error("Cannot find output event listener for stream " + this.streamId + " in execution plan " + executionPlanConfiguration.getName()
+            log.error("Cannot find output event listener for stream " + streamId + " in execution plan " + executionPlanConfiguration.getName()
                     + " of tenant " + tenantId);
         }
     }

@@ -24,8 +24,9 @@ import backtype.storm.topology.base.BaseRichSpout;
 import backtype.storm.tuple.Fields;
 import org.apache.log4j.Logger;
 import org.wso2.carbon.databridge.commons.Event;
+import org.wso2.carbon.databridge.commons.thrift.utils.HostAddressFinder;
 import org.wso2.carbon.event.processor.storm.common.client.ManagerServiceClient;
-import org.wso2.carbon.event.processor.storm.common.event.server.EventServer;
+import org.wso2.carbon.event.processor.storm.common.event.server.BinaryTransportEventServer;
 import org.wso2.carbon.event.processor.storm.common.event.server.EventServerConfig;
 import org.wso2.carbon.event.processor.storm.common.event.server.StreamCallback;
 import org.wso2.carbon.event.processor.storm.common.util.StormUtils;
@@ -54,6 +55,7 @@ public class EventReceiverSpout extends BaseRichSpout implements StreamCallback 
      * Siddhi stream definitions of all incoming streams. Required to declare output fields
      */
     private String[] incomingStreamDefinitions;
+    private BinaryTransportEventServer binaryTransportEventServer;
 
     /**
      * Stream IDs of incoming streams
@@ -109,6 +111,7 @@ public class EventReceiverSpout extends BaseRichSpout implements StreamCallback 
             outputFieldsDeclarer.declareStream(siddhiStreamDefinition.getStreamId(), fields);
 
             incomingStreamIDs.add(siddhiStreamDefinition.getStreamId());
+
             log.info(logPrefix + "Declaring output fields for stream - " + siddhiStreamDefinition.getStreamId());
         }
     }
@@ -117,13 +120,18 @@ public class EventReceiverSpout extends BaseRichSpout implements StreamCallback 
     public void open(Map map, TopologyContext topologyContext, SpoutOutputCollector spoutOutputCollector) {
         this.spoutOutputCollector = spoutOutputCollector;
         this.storedEvents = new ConcurrentLinkedQueue<Event>();
-        System.setProperty("Security.KeyStore.Location", keyStorePath); //"/home/sajith/wso2cep-4.0.0-SNAPSHOT/samples/producers/performance-test/src/main/resources/wso2carbon.jks");
+        System.setProperty("Security.KeyStore.Location", keyStorePath);
         System.setProperty("Security.KeyStore.Password", keyStorePassword);
 
         try {
             selectPort();
-            EventServer eventServer = new EventServer(new EventServerConfig(listeningPort), SiddhiUtils.toSiddhiStreamDefinitions(incomingStreamDefinitions).get(0), this);
-            eventServer.start();
+            this.thisHostIp = HostAddressFinder.findAddress("localhost");
+            binaryTransportEventServer = new BinaryTransportEventServer(new EventServerConfig(listeningPort), this);
+            List<StreamDefinition> siddhiStreamDefinitions = SiddhiUtils.toSiddhiStreamDefinitions(incomingStreamDefinitions);
+            for(StreamDefinition siddhiStreamDefinition : siddhiStreamDefinitions) {
+                binaryTransportEventServer.subscribe(siddhiStreamDefinition);
+            }
+            binaryTransportEventServer.start();
             log.info(logPrefix + "EventReceiverSpout starting to listen for events on port " + listeningPort);
             registerWithCepMangerService();
         } catch (Exception e) {
@@ -165,7 +173,7 @@ public class EventReceiverSpout extends BaseRichSpout implements StreamCallback 
     }
 
     @Override
-    public void receive(Object[] event) {
-        storedEvents.add(new Event(incomingStreamIDs.get(0), System.currentTimeMillis(), null, null, event));
+    public void receive(String streamId, Object[] event) {
+        storedEvents.add(new Event(streamId, System.currentTimeMillis(), null, null, event));
     }
 }

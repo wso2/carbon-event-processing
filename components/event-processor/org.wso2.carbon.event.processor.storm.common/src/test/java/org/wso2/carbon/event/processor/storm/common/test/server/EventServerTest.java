@@ -18,7 +18,7 @@
 
 package org.wso2.carbon.event.processor.storm.common.test.server;
 
-import org.wso2.carbon.event.processor.storm.common.event.server.EventServer;
+import org.wso2.carbon.event.processor.storm.common.event.server.BinaryTransportEventServer;
 import org.wso2.carbon.event.processor.storm.common.event.server.EventServerConfig;
 import org.wso2.carbon.event.processor.storm.common.event.server.StreamCallback;
 import org.wso2.siddhi.query.api.definition.Attribute;
@@ -37,15 +37,18 @@ public class EventServerTest {
                 .attribute("att3", Attribute.Type.STRING)
                 .attribute("att4", Attribute.Type.INT);
 
-        EventServer eventServer = new EventServer(new EventServerConfig(7612), streamDefinition, new StreamCallback() {
+        BinaryTransportEventServer binaryTransportEventServer = new BinaryTransportEventServer(new EventServerConfig(7612), new StreamCallback() {
             @Override
-            public void receive(Object[] event) {
-                System.out.println(Arrays.deepToString(event));
+            public void receive(String streamId, Object[] event) {
+                System.out.println("Stream ID: " + streamId);
+                System.out.println("Event: " + Arrays.deepToString(event));
             }
         });
+        binaryTransportEventServer.subscribe(streamDefinition);
+        binaryTransportEventServer.start();
 
-        eventServer.start();
-
-        Thread.sleep(10000);
+        Thread.sleep(100000);
+        System.out.println("Shutting down server...");
+        binaryTransportEventServer.shutdown();
     }
 }

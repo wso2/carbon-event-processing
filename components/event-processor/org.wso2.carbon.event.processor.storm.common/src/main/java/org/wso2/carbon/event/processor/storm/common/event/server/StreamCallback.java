@@ -20,5 +20,10 @@ package org.wso2.carbon.event.processor.storm.common.event.server;
 
 public interface StreamCallback {
 
-    void receive(Object[] event);
+    /**
+     *
+     * @param streamId the stream id for the incoming event
+     * @param event the event as an object array of attributes
+     */
+    public void receive(String streamId, Object[] event);
 }
