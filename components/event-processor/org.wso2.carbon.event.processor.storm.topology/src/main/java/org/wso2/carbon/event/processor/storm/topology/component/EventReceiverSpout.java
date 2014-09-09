@@ -25,6 +25,7 @@ import backtype.storm.tuple.Fields;
 import org.apache.log4j.Logger;
 import org.wso2.carbon.databridge.commons.Event;
 import org.wso2.carbon.databridge.commons.thrift.utils.HostAddressFinder;
+import org.wso2.carbon.event.processor.storm.common.event.server.BinaryTransportEventServer;
 import org.wso2.carbon.event.processor.storm.common.event.server.EventServerConfig;
 import org.wso2.carbon.event.processor.storm.common.event.server.StreamCallback;
 import org.wso2.carbon.event.processor.storm.common.management.client.ManagerServiceClient;
@@ -79,6 +80,8 @@ public class EventReceiverSpout extends BaseRichSpout implements StreamCallback 
     private String keyStorePassword;
     private int minListeningPort;
     private int maxListeningPort;
+    private int eventCount;
+    private long batchStartTime;
 
     /**
      * Receives events from the CEP Receiver through Thrift using data bridge and pass through the events
@@ -119,6 +122,8 @@ public class EventReceiverSpout extends BaseRichSpout implements StreamCallback 
     public void open(Map map, TopologyContext topologyContext, SpoutOutputCollector spoutOutputCollector) {
         this.spoutOutputCollector = spoutOutputCollector;
         this.storedEvents = new ConcurrentLinkedQueue<Event>();
+        this.eventCount = 0;
+        this.batchStartTime = System.currentTimeMillis();
         System.setProperty("Security.KeyStore.Location", keyStorePath);
         System.setProperty("Security.KeyStore.Password", keyStorePassword);
 
@@ -127,7 +132,7 @@ public class EventReceiverSpout extends BaseRichSpout implements StreamCallback 
             this.thisHostIp = HostAddressFinder.findAddress("localhost");
             binaryTransportEventServer = new BinaryTransportEventServer(new EventServerConfig(listeningPort), this);
             List<StreamDefinition> siddhiStreamDefinitions = SiddhiUtils.toSiddhiStreamDefinitions(incomingStreamDefinitions);
-            for(StreamDefinition siddhiStreamDefinition : siddhiStreamDefinitions) {
+            for (StreamDefinition siddhiStreamDefinition : siddhiStreamDefinitions) {
                 binaryTransportEventServer.subscribe(siddhiStreamDefinition);
             }
             binaryTransportEventServer.start();
@@ -154,6 +159,14 @@ public class EventReceiverSpout extends BaseRichSpout implements StreamCallback 
             if (incomingStreamIDs.contains(siddhiStreamName)) {
                 if (log.isDebugEnabled()) {
                     log.debug(logPrefix + "Sending event : " + siddhiStreamName + "=>" + event.toString());
+
+                }
+                if(eventCount % 10000 == 0) {
+                    double timeSpentInSecs = (System.currentTimeMillis() - batchStartTime)/1000.0D;
+                    double throughput = 10000 /timeSpentInSecs;
+                    log.info("Processed 10000 events in " + timeSpentInSecs + " seconds, throughput : " + throughput + " events/sec");
+                    eventCount = 0;
+                    batchStartTime = System.currentTimeMillis();
                 }
                 spoutOutputCollector.emit(siddhiStreamName, Arrays.asList(event.getPayloadData()));
             } else {
@@ -173,6 +186,9 @@ public class EventReceiverSpout extends BaseRichSpout implements StreamCallback 
 
     @Override
     public void receive(String streamId, Object[] event) {
+        if(log.isDebugEnabled()) {
+            log.debug(logPrefix + " Received event: " + Arrays.deepToString(event));
+        }
         storedEvents.add(new Event(streamId, System.currentTimeMillis(), null, null, event));
     }
 }

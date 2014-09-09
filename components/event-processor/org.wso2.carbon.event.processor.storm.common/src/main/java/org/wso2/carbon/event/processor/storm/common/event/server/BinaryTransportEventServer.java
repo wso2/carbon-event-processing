@@ -117,7 +117,6 @@ public class BinaryTransportEventServer {
                                 while (true) {
                                     int streamNameSize = loadData(in) & 0xff;
                                     byte[] streamNameData = loadData(in, new byte[streamNameSize]);
-                                    //TODO: Can we assume each socket connection sends only a particular stream and optimize code??
                                     String streamId = new String(streamNameData, 0, streamNameData.length);
                                     StreamRuntimeInfo streamRuntimeInfo = streamRuntimeInfoMap.get(streamId);
 

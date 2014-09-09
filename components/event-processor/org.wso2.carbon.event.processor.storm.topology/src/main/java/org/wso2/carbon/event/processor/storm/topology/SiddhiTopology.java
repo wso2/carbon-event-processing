@@ -72,16 +72,16 @@ public class SiddhiTopology {
 
         TopologyBuilder builder = new TopologyBuilder();
 
-        builder.setSpout("EventReceiverSpout", new EventReceiverSpout(minListenerPort, maxListenerPort, keyStorePath, cepManagerHost, cepManagerPort, importedStreams, exeucutionPlanName), 2);
-        builder.setBolt("Siddhibolt", new SiddhiBolt(importedStreams, new String[]{query}, new String[]{outputStream}), 3).shuffleGrouping("EventReceiverSpout", inputStream);
+        builder.setSpout("EventReceiverSpout", new EventReceiverSpout(minListenerPort, maxListenerPort, keyStorePath, cepManagerHost, cepManagerPort, importedStreams, exeucutionPlanName), 1);
+        builder.setBolt("Siddhibolt", new SiddhiBolt(importedStreams, new String[]{query}, new String[]{outputStream}), 2).shuffleGrouping("EventReceiverSpout", inputStream);
         builder.setBolt("EventPublisherBolt", new EventPublisherBolt(cepManagerHost, cepManagerPort, trustStroePath,
-                importedStreams, new String[]{query}, new String[]{outputStream}, exeucutionPlanName), 2).shuffleGrouping("Siddhibolt", outputStream);
+                importedStreams, new String[]{query}, new String[]{outputStream}, exeucutionPlanName), 1).shuffleGrouping("Siddhibolt", outputStream).setDebug(true);
 
         Config conf = new Config();
         conf.setDebug(true);
 
-        conf.setMaxTaskParallelism(12);
-        conf.setNumWorkers(5);
+        conf.setMaxTaskParallelism(4);
+        conf.setNumWorkers(4);
         StormSubmitter.submitTopology(args[0], conf, builder.createTopology());
 /*
         LocalCluster cluster = new LocalCluster();

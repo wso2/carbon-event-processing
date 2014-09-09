@@ -34,6 +34,7 @@ import org.wso2.siddhi.core.util.collection.Pair;
 
 import java.io.IOException;
 import java.net.SocketException;
+import java.util.Arrays;
 
 /**
  * Publishes events of a stream to the event receiver spout running on Storm. There will be SiddhiStormInputEventDispatcher
@@ -80,6 +81,9 @@ public class SiddhiStormInputEventDispatcher extends AbstractSiddhiInputEventDis
     public void sendEvent(Object[] eventData) throws InterruptedException {
         try {
             if (eventClient != null) {
+                if(log.isDebugEnabled()) {
+                    log.debug("Sending event: " + Arrays.deepToString(eventData));
+                }
                 eventClient.sendEvent(eventData);
             } else {
                 log.warn("Dropping the event since the data publisher is not yet initialized for " + super.getExecutionPlanName() + ":" + super.tenantId);
@@ -93,9 +97,9 @@ public class SiddhiStormInputEventDispatcher extends AbstractSiddhiInputEventDis
     public void onResponseReceived(Pair<String, Integer> endpoint) {
         synchronized (this) {
             try {
-                eventClient = new EventClient("tcp://" + endpoint.getOne() + ":" + endpoint.getTwo(), siddhiStreamDefinition);
+                eventClient = new EventClient(endpoint.getOne() + ":" + endpoint.getTwo(), siddhiStreamDefinition);
             } catch (Exception e) {
-                log.error("Error while creating event client");
+                log.error("Error while creating event client: " + e.getMessage() , e);
             }
         }
 

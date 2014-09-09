@@ -59,30 +59,28 @@
                 </exclusion>
             </exclusions>
         </dependency>
-        <!--
-                <dependency>
-                    <groupId>org.wso2.carbon</groupId>
-                    <artifactId>org.wso2.carbon.databridge.core</artifactId>
-                    <version>${carbon.version}</version>
-                    <exclusions>
-                        <exclusion>
-                            <groupId>slf4j.wso2</groupId>
-                            <artifactId>slf4j</artifactId>
-                        </exclusion>
-                    </exclusions>
-                </dependency>
-                <dependency>
-                    <groupId>org.wso2.carbon</groupId>
-                    <artifactId>org.wso2.carbon.databridge.receiver.thrift</artifactId>
-                    <version>${carbon.version}</version>
-                    <exclusions>
-                        <exclusion>
-                            <groupId>slf4j.wso2</groupId>
-                            <artifactId>slf4j</artifactId>
-                        </exclusion>
-                    </exclusions>
-                </dependency>
-        -->
+        <dependency>
+            <groupId>org.wso2.carbon</groupId>
+            <artifactId>org.wso2.carbon.databridge.core</artifactId>
+            <version>${carbon.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>slf4j.wso2</groupId>
+                    <artifactId>slf4j</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.wso2.carbon</groupId>
+            <artifactId>org.wso2.carbon.databridge.receiver.thrift</artifactId>
+            <version>${carbon.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>slf4j.wso2</groupId>
+                    <artifactId>slf4j</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
         <dependency>
             <groupId>org.wso2.carbon</groupId>
             <artifactId>org.wso2.carbon.databridge.commons</artifactId>
@@ -125,6 +123,11 @@
                     <descriptorRefs>
                         <descriptorRef>jar-with-dependencies</descriptorRef>
                     </descriptorRefs>
+                    <archive>
+                        <manifest>
+                            <mainClass></mainClass>
+                        </manifest>
+                    </archive>
                 </configuration>
                 <executions>
                     <execution>

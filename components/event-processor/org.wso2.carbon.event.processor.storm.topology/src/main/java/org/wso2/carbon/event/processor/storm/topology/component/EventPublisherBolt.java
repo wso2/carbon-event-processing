@@ -80,7 +80,8 @@ public class EventPublisherBolt extends BaseBasicBolt implements ManagerServiceC
 
     private String trustStorePath;
     private String trustStorePassword;
-
+    private int eventCount;
+    private long batchStartTime;
     private SiddhiManager siddhiManager;
 
     public EventPublisherBolt(String cepManagerHost, int cepManagerPort, String trustStorePath, String[] streamDefinitions, String[] queries, String[] exportedStreamIDs, String executionPlanName) {
@@ -109,6 +110,14 @@ public class EventPublisherBolt extends BaseBasicBolt implements ManagerServiceC
                     if (log.isDebugEnabled()) {
                         log.debug(logPrefix + "Event published to CEP Publisher =>" + tuple.toString());
                     }
+                    if(eventCount % 10000 == 0) {
+                        double timeSpentInSecs = (System.currentTimeMillis() - batchStartTime)/1000.0D;
+                        double throughput = 10000 /timeSpentInSecs;
+                        log.info("Processed 10000 events in " + timeSpentInSecs + " seconds, throughput : " + throughput + " events/sec");
+                        eventCount = 0;
+                        batchStartTime = System.currentTimeMillis();
+                    }
+
                     eventClient.sendEvent(tuple.getValues().toArray());
                 } catch (IOException e) {
                     log.error(logPrefix + "Error while publishing event to CEP publisher", e);
@@ -136,7 +145,9 @@ public class EventPublisherBolt extends BaseBasicBolt implements ManagerServiceC
         // TODO : remove siddhi related stream definitions. Use only exported streams
         log = Logger.getLogger(EventPublisherBolt.class);
         siddhiManager = new SiddhiManager(new SiddhiConfiguration());
-        System.setProperty("javax.net.ssl.trustStore", trustStorePath);//"/home/sajith/wso2cep-4.0.0-SNAPSHOT/samples/producers/performance-test/src/main/resources/client-truststore.jks");
+        eventCount = 0;
+        batchStartTime = System.currentTimeMillis();
+        System.setProperty("javax.net.ssl.trustStore", trustStorePath);
         System.setProperty("javax.net.ssl.trustStorePassword", trustStorePassword);
 
 
@@ -179,14 +190,22 @@ public class EventPublisherBolt extends BaseBasicBolt implements ManagerServiceC
     public void onResponseReceived(Pair<String, Integer> endpoint) {
         synchronized (this) {
             try {
+                if(log.isDebugEnabled()) {
+                    for(StreamDefinition streamDefinition: siddhiManager.getStreamDefinitions()) {
+                        log.debug(" Siddhi Manager stream id: " + streamDefinition.getStreamId());
+                    }
+                }
+
                 for (Map.Entry<String, org.wso2.carbon.databridge.commons.StreamDefinition> entry : siddhiStreamIdToDataBridgeStreamMap.entrySet()) {
-                    eventClient = new EventClient("tcp://" + endpoint.getOne() + ":" + endpoint.getTwo(), siddhiManager.getStreamDefinition(entry.getValue().getStreamId()));
-                    log.error("Error while creating event client");
+                    if(log.isDebugEnabled()) {
+                        log.debug("Databridge stream id: " + entry.getValue().getStreamId());
+                    }
+                    eventClient = new EventClient(endpoint.getOne() + ":" + endpoint.getTwo(), siddhiManager.getStreamDefinition(entry.getValue().getName()));
+                    log.info(logPrefix + " EventPublisherBolt connecting to CEP Publisher at " + endpoint.getOne() + ":" + endpoint.getTwo());
                 }
             } catch (Exception e) {
-                log.error("Error while creating event client");
+                log.error("Error while creating event client:" + e.getMessage(), e);
             }
-            log.info(logPrefix + "EventPublisherBolt connecting to CEP Publisher at " + endpoint.getOne() + ":" + endpoint.getTwo());
         }
     }
 }
