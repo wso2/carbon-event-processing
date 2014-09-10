@@ -107,13 +107,13 @@ public class SiddhiBolt extends BaseBasicBolt {
         }
 
         for (final String streamId : exportedStreamIds) {
-            log.info("Adding callback for stream - " + streamId);
+            log.info("Siddhi Bolt adding callback for stream: " + streamId);
             siddhiManager.addCallback(streamId, new StreamCallback() {
                 @Override
                 public void receive(Event[] events) {
 
                     for (Event event : events) {
-                        if(eventCount % 10000 == 0) {
+                        if(++eventCount % 10000 == 0) {
                             double timeSpentInSecs = (System.currentTimeMillis() - batchStartTime)/1000.0D;
                             double throughput = 10000 /timeSpentInSecs;
                             log.info("Processed 10000 events in " + timeSpentInSecs + " seconds, throughput : " + throughput + " events/sec");
@@ -122,9 +122,6 @@ public class SiddhiBolt extends BaseBasicBolt {
                         }
 
                         collector.emit(event.getStreamId(), Arrays.asList(event.getData()));
-                        if (log.isDebugEnabled()) {
-                            log.debug("Sending Processed event : " + event.getStreamId() + "=>" + event.toString());
-                        }
                     }
                 }
             });

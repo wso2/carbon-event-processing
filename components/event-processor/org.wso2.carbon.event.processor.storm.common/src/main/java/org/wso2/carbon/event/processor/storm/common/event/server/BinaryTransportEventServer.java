@@ -27,6 +27,7 @@ import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.nio.ByteBuffer;
+import java.util.Arrays;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
@@ -103,7 +104,7 @@ public class BinaryTransportEventServer {
         @Override
         public void run() {
             try {
-                log.info("Starting event listener on " + eventServerConfig.getPort());
+                log.info("EventServer starting event listener on port " + eventServerConfig.getPort());
                 isRunning = true;
                 receiverSocket = new ServerSocket(eventServerConfig.getPort());
                 while (isRunning) {
@@ -149,7 +150,9 @@ public class BinaryTransportEventServer {
                                                 event[i] = new String(stringData, 0, stringData.length);
                                         }
                                     }
-
+                                    if(log.isDebugEnabled()) {
+                                        log.debug("EventServer received event: " + Arrays.deepToString(event));
+                                    }
                                     streamCallback.receive(streamId, event);
                                 }
                             } catch (IOException e) {
@@ -162,7 +165,7 @@ public class BinaryTransportEventServer {
                 if (isRunning) {
                     log.error("Error while the server was listening for events: " + e.getMessage(), e);
                 } else {
-                    log.info("Stopped listening for socket connections.");
+                    log.info("EventServer stopped listening for socket connections.");
                 }
             } finally {
                 isRunning = false;

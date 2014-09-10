@@ -34,7 +34,6 @@ import org.wso2.siddhi.core.util.collection.Pair;
 
 import java.io.IOException;
 import java.net.SocketException;
-import java.util.Arrays;
 
 /**
  * Publishes events of a stream to the event receiver spout running on Storm. There will be SiddhiStormInputEventDispatcher
@@ -44,7 +43,6 @@ public class SiddhiStormInputEventDispatcher extends AbstractSiddhiInputEventDis
     private static final Log log = LogFactory.getLog(SiddhiStormInputEventDispatcher.class);
 
     private EventClient eventClient = null;
-    private String streamVersion;
     private String cepManagerHost = StormDeploymentConfiguration.getCepManagerHost();
     private int cepManagerPort = StormDeploymentConfiguration.getCepManagerPort();
     private org.wso2.siddhi.query.api.definition.StreamDefinition siddhiStreamDefinition;
@@ -67,7 +65,7 @@ public class SiddhiStormInputEventDispatcher extends AbstractSiddhiInputEventDis
         // Creating a data bridge stream equivalent to the Siddhi stream handled by this input event dispatcher
         // by creating a data bridge stream which has name as the Siddhi stream name, and all fields as payload
         // fields just like in Siddhi streams.
-        this.siddhiStreamDefinition = EventProcessorUtil.convertToSiddhiStreamDefinition(streamDefinition, new StreamConfiguration(streamDefinition.getName(), streamDefinition.getVersion()));
+        this.siddhiStreamDefinition = EventProcessorUtil.convertToSiddhiStreamDefinition(streamDefinition, new StreamConfiguration(super.siddhiStreamId, streamDefinition.getVersion()));
         ManagerServiceClient client = new ManagerServiceClient(cepManagerHost, cepManagerPort, this);
         client.getStormReceiver(super.getExecutionPlanName(), super.tenantId, StormDeploymentConfiguration.getReconnectInterval(), thisHostIp);
     }
@@ -81,10 +79,7 @@ public class SiddhiStormInputEventDispatcher extends AbstractSiddhiInputEventDis
     public void sendEvent(Object[] eventData) throws InterruptedException {
         try {
             if (eventClient != null) {
-                if(log.isDebugEnabled()) {
-                    log.debug("Sending event: " + Arrays.deepToString(eventData));
-                }
-                eventClient.sendEvent(eventData);
+                eventClient.sendEvent(super.siddhiStreamId, eventData);
             } else {
                 log.warn("Dropping the event since the data publisher is not yet initialized for " + super.getExecutionPlanName() + ":" + super.tenantId);
             }
@@ -97,9 +92,10 @@ public class SiddhiStormInputEventDispatcher extends AbstractSiddhiInputEventDis
     public void onResponseReceived(Pair<String, Integer> endpoint) {
         synchronized (this) {
             try {
-                eventClient = new EventClient(endpoint.getOne() + ":" + endpoint.getTwo(), siddhiStreamDefinition);
+                eventClient = new EventClient(endpoint.getOne() + ":" + endpoint.getTwo());
+                eventClient.addStreamDefinition(siddhiStreamDefinition);
             } catch (Exception e) {
-                log.error("Error while creating event client: " + e.getMessage() , e);
+                log.error("Error while creating event client: " + e.getMessage(), e);
             }
         }
 

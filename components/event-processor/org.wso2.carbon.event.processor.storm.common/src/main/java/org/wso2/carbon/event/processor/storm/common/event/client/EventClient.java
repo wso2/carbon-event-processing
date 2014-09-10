@@ -29,28 +29,33 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.net.Socket;
 import java.nio.ByteBuffer;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
+//TODO Fix event client to support multiple streams
 public class EventClient {
     public static final String DEFAULT_CHARSET = "UTF-8";
     private static Logger log = Logger.getLogger(EventClient.class);
     private final String hostUrl;
-    private final StreamDefinition streamDefinition;
-    private final StreamRuntimeInfo streamRuntimeInfo;
+    private Map<String, StreamRuntimeInfo> streamRuntimeInfoMap;
     private OutputStream outputStream;
     private Socket clientSocket;
 
 
-    public EventClient(String hostUrl, StreamDefinition streamDefinition) throws IOException {
+    public EventClient(String hostUrl) throws IOException {
         this.hostUrl = hostUrl;
-        this.streamDefinition = streamDefinition;
-        this.streamRuntimeInfo = EventServerUtils.createStreamRuntimeInfo(streamDefinition);
-
-        log.info("Client configured to send events to " + hostUrl);
+        this.streamRuntimeInfoMap = new ConcurrentHashMap<String, StreamRuntimeInfo>();
         String[] hp = hostUrl.split(":");
         String host = hp[0];
         int port = Integer.parseInt(hp[1]);
         this.clientSocket = new Socket(host, port);
         this.outputStream = new BufferedOutputStream(this.clientSocket.getOutputStream());
+        log.info("Client configured to send events to " + hostUrl);
+    }
+
+    public void addStreamDefinition(StreamDefinition streamDefinition) {
+        streamRuntimeInfoMap.put(streamDefinition.getStreamId(), EventServerUtils.createStreamRuntimeInfo(streamDefinition));
+        log.info("Stream definition added for stream: " + streamDefinition.getStreamId());
     }
 
     public void close() {
@@ -58,12 +63,14 @@ public class EventClient {
             outputStream.flush();
             clientSocket.close();
         } catch (IOException e) {
-            log.warn("Error while closing stream for sending events: " + e.getMessage(), e);
+            log.warn("Error while closing stream to " + hostUrl + " : " + e.getMessage(), e);
         }
     }
 
 
-    public void sendEvent(Object[] event) throws IOException {
+    public void sendEvent(String streamId, Object[] event) throws IOException {
+        StreamRuntimeInfo streamRuntimeInfo = streamRuntimeInfoMap.get(streamId);
+
         outputStream.write((byte) streamRuntimeInfo.getStreamId().length());
         outputStream.write((streamRuntimeInfo.getStreamId()).getBytes(DEFAULT_CHARSET));
 

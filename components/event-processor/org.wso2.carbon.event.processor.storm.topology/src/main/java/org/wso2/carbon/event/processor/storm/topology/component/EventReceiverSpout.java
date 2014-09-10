@@ -111,9 +111,7 @@ public class EventReceiverSpout extends BaseRichSpout implements StreamCallback 
         for (StreamDefinition siddhiStreamDefinition : streamDefinitions) {
             Fields fields = new Fields(siddhiStreamDefinition.getAttributeNameArray());
             outputFieldsDeclarer.declareStream(siddhiStreamDefinition.getStreamId(), fields);
-
             incomingStreamIDs.add(siddhiStreamDefinition.getStreamId());
-
             log.info(logPrefix + "Declaring output fields for stream - " + siddhiStreamDefinition.getStreamId());
         }
     }
@@ -138,10 +136,9 @@ public class EventReceiverSpout extends BaseRichSpout implements StreamCallback 
             binaryTransportEventServer.start();
             log.info(logPrefix + "EventReceiverSpout starting to listen for events on port " + listeningPort);
             registerWithCepMangerService();
-        } catch (Exception e) {
-            log.error(logPrefix + "Error starting event listener for spout");
+        } catch (Throwable e) {
+            log.error(logPrefix + "Error starting event listener for spout: " + e.getMessage(), e);
         }
-
     }
 
     private void registerWithCepMangerService() {
@@ -154,16 +151,16 @@ public class EventReceiverSpout extends BaseRichSpout implements StreamCallback 
     public void nextTuple() {
         Event event = storedEvents.poll();
         if (event != null) {
-            final String siddhiStreamName = SiddhiUtils.getSiddhiStreamName(event.getStreamId());
+            final String siddhiStreamName = event.getStreamId();
 
             if (incomingStreamIDs.contains(siddhiStreamName)) {
                 if (log.isDebugEnabled()) {
                     log.debug(logPrefix + "Sending event : " + siddhiStreamName + "=>" + event.toString());
 
                 }
-                if(eventCount % 10000 == 0) {
-                    double timeSpentInSecs = (System.currentTimeMillis() - batchStartTime)/1000.0D;
-                    double throughput = 10000 /timeSpentInSecs;
+                if (++eventCount % 10000 == 0) {
+                    double timeSpentInSecs = (System.currentTimeMillis() - batchStartTime) / 1000.0D;
+                    double throughput = 10000 / timeSpentInSecs;
                     log.info("Processed 10000 events in " + timeSpentInSecs + " seconds, throughput : " + throughput + " events/sec");
                     eventCount = 0;
                     batchStartTime = System.currentTimeMillis();
@@ -186,8 +183,8 @@ public class EventReceiverSpout extends BaseRichSpout implements StreamCallback 
 
     @Override
     public void receive(String streamId, Object[] event) {
-        if(log.isDebugEnabled()) {
-            log.debug(logPrefix + " Received event: " + Arrays.deepToString(event));
+        if (log.isDebugEnabled()) {
+            log.debug(logPrefix + "Received event for stream '" + streamId + "': " + Arrays.deepToString(event));
         }
         storedEvents.add(new Event(streamId, System.currentTimeMillis(), null, null, event));
     }

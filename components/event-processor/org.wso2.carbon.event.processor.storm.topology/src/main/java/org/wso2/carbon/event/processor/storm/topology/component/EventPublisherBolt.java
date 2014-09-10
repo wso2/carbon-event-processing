@@ -93,7 +93,7 @@ public class EventPublisherBolt extends BaseBasicBolt implements ManagerServiceC
         this.executionPlanName = executionPlanName;
         this.trustStorePath = trustStorePath;
         this.trustStorePassword = "wso2carbon";
-        this.logPrefix = "{" + executionPlanName + ":" + tenantId + "}";
+        this.logPrefix = "{" + executionPlanName + ":" + tenantId + "} - ";
     }
 
     @Override
@@ -103,6 +103,7 @@ public class EventPublisherBolt extends BaseBasicBolt implements ManagerServiceC
         }
 
         if (eventClient != null) {
+            //TODO Do we need to keep databridge stream definitions inside the bolt??
             org.wso2.carbon.databridge.commons.StreamDefinition databridgeStream = siddhiStreamIdToDataBridgeStreamMap.get(tuple.getSourceStreamId());
 
             if (databridgeStream != null) {
@@ -110,15 +111,15 @@ public class EventPublisherBolt extends BaseBasicBolt implements ManagerServiceC
                     if (log.isDebugEnabled()) {
                         log.debug(logPrefix + "Event published to CEP Publisher =>" + tuple.toString());
                     }
-                    if(eventCount % 10000 == 0) {
-                        double timeSpentInSecs = (System.currentTimeMillis() - batchStartTime)/1000.0D;
-                        double throughput = 10000 /timeSpentInSecs;
+                    if (++eventCount % 10000 == 0) {
+                        double timeSpentInSecs = (System.currentTimeMillis() - batchStartTime) / 1000.0D;
+                        double throughput = 10000 / timeSpentInSecs;
                         log.info("Processed 10000 events in " + timeSpentInSecs + " seconds, throughput : " + throughput + " events/sec");
                         eventCount = 0;
                         batchStartTime = System.currentTimeMillis();
                     }
 
-                    eventClient.sendEvent(tuple.getValues().toArray());
+                    eventClient.sendEvent(tuple.getSourceStreamId(), tuple.getValues().toArray());
                 } catch (IOException e) {
                     log.error(logPrefix + "Error while publishing event to CEP publisher", e);
                 }
@@ -190,20 +191,15 @@ public class EventPublisherBolt extends BaseBasicBolt implements ManagerServiceC
     public void onResponseReceived(Pair<String, Integer> endpoint) {
         synchronized (this) {
             try {
-                if(log.isDebugEnabled()) {
-                    for(StreamDefinition streamDefinition: siddhiManager.getStreamDefinitions()) {
-                        log.debug(" Siddhi Manager stream id: " + streamDefinition.getStreamId());
+                eventClient = new EventClient(endpoint.getOne() + ":" + endpoint.getTwo());
+                for (String siddhiStreamId : exportedStreamIDs) {
+                    if (log.isDebugEnabled()) {
+                        log.debug(logPrefix + "EventPublisherBolt adding stream definition to client for exported Siddhi stream: " + siddhiStreamId);
                     }
+                    eventClient.addStreamDefinition(siddhiManager.getStreamDefinition(siddhiStreamId));
                 }
-
-                for (Map.Entry<String, org.wso2.carbon.databridge.commons.StreamDefinition> entry : siddhiStreamIdToDataBridgeStreamMap.entrySet()) {
-                    if(log.isDebugEnabled()) {
-                        log.debug("Databridge stream id: " + entry.getValue().getStreamId());
-                    }
-                    eventClient = new EventClient(endpoint.getOne() + ":" + endpoint.getTwo(), siddhiManager.getStreamDefinition(entry.getValue().getName()));
-                    log.info(logPrefix + " EventPublisherBolt connecting to CEP Publisher at " + endpoint.getOne() + ":" + endpoint.getTwo());
-                }
-            } catch (Exception e) {
+                log.info(logPrefix + " EventPublisherBolt connecting to CEP publisher at " + endpoint.getOne() + ":" + endpoint.getTwo());
+            } catch (IOException e) {
                 log.error("Error while creating event client:" + e.getMessage(), e);
             }
         }

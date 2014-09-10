@@ -68,15 +68,16 @@ public class BinaryTransportEventSendingTestCase {
                 .attribute("att3", Attribute.Type.STRING)
                 .attribute("att4", Attribute.Type.INT);
 
-        EventClient eventClient = null;
+        EventClient eventClient;
         try {
-            eventClient = new EventClient("localhost:7612", streamDefinition);
+            eventClient = new EventClient("localhost:7612");
+            eventClient.addStreamDefinition(streamDefinition);
             Thread.sleep(1000);
             System.out.println("Start testing");
             Random random = new Random();
 
             for (int i = 0; i < 100; i++) {
-                eventClient.sendEvent(new Object[]{random.nextInt(), random.nextFloat(), "Abcdefghijklmnop" + random.nextLong(), random.nextInt()});
+                eventClient.sendEvent(streamDefinition.getStreamId(), new Object[]{random.nextInt(), random.nextFloat(), "Abcdefghijklmnop" + random.nextLong(), random.nextInt()});
             }
         } catch (IOException e) {
             e.printStackTrace();

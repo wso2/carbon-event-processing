@@ -344,7 +344,8 @@ public class CarbonEventProcessorService implements EventProcessorService {
                 streamCallback = new SiddhiOutputStreamListener(exportedStreamConfiguration.getSiddhiStreamName(), exportedStreamConfiguration.getStreamId(), executionPlanConfiguration, tenantId);
 
                 if (isRunningOnStorm && StormDeploymentConfiguration.isPublisherNode()) {
-                    stormOutputListener.registerOutputStreamListener(exportedStreamConfiguration.getSiddhiStreamName(), streamCallback);
+                    org.wso2.siddhi.query.api.definition.StreamDefinition siddhiStreamDefinition = siddhiStreamDefinitions.get(exportedStreamConfiguration.getSiddhiStreamName());
+                    stormOutputListener.registerOutputStreamListener(siddhiStreamDefinition, streamCallback);
                 }
             }
             siddhiManager.addCallback(exportedStreamConfiguration.getSiddhiStreamName(), streamCallback);

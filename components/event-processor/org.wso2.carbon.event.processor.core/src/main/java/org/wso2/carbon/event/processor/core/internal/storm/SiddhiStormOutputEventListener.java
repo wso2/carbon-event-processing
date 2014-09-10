@@ -27,7 +27,9 @@ import org.wso2.carbon.event.processor.storm.common.event.server.StreamCallback;
 import org.wso2.carbon.event.processor.storm.common.helper.StormDeploymentConfiguration;
 import org.wso2.carbon.event.processor.storm.common.management.client.ManagerServiceClient;
 import org.wso2.carbon.event.processor.storm.common.util.StormUtils;
+import org.wso2.siddhi.query.api.definition.StreamDefinition;
 
+import java.util.Arrays;
 import java.util.HashMap;
 
 /**
@@ -37,7 +39,6 @@ import java.util.HashMap;
  * the event to the relevant output adaptor for the stream.
  */
 public class SiddhiStormOutputEventListener implements StreamCallback {
-    private static final String DEFAULT_STREAM_VERSION = "1.0.0";
     private static Logger log = Logger.getLogger(SiddhiStormOutputEventListener.class);
     private ExecutionPlanConfiguration executionPlanConfiguration;
     private int listeningPort;
@@ -48,6 +49,7 @@ public class SiddhiStormOutputEventListener implements StreamCallback {
     private HashMap<String, SiddhiOutputStreamListener> streamNameToOutputStreamListenerMap = new HashMap<String, SiddhiOutputStreamListener>();
     private int minListeningPort = StormDeploymentConfiguration.getMinListingPort();
     private int maxListeningPort = StormDeploymentConfiguration.getMaxListeningPort();
+    private BinaryTransportEventServer binaryTransportEventServer;
 
     public SiddhiStormOutputEventListener(ExecutionPlanConfiguration executionPlanConfiguration, int tenantId) {
         this.executionPlanConfiguration = executionPlanConfiguration;
@@ -55,25 +57,26 @@ public class SiddhiStormOutputEventListener implements StreamCallback {
         init();
     }
 
-    public void registerOutputStreamListener(String siddhiStreamName, SiddhiOutputStreamListener outputStreamListener) {
-        log.info("Registering Output stream listener for Siddhi stream " + siddhiStreamName);
-        streamNameToOutputStreamListenerMap.put(siddhiStreamName + ":" + DEFAULT_STREAM_VERSION, outputStreamListener);
+    public void registerOutputStreamListener(StreamDefinition siddhiStreamDefinition, SiddhiOutputStreamListener outputStreamListener) {
+        log.info("Registering output stream listener for Siddhi stream : " + siddhiStreamDefinition.getStreamId());
+        streamNameToOutputStreamListenerMap.put(siddhiStreamDefinition.getStreamId(), outputStreamListener);
+        binaryTransportEventServer.subscribe(siddhiStreamDefinition);
     }
 
     private void registerWithCepMangerService() {
-        log.info("Registering CEP Publisher for " + executionPlanConfiguration.getName() + ":" + tenantId + " at " + thisHostIp + ":" + listeningPort);
+        log.info("Registering CEP publisher for " + executionPlanConfiguration.getName() + ":" + tenantId + " at " + thisHostIp + ":" + listeningPort);
         ManagerServiceClient client = new ManagerServiceClient(cepMangerHost, cepMangerPort, null);
         client.registerCepPublisher(executionPlanConfiguration.getName(), tenantId, thisHostIp, listeningPort, StormDeploymentConfiguration.getReconnectInterval());
     }
 
     private void init() {
-        log.info("[CEP Publisher]Initializing Storm output event listener for execution plan '" + executionPlanConfiguration.getName() + "'"
+        log.info("[CEP Publisher] Initializing storm output event listener for execution plan '" + executionPlanConfiguration.getName() + "'"
                 + "(TenantID=" + tenantId + ")");
 
         try {
             selectPort();
             thisHostIp = HostAddressFinder.findAddress("localhost");
-            BinaryTransportEventServer binaryTransportEventServer = new BinaryTransportEventServer(new EventServerConfig(listeningPort), this);
+            binaryTransportEventServer = new BinaryTransportEventServer(new EventServerConfig(listeningPort), this);
             binaryTransportEventServer.start();
             registerWithCepMangerService();
         } catch (Exception e) {
@@ -94,12 +97,11 @@ public class SiddhiStormOutputEventListener implements StreamCallback {
     @Override
     public void receive(String streamId, Object[] event) {
         SiddhiOutputStreamListener outputStreamListener = streamNameToOutputStreamListenerMap.get(streamId);
-
         if (outputStreamListener != null) {
             outputStreamListener.sendEventData(event);
         } else {
-            log.error("Cannot find output event listener for stream " + streamId + " in execution plan " + executionPlanConfiguration.getName()
-                    + " of tenant " + tenantId);
+            log.warn("Cannot find output event listener for stream " + streamId + " in execution plan " + executionPlanConfiguration.getName()
+                    + " of tenant " + tenantId + ". Discarding event:" + Arrays.deepToString(event));
         }
     }
 }
