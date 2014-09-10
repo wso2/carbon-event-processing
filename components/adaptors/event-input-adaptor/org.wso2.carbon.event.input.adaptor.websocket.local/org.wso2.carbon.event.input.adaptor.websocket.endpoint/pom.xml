@@ -22,7 +22,7 @@
     <artifactId>org.wso2.carbon.event.input.adaptor.websocket.endpoint</artifactId>
     <packaging>war</packaging>
     <version>2.0.0-SNAPSHOT</version>
-    <name>Websocket Server Webapp for Websocket Input Event Adaptor</name>
+    <name>WSO2 Carbon Websocket Webapp - Webapp for Websocket Input Event Adaptor</name>
     <url>http://wso2.org</url>
     <dependencies>
         <dependency>
