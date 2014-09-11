@@ -38,6 +38,7 @@ public class SiddhiTopology {
             StormDeploymentConfiguration.loadConfigurations();
         }
 
+/*
         String inputStreamDef = "define stream authStream (username string, ipAddress string, browser string);";
         String query = "from every a1 = authStream " +
                 "-> b1 = authStream[username == a1.username and ipAddress != a1.ipAddress] " +
@@ -47,7 +48,7 @@ public class SiddhiTopology {
         String exeucutionPlanName = "Login_Info_Analyzer";
         String inputStream = "authStream";
         String outputStream = "alertStream";
-/*
+*/
         String inputStreamDef = "define stream analyticsStats (meta_ipAdd string, meta_index long, meta_timestamp long, meta_nanoTime long,userID string, searchTerms string);";
         String query = "from analyticsStats[meta_ipAdd != '192.168.1.1']#window.time(5 min) " +
                 "select meta_ipAdd, meta_index, meta_timestamp, meta_nanoTime, userID " +
@@ -55,7 +56,6 @@ public class SiddhiTopology {
         String exeucutionPlanName = "PreprocessStats";
         String inputStream = "analyticsStats";
         String outputStream = "filteredStatStream";
-*/
 
         SiddhiManager siddhiManager = new SiddhiManager();
         siddhiManager.defineStream(inputStreamDef);
@@ -72,15 +72,15 @@ public class SiddhiTopology {
 
         TopologyBuilder builder = new TopologyBuilder();
 
-        builder.setSpout("EventReceiverSpout", new EventReceiverSpout(minListenerPort, maxListenerPort, keyStorePath, cepManagerHost, cepManagerPort, importedStreams, exeucutionPlanName), 1);
-        builder.setBolt("Siddhibolt", new SiddhiBolt(importedStreams, new String[]{query}, new String[]{outputStream}), 2).shuffleGrouping("EventReceiverSpout", inputStream);
+        builder.setSpout("EventReceiverSpout", new EventReceiverSpout(minListenerPort, maxListenerPort, keyStorePath, cepManagerHost, cepManagerPort, importedStreams, exeucutionPlanName), 2);
+        builder.setBolt("Siddhibolt", new SiddhiBolt(importedStreams, new String[]{query}, new String[]{outputStream}), 3).shuffleGrouping("EventReceiverSpout", inputStream);
         builder.setBolt("EventPublisherBolt", new EventPublisherBolt(cepManagerHost, cepManagerPort, trustStroePath,
-                importedStreams, new String[]{query}, new String[]{outputStream}, exeucutionPlanName), 1).shuffleGrouping("Siddhibolt", outputStream).setDebug(true);
+                importedStreams, new String[]{query}, new String[]{outputStream}, exeucutionPlanName), 3).shuffleGrouping("Siddhibolt", outputStream).setDebug(true);
 
         Config conf = new Config();
         conf.setDebug(true);
 
-        conf.setMaxTaskParallelism(4);
+        conf.setMaxTaskParallelism(8);
         conf.setNumWorkers(4);
         StormSubmitter.submitTopology(args[0], conf, builder.createTopology());
 /*

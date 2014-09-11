@@ -155,7 +155,7 @@ public class EventReceiverSpout extends BaseRichSpout implements StreamCallback 
 
             if (incomingStreamIDs.contains(siddhiStreamName)) {
                 if (log.isDebugEnabled()) {
-                    log.debug(logPrefix + "Sending event : " + siddhiStreamName + "=>" + event.toString());
+                    log.debug(logPrefix + "Sending event : " + siddhiStreamName + " => " + event.toString());
 
                 }
                 if (++eventCount % 10000 == 0) {

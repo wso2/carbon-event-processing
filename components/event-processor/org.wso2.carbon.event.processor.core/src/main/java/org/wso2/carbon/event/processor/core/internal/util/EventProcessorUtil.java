@@ -84,7 +84,7 @@ public class EventProcessorUtil {
     public static org.wso2.siddhi.query.api.definition.StreamDefinition convertToSiddhiStreamDefinition(
             StreamDefinition streamDefinition, StreamConfiguration streamConfiguration) {
         org.wso2.siddhi.query.api.definition.StreamDefinition siddhiStreamDefinition = new org.wso2.siddhi.query.api.definition.StreamDefinition();
-        siddhiStreamDefinition.name(streamConfiguration.getSiddhiStreamName());
+        siddhiStreamDefinition.name(streamConfiguration.getName());
         if (streamDefinition.getMetaData() != null) {
             for (org.wso2.carbon.databridge.commons.Attribute attribute : streamDefinition.getMetaData()) {
                 siddhiStreamDefinition.attribute(attribute.getName(), convertToSiddhiAttribute(attribute, EventProcessorConstants.META + EventProcessorConstants.ATTRIBUTE_SEPARATOR).getType());

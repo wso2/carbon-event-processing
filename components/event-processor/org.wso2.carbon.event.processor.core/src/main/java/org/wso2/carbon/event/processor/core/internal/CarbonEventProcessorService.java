@@ -372,7 +372,7 @@ public class CarbonEventProcessorService implements EventProcessorService {
                 } catch (EventStreamConfigurationException e) {
                     // Ignore as this would never happen
                 }
-                eventDispatcher = new SiddhiStormInputEventDispatcher(streamDefinition, importedStreamConfiguration.getSiddhiStreamName(), executionPlanConfiguration, tenantId);
+                eventDispatcher = new SiddhiStormInputEventDispatcher(streamDefinition, importedStreamConfiguration.getStreamId(), inputHandler.getStreamId(), executionPlanConfiguration, tenantId);
             } else {
                 eventDispatcher = new SiddhiInputEventDispatcher(importedStreamConfiguration.getStreamId(), inputHandler, executionPlanConfiguration, tenantId);
             }

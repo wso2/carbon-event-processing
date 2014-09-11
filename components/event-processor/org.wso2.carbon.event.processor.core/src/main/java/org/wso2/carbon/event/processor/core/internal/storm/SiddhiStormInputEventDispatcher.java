@@ -48,24 +48,24 @@ public class SiddhiStormInputEventDispatcher extends AbstractSiddhiInputEventDis
     private org.wso2.siddhi.query.api.definition.StreamDefinition siddhiStreamDefinition;
 
     public SiddhiStormInputEventDispatcher(StreamDefinition streamDefinition,
-                                           String siddhiStreamName,
+                                           String siddhiStreamId, String siddhiStreamName,
                                            ExecutionPlanConfiguration executionPlanConfiguration,
                                            int tenantId) {
-        super(streamDefinition.getStreamId(), siddhiStreamName, executionPlanConfiguration, tenantId);
-        init(streamDefinition);
+        super(streamDefinition.getStreamId(), siddhiStreamId, executionPlanConfiguration, tenantId);
+        init(streamDefinition, siddhiStreamName);
     }
 
-    private void init(StreamDefinition streamDefinition) {
+    private void init(StreamDefinition streamDefinition, String siddhiStreamName) {
         String thisHostIp = null;
         try {
             thisHostIp = HostAddressFinder.findAddress("localhost");
         } catch (SocketException e) {
             log.error("Cannot find IP address of the host");
         }
-        // Creating a data bridge stream equivalent to the Siddhi stream handled by this input event dispatcher
-        // by creating a data bridge stream which has name as the Siddhi stream name, and all fields as payload
+        // Creating a Siddhi stream handled by this input event dispatcher
+        // by using a data bridge stream which has name as the Siddhi stream name, and all fields as payload
         // fields just like in Siddhi streams.
-        this.siddhiStreamDefinition = EventProcessorUtil.convertToSiddhiStreamDefinition(streamDefinition, new StreamConfiguration(super.siddhiStreamId, streamDefinition.getVersion()));
+        this.siddhiStreamDefinition = EventProcessorUtil.convertToSiddhiStreamDefinition(streamDefinition, new StreamConfiguration(siddhiStreamName, streamDefinition.getVersion()));
         ManagerServiceClient client = new ManagerServiceClient(cepManagerHost, cepManagerPort, this);
         client.getStormReceiver(super.getExecutionPlanName(), super.tenantId, StormDeploymentConfiguration.getReconnectInterval(), thisHostIp);
     }
@@ -79,7 +79,7 @@ public class SiddhiStormInputEventDispatcher extends AbstractSiddhiInputEventDis
     public void sendEvent(Object[] eventData) throws InterruptedException {
         try {
             if (eventClient != null) {
-                eventClient.sendEvent(super.siddhiStreamId, eventData);
+                eventClient.sendEvent(this.siddhiStreamDefinition.getStreamId(), eventData);
             } else {
                 log.warn("Dropping the event since the data publisher is not yet initialized for " + super.getExecutionPlanName() + ":" + super.tenantId);
             }
@@ -100,7 +100,7 @@ public class SiddhiStormInputEventDispatcher extends AbstractSiddhiInputEventDis
         }
 
         log.info("[CEP Receiver]Storm input dispatcher connecting to Storm event receiver at " + endpoint.getOne() + ":" + endpoint.getTwo()
-                + " for the Stream '" + super.siddhiStreamId + "' of ExecutionPlan '" + super.getExecutionPlanName()
+                + " for the Stream '" + siddhiStreamDefinition.getStreamId() + "' of ExecutionPlan '" + super.getExecutionPlanName()
                 + "' (TenantID=" + super.tenantId + ")");
     }
 }
