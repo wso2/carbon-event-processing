@@ -1,4 +1,4 @@
-<!--
+<%--
 ~ Copyright (c) 2005-2014, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
 ~
 ~ WSO2 Inc. licenses this file to you under the Apache License,
@@ -14,7 +14,7 @@
 ~ KIND, either express or implied.  See the License for the
 ~ specific language governing permissions and limitations
 ~ under the License.
--->
+--%>
 <%@ page import="org.wso2.carbon.event.builder.stub.EventBuilderAdminServiceStub" %>
 <%@ page import="org.wso2.carbon.event.builder.stub.types.EventBuilderMessagePropertyDto" %>
 <%@ page import="org.wso2.carbon.event.builder.ui.EventBuilderUIUtils" %>
@@ -75,8 +75,8 @@
 
             <tr id="eventAdaptorSelectTr">
                 <td>Input Event Adaptor Name<span class="required">*</span></td>
-                <!-- The element positioning of the select is important since showMessageConfigProperties uses the first
-  ancestral 'tr' to determine where to insert the message configuration properties on loading ajax -->
+                <%-- The element positioning of the select is important since showMessageConfigProperties uses the first
+  ancestral 'tr' to determine where to insert the message configuration properties on loading ajax --%>
                 <td class="custom-noPadding"
                     style="padding-left: 0px !important;">
                     <table>
