@@ -23,8 +23,8 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.junit.Before;
 import org.junit.Test;
-import org.wso2.carbon.event.processor.storm.common.event.client.EventClient;
-import org.wso2.carbon.event.processor.storm.common.event.server.BinaryTransportEventServer;
+import org.wso2.carbon.event.processor.storm.common.event.client.TCPEventClient;
+import org.wso2.carbon.event.processor.storm.common.event.server.TCPEventServer;
 import org.wso2.carbon.event.processor.storm.common.event.server.EventServerConfig;
 import org.wso2.carbon.event.processor.storm.common.event.server.StreamCallback;
 import org.wso2.carbon.event.processor.storm.common.test.util.AnalyticStatDataProvider;
@@ -39,10 +39,10 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicInteger;
 
-public class BinaryTransportEventSendingTestCase {
+public class TCPEventSendingTestCase {
     public static final int EVENTS_PER_CLIENT = 10000;
     public static final int TOTAL_CLIENTS = 15;
-    private static final Log log = LogFactory.getLog(BinaryTransportEventSendingTestCase.class);
+    private static final Log log = LogFactory.getLog(TCPEventSendingTestCase.class);
     private ExecutorService threadPool;
 
     @Before
@@ -60,16 +60,16 @@ public class BinaryTransportEventSendingTestCase {
                 .attribute("att4", Attribute.Type.INT);
 
         TestStreamCallback streamCallback = new TestStreamCallback();
-        BinaryTransportEventServer binaryTransportEventServer = new BinaryTransportEventServer(new EventServerConfig(7612), streamCallback);
+        TCPEventServer TCPEventServer = new TCPEventServer(new EventServerConfig(7612), streamCallback);
         try {
-            binaryTransportEventServer.subscribe(streamDefinition);
-            binaryTransportEventServer.start();
+            TCPEventServer.subscribe(streamDefinition);
+            TCPEventServer.start();
             Thread.sleep(1000);
             threadPool.submit(new ClientThread(streamDefinition, new SimpleDataProvider(), 100));
             Thread.sleep(5000);
             Assert.assertEquals(100, streamCallback.getEventCount());
             log.info("Shutting down server...");
-            binaryTransportEventServer.shutdown();
+            TCPEventServer.shutdown();
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
@@ -87,10 +87,10 @@ public class BinaryTransportEventSendingTestCase {
                 .attribute("searchTerms", Attribute.Type.STRING);
 
         TestStreamCallback streamCallback = new TestStreamCallback();
-        BinaryTransportEventServer binaryTransportEventServer = new BinaryTransportEventServer(new EventServerConfig(7612), streamCallback);
+        TCPEventServer TCPEventServer = new TCPEventServer(new EventServerConfig(7612), streamCallback);
         try {
-            binaryTransportEventServer.subscribe(streamDefinition);
-            binaryTransportEventServer.start();
+            TCPEventServer.subscribe(streamDefinition);
+            TCPEventServer.start();
             Thread.sleep(1000);
             for (int i = 0; i < TOTAL_CLIENTS; i++) {
                 threadPool.submit(new ClientThread(streamDefinition, new AnalyticStatDataProvider(), EVENTS_PER_CLIENT));
@@ -100,7 +100,7 @@ public class BinaryTransportEventSendingTestCase {
             }
             Assert.assertEquals(TOTAL_CLIENTS * EVENTS_PER_CLIENT, streamCallback.getEventCount());
             log.info("Shutting down server...");
-            binaryTransportEventServer.shutdown();
+            TCPEventServer.shutdown();
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
@@ -132,23 +132,23 @@ public class BinaryTransportEventSendingTestCase {
 
         @Override
         public void run() {
-            EventClient eventClient = null;
+            TCPEventClient TCPEventClient = null;
             try {
-                eventClient = new EventClient("localhost:7612");
-                eventClient.addStreamDefinition(streamDefinition);
+                TCPEventClient = new TCPEventClient("localhost:7612");
+                TCPEventClient.addStreamDefinition(streamDefinition);
                 Thread.sleep(1000);
                 log.info("Starting event client to send events to localhost:7612");
 
                 for (int i = 0; i < eventsToSend; i++) {
-                    eventClient.sendEvent(streamDefinition.getStreamId(), dataProvider.getEvent());
+                    TCPEventClient.sendEvent(streamDefinition.getStreamId(), dataProvider.getEvent());
                 }
             } catch (IOException e) {
                 e.printStackTrace();
             } catch (InterruptedException e) {
                 e.printStackTrace();
             } finally {
-                if (eventClient != null) {
-                    eventClient.close();
+                if (TCPEventClient != null) {
+                    TCPEventClient.close();
                 }
             }
         }

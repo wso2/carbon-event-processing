@@ -22,6 +22,7 @@ import org.wso2.siddhi.query.api.definition.Attribute;
 
 public class StreamRuntimeInfo {
     private String streamId;
+    private byte streamIdSize;
     private int fixedMessageSize;
     private int noOfStringAttributes;
     private int noOfAttributes;
@@ -65,5 +66,13 @@ public class StreamRuntimeInfo {
 
     public void setAttributeTypes(Attribute.Type[] attributes) {
         this.attributes = attributes;
+    }
+
+    public byte getStreamIdSize() {
+        return streamIdSize;
+    }
+
+    public void setStreamIdSize(byte streamIdSize) {
+        this.streamIdSize = streamIdSize;
     }
 }

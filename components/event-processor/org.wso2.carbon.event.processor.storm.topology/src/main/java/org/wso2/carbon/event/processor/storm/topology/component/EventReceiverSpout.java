@@ -25,7 +25,7 @@ import backtype.storm.tuple.Fields;
 import org.apache.log4j.Logger;
 import org.wso2.carbon.databridge.commons.Event;
 import org.wso2.carbon.databridge.commons.thrift.utils.HostAddressFinder;
-import org.wso2.carbon.event.processor.storm.common.event.server.BinaryTransportEventServer;
+import org.wso2.carbon.event.processor.storm.common.event.server.TCPEventServer;
 import org.wso2.carbon.event.processor.storm.common.event.server.EventServerConfig;
 import org.wso2.carbon.event.processor.storm.common.event.server.StreamCallback;
 import org.wso2.carbon.event.processor.storm.common.management.client.ManagerServiceClient;
@@ -55,7 +55,7 @@ public class EventReceiverSpout extends BaseRichSpout implements StreamCallback 
      * Siddhi stream definitions of all incoming streams. Required to declare output fields
      */
     private String[] incomingStreamDefinitions;
-    private BinaryTransportEventServer binaryTransportEventServer;
+    private TCPEventServer TCPEventServer;
 
     /**
      * Stream IDs of incoming streams
@@ -128,12 +128,12 @@ public class EventReceiverSpout extends BaseRichSpout implements StreamCallback 
         try {
             selectPort();
             this.thisHostIp = HostAddressFinder.findAddress("localhost");
-            binaryTransportEventServer = new BinaryTransportEventServer(new EventServerConfig(listeningPort), this);
+            TCPEventServer = new TCPEventServer(new EventServerConfig(listeningPort), this);
             List<StreamDefinition> siddhiStreamDefinitions = SiddhiUtils.toSiddhiStreamDefinitions(incomingStreamDefinitions);
             for (StreamDefinition siddhiStreamDefinition : siddhiStreamDefinitions) {
-                binaryTransportEventServer.subscribe(siddhiStreamDefinition);
+                TCPEventServer.subscribe(siddhiStreamDefinition);
             }
-            binaryTransportEventServer.start();
+            TCPEventServer.start();
             log.info(logPrefix + "EventReceiverSpout starting to listen for events on port " + listeningPort);
             registerWithCepMangerService();
         } catch (Throwable e) {

@@ -25,6 +25,7 @@ import org.wso2.siddhi.query.api.definition.Attribute;
 import org.wso2.siddhi.query.api.definition.StreamDefinition;
 
 import java.io.BufferedOutputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.net.Socket;
@@ -33,16 +34,16 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 //TODO Fix event client to support multiple streams
-public class EventClient {
+public class TCPEventClient {
     public static final String DEFAULT_CHARSET = "UTF-8";
-    private static Logger log = Logger.getLogger(EventClient.class);
+    private static Logger log = Logger.getLogger(TCPEventClient.class);
     private final String hostUrl;
     private Map<String, StreamRuntimeInfo> streamRuntimeInfoMap;
     private OutputStream outputStream;
     private Socket clientSocket;
 
 
-    public EventClient(String hostUrl) throws IOException {
+    public TCPEventClient(String hostUrl) throws IOException {
         this.hostUrl = hostUrl;
         this.streamRuntimeInfoMap = new ConcurrentHashMap<String, StreamRuntimeInfo>();
         String[] hp = hostUrl.split(":");
@@ -68,15 +69,19 @@ public class EventClient {
     }
 
 
-    public void sendEvent(String streamId, Object[] event) throws IOException {
+    public synchronized void sendEvent(String streamId, Object[] event) throws IOException {
         StreamRuntimeInfo streamRuntimeInfo = streamRuntimeInfoMap.get(streamId);
 
-        outputStream.write((byte) streamRuntimeInfo.getStreamId().length());
-        outputStream.write((streamRuntimeInfo.getStreamId()).getBytes(DEFAULT_CHARSET));
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
 
-        ByteBuffer buf = ByteBuffer.allocate(streamRuntimeInfo.getFixedMessageSize());
+        byte streamIdSize = streamRuntimeInfo.getStreamIdSize();
+        ByteBuffer buf = ByteBuffer.allocate(streamRuntimeInfo.getFixedMessageSize() + streamIdSize + 1);
+        buf.put(streamIdSize);
+        buf.put((streamRuntimeInfo.getStreamId()).getBytes(DEFAULT_CHARSET));
+
         int[] stringDataIndex = new int[streamRuntimeInfo.getNoOfStringAttributes()];
         int stringIndex = 0;
+        int stringSize = 0;
         Attribute.Type[] types = streamRuntimeInfo.getAttributeTypes();
         for (int i = 0, typesLength = types.length; i < typesLength; i++) {
             Attribute.Type type = types[i];
@@ -97,16 +102,22 @@ public class EventClient {
                     buf.putDouble((Double) event[i]);
                     continue;
                 case STRING:
-                    buf.putShort((short) ((String) event[i]).length());
+                    short length = (short) ((String) event[i]).length();
+                    buf.putShort(length);
                     stringDataIndex[stringIndex] = i;
                     stringIndex++;
+                    stringSize += length;
             }
         }
+        out.write(buf.array());
 
-        outputStream.write(buf.array());
+        buf = ByteBuffer.allocate(stringSize);
         for (int aStringIndex : stringDataIndex) {
-            outputStream.write(((String) event[aStringIndex]).getBytes(DEFAULT_CHARSET));
+            buf.put(((String) event[aStringIndex]).getBytes(DEFAULT_CHARSET));
         }
+        out.write(buf.array());
+
+        outputStream.write(out.toByteArray());
         outputStream.flush();
 
     }

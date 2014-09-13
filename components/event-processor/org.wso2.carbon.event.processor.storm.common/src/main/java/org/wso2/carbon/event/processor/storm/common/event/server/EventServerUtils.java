@@ -25,41 +25,42 @@ public class EventServerUtils {
 
 
     public static StreamRuntimeInfo createStreamRuntimeInfo(StreamDefinition streamDefinition) {
-        StreamRuntimeInfo streamRuntimeInfo= new StreamRuntimeInfo(streamDefinition.getStreamId());
+        StreamRuntimeInfo streamRuntimeInfo = new StreamRuntimeInfo(streamDefinition.getStreamId());
 
-        int messageSize=0;
-        int stringAttributes=0;
-        Attribute.Type[] attributeTypes=new Attribute.Type[streamDefinition.getAttributeList().size()];
+        streamRuntimeInfo.setStreamIdSize((byte) streamDefinition.getStreamId().length());
+
+        int messageSize = 0;
+        int stringAttributes = 0;
+        Attribute.Type[] attributeTypes = new Attribute.Type[streamDefinition.getAttributeList().size()];
 
         java.util.List<Attribute> attributeList = streamDefinition.getAttributeList();
         for (int i = 0; i < attributeList.size(); i++) {
             Attribute attribute = attributeList.get(i);
             switch (attribute.getType()) {
-
                 case INT:
                     messageSize += 4;
-                    attributeTypes[i]= Attribute.Type.INT;
+                    attributeTypes[i] = Attribute.Type.INT;
                     break;
                 case LONG:
                     messageSize += 8;
-                    attributeTypes[i]= Attribute.Type.LONG;
+                    attributeTypes[i] = Attribute.Type.LONG;
                     break;
                 case BOOL:
                     messageSize += 1;
-                    attributeTypes[i]= Attribute.Type.BOOL;
+                    attributeTypes[i] = Attribute.Type.BOOL;
                     break;
                 case FLOAT:
                     messageSize += 4;
-                    attributeTypes[i]= Attribute.Type.FLOAT;
+                    attributeTypes[i] = Attribute.Type.FLOAT;
                     break;
                 case DOUBLE:
                     messageSize += 8;
-                    attributeTypes[i]= Attribute.Type.DOUBLE;
+                    attributeTypes[i] = Attribute.Type.DOUBLE;
                     break;
                 case STRING:
                     messageSize += 2;
                     stringAttributes++;
-                    attributeTypes[i]= Attribute.Type.STRING;
+                    attributeTypes[i] = Attribute.Type.STRING;
                     break;
             }
         }

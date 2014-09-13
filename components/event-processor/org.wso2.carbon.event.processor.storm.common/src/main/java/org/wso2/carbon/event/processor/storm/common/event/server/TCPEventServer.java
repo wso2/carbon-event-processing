@@ -33,15 +33,15 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-public class BinaryTransportEventServer {
-    private static Logger log = Logger.getLogger(BinaryTransportEventServer.class);
+public class TCPEventServer {
+    private static Logger log = Logger.getLogger(TCPEventServer.class);
     private EventServerConfig eventServerConfig = new EventServerConfig(7211);
     private ExecutorService pool;
     private StreamCallback streamCallback;
     private ServerWorker serverWorker;
     private Map<String, StreamRuntimeInfo> streamRuntimeInfoMap = new ConcurrentHashMap<String, StreamRuntimeInfo>();
 
-    public BinaryTransportEventServer(EventServerConfig eventServerConfig, StreamCallback streamCallback) {
+    public TCPEventServer(EventServerConfig eventServerConfig, StreamCallback streamCallback) {
         this.eventServerConfig = eventServerConfig;
         this.streamCallback = streamCallback;
         this.serverWorker = new ServerWorker();
@@ -88,7 +88,7 @@ public class BinaryTransportEventServer {
                 receiverSocket = new ServerSocket(eventServerConfig.getPort());
                 while (isRunning) {
                     final Socket connectionSocket = receiverSocket.accept();
-                    pool.submit(new ListenerProcessor(connectionSocket));
+                    pool.execute(new ListenerProcessor(connectionSocket));
                 }
             } catch (Throwable e) {
                 if (isRunning) {
@@ -114,6 +114,7 @@ public class BinaryTransportEventServer {
                 try {
                     BufferedInputStream in = new BufferedInputStream(connectionSocket.getInputStream());
                     while (true) {
+
                         int streamNameSize = loadData(in) & 0xff;
                         byte[] streamNameData = loadData(in, new byte[streamNameSize]);
                         String streamId = new String(streamNameData, 0, streamNameData.length);
