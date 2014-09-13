@@ -23,6 +23,7 @@ import org.wso2.siddhi.query.api.definition.Attribute;
 import org.wso2.siddhi.query.api.definition.StreamDefinition;
 
 import java.io.BufferedInputStream;
+import java.io.EOFException;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -63,27 +64,6 @@ public class BinaryTransportEventServer {
         serverWorker.shutdownServerWorker();
     }
 
-    private int loadData(BufferedInputStream in) throws IOException {
-        while (true) {
-            int byteData = in.read();
-            if (byteData != -1) {
-                return byteData;
-            }
-        }
-    }
-
-    private byte[] loadData(BufferedInputStream in, byte[] dataArray) throws IOException {
-
-        int start = 0;
-        while (true) {
-            int readCount = in.read(dataArray, 0, dataArray.length - start);
-            start += readCount;
-            if (start == dataArray.length) {
-                return dataArray;
-            }
-        }
-    }
-
     private class ServerWorker implements Runnable {
         private ServerSocket receiverSocket;
         private boolean isRunning = false;
@@ -109,57 +89,7 @@ public class BinaryTransportEventServer {
                 receiverSocket = new ServerSocket(eventServerConfig.getPort());
                 while (isRunning) {
                     final Socket connectionSocket = receiverSocket.accept();
-                    pool.submit(new Runnable() {
-
-                        @Override
-                        public void run() {
-                            try {
-                                BufferedInputStream in = new BufferedInputStream(connectionSocket.getInputStream());
-                                while (true) {
-                                    int streamNameSize = loadData(in) & 0xff;
-                                    byte[] streamNameData = loadData(in, new byte[streamNameSize]);
-                                    String streamId = new String(streamNameData, 0, streamNameData.length);
-                                    StreamRuntimeInfo streamRuntimeInfo = streamRuntimeInfoMap.get(streamId);
-
-                                    Object[] event = new Object[streamRuntimeInfo.getNoOfAttributes()];
-                                    byte[] fixedMessageData = loadData(in, new byte[streamRuntimeInfo.getFixedMessageSize()]);
-
-                                    ByteBuffer bbuf = ByteBuffer.wrap(fixedMessageData, 0, fixedMessageData.length);
-                                    Attribute.Type[] attributeTypes = streamRuntimeInfo.getAttributeTypes();
-                                    for (int i = 0; i < attributeTypes.length; i++) {
-                                        Attribute.Type type = attributeTypes[i];
-                                        switch (type) {
-                                            case INT:
-                                                event[i] = bbuf.getInt();
-                                                continue;
-                                            case LONG:
-                                                event[i] = bbuf.getLong();
-                                                continue;
-                                            case BOOL:
-                                                event[i] = bbuf.get() == 1;
-                                                continue;
-                                            case FLOAT:
-                                                event[i] = bbuf.getFloat();
-                                                continue;
-                                            case DOUBLE:
-                                                event[i] = bbuf.getLong();
-                                                continue;
-                                            case STRING:
-                                                int size = bbuf.getShort() & 0xffff;
-                                                byte[] stringData = loadData(in, new byte[size]);
-                                                event[i] = new String(stringData, 0, stringData.length);
-                                        }
-                                    }
-                                    if(log.isDebugEnabled()) {
-                                        log.debug("EventServer received event: " + Arrays.deepToString(event));
-                                    }
-                                    streamCallback.receive(streamId, event);
-                                }
-                            } catch (IOException e) {
-                                log.error("Error reading data from receiver socket:" + e.getMessage(), e);
-                            }
-                        }
-                    });
+                    pool.submit(new ListenerProcessor(connectionSocket));
                 }
             } catch (Throwable e) {
                 if (isRunning) {
@@ -172,5 +102,96 @@ public class BinaryTransportEventServer {
             }
         }
 
+        private class ListenerProcessor implements Runnable {
+
+            private final Socket connectionSocket;
+
+            public ListenerProcessor(Socket connectionSocket) {
+                this.connectionSocket = connectionSocket;
+            }
+
+            @Override
+            public void run() {
+                try {
+                    BufferedInputStream in = new BufferedInputStream(connectionSocket.getInputStream());
+                    while (true) {
+                        int streamNameSize = loadData(in) & 0xff;
+                        byte[] streamNameData = loadData(in, new byte[streamNameSize]);
+                        String streamId = new String(streamNameData, 0, streamNameData.length);
+                        StreamRuntimeInfo streamRuntimeInfo = streamRuntimeInfoMap.get(streamId);
+
+                        Object[] event = new Object[streamRuntimeInfo.getNoOfAttributes()];
+                        byte[] fixedMessageData = loadData(in, new byte[streamRuntimeInfo.getFixedMessageSize()]);
+
+                        ByteBuffer bbuf = ByteBuffer.wrap(fixedMessageData, 0, fixedMessageData.length);
+                        Attribute.Type[] attributeTypes = streamRuntimeInfo.getAttributeTypes();
+                        for (int i = 0; i < attributeTypes.length; i++) {
+                            Attribute.Type type = attributeTypes[i];
+                            switch (type) {
+                                case INT:
+                                    event[i] = bbuf.getInt();
+                                    continue;
+                                case LONG:
+                                    event[i] = bbuf.getLong();
+                                    continue;
+                                case BOOL:
+                                    event[i] = bbuf.get() == 1;
+                                    continue;
+                                case FLOAT:
+                                    event[i] = bbuf.getFloat();
+                                    continue;
+                                case DOUBLE:
+                                    event[i] = bbuf.getLong();
+                                    continue;
+                                case STRING:
+                                    int size = bbuf.getShort() & 0xffff;
+                                    byte[] stringData = loadData(in, new byte[size]);
+                                    event[i] = new String(stringData, 0, stringData.length);
+                            }
+                        }
+                        System.out.println("Raw event: " + Arrays.deepToString(event));
+                        streamCallback.receive(streamId, event);
+                    }
+                } catch (EOFException e) {
+                    log.info("Closing listener socket. " + e.getMessage());
+                } catch (IOException e) {
+                    log.error("Error reading data from receiver socket:" + e.getMessage(), e);
+                }
+            }
+
+            /**
+             * Returns the number of bytes that were read by the stream.
+             * This method does not return if the stream is closed from remote end.
+             *
+             * @param in the input stream to be read
+             * @return the number of bytes read
+             * @throws IOException
+             */
+            private int loadData(BufferedInputStream in) throws IOException {
+                int byteData = in.read();
+                if (byteData != -1) {
+                    return byteData;
+                } else {
+                    throw new EOFException("Connection closed from remote end.");
+                }
+            }
+
+            private byte[] loadData(BufferedInputStream in, byte[] dataArray) throws IOException {
+
+                int start = 0;
+                while (true) {
+                    int readCount = in.read(dataArray, 0, dataArray.length - start);
+                    if (readCount != -1) {
+                        start += readCount;
+                        if (start == dataArray.length) {
+                            return dataArray;
+                        }
+                    } else {
+                        throw new EOFException("Connection closed from remote end.");
+                    }
+                }
+            }
+
+        }
     }
 }
