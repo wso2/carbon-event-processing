@@ -28,7 +28,6 @@ import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.nio.ByteBuffer;
-import java.util.Arrays;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
@@ -149,7 +148,6 @@ public class BinaryTransportEventServer {
                                     event[i] = new String(stringData, 0, stringData.length);
                             }
                         }
-                        System.out.println("Raw event: " + Arrays.deepToString(event));
                         streamCallback.receive(streamId, event);
                     }
                 } catch (EOFException e) {
