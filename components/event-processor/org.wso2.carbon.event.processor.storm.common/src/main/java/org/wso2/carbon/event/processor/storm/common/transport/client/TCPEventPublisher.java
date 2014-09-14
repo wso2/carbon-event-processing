@@ -16,17 +16,16 @@
  *  under the License.
  */
 
-package org.wso2.carbon.event.processor.storm.common.event.client;
+package org.wso2.carbon.event.processor.storm.common.transport.client;
 
 import com.lmax.disruptor.EventFactory;
 import com.lmax.disruptor.EventHandler;
 import com.lmax.disruptor.RingBuffer;
 import com.lmax.disruptor.SleepingWaitStrategy;
 import com.lmax.disruptor.dsl.Disruptor;
-import com.lmax.disruptor.dsl.ProducerType;
 import org.apache.log4j.Logger;
-import org.wso2.carbon.event.processor.storm.common.event.server.EventServerUtils;
-import org.wso2.carbon.event.processor.storm.common.event.server.StreamRuntimeInfo;
+import org.wso2.carbon.event.processor.storm.common.transport.common.EventServerUtils;
+import org.wso2.carbon.event.processor.storm.common.transport.common.StreamRuntimeInfo;
 import org.wso2.siddhi.query.api.definition.Attribute;
 import org.wso2.siddhi.query.api.definition.StreamDefinition;
 
@@ -40,50 +39,55 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Executors;
 
-//TODO Fix event client to support multiple streams
-public class TCPEventClient {
+public class TCPEventPublisher {
+
     public static final String DEFAULT_CHARSET = "UTF-8";
-    private static Logger log = Logger.getLogger(TCPEventClient.class);
+    private static Logger log = Logger.getLogger(TCPEventPublisher.class);
     private final String hostUrl;
-    private final Disruptor<ArrayHolder> disruptor;
-    private final RingBuffer<ArrayHolder> ringBuffer;
+    private final Disruptor<BiteArrayHolder> disruptor;
+    private final RingBuffer<BiteArrayHolder> ringBuffer;
     private Map<String, StreamRuntimeInfo> streamRuntimeInfoMap;
     private OutputStream outputStream;
     private Socket clientSocket;
+    private TCPEventPublisherConfig publisherConfig;
 
 
-    public TCPEventClient(String hostUrl) throws IOException {
+    public TCPEventPublisher(String hostUrl, TCPEventPublisherConfig publisherConfig) throws IOException {
+
         this.hostUrl = hostUrl;
+        this.publisherConfig = publisherConfig;
         this.streamRuntimeInfoMap = new ConcurrentHashMap<String, StreamRuntimeInfo>();
+
         String[] hp = hostUrl.split(":");
         String host = hp[0];
         int port = Integer.parseInt(hp[1]);
+
         this.clientSocket = new Socket(host, port);
         this.outputStream = new BufferedOutputStream(this.clientSocket.getOutputStream());
-        disruptor = new Disruptor<ArrayHolder>(new EventFactory<ArrayHolder>() {
+        this.disruptor = new Disruptor<BiteArrayHolder>(new EventFactory<BiteArrayHolder>() {
             @Override
-            public ArrayHolder newInstance() {
-                return new ArrayHolder();
+            public BiteArrayHolder newInstance() {
+                return new BiteArrayHolder();
             }
+        }, publisherConfig.getBufferSize(), Executors.newSingleThreadExecutor(), publisherConfig.getProducerType(),
+                new SleepingWaitStrategy());
 
-
-        }, 1024, Executors.newSingleThreadExecutor(), ProducerType.MULTI, new SleepingWaitStrategy());
-
-        ringBuffer = disruptor.getRingBuffer();
-        disruptor.handleEventsWith(new EventHandler<ArrayHolder>() {
+        this.ringBuffer = disruptor.getRingBuffer();
+        this.disruptor.handleEventsWith(new EventHandler<BiteArrayHolder>() {
             @Override
-            public void onEvent(ArrayHolder event, long sequence, boolean endOfBatch) throws Exception {
-                outputStream.write(event.bytes);
-                outputStream.flush();
+            public void onEvent(BiteArrayHolder biteArrayHolder, long sequence, boolean endOfBatch) throws Exception {
+                outputStream.write(biteArrayHolder.bytes);
+                if (endOfBatch) {
+                    outputStream.flush();
+                }
             }
         });
         disruptor.start();
         log.info("Client configured to send events to " + hostUrl);
     }
 
-    class ArrayHolder {
-        byte[] bytes;
-
+    public TCPEventPublisher(String hostUrl) throws IOException {
+        this(hostUrl, new TCPEventPublisherConfig());
     }
 
     public void addStreamDefinition(StreamDefinition streamDefinition) {
@@ -93,6 +97,7 @@ public class TCPEventClient {
 
     public void close() {
         try {
+            disruptor.shutdown();
             outputStream.flush();
             clientSocket.close();
         } catch (IOException e) {
@@ -102,9 +107,10 @@ public class TCPEventClient {
 
 
     public synchronized void sendEvent(String streamId, Object[] event) throws IOException {
+
         StreamRuntimeInfo streamRuntimeInfo = streamRuntimeInfoMap.get(streamId);
 
-        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        ByteArrayOutputStream arrayOutputStream = new ByteArrayOutputStream();
 
         byte streamIdSize = streamRuntimeInfo.getStreamIdSize();
         ByteBuffer buf = ByteBuffer.allocate(streamRuntimeInfo.getFixedMessageSize() + streamIdSize + 1);
@@ -141,33 +147,31 @@ public class TCPEventClient {
                     stringSize += length;
             }
         }
-        out.write(buf.array());
+        arrayOutputStream.write(buf.array());
 
         buf = ByteBuffer.allocate(stringSize);
         for (int aStringIndex : stringDataIndex) {
             buf.put(((String) event[aStringIndex]).getBytes(DEFAULT_CHARSET));
         }
-        out.write(buf.array());
+        arrayOutputStream.write(buf.array());
 
-//        send(out);
-        sendDisruptor(out);
+        send(arrayOutputStream.toByteArray());
 
     }
 
-    private void send(ByteArrayOutputStream out) throws IOException {
-
-        outputStream.write(out.toByteArray());
-        outputStream.flush();
-    }
-
-    private void sendDisruptor(ByteArrayOutputStream out) throws IOException {
+    private void send(byte[] byteArray) throws IOException {
 
         long sequenceNo = ringBuffer.next();
         try {
-            ArrayHolder existingHolder = ringBuffer.get(sequenceNo);
-            existingHolder.bytes = out.toByteArray();
+            BiteArrayHolder existingHolder = ringBuffer.get(sequenceNo);
+            existingHolder.bytes = byteArray;
         } finally {
             ringBuffer.publish(sequenceNo);
         }
+    }
+
+    class BiteArrayHolder {
+        byte[] bytes;
+
     }
 }

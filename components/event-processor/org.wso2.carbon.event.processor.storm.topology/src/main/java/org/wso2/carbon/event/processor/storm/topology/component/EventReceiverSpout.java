@@ -25,9 +25,9 @@ import backtype.storm.tuple.Fields;
 import org.apache.log4j.Logger;
 import org.wso2.carbon.databridge.commons.Event;
 import org.wso2.carbon.databridge.commons.thrift.utils.HostAddressFinder;
-import org.wso2.carbon.event.processor.storm.common.event.server.TCPEventServer;
-import org.wso2.carbon.event.processor.storm.common.event.server.EventServerConfig;
-import org.wso2.carbon.event.processor.storm.common.event.server.StreamCallback;
+import org.wso2.carbon.event.processor.storm.common.transport.server.TCPEventServer;
+import org.wso2.carbon.event.processor.storm.common.transport.server.TCPEventServerConfig;
+import org.wso2.carbon.event.processor.storm.common.transport.server.StreamCallback;
 import org.wso2.carbon.event.processor.storm.common.management.client.ManagerServiceClient;
 import org.wso2.carbon.event.processor.storm.common.util.StormUtils;
 import org.wso2.carbon.event.processor.storm.topology.util.SiddhiUtils;
@@ -128,7 +128,7 @@ public class EventReceiverSpout extends BaseRichSpout implements StreamCallback 
         try {
             selectPort();
             this.thisHostIp = HostAddressFinder.findAddress("localhost");
-            TCPEventServer = new TCPEventServer(new EventServerConfig(listeningPort), this);
+            TCPEventServer = new TCPEventServer(new TCPEventServerConfig(listeningPort), this);
             List<StreamDefinition> siddhiStreamDefinitions = SiddhiUtils.toSiddhiStreamDefinitions(incomingStreamDefinitions);
             for (StreamDefinition siddhiStreamDefinition : siddhiStreamDefinitions) {
                 TCPEventServer.subscribe(siddhiStreamDefinition);

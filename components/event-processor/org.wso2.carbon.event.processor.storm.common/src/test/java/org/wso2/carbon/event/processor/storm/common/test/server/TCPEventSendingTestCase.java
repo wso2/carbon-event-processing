@@ -23,10 +23,10 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.junit.Before;
 import org.junit.Test;
-import org.wso2.carbon.event.processor.storm.common.event.client.TCPEventClient;
-import org.wso2.carbon.event.processor.storm.common.event.server.TCPEventServer;
-import org.wso2.carbon.event.processor.storm.common.event.server.EventServerConfig;
-import org.wso2.carbon.event.processor.storm.common.event.server.StreamCallback;
+import org.wso2.carbon.event.processor.storm.common.transport.client.TCPEventPublisher;
+import org.wso2.carbon.event.processor.storm.common.transport.server.TCPEventServer;
+import org.wso2.carbon.event.processor.storm.common.transport.server.TCPEventServerConfig;
+import org.wso2.carbon.event.processor.storm.common.transport.server.StreamCallback;
 import org.wso2.carbon.event.processor.storm.common.test.util.AnalyticStatDataProvider;
 import org.wso2.carbon.event.processor.storm.common.test.util.DataProvider;
 import org.wso2.carbon.event.processor.storm.common.test.util.SimpleDataProvider;
@@ -60,7 +60,7 @@ public class TCPEventSendingTestCase {
                 .attribute("att4", Attribute.Type.INT);
 
         TestStreamCallback streamCallback = new TestStreamCallback();
-        TCPEventServer TCPEventServer = new TCPEventServer(new EventServerConfig(7612), streamCallback);
+        TCPEventServer TCPEventServer = new TCPEventServer(new TCPEventServerConfig(7612), streamCallback);
         try {
             TCPEventServer.subscribe(streamDefinition);
             TCPEventServer.start();
@@ -87,7 +87,7 @@ public class TCPEventSendingTestCase {
                 .attribute("searchTerms", Attribute.Type.STRING);
 
         TestStreamCallback streamCallback = new TestStreamCallback();
-        TCPEventServer TCPEventServer = new TCPEventServer(new EventServerConfig(7612), streamCallback);
+        TCPEventServer TCPEventServer = new TCPEventServer(new TCPEventServerConfig(7612), streamCallback);
         try {
             TCPEventServer.subscribe(streamDefinition);
             TCPEventServer.start();
@@ -132,23 +132,23 @@ public class TCPEventSendingTestCase {
 
         @Override
         public void run() {
-            TCPEventClient TCPEventClient = null;
+            TCPEventPublisher TCPEventPublisher = null;
             try {
-                TCPEventClient = new TCPEventClient("localhost:7612");
-                TCPEventClient.addStreamDefinition(streamDefinition);
+                TCPEventPublisher = new TCPEventPublisher("localhost:7612");
+                TCPEventPublisher.addStreamDefinition(streamDefinition);
                 Thread.sleep(1000);
                 log.info("Starting event client to send events to localhost:7612");
 
                 for (int i = 0; i < eventsToSend; i++) {
-                    TCPEventClient.sendEvent(streamDefinition.getStreamId(), dataProvider.getEvent());
+                    TCPEventPublisher.sendEvent(streamDefinition.getStreamId(), dataProvider.getEvent());
                 }
             } catch (IOException e) {
                 e.printStackTrace();
             } catch (InterruptedException e) {
                 e.printStackTrace();
             } finally {
-                if (TCPEventClient != null) {
-                    TCPEventClient.close();
+                if (TCPEventPublisher != null) {
+                    TCPEventPublisher.close();
                 }
             }
         }

@@ -16,7 +16,7 @@
  *  under the License.
  */
 
-package org.wso2.carbon.event.processor.storm.common.event.server;
+package org.wso2.carbon.event.processor.storm.common.transport.common;
 
 import org.wso2.siddhi.query.api.definition.Attribute;
 import org.wso2.siddhi.query.api.definition.StreamDefinition;

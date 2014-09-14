@@ -16,15 +16,14 @@
  *  under the License.
  */
 
-package org.wso2.carbon.event.processor.storm.common.event.server;
+package org.wso2.carbon.event.processor.storm.common.transport.server;
 
-public class EventServerConfig {
+public class TCPEventServerConfig {
 
-    public static final int DEFAULT_THREAD_POOL_SIZE = 10;
-    private int numberOfThreads = DEFAULT_THREAD_POOL_SIZE;
+    private int numberOfThreads = 10;
     private int port;
 
-    public EventServerConfig(int port) {
+    public TCPEventServerConfig(int port) {
         this.port = port;
     }
 

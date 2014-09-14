@@ -18,9 +18,9 @@
 
 package org.wso2.carbon.event.processor.storm.common.test.server;
 
-import org.wso2.carbon.event.processor.storm.common.event.server.EventServerConfig;
-import org.wso2.carbon.event.processor.storm.common.event.server.StreamCallback;
-import org.wso2.carbon.event.processor.storm.common.event.server.TCPEventServer;
+import org.wso2.carbon.event.processor.storm.common.transport.server.TCPEventServerConfig;
+import org.wso2.carbon.event.processor.storm.common.transport.server.StreamCallback;
+import org.wso2.carbon.event.processor.storm.common.transport.server.TCPEventServer;
 import org.wso2.siddhi.query.api.definition.Attribute;
 import org.wso2.siddhi.query.api.definition.StreamDefinition;
 
@@ -47,7 +47,7 @@ public class TCPEventTestServer {
         streamDefinition1.attribute("att5", Attribute.Type.BOOL);
 
 
-        TCPEventServer eventServer = new TCPEventServer(new EventServerConfig(7612), new StreamCallback() {
+        TCPEventServer eventServer = new TCPEventServer(new TCPEventServerConfig(7612), new StreamCallback() {
 
             public int count;
             public long start=System.currentTimeMillis();

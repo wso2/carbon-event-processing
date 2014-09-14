@@ -16,9 +16,11 @@
  *  under the License.
  */
 
-package org.wso2.carbon.event.processor.storm.common.event.server;
+package org.wso2.carbon.event.processor.storm.common.transport.server;
 
 import org.apache.log4j.Logger;
+import org.wso2.carbon.event.processor.storm.common.transport.common.EventServerUtils;
+import org.wso2.carbon.event.processor.storm.common.transport.common.StreamRuntimeInfo;
 import org.wso2.siddhi.query.api.definition.Attribute;
 import org.wso2.siddhi.query.api.definition.StreamDefinition;
 
@@ -35,17 +37,17 @@ import java.util.concurrent.Executors;
 
 public class TCPEventServer {
     private static Logger log = Logger.getLogger(TCPEventServer.class);
-    private EventServerConfig eventServerConfig = new EventServerConfig(7211);
+    private TCPEventServerConfig TCPEventServerConfig = new TCPEventServerConfig(7211);
     private ExecutorService pool;
     private StreamCallback streamCallback;
     private ServerWorker serverWorker;
     private Map<String, StreamRuntimeInfo> streamRuntimeInfoMap = new ConcurrentHashMap<String, StreamRuntimeInfo>();
 
-    public TCPEventServer(EventServerConfig eventServerConfig, StreamCallback streamCallback) {
-        this.eventServerConfig = eventServerConfig;
+    public TCPEventServer(TCPEventServerConfig TCPEventServerConfig, StreamCallback streamCallback) {
+        this.TCPEventServerConfig = TCPEventServerConfig;
         this.streamCallback = streamCallback;
         this.serverWorker = new ServerWorker();
-        this.pool = Executors.newFixedThreadPool(eventServerConfig.getNumberOfThreads());
+        this.pool = Executors.newFixedThreadPool(TCPEventServerConfig.getNumberOfThreads());
     }
 
     public void subscribe(StreamDefinition streamDefinition) {
@@ -83,9 +85,9 @@ public class TCPEventServer {
         @Override
         public void run() {
             try {
-                log.info("EventServer starting event listener on port " + eventServerConfig.getPort());
+                log.info("EventServer starting event listener on port " + TCPEventServerConfig.getPort());
                 isRunning = true;
-                receiverSocket = new ServerSocket(eventServerConfig.getPort());
+                receiverSocket = new ServerSocket(TCPEventServerConfig.getPort());
                 while (isRunning) {
                     final Socket connectionSocket = receiverSocket.accept();
                     pool.execute(new ListenerProcessor(connectionSocket));

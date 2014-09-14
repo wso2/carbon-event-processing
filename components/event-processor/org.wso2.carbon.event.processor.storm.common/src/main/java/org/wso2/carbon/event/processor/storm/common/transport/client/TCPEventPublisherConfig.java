@@ -16,14 +16,28 @@
  *  under the License.
  */
 
-package org.wso2.carbon.event.processor.storm.common.event.server;
+package org.wso2.carbon.event.processor.storm.common.transport.client;
 
-public interface StreamCallback {
+import com.lmax.disruptor.dsl.ProducerType;
 
-    /**
-     *
-     * @param streamId the stream id for the incoming event
-     * @param event the event as an object array of attributes
-     */
-    public void receive(String streamId, Object[] event);
+public class TCPEventPublisherConfig {
+
+    private int bufferSize = 1024;
+    private ProducerType producerType =ProducerType.MULTI;
+
+    public int getBufferSize() {
+        return bufferSize;
+    }
+
+    public void setBufferSize(int bufferSize) {
+        this.bufferSize = bufferSize;
+    }
+
+    public ProducerType getProducerType() {
+        return producerType;
+    }
+
+    public void setProducerType(ProducerType producerType) {
+        this.producerType = producerType;
+    }
 }

@@ -18,7 +18,7 @@
 
 package org.wso2.carbon.event.processor.storm.common.test.server;
 
-import org.wso2.carbon.event.processor.storm.common.event.client.TCPEventClient;
+import org.wso2.carbon.event.processor.storm.common.transport.client.TCPEventPublisher;
 import org.wso2.siddhi.query.api.definition.Attribute;
 import org.wso2.siddhi.query.api.definition.StreamDefinition;
 
@@ -44,9 +44,9 @@ public class TCPEventTestClient {
         streamDefinition1.attribute("att3", Attribute.Type.STRING);
         streamDefinition1.attribute("att4", Attribute.Type.DOUBLE);
         streamDefinition1.attribute("att5", Attribute.Type.BOOL);
-        TCPEventClient TCPEventClient = new TCPEventClient("localhost:7612");
-        TCPEventClient.addStreamDefinition(streamDefinition);
-        TCPEventClient.addStreamDefinition(streamDefinition1);
+        TCPEventPublisher TCPEventPublisher = new TCPEventPublisher("localhost:7612");
+        TCPEventPublisher.addStreamDefinition(streamDefinition);
+        TCPEventPublisher.addStreamDefinition(streamDefinition1);
 
         Thread.sleep(1000);
         System.out.println("Start testing");
@@ -57,21 +57,21 @@ public class TCPEventTestClient {
 //            eventClient.sendEvent("TestStream1", new Object[]{90l, 77f, "Abcdefghijklmnop", 4.5,true});
 //
 //        }
-        Thread thread=new Thread(new Runner(TCPEventClient));
+        Thread thread=new Thread(new Runner(TCPEventPublisher));
         thread.start();
-        Thread thread1=new Thread(new Runner(TCPEventClient));
+        Thread thread1=new Thread(new Runner(TCPEventPublisher));
         thread1.start();
-        Thread thread2=new Thread(new Runner(TCPEventClient));
+        Thread thread2=new Thread(new Runner(TCPEventPublisher));
         thread2.start();
     }
 
     static class Runner implements Runnable{
 
 
-        private TCPEventClient TCPEventClient;
+        private TCPEventPublisher TCPEventPublisher;
 
-        Runner(TCPEventClient TCPEventClient) {
-            this.TCPEventClient = TCPEventClient;
+        Runner(TCPEventPublisher TCPEventPublisher) {
+            this.TCPEventPublisher = TCPEventPublisher;
         }
 
         /**
@@ -89,8 +89,8 @@ public class TCPEventTestClient {
         public void run() {
             for (int i = 0; i < 1000000000; i++) {
                 try {
-                    TCPEventClient.sendEvent("TestStream", new Object[]{75, 45f, "Abcdefghijklmnop", 89});
-                    TCPEventClient.sendEvent("TestStream1", new Object[]{90l, 77f, "Abcdefghijklmnop", 4.5,true});
+                    TCPEventPublisher.sendEvent("TestStream", new Object[]{75, 45f, "Abcdefghijklmnop", 89});
+                    TCPEventPublisher.sendEvent("TestStream1", new Object[]{90l, 77f, "Abcdefghijklmnop", 4.5,true});
                 } catch (IOException e) {
                     e.printStackTrace();
                 }

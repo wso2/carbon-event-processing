@@ -24,7 +24,7 @@ import backtype.storm.topology.base.BaseBasicBolt;
 import backtype.storm.tuple.Tuple;
 import org.apache.log4j.Logger;
 import org.wso2.carbon.databridge.commons.thrift.utils.HostAddressFinder;
-import org.wso2.carbon.event.processor.storm.common.event.client.TCPEventClient;
+import org.wso2.carbon.event.processor.storm.common.transport.client.TCPEventPublisher;
 import org.wso2.carbon.event.processor.storm.common.management.client.ManagerServiceClient;
 import org.wso2.carbon.event.processor.storm.common.management.client.ManagerServiceClientCallback;
 import org.wso2.carbon.event.processor.storm.topology.util.SiddhiUtils;
@@ -62,7 +62,7 @@ public class EventPublisherBolt extends BaseBasicBolt implements ManagerServiceC
     private Map<String, org.wso2.carbon.databridge.commons.StreamDefinition> siddhiStreamIdToDataBridgeStreamMap
             = new HashMap<String, org.wso2.carbon.databridge.commons.StreamDefinition>();
 
-    private transient TCPEventClient TCPEventClient = null;
+    private transient TCPEventPublisher TCPEventPublisher = null;
 
     private String executionPlanName;
 
@@ -102,7 +102,7 @@ public class EventPublisherBolt extends BaseBasicBolt implements ManagerServiceC
             init(); // TODO : Understand why this init is required
         }
 
-        if (TCPEventClient != null) {
+        if (TCPEventPublisher != null) {
             //TODO Do we need to keep databridge stream definitions inside the bolt??
             org.wso2.carbon.databridge.commons.StreamDefinition databridgeStream = siddhiStreamIdToDataBridgeStreamMap.get(tuple.getSourceStreamId());
 
@@ -119,7 +119,7 @@ public class EventPublisherBolt extends BaseBasicBolt implements ManagerServiceC
                         batchStartTime = System.currentTimeMillis();
                     }
 
-                    TCPEventClient.sendEvent(tuple.getSourceStreamId(), tuple.getValues().toArray());
+                    TCPEventPublisher.sendEvent(tuple.getSourceStreamId(), tuple.getValues().toArray());
                 } catch (IOException e) {
                     log.error(logPrefix + "Error while publishing event to CEP publisher", e);
                 }
@@ -191,12 +191,12 @@ public class EventPublisherBolt extends BaseBasicBolt implements ManagerServiceC
     public void onResponseReceived(Pair<String, Integer> endpoint) {
         synchronized (this) {
             try {
-                TCPEventClient = new TCPEventClient(endpoint.getOne() + ":" + endpoint.getTwo());
+                TCPEventPublisher = new TCPEventPublisher(endpoint.getOne() + ":" + endpoint.getTwo());
                 for (String siddhiStreamId : exportedStreamIDs) {
                     if (log.isDebugEnabled()) {
                         log.debug(logPrefix + "EventPublisherBolt adding stream definition to client for exported Siddhi stream: " + siddhiStreamId);
                     }
-                    TCPEventClient.addStreamDefinition(siddhiManager.getStreamDefinition(siddhiStreamId));
+                    TCPEventPublisher.addStreamDefinition(siddhiManager.getStreamDefinition(siddhiStreamId));
                 }
                 log.info(logPrefix + " EventPublisherBolt connecting to CEP publisher at " + endpoint.getOne() + ":" + endpoint.getTwo());
             } catch (IOException e) {

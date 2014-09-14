@@ -25,7 +25,7 @@ import org.wso2.carbon.event.processor.core.StreamConfiguration;
 import org.wso2.carbon.event.processor.core.internal.ha.server.utils.HostAddressFinder;
 import org.wso2.carbon.event.processor.core.internal.listener.AbstractSiddhiInputEventDispatcher;
 import org.wso2.carbon.event.processor.core.internal.util.EventProcessorUtil;
-import org.wso2.carbon.event.processor.storm.common.event.client.TCPEventClient;
+import org.wso2.carbon.event.processor.storm.common.transport.client.TCPEventPublisher;
 import org.wso2.carbon.event.processor.storm.common.helper.StormDeploymentConfiguration;
 import org.wso2.carbon.event.processor.storm.common.management.client.ManagerServiceClient;
 import org.wso2.carbon.event.processor.storm.common.management.client.ManagerServiceClientCallback;
@@ -42,7 +42,7 @@ import java.net.SocketException;
 public class SiddhiStormInputEventDispatcher extends AbstractSiddhiInputEventDispatcher implements ManagerServiceClientCallback {
     private static final Log log = LogFactory.getLog(SiddhiStormInputEventDispatcher.class);
 
-    private TCPEventClient TCPEventClient = null;
+    private TCPEventPublisher TCPEventPublisher = null;
     private String cepManagerHost = StormDeploymentConfiguration.getCepManagerHost();
     private int cepManagerPort = StormDeploymentConfiguration.getCepManagerPort();
     private org.wso2.siddhi.query.api.definition.StreamDefinition siddhiStreamDefinition;
@@ -78,8 +78,8 @@ public class SiddhiStormInputEventDispatcher extends AbstractSiddhiInputEventDis
     @Override
     public void sendEvent(Object[] eventData) throws InterruptedException {
         try {
-            if (TCPEventClient != null) {
-                TCPEventClient.sendEvent(this.siddhiStreamDefinition.getStreamId(), eventData);
+            if (TCPEventPublisher != null) {
+                TCPEventPublisher.sendEvent(this.siddhiStreamDefinition.getStreamId(), eventData);
             } else {
                 log.warn("Dropping the event since the data publisher is not yet initialized for " + super.getExecutionPlanName() + ":" + super.tenantId);
             }
@@ -92,8 +92,8 @@ public class SiddhiStormInputEventDispatcher extends AbstractSiddhiInputEventDis
     public void onResponseReceived(Pair<String, Integer> endpoint) {
         synchronized (this) {
             try {
-                TCPEventClient = new TCPEventClient(endpoint.getOne() + ":" + endpoint.getTwo());
-                TCPEventClient.addStreamDefinition(siddhiStreamDefinition);
+                TCPEventPublisher = new TCPEventPublisher(endpoint.getOne() + ":" + endpoint.getTwo());
+                TCPEventPublisher.addStreamDefinition(siddhiStreamDefinition);
             } catch (Exception e) {
                 log.error("Error while creating event client: " + e.getMessage(), e);
             }

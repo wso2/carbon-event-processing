@@ -16,11 +16,12 @@
  *  under the License.
  */
 
-package org.wso2.carbon.event.processor.storm.common.event.server;
+package org.wso2.carbon.event.processor.storm.common.transport.common;
 
 import org.wso2.siddhi.query.api.definition.Attribute;
 
 public class StreamRuntimeInfo {
+
     private String streamId;
     private byte streamIdSize;
     private int fixedMessageSize;
