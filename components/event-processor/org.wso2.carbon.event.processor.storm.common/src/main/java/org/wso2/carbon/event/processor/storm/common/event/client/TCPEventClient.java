@@ -18,6 +18,12 @@
 
 package org.wso2.carbon.event.processor.storm.common.event.client;
 
+import com.lmax.disruptor.EventFactory;
+import com.lmax.disruptor.EventHandler;
+import com.lmax.disruptor.RingBuffer;
+import com.lmax.disruptor.SleepingWaitStrategy;
+import com.lmax.disruptor.dsl.Disruptor;
+import com.lmax.disruptor.dsl.ProducerType;
 import org.apache.log4j.Logger;
 import org.wso2.carbon.event.processor.storm.common.event.server.EventServerUtils;
 import org.wso2.carbon.event.processor.storm.common.event.server.StreamRuntimeInfo;
@@ -32,12 +38,15 @@ import java.net.Socket;
 import java.nio.ByteBuffer;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.Executors;
 
 //TODO Fix event client to support multiple streams
 public class TCPEventClient {
     public static final String DEFAULT_CHARSET = "UTF-8";
     private static Logger log = Logger.getLogger(TCPEventClient.class);
     private final String hostUrl;
+    private final Disruptor<ArrayHolder> disruptor;
+    private final RingBuffer<ArrayHolder> ringBuffer;
     private Map<String, StreamRuntimeInfo> streamRuntimeInfoMap;
     private OutputStream outputStream;
     private Socket clientSocket;
@@ -51,7 +60,30 @@ public class TCPEventClient {
         int port = Integer.parseInt(hp[1]);
         this.clientSocket = new Socket(host, port);
         this.outputStream = new BufferedOutputStream(this.clientSocket.getOutputStream());
+        disruptor = new Disruptor<ArrayHolder>(new EventFactory<ArrayHolder>() {
+            @Override
+            public ArrayHolder newInstance() {
+                return new ArrayHolder();
+            }
+
+
+        }, 1024, Executors.newSingleThreadExecutor(), ProducerType.MULTI, new SleepingWaitStrategy());
+
+        ringBuffer = disruptor.getRingBuffer();
+        disruptor.handleEventsWith(new EventHandler<ArrayHolder>() {
+            @Override
+            public void onEvent(ArrayHolder event, long sequence, boolean endOfBatch) throws Exception {
+                outputStream.write(event.bytes);
+                outputStream.flush();
+            }
+        });
+        disruptor.start();
         log.info("Client configured to send events to " + hostUrl);
+    }
+
+    class ArrayHolder {
+        byte[] bytes;
+
     }
 
     public void addStreamDefinition(StreamDefinition streamDefinition) {
@@ -117,8 +149,25 @@ public class TCPEventClient {
         }
         out.write(buf.array());
 
+//        send(out);
+        sendDisruptor(out);
+
+    }
+
+    private void send(ByteArrayOutputStream out) throws IOException {
+
         outputStream.write(out.toByteArray());
         outputStream.flush();
+    }
 
+    private void sendDisruptor(ByteArrayOutputStream out) throws IOException {
+
+        long sequenceNo = ringBuffer.next();
+        try {
+            ArrayHolder existingHolder = ringBuffer.get(sequenceNo);
+            existingHolder.bytes = out.toByteArray();
+        } finally {
+            ringBuffer.publish(sequenceNo);
+        }
     }
 }

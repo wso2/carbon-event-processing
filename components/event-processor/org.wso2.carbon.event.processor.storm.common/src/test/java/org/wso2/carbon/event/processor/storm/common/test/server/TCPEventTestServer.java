@@ -18,9 +18,9 @@
 
 package org.wso2.carbon.event.processor.storm.common.test.server;
 
-import org.wso2.carbon.event.processor.storm.common.event.server.TCPEventServer;
 import org.wso2.carbon.event.processor.storm.common.event.server.EventServerConfig;
 import org.wso2.carbon.event.processor.storm.common.event.server.StreamCallback;
+import org.wso2.carbon.event.processor.storm.common.event.server.TCPEventServer;
 import org.wso2.siddhi.query.api.definition.Attribute;
 import org.wso2.siddhi.query.api.definition.StreamDefinition;
 
@@ -51,6 +51,7 @@ public class TCPEventTestServer {
 
             public int count;
             public long start=System.currentTimeMillis();
+            private Object[] prev=null;
 
             /**
              * @param streamId the stream id for the incoming event
@@ -59,9 +60,10 @@ public class TCPEventTestServer {
             @Override
             public void receive(String streamId, Object[] event) {
                 if (!event[2].equals("Abcdefghijklmnop")) {
-                    System.out.println(streamId + Arrays.deepToString(event));
-
+                    System.out.println(streamId + " prev: "+Arrays.deepToString(prev)+" current :  "+Arrays.deepToString(event));
                 }
+                prev=event;
+
                 count++;
                 if (count % 2000000 == 0) {
                     long end = System.currentTimeMillis();
