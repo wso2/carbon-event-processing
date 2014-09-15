@@ -68,10 +68,10 @@ public class TCPEventTestClient {
     static class Runner implements Runnable{
 
 
-        private TCPEventPublisher TCPEventPublisher;
+        private TCPEventPublisher tcpEventPublisher;
 
-        Runner(TCPEventPublisher TCPEventPublisher) {
-            this.TCPEventPublisher = TCPEventPublisher;
+        Runner(TCPEventPublisher tcpEventPublisher) {
+            this.tcpEventPublisher = tcpEventPublisher;
         }
 
         /**
@@ -89,8 +89,8 @@ public class TCPEventTestClient {
         public void run() {
             for (int i = 0; i < 1000000000; i++) {
                 try {
-                    TCPEventPublisher.sendEvent("TestStream", new Object[]{75, 45f, "Abcdefghijklmnop", 89});
-                    TCPEventPublisher.sendEvent("TestStream1", new Object[]{90l, 77f, "Abcdefghijklmnop", 4.5,true});
+                    tcpEventPublisher.sendEvent("TestStream", new Object[]{75, 45f, "Abcdefghijklmnop", 89});
+                    tcpEventPublisher.sendEvent("TestStream1", new Object[]{90l, 77f, "Abcdefghijklmnop", 4.5, true});
                 } catch (IOException e) {
                     e.printStackTrace();
                 }

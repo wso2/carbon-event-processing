@@ -106,7 +106,7 @@ public class TCPEventPublisher {
     }
 
 
-    public synchronized void sendEvent(String streamId, Object[] event) throws IOException {
+    public void sendEvent(String streamId, Object[] event) throws IOException {
 
         StreamRuntimeInfo streamRuntimeInfo = streamRuntimeInfoMap.get(streamId);
 

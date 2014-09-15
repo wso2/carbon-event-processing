@@ -157,6 +157,8 @@ public class TCPEventServer {
                     log.info("Closing listener socket. " + e.getMessage());
                 } catch (IOException e) {
                     log.error("Error reading data from receiver socket:" + e.getMessage(), e);
+                } catch (Throwable t){
+                    log.error("Error :"  + t.getMessage(), t);
                 }
             }
 
@@ -181,7 +183,7 @@ public class TCPEventServer {
 
                 int start = 0;
                 while (true) {
-                    int readCount = in.read(dataArray, 0, dataArray.length - start);
+                    int readCount = in.read(dataArray, start, dataArray.length - start);
                     if (readCount != -1) {
                         start += readCount;
                         if (start == dataArray.length) {
