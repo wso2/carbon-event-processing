@@ -45,7 +45,7 @@ public class EventProcessorAdminService extends AbstractAdmin {
     public void deployExecutionPlanConfiguration(ExecutionPlanConfigurationDto configurationDto)
             throws AxisFault {
         EventProcessorService eventProcessorService = EventProcessorAdminValueHolder.getEventProcessorService();
-        if (eventProcessorService != null && checkExecutionPlanValidity(configurationDto.getName())) {
+        if (eventProcessorService != null) {
             ExecutionPlanConfiguration configuration = new ExecutionPlanConfiguration();
             copyConfigurationsFromDto(configuration, configurationDto);
 
@@ -403,24 +403,6 @@ public class EventProcessorAdminService extends AbstractAdmin {
             }
             dto.setExportedStreams(exportedStreamDtos);
         }
-    }
-
-    private boolean checkExecutionPlanValidity(String executionPlanName)
-            throws AxisFault {
-
-        EventProcessorService eventProcessorService = EventProcessorAdminValueHolder.getEventProcessorService();
-        int tenantId = PrivilegedCarbonContext.getThreadLocalCarbonContext().getTenantId();
-        Map<String, ExecutionPlanConfiguration> executionPlanConfigurationMap;
-        executionPlanConfigurationMap = eventProcessorService.getAllActiveExecutionConfigurations(tenantId);
-        if (executionPlanConfigurationMap != null) {
-            for (String executionPlan : executionPlanConfigurationMap.keySet()) {
-                if (executionPlanName.equalsIgnoreCase(executionPlan)) {
-                    return false;
-                }
-            }
-        }
-
-        return true;
     }
 
 }
