@@ -101,10 +101,39 @@ public class CarbonEventProcessorService implements EventProcessorService {
             ExecutionPlanDependencyValidationException,
             ExecutionPlanConfigurationException {
 
-        String executionPlanName = executionPlanConfiguration.getName();
-        int tenantId = PrivilegedCarbonContext.getThreadLocalCarbonContext().getTenantId();
         OMElement omElement = EventProcessorConfigurationHelper.toOM(executionPlanConfiguration);
+        deployExecutionPlan(omElement, axisConfiguration);
+
+    }
+
+    @Override
+    public void deployExecutionPlanConfiguration(
+            String executionPlanConfigurationXml,
+            AxisConfiguration axisConfiguration) throws
+            ExecutionPlanDependencyValidationException,
+            ExecutionPlanConfigurationException {
+
+        OMElement omElement;
+        try {
+            omElement = AXIOMUtil.stringToOM(executionPlanConfigurationXml);
+        } catch (XMLStreamException e) {
+            throw new ExecutionPlanConfigurationException("Cannot parse execution plan configuration XML:" + e.getMessage(), e);
+        }
+        deployExecutionPlan(omElement, axisConfiguration);
+
+    }
+
+    private void deployExecutionPlan(OMElement omElement, AxisConfiguration axisConfiguration) throws ExecutionPlanConfigurationException, ExecutionPlanDependencyValidationException {
+
+        int tenantId = PrivilegedCarbonContext.getThreadLocalCarbonContext().getTenantId();
+
         EventProcessorConfigurationHelper.validateExecutionPlanConfiguration(omElement, tenantId);
+
+        String executionPlanName = EventProcessorConfigurationHelper.getExecutionPlanName(omElement);
+
+        if (!(checkExecutionPlanValidity(executionPlanName, tenantId))) {
+            throw new ExecutionPlanConfigurationException(executionPlanName + " already registered as an execution in this tenant");
+        }
 
         String repoPath = axisConfiguration.getRepository().getPath();
         File directory = new File(repoPath);
@@ -128,40 +157,6 @@ public class CarbonEventProcessorService implements EventProcessorService {
         }
         validateToRemoveInactiveExecutionPlanConfiguration(executionPlanName, axisConfiguration);
         EventProcessorConfigurationFilesystemInvoker.save(omElement, executionPlanName, executionPlanName + EventProcessorConstants.XML_EXTENSION, axisConfiguration);
-    }
-
-    @Override
-    public void deployExecutionPlanConfiguration(
-            String executionPlanConfigurationXml,
-            AxisConfiguration axisConfiguration) throws
-            ExecutionPlanDependencyValidationException,
-            ExecutionPlanConfigurationException {
-        OMElement omElement = null;
-        try {
-            omElement = AXIOMUtil.stringToOM(executionPlanConfigurationXml);
-        } catch (XMLStreamException e) {
-            throw new ExecutionPlanConfigurationException("Cannot parse execution plan configuration XML:" + e.getMessage(), e);
-        }
-        int tenantId = PrivilegedCarbonContext.getThreadLocalCarbonContext().getTenantId();
-        EventProcessorConfigurationHelper.validateExecutionPlanConfiguration(omElement, tenantId);
-        String executionPlanName = EventProcessorConfigurationHelper.getExecutionPlanName(omElement);
-
-        File directory = new File(axisConfiguration.getRepository().getPath());
-        if (!directory.exists()) {
-            if (directory.mkdir()) {
-                throw new ExecutionPlanConfigurationException("Cannot create directory to add tenant specific execution plan : " + executionPlanName);
-            }
-        }
-        directory = new File(directory.getAbsolutePath() + File.separator + EventProcessorConstants.EP_ELE_DIRECTORY);
-        if (!directory.exists()) {
-            if (!directory.mkdir()) {
-                throw new ExecutionPlanConfigurationException("Cannot create directory " + EventProcessorConstants.EP_ELE_DIRECTORY + " to add tenant specific  execution plan :" + executionPlanName);
-            }
-        }
-        validateToRemoveInactiveExecutionPlanConfiguration(executionPlanName, axisConfiguration);
-        EventProcessorConfigurationFilesystemInvoker.save(omElement, executionPlanName, executionPlanName + EventProcessorConstants.XML_EXTENSION, axisConfiguration);
-
-
     }
 
     @Override
@@ -887,8 +882,8 @@ public class CarbonEventProcessorService implements EventProcessorService {
         Map<String, ExecutionPlanConfiguration> executionPlanConfigurationMap;
         executionPlanConfigurationMap = getAllActiveExecutionConfigurations(tenantId);
         if (executionPlanConfigurationMap != null) {
-            for (String executionPlan : executionPlanConfigurationMap.keySet()) {
-                if (executionPlanName.equalsIgnoreCase(executionPlan)) {
+            for (String existingExecutionPlanName : executionPlanConfigurationMap.keySet()) {
+                if (executionPlanName.equalsIgnoreCase(existingExecutionPlanName)) {
                     return false;
                 }
             }
