@@ -102,7 +102,7 @@ public class CarbonEventProcessorService implements EventProcessorService {
             ExecutionPlanConfigurationException {
 
         OMElement omElement = EventProcessorConfigurationHelper.toOM(executionPlanConfiguration);
-        deployExecutionPlanConfiguration(omElement.getText(), axisConfiguration);
+        deployExecutionPlan(omElement, axisConfiguration);
 
     }
 
@@ -113,14 +113,20 @@ public class CarbonEventProcessorService implements EventProcessorService {
             ExecutionPlanDependencyValidationException,
             ExecutionPlanConfigurationException {
 
-        int tenantId = PrivilegedCarbonContext.getThreadLocalCarbonContext().getTenantId();
-
         OMElement omElement;
         try {
             omElement = AXIOMUtil.stringToOM(executionPlanConfigurationXml);
         } catch (XMLStreamException e) {
             throw new ExecutionPlanConfigurationException("Cannot parse execution plan configuration XML:" + e.getMessage(), e);
         }
+        deployExecutionPlan(omElement, axisConfiguration);
+
+    }
+
+    private void deployExecutionPlan(OMElement omElement, AxisConfiguration axisConfiguration) throws ExecutionPlanConfigurationException, ExecutionPlanDependencyValidationException {
+
+        int tenantId = PrivilegedCarbonContext.getThreadLocalCarbonContext().getTenantId();
+
         EventProcessorConfigurationHelper.validateExecutionPlanConfiguration(omElement, tenantId);
 
         String executionPlanName = EventProcessorConfigurationHelper.getExecutionPlanName(omElement);
@@ -151,7 +157,6 @@ public class CarbonEventProcessorService implements EventProcessorService {
         }
         validateToRemoveInactiveExecutionPlanConfiguration(executionPlanName, axisConfiguration);
         EventProcessorConfigurationFilesystemInvoker.save(omElement, executionPlanName, executionPlanName + EventProcessorConstants.XML_EXTENSION, axisConfiguration);
-
     }
 
     @Override
