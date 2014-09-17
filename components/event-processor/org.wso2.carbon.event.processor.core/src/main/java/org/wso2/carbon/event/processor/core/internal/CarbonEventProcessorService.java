@@ -1,20 +1,20 @@
 /*
-*  Copyright (c) 2005-2014, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
-*
-*  WSO2 Inc. licenses this file to you under the Apache License,
-*  Version 2.0 (the "License"); you may not use this file except
-*  in compliance with the License.
-*  You may obtain a copy of the License at
-*
-*    http://www.apache.org/licenses/LICENSE-2.0
-*
-* Unless required by applicable law or agreed to in writing,
-* software distributed under the License is distributed on an
-* "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
-* KIND, either express or implied.  See the License for the
-* specific language governing permissions and limitations
-* under the License.
-*/
+ * Copyright (c) 2005-2014, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
+ *
+ *  WSO2 Inc. licenses this file to you under the Apache License,
+ *  Version 2.0 (the "License"); you may not use this file except
+ *  in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing,
+ *  software distributed under the License is distributed on an
+ *  "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ *  KIND, either express or implied.  See the License for the
+ *  specific language governing permissions and limitations
+ *  under the License.
+ */
 package org.wso2.carbon.event.processor.core.internal;
 
 import me.prettyprint.hector.api.Cluster;
@@ -27,11 +27,7 @@ import org.wso2.carbon.cassandra.dataaccess.ClusterInformation;
 import org.wso2.carbon.context.PrivilegedCarbonContext;
 import org.wso2.carbon.databridge.commons.Attribute;
 import org.wso2.carbon.databridge.commons.StreamDefinition;
-import org.wso2.carbon.event.processor.core.EventProcessorService;
-import org.wso2.carbon.event.processor.core.ExecutionPlan;
-import org.wso2.carbon.event.processor.core.ExecutionPlanConfiguration;
-import org.wso2.carbon.event.processor.core.ExecutionPlanConfigurationFile;
-import org.wso2.carbon.event.processor.core.StreamConfiguration;
+import org.wso2.carbon.event.processor.core.*;
 import org.wso2.carbon.event.processor.core.exception.ExecutionPlanConfigurationException;
 import org.wso2.carbon.event.processor.core.exception.ExecutionPlanDependencyValidationException;
 import org.wso2.carbon.event.processor.core.exception.ServiceDependencyValidationException;
@@ -68,22 +64,17 @@ import org.wso2.siddhi.query.compiler.exception.SiddhiParserException;
 import javax.sql.DataSource;
 import javax.xml.stream.XMLStreamException;
 import java.io.File;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class CarbonEventProcessorService implements EventProcessorService {
     private static final Log log = LogFactory.getLog(CarbonEventProcessorService.class);
+    private final boolean isRunningOnStorm;
     // deployed query plans
     private Map<Integer, Map<String, ExecutionPlan>> tenantSpecificExecutionPlans;
     // not distinguishing between deployed vs failed here.
     private Map<Integer, List<ExecutionPlanConfigurationFile>> tenantSpecificExecutionPlanFiles;
     private CEPMembership currentCepMembershipInfo;
-    private final boolean isRunningOnStorm;
 
     public CarbonEventProcessorService() {
         tenantSpecificExecutionPlans = new ConcurrentHashMap<Integer, Map<String, ExecutionPlan>>();
@@ -107,8 +98,8 @@ public class CarbonEventProcessorService implements EventProcessorService {
     public void deployExecutionPlanConfiguration(
             ExecutionPlanConfiguration executionPlanConfiguration,
             AxisConfiguration axisConfiguration) throws
-                                                 ExecutionPlanDependencyValidationException,
-                                                 ExecutionPlanConfigurationException {
+            ExecutionPlanDependencyValidationException,
+            ExecutionPlanConfigurationException {
 
         String executionPlanName = executionPlanConfiguration.getName();
         int tenantId = PrivilegedCarbonContext.getThreadLocalCarbonContext().getTenantId();
@@ -143,8 +134,8 @@ public class CarbonEventProcessorService implements EventProcessorService {
     public void deployExecutionPlanConfiguration(
             String executionPlanConfigurationXml,
             AxisConfiguration axisConfiguration) throws
-                                                 ExecutionPlanDependencyValidationException,
-                                                 ExecutionPlanConfigurationException {
+            ExecutionPlanDependencyValidationException,
+            ExecutionPlanConfigurationException {
         OMElement omElement = null;
         try {
             omElement = AXIOMUtil.stringToOM(executionPlanConfigurationXml);
@@ -185,7 +176,7 @@ public class CarbonEventProcessorService implements EventProcessorService {
     @Override
     public void undeployActiveExecutionPlanConfiguration(String name,
                                                          AxisConfiguration axisConfiguration) throws
-                                                                                              ExecutionPlanConfigurationException {
+            ExecutionPlanConfigurationException {
         int tenantId = PrivilegedCarbonContext.getThreadLocalCarbonContext().getTenantId();
         EventProcessorConfigurationFilesystemInvoker.delete(getExecutionPlanConfigurationFileByPlanName(name, tenantId).getFileName(), axisConfiguration);
     }
@@ -243,7 +234,7 @@ public class CarbonEventProcessorService implements EventProcessorService {
     public void addExecutionPlanConfiguration(ExecutionPlanConfiguration executionPlanConfiguration,
                                               AxisConfiguration axisConfiguration)
             throws ExecutionPlanDependencyValidationException, ExecutionPlanConfigurationException,
-                   ServiceDependencyValidationException {
+            ServiceDependencyValidationException {
         int tenantId = PrivilegedCarbonContext.getThreadLocalCarbonContext().getTenantId();
         Map<String, ExecutionPlan> tenantExecutionPlans = tenantSpecificExecutionPlans.get(tenantId);
         if (tenantExecutionPlans == null) {
@@ -281,6 +272,7 @@ public class CarbonEventProcessorService implements EventProcessorService {
         }
 
         Map<String, InputHandler> inputHandlerMap = new ConcurrentHashMap<String, InputHandler>(executionPlanConfiguration.getImportedStreams().size());
+        Map<String, org.wso2.siddhi.query.api.definition.StreamDefinition> siddhiStreamDefinitions = new ConcurrentHashMap<String, org.wso2.siddhi.query.api.definition.StreamDefinition>();
 
         SiddhiConfiguration siddhiConfig = getSiddhiConfigurationFor(executionPlanConfiguration, tenantId);
         SiddhiManager siddhiManager = getSiddhiManagerFor(executionPlanConfiguration, siddhiConfig, inputHandlerMap);
@@ -314,7 +306,8 @@ public class CarbonEventProcessorService implements EventProcessorService {
                 populateAttributes(siddhiStreamDefinition, streamDefinition.getCorrelationData(), EventProcessorConstants.CORRELATION + EventProcessorConstants.ATTRIBUTE_SEPARATOR);
                 populateAttributes(siddhiStreamDefinition, streamDefinition.getPayloadData(), "");
                 siddhiManager.defineStream(siddhiStreamDefinition);
-                log.debug("stream defined for " + siddhiStreamDefinition.getStreamId());
+                siddhiStreamDefinitions.put(siddhiStreamDefinition.getStreamId(), siddhiStreamDefinition);
+                log.debug("Stream defined for " + siddhiStreamDefinition.getStreamId());
             } catch (EventStreamConfigurationException e) {
                 //ignored as this will not happen
             }
@@ -351,7 +344,8 @@ public class CarbonEventProcessorService implements EventProcessorService {
                 streamCallback = new SiddhiOutputStreamListener(exportedStreamConfiguration.getSiddhiStreamName(), exportedStreamConfiguration.getStreamId(), executionPlanConfiguration, tenantId);
 
                 if (isRunningOnStorm && StormDeploymentConfiguration.isPublisherNode()) {
-                    stormOutputListener.registerOutputStreamListener(exportedStreamConfiguration.getSiddhiStreamName(), streamCallback);
+                    org.wso2.siddhi.query.api.definition.StreamDefinition siddhiStreamDefinition = siddhiStreamDefinitions.get(exportedStreamConfiguration.getSiddhiStreamName());
+                    stormOutputListener.registerOutputStreamListener(siddhiStreamDefinition, streamCallback);
                 }
             }
             siddhiManager.addCallback(exportedStreamConfiguration.getSiddhiStreamName(), streamCallback);
@@ -378,7 +372,7 @@ public class CarbonEventProcessorService implements EventProcessorService {
                 } catch (EventStreamConfigurationException e) {
                     // Ignore as this would never happen
                 }
-                eventDispatcher = new SiddhiStormInputEventDispatcher(streamDefinition, importedStreamConfiguration.getSiddhiStreamName(), executionPlanConfiguration, tenantId);
+                eventDispatcher = new SiddhiStormInputEventDispatcher(streamDefinition, importedStreamConfiguration.getStreamId(), inputHandler.getStreamId(), executionPlanConfiguration, tenantId);
             } else {
                 eventDispatcher = new SiddhiInputEventDispatcher(importedStreamConfiguration.getStreamId(), inputHandler, executionPlanConfiguration, tenantId);
             }
@@ -397,9 +391,10 @@ public class CarbonEventProcessorService implements EventProcessorService {
         }
     }
 
+
     public List<StreamDefinition> getSiddhiStreams(String[] inputStreamDefinitions,
                                                    String queryExpressions) throws
-                                                                            SiddhiParserException {
+            SiddhiParserException {
         SiddhiManager siddhiManager = createMockSiddhiManager(inputStreamDefinitions, queryExpressions);
         List<org.wso2.siddhi.query.api.definition.StreamDefinition> streamDefinitions = siddhiManager.getStreamDefinitions();
         List<StreamDefinition> databridgeStreamDefinitions = new ArrayList<StreamDefinition>(streamDefinitions.size());
@@ -515,7 +510,7 @@ public class CarbonEventProcessorService implements EventProcessorService {
                                 getRealmConfiguration().getAdminUserName();
 
                         ClusterInformation clusterInformation = new ClusterInformation(adminUserName,
-                                                                                       adminPassword);
+                                adminPassword);
                         clusterInformation.setClusterName(CassandraPersistenceStore.CLUSTER_NAME);
                         EventProcessorValueHolder.setClusterInformation(clusterInformation);
                     } catch (UserStoreException e) {

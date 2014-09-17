@@ -1,20 +1,20 @@
 /*
-*  Copyright (c) 2005-2014, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
-*
-*  WSO2 Inc. licenses this file to you under the Apache License,
-*  Version 2.0 (the "License"); you may not use this file except
-*  in compliance with the License.
-*  You may obtain a copy of the License at
-*
-*    http://www.apache.org/licenses/LICENSE-2.0
-*
-* Unless required by applicable law or agreed to in writing,
-* software distributed under the License is distributed on an
-* "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
-* KIND, either express or implied.  See the License for the
-* specific language governing permissions and limitations
-* under the License.
-*/
+ * Copyright (c) 2005-2014, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
+ *
+ *  WSO2 Inc. licenses this file to you under the Apache License,
+ *  Version 2.0 (the "License"); you may not use this file except
+ *  in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing,
+ *  software distributed under the License is distributed on an
+ *  "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ *  KIND, either express or implied.  See the License for the
+ *  specific language governing permissions and limitations
+ *  under the License.
+ */
 package org.wso2.carbon.event.stream.manager.core.internal.stream;
 
 import org.apache.commons.logging.Log;
@@ -159,7 +159,7 @@ public class EventJunction implements EventProducerCallback {
                 try {
                     consumer.consumeEventData(data);
                 } catch (Exception e) {
-                    log.error("Error while dispatching events", e);
+                    log.error("Error while dispatching events: " + e.getMessage(), e);
                 }
             }
         }
@@ -169,7 +169,7 @@ public class EventJunction implements EventProducerCallback {
                 try {
                     consumer.consumeEventData(data);
                 } catch (Exception e) {
-                    log.error("Error while dispatching events", e);
+                    log.error("Error while dispatching events: " + e.getMessage(), e);
                 }
             }
         }
@@ -182,7 +182,7 @@ public class EventJunction implements EventProducerCallback {
                     try {
                         consumer.onEvent(event);
                     } catch (Exception e) {
-                        log.error("Error while dispatching events", e);
+                        log.error("Error while dispatching events: " + e.getMessage(), e);
                     }
                 }
             }
@@ -192,7 +192,7 @@ public class EventJunction implements EventProducerCallback {
                     try {
                         consumer.onEvent(event);
                     } catch (Exception e) {
-                        log.error("Error while dispatching events", e);
+                        log.error("Error while dispatching events: " + e.getMessage(), e);
                     }
                 }
             }
@@ -211,7 +211,7 @@ public class EventJunction implements EventProducerCallback {
                     try {
                         consumer.consumeEventData(eventData);
                     } catch (Exception e) {
-                        log.error("Error while dispatching events", e);
+                        log.error("Error while dispatching events: " + e.getMessage(), e);
                     }
                 }
             }
@@ -220,7 +220,7 @@ public class EventJunction implements EventProducerCallback {
                     try {
                         consumer.consumeEventData(eventData);
                     } catch (Exception e) {
-                        log.error("Error while dispatching events", e);
+                        log.error("Error while dispatching events: " + e.getMessage(), e);
                     }
                 }
             }
@@ -232,7 +232,7 @@ public class EventJunction implements EventProducerCallback {
                 try {
                     consumer.onEvent(event);
                 } catch (Exception e) {
-                    log.error("Error while dispatching events", e);
+                    log.error("Error while dispatching events: " + e.getMessage(), e);
                 }
             }
         }
@@ -242,7 +242,7 @@ public class EventJunction implements EventProducerCallback {
                 try {
                     consumer.onEvent(event);
                 } catch (Exception e) {
-                    log.error("Error while dispatching events", e);
+                    log.error("Error while dispatching events: " + e.getMessage(), e);
                 }
             }
         }
@@ -261,7 +261,7 @@ public class EventJunction implements EventProducerCallback {
                         try {
                             consumer.consumeEventData(eventData);
                         } catch (Exception e) {
-                            log.error("Error while dispatching events", e);
+                            log.error("Error while dispatching events: " + e.getMessage(), e);
                         }
                     }
                 }
@@ -270,7 +270,7 @@ public class EventJunction implements EventProducerCallback {
                         try {
                             consumer.consumeEventData(eventData);
                         } catch (Exception e) {
-                            log.error("Error while dispatching events", e);
+                            log.error("Error while dispatching events: " + e.getMessage(), e);
                         }
                     }
                 }
@@ -282,7 +282,7 @@ public class EventJunction implements EventProducerCallback {
                     try {
                         consumer.onEvent(event);
                     } catch (Exception e) {
-                        log.error("Error while dispatching events", e);
+                        log.error("Error while dispatching events: " + e.getMessage(), e);
                     }
                 }
             }
@@ -293,8 +293,8 @@ public class EventJunction implements EventProducerCallback {
             for (WSO2EventListConsumer eventListConsumer : wso2EventListConsumers) {
                 try {
                     eventListConsumer.onEventList(events);
-                } catch (Exception ex) {
-                    log.error("Error while dispatching events", ex);
+                } catch (Exception e) {
+                    log.error("Error while dispatching events: " + e.getMessage(), e);
                 }
             }
         }
@@ -308,7 +308,7 @@ public class EventJunction implements EventProducerCallback {
                 try {
                     consumer.consumeEvents(events);
                 } catch (Exception e) {
-                    log.error("Error while dispatching events", e);
+                    log.error("Error while dispatching events: " + e.getMessage(), e);
                 }
             }
         }
@@ -322,7 +322,7 @@ public class EventJunction implements EventProducerCallback {
                     try {
                         consumer.consumeEventData(event.getData());
                     } catch (Exception e) {
-                        log.error("Error while dispatching events", e);
+                        log.error("Error while dispatching events: " + e.getMessage(), e);
                     }
                 }
             }
@@ -334,7 +334,7 @@ public class EventJunction implements EventProducerCallback {
                     try {
                         consumer.onEvent(outEvent);
                     } catch (Exception e) {
-                        log.error("Error while dispatching events", e);
+                        log.error("Error while dispatching events: " + e.getMessage(), e);
                     }
                 }
 
@@ -349,7 +349,7 @@ public class EventJunction implements EventProducerCallback {
                 try {
                     consumer.onEventList(wso2EventList);
                 } catch (Exception e) {
-                    log.error("Error while dispatching events", e);
+                    log.error("Error while dispatching events: " + e.getMessage(), e);
                 }
             }
         }
