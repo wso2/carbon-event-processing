@@ -24,7 +24,7 @@
     <artifactId>org.wso2.carbon.event.output.adaptor.websocket.endpoint</artifactId>
     <packaging>war</packaging>
     <version>2.0.0-SNAPSHOT</version>
-    <name>Websocket Server Webapp for Websocket Output Event Adaptor</name>
+    <name>WSO2 Carbon Websocket Webapp - Webapp for Websocket Output Event Adaptor</name>
     <url>http://wso2.org</url>
     <dependencies>
         <dependency>
@@ -48,5 +48,17 @@
     </dependencies>
     <build>
         <finalName>outputwebsocket</finalName>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.1</version>
+                <configuration>
+                    <encoding>UTF-8</encoding>
+                    <source>1.6</source>
+                    <target>1.6</target>
+                </configuration>
+            </plugin>
+        </plugins>
     </build>
 </project>

@@ -1,4 +1,4 @@
-<!--
+<%--
 ~ Copyright (c) 2005-2014, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
 ~
 ~ WSO2 Inc. licenses this file to you under the Apache License,
@@ -14,7 +14,7 @@
 ~ KIND, either express or implied.  See the License for the
 ~ specific language governing permissions and limitations
 ~ under the License.
--->
+--%>
 <%@ page import="org.wso2.carbon.event.builder.stub.EventBuilderAdminServiceStub" %>
 <%@ page import="org.wso2.carbon.event.builder.ui.EventBuilderUIUtils" %>
 <%@ page import="java.util.ResourceBundle" %>
@@ -43,7 +43,7 @@
             src="../dialog/js/jqueryui/tabs/jquery-ui-1.6.custom.min.js"></script>
     <script type="text/javascript" src="../dialog/js/jqueryui/tabs/jquery.cookie.js"></script>
 
-    <!--Yahoo includes for dom event handling-->
+    <%--Yahoo includes for dom event handling--%>
     <script src="../yui/build/yahoo-dom-event/yahoo-dom-event.js" type="text/javascript"></script>
     <script type="text/javascript" src="../ajax/js/prototype.js"></script>
 

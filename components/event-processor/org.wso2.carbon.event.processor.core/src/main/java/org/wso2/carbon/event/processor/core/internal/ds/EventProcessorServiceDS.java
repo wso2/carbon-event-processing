@@ -1,20 +1,20 @@
 /*
-*  Copyright (c) 2005-2014, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
-*
-*  WSO2 Inc. licenses this file to you under the Apache License,
-*  Version 2.0 (the "License"); you may not use this file except
-*  in compliance with the License.
-*  You may obtain a copy of the License at
-*
-*    http://www.apache.org/licenses/LICENSE-2.0
-*
-* Unless required by applicable law or agreed to in writing,
-* software distributed under the License is distributed on an
-* "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
-* KIND, either express or implied.  See the License for the
-* specific language governing permissions and limitations
-* under the License.
-*/
+ * Copyright (c) 2005-2014, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
+ *
+ *  WSO2 Inc. licenses this file to you under the Apache License,
+ *  Version 2.0 (the "License"); you may not use this file except
+ *  in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing,
+ *  software distributed under the License is distributed on an
+ *  "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ *  KIND, either express or implied.  See the License for the
+ *  specific language governing permissions and limitations
+ *  under the License.
+ */
 package org.wso2.carbon.event.processor.core.internal.ds;
 
 import com.hazelcast.core.HazelcastInstance;
@@ -23,6 +23,7 @@ import org.apache.commons.logging.LogFactory;
 import org.osgi.service.component.ComponentContext;
 import org.wso2.carbon.base.api.ServerConfigurationService;
 import org.wso2.carbon.cassandra.dataaccess.DataAccessService;
+import org.wso2.carbon.databridge.core.definitionstore.AbstractStreamDefinitionStore;
 import org.wso2.carbon.event.processor.core.EventProcessorService;
 import org.wso2.carbon.event.processor.core.internal.CarbonEventProcessorService;
 import org.wso2.carbon.event.processor.core.internal.ha.server.HAManagementServer;
@@ -39,6 +40,9 @@ import org.wso2.carbon.utils.ConfigurationContextService;
  * @scr.reference name="eventStatistics.service"
  * interface="org.wso2.carbon.event.statistics.EventStatisticsService" cardinality="1..1"
  * policy="dynamic" bind="setEventStatisticsService" unbind="unsetEventStatisticsService"
+ * @scr.reference name="stream.definitionStore.service"
+ * interface="org.wso2.carbon.databridge.core.definitionstore.AbstractStreamDefinitionStore" cardinality="1..1"
+ * policy="dynamic" bind="setEventStreamStoreService" unbind="unsetEventStreamStoreService"
  * @scr.reference name="eventStreamManager.service"
  * interface="org.wso2.carbon.event.stream.manager.core.EventStreamService" cardinality="1..1"
  * policy="dynamic" bind="setEventStreamManagerService" unbind="unsetEventStreamManagerService"
@@ -88,6 +92,14 @@ public class EventProcessorServiceDS {
 
     protected void unsetEventStatisticsService(EventStatisticsService eventStatisticsService) {
         EventProcessorValueHolder.registerEventStatisticsService(null);
+    }
+
+    protected void setEventStreamStoreService(AbstractStreamDefinitionStore streamDefinitionStore) {
+        EventProcessorValueHolder.registerStreamDefinitionStore(streamDefinitionStore);
+    }
+
+    protected void unsetEventStreamStoreService(AbstractStreamDefinitionStore streamDefinitionStore) {
+        EventProcessorValueHolder.registerStreamDefinitionStore(null);
     }
 
     protected void setEventStreamManagerService(EventStreamService eventStreamService) {
@@ -146,5 +158,4 @@ public class EventProcessorServiceDS {
     protected void unsetConfigurationContext(ConfigurationContextService configurationContext) {
         EventProcessorValueHolder.setConfigurationContext(null);
     }
-
 }

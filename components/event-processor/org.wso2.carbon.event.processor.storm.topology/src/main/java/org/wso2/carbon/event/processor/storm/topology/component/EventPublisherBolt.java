@@ -1,20 +1,20 @@
 /*
-*  Copyright (c) 2005-2014, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
-*
-*  WSO2 Inc. licenses this file to you under the Apache License,
-*  Version 2.0 (the "License"); you may not use this file except
-*  in compliance with the License.
-*  You may obtain a copy of the License at
-*
-*    http://www.apache.org/licenses/LICENSE-2.0
-*
-* Unless required by applicable law or agreed to in writing,
-* software distributed under the License is distributed on an
-* "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
-* KIND, either express or implied.  See the License for the
-* specific language governing permissions and limitations
-* under the License.
-*/
+ * Copyright (c) 2005-2014, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
+ *
+ *  WSO2 Inc. licenses this file to you under the Apache License,
+ *  Version 2.0 (the "License"); you may not use this file except
+ *  in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing,
+ *  software distributed under the License is distributed on an
+ *  "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ *  KIND, either express or implied.  See the License for the
+ *  specific language governing permissions and limitations
+ *  under the License.
+ */
 package org.wso2.carbon.event.processor.storm.topology.component;
 
 import backtype.storm.task.TopologyContext;
@@ -23,17 +23,17 @@ import backtype.storm.topology.OutputFieldsDeclarer;
 import backtype.storm.topology.base.BaseBasicBolt;
 import backtype.storm.tuple.Tuple;
 import org.apache.log4j.Logger;
-import org.wso2.carbon.databridge.agent.thrift.AsyncDataPublisher;
-import org.wso2.carbon.databridge.agent.thrift.exception.AgentException;
 import org.wso2.carbon.databridge.commons.thrift.utils.HostAddressFinder;
-import org.wso2.carbon.event.processor.storm.common.client.ManagerServiceClient;
-import org.wso2.carbon.event.processor.storm.common.client.ManagerServiceClientCallback;
+import org.wso2.carbon.event.processor.storm.common.transport.client.TCPEventPublisher;
+import org.wso2.carbon.event.processor.storm.common.management.client.ManagerServiceClient;
+import org.wso2.carbon.event.processor.storm.common.management.client.ManagerServiceClientCallback;
 import org.wso2.carbon.event.processor.storm.topology.util.SiddhiUtils;
 import org.wso2.siddhi.core.SiddhiManager;
 import org.wso2.siddhi.core.config.SiddhiConfiguration;
 import org.wso2.siddhi.core.util.collection.Pair;
 import org.wso2.siddhi.query.api.definition.StreamDefinition;
 
+import java.io.IOException;
 import java.net.SocketException;
 import java.util.HashMap;
 import java.util.Map;
@@ -52,17 +52,17 @@ public class EventPublisherBolt extends BaseBasicBolt implements ManagerServiceC
      */
     private String[] streamDefinitions;
     /**
-     * Quarries processed by Siddhi engine. Required to extract field definitions of implicitly declared stream
+     * Queries processed by Siddhi engine. Required to extract field definitions of implicitly declared stream
      * definitions
      */
     private String[] queries;
     /**
      * Keep track of relevant data bridge stream id for a given Siddhi stream id
      */
-    private Map<String, org.wso2.carbon.databridge.commons.StreamDefinition> siddhiStreamIdToDataBridgeStream
+    private Map<String, org.wso2.carbon.databridge.commons.StreamDefinition> siddhiStreamIdToDataBridgeStreamMap
             = new HashMap<String, org.wso2.carbon.databridge.commons.StreamDefinition>();
 
-    private transient AsyncDataPublisher dataPublisher = null;
+    private transient TCPEventPublisher TCPEventPublisher = null;
 
     private String executionPlanName;
 
@@ -80,10 +80,11 @@ public class EventPublisherBolt extends BaseBasicBolt implements ManagerServiceC
 
     private String trustStorePath;
     private String trustStorePassword;
-
+    private int eventCount;
+    private long batchStartTime;
     private SiddhiManager siddhiManager;
 
-    public EventPublisherBolt(String cepManagerHost, int cepManagerPort, String trustStorePath, String[] streamDefinitions, String[] queries, String[] exportedStreamIDs, String executionPlanName){
+    public EventPublisherBolt(String cepManagerHost, int cepManagerPort, String trustStorePath, String[] streamDefinitions, String[] queries, String[] exportedStreamIDs, String executionPlanName) {
         this.exportedStreamIDs = exportedStreamIDs;
         this.streamDefinitions = streamDefinitions;
         this.cepManagerHost = cepManagerHost;
@@ -92,31 +93,40 @@ public class EventPublisherBolt extends BaseBasicBolt implements ManagerServiceC
         this.executionPlanName = executionPlanName;
         this.trustStorePath = trustStorePath;
         this.trustStorePassword = "wso2carbon";
-        logPrefix = "{" + executionPlanName + ":" + tenantId +"}";
+        this.logPrefix = "{" + executionPlanName + ":" + tenantId + "} - ";
     }
 
     @Override
     public void execute(Tuple tuple, BasicOutputCollector basicOutputCollector) {
-        if (siddhiManager == null){
+        if (siddhiManager == null) {
             init(); // TODO : Understand why this init is required
         }
 
-        if (dataPublisher != null){
-            org.wso2.carbon.databridge.commons.StreamDefinition databridgeStream = siddhiStreamIdToDataBridgeStream.get(tuple.getSourceStreamId());
+        if (TCPEventPublisher != null) {
+            //TODO Do we need to keep databridge stream definitions inside the bolt??
+            org.wso2.carbon.databridge.commons.StreamDefinition databridgeStream = siddhiStreamIdToDataBridgeStreamMap.get(tuple.getSourceStreamId());
 
-            if (databridgeStream != null){
+            if (databridgeStream != null) {
                 try {
-                    if (log.isDebugEnabled()){
+                    if (log.isDebugEnabled()) {
                         log.debug(logPrefix + "Event published to CEP Publisher =>" + tuple.toString());
                     }
-                    dataPublisher.publish(databridgeStream.getName(), databridgeStream.getVersion(), null, null, tuple.getValues().toArray());
-                } catch (AgentException e) {
-                   log.error(logPrefix + "Error while publishing event to CEP publisher" , e);
+                    if (++eventCount % 10000 == 0) {
+                        double timeSpentInSecs = (System.currentTimeMillis() - batchStartTime) / 1000.0D;
+                        double throughput = 10000 / timeSpentInSecs;
+                        log.info("Processed 10000 events in " + timeSpentInSecs + " seconds, throughput : " + throughput + " events/sec");
+                        eventCount = 0;
+                        batchStartTime = System.currentTimeMillis();
+                    }
+
+                    TCPEventPublisher.sendEvent(tuple.getSourceStreamId(), tuple.getValues().toArray());
+                } catch (IOException e) {
+                    log.error(logPrefix + "Error while publishing event to CEP publisher", e);
                 }
-            }else{
+            } else {
                 log.warn(logPrefix + "Tuple received for unknown stream " + tuple.getSourceStreamId() + ". Discarding event : " + tuple.toString());
             }
-        }else{
+        } else {
             log.warn("Dropping the event since the data publisher is not yet initialized for " + executionPlanName + ":" + tenantId);
         }
     }
@@ -132,43 +142,45 @@ public class EventPublisherBolt extends BaseBasicBolt implements ManagerServiceC
         init();
     }
 
-    private void init(){
+    private void init() {
         // TODO : remove siddhi related stream definitions. Use only exported streams
         log = Logger.getLogger(EventPublisherBolt.class);
         siddhiManager = new SiddhiManager(new SiddhiConfiguration());
-        System.setProperty("javax.net.ssl.trustStore", trustStorePath);//"/home/sajith/wso2cep-4.0.0-SNAPSHOT/samples/producers/performance-test/src/main/resources/client-truststore.jks");
+        eventCount = 0;
+        batchStartTime = System.currentTimeMillis();
+        System.setProperty("javax.net.ssl.trustStore", trustStorePath);
         System.setProperty("javax.net.ssl.trustStorePassword", trustStorePassword);
 
 
-        if(streamDefinitions != null){
-            for(String definition: streamDefinitions){
-                if(definition.contains("define stream")){
+        if (streamDefinitions != null) {
+            for (String definition : streamDefinitions) {
+                if (definition.contains("define stream")) {
                     siddhiManager.defineStream(definition);
-                }else if(definition.contains("define partition")){
+                } else if (definition.contains("define partition")) {
                     siddhiManager.definePartition(definition);
-                }else{
-                    throw new RuntimeException("Invalid definition : "+ definition);
+                } else {
+                    throw new RuntimeException("Invalid definition : " + definition);
                 }
             }
         }
 
-        if (queries != null){
-            for(String query: queries){
+        if (queries != null) {
+            for (String query : queries) {
                 siddhiManager.addQuery(query);
             }
         }
 
         String thisHostIp = null;
         try {
-           thisHostIp =  HostAddressFinder.findAddress("localhost");
+            thisHostIp = HostAddressFinder.findAddress("localhost");
         } catch (SocketException e) {
             log.error("Cannot find IP address of the host");
         }
 
-        for (String streamDefinitionId : exportedStreamIDs){
+        for (String streamDefinitionId : exportedStreamIDs) {
             StreamDefinition siddhiStreamDefinition = siddhiManager.getStreamDefinition(streamDefinitionId);
             org.wso2.carbon.databridge.commons.StreamDefinition databridgeStreamDefinition = SiddhiUtils.toFlatDataBridgeStreamDefinition(siddhiStreamDefinition);
-            siddhiStreamIdToDataBridgeStream.put(siddhiStreamDefinition.getStreamId(), databridgeStreamDefinition);
+            siddhiStreamIdToDataBridgeStreamMap.put(siddhiStreamDefinition.getStreamId(), databridgeStreamDefinition);
         }
         // Connecting to CEP manager service to get details of CEP publisher
         ManagerServiceClient client = new ManagerServiceClient(cepManagerHost, cepManagerPort, this);
@@ -177,14 +189,19 @@ public class EventPublisherBolt extends BaseBasicBolt implements ManagerServiceC
 
     @Override
     public void onResponseReceived(Pair<String, Integer> endpoint) {
-        synchronized (this){
-            dataPublisher = new AsyncDataPublisher("tcp://" + endpoint.getOne() + ":" + endpoint.getTwo(), "admin", "admin");
-
-            for (Map.Entry<String, org.wso2.carbon.databridge.commons.StreamDefinition> entry :  siddhiStreamIdToDataBridgeStream.entrySet()){
-                dataPublisher.addStreamDefinition(entry.getValue());
-                log.info(logPrefix + "Data bridge stream '" + entry.getValue().getStreamId() + "' defined for Siddhi stream '" + entry.getValue().getStreamId() + "'");
+        synchronized (this) {
+            try {
+                TCPEventPublisher = new TCPEventPublisher(endpoint.getOne() + ":" + endpoint.getTwo());
+                for (String siddhiStreamId : exportedStreamIDs) {
+                    if (log.isDebugEnabled()) {
+                        log.debug(logPrefix + "EventPublisherBolt adding stream definition to client for exported Siddhi stream: " + siddhiStreamId);
+                    }
+                    TCPEventPublisher.addStreamDefinition(siddhiManager.getStreamDefinition(siddhiStreamId));
+                }
+                log.info(logPrefix + " EventPublisherBolt connecting to CEP publisher at " + endpoint.getOne() + ":" + endpoint.getTwo());
+            } catch (IOException e) {
+                log.error("Error while creating event client:" + e.getMessage(), e);
             }
-            log.info(logPrefix + "EventPublisherBolt connecting to CEP Publisher at " + endpoint.getOne() + ":" + endpoint.getTwo());
         }
     }
 }
