@@ -18,8 +18,8 @@
 package org.wso2.carbon.event.formatter.core.internal.type.json;
 
 import com.google.gson.JsonObject;
-import org.json.JSONException;
-import org.json.JSONObject;
+import com.google.gson.JsonParser;
+import com.google.gson.JsonSyntaxException;
 import org.wso2.carbon.databridge.commons.Attribute;
 import org.wso2.carbon.databridge.commons.StreamDefinition;
 import org.wso2.carbon.event.formatter.core.config.EventFormatterConfiguration;
@@ -96,9 +96,16 @@ public class JSONOutputMapper implements OutputMapper {
             }
         }
 
+        String jsonEvent = eventText.toString();
+
+        if(jsonEvent.contains("\"null\"")){
+            jsonEvent = jsonEvent.replaceAll("\"null\"","null");
+        }
+
         try {
-            return new JSONObject(eventText.toString()).toString();
-        } catch (JSONException e) {
+            JsonParser jsonParser = new JsonParser();
+            return jsonParser.parse(jsonEvent).toString();
+        } catch (JsonSyntaxException e) {
             throw new EventFormatterConfigurationException("Not valid JSON object : " + e.getMessage(), e);
         }
     }
@@ -139,7 +146,7 @@ public class JSONOutputMapper implements OutputMapper {
                 return data.toString();
             }
         }
-        return "\"\"";
+        return null;
     }
 
     private void generateJsonEventTemplate(StreamDefinition streamDefinition) {
