@@ -20,7 +20,8 @@ package org.wso2.carbon.event.processor.storm.topology;
 import backtype.storm.Config;
 import backtype.storm.StormSubmitter;
 import backtype.storm.topology.TopologyBuilder;
-import org.wso2.carbon.event.processor.storm.common.helper.StormDeploymentConfiguration;
+import org.wso2.carbon.event.processor.storm.common.config.StormDeploymentConfig;
+import org.wso2.carbon.event.processor.storm.common.util.StormConfigReader;
 import org.wso2.carbon.event.processor.storm.topology.component.EventPublisherBolt;
 import org.wso2.carbon.event.processor.storm.topology.component.EventReceiverSpout;
 import org.wso2.carbon.event.processor.storm.topology.component.SiddhiBolt;
@@ -31,11 +32,14 @@ import org.wso2.siddhi.core.SiddhiManager;
  */
 public class SiddhiTopology {
     public static void main(String[] args) throws Exception {
-        if(args.length >= 2) {
+        StormDeploymentConfig stormDeploymentConfig = null;
+        if (args.length >= 2) {
             String carbonHome = args[1];
-            StormDeploymentConfiguration.loadConfigurations(carbonHome);
+            stormDeploymentConfig = StormConfigReader.loadConfigurations(carbonHome);
         } else {
-            StormDeploymentConfiguration.loadConfigurations();
+            // StormDeploymentConfig.loadConfigurations();
+            System.out.printf("carbonHome not set");
+            return;
         }
 
 /*
@@ -63,19 +67,12 @@ public class SiddhiTopology {
 
         String[] importedStreams = new String[1];
         importedStreams[0] = inputStreamDef;
-        int maxListenerPort = StormDeploymentConfiguration.getMaxListeningPort();
-        int minListenerPort = StormDeploymentConfiguration.getMinListingPort();
-        String keyStorePath = StormDeploymentConfiguration.getKeyStorePath();
-        String trustStroePath = StormDeploymentConfiguration.getTrustStorePath();
-        String cepManagerHost = StormDeploymentConfiguration.getCepManagerHost();
-        int cepManagerPort = StormDeploymentConfiguration.getCepManagerPort();
 
         TopologyBuilder builder = new TopologyBuilder();
 
-        builder.setSpout("EventReceiverSpout", new EventReceiverSpout(minListenerPort, maxListenerPort, keyStorePath, cepManagerHost, cepManagerPort, importedStreams, exeucutionPlanName), 2);
+        builder.setSpout("EventReceiverSpout", new EventReceiverSpout(-1234, stormDeploymentConfig, importedStreams, exeucutionPlanName), 2);
         builder.setBolt("Siddhibolt", new SiddhiBolt(importedStreams, new String[]{query}, new String[]{outputStream}), 3).shuffleGrouping("EventReceiverSpout", inputStream);
-        builder.setBolt("EventPublisherBolt", new EventPublisherBolt(cepManagerHost, cepManagerPort, trustStroePath,
-                importedStreams, new String[]{query}, new String[]{outputStream}, exeucutionPlanName), 3).shuffleGrouping("Siddhibolt", outputStream).setDebug(true);
+        builder.setBolt("EventPublisherBolt", new EventPublisherBolt(-1234, importedStreams, new String[]{query}, new String[]{outputStream}, exeucutionPlanName, stormDeploymentConfig), 3).shuffleGrouping("Siddhibolt", outputStream).setDebug(true);
 
         Config conf = new Config();
         conf.setDebug(true);

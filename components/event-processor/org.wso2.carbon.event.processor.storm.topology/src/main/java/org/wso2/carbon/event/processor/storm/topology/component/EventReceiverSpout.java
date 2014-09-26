@@ -23,12 +23,17 @@ import backtype.storm.topology.OutputFieldsDeclarer;
 import backtype.storm.topology.base.BaseRichSpout;
 import backtype.storm.tuple.Fields;
 import org.apache.log4j.Logger;
+import org.apache.thrift.protocol.TBinaryProtocol;
+import org.apache.thrift.protocol.TProtocol;
+import org.apache.thrift.transport.TSocket;
+import org.apache.thrift.transport.TTransport;
 import org.wso2.carbon.databridge.commons.Event;
 import org.wso2.carbon.databridge.commons.thrift.utils.HostAddressFinder;
+import org.wso2.carbon.event.processor.storm.common.config.StormDeploymentConfig;
+import org.wso2.carbon.event.processor.storm.common.manager.service.StormManagerService;
+import org.wso2.carbon.event.processor.storm.common.transport.server.StreamCallback;
 import org.wso2.carbon.event.processor.storm.common.transport.server.TCPEventServer;
 import org.wso2.carbon.event.processor.storm.common.transport.server.TCPEventServerConfig;
-import org.wso2.carbon.event.processor.storm.common.transport.server.StreamCallback;
-import org.wso2.carbon.event.processor.storm.common.management.client.ManagerServiceClient;
 import org.wso2.carbon.event.processor.storm.common.util.StormUtils;
 import org.wso2.carbon.event.processor.storm.topology.util.SiddhiUtils;
 import org.wso2.siddhi.query.api.definition.StreamDefinition;
@@ -51,11 +56,12 @@ public class EventReceiverSpout extends BaseRichSpout implements StreamCallback 
     private int listeningPort;
     private String thisHostIp;
 
+    private StormDeploymentConfig stormDeploymentConfig;
     /**
      * Siddhi stream definitions of all incoming streams. Required to declare output fields
      */
     private String[] incomingStreamDefinitions;
-    private TCPEventServer TCPEventServer;
+    private TCPEventServer tcpEventServer;
 
     /**
      * Stream IDs of incoming streams
@@ -73,13 +79,7 @@ public class EventReceiverSpout extends BaseRichSpout implements StreamCallback 
 
     private String executionPlanName;
     private int tenantId = -1234;
-    private int cepMangerPort;
-    private String cepMangerHost;
     private String logPrefix;
-    private String keyStorePath;
-    private String keyStorePassword;
-    private int minListeningPort;
-    private int maxListeningPort;
     private int eventCount;
     private long batchStartTime;
 
@@ -87,20 +87,14 @@ public class EventReceiverSpout extends BaseRichSpout implements StreamCallback 
      * Receives events from the CEP Receiver through Thrift using data bridge and pass through the events
      * to a downstream component as tupels.
      *
-     * @param minListeningPort          - the lower bound of the range of listening ports of the Thrift server
-     * @param maxListeningPort          - the upper bound for the range of listening ports allocated for this Thrift server
      * @param incomingStreamDefinitions - Incoming Siddhi stream definitions
      */
-    public EventReceiverSpout(int minListeningPort, int maxListeningPort, String keyStorePath, String cepManagerHost, int cepManagerPort, String[] incomingStreamDefinitions, String executionPlanName) {
-        this.minListeningPort = minListeningPort;
-        this.maxListeningPort = maxListeningPort;
-        this.cepMangerHost = cepManagerHost;
-        this.cepMangerPort = cepManagerPort;
+    public EventReceiverSpout(int tenantId, StormDeploymentConfig stormDeploymentConfig, String[] incomingStreamDefinitions, String executionPlanName) {
+        this.tenantId = tenantId;
+        this.stormDeploymentConfig = stormDeploymentConfig;
         this.incomingStreamDefinitions = incomingStreamDefinitions;
         this.executionPlanName = executionPlanName;
-        this.keyStorePath = keyStorePath;
-        this.keyStorePassword = "wso2carbon";
-        this.logPrefix = "{" + executionPlanName + ":" + tenantId + "} - ";
+        this.logPrefix = "{" + tenantId + ":" + executionPlanName + "} - ";
 
     }
 
@@ -122,29 +116,22 @@ public class EventReceiverSpout extends BaseRichSpout implements StreamCallback 
         this.storedEvents = new ConcurrentLinkedQueue<Event>();
         this.eventCount = 0;
         this.batchStartTime = System.currentTimeMillis();
-        System.setProperty("Security.KeyStore.Location", keyStorePath);
-        System.setProperty("Security.KeyStore.Password", keyStorePassword);
 
         try {
-            selectPort();
-            this.thisHostIp = HostAddressFinder.findAddress("localhost");
-            TCPEventServer = new TCPEventServer(new TCPEventServerConfig(listeningPort), this);
+            listeningPort = findPort();
+            thisHostIp = HostAddressFinder.findAddress("localhost");
+            tcpEventServer = new TCPEventServer(new TCPEventServerConfig(listeningPort), this);
             List<StreamDefinition> siddhiStreamDefinitions = SiddhiUtils.toSiddhiStreamDefinitions(incomingStreamDefinitions);
             for (StreamDefinition siddhiStreamDefinition : siddhiStreamDefinitions) {
-                TCPEventServer.subscribe(siddhiStreamDefinition);
+                tcpEventServer.subscribe(siddhiStreamDefinition);
             }
-            TCPEventServer.start();
+            tcpEventServer.start();
             log.info(logPrefix + "EventReceiverSpout starting to listen for events on port " + listeningPort);
-            registerWithCepMangerService();
+            Thread thread = new Thread(new Registrar());
+            thread.start();
         } catch (Throwable e) {
             log.error(logPrefix + "Error starting event listener for spout: " + e.getMessage(), e);
         }
-    }
-
-    private void registerWithCepMangerService() {
-        log.info("Registering Storm receiver for " + executionPlanName + ":" + tenantId + " at " + thisHostIp + ":" + listeningPort);
-        ManagerServiceClient client = new ManagerServiceClient(cepMangerHost, cepMangerPort, null);
-        client.registerStormReceiver(executionPlanName, tenantId, thisHostIp, listeningPort, 20);
     }
 
     @Override
@@ -172,14 +159,15 @@ public class EventReceiverSpout extends BaseRichSpout implements StreamCallback 
         }
     }
 
-    private void selectPort() {
-        for (int i = minListeningPort; i <= maxListeningPort; i++) {
+    private int findPort() throws Exception {
+        for (int i = stormDeploymentConfig.getTransportMinPort(); i <= stormDeploymentConfig.getTransportMaxPort(); i++) {
             if (!StormUtils.isPortUsed(i)) {
-                listeningPort = i;
-                break;
+                return i;
             }
         }
+        throw new Exception("Cannot find free port in range " + stormDeploymentConfig.getTransportMinPort() + "~" + stormDeploymentConfig.getTransportMaxPort());
     }
+
 
     @Override
     public void receive(String streamId, Object[] event) {
@@ -187,5 +175,55 @@ public class EventReceiverSpout extends BaseRichSpout implements StreamCallback 
             log.debug(logPrefix + "Received event for stream '" + streamId + "': " + Arrays.deepToString(event));
         }
         storedEvents.add(new Event(streamId, System.currentTimeMillis(), null, null, event));
+    }
+
+
+    class Registrar implements Runnable {
+
+        /**
+         * When an object implementing interface <code>Runnable</code> is used
+         * to create a thread, starting the thread causes the object's
+         * <code>run</code> method to be called in that separately executing
+         * thread.
+         * <p/>
+         * The general contract of the method <code>run</code> is that it may
+         * take any action whatsoever.
+         *
+         * @see Thread#run()
+         */
+        @Override
+        public void run() {
+            log.info(logPrefix + "Registering Storm receiver with " + thisHostIp + ":" + listeningPort);
+            if (!registerStormReceiverWithStormMangerService()) {
+                log.info(logPrefix + "Retry registering Storm receiver in 30 sec");
+                try {
+                    Thread.sleep(30000);
+                } catch (InterruptedException e1) {
+                    //ignore
+                }
+            }
+        }
+
+        private boolean registerStormReceiverWithStormMangerService() {
+
+            TTransport transport = null;
+            try {
+                transport = new TSocket(stormDeploymentConfig.getManagers().get(0).getHostName(), stormDeploymentConfig.getManagers().get(0).getPort());
+                TProtocol protocol = new TBinaryProtocol(transport);
+                transport.open();
+
+                StormManagerService.Client client = new StormManagerService.Client(protocol);
+                client.registerStormReceiver(tenantId, executionPlanName, thisHostIp, listeningPort);
+                log.info(logPrefix + "Successfully registering Storm receiver with " + thisHostIp + ":" + listeningPort);
+                return true;
+            } catch (Exception e) {
+                log.error(logPrefix + "Error in registering Storm receiver", e);
+                return false;
+            } finally {
+                if (transport != null) {
+                    transport.close();
+                }
+            }
+        }
     }
 }

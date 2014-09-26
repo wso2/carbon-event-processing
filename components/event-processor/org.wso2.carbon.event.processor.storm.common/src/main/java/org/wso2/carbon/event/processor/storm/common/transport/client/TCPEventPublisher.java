@@ -21,7 +21,6 @@ package org.wso2.carbon.event.processor.storm.common.transport.client;
 import com.lmax.disruptor.EventFactory;
 import com.lmax.disruptor.EventHandler;
 import com.lmax.disruptor.RingBuffer;
-import com.lmax.disruptor.SleepingWaitStrategy;
 import com.lmax.disruptor.dsl.Disruptor;
 import org.apache.log4j.Logger;
 import org.wso2.carbon.event.processor.storm.common.transport.common.EventServerUtils;
@@ -64,13 +63,22 @@ public class TCPEventPublisher {
 
         this.clientSocket = new Socket(host, port);
         this.outputStream = new BufferedOutputStream(this.clientSocket.getOutputStream());
+
+        //Cannot be used as Disruptor constructor is not backward compatible with storm
+//        this.disruptor = new Disruptor<BiteArrayHolder>(new EventFactory<BiteArrayHolder>() {
+//            @Override
+//            public BiteArrayHolder newInstance() {
+//                return new BiteArrayHolder();
+//            }
+//        }, publisherConfig.getBufferSize(), Executors.newSingleThreadExecutor(), publisherConfig.getProducerType(),
+//                new SleepingWaitStrategy());
+
         this.disruptor = new Disruptor<BiteArrayHolder>(new EventFactory<BiteArrayHolder>() {
             @Override
             public BiteArrayHolder newInstance() {
                 return new BiteArrayHolder();
             }
-        }, publisherConfig.getBufferSize(), Executors.newSingleThreadExecutor(), publisherConfig.getProducerType(),
-                new SleepingWaitStrategy());
+        }, publisherConfig.getBufferSize(), Executors.newSingleThreadExecutor());
 
         this.ringBuffer = disruptor.getRingBuffer();
         this.disruptor.handleEventsWith(new EventHandler<BiteArrayHolder>() {

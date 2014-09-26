@@ -18,6 +18,8 @@
 package org.wso2.carbon.event.processor.core.internal.ds;
 
 import com.hazelcast.core.HazelcastInstance;
+import com.hazelcast.core.MembershipEvent;
+import com.hazelcast.core.MembershipListener;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.osgi.service.component.ComponentContext;
@@ -28,11 +30,15 @@ import org.wso2.carbon.event.processor.core.EventProcessorService;
 import org.wso2.carbon.event.processor.core.internal.CarbonEventProcessorService;
 import org.wso2.carbon.event.processor.core.internal.ha.server.HAManagementServer;
 import org.wso2.carbon.event.processor.core.internal.listener.EventStreamListenerImpl;
+import org.wso2.carbon.event.processor.core.internal.storm.manager.StormManagerServer;
 import org.wso2.carbon.event.processor.core.internal.util.EventProcessorConstants;
+import org.wso2.carbon.event.processor.storm.common.config.StormDeploymentConfig;
+import org.wso2.carbon.event.processor.storm.common.util.StormConfigReader;
 import org.wso2.carbon.event.statistics.EventStatisticsService;
 import org.wso2.carbon.event.stream.manager.core.EventStreamService;
 import org.wso2.carbon.ndatasource.core.DataSourceService;
 import org.wso2.carbon.user.core.UserRealm;
+import org.wso2.carbon.utils.CarbonUtils;
 import org.wso2.carbon.utils.ConfigurationContextService;
 
 /**
@@ -73,6 +79,12 @@ public class EventProcessorServiceDS {
 
             new HAManagementServer(carbonEventProcessorService);
 
+            StormDeploymentConfig stormDeploymentConfig = StormConfigReader.loadConfigurations(CarbonUtils.getCarbonHome());
+            if (stormDeploymentConfig != null && stormDeploymentConfig.isManagerNode()) {
+                StormManagerServer stormManagerServer = new StormManagerServer(stormDeploymentConfig.getLocalManagerConfig().getHostName(), stormDeploymentConfig.getLocalManagerConfig().getPort());
+                EventProcessorValueHolder.registerStormManagerServer(stormManagerServer);
+            }
+
             context.getBundleContext().registerService(EventProcessorService.class.getName(), carbonEventProcessorService, null);
             EventProcessorValueHolder.getEventStreamService().registerEventStreamListener(new EventStreamListenerImpl());
 
@@ -80,8 +92,21 @@ public class EventProcessorServiceDS {
                 log.debug("Successfully deployed EventProcessorService");
             }
 
-        } catch (RuntimeException e) {
+        } catch (Throwable e) {
             log.error("Could not create EventProcessorService: " + e.getMessage(), e);
+        }
+
+    }
+
+    protected void deactivate(ComponentContext context) {
+
+        try {
+            StormManagerServer stormManagerServer = EventProcessorValueHolder.getStormManagerServer();
+            if (stormManagerServer != null) {
+                stormManagerServer.stop();
+            }
+        } catch (RuntimeException e) {
+            log.error("Error in stopping Storm Manager Service : " + e.getMessage(), e);
         }
 
     }
@@ -112,6 +137,28 @@ public class EventProcessorServiceDS {
 
     protected void setHazelcastInstance(HazelcastInstance hazelcastInstance) {
         EventProcessorValueHolder.registerHazelcastInstance(hazelcastInstance);
+
+        StormManagerServer stormManagerServer = EventProcessorValueHolder.getStormManagerServer();
+        if (stormManagerServer != null) {
+            stormManagerServer.tryBecomeCoordinator();
+        }
+
+        hazelcastInstance.getCluster().addMembershipListener(new MembershipListener() {
+            @Override
+            public void memberAdded(MembershipEvent membershipEvent) {
+
+            }
+
+            @Override
+            public void memberRemoved(MembershipEvent membershipEvent) {
+                StormManagerServer stormManagerServer = EventProcessorValueHolder.getStormManagerServer();
+                if (stormManagerServer != null) {
+                    stormManagerServer.tryBecomeCoordinator();
+                }
+            }
+
+        });
+
         EventProcessorValueHolder.getEventProcessorService().notifyServiceAvailability(EventProcessorConstants.HAZELCAST_INSTANCE);
     }
 

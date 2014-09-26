@@ -103,8 +103,6 @@
                 <artifactId>build-helper-maven-plugin</artifactId>
                 <version>1.8</version>
             </dependency>
-
-
             <dependency>
                 <groupId>libthrift.wso2</groupId>
                 <artifactId>libthrift</artifactId>
@@ -836,6 +834,17 @@
                 <artifactId>org.wso2.carbon.stratos.common</artifactId>
                 <version>${stratos.version}</version>
             </dependency>
+
+            <dependency>
+                <groupId>com.lmax</groupId>
+                <artifactId>disruptor</artifactId>
+                <version>${disruptor.version}</version>
+            </dependency>
+            <!--<dependency>-->
+                <!--<groupId>com.googlecode.disruptor.wso2</groupId>-->
+                <!--<artifactId>disruptor</artifactId>-->
+                <!--<version>${disruptor.version}</version>-->
+            <!--</dependency>-->
         </dependencies>
     </dependencyManagement>
 
@@ -1202,6 +1211,8 @@
         <version.json.wso2>2.0.0.wso2v1</version.json.wso2>
 
         <javax.ws.rs-api.version>2.0-m10</javax.ws.rs-api.version>
+
+        <disruptor.version>3.2.1</disruptor.version>
     </properties>
 
     <repositories>
