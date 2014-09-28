@@ -1,0 +1,43 @@
+<storm-query-plan>
+    <event-receiver name="EventReceiverSpout" parallel="2">
+        <streams>
+            <stream>
+                define stream analyticsStats (meta_ipAdd string, meta_index long, meta_timestamp long, meta_nanoTime
+                long,userID string, searchTerms string);
+            </stream>
+        </streams>
+    </event-receiver>
+    <event-processor name="SiddhiBolt" parallel="3">
+        <input-streams>
+            <stream>
+                define stream analyticsStats (meta_ipAdd string, meta_index long, meta_timestamp long, meta_nanoTime
+                long,userID string, searchTerms string);
+            </stream>
+        </input-streams>
+        <queries>
+            from analyticsStats[meta_ipAdd != '192.168.1.1']#window.time(5 min)
+            select meta_ipAdd, meta_index, meta_timestamp, meta_nanoTime, userID
+            insert into filteredStatStream;
+        </queries>
+        <output-streams>
+            <stream>
+                define stream filteredStatStream (meta_ipAdd string, meta_index long, meta_timestamp long, meta_nanoTime
+                long,userID string);
+            </stream>
+        </output-streams>
+    </event-processor>
+    <event-publisher name="EventPublisherBolt" parallel="3">
+        <input-streams>
+            <stream>
+                define stream filteredStatStream (meta_ipAdd string, meta_index long, meta_timestamp long, meta_nanoTime
+                long,userID string);
+            </stream>
+        </input-streams>
+        <output-streams>
+            <stream>
+                define stream filteredStatStream (meta_ipAdd string, meta_index long, meta_timestamp long, meta_nanoTime
+                long,userID string);
+            </stream>
+        </output-streams>
+    </event-publisher>
+</storm-query-plan>

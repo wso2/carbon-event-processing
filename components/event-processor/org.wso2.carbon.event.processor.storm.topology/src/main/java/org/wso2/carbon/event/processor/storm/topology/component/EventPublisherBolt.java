@@ -31,13 +31,17 @@ import org.wso2.carbon.databridge.commons.thrift.utils.HostAddressFinder;
 import org.wso2.carbon.event.processor.storm.common.config.StormDeploymentConfig;
 import org.wso2.carbon.event.processor.storm.common.manager.service.StormManagerService;
 import org.wso2.carbon.event.processor.storm.common.transport.client.TCPEventPublisher;
-import org.wso2.carbon.event.processor.storm.topology.util.SiddhiUtils;
 import org.wso2.siddhi.core.SiddhiManager;
 import org.wso2.siddhi.core.config.SiddhiConfiguration;
+import org.wso2.siddhi.query.api.ExecutionPlan;
 import org.wso2.siddhi.query.api.definition.StreamDefinition;
+import org.wso2.siddhi.query.api.definition.TableDefinition;
+import org.wso2.siddhi.query.api.definition.partition.PartitionDefinition;
+import org.wso2.siddhi.query.api.query.Query;
 
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -45,24 +49,16 @@ import java.util.Map;
  */
 public class EventPublisherBolt extends BaseBasicBolt {
     private transient Logger log = Logger.getLogger(EventPublisherBolt.class);
-    /**
-     * Exported stream IDs. Must declare output filed for each exported stream
-     */
-    private String[] exportedStreamIDs;
+    private final List<ExecutionPlan> queries;
     /**
      * All stream definitions processed
      */
-    private String[] streamDefinitions;
-    /**
-     * Queries processed by Siddhi engine. Required to extract field definitions of implicitly declared stream
-     * definitions
-     */
-    private String[] queries;
+    private List<StreamDefinition> inputStreamDefinitions;
+    private List<StreamDefinition> outputStreamDefinitions;
     /**
      * Keep track of relevant data bridge stream id for a given Siddhi stream id
      */
-    private Map<String, org.wso2.carbon.databridge.commons.StreamDefinition> siddhiStreamIdToDataBridgeStreamMap
-            = new HashMap<String, org.wso2.carbon.databridge.commons.StreamDefinition>();
+    private Map<String, StreamDefinition> streamIdToDefinitionMap = new HashMap<String, StreamDefinition>();
 
     private transient TCPEventPublisher tcpEventPublisher = null;
 
@@ -77,14 +73,16 @@ public class EventPublisherBolt extends BaseBasicBolt {
     private StormDeploymentConfig stormDeploymentConfig;
     private String thisHostIp;
 
-    public EventPublisherBolt(int tenantId, String[] streamDefinitions, String[] queries, String[] exportedStreamIDs, String executionPlanName, StormDeploymentConfig stormDeploymentConfig) {
-        this.tenantId = tenantId;
-        this.exportedStreamIDs = exportedStreamIDs;
-        this.streamDefinitions = streamDefinitions;
-        this.queries = queries;
-        this.executionPlanName = executionPlanName;
+    public EventPublisherBolt(StormDeploymentConfig stormDeploymentConfig, List<StreamDefinition> inputStreamDefinitions, List<ExecutionPlan> queries, List<StreamDefinition> outputStreamDefinitions, String executionPlanName, int tenantId) {
+
         this.stormDeploymentConfig = stormDeploymentConfig;
+        this.inputStreamDefinitions = inputStreamDefinitions;
+        this.queries = queries;
+        this.outputStreamDefinitions = outputStreamDefinitions;
+        this.executionPlanName = executionPlanName;
+        this.tenantId = tenantId;
         this.logPrefix = "{" + executionPlanName + ":" + tenantId + "} - ";
+
     }
 
     @Override
@@ -98,9 +96,9 @@ public class EventPublisherBolt extends BaseBasicBolt {
 
         if (tcpEventPublisher != null) {
             //TODO Do we need to keep databridge stream definitions inside the bolt??
-            org.wso2.carbon.databridge.commons.StreamDefinition databridgeStream = siddhiStreamIdToDataBridgeStreamMap.get(tuple.getSourceStreamId());
-
-            if (databridgeStream != null) {
+//            org.wso2.carbon.databridge.commons.StreamDefinition databridgeStream = streamIdToDefinitionMap.get(tuple.getSourceStreamId());
+          StreamDefinition streamDefinition=  streamIdToDefinitionMap.get(tuple.getSourceStreamId());
+            if (streamDefinition != null) {
                 try {
                     if (log.isDebugEnabled()) {
                         log.debug(logPrefix + "Event published to CEP Publisher =>" + tuple.toString());
@@ -146,28 +144,28 @@ public class EventPublisherBolt extends BaseBasicBolt {
 
             thisHostIp = HostAddressFinder.findAddress("localhost");
 
-            if (streamDefinitions != null) {
-                for (String definition : streamDefinitions) {
-                    if (definition.contains("define stream")) {
-                        siddhiManager.defineStream(definition);
-                    } else if (definition.contains("define partition")) {
-                        siddhiManager.definePartition(definition);
-                    } else {
-                        throw new RuntimeException("Invalid definition : " + definition);
-                    }
+            if (inputStreamDefinitions != null) {
+                for (StreamDefinition definition : inputStreamDefinitions) {
+                    siddhiManager.defineStream(definition);
                 }
             }
 
             if (queries != null) {
-                for (String query : queries) {
-                    siddhiManager.addQuery(query);
+                for (ExecutionPlan executionPlan : queries) {
+                    if (executionPlan instanceof Query) {
+                        siddhiManager.addQuery((Query) executionPlan);
+                    } else if (executionPlan instanceof StreamDefinition) {
+                        siddhiManager.defineStream((StreamDefinition) executionPlan);
+                    } else if (executionPlan instanceof PartitionDefinition) {
+                        siddhiManager.definePartition((PartitionDefinition) executionPlan);
+                    } else if (executionPlan instanceof TableDefinition) {
+                        siddhiManager.defineTable((TableDefinition) executionPlan);
+                    }
                 }
             }
 
-            for (String streamDefinitionId : exportedStreamIDs) {
-                StreamDefinition siddhiStreamDefinition = siddhiManager.getStreamDefinition(streamDefinitionId);
-                org.wso2.carbon.databridge.commons.StreamDefinition databridgeStreamDefinition = SiddhiUtils.toFlatDataBridgeStreamDefinition(siddhiStreamDefinition);
-                siddhiStreamIdToDataBridgeStreamMap.put(siddhiStreamDefinition.getStreamId(), databridgeStreamDefinition);
+            for (StreamDefinition outputStreamDefinition : outputStreamDefinitions) {
+                streamIdToDefinitionMap.put(outputStreamDefinition.getStreamId(), outputStreamDefinition);
             }
 
             Thread thread = new Thread(new Registrar());
@@ -197,7 +195,7 @@ public class EventPublisherBolt extends BaseBasicBolt {
         @Override
         public void run() {
             log.info(logPrefix + "Getting CEP publisher for " + thisHostIp);
-            while (!configureStormReceiverFromStormMangerService()){
+            while (!configureStormReceiverFromStormMangerService()) {
                 log.info(logPrefix + "Retry getting CEP publisher in 30 sec");
                 try {
                     Thread.sleep(30000);
@@ -222,11 +220,11 @@ public class EventPublisherBolt extends BaseBasicBolt {
                 log.info(logPrefix + "Successfully got CEP publisher with " + cepPublisherHostPort);
 
                 tcpEventPublisher = new TCPEventPublisher(cepPublisherHostPort);
-                for (String siddhiStreamId : exportedStreamIDs) {
+                for (StreamDefinition outputStreamDefinition : outputStreamDefinitions) {
                     if (log.isDebugEnabled()) {
-                        log.debug(logPrefix + "EventPublisherBolt adding stream definition to client for exported Siddhi stream: " + siddhiStreamId);
+                        log.debug(logPrefix + "EventPublisherBolt adding stream definition to client for exported Siddhi stream: " + outputStreamDefinition.getStreamId());
                     }
-                    tcpEventPublisher.addStreamDefinition(siddhiManager.getStreamDefinition(siddhiStreamId));
+                    tcpEventPublisher.addStreamDefinition(outputStreamDefinition);
                 }
                 log.info(logPrefix + "connected to CEP publisher at " + cepPublisherHostPort);
                 return true;

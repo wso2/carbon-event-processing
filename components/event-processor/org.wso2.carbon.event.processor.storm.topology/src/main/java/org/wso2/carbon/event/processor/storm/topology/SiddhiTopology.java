@@ -22,9 +22,6 @@ import backtype.storm.StormSubmitter;
 import backtype.storm.topology.TopologyBuilder;
 import org.wso2.carbon.event.processor.storm.common.config.StormDeploymentConfig;
 import org.wso2.carbon.event.processor.storm.common.util.StormConfigReader;
-import org.wso2.carbon.event.processor.storm.topology.component.EventPublisherBolt;
-import org.wso2.carbon.event.processor.storm.topology.component.EventReceiverSpout;
-import org.wso2.carbon.event.processor.storm.topology.component.SiddhiBolt;
 import org.wso2.siddhi.core.SiddhiManager;
 
 /**
@@ -70,9 +67,9 @@ public class SiddhiTopology {
 
         TopologyBuilder builder = new TopologyBuilder();
 
-        builder.setSpout("EventReceiverSpout", new EventReceiverSpout(-1234, stormDeploymentConfig, importedStreams, exeucutionPlanName), 2);
-        builder.setBolt("Siddhibolt", new SiddhiBolt(importedStreams, new String[]{query}, new String[]{outputStream}), 3).shuffleGrouping("EventReceiverSpout", inputStream);
-        builder.setBolt("EventPublisherBolt", new EventPublisherBolt(-1234, importedStreams, new String[]{query}, new String[]{outputStream}, exeucutionPlanName, stormDeploymentConfig), 3).shuffleGrouping("Siddhibolt", outputStream).setDebug(true);
+//        builder.setSpout("EventReceiverSpout", new EventReceiverSpout(-1234, stormDeploymentConfig, importedStreams, exeucutionPlanName), 2);
+//        builder.setBolt("Siddhibolt", new SiddhiBolt(importedStreams, new String[]{query}, new String[]{outputStream}), 3).shuffleGrouping("EventReceiverSpout", inputStream);
+//        builder.setBolt("EventPublisherBolt", new EventPublisherBolt(-1234, importedStreams, new String[]{query}, new String[]{outputStream}, exeucutionPlanName, stormDeploymentConfig), 3).shuffleGrouping("Siddhibolt", outputStream).setDebug(true);
 
         Config conf = new Config();
         conf.setDebug(true);

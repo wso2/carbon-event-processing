@@ -35,7 +35,6 @@ import org.wso2.carbon.event.processor.storm.common.transport.server.StreamCallb
 import org.wso2.carbon.event.processor.storm.common.transport.server.TCPEventServer;
 import org.wso2.carbon.event.processor.storm.common.transport.server.TCPEventServerConfig;
 import org.wso2.carbon.event.processor.storm.common.util.StormUtils;
-import org.wso2.carbon.event.processor.storm.topology.util.SiddhiUtils;
 import org.wso2.siddhi.query.api.definition.StreamDefinition;
 
 import java.util.ArrayList;
@@ -60,7 +59,7 @@ public class EventReceiverSpout extends BaseRichSpout implements StreamCallback 
     /**
      * Siddhi stream definitions of all incoming streams. Required to declare output fields
      */
-    private String[] incomingStreamDefinitions;
+    private List<StreamDefinition> incomingStreamDefinitions;
     private TCPEventServer tcpEventServer;
 
     /**
@@ -87,22 +86,25 @@ public class EventReceiverSpout extends BaseRichSpout implements StreamCallback 
      * Receives events from the CEP Receiver through Thrift using data bridge and pass through the events
      * to a downstream component as tupels.
      *
+     * @param stormDeploymentConfig
      * @param incomingStreamDefinitions - Incoming Siddhi stream definitions
+     * @param executionPlanName
+     * @param tenantId
      */
-    public EventReceiverSpout(int tenantId, StormDeploymentConfig stormDeploymentConfig, String[] incomingStreamDefinitions, String executionPlanName) {
-        this.tenantId = tenantId;
+    public EventReceiverSpout(StormDeploymentConfig stormDeploymentConfig, List<StreamDefinition> incomingStreamDefinitions, String executionPlanName, int tenantId) {
         this.stormDeploymentConfig = stormDeploymentConfig;
         this.incomingStreamDefinitions = incomingStreamDefinitions;
         this.executionPlanName = executionPlanName;
-        this.logPrefix = "{" + tenantId + ":" + executionPlanName + "} - ";
+        this.tenantId = tenantId;
+
+        this.logPrefix = "{" + executionPlanName + ":" + tenantId + "} - ";
 
     }
 
     @Override
     public void declareOutputFields(OutputFieldsDeclarer outputFieldsDeclarer) {
         // Declaring all incoming streams as output streams because this spouts role is to pass through all the incoming events as tuples.
-        List<StreamDefinition> streamDefinitions = SiddhiUtils.toSiddhiStreamDefinitions(incomingStreamDefinitions);
-        for (StreamDefinition siddhiStreamDefinition : streamDefinitions) {
+        for (StreamDefinition siddhiStreamDefinition : incomingStreamDefinitions) {
             Fields fields = new Fields(siddhiStreamDefinition.getAttributeNameArray());
             outputFieldsDeclarer.declareStream(siddhiStreamDefinition.getStreamId(), fields);
             incomingStreamIDs.add(siddhiStreamDefinition.getStreamId());
@@ -121,8 +123,7 @@ public class EventReceiverSpout extends BaseRichSpout implements StreamCallback 
             listeningPort = findPort();
             thisHostIp = HostAddressFinder.findAddress("localhost");
             tcpEventServer = new TCPEventServer(new TCPEventServerConfig(listeningPort), this);
-            List<StreamDefinition> siddhiStreamDefinitions = SiddhiUtils.toSiddhiStreamDefinitions(incomingStreamDefinitions);
-            for (StreamDefinition siddhiStreamDefinition : siddhiStreamDefinitions) {
+            for (StreamDefinition siddhiStreamDefinition : incomingStreamDefinitions) {
                 tcpEventServer.subscribe(siddhiStreamDefinition);
             }
             tcpEventServer.start();
