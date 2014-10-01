@@ -32,74 +32,23 @@
     <artifactId>org.wso2.carbon.event.processor.storm.topology</artifactId>
     <name>WSO2 Carbon - Storm Topology Submitter</name>
     <version>1.0.0-SNAPSHOT</version>
-    <packaging>jar</packaging>
+    <packaging>bundle</packaging>
 
     <dependencies>
-        <dependency>
-            <groupId>org.apache.storm</groupId>
-            <artifactId>storm-core</artifactId>
-            <version>${storm.version}</version>
-            <!-- keep storm out of the jar-with-dependencies -->
-            <!--<scope>provided</scope>-->
-        </dependency>
         <dependency>
             <groupId>org.wso2.siddhi</groupId>
             <artifactId>siddhi-core</artifactId>
             <version>${siddhi.version}</version>
         </dependency>
         <dependency>
-            <groupId>org.wso2.carbon</groupId>
-            <artifactId>org.wso2.carbon.databridge.agent.thrift</artifactId>
-            <version>${carbon.version}</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>slf4j.wso2</groupId>
-                    <artifactId>slf4j</artifactId>
-                </exclusion>
-            </exclusions>
+            <groupId>org.wso2.siddhi</groupId>
+            <artifactId>siddhi-api</artifactId>
+            <version>${siddhi.version}</version>
         </dependency>
         <dependency>
-            <groupId>org.wso2.carbon</groupId>
-            <artifactId>org.wso2.carbon.databridge.core</artifactId>
-            <version>${carbon.version}</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>slf4j.wso2</groupId>
-                    <artifactId>slf4j</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-        <dependency>
-            <groupId>org.wso2.carbon</groupId>
-            <artifactId>org.wso2.carbon.databridge.receiver.thrift</artifactId>
-            <version>${carbon.version}</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>slf4j.wso2</groupId>
-                    <artifactId>slf4j</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-        <dependency>
-            <groupId>org.wso2.carbon</groupId>
-            <artifactId>org.wso2.carbon.databridge.commons</artifactId>
-            <version>${carbon.version}</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>slf4j.wso2</groupId>
-                    <artifactId>slf4j</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.ws.commons.axiom</groupId>
-            <artifactId>axiom-api</artifactId>
-            <version>1.2.14</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.axis2</groupId>
-            <artifactId>axis2-kernel</artifactId>
-            <version>1.6.2</version>
+            <groupId>org.wso2.siddhi</groupId>
+            <artifactId>siddhi-query</artifactId>
+            <version>${siddhi.version}</version>
         </dependency>
         <dependency>
             <groupId>org.wso2.carbon</groupId>
@@ -112,54 +61,68 @@
                 </exclusion>
             </exclusions>
         </dependency>
+        <dependency>
+            <groupId>libthrift.wso2</groupId>
+            <artifactId>libthrift</artifactId>
+            <version>${libthrift.wso2.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.lmax</groupId>
+            <artifactId>disruptor</artifactId>
+            <version>${disruptor.version}</version>
+        </dependency>
         <!--<dependency>-->
             <!--<groupId>com.googlecode.disruptor</groupId>-->
             <!--<artifactId>disruptor</artifactId>-->
             <!--<version>2.10.4</version>-->
         <!--</dependency>-->
 
-        <dependency>
-            <groupId>com.lmax</groupId>
-            <artifactId>disruptor</artifactId>
-            <version>${disruptor.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.ws.commons.axiom</groupId>
-            <artifactId>axiom-impl</artifactId>
-            <version>1.2.14</version>
-        </dependency>
+        <!--<dependency>-->
+            <!--<groupId>com.lmax</groupId>-->
+            <!--<artifactId>disruptor</artifactId>-->
+            <!--<version>${disruptor.version}</version>-->
+        <!--</dependency>-->
+        <!--<dependency>-->
+            <!--<groupId>org.apache.ws.commons.axiom</groupId>-->
+            <!--<artifactId>axiom-impl</artifactId>-->
+            <!--<version>1.2.14</version>-->
+        <!--</dependency>-->
 
     </dependencies>
-
     <build>
         <plugins>
             <plugin>
-                <artifactId>maven-assembly-plugin</artifactId>
+                <groupId>org.apache.felix</groupId>
+                <artifactId>maven-bundle-plugin</artifactId>
+                <version>2.4.0</version>
+                <extensions>true</extensions>
                 <configuration>
-                    <descriptorRefs>
-                        <descriptorRef>jar-with-dependencies</descriptorRef>
-                    </descriptorRefs>
-                    <archive>
-                        <manifest>
-                            <mainClass></mainClass>
-                        </manifest>
-                    </archive>
+                    <instructions>
+                        <Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
+                        <Bundle-Name>${project.artifactId}</Bundle-Name>
+                        <Export-Package>
+                            *
+                        </Export-Package>
+                        <!--<Import-Package>-->
+                            <!--*;resolution:=optional-->
+                        <!--</Import-Package>-->
+                        <!--<Include-Resource>-->
+                            <!--{maven-resources},-->
+                            <!--@storm-core-${storm.version}.jar!/META-INF/**,-->
+                            <!--@storm-core-${storm.version}.jar!/*.conf,-->
+                            <!--@storm-core-${storm.version}.jar!/*.yaml*,-->
+                            <!--@storm-core-${storm.version}.jar!/*.xml,-->
+                            <!--@storm-core-${storm.version}.jar!/*.ini,-->
+                        <!--</Include-Resource>-->
+                        <Embed-Dependency>
+                            siddhi-core|siddhi-api|siddhi-query|org.wso2.carbon.event.processor.storm.common|libthrift|disruptor;scope=compile|runtime;inline=true
+                        </Embed-Dependency>
+                        <Embed-Transitive>true</Embed-Transitive>
+                        <DynamicImport-Package>*</DynamicImport-Package>
+                    </instructions>
                 </configuration>
-                <executions>
-                    <execution>
-                        <id>make-assembly</id>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>single</goal>
-                        </goals>
-                    </execution>
-                </executions>
             </plugin>
         </plugins>
     </build>
-
-    <properties>
-        <storm.version>0.9.2-incubating</storm.version>
-    </properties>
 
 </project>

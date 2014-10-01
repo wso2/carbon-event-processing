@@ -15,7 +15,7 @@
  *  specific language governing permissions and limitations
  *  under the License.
  */
-package org.wso2.carbon.event.processor.storm.topology.component;
+package org.wso2.carbon.event.processor.storm.common.component;
 
 import backtype.storm.task.TopologyContext;
 import backtype.storm.topology.BasicOutputCollector;
@@ -27,10 +27,10 @@ import org.apache.thrift.protocol.TBinaryProtocol;
 import org.apache.thrift.protocol.TProtocol;
 import org.apache.thrift.transport.TSocket;
 import org.apache.thrift.transport.TTransport;
-import org.wso2.carbon.databridge.commons.thrift.utils.HostAddressFinder;
 import org.wso2.carbon.event.processor.storm.common.config.StormDeploymentConfig;
 import org.wso2.carbon.event.processor.storm.common.manager.service.StormManagerService;
 import org.wso2.carbon.event.processor.storm.common.transport.client.TCPEventPublisher;
+import org.wso2.carbon.event.processor.storm.common.util.Utils;
 import org.wso2.siddhi.core.SiddhiManager;
 import org.wso2.siddhi.core.config.SiddhiConfiguration;
 import org.wso2.siddhi.query.api.ExecutionPlan;
@@ -142,7 +142,7 @@ public class EventPublisherBolt extends BaseBasicBolt {
             eventCount = 0;
             batchStartTime = System.currentTimeMillis();
 
-            thisHostIp = HostAddressFinder.findAddress("localhost");
+            thisHostIp = Utils.findAddress("localhost");
 
             if (inputStreamDefinitions != null) {
                 for (StreamDefinition definition : inputStreamDefinitions) {

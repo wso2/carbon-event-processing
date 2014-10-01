@@ -1,9 +1,29 @@
-package org.wso2.carbon.event.processor.storm.topology.util;
+/*
+ * Copyright (c) 2005-2014, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
+ *
+ *  WSO2 Inc. licenses this file to you under the Apache License,
+ *  Version 2.0 (the "License"); you may not use this file except
+ *  in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing,
+ *  software distributed under the License is distributed on an
+ *  "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ *  KIND, either express or implied.  See the License for the
+ *  specific language governing permissions and limitations
+ *  under the License.
+ */
+package org.wso2.carbon.event.processor.core.internal.storm.util;
 
 import org.wso2.siddhi.query.api.ExecutionPlan;
 import org.wso2.siddhi.query.api.definition.StreamDefinition;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class ComponentInfoHolder {
 
@@ -14,9 +34,9 @@ public class ComponentInfoHolder {
     private ComponentType componentType;
     private String componentName = null;
     private Object declarer;
-    private HashMap<String, StreamDefinition> inputStreams = new HashMap<String, StreamDefinition>();
-    private ArrayList<ExecutionPlan> siddhiQueries = new ArrayList<ExecutionPlan>();
-    private HashMap<String, StreamDefinition> outputStreams = new HashMap<String, StreamDefinition>();
+    private Map<String, StreamDefinition> inputStreams = new HashMap<String, StreamDefinition>();
+    private List<ExecutionPlan> siddhiQueries = new ArrayList<ExecutionPlan>();
+    private Map<String, StreamDefinition> outputStreams = new HashMap<String, StreamDefinition>();
     private int parallelism = 1;
     private int groupingType = GROUPING_TYPE_SHUFFLE_GROUPING;
     private HashMap<String, String> groupingParameters = new HashMap<String, String>();
@@ -58,24 +78,6 @@ public class ComponentInfoHolder {
         return outputStreams.keySet().toArray(new String[inputStreams.size()]);
     }
 
-//    public StreamDefinition[] getAllStreamDefinitions() {
-//        Set<StreamDefinition> allStreamDefinitions = new HashSet<StreamDefinition>();
-//
-//        for (Map.Entry<String, StreamDefinition> entry : inputStreams.entrySet()) {
-//            if (entry.getValue() != null) {
-//                allStreamDefinitions.add(entry.getValue());
-//            }
-//        }
-//
-//        for (Map.Entry<String, StreamDefinition> entry : outputStreams.entrySet()) {
-//            if (entry.getValue() != null) {
-//                allStreamDefinitions.add(entry.getValue());
-//            }
-//        }
-//
-//        return allStreamDefinitions.toArray(new StreamDefinition[inputStreams.size()]);
-//    }
-
     public int getParallelism() {
         return parallelism;
     }
@@ -92,7 +94,7 @@ public class ComponentInfoHolder {
         return componentName;
     }
 
-    public List<ExecutionPlan> getSiddhiQuery() {
+    public List<ExecutionPlan> getSiddhiQueries() {
         return siddhiQueries;
     }
 
@@ -107,25 +109,5 @@ public class ComponentInfoHolder {
     public Object getDeclarer() {
         return declarer;
     }
-//    @Override
-//    public String toString() {
-//        StringBuilder message = new StringBuilder();
-//        message.append("Component Name: ").append(componentName).append("\n");
-//        message.append("Parallelism: ").append(parallelism).append("\n");
-//        message.append("Grouping Type: ").append(groupingType).append("\n");
-//        message.append("Grouping Parameters: ").append(groupingParameters.toString()).append("\n");
-//
-//        message.append("Input Streams:\n");
-//        for (String inputStream : getInputStreamIds()) {
-//            message.append("->").append(inputStream).append("\n");
-//        }
-//
-//        message.append("Output Streams:\n");
-//        for (String outputStream : getOutputStreamIds()) {
-//            message.append("<-").append(outputStream).append("\n");
-//        }
-//
-//        return message.toString();
-//    }
 
 }

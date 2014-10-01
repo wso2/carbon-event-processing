@@ -15,7 +15,7 @@
  *  specific language governing permissions and limitations
  *  under the License.
  */
-package org.wso2.carbon.event.processor.storm.topology.component;
+package org.wso2.carbon.event.processor.storm.common.component;
 
 import backtype.storm.spout.SpoutOutputCollector;
 import backtype.storm.task.TopologyContext;
@@ -27,14 +27,14 @@ import org.apache.thrift.protocol.TBinaryProtocol;
 import org.apache.thrift.protocol.TProtocol;
 import org.apache.thrift.transport.TSocket;
 import org.apache.thrift.transport.TTransport;
-import org.wso2.carbon.databridge.commons.Event;
-import org.wso2.carbon.databridge.commons.thrift.utils.HostAddressFinder;
 import org.wso2.carbon.event.processor.storm.common.config.StormDeploymentConfig;
 import org.wso2.carbon.event.processor.storm.common.manager.service.StormManagerService;
 import org.wso2.carbon.event.processor.storm.common.transport.server.StreamCallback;
 import org.wso2.carbon.event.processor.storm.common.transport.server.TCPEventServer;
 import org.wso2.carbon.event.processor.storm.common.transport.server.TCPEventServerConfig;
-import org.wso2.carbon.event.processor.storm.common.util.StormUtils;
+import org.wso2.carbon.event.processor.storm.common.util.Utils;
+import org.wso2.siddhi.core.event.Event;
+import org.wso2.siddhi.core.event.in.InEvent;
 import org.wso2.siddhi.query.api.definition.StreamDefinition;
 
 import java.util.ArrayList;
@@ -121,7 +121,7 @@ public class EventReceiverSpout extends BaseRichSpout implements StreamCallback 
 
         try {
             listeningPort = findPort();
-            thisHostIp = HostAddressFinder.findAddress("localhost");
+            thisHostIp = Utils.findAddress("localhost");
             tcpEventServer = new TCPEventServer(new TCPEventServerConfig(listeningPort), this);
             for (StreamDefinition siddhiStreamDefinition : incomingStreamDefinitions) {
                 tcpEventServer.subscribe(siddhiStreamDefinition);
@@ -153,7 +153,7 @@ public class EventReceiverSpout extends BaseRichSpout implements StreamCallback 
                     eventCount = 0;
                     batchStartTime = System.currentTimeMillis();
                 }
-                spoutOutputCollector.emit(siddhiStreamName, Arrays.asList(event.getPayloadData()));
+                spoutOutputCollector.emit(siddhiStreamName, Arrays.asList(event.getData()));
             } else {
                 log.warn(logPrefix + "Event received for unknown stream : " + siddhiStreamName);
             }
@@ -162,7 +162,7 @@ public class EventReceiverSpout extends BaseRichSpout implements StreamCallback 
 
     private int findPort() throws Exception {
         for (int i = stormDeploymentConfig.getTransportMinPort(); i <= stormDeploymentConfig.getTransportMaxPort(); i++) {
-            if (!StormUtils.isPortUsed(i)) {
+            if (!Utils.isPortUsed(i)) {
                 return i;
             }
         }
@@ -171,11 +171,11 @@ public class EventReceiverSpout extends BaseRichSpout implements StreamCallback 
 
 
     @Override
-    public void receive(String streamId, Object[] event) {
+    public void receive(String streamId, Object[] eventData) {
         if (log.isDebugEnabled()) {
-            log.debug(logPrefix + "Received event for stream '" + streamId + "': " + Arrays.deepToString(event));
+            log.debug(logPrefix + "Received event for stream '" + streamId + "': " + Arrays.deepToString(eventData));
         }
-        storedEvents.add(new Event(streamId, System.currentTimeMillis(), null, null, event));
+        storedEvents.add(new InEvent(streamId, System.currentTimeMillis(), eventData));
     }
 
 

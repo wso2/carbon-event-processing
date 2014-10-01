@@ -116,7 +116,7 @@ public final class HAManagementServerBuilder {
                     inputStream.close();
                 }
             } catch (IOException e) {
-                String errorMessage = "Can not close the input stream";
+                String errorMessage = "Can not shutdown the input stream";
                 log.error(errorMessage, e);
             }
         }

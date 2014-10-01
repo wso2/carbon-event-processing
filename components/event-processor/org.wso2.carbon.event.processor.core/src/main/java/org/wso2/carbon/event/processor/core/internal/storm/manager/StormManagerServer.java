@@ -48,6 +48,10 @@ public class StormManagerServer {
         stormManagerService.setStormManager(stormManager);
     }
 
+    public boolean isStormManager() {
+        return stormManagerService.isStormManager();
+    }
+
     static class ServerThread implements Runnable {
         private TServer server;
 
@@ -65,7 +69,9 @@ public class StormManagerServer {
         HazelcastInstance hazelcastInstance = EventProcessorValueHolder.getHazelcastInstance();
         if (hazelcastInstance != null) {
             ILock lock = hazelcastInstance.getLock("StormManager");
-            setStormManager(lock.tryLock());
+            boolean isCoordinator=lock.tryLock();
+            log.info("Node became Storm Coordinator");
+            setStormManager(isCoordinator);
         }
     }
 

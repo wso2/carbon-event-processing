@@ -15,18 +15,23 @@
 * specific language governing permissions and limitations
 * under the License.
 */
-package org.wso2.carbon.event.stream.manager.core;
+package org.wso2.carbon.event.processor.core.exception;
 
-/**
- * Represents event sinks that fetch events from the junction.
- */
-public interface SiddhiEventConsumer {
 
-    public String getStreamId();
+public class StormDeploymentException extends Exception {
 
-    public void consumeEvents(org.wso2.siddhi.core.event.Event[] events);
+    public StormDeploymentException() {
+    }
 
-    public void consumeEventData(Object[] data);
+    public StormDeploymentException(String message) {
+        super(message);
+    }
 
-    public void shutdown();
+    public StormDeploymentException(String message, Throwable cause) {
+        super(message, cause);
+    }
+
+    public StormDeploymentException(Throwable cause) {
+        super(cause);
+    }
 }

@@ -29,8 +29,8 @@ import org.wso2.carbon.event.processor.core.internal.CarbonEventProcessorService
 import org.wso2.carbon.event.processor.core.internal.ha.CEPMembership;
 import org.wso2.carbon.event.processor.core.internal.ha.server.utils.HAManagementServerBuilder;
 import org.wso2.carbon.event.processor.core.internal.ha.server.utils.HAManagementServerConstants;
-import org.wso2.carbon.event.processor.core.internal.ha.server.utils.HostAddressFinder;
 import org.wso2.carbon.event.processor.core.internal.ha.thrift.service.HAManagementService;
+import org.wso2.carbon.event.processor.storm.common.util.Utils;
 
 import java.net.InetSocketAddress;
 
@@ -48,7 +48,7 @@ public class HAManagementServer {
 
             String hostName = haManagementServerConfiguration.getReceiverHostName();
             if (null == hostName) {
-                hostName = HostAddressFinder.findAddress("localhost");
+                hostName = Utils.findAddress("localhost");
             }
             haManagementServerConfiguration.setReceiverHostName(hostName);
             carbonEventProcessorService.addCurrentCEPMembership(new CEPMembership(hostName, haManagementServerConfiguration.getDataReceiverPort()));

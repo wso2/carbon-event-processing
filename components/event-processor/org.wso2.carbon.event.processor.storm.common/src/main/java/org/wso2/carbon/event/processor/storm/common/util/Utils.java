@@ -15,15 +15,13 @@
 * specific language governing permissions and limitations
 * under the License.
 */
-package org.wso2.carbon.event.processor.core.internal.ha.server.utils;
+package org.wso2.carbon.event.processor.storm.common.util;
 
-import java.net.Inet4Address;
-import java.net.InetAddress;
-import java.net.NetworkInterface;
-import java.net.SocketException;
+import java.io.IOException;
+import java.net.*;
 import java.util.Enumeration;
 
-public class HostAddressFinder {
+public class Utils {
     public static String findAddress(String hostname) throws SocketException {
         if (hostname.trim().equals("localhost") || hostname.trim().equals("127.0.0.1") || hostname.trim().equals("::1")) {
             Enumeration<NetworkInterface> ifaces =
@@ -43,5 +41,25 @@ public class HostAddressFinder {
         } else {
             return hostname;
         }
+    }
+
+    public static boolean isPortUsed(final int portNumber){
+        boolean isPortUsed;
+        ServerSocket socket = null;
+        try {
+            socket = new ServerSocket(portNumber);
+            isPortUsed = false;
+        } catch (IOException ignored) {
+            isPortUsed =  true;
+        } finally {
+            if (socket != null){
+                try {
+                    socket.close();
+                } catch (IOException e) {
+                    isPortUsed = true;
+                }
+            }
+        }
+        return isPortUsed;
     }
 }

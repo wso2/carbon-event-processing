@@ -36,6 +36,11 @@
     <packaging>bundle</packaging>
 
     <dependencies>
+        <dependency>
+            <groupId>org.apache.storm.wso2</groupId>
+            <artifactId>storm</artifactId>
+            <scope>provided</scope>
+        </dependency>
         <!--<dependency>-->
             <!--<groupId>org.apache.ws.commons.axiom</groupId>-->
             <!--<artifactId>axiom-api</artifactId>-->

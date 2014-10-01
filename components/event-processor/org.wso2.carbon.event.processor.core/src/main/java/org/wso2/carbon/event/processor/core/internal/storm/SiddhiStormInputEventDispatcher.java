@@ -26,15 +26,17 @@ import org.apache.thrift.transport.TTransport;
 import org.wso2.carbon.databridge.commons.StreamDefinition;
 import org.wso2.carbon.event.processor.core.ExecutionPlanConfiguration;
 import org.wso2.carbon.event.processor.core.StreamConfiguration;
-import org.wso2.carbon.event.processor.core.internal.ha.server.utils.HostAddressFinder;
 import org.wso2.carbon.event.processor.core.internal.listener.AbstractSiddhiInputEventDispatcher;
 import org.wso2.carbon.event.processor.core.internal.util.EventProcessorUtil;
 import org.wso2.carbon.event.processor.storm.common.config.StormDeploymentConfig;
 import org.wso2.carbon.event.processor.storm.common.manager.service.StormManagerService;
 import org.wso2.carbon.event.processor.storm.common.transport.client.TCPEventPublisher;
+import org.wso2.carbon.event.processor.storm.common.util.Utils;
 import org.wso2.siddhi.core.event.Event;
 
 import java.io.IOException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 /**
  * Publishes events of a stream to the event receiver spout running on Storm. There will be SiddhiStormInputEventDispatcher
@@ -49,6 +51,7 @@ public class SiddhiStormInputEventDispatcher extends AbstractSiddhiInputEventDis
     private org.wso2.siddhi.query.api.definition.StreamDefinition siddhiStreamDefinition;
     private String logPrefix;
     private String thisHostIp;
+    private ExecutorService executorService = Executors.newSingleThreadExecutor();
 
     public SiddhiStormInputEventDispatcher(StreamDefinition streamDefinition,
                                            String siddhiStreamId, String siddhiStreamName,
@@ -64,7 +67,7 @@ public class SiddhiStormInputEventDispatcher extends AbstractSiddhiInputEventDis
         logPrefix = "[CEP Receiver] for execution plan '" + executionPlanConfiguration.getName() + "'" + "(TenantID=" + tenantId + ") ";
 
         try {
-            thisHostIp = HostAddressFinder.findAddress("localhost");
+            thisHostIp = Utils.findAddress("localhost");
 
             // Creating a Siddhi stream handled by this input event dispatcher
             // by using a data bridge stream which has name as the Siddhi stream name, and all fields as payload
@@ -149,5 +152,11 @@ public class SiddhiStormInputEventDispatcher extends AbstractSiddhiInputEventDis
                 }
             }
         }
+    }
+
+    @Override
+    public void shutdown() {
+        executorService.shutdown();
+        tcpEventPublisher.shutdown();
     }
 }

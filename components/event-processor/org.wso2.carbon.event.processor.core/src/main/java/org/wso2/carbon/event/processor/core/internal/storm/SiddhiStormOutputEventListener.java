@@ -30,11 +30,13 @@ import org.wso2.carbon.event.processor.storm.common.manager.service.StormManager
 import org.wso2.carbon.event.processor.storm.common.transport.server.StreamCallback;
 import org.wso2.carbon.event.processor.storm.common.transport.server.TCPEventServer;
 import org.wso2.carbon.event.processor.storm.common.transport.server.TCPEventServerConfig;
-import org.wso2.carbon.event.processor.storm.common.util.StormUtils;
+import org.wso2.carbon.event.processor.storm.common.util.Utils;
 import org.wso2.siddhi.query.api.definition.StreamDefinition;
 
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 /**
  * Receives events from the Event publisher bolt running on storm. There will be one SiddhiStormOutputEventListener instance
@@ -50,8 +52,9 @@ public class SiddhiStormOutputEventListener implements StreamCallback {
     private final StormDeploymentConfig stormDeploymentConfig;
     private String thisHostIp;
     private HashMap<String, SiddhiOutputStreamListener> streamNameToOutputStreamListenerMap = new HashMap<String, SiddhiOutputStreamListener>();
-    private TCPEventServer TCPEventServer;
+    private TCPEventServer tcpEventServer;
     private String logPrefix = "";
+    private ExecutorService executorService = Executors.newSingleThreadExecutor();
 
     public SiddhiStormOutputEventListener(ExecutionPlanConfiguration executionPlanConfiguration, int tenantId, StormDeploymentConfig stormDeploymentConfig) {
         this.executionPlanConfiguration = executionPlanConfiguration;
@@ -67,10 +70,9 @@ public class SiddhiStormOutputEventListener implements StreamCallback {
         try {
             listeningPort = findPort();
             thisHostIp = HostAddressFinder.findAddress("localhost");
-            TCPEventServer = new TCPEventServer(new TCPEventServerConfig(listeningPort), this);
-            TCPEventServer.start();
-            Thread thread = new Thread(new Registrar());
-            thread.start();
+            tcpEventServer = new TCPEventServer(new TCPEventServerConfig(listeningPort), this);
+            tcpEventServer.start();
+            executorService.execute(new Registrar());
         } catch (Exception e) {
             log.error(logPrefix + "Failed to start event listener", e);
         }
@@ -80,7 +82,7 @@ public class SiddhiStormOutputEventListener implements StreamCallback {
     public void registerOutputStreamListener(StreamDefinition siddhiStreamDefinition, SiddhiOutputStreamListener outputStreamListener) {
         log.info(logPrefix + "Registering output stream listener for Siddhi stream : " + siddhiStreamDefinition.getStreamId());
         streamNameToOutputStreamListenerMap.put(siddhiStreamDefinition.getStreamId(), outputStreamListener);
-        TCPEventServer.subscribe(siddhiStreamDefinition);
+        tcpEventServer.subscribe(siddhiStreamDefinition);
     }
 
     @Override
@@ -96,7 +98,7 @@ public class SiddhiStormOutputEventListener implements StreamCallback {
 
     private int findPort() throws Exception {
         for (int i = stormDeploymentConfig.getTransportMinPort(); i <= stormDeploymentConfig.getTransportMaxPort(); i++) {
-            if (!StormUtils.isPortUsed(i)) {
+            if (!Utils.isPortUsed(i)) {
                 return i;
             }
         }
@@ -152,5 +154,10 @@ public class SiddhiStormOutputEventListener implements StreamCallback {
                 }
             }
         }
+    }
+
+    public void shutdown() {
+        executorService.shutdown();
+        tcpEventServer.shutdown();
     }
 }

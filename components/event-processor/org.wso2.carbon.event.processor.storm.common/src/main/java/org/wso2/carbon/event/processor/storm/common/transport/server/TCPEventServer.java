@@ -78,7 +78,7 @@ public class TCPEventServer {
             try {
                 receiverSocket.close();
             } catch (IOException e) {
-                log.error("Error occurred while trying to close socket: " + e.getMessage(), e);
+                log.error("Error occurred while trying to shutdown socket: " + e.getMessage(), e);
             }
         }
 

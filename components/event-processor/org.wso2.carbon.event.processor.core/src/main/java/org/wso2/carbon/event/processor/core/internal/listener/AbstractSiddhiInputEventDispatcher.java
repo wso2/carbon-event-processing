@@ -114,4 +114,8 @@ public abstract class AbstractSiddhiInputEventDispatcher implements SiddhiEventC
      * @throws InterruptedException
      */
     public abstract void sendEvent(Object[] eventData) throws InterruptedException;
+
+    public void shutdown(){
+
+    }
 }

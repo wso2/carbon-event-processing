@@ -23,8 +23,8 @@ public class StormManagerServiceImpl implements StormManagerService.Iface {
 
     @Override
     public void registerStormReceiver(int tenantId, String executionPlanName, String hostName, int port) throws NotStormManagerException, TException {
-        if(!isStormManager){
-            throw new NotStormManagerException(hostPort+" not a storm manager" );
+        if (!isStormManager) {
+            throw new NotStormManagerException(hostPort + " not a storm manager");
         }
         insertToCollection(stormReceivers, constructKey(tenantId, executionPlanName), new Endpoint(port, hostName));
 
@@ -32,16 +32,16 @@ public class StormManagerServiceImpl implements StormManagerService.Iface {
 
     @Override
     public void registerCEPPublisher(int tenantId, String executionPlanName, String hostName, int port) throws NotStormManagerException, TException {
-        if(!isStormManager){
-            throw new NotStormManagerException(hostPort+" not a storm manager" );
+        if (!isStormManager) {
+            throw new NotStormManagerException(hostPort + " not a storm manager");
         }
         insertToCollection(cepPublishers, constructKey(tenantId, executionPlanName), new Endpoint(port, hostName));
     }
 
     @Override
     public String getStormReceiver(int tenantId, String executionPlanName, String cepReceiverHostName) throws NotStormManagerException, EndpointNotFoundException, TException {
-        if(!isStormManager){
-            throw new NotStormManagerException(hostPort+" not a storm manager" );
+        if (!isStormManager) {
+            throw new NotStormManagerException(hostPort + " not a storm manager");
         }
         Set<Endpoint> endpointSet = stormReceivers.get(constructKey(tenantId, executionPlanName));
         Endpoint selectedEndpoint = selectEndpoint(endpointSet, cepReceiverHostName);
@@ -55,8 +55,8 @@ public class StormManagerServiceImpl implements StormManagerService.Iface {
 
     @Override
     public String getCEPPublisher(int tenantId, String executionPlanName, String stormPublisherHostName) throws NotStormManagerException, EndpointNotFoundException, TException {
-        if(!isStormManager){
-            throw new NotStormManagerException(hostPort+" not a storm manager" );
+        if (!isStormManager) {
+            throw new NotStormManagerException(hostPort + " not a storm manager");
         }
         Set<Endpoint> endpointSet = cepPublishers.get(constructKey(tenantId, executionPlanName));
         Endpoint selectedEndpoint = selectEndpoint(endpointSet, stormPublisherHostName);
@@ -127,41 +127,47 @@ public class StormManagerServiceImpl implements StormManagerService.Iface {
     }
 
 
-    private class Endpoint{
-    //    public static final String ENDPOINT_TYPE_STORM_RECEIVER = "StormReceiver";
-    //    public static final String ENDPOINT_TYPE_CEP_PUBLISHER = "CepPublisher";
-    //
-    //    enum EndpointType{
-    //         STORM_RECEOVE
-    //    }
+    private class Endpoint {
+        //    public static final String ENDPOINT_TYPE_STORM_RECEIVER = "StormReceiver";
+        //    public static final String ENDPOINT_TYPE_CEP_PUBLISHER = "CepPublisher";
+        //
+        //    enum EndpointType{
+        //         STORM_RECEOVE
+        //    }
 
         private int port;
         private String hostName;
         private int connectionCount = 0;
-    //    private String type;
+        //    private String type;
 
         Endpoint(int port, String hostName) {
             this.port = port;
             this.hostName = hostName;
-    //        this.type = type;
+            //        this.type = type;
         }
 
-        public String getHostName(){
+        public String getHostName() {
             return hostName;
         }
 
-        public int getPort(){
+        public int getPort() {
             return port;
         }
 
-        public void setConnectionCount(int connections){
+        public void setConnectionCount(int connections) {
             connectionCount = connections;
         }
 
-        public int getConnectionCount(){return connectionCount;}
+        public int getConnectionCount() {
+            return connectionCount;
+        }
 
-    //    public String toString(){
-    //        return ("[" + type + "]" + hostName + ":" + port);
-    //    }
+        //    public String toString(){
+        //        return ("[" + type + "]" + hostName + ":" + port);
+        //    }
+    }
+
+    public boolean isStormManager() {
+        return isStormManager;
     }
 }

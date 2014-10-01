@@ -103,7 +103,7 @@ public class TCPEventPublisher {
         log.info("Stream definition added for stream: " + streamDefinition.getStreamId());
     }
 
-    public void close() {
+    public void shutdown() {
         try {
             disruptor.shutdown();
             outputStream.flush();
