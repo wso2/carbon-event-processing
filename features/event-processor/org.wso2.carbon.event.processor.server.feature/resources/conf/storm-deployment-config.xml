@@ -1,6 +1,6 @@
 <stromDeploymentConfig>
 
-    <stormEnabled>true</stormEnabled>
+    <stormEnabled>false</stormEnabled>
 
     <jar>org.wso2.carbon.event.processor.storm.jar</jar>
 
