@@ -126,6 +126,7 @@
                                     <includes>
                                         <include>conf/cep-ha-management.xml</include>
                                         <include>conf/storm-deployment-config.xml</include>
+                                        <include>conf/storm.yaml</include>
                                         <include>org.wso2.carbon.event.processor.storm.jar</include>
                                         <include>build.properties</include>
                                         <include>p2.inf</include>
