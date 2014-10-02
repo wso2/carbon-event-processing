@@ -99,7 +99,7 @@
                                     <version>${project.version}</version>
                                     <type>jar</type>
                                     <overWrite>true</overWrite>
-                                    <outputDirectory>${basedir}/resources/</outputDirectory>
+                                    <outputDirectory>${basedir}/src/main/resources/</outputDirectory>
                                     <destFileName>org.wso2.carbon.event.processor.storm.jar</destFileName>
                                 </artifactItem>
                             </artifactItems>
