@@ -1,0 +1,39 @@
+<stromDeploymentConfig>
+
+    <stormEnabled>true</stormEnabled>
+
+    <jar>org.wso2.carbon.event.processor.storm.jar</jar>
+
+    <management>
+        <managers>
+            <manager>
+                <hostName>0.0.0.0</hostName>
+                <port>8904</port>
+            </manager>
+            <manager>
+                <hostName>0.0.0.0</hostName>
+                <port>8905</port>
+            </manager>
+        </managers>
+        <reconnectionInterval>20</reconnectionInterval>
+    </management>
+
+    <transport>
+        <portRange>
+            <min>15000</min>
+            <max>15100</max>
+        </portRange>
+        <reconnectionInterval>20</reconnectionInterval>
+    </transport>
+
+    <node>
+        <receiver enable="true"/>
+        <publisher enable="false"/>
+        <manager enable="true">
+            <hostName>0.0.0.0</hostName>
+            <port>8904</port>
+        </manager>
+    </node>
+
+</stromDeploymentConfig>
+

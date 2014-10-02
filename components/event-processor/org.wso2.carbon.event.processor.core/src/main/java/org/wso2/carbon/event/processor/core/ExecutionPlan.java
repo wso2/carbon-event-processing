@@ -18,6 +18,7 @@
 package org.wso2.carbon.event.processor.core;
 
 import org.wso2.carbon.event.processor.core.internal.ha.HAManager;
+import org.wso2.carbon.event.processor.core.internal.storm.SiddhiStormOutputEventListener;
 import org.wso2.carbon.event.stream.manager.core.EventProducer;
 import org.wso2.carbon.event.stream.manager.core.SiddhiEventConsumer;
 import org.wso2.siddhi.core.SiddhiManager;
@@ -33,6 +34,7 @@ public class ExecutionPlan {
     private HAManager haManager;
     private List<EventProducer> eventProducers = new ArrayList<EventProducer>();
     private List<SiddhiEventConsumer> siddhiEventConsumers = new ArrayList<SiddhiEventConsumer>();
+    private SiddhiStormOutputEventListener stormOutputListener;
 
 
     public ExecutionPlan(String name, SiddhiManager siddhiManager,
@@ -80,6 +82,12 @@ public class ExecutionPlan {
         if (haManager != null) {
             haManager.shutdown();
         }
+        if(stormOutputListener!=null){
+            stormOutputListener.shutdown();
+        }
+        for(SiddhiEventConsumer siddhiEventConsumer:siddhiEventConsumers){
+            siddhiEventConsumer.shutdown();
+        }
         siddhiManager.shutdown();
     }
 
@@ -98,5 +106,9 @@ public class ExecutionPlan {
 
     public List<SiddhiEventConsumer> getSiddhiEventConsumers() {
         return siddhiEventConsumers;
+    }
+
+    public void addStormOutputListener(SiddhiStormOutputEventListener stormOutputListener) {
+        this.stormOutputListener = stormOutputListener;
     }
 }

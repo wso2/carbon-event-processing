@@ -27,4 +27,6 @@ public interface SiddhiEventConsumer {
     public void consumeEvents(org.wso2.siddhi.core.event.Event[] events);
 
     public void consumeEventData(Object[] data);
+
+    public void shutdown();
 }

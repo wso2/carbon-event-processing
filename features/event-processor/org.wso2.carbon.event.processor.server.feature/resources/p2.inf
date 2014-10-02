@@ -1,3 +1,5 @@
 instructions.configure = \
 org.eclipse.equinox.p2.touchpoint.natives.copy(source:${installFolder}/../features/org.wso2.carbon.event.processor.server_${feature.version}/conf/cep-ha-management.xml,target:${installFolder}/../../conf/cep-ha-management.xml,overwrite:true);\
-
+org.eclipse.equinox.p2.touchpoint.natives.copy(source:${installFolder}/../features/org.wso2.carbon.event.processor.server_${feature.version}/conf/storm-deployment-config.xml,target:${installFolder}/../../conf/cep/storm/storm-deployment-config.xml,overwrite:true);\
+org.eclipse.equinox.p2.touchpoint.natives.copy(source:${installFolder}/../features/org.wso2.carbon.event.processor.server_${feature.version}/conf/storm.yaml,target:${installFolder}/../../conf/cep/storm/storm.yaml,overwrite:true);\
+org.eclipse.equinox.p2.touchpoint.natives.copy(source:${installFolder}/../features/org.wso2.carbon.event.processor.server_${feature.version}/org.wso2.carbon.event.processor.storm.jar,target:${installFolder}/../../conf/cep/storm/org.wso2.carbon.event.processor.storm.jar,overwrite:true);

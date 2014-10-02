@@ -22,8 +22,10 @@ import org.wso2.carbon.base.api.ServerConfigurationService;
 import org.wso2.carbon.cassandra.dataaccess.ClusterInformation;
 import org.wso2.carbon.cassandra.dataaccess.DataAccessService;
 import org.wso2.carbon.databridge.core.definitionstore.AbstractStreamDefinitionStore;
+import org.wso2.carbon.event.processor.common.storm.config.StormDeploymentConfig;
 import org.wso2.carbon.event.processor.core.internal.CarbonEventProcessorService;
 import org.wso2.carbon.event.processor.core.internal.persistence.CassandraPersistenceStore;
+import org.wso2.carbon.event.processor.core.internal.storm.manager.StormManagerServer;
 import org.wso2.carbon.event.statistics.EventStatisticsService;
 import org.wso2.carbon.event.stream.manager.core.EventStreamService;
 import org.wso2.carbon.ndatasource.core.DataSourceService;
@@ -44,6 +46,8 @@ public class EventProcessorValueHolder {
     private static ServerConfigurationService serverConfiguration;
     private static ConfigurationContextService configurationContext;
     private static AbstractStreamDefinitionStore streamDefinitionStore;
+    private static StormManagerServer stormManagerServer;
+    private static StormDeploymentConfig stormDeploymentConfig;
 
     public static AbstractStreamDefinitionStore getStreamDefinitionStore() {
         return streamDefinitionStore;
@@ -140,5 +144,21 @@ public class EventProcessorValueHolder {
 
     public static void setConfigurationContext(ConfigurationContextService configurationContext) {
         EventProcessorValueHolder.configurationContext = configurationContext;
+    }
+
+    public static void registerStormManagerServer(StormManagerServer stormManagerServer) {
+        EventProcessorValueHolder.stormManagerServer = stormManagerServer;
+    }
+
+    public static StormManagerServer getStormManagerServer() {
+        return stormManagerServer;
+    }
+
+    public static void registerStormDeploymentConfig(StormDeploymentConfig stormDeploymentConfig) {
+        EventProcessorValueHolder.stormDeploymentConfig = stormDeploymentConfig;
+    }
+
+    public static StormDeploymentConfig getStormDeploymentConfig() {
+        return stormDeploymentConfig;
     }
 }

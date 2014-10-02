@@ -1,24 +1,25 @@
-<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <!--
-~ Copyright (c) 2005-2014, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
-~
-~ WSO2 Inc. licenses this file to you under the Apache License,
-~ Version 2.0 (the "License"); you may not use this file except
-~ in compliance with the License.
-~ You may obtain a copy of the License at
-~
-~    http://www.apache.org/licenses/LICENSE-2.0
-~
-~ Unless required by applicable law or agreed to in writing,
-~ software distributed under the License is distributed on an
-~ "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
-~ KIND, either express or implied.  See the License for the
-~ specific language governing permissions and limitations
-~ under the License.
--->
+  ~ Copyright (c) 2005-2014, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
+  ~
+  ~  WSO2 Inc. licenses this file to you under the Apache License,
+  ~  Version 2.0 (the "License"); you may not use this file except
+  ~  in compliance with the License.
+  ~  You may obtain a copy of the License at
+  ~
+  ~     http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~  Unless required by applicable law or agreed to in writing,
+  ~  software distributed under the License is distributed on an
+  ~  "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+  ~  KIND, either express or implied.  See the License for the
+  ~  specific language governing permissions and limitations
+  ~  under the License.
+  -->
+
 <project xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 
     <parent>
         <groupId>org.wso2.carbon</groupId>
@@ -28,52 +29,19 @@
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
-    <version>2.0.0-SNAPSHOT</version>
     <artifactId>org.wso2.carbon.event.processor.storm</artifactId>
+    <name>WSO2 Carbon - Storm Jar</name>
     <packaging>bundle</packaging>
-    <name>WSO2 Carbon - Event Processor Storm Integration</name>
-    <description>This provides the CEP event processor integration to Apache Storm (Incubating)
-    </description>
-    <url>http://wso2.org</url>
-
-    <repositories>
-        <repository>
-            <id>clojars.org</id>
-            <url>http://clojars.org/repo</url>
-        </repository>
-        <repository>
-            <id>storm.apache.org</id>
-            <url>https://repository.apache.org/content/repositories/orgapachestorm-1002</url>
-        </repository>
-    </repositories>
 
     <dependencies>
         <dependency>
-            <groupId>org.wso2.carbon</groupId>
-            <artifactId>org.wso2.carbon.logging</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.wso2.carbon</groupId>
-            <artifactId>org.wso2.carbon.core</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.wso2.carbon</groupId>
-            <artifactId>org.wso2.carbon.utils</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-            <version>${junit.version4}</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
             <groupId>org.wso2.siddhi</groupId>
-            <artifactId>siddhi-api</artifactId>
+            <artifactId>siddhi-core</artifactId>
             <version>${siddhi.version}</version>
         </dependency>
         <dependency>
             <groupId>org.wso2.siddhi</groupId>
-            <artifactId>siddhi-core</artifactId>
+            <artifactId>siddhi-api</artifactId>
             <version>${siddhi.version}</version>
         </dependency>
         <dependency>
@@ -83,99 +51,44 @@
         </dependency>
         <dependency>
             <groupId>org.wso2.carbon</groupId>
-            <artifactId>org.wso2.carbon.event.statistics</artifactId>
-           
+            <artifactId>org.wso2.carbon.event.processor.storm.common</artifactId>
+            <version>2.0.0-SNAPSHOT</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>slf4j.wso2</groupId>
+                    <artifactId>slf4j</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
-            <groupId>org.wso2.carbon</groupId>
-            <artifactId>org.wso2.carbon.event.processor.api</artifactId>
-            
+            <groupId>libthrift.wso2</groupId>
+            <artifactId>libthrift</artifactId>
+            <version>${libthrift.wso2.version}</version>
         </dependency>
         <dependency>
-            <groupId>org.wso2.carbon</groupId>
-            <artifactId>org.wso2.carbon.event.processor.core</artifactId>
-            
-        </dependency>
-        <dependency>
-            <groupId>org.hectorclient.wso2</groupId>
-            <artifactId>hector-core</artifactId>
-            <version>${hector.core.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.wso2.carbon</groupId>
-            <artifactId>org.wso2.carbon.cassandra.dataaccess</artifactId>
-            
-        </dependency>
-        <dependency>
-            <groupId>org.wso2.carbon</groupId>
-            <artifactId>org.wso2.carbon.ndatasource.core</artifactId>
-            
-        </dependency>
-        <dependency>
-            <groupId>org.wso2.carbon</groupId>
-            <artifactId>org.wso2.carbon.event.stream.manager.core</artifactId>
-            
-        </dependency>
-        <dependency>
-            <groupId>org.clojure</groupId>
-            <artifactId>clojure</artifactId>
-            <version>1.5.1</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.storm</groupId>
-            <artifactId>storm-core</artifactId>
-            <version>0.9.1-incubating-SNAPSHOT</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.storm</groupId>
-            <artifactId>libthrift7</artifactId>
-            <version>0.9.1-incubating-SNAPSHOT</version>
+            <groupId>com.lmax</groupId>
+            <artifactId>disruptor</artifactId>
+            <version>${disruptor.version}</version>
         </dependency>
     </dependencies>
 
     <build>
         <plugins>
-
-            <plugin>
-                <groupId>org.apache.felix</groupId>
-                <artifactId>maven-scr-plugin</artifactId>
-                <version>1.7.4</version>
-                <executions>
-                    <execution>
-                        <id>generate-scr-scrdescriptor</id>
-                        <goals>
-                            <goal>scr</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-surefire-plugin</artifactId>
-                <version>2.3</version>
-            </plugin>
             <plugin>
                 <groupId>org.apache.felix</groupId>
                 <artifactId>maven-bundle-plugin</artifactId>
-
+                <version>2.4.0</version>
                 <extensions>true</extensions>
                 <configuration>
                     <instructions>
                         <Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
                         <Bundle-Name>${project.artifactId}</Bundle-Name>
-                        <Export-Package>
-                            org.wso2.carbon.event.processor.storm.*
-                        </Export-Package>
-                        <Import-Package>
-                            !javax.xml.namespace,
-                            javax.xml.namespace; version=0.0.0,
-                            *;resolution:=optional,
-                        </Import-Package>
+                        <Export-Package>*</Export-Package>
+                        <Embed-Dependency>
+                            siddhi-core|siddhi-api|siddhi-query|org.wso2.carbon.event.processor.storm.common|libthrift|disruptor;scope=compile|runtime;inline=true
+                        </Embed-Dependency>
+                        <Embed-Transitive>true</Embed-Transitive>
                         <DynamicImport-Package>*</DynamicImport-Package>
-                        <Axis2Deployer>StormProcessorDeployer</Axis2Deployer>
-                        <Axis2RequiredServices>
-                            org.wso2.carbon.event.processor.storm.StormProcessorService
-                        </Axis2RequiredServices>
                     </instructions>
                 </configuration>
             </plugin>
@@ -183,8 +96,3 @@
     </build>
 
 </project>
-
-
-
-
-

@@ -19,56 +19,67 @@ package org.wso2.carbon.event.processor.core.internal.storm;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.thrift.protocol.TBinaryProtocol;
+import org.apache.thrift.protocol.TProtocol;
+import org.apache.thrift.transport.TSocket;
+import org.apache.thrift.transport.TTransport;
 import org.wso2.carbon.databridge.commons.StreamDefinition;
 import org.wso2.carbon.event.processor.core.ExecutionPlanConfiguration;
 import org.wso2.carbon.event.processor.core.StreamConfiguration;
-import org.wso2.carbon.event.processor.core.internal.ha.server.utils.HostAddressFinder;
 import org.wso2.carbon.event.processor.core.internal.listener.AbstractSiddhiInputEventDispatcher;
 import org.wso2.carbon.event.processor.core.internal.util.EventProcessorUtil;
-import org.wso2.carbon.event.processor.storm.common.transport.client.TCPEventPublisher;
-import org.wso2.carbon.event.processor.storm.common.helper.StormDeploymentConfiguration;
-import org.wso2.carbon.event.processor.storm.common.management.client.ManagerServiceClient;
-import org.wso2.carbon.event.processor.storm.common.management.client.ManagerServiceClientCallback;
+import org.wso2.carbon.event.processor.common.storm.config.StormDeploymentConfig;
+import org.wso2.carbon.event.processor.common.storm.manager.service.StormManagerService;
+import org.wso2.carbon.event.processor.common.transport.client.TCPEventPublisher;
+import org.wso2.carbon.event.processor.common.util.Utils;
 import org.wso2.siddhi.core.event.Event;
-import org.wso2.siddhi.core.util.collection.Pair;
 
 import java.io.IOException;
-import java.net.SocketException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 /**
  * Publishes events of a stream to the event receiver spout running on Storm. There will be SiddhiStormInputEventDispatcher
  * instance for each imported stream of execution plan
  */
-public class SiddhiStormInputEventDispatcher extends AbstractSiddhiInputEventDispatcher implements ManagerServiceClientCallback {
+public class SiddhiStormInputEventDispatcher extends AbstractSiddhiInputEventDispatcher {
     private static final Log log = LogFactory.getLog(SiddhiStormInputEventDispatcher.class);
+    private final StormDeploymentConfig stormDeploymentConfig;
+    private final ExecutionPlanConfiguration executionPlanConfiguration;
 
-    private TCPEventPublisher TCPEventPublisher = null;
-    private String cepManagerHost = StormDeploymentConfiguration.getCepManagerHost();
-    private int cepManagerPort = StormDeploymentConfiguration.getCepManagerPort();
+    private TCPEventPublisher tcpEventPublisher = null;
     private org.wso2.siddhi.query.api.definition.StreamDefinition siddhiStreamDefinition;
+    private String logPrefix;
+    private String thisHostIp;
+    private ExecutorService executorService = Executors.newSingleThreadExecutor();
 
     public SiddhiStormInputEventDispatcher(StreamDefinition streamDefinition,
                                            String siddhiStreamId, String siddhiStreamName,
                                            ExecutionPlanConfiguration executionPlanConfiguration,
-                                           int tenantId) {
+                                           int tenantId, StormDeploymentConfig stormDeploymentConfig) {
         super(streamDefinition.getStreamId(), siddhiStreamId, executionPlanConfiguration, tenantId);
-        init(streamDefinition, siddhiStreamName);
+        this.executionPlanConfiguration = executionPlanConfiguration;
+        this.stormDeploymentConfig = stormDeploymentConfig;
+        init(streamDefinition, siddhiStreamName, executionPlanConfiguration);
     }
 
-    private void init(StreamDefinition streamDefinition, String siddhiStreamName) {
-        String thisHostIp = null;
+    private void init(StreamDefinition streamDefinition, String siddhiStreamName, ExecutionPlanConfiguration executionPlanConfiguration) {
+        logPrefix = "[CEP Receiver] for execution plan '" + executionPlanConfiguration.getName() + "'" + "(TenantID=" + tenantId + ") ";
+
         try {
-            thisHostIp = HostAddressFinder.findAddress("localhost");
-        } catch (SocketException e) {
-            log.error("Cannot find IP address of the host");
+            thisHostIp = Utils.findAddress("localhost");
+
+            // Creating a Siddhi stream handled by this input event dispatcher
+            // by using a data bridge stream which has name as the Siddhi stream name, and all fields as payload
+            // fields just like in Siddhi streams.
+            this.siddhiStreamDefinition = EventProcessorUtil.convertToSiddhiStreamDefinition(streamDefinition, new StreamConfiguration(siddhiStreamName, streamDefinition.getVersion()));
+            Thread thread = new Thread(new Registrar());
+            thread.start();
+        } catch (Exception e) {
+            log.error(logPrefix + "Failed to start event listener", e);
         }
-        // Creating a Siddhi stream handled by this input event dispatcher
-        // by using a data bridge stream which has name as the Siddhi stream name, and all fields as payload
-        // fields just like in Siddhi streams.
-        this.siddhiStreamDefinition = EventProcessorUtil.convertToSiddhiStreamDefinition(streamDefinition, new StreamConfiguration(siddhiStreamName, streamDefinition.getVersion()));
-        ManagerServiceClient client = new ManagerServiceClient(cepManagerHost, cepManagerPort, this);
-        client.getStormReceiver(super.getExecutionPlanName(), super.tenantId, StormDeploymentConfiguration.getReconnectInterval(), thisHostIp);
     }
+
 
     @Override
     public void sendEvent(Event event) throws InterruptedException {
@@ -78,29 +89,74 @@ public class SiddhiStormInputEventDispatcher extends AbstractSiddhiInputEventDis
     @Override
     public void sendEvent(Object[] eventData) throws InterruptedException {
         try {
-            if (TCPEventPublisher != null) {
-                TCPEventPublisher.sendEvent(this.siddhiStreamDefinition.getStreamId(), eventData);
+            if (tcpEventPublisher != null) {
+                tcpEventPublisher.sendEvent(this.siddhiStreamDefinition.getStreamId(), eventData);
             } else {
-                log.warn("Dropping the event since the data publisher is not yet initialized for " + super.getExecutionPlanName() + ":" + super.tenantId);
+                log.warn(logPrefix + "Dropping the event since the data publisher is not yet initialized");
             }
         } catch (IOException e) {
-            log.error("Error while publishing data", e);
+            log.error(logPrefix + "Error while publishing data", e);
+        }
+    }
+
+    class Registrar implements Runnable {
+
+        /**
+         * When an object implementing interface <code>Runnable</code> is used
+         * to create a thread, starting the thread causes the object's
+         * <code>run</code> method to be called in that separately executing
+         * thread.
+         * <p/>
+         * The general contract of the method <code>run</code> is that it may
+         * take any action whatsoever.
+         *
+         * @see Thread#run()
+         */
+        @Override
+        public void run() {
+            log.info(logPrefix + "Getting Storm receiver for " + thisHostIp);
+            while (!configureStormReceiverFromStormMangerService()) {
+                log.info(logPrefix + "Retry getting Storm receiver in 30 sec");
+                try {
+                    Thread.sleep(30000);
+                } catch (InterruptedException e1) {
+                    //ignore
+                }
+            }
+
+        }
+
+        private boolean configureStormReceiverFromStormMangerService() {
+
+            TTransport transport = null;
+            try {
+                transport = new TSocket(stormDeploymentConfig.getManagers().get(0).getHostName(), stormDeploymentConfig.getManagers().get(0).getPort());
+                TProtocol protocol = new TBinaryProtocol(transport);
+                transport.open();
+
+                StormManagerService.Client client = new StormManagerService.Client(protocol);
+                String stormReceiverHostPort = client.getStormReceiver(tenantId, executionPlanConfiguration.getName(), thisHostIp);
+                log.info(logPrefix + "Successfully got Storm receiver with " + stormReceiverHostPort);
+
+                tcpEventPublisher = new TCPEventPublisher(stormReceiverHostPort);
+                tcpEventPublisher.addStreamDefinition(siddhiStreamDefinition);
+                log.info(logPrefix + "connected to Storm event receiver at " + stormReceiverHostPort
+                        + " for the Stream '" + siddhiStreamDefinition.getStreamId());
+                return true;
+            } catch (Exception e) {
+                log.error(logPrefix + "Error in getting Storm receiver ", e);
+                return false;
+            } finally {
+                if (transport != null) {
+                    transport.close();
+                }
+            }
         }
     }
 
     @Override
-    public void onResponseReceived(Pair<String, Integer> endpoint) {
-        synchronized (this) {
-            try {
-                TCPEventPublisher = new TCPEventPublisher(endpoint.getOne() + ":" + endpoint.getTwo());
-                TCPEventPublisher.addStreamDefinition(siddhiStreamDefinition);
-            } catch (Exception e) {
-                log.error("Error while creating event client: " + e.getMessage(), e);
-            }
-        }
-
-        log.info("[CEP Receiver]Storm input dispatcher connecting to Storm event receiver at " + endpoint.getOne() + ":" + endpoint.getTwo()
-                + " for the Stream '" + siddhiStreamDefinition.getStreamId() + "' of ExecutionPlan '" + super.getExecutionPlanName()
-                + "' (TenantID=" + super.tenantId + ")");
+    public void shutdown() {
+        executorService.shutdown();
+        tcpEventPublisher.shutdown();
     }
 }

@@ -58,7 +58,7 @@ public class SiddhiExtensionLoader {
                 }
             }
         } catch (IOException e) {
-            String errorMessage = "Can not close the input stream for " + path;
+            String errorMessage = "Can not shutdown the input stream for " + path;
             log.error(errorMessage, e);
         }
 
