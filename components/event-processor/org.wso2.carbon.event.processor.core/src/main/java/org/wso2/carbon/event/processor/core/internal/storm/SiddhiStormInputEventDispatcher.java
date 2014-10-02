@@ -28,10 +28,10 @@ import org.wso2.carbon.event.processor.core.ExecutionPlanConfiguration;
 import org.wso2.carbon.event.processor.core.StreamConfiguration;
 import org.wso2.carbon.event.processor.core.internal.listener.AbstractSiddhiInputEventDispatcher;
 import org.wso2.carbon.event.processor.core.internal.util.EventProcessorUtil;
-import org.wso2.carbon.event.processor.storm.common.config.StormDeploymentConfig;
-import org.wso2.carbon.event.processor.storm.common.manager.service.StormManagerService;
-import org.wso2.carbon.event.processor.storm.common.transport.client.TCPEventPublisher;
-import org.wso2.carbon.event.processor.storm.common.util.Utils;
+import org.wso2.carbon.event.processor.common.storm.config.StormDeploymentConfig;
+import org.wso2.carbon.event.processor.common.storm.manager.service.StormManagerService;
+import org.wso2.carbon.event.processor.common.transport.client.TCPEventPublisher;
+import org.wso2.carbon.event.processor.common.util.Utils;
 import org.wso2.siddhi.core.event.Event;
 
 import java.io.IOException;

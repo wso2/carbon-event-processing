@@ -28,11 +28,12 @@ import org.apache.thrift7.TException;
 import org.json.simple.JSONValue;
 import org.wso2.carbon.event.processor.core.exception.ExecutionPlanConfigurationException;
 import org.wso2.carbon.event.processor.core.exception.StormDeploymentException;
+import org.wso2.carbon.event.processor.core.internal.ds.EventProcessorValueHolder;
 import org.wso2.carbon.event.processor.core.internal.storm.util.StormTopologyConstructor;
-import org.wso2.carbon.event.processor.storm.common.config.StormDeploymentConfig;
-import org.wso2.carbon.event.processor.storm.common.util.StormConfigReader;
+import org.wso2.carbon.utils.CarbonUtils;
 
 import javax.xml.stream.XMLStreamException;
+import java.io.File;
 import java.util.List;
 import java.util.Map;
 
@@ -42,17 +43,17 @@ import java.util.Map;
 public class TopologyManager {
 
     private static Map stormConfig;
-    private static StormDeploymentConfig stormDeploymentConfig;
     private static Nimbus.Client client;
-    private static String jarLocation = "/Users/suho/wso2/src/dev/carbon-event-processing/components/event-processor/org.wso2.carbon.event.processor.storm.topology/target/org.wso2.carbon.event.processor.storm.topology-1.0.0-SNAPSHOT.jar";
+    private static String jarLocation;
     private static final Log log = LogFactory.getLog(TopologyManager.class);
 
 
     static {
-        System.setProperty("storm.yaml", "/Users/suho/wso2/packs/cep/storm/apache-storm-0.9.2-incubating/conf/storm.yaml");
+        String stormConfigDirPath = CarbonUtils.getCarbonConfigDirPath() + File.separator + "cep" + File.separator + "storm";
+        System.setProperty("storm.yaml", stormConfigDirPath + File.separator + "storm.yaml");
         stormConfig = Utils.readStormConfig();
         client = NimbusClient.getConfiguredClient(stormConfig).getClient();
-        stormDeploymentConfig = StormConfigReader.loadConfigurations("/Users/suho/wso2/src/dev/product-cep/modules/distribution/target/receiver/wso2cep-4.0.0-SNAPSHOT/");
+        jarLocation = stormConfigDirPath + File.separator + EventProcessorValueHolder.getStormDeploymentConfig().getJar();
     }
 
     public static List<TopologySummary> getTopologies() throws StormDeploymentException {
@@ -68,7 +69,7 @@ public class TopologyManager {
 
         TopologyBuilder builder = null;
         try {
-            builder = StormTopologyConstructor.constructTopologyBuilder(stormQueryPlan, executionPlanName, tenantId, stormDeploymentConfig);
+            builder = StormTopologyConstructor.constructTopologyBuilder(stormQueryPlan, executionPlanName, tenantId, EventProcessorValueHolder.getStormDeploymentConfig());
         } catch (XMLStreamException e) {
             throw new ExecutionPlanConfigurationException("Invalid Config for Execution Plan " + executionPlanName + " for tenant " + tenantId, e);
         }

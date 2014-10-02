@@ -30,7 +30,7 @@ import org.wso2.carbon.event.processor.core.internal.ha.CEPMembership;
 import org.wso2.carbon.event.processor.core.internal.ha.server.utils.HAManagementServerBuilder;
 import org.wso2.carbon.event.processor.core.internal.ha.server.utils.HAManagementServerConstants;
 import org.wso2.carbon.event.processor.core.internal.ha.thrift.service.HAManagementService;
-import org.wso2.carbon.event.processor.storm.common.util.Utils;
+import org.wso2.carbon.event.processor.common.util.Utils;
 
 import java.net.InetSocketAddress;
 

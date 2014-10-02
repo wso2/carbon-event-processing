@@ -25,12 +25,12 @@ import org.apache.thrift.transport.TTransport;
 import org.wso2.carbon.databridge.commons.thrift.utils.HostAddressFinder;
 import org.wso2.carbon.event.processor.core.ExecutionPlanConfiguration;
 import org.wso2.carbon.event.processor.core.internal.listener.SiddhiOutputStreamListener;
-import org.wso2.carbon.event.processor.storm.common.config.StormDeploymentConfig;
-import org.wso2.carbon.event.processor.storm.common.manager.service.StormManagerService;
-import org.wso2.carbon.event.processor.storm.common.transport.server.StreamCallback;
-import org.wso2.carbon.event.processor.storm.common.transport.server.TCPEventServer;
-import org.wso2.carbon.event.processor.storm.common.transport.server.TCPEventServerConfig;
-import org.wso2.carbon.event.processor.storm.common.util.Utils;
+import org.wso2.carbon.event.processor.common.storm.config.StormDeploymentConfig;
+import org.wso2.carbon.event.processor.common.storm.manager.service.StormManagerService;
+import org.wso2.carbon.event.processor.common.transport.server.StreamCallback;
+import org.wso2.carbon.event.processor.common.transport.server.TCPEventServer;
+import org.wso2.carbon.event.processor.common.transport.server.TCPEventServerConfig;
+import org.wso2.carbon.event.processor.common.util.Utils;
 import org.wso2.siddhi.query.api.definition.StreamDefinition;
 
 import java.util.Arrays;

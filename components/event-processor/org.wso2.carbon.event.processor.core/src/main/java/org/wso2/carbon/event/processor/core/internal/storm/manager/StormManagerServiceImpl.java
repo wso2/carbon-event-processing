@@ -1,9 +1,9 @@
 package org.wso2.carbon.event.processor.core.internal.storm.manager;
 
 import org.apache.thrift.TException;
-import org.wso2.carbon.event.processor.storm.common.manager.service.StormManagerService;
-import org.wso2.carbon.event.processor.storm.common.manager.service.exception.EndpointNotFoundException;
-import org.wso2.carbon.event.processor.storm.common.manager.service.exception.NotStormManagerException;
+import org.wso2.carbon.event.processor.common.storm.manager.service.StormManagerService;
+import org.wso2.carbon.event.processor.common.storm.manager.service.exception.EndpointNotFoundException;
+import org.wso2.carbon.event.processor.common.storm.manager.service.exception.NotStormManagerException;
 
 import java.util.HashMap;
 import java.util.HashSet;

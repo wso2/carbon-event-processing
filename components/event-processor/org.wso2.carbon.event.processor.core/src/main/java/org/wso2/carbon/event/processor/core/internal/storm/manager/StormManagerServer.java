@@ -8,7 +8,7 @@ import org.apache.thrift.server.TThreadPoolServer;
 import org.apache.thrift.transport.TServerSocket;
 import org.apache.thrift.transport.TTransportException;
 import org.wso2.carbon.event.processor.core.internal.ds.EventProcessorValueHolder;
-import org.wso2.carbon.event.processor.storm.common.manager.service.StormManagerService;
+import org.wso2.carbon.event.processor.common.storm.manager.service.StormManagerService;
 
 import java.net.InetSocketAddress;
 

@@ -28,7 +28,7 @@
 
     <node>
         <receiver enable="true"/>
-        <publisher enable="true"/>
+        <publisher enable="false"/>
         <manager enable="true">
             <hostName>0.0.0.0</hostName>
             <port>8904</port>

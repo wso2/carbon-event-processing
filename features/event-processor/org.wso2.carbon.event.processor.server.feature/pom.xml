@@ -62,38 +62,52 @@
             <groupId>org.wso2.siddhi</groupId>
             <artifactId>siddhi-query</artifactId>
         </dependency>
-        <!--<dependency>-->
-            <!--<groupId>com.lmax</groupId>-->
-            <!--<artifactId>disruptor</artifactId>-->
-        <!--</dependency>-->
         <dependency>
             <groupId>org.apache.storm.wso2</groupId>
             <artifactId>storm</artifactId>
         </dependency>
-        <!--<dependency>-->
-            <!--<groupId>org.apache.curator</groupId>-->
-            <!--<artifactId>curator-framework</artifactId>-->
-            <!--<version>${curator.version}</version>-->
-            <!--<exclusions>-->
-                <!--<exclusion>-->
-                    <!--<groupId>log4j</groupId>-->
-                    <!--<artifactId>log4j</artifactId>-->
-                <!--</exclusion>-->
-                <!--<exclusion>-->
-                    <!--<groupId>org.slf4j</groupId>-->
-                    <!--<artifactId>slf4j-log4j12</artifactId>-->
-                <!--</exclusion>-->
-            <!--</exclusions>-->
-        <!--</dependency>-->
         <dependency>
             <groupId>org.wso2.carbon</groupId>
-            <artifactId>org.wso2.carbon.event.processor.storm.common</artifactId>
-            <version>2.0.0-SNAPSHOT</version>
+            <artifactId>org.wso2.carbon.event.processor.common</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.wso2.carbon</groupId>
+            <artifactId>org.wso2.carbon.event.processor.storm</artifactId>
+            <version>${project.version}</version>
         </dependency>
     </dependencies>
 
     <build>
         <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <version>2.4</version>
+                <executions>
+                    <execution>
+                        <id>copy</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>copy</goal>
+                        </goals>
+                        <configuration>
+                            <artifactItems>
+                                <artifactItem>
+                                    <groupId>org.wso2.carbon</groupId>
+                                    <artifactId>org.wso2.carbon.event.processor.storm</artifactId>
+                                    <version>${project.version}</version>
+                                    <type>jar</type>
+                                    <overWrite>true</overWrite>
+                                    <outputDirectory>${basedir}/resources/</outputDirectory>
+                                    <destFileName>org.wso2.carbon.event.processor.storm.jar</destFileName>
+                                </artifactItem>
+                            </artifactItems>
+                            <!-- other configurations here -->
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
             <plugin>
                 <artifactId>maven-resources-plugin</artifactId>
                 <version>2.6</version>
@@ -112,6 +126,7 @@
                                     <includes>
                                         <include>conf/cep-ha-management.xml</include>
                                         <include>conf/storm-deployment-config.xml</include>
+                                        <include>org.wso2.carbon.event.processor.storm.jar</include>
                                         <include>build.properties</include>
                                         <include>p2.inf</include>
                                     </includes>
@@ -164,14 +179,8 @@
                                 <bundleDef>
                                     org.apache.storm.wso2:storm:${storm.version}
                                 </bundleDef>
-                                <!--<bundleDef>-->
-                                    <!--org.apache.curator:curator-framework:${curator.version}-->
-                                <!--</bundleDef>-->
-                                <!--<bundleDef>-->
-                                    <!--com.googlecode.disruptor.wso2:disruptor:2.0.0-SNAPSHOT-->
-                                <!--</bundleDef>-->
                                 <bundleDef>
-                                    org.wso2.carbon:org.wso2.carbon.event.processor.storm.common:2.0.0-SNAPSHOT
+                                    org.wso2.carbon:org.wso2.carbon.event.processor.common:2.0.0-SNAPSHOT
                                 </bundleDef>
                             </bundles>
                             <importFeatures>
@@ -183,7 +192,9 @@
             </plugin>
         </plugins>
     </build>
+
     <!--<properties>-->
         <!--<siddhi.version>3.0.0-SNAPSHOT</siddhi.version>-->
     <!--</properties>-->
+
 </project>

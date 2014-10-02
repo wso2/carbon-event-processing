@@ -27,6 +27,7 @@ import org.wso2.carbon.cassandra.dataaccess.ClusterInformation;
 import org.wso2.carbon.context.PrivilegedCarbonContext;
 import org.wso2.carbon.databridge.commons.Attribute;
 import org.wso2.carbon.databridge.commons.StreamDefinition;
+import org.wso2.carbon.event.processor.common.storm.config.StormDeploymentConfig;
 import org.wso2.carbon.event.processor.core.*;
 import org.wso2.carbon.event.processor.core.exception.ExecutionPlanConfigurationException;
 import org.wso2.carbon.event.processor.core.exception.ExecutionPlanDependencyValidationException;
@@ -50,8 +51,6 @@ import org.wso2.carbon.event.processor.core.internal.util.EventProcessorUtil;
 import org.wso2.carbon.event.processor.core.internal.util.helper.CassandraConnectionValidator;
 import org.wso2.carbon.event.processor.core.internal.util.helper.EventProcessorConfigurationHelper;
 import org.wso2.carbon.event.processor.core.internal.util.helper.SiddhiExtensionLoader;
-import org.wso2.carbon.event.processor.storm.common.config.StormDeploymentConfig;
-import org.wso2.carbon.event.processor.storm.common.util.StormConfigReader;
 import org.wso2.carbon.event.stream.manager.core.EventProducer;
 import org.wso2.carbon.event.stream.manager.core.SiddhiEventConsumer;
 import org.wso2.carbon.event.stream.manager.core.exception.EventStreamConfigurationException;
@@ -59,7 +58,6 @@ import org.wso2.carbon.ndatasource.common.DataSourceException;
 import org.wso2.carbon.ndatasource.core.CarbonDataSource;
 import org.wso2.carbon.ndatasource.core.DataSourceManager;
 import org.wso2.carbon.user.core.UserStoreException;
-import org.wso2.carbon.utils.CarbonUtils;
 import org.wso2.siddhi.core.SiddhiManager;
 import org.wso2.siddhi.core.config.SiddhiConfiguration;
 import org.wso2.siddhi.core.stream.input.InputHandler;
@@ -73,7 +71,6 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public class CarbonEventProcessorService implements EventProcessorService {
     private static final Log log = LogFactory.getLog(CarbonEventProcessorService.class);
-    private final StormDeploymentConfig stormDeploymentConfig;
     // deployed query plans
     private Map<Integer, Map<String, ExecutionPlan>> tenantSpecificExecutionPlans;
     // not distinguishing between deployed vs failed here.
@@ -83,7 +80,6 @@ public class CarbonEventProcessorService implements EventProcessorService {
     public CarbonEventProcessorService() {
         tenantSpecificExecutionPlans = new ConcurrentHashMap<Integer, Map<String, ExecutionPlan>>();
         tenantSpecificExecutionPlanFiles = new ConcurrentHashMap<Integer, List<ExecutionPlanConfigurationFile>>();
-        stormDeploymentConfig = StormConfigReader.loadConfigurations(CarbonUtils.getCarbonHome());
     }
 
     private static void populateAttributes(
@@ -321,6 +317,7 @@ public class CarbonEventProcessorService implements EventProcessorService {
             distributed = true;
         }
 
+        StormDeploymentConfig stormDeploymentConfig = EventProcessorValueHolder.getStormDeploymentConfig();
         if (distributed) {
             if (stormDeploymentConfig != null && stormDeploymentConfig.isManagerNode() && EventProcessorValueHolder.getStormManagerServer().isStormManager()) {
                 try {
@@ -605,6 +602,7 @@ public class CarbonEventProcessorService implements EventProcessorService {
                 distributed = true;
             }
 
+            StormDeploymentConfig stormDeploymentConfig = EventProcessorValueHolder.getStormDeploymentConfig();
             if (distributed && stormDeploymentConfig != null && stormDeploymentConfig.isManagerNode() && EventProcessorValueHolder.getStormManagerServer().isStormManager()) {
                 try {
                     TopologyManager.killTopology(executionPlanConfiguration.getName(), tenantId);
