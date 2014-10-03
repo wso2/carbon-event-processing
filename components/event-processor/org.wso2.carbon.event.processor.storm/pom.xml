@@ -68,7 +68,7 @@
         <dependency>
             <groupId>com.lmax</groupId>
             <artifactId>disruptor</artifactId>
-            <version>${disruptor.version}</version>
+            <version>${disruptor.jar.version}</version>
         </dependency>
     </dependencies>
 
