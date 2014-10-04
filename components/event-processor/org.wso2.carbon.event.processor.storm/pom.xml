@@ -51,7 +51,7 @@
         </dependency>
         <dependency>
             <groupId>org.wso2.carbon</groupId>
-            <artifactId>org.wso2.carbon.event.processor.storm.common</artifactId>
+            <artifactId>org.wso2.carbon.event.processor.common</artifactId>
             <version>2.0.0-SNAPSHOT</version>
             <exclusions>
                 <exclusion>
@@ -85,7 +85,7 @@
                         <Bundle-Name>${project.artifactId}</Bundle-Name>
                         <Export-Package>*</Export-Package>
                         <Embed-Dependency>
-                            siddhi-core|siddhi-api|siddhi-query|org.wso2.carbon.event.processor.storm.common|libthrift|disruptor;scope=compile|runtime;inline=true
+                            siddhi-core|siddhi-api|siddhi-query|org.wso2.carbon.event.processor.common|libthrift|disruptor;scope=compile|runtime;inline=true
                         </Embed-Dependency>
                         <Embed-Transitive>true</Embed-Transitive>
                         <DynamicImport-Package>*</DynamicImport-Package>
