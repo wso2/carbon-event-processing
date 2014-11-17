@@ -42,15 +42,10 @@
         <dependency>
             <groupId>org.wso2.carbon</groupId>
             <artifactId>org.wso2.carbon.event.output.adaptor.core</artifactId>
-            
         </dependency>
         <dependency>
-            <groupId>org.wso2.carbon</groupId>
-            <artifactId>org.wso2.carbon.logging</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.wso2.carbon</groupId>
-            <artifactId>org.wso2.carbon.core</artifactId>
+            <groupId>org.apache.axis2.transport</groupId>
+            <artifactId>axis2-transport-mail</artifactId>
         </dependency>
     </dependencies>
     <build>
