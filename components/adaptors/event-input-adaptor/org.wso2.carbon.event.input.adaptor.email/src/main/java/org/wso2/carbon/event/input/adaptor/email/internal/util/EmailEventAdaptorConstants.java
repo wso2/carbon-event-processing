@@ -37,6 +37,7 @@ public final class EmailEventAdaptorConstants {
     public static final String ADAPTOR_CONF_RECEIVING_EMAIL_PASSWORD = "mail.protocol.password";
     public static final String ADAPTOR_CONF_RECEIVING_EMAIL_SOCKET_FACTORY_CLASS = "mail.protocol.socketFactory.class";
     public static final String ADAPTOR_CONF_RECEIVING_EMAIL_SOCKET_FACTORY_FALLBACK = "mail.protocol.socketFactory.fallback";
+    public static final String ADAPTOR_CONF_RECEIVING_EMAIL_TRANSPORT_NAME = "mailto";
     public static final String ADAPTOR_MESSAGE_RECEIVING_EMAIL_SUBJECT = "email.in.subject";
     public static final String ADAPTOR_MESSAGE_RECEIVING_EMAIL_SUBJECT_HINT = "email.in.subject.hint";
 
