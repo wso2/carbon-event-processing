@@ -23,7 +23,6 @@ import org.apache.axis2.description.AxisService;
 import org.apache.axis2.description.InOnlyAxisOperation;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.engine.AxisEvent;
-import org.apache.axis2.transport.mail.MailConstants;
 import org.wso2.carbon.CarbonConstants;
 import org.wso2.carbon.event.input.adaptor.core.InputEventAdaptorListener;
 import org.wso2.carbon.event.input.adaptor.core.config.InputEventAdaptorConfiguration;
@@ -104,7 +103,7 @@ public class Axis2Util {
         }
         List<String> transports = axisService.getExposedTransports();
         transports.clear();
-        transports.add(MailConstants.TRANSPORT_NAME);
+        transports.add(EmailEventAdaptorConstants.ADAPTOR_CONF_RECEIVING_EMAIL_TRANSPORT_NAME);
         axisService.setExposedTransports(transports);
 
         SubscriptionEmailMessageReceiver messageReceiver =
@@ -122,7 +121,6 @@ public class Axis2Util {
      * removes the operation from the Axis service.
      *
      * @param inputEventAdaptorMessageConfiguration
-     *
      * @param inputEventAdaptorConfiguration
      * @param axisConfiguration
      * @param subscriptionId
