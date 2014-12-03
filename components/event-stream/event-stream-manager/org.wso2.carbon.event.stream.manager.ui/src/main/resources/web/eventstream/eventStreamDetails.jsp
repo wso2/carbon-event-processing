@@ -51,47 +51,50 @@
 		src="../eventstream/js/vkbeautify.0.99.00.beta.js"></script>
 
 	<%
-    	String eventStreamWithVersion = request.getParameter("eventStreamWithVersion");
-    	    		EventStreamAdminServiceStub eventStreamAdminServiceStub = EventStreamUIUtils
-    				.getEventStreamAdminService(config, session, request);
-    		EventStreamDefinitionDto streamDefinitionDto = eventStreamAdminServiceStub
-    				.getStreamDefinitionDto(eventStreamWithVersion);
-    %>
+		String eventStreamWithVersion = request.getParameter("eventStreamWithVersion");
+	    	    		EventStreamAdminServiceStub eventStreamAdminServiceStub = EventStreamUIUtils
+	    				.getEventStreamAdminService(config, session, request);
+	    		EventStreamDefinitionDto streamDefinitionDto = eventStreamAdminServiceStub
+	    				.getStreamDefinitionDto(eventStreamWithVersion);
+	%>
 
 	<script type="text/javascript">
-        jQuery(document).ready(function () {
-            formatSampleEvent();
-        });
+		jQuery(document).ready(function() {
+			formatSampleEvent();
+		});
 
-        function formatSampleEvent() {
-        	
-            var selectedIndex = document.getElementById("sampleEventTypeFilter").selectedIndex;
-            var eventType = document.getElementById("sampleEventTypeFilter").options[selectedIndex].text;
+		function formatSampleEvent() {
 
-            var sampleEvent = document.getElementById("sampleEventText").value.trim();
+			var selectedIndex = document
+					.getElementById("sampleEventTypeFilter").selectedIndex;
+			var eventType = document.getElementById("sampleEventTypeFilter").options[selectedIndex].text;
 
-            if (eventType == "xml") {
-                jQuery('#sampleEventText').val(vkbeautify.xml(sampleEvent.trim()));
-            }
-            else if (eventType == "json") {
-                jQuery('#sampleEventText').val(vkbeautify.json(sampleEvent.trim()));
-            }
-        }
-    </script>
-	<script type="text/javascript">  
-    jQuery(document).ready(function () {
-    	changeView('graphics');
-    });    	
-	function changeView(view){ 
-		var plain = "source";
-		if(plain.localeCompare(view) == 0){
-			document.getElementById("designInnerDiv").style.display="none";
-			document.getElementById("sourceInnerDiv").style.display="inline";
-		}else{
-			document.getElementById("sourceInnerDiv").style.display="none";
-			document.getElementById("designInnerDiv").style.display="inline";
-		}          
-	}  
+			var sampleEvent = document.getElementById("sampleEventText").value
+					.trim();
+
+			if (eventType == "xml") {
+				jQuery('#sampleEventText').val(
+						vkbeautify.xml(sampleEvent.trim()));
+			} else if (eventType == "json") {
+				jQuery('#sampleEventText').val(
+						vkbeautify.json(sampleEvent.trim()));
+			}
+		}
+	</script>
+	<script type="text/javascript">
+		jQuery(document).ready(function() {
+			changeView('graphics');
+		});
+		function changeView(view) {
+			var plain = "source";
+			if (plain.localeCompare(view) == 0) {
+				document.getElementById("designInnerDiv").style.display = "none";
+				document.getElementById("sourceInnerDiv").style.display = "inline";
+			} else {
+				document.getElementById("sourceInnerDiv").style.display = "none";
+				document.getElementById("designInnerDiv").style.display = "inline";
+			}
+		}
 	</script>
 
 	<div id="middle">
@@ -119,11 +122,14 @@
 
 									<tbody>
 										<%
-	
-	                                    if (eventStreamWithVersion != null) {
-	                                        EventStreamAdminServiceStub stub = EventStreamUIUtils.getEventStreamAdminService(config, session, request);
-										String[] eventAdaptorPropertiesDto = stub.getStreamDetailsForStreamId(eventStreamWithVersion);
-	                                %>
+											if (eventStreamWithVersion != null) {
+													EventStreamAdminServiceStub stub =
+													                                   EventStreamUIUtils.getEventStreamAdminService(config,
+													                                                                                 session,
+													                                                                                 request);
+													String[] eventAdaptorPropertiesDto =
+													                                     stub.getStreamDetailsForStreamId(eventStreamWithVersion);
+										%>
 										<tr>
 											<td colspan="2">
 												<div id="designInnerDiv">
@@ -181,7 +187,9 @@
 																<td style="padding-top: 10px"><input type="text"
 																	name="eventStreamDescription"
 																	id="eventStreamDescription" class="initE"
-																	value="<%=streamDefinitionDto.getDescription() != null ? streamDefinitionDto.getDescription() : ""%>"
+																	value="<%=streamDefinitionDto.getDescription() != null
+					                                                      ? streamDefinitionDto.getDescription()
+					                                                      : ""%>"
 																	style="width: 75%" readonly="true" />
 																	<div class="sectionHelp">
 																		<fmt:message key="event.stream.description.help" />
@@ -197,7 +205,9 @@
 																<td style="padding-top: 10px"><input type="text"
 																	name="eventStreamNickName" id="eventStreamNickName"
 																	class="initE"
-																	value="<%=streamDefinitionDto.getNickName() != null ? streamDefinitionDto.getNickName() : ""%>"
+																	value="<%=streamDefinitionDto.getNickName() != null
+					                                                   ? streamDefinitionDto.getNickName()
+					                                                   : ""%>"
 																	style="width: 75%" readonly="true" />
 
 																	<div class="sectionHelp">
@@ -215,7 +225,10 @@
 																<td colspan="2">
 																	<h6>
 																		<fmt:message key="attribute.data.type.meta" />
-																	</h6> <%if (streamDefinitionDto.getMetaData() != null && streamDefinitionDto.getMetaData().length > 0){%>
+																	</h6> <%
+ 	if (streamDefinitionDto.getMetaData() != null &&
+ 			    streamDefinitionDto.getMetaData().length > 0) {
+ %>
 																	<table class="styledLeft noBorders spacer-bot"
 																		id="outputMetaDataTable">
 																		<thead>
@@ -225,16 +238,21 @@
 																					key="attribute.type" /></th>
 
 																		</thead>
-																		<%for (EventStreamAttributeDto metaData : streamDefinitionDto.getMetaData()) {%>
+																		<%
+																			for (EventStreamAttributeDto metaData : streamDefinitionDto.getMetaData()) {
+																		%>
 																		<tr>
 																			<td class="property-names"><%=metaData.getAttributeName()%>
 																			</td>
 																			<td class="property-names"><%=metaData.getAttributeType()%>
 																			</td>
 																		</tr>
-																		<%}%>
-																	</table> <%} 
-																	else{%>
+																		<%
+																			}
+																		%>
+																	</table> <%
+ 	} else {
+ %>
 																	<table class="styledLeft noBorders spacer-bot"
 																		id="outputMetaDataTable" style="display: none">
 																		<thead>
@@ -246,14 +264,19 @@
 																	</table>
 																	<div class="noDataDiv-plain" id="noOutputMetaData">
 																		<fmt:message key="no.meta.attributes.defined" />
-																	</div> <%}%>
+																	</div> <%
+ 	}
+ %>
 																</td>
 															</tr>
 															<tr name="streamAttributes">
 																<td colspan="2">
 																	<h6>
 																		<fmt:message key="attribute.data.type.correlation" />
-																	</h6> <%if (streamDefinitionDto.getCorrelationData() != null && streamDefinitionDto.getCorrelationData().length > 0){%>
+																	</h6> <%
+ 	if (streamDefinitionDto.getCorrelationData() != null &&
+ 			    streamDefinitionDto.getCorrelationData().length > 0) {
+ %>
 																	<table class="styledLeft noBorders spacer-bot"
 																		id="outputCorrelationDataTable">
 																		<thead>
@@ -262,15 +285,21 @@
 																			<th class="leftCol-med"><fmt:message
 																					key="attribute.type" /></th>
 																		</thead>
-																		<%for (EventStreamAttributeDto correlationData : streamDefinitionDto.getCorrelationData()) {%>
+																		<%
+																			for (EventStreamAttributeDto correlationData : streamDefinitionDto.getCorrelationData()) {
+																		%>
 																		<tr>
 																			<td class="property-names"><%=correlationData.getAttributeName()%>
 																			</td>
 																			<td class="property-names"><%=correlationData.getAttributeType()%>
 																			</td>
 																		</tr>
-																		<%}%>
-																	</table> <%}else {%>
+																		<%
+																			}
+																		%>
+																	</table> <%
+ 	} else {
+ %>
 																	<table class="styledLeft noBorders spacer-bot"
 																		id="outputCorrelationDataTable" style="display: none">
 																		<thead>
@@ -284,14 +313,19 @@
 																	<div class="noDataDiv-plain"
 																		id="noOutputCorrelationData">
 																		<fmt:message key="no.correlation.attributes.defined" />
-																	</div> <%}%>
+																	</div> <%
+ 	}
+ %>
 																</td>
 															</tr>
 															<tr name="streamAttributes">
 																<td colspan="2">
 																	<h6>
 																		<fmt:message key="attribute.data.type.payload" />
-																	</h6> <%if (streamDefinitionDto.getPayloadData() != null && streamDefinitionDto.getPayloadData().length > 0) {%>
+																	</h6> <%
+ 	if (streamDefinitionDto.getPayloadData() != null &&
+ 			    streamDefinitionDto.getPayloadData().length > 0) {
+ %>
 																	<table class="styledLeft noBorders spacer-bot"
 																		id="outputPayloadDataTable">
 																		<thead>
@@ -300,15 +334,21 @@
 																			<th class="leftCol-med"><fmt:message
 																					key="attribute.type" /></th>
 																		</thead>
-																		<%for (EventStreamAttributeDto payloadData : streamDefinitionDto.getPayloadData()) {%>
+																		<%
+																			for (EventStreamAttributeDto payloadData : streamDefinitionDto.getPayloadData()) {
+																		%>
 																		<tr>
 																			<td class="property-names"><%=payloadData.getAttributeName()%>
 																			</td>
 																			<td class="property-names"><%=payloadData.getAttributeType()%>
 																			</td>
 																		</tr>
-																		<%}%>
-																	</table> <%}%>
+																		<%
+																			}
+																		%>
+																	</table> <%
+ 	}
+ %>
 																</td>
 															</tr>
 														</tbody>
@@ -375,8 +415,8 @@
 										</tr>
 
 										<%
-	                                    }
-	                                %>
+											}
+										%>
 									</tbody>
 								</table>
 							</td>
