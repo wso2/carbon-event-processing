@@ -126,3 +126,22 @@ h6 {
 .leftCol-extSmall {
     width: 110px;
 }
+
+
+a.icon-link {
+	background-image: url(../images/default-menu-icon.gif);
+	background-repeat: no-repeat;
+	background-position: left top;
+	padding-left: 20px;
+	line-height: 17px;
+	height: 17px;
+	float: left;
+	position: relative;
+	margin-left: 10px;
+	margin-top: 5px;
+	margin-bottom: 3px;
+	white-space: nowrap;
+	cursor: pointer;
+	color: #2F7ABD;
+}
+
