@@ -68,8 +68,8 @@ public final class RDBMSEventAdapterType extends AbstractOutputEventAdaptor {
 
 
     private RDBMSEventAdapterType() {
-        this.initialConfiguration=new ConcurrentHashMap<Integer, ConcurrentHashMap<OutputEventAdaptorConfiguration, ConcurrentHashMap<OutputEventAdaptorMessageConfiguration, ExecutionInfo>>>(32);
-        this.tables = new ConcurrentHashMap<String, ConcurrentHashMap<String, ExecutionInfo>>(32);
+        this.initialConfiguration=new ConcurrentHashMap<Integer, ConcurrentHashMap<OutputEventAdaptorConfiguration, ConcurrentHashMap<OutputEventAdaptorMessageConfiguration, ExecutionInfo>>>();
+        this.tables = new ConcurrentHashMap<String, ConcurrentHashMap<String, ExecutionInfo>>();
     }
 
     /**
@@ -149,10 +149,11 @@ public final class RDBMSEventAdapterType extends AbstractOutputEventAdaptor {
             int tenantId) {
 
         ExecutionInfo executionInfo = null;
+        String tableName = null;
         try {
             if (message instanceof Map) {
 
-                String tableName = outputEventMessageConfiguration.getOutputMessageProperties().get(RDBMSEventAdaptorConstants.ADAPTOR_GENERIC_RDBMS_TABLE_NAME);
+                tableName = outputEventMessageConfiguration.getOutputMessageProperties().get(RDBMSEventAdaptorConstants.ADAPTOR_GENERIC_RDBMS_TABLE_NAME);
                 String executionMode = outputEventMessageConfiguration.getOutputMessageProperties().get(RDBMSEventAdaptorConstants.ADAPTOR_GENERIC_RDBMS_EXECUTION_MODE);
                 String updateColumnKeys = outputEventMessageConfiguration.getOutputMessageProperties().get(RDBMSEventAdaptorConstants.ADAPTOR_GENERIC_RDBMS_UPDATE_KEYS);
 
@@ -185,43 +186,45 @@ public final class RDBMSEventAdapterType extends AbstractOutputEventAdaptor {
                     outputMessageConfigurationMap.put(outputEventMessageConfiguration,executionInfo);
                     initializeDatabaseExecutionInfo(tableName, executionMode, updateColumnKeys, message, outputEventAdaptorConfiguration, executionInfo);
                 }
-                executeProcessActions(message,executionInfo);
+                executeProcessActions(message,executionInfo,tableName);
             } else {
                 throw new OutputEventAdaptorEventProcessingException(message.getClass().toString() + "is not a compatible type. Hence Event is dropped.");
             }
         } catch (RDBMSConnectionException e) {
             executionInfo.setIsConnectionLive(false);
+            log.error("Error while initializing connection for datasource "+outputEventAdaptorConfiguration.getOutputProperties().get(RDBMSEventAdaptorConstants.ADAPTOR_GENERIC_RDBMS_DATASOURCE_NAME)
+                    + "Reconnection will try from " + (executionInfo.getNextConnectionTime() - System.currentTimeMillis()) + " milliseconds.", e);
             executionInfo.getDecayTimer().incrementPosition();
-            log.error("Error while initializing connection for datasource "+outputEventAdaptorConfiguration.getOutputProperties().get(RDBMSEventAdaptorConstants.ADAPTOR_GENERIC_RDBMS_DATASOURCE_NAME) , e);
 
             if(executionInfo.getNextConnectionTime() == 0){
                 try {
-                    executeProcessActions(message, executionInfo);
+                    executeProcessActions(message, executionInfo,tableName);
                 } catch (RDBMSConnectionException e1) {
+                    log.error("Error while initializing connection for datasource "+outputEventAdaptorConfiguration.getOutputProperties().get(RDBMSEventAdaptorConstants.ADAPTOR_GENERIC_RDBMS_DATASOURCE_NAME)
+                            + "Reconnection will try from " + (executionInfo.getNextConnectionTime() - System.currentTimeMillis()) + " milliseconds.", e);
                     executionInfo.getDecayTimer().incrementPosition();
-                    log.error("Error while initializing connection for datasource " + outputEventAdaptorConfiguration.getOutputProperties().get(RDBMSEventAdaptorConstants.ADAPTOR_GENERIC_RDBMS_DATASOURCE_NAME) , e1);
                 } catch (RDBMSEventProcessingException e2){
-                    log.error(e.getMessage() + "Hence Event is dropped.");
+                    log.error(e2.getMessage() + " Hence Event is dropped.");
                 }
             }
         } catch (RDBMSEventProcessingException e){
-            log.error(e.getMessage() + "Hence Event is dropped.");
+            log.error(e.getMessage() + " Hence Event is dropped.");
         }
     }
 
-    public void executeProcessActions(Object message, ExecutionInfo executionInfo) throws RDBMSConnectionException,RDBMSEventProcessingException {
+    public void executeProcessActions(Object message, ExecutionInfo executionInfo, String tableName) throws RDBMSConnectionException,RDBMSEventProcessingException {
 
         if (!executionInfo.getIsConnectionLive()) {
             long nextConnectionTime = executionInfo.getNextConnectionTime();
             long currentTime = System.currentTimeMillis();
             if (currentTime >= nextConnectionTime) {
-                createTableIfNotExist(executionInfo);
+                createTableIfNotExist(executionInfo,tableName);
                 executeDbActions(message,executionInfo);
                 executionInfo.getDecayTimer().reset();
                 executionInfo.setIsConnectionLive(true);
             } else {
                 if(log.isDebugEnabled()){
-                    log.debug("End point suspended hence dropping event.Next connection will try from " + (executionInfo.getNextConnectionTime() - currentTime) + " milliseconds.");
+                    log.debug("End point suspended hence dropping event. End point will be active after " + (executionInfo.getNextConnectionTime() - currentTime) + " milliseconds.");
                 }
             }
         } else {
@@ -268,7 +271,7 @@ public final class RDBMSEventAdapterType extends AbstractOutputEventAdaptor {
                 }
             }
         } catch (SQLException e) {
-            throw new RDBMSEventProcessingException("Cannot Execute Insert/Update Query for event " + message.toString() + e.getMessage(),e);
+            throw new RDBMSEventProcessingException("Cannot Execute Insert/Update Query for event " + message.toString() + " " + e.getMessage(),e);
         } finally {
             cleanupConnections(stmt, con);
         }
@@ -312,7 +315,7 @@ public final class RDBMSEventAdapterType extends AbstractOutputEventAdaptor {
             }
         } catch (SQLException e){
             cleanupConnections(stmt,null);
-            throw new RDBMSEventProcessingException("Cannot set value to attribute name "+ attribute.getName() + "hence dropping the event." +e.getMessage() ,e);
+            throw new RDBMSEventProcessingException("Cannot set value to attribute name "+ attribute.getName() + ". Hence dropping the event." +e.getMessage() ,e);
         }
     }
 
@@ -543,38 +546,40 @@ public final class RDBMSEventAdapterType extends AbstractOutputEventAdaptor {
         return query;
     }
 
-    public void createTableIfNotExist(ExecutionInfo executionInfo) throws RDBMSConnectionException,RDBMSEventProcessingException {
+    public void createTableIfNotExist(ExecutionInfo executionInfo,String tableName) throws RDBMSConnectionException,RDBMSEventProcessingException {
 
-        Connection con = null;
+        Connection connection;
         Statement stmt = null;
         Boolean tableExists = true;
 
         try {
-            con = executionInfo.getDatasource().getConnection();
+            connection = executionInfo.getDatasource().getConnection();
         } catch (SQLException e) {
             throw new RDBMSConnectionException(e);
         }
 
         try {
             try {
-                stmt = con.createStatement();
+                stmt = connection.createStatement();
                 stmt.executeQuery(executionInfo.getPreparedTableExistenceCheckStatement());
             } catch (SQLException e) {
                 tableExists = false;
-                log.info("Table does not Exist. Table Will be created.");
+                if(log.isDebugEnabled()) {
+                    log.debug("Table " + tableName + " does not Exist. Table Will be created. ");
+                }
             }
 
             if (!tableExists) {
                 stmt.executeUpdate(executionInfo.getPreparedCreateTableStatement());
             }
         } catch (SQLException e) {
-            throw new RDBMSEventProcessingException("Cannot Execute Create Table Query." + e.getMessage(),e);
+            throw new RDBMSEventProcessingException("Cannot Execute Create Table Query. " + e.getMessage(),e);
         } finally {
-            cleanupConnections(stmt, con);
+            cleanupConnections(stmt, connection);
         }
     }
 
-    private void cleanupConnections(Statement stmt, Connection con) {
+    private void cleanupConnections(Statement stmt, Connection connection) {
         if (stmt != null) {
             try {
                 stmt.close();
@@ -582,9 +587,9 @@ public final class RDBMSEventAdapterType extends AbstractOutputEventAdaptor {
                 log.error("unable to close statement", e);
             }
         }
-        if (con != null) {
+        if (connection != null) {
             try {
-                con.close();
+                connection.close();
             } catch (SQLException e) {
                 log.error("unable to close connection", e);
             }
@@ -604,7 +609,7 @@ public final class RDBMSEventAdapterType extends AbstractOutputEventAdaptor {
                 Connection conn = dataSource.getConnection();
                 conn.close();
             } else {
-                throw new OutputEventAdaptorEventProcessingException("There is no any datsource found named " + RDBMSEventAdaptorConstants.ADAPTOR_GENERIC_RDBMS_DATASOURCE_NAME + "to connect.");
+                throw new OutputEventAdaptorEventProcessingException("There is no any datsource found named " + RDBMSEventAdaptorConstants.ADAPTOR_GENERIC_RDBMS_DATASOURCE_NAME + " to connect.");
             }
         } catch (Exception e) {
             throw new OutputEventAdaptorEventProcessingException(e);
