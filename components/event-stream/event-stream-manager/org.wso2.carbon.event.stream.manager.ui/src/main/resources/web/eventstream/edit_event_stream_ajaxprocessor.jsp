@@ -97,7 +97,7 @@
             }
         }
 
-        stub.editEventStreamInfo(streamId, eventStreamName, eventStreamVersion, metaWSO2EventAttributeDtos, correlationWSO2EventAttributeDtos, payloadWSO2EventAttributeDtos, eventStreamDescription, eventStreamNickName);
+        stub.editEventStreamDefinition(streamId, eventStreamName, eventStreamVersion, metaWSO2EventAttributeDtos, correlationWSO2EventAttributeDtos, payloadWSO2EventAttributeDtos, eventStreamDescription, eventStreamNickName);
         msg = "true";
 
     } catch (Exception e) {

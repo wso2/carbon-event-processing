@@ -58,13 +58,13 @@
         String eventStreamVersion = request.getParameter("eventStreamVersion");
         int totalEventStreams = 0;
         if (eventStreamName != null && eventStreamVersion != null) {
-            stub.removeEventStreamInfo(eventStreamName, eventStreamVersion);
+            stub.removeEventStreamDefinition(eventStreamName, eventStreamVersion);
     %>
     <script type="text/javascript">CARBON.showInfoDialog('Event Stream successfully deleted.');</script>
     <%
         }
 
-        EventStreamInfoDto[] eventStreamDetailsArray = stub.getAllEventStreamInfoDto();
+        EventStreamInfoDto[] eventStreamDetailsArray = stub.getAllEventStreamDefinitionDto();
         if (eventStreamDetailsArray != null) {
             totalEventStreams = eventStreamDetailsArray.length;
         }
