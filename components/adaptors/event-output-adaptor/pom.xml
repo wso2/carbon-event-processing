@@ -72,6 +72,7 @@
         <module>org.wso2.carbon.event.output.adaptor.manager.core</module>
         <module>org.wso2.carbon.event.output.adaptor.manager.ui</module>
         <module>org.wso2.carbon.event.output.adaptor.manager.admin</module>
+        <module>org.wso2.carbon.event.output.adaptor.rdbms</module>
     </modules>
 
     <properties>
