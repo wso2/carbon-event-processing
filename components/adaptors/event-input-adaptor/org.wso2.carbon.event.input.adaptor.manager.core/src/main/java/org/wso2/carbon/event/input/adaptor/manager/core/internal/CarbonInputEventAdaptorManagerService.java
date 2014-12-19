@@ -23,6 +23,8 @@ import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.wso2.carbon.context.PrivilegedCarbonContext;
+import org.wso2.carbon.event.input.adaptor.core.InputEventAdaptorDto;
+import org.wso2.carbon.event.input.adaptor.core.Property;
 import org.wso2.carbon.event.input.adaptor.core.config.InputEventAdaptorConfiguration;
 import org.wso2.carbon.event.input.adaptor.core.config.InternalInputEventAdaptorConfiguration;
 import org.wso2.carbon.event.input.adaptor.manager.core.InputEventAdaptorFile;
@@ -30,6 +32,7 @@ import org.wso2.carbon.event.input.adaptor.manager.core.InputEventAdaptorInfo;
 import org.wso2.carbon.event.input.adaptor.manager.core.InputEventAdaptorManagerService;
 import org.wso2.carbon.event.input.adaptor.manager.core.InputEventAdaptorNotificationListener;
 import org.wso2.carbon.event.input.adaptor.manager.core.exception.InputEventAdaptorManagerConfigurationException;
+import org.wso2.carbon.event.input.adaptor.manager.core.internal.ds.InputEventAdaptorHolder;
 import org.wso2.carbon.event.input.adaptor.manager.core.internal.util.InputEventAdaptorManagerConstants;
 import org.wso2.carbon.event.input.adaptor.manager.core.internal.util.helper.InputEventAdaptorConfigurationFilesystemInvoker;
 import org.wso2.carbon.event.input.adaptor.manager.core.internal.util.helper.InputEventAdaptorConfigurationHelper;
@@ -91,7 +94,7 @@ public class CarbonInputEventAdaptorManagerService
             }
 
             validateToRemoveInactiveEventAdaptorConfiguration(eventAdaptorName, axisConfiguration);
-            InputEventAdaptorConfigurationFilesystemInvoker.save(omElement, eventAdaptorName, eventAdaptorName + ".xml", axisConfiguration);
+            InputEventAdaptorConfigurationFilesystemInvoker.encryptAndSave(omElement, eventAdaptorName, eventAdaptorName + ".xml", axisConfiguration);
 
         } else {
             log.error("There is no Input Event Adaptor type called " + eventAdaptorConfiguration.getType() + " is available");
@@ -161,11 +164,11 @@ public class CarbonInputEventAdaptorManagerService
             if (checkAdaptorValidity(tenantId, eventAdaptorConfigurationObject.getName())) {
                 if (InputEventAdaptorConfigurationHelper.validateEventAdaptorConfiguration(eventAdaptorConfigurationObject)) {
                     undeployInactiveInputEventAdaptorConfiguration(filename, axisConfiguration);
-                    InputEventAdaptorConfigurationFilesystemInvoker.save(omElement, eventAdaptorConfigurationObject.getName(), filename, axisConfiguration);
+                    InputEventAdaptorConfigurationFilesystemInvoker.encryptAndSave(omElement, eventAdaptorConfigurationObject.getName(), filename, axisConfiguration);
                 } else {
                     log.error("There is no event adaptor type called " + eventAdaptorConfigurationObject.getType() + " is available");
                     throw new InputEventAdaptorManagerConfigurationException("There is no Input Event Adaptor type called "
-                                                                             + eventAdaptorConfigurationObject.getType() + " is available ");
+                            + eventAdaptorConfigurationObject.getType() + " is available ");
                 }
             } else {
                 throw new InputEventAdaptorManagerConfigurationException("There is a Input Event Adaptor with the same name");
@@ -354,7 +357,6 @@ public class CarbonInputEventAdaptorManagerService
      * to add to the tenant specific event adaptor configuration map (only the correctly deployed event adaptors)
      *
      * @throws org.wso2.carbon.event.input.adaptor.manager.core.exception.InputEventAdaptorManagerConfigurationException
-     *
      */
     public void addInputEventAdaptorConfiguration(
             int tenantId, InputEventAdaptorConfiguration eventAdaptorConfiguration)
@@ -480,7 +482,7 @@ public class CarbonInputEventAdaptorManagerService
         undeployActiveInputEventAdaptorConfiguration(eventAdaptorName, axisConfiguration);
         OMElement omElement = InputEventAdaptorConfigurationHelper.eventAdaptorConfigurationToOM(inputEventAdaptorConfiguration);
         InputEventAdaptorConfigurationFilesystemInvoker.delete(fileName, axisConfiguration);
-        InputEventAdaptorConfigurationFilesystemInvoker.save(omElement, eventAdaptorName, fileName, axisConfiguration);
+        InputEventAdaptorConfigurationFilesystemInvoker.encryptAndSave(omElement, eventAdaptorName, fileName, axisConfiguration);
     }
 
     /**
@@ -488,7 +490,6 @@ public class CarbonInputEventAdaptorManagerService
      * for event adaptor configuration
      *
      * @throws org.wso2.carbon.event.input.adaptor.manager.core.exception.InputEventAdaptorManagerConfigurationException
-     *
      */
     private void addToTenantSpecificEventAdaptorInfoMap(int tenantId,
                                                         InputEventAdaptorConfiguration eventAdaptorConfiguration)
@@ -549,7 +550,6 @@ public class CarbonInputEventAdaptorManagerService
      * this stores the event adaptor configuration to the file system after validating the event adaptor when doing editing
      *
      * @throws org.wso2.carbon.event.input.adaptor.manager.core.exception.InputEventAdaptorManagerConfigurationException
-     *
      */
     private void validateToEditEventAdaptorConfiguration(int tenantId,
                                                          String eventAdaptorName,
@@ -563,7 +563,7 @@ public class CarbonInputEventAdaptorManagerService
                 fileName = eventAdaptorName + InputEventAdaptorManagerConstants.IEA_CONFIG_FILE_EXTENSION_WITH_DOT;
             }
             InputEventAdaptorConfigurationFilesystemInvoker.delete(fileName, axisConfiguration);
-            InputEventAdaptorConfigurationFilesystemInvoker.save(omElement, eventAdaptorName, fileName, axisConfiguration);
+            InputEventAdaptorConfigurationFilesystemInvoker.encryptAndSave(omElement, eventAdaptorName, fileName, axisConfiguration);
         } else {
             log.error("There is no Input Event Adaptor type called " + eventAdaptorConfiguration.getType() + " is available ");
             throw new InputEventAdaptorManagerConfigurationException("There is no Input Event Adaptor type called " + eventAdaptorConfiguration.getType() + " is available ");
@@ -604,6 +604,23 @@ public class CarbonInputEventAdaptorManagerService
             }
         }
         return false;
+    }
+
+    public List<String> getEncryptedProperties(String eventAdaptorType) {
+        List<String> encryptedProperties = new ArrayList<String>(1);
+
+        InputEventAdaptorDto dto = InputEventAdaptorHolder.getInstance().getInputEventAdaptorService().getEventAdaptorDto(eventAdaptorType);
+        if (dto != null) {
+            List<Property> properties = dto.getAdaptorPropertyList();
+            if (properties != null) {
+                for (Property prop : properties) {
+                    if (prop.isSecured()) {
+                        encryptedProperties.add(prop.getPropertyName());
+                    }
+                }
+            }
+        }
+        return encryptedProperties;
     }
 
 }
