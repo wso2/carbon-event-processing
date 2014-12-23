@@ -100,6 +100,11 @@
         </dependency>
         <dependency>
             <groupId>org.wso2.carbon</groupId>
+            <artifactId>org.wso2.carbon.event.output.adaptor.rdbms.server.feature</artifactId>
+            <type>zip</type>
+        </dependency>
+        <dependency>
+            <groupId>org.wso2.carbon</groupId>
             <artifactId>org.wso2.carbon.event.output.adaptor.logger.server.feature</artifactId>
             <type>zip</type>
         </dependency>
@@ -149,6 +154,7 @@
                                 <includedFeatureDef>org.wso2.carbon:org.wso2.carbon.event.output.adaptor.server.feature:2.0.0-SNAPSHOT</includedFeatureDef>
                                 <includedFeatureDef>org.wso2.carbon:org.wso2.carbon.event.output.adaptor.cassandra.server.feature:2.0.0-SNAPSHOT</includedFeatureDef>
                                 <includedFeatureDef>org.wso2.carbon:org.wso2.carbon.event.output.adaptor.mysql.server.feature:2.0.0-SNAPSHOT</includedFeatureDef>
+                                <includedFeatureDef>org.wso2.carbon:org.wso2.carbon.event.output.adaptor.rdbms.server.feature:2.0.0-SNAPSHOT</includedFeatureDef>
                                 <includedFeatureDef>org.wso2.carbon:org.wso2.carbon.event.output.adaptor.jms.server.feature:2.0.0-SNAPSHOT</includedFeatureDef>
                                 <includedFeatureDef>org.wso2.carbon:org.wso2.carbon.event.output.adaptor.mqtt.server.feature:2.0.0-SNAPSHOT</includedFeatureDef>
                                 <includedFeatureDef>org.wso2.carbon:org.wso2.carbon.event.output.adaptor.email.server.feature:2.0.0-SNAPSHOT</includedFeatureDef>
