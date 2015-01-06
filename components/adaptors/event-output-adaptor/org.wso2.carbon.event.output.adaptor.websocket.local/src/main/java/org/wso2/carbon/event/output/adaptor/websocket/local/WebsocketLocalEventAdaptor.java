@@ -84,7 +84,9 @@ public class WebsocketLocalEventAdaptor extends AbstractOutputEventAdaptor{
         CopyOnWriteArrayList<Session> sessions = websocketLocalOutputCallbackRegisterServiceInternal.getSessions(tenantId, outputEventAdaptorConfiguration.getName(), topic);
         if (sessions != null){
             for (Session session : sessions){
-                session.getAsyncRemote().sendText(message.toString());
+                synchronized (session){
+                    session.getAsyncRemote().sendText(message.toString());  //this method call was synchronized to fix CEP-996
+                }
             }
         }
     }
