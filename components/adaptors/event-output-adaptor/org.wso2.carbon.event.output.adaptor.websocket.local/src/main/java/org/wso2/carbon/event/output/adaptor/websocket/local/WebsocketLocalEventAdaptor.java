@@ -85,7 +85,7 @@ public class WebsocketLocalEventAdaptor extends AbstractOutputEventAdaptor{
         if (sessions != null){
             for (Session session : sessions){
                 synchronized (session){
-                    session.getAsyncRemote().sendText(message.toString());
+                    session.getAsyncRemote().sendText(message.toString());  //this method call was synchronized to fix CEP-996
                 }
             }
         }
