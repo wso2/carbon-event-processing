@@ -120,7 +120,9 @@ public class WebsocketEventAdaptor extends AbstractOutputEventAdaptor{
                 throw new OutputEventAdaptorEventProcessingException(e);
             }
         }
-        session.getAsyncRemote().sendText(message.toString());
+        synchronized (session){
+            session.getAsyncRemote().sendText(message.toString());      //this method call was synchronized to fix CEP-996
+        }
     }
 
 	@Override
