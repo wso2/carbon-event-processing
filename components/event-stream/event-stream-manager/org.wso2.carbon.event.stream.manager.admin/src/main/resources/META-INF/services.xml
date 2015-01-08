@@ -36,7 +36,7 @@
             /permission/admin/manage/event-streams
         </parameter>
 
-        <operation name="addEventStreamDefinition">
+        <operation name="addEventStreamDefinitionAsDto">
             <parameter name="AuthorizationAction" locked="true">
                 /permission/admin/manage/event-streams
             </parameter>
@@ -60,7 +60,13 @@
             </parameter>
         </operation>
 
-        <operation name="editEventStreamDefinition">
+        <operation name="editEventStreamDefinitionAsString">
+            <parameter name="AuthorizationAction" locked="true">
+                /permission/admin/manage/event-streams
+            </parameter>
+        </operation>
+
+        <operation name="editEventStreamDefinitionAsDto">
             <parameter name="AuthorizationAction" locked="true">
                 /permission/admin/manage/event-streams
             </parameter>

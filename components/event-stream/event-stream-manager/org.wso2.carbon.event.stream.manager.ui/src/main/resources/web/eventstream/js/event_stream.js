@@ -425,6 +425,8 @@ function convertStringToEventStreamInfoDto() {
     var eventStreamDefinitionString = document
         .getElementById("streamDefinitionText").value.trim();
 
+
+
     new Ajax.Request('../eventstream/transform_to_dto_ajaxprocessor.jsp',{
         method: 'POST',
         asynchronous: false,
@@ -446,27 +448,34 @@ function convertStringToEventStreamInfoDto() {
                 document.getElementById("eventStreamDescription").value = eventStreamDefinitionDtoJSON.message.description;
                 document.getElementById("eventStreamNickName").value = eventStreamDefinitionDtoJSON.message.nickName;
 
+                //var source =  document.getElementById("sourceWorkArea");
+                //var design =  document.getElementById("designWorkArea");
+
+
+
                 if (0 == eventStreamDefinitionDtoJSON.message.metaAttributes.length) {
                     var streamAttributeTable = document.getElementById("outputMetaDataTable");
+
                     while (streamAttributeTable.rows.length > 1) {
                         streamAttributeTable.deleteRow(1);
                     }
+
                     document.getElementById("noOutputMetaData").style.display = "";
                     streamAttributeTable.style.display = "none";
+
                 } else {
                     var streamAttributeTable = document.getElementById("outputMetaDataTable");
                     while (streamAttributeTable.rows.length > 1) {
                         streamAttributeTable.deleteRow(1);
                     }
                     for (i = 0; i < eventStreamDefinitionDtoJSON.message.metaAttributes.length; i++) {
-                        addStreamAttribute2("Meta",
-                            eventStreamDefinitionDtoJSON.message.metaAttributes[i].attributeName,
-                            eventStreamDefinitionDtoJSON.message.metaAttributes[i].attributeType);
+                        addStreamAttribute2("Meta", eventStreamDefinitionDtoJSON.message.metaAttributes[i].attributeName, eventStreamDefinitionDtoJSON.message.metaAttributes[i].attributeType);
                     }
                     document.getElementById("noOutputMetaData").style.display = "none";
                     streamAttributeTable.style.display = "";
                 }
                 if (0 == eventStreamDefinitionDtoJSON.message.correlationAttributes.length) {
+
                     var streamAttributeTable = document.getElementById("outputCorrelationDataTable");
                     while (streamAttributeTable.rows.length > 1) {
                         streamAttributeTable.deleteRow(1);
@@ -502,8 +511,11 @@ function convertStringToEventStreamInfoDto() {
                     document.getElementById("noOutputPayloadData").style.display = "none";
                     streamAttributeTable.style.display = "";
                 }
-                document.getElementById("sourceWorkArea").style.display = "none";
+
+                document.getElementById("sourceWorkArea").style.display = "";
                 document.getElementById("designWorkArea").style.display = "inline";
+
+
             }
 
 
@@ -514,7 +526,6 @@ function convertStringToEventStreamInfoDto() {
 function addStreamAttribute2(dataType, name, type) {
 
     var streamAttributeTable = document.getElementById("output" + dataType + "DataTable");
-
     var newTableRow = streamAttributeTable.insertRow(streamAttributeTable.rows.length);
     var newCell0 = newTableRow.insertCell(0);
     newCell0.innerHTML = name;
@@ -535,6 +546,7 @@ function addStreamAttribute2(dataType, name, type) {
 
 function addEventStreamByString(form) {
     var eventStreamDefinitionString = document.getElementById("streamDefinitionText").value.trim();
+
 
     new Ajax.Request('../eventstream/add_event_stream_by_string_ajaxprocessor.jsp',{
         method: 'POST',
@@ -594,4 +606,33 @@ function addEventStreamByString(form) {
 
         }
     })
+}
+
+function editEventStreamByString(form, eventStreamId) {
+
+    CARBON.showConfirmationDialog("If event stream is edited then related configuration files will be also affected! Are you sure want to edit?",
+
+        function () {
+
+            var eventStreamDefinitionString = document.getElementById("streamDefinitionText").value.trim();
+            new Ajax.Request('../eventstream/edit_event_stream_by_string_ajaxprocessor.jsp',{
+                method: 'POST',
+                asynchronous: false,
+                parameters: {
+                    eventStreamDefinitionString: eventStreamDefinitionString,
+                    oldEventStreamId: eventStreamId
+                },onSuccess: function (event) {
+
+                    var addStreamResposeJSON = JSON.parse(event.responseText.trim());
+                    if (addStreamResposeJSON.success.localeCompare("fail") == 0) {
+                        CARBON.showErrorDialog("Failed to edit event stream, Exception: " + addStreamResposeJSON.message);
+                    } else {
+                        form.submit();
+                    }
+
+
+                }
+            })
+        }, null, null);
+
 }

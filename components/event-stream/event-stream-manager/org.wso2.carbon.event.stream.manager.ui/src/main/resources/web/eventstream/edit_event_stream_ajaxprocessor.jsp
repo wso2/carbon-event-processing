@@ -17,6 +17,7 @@
 --%>
 <%@ page import="org.wso2.carbon.event.stream.manager.stub.EventStreamAdminServiceStub" %>
 <%@ page import="org.wso2.carbon.event.stream.manager.stub.types.EventStreamAttributeDto" %>
+<%@ page import="org.wso2.carbon.event.stream.manager.stub.types.EventStreamDefinitionDto" %>
 <%@ page import="org.wso2.carbon.event.stream.manager.ui.EventStreamUIUtils" %>
 
 <%
@@ -25,12 +26,12 @@
     try {
         EventStreamAdminServiceStub stub = EventStreamUIUtils.getEventStreamAdminService(config, session, request);
 
+        EventStreamDefinitionDto eventStreamDefinitionDto = new EventStreamDefinitionDto();
         String streamId = request.getParameter("oldStreamId");
-        String eventStreamName = request.getParameter("eventStreamName");
-        String eventStreamVersion = request.getParameter("eventStreamVersion");
-        String eventStreamDescription = request.getParameter("eventStreamDescription");
-        String eventStreamNickName = request.getParameter("eventStreamNickName");
-
+        eventStreamDefinitionDto.setName(request.getParameter("eventStreamName"));
+        eventStreamDefinitionDto.setVersion(request.getParameter("eventStreamVersion"));
+        eventStreamDefinitionDto.setDescription(request.getParameter("eventStreamDescription"));
+        eventStreamDefinitionDto.setNickName(request.getParameter("eventStreamNickName"));
         String metaDataSet = request.getParameter("metaData");
         EventStreamAttributeDto[] metaWSO2EventAttributeDtos = null;
 
@@ -52,7 +53,7 @@
 
             }
         }
-
+        eventStreamDefinitionDto.setMetaData(metaWSO2EventAttributeDtos);
         String correlationDataSet = request.getParameter("correlationData");
         EventStreamAttributeDto[] correlationWSO2EventAttributeDtos = null;
 
@@ -74,6 +75,7 @@
 
             }
         }
+        eventStreamDefinitionDto.setCorrelationData(correlationWSO2EventAttributeDtos);
 
         String payloadDataSet = request.getParameter("payloadData");
         EventStreamAttributeDto[] payloadWSO2EventAttributeDtos = null;
@@ -96,8 +98,9 @@
 
             }
         }
+        eventStreamDefinitionDto.setPayloadData(payloadWSO2EventAttributeDtos);
 
-        stub.editEventStreamDefinition(streamId, eventStreamName, eventStreamVersion, metaWSO2EventAttributeDtos, correlationWSO2EventAttributeDtos, payloadWSO2EventAttributeDtos, eventStreamDescription, eventStreamNickName);
+        stub.editEventStreamDefinitionAsDto(eventStreamDefinitionDto, streamId);
         msg = "true";
 
     } catch (Exception e) {

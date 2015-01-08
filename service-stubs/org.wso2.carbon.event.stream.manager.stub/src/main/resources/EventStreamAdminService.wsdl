@@ -137,17 +137,19 @@
                     </xs:sequence>
                 </xs:complexType>
             </xs:element>
-            <xs:element name="editEventStreamDefinition">
+            <xs:element name="editEventStreamDefinitionAsString">
                 <xs:complexType>
                     <xs:sequence>
+                        <xs:element minOccurs="0" name="streamStringDefinition" nillable="true" type="xs:string"></xs:element>
                         <xs:element minOccurs="0" name="oldStreamId" nillable="true" type="xs:string"></xs:element>
-                        <xs:element minOccurs="0" name="eventStreamName" nillable="true" type="xs:string"></xs:element>
-                        <xs:element minOccurs="0" name="eventStreamVersion" nillable="true" type="xs:string"></xs:element>
-                        <xs:element maxOccurs="unbounded" minOccurs="0" name="metaEventStreamAttributeDtos" nillable="true" type="ax2113:EventStreamAttributeDto"></xs:element>
-                        <xs:element maxOccurs="unbounded" minOccurs="0" name="correlationEventStreamAttributeDtos" nillable="true" type="ax2113:EventStreamAttributeDto"></xs:element>
-                        <xs:element maxOccurs="unbounded" minOccurs="0" name="payloadEventStreamAttributeDtos" nillable="true" type="ax2113:EventStreamAttributeDto"></xs:element>
-                        <xs:element minOccurs="0" name="eventStreamDescription" nillable="true" type="xs:string"></xs:element>
-                        <xs:element minOccurs="0" name="eventStreamNickName" nillable="true" type="xs:string"></xs:element>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="editEventStreamDefinitionAsDto">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element minOccurs="0" name="eventStreamDefinitionDto" nillable="true" type="ax2113:EventStreamDefinitionDto"></xs:element>
+                        <xs:element minOccurs="0" name="oldStreamId" nillable="true" type="xs:string"></xs:element>
                     </xs:sequence>
                 </xs:complexType>
             </xs:element>
@@ -186,16 +188,10 @@
                     </xs:sequence>
                 </xs:complexType>
             </xs:element>
-            <xs:element name="addEventStreamDefinition">
+            <xs:element name="addEventStreamDefinitionAsDto">
                 <xs:complexType>
                     <xs:sequence>
-                        <xs:element minOccurs="0" name="eventStreamName" nillable="true" type="xs:string"></xs:element>
-                        <xs:element minOccurs="0" name="eventStreamVersion" nillable="true" type="xs:string"></xs:element>
-                        <xs:element maxOccurs="unbounded" minOccurs="0" name="metaEventStreamAttributeDtos" nillable="true" type="ax2113:EventStreamAttributeDto"></xs:element>
-                        <xs:element maxOccurs="unbounded" minOccurs="0" name="correlationEventStreamAttributeDtos" nillable="true" type="ax2113:EventStreamAttributeDto"></xs:element>
-                        <xs:element maxOccurs="unbounded" minOccurs="0" name="payloadEventStreamAttributeDtos" nillable="true" type="ax2113:EventStreamAttributeDto"></xs:element>
-                        <xs:element minOccurs="0" name="eventStreamDescription" nillable="true" type="xs:string"></xs:element>
-                        <xs:element minOccurs="0" name="eventStreamNickName" nillable="true" type="xs:string"></xs:element>
+                        <xs:element minOccurs="0" name="eventStreamDefinitionDto" nillable="true" type="ax2113:EventStreamDefinitionDto"></xs:element>
                     </xs:sequence>
                 </xs:complexType>
             </xs:element>
@@ -207,10 +203,10 @@
     <wsdl:message name="getStreamDefinitionAsStringResponse">
         <wsdl:part name="parameters" element="ns:getStreamDefinitionAsStringResponse"></wsdl:part>
     </wsdl:message>
-    <wsdl:message name="addEventStreamDefinitionRequest">
-        <wsdl:part name="parameters" element="ns:addEventStreamDefinition"></wsdl:part>
+    <wsdl:message name="addEventStreamDefinitionAsDtoRequest">
+        <wsdl:part name="parameters" element="ns:addEventStreamDefinitionAsDto"></wsdl:part>
     </wsdl:message>
-    <wsdl:message name="addEventStreamDefinitionResponse"></wsdl:message>
+    <wsdl:message name="addEventStreamDefinitionAsDtoResponse"></wsdl:message>
     <wsdl:message name="convertEventStreamDefinitionDtoToStringRequest">
         <wsdl:part name="parameters" element="ns:convertEventStreamDefinitionDtoToString"></wsdl:part>
     </wsdl:message>
@@ -223,6 +219,10 @@
     <wsdl:message name="getStreamDefinitionDtoResponse">
         <wsdl:part name="parameters" element="ns:getStreamDefinitionDtoResponse"></wsdl:part>
     </wsdl:message>
+    <wsdl:message name="editEventStreamDefinitionAsDtoRequest">
+        <wsdl:part name="parameters" element="ns:editEventStreamDefinitionAsDto"></wsdl:part>
+    </wsdl:message>
+    <wsdl:message name="editEventStreamDefinitionAsDtoResponse"></wsdl:message>
     <wsdl:message name="convertStringToEventStreamDefinitionDtoRequest">
         <wsdl:part name="parameters" element="ns:convertStringToEventStreamDefinitionDto"></wsdl:part>
     </wsdl:message>
@@ -235,16 +235,16 @@
     <wsdl:message name="getStreamDetailsForStreamIdResponse">
         <wsdl:part name="parameters" element="ns:getStreamDetailsForStreamIdResponse"></wsdl:part>
     </wsdl:message>
+    <wsdl:message name="editEventStreamDefinitionAsStringRequest">
+        <wsdl:part name="parameters" element="ns:editEventStreamDefinitionAsString"></wsdl:part>
+    </wsdl:message>
+    <wsdl:message name="editEventStreamDefinitionAsStringResponse"></wsdl:message>
     <wsdl:message name="getStreamNamesRequest">
         <wsdl:part name="parameters" element="ns:getStreamNames"></wsdl:part>
     </wsdl:message>
     <wsdl:message name="getStreamNamesResponse">
         <wsdl:part name="parameters" element="ns:getStreamNamesResponse"></wsdl:part>
     </wsdl:message>
-    <wsdl:message name="editEventStreamDefinitionRequest">
-        <wsdl:part name="parameters" element="ns:editEventStreamDefinition"></wsdl:part>
-    </wsdl:message>
-    <wsdl:message name="editEventStreamDefinitionResponse"></wsdl:message>
     <wsdl:message name="getAllEventStreamDefinitionDtoRequest">
         <wsdl:part name="parameters" element="ns:getAllEventStreamDefinitionDto"></wsdl:part>
     </wsdl:message>
@@ -270,9 +270,9 @@
             <wsdl:input message="ns:getStreamDefinitionAsStringRequest" wsaw:Action="urn:getStreamDefinitionAsString"></wsdl:input>
             <wsdl:output message="ns:getStreamDefinitionAsStringResponse" wsaw:Action="urn:getStreamDefinitionAsStringResponse"></wsdl:output>
         </wsdl:operation>
-        <wsdl:operation name="addEventStreamDefinition">
-            <wsdl:input message="ns:addEventStreamDefinitionRequest" wsaw:Action="urn:addEventStreamDefinition"></wsdl:input>
-            <wsdl:output message="ns:addEventStreamDefinitionResponse" wsaw:Action="urn:addEventStreamDefinitionResponse"></wsdl:output>
+        <wsdl:operation name="addEventStreamDefinitionAsDto">
+            <wsdl:input message="ns:addEventStreamDefinitionAsDtoRequest" wsaw:Action="urn:addEventStreamDefinitionAsDto"></wsdl:input>
+            <wsdl:output message="ns:addEventStreamDefinitionAsDtoResponse" wsaw:Action="urn:addEventStreamDefinitionAsDtoResponse"></wsdl:output>
         </wsdl:operation>
         <wsdl:operation name="convertEventStreamDefinitionDtoToString">
             <wsdl:input message="ns:convertEventStreamDefinitionDtoToStringRequest" wsaw:Action="urn:convertEventStreamDefinitionDtoToString"></wsdl:input>
@@ -282,6 +282,10 @@
             <wsdl:input message="ns:getStreamDefinitionDtoRequest" wsaw:Action="urn:getStreamDefinitionDto"></wsdl:input>
             <wsdl:output message="ns:getStreamDefinitionDtoResponse" wsaw:Action="urn:getStreamDefinitionDtoResponse"></wsdl:output>
         </wsdl:operation>
+        <wsdl:operation name="editEventStreamDefinitionAsDto">
+            <wsdl:input message="ns:editEventStreamDefinitionAsDtoRequest" wsaw:Action="urn:editEventStreamDefinitionAsDto"></wsdl:input>
+            <wsdl:output message="ns:editEventStreamDefinitionAsDtoResponse" wsaw:Action="urn:editEventStreamDefinitionAsDtoResponse"></wsdl:output>
+        </wsdl:operation>
         <wsdl:operation name="convertStringToEventStreamDefinitionDto">
             <wsdl:input message="ns:convertStringToEventStreamDefinitionDtoRequest" wsaw:Action="urn:convertStringToEventStreamDefinitionDto"></wsdl:input>
             <wsdl:output message="ns:convertStringToEventStreamDefinitionDtoResponse" wsaw:Action="urn:convertStringToEventStreamDefinitionDtoResponse"></wsdl:output>
@@ -290,13 +294,13 @@
             <wsdl:input message="ns:getStreamDetailsForStreamIdRequest" wsaw:Action="urn:getStreamDetailsForStreamId"></wsdl:input>
             <wsdl:output message="ns:getStreamDetailsForStreamIdResponse" wsaw:Action="urn:getStreamDetailsForStreamIdResponse"></wsdl:output>
         </wsdl:operation>
+        <wsdl:operation name="editEventStreamDefinitionAsString">
+            <wsdl:input message="ns:editEventStreamDefinitionAsStringRequest" wsaw:Action="urn:editEventStreamDefinitionAsString"></wsdl:input>
+            <wsdl:output message="ns:editEventStreamDefinitionAsStringResponse" wsaw:Action="urn:editEventStreamDefinitionAsStringResponse"></wsdl:output>
+        </wsdl:operation>
         <wsdl:operation name="getStreamNames">
             <wsdl:input message="ns:getStreamNamesRequest" wsaw:Action="urn:getStreamNames"></wsdl:input>
             <wsdl:output message="ns:getStreamNamesResponse" wsaw:Action="urn:getStreamNamesResponse"></wsdl:output>
-        </wsdl:operation>
-        <wsdl:operation name="editEventStreamDefinition">
-            <wsdl:input message="ns:editEventStreamDefinitionRequest" wsaw:Action="urn:editEventStreamDefinition"></wsdl:input>
-            <wsdl:output message="ns:editEventStreamDefinitionResponse" wsaw:Action="urn:editEventStreamDefinitionResponse"></wsdl:output>
         </wsdl:operation>
         <wsdl:operation name="getAllEventStreamDefinitionDto">
             <wsdl:input message="ns:getAllEventStreamDefinitionDtoRequest" wsaw:Action="urn:getAllEventStreamDefinitionDto"></wsdl:input>
@@ -326,8 +330,8 @@
                 <soap:body use="literal"></soap:body>
             </wsdl:output>
         </wsdl:operation>
-        <wsdl:operation name="addEventStreamDefinition">
-            <soap:operation soapAction="urn:addEventStreamDefinition" style="document"></soap:operation>
+        <wsdl:operation name="addEventStreamDefinitionAsDto">
+            <soap:operation soapAction="urn:addEventStreamDefinitionAsDto" style="document"></soap:operation>
             <wsdl:input>
                 <soap:body use="literal"></soap:body>
             </wsdl:input>
@@ -353,6 +357,15 @@
                 <soap:body use="literal"></soap:body>
             </wsdl:output>
         </wsdl:operation>
+        <wsdl:operation name="editEventStreamDefinitionAsDto">
+            <soap:operation soapAction="urn:editEventStreamDefinitionAsDto" style="document"></soap:operation>
+            <wsdl:input>
+                <soap:body use="literal"></soap:body>
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal"></soap:body>
+            </wsdl:output>
+        </wsdl:operation>
         <wsdl:operation name="convertStringToEventStreamDefinitionDto">
             <soap:operation soapAction="urn:convertStringToEventStreamDefinitionDto" style="document"></soap:operation>
             <wsdl:input>
@@ -371,8 +384,8 @@
                 <soap:body use="literal"></soap:body>
             </wsdl:output>
         </wsdl:operation>
-        <wsdl:operation name="getStreamNames">
-            <soap:operation soapAction="urn:getStreamNames" style="document"></soap:operation>
+        <wsdl:operation name="editEventStreamDefinitionAsString">
+            <soap:operation soapAction="urn:editEventStreamDefinitionAsString" style="document"></soap:operation>
             <wsdl:input>
                 <soap:body use="literal"></soap:body>
             </wsdl:input>
@@ -380,8 +393,8 @@
                 <soap:body use="literal"></soap:body>
             </wsdl:output>
         </wsdl:operation>
-        <wsdl:operation name="editEventStreamDefinition">
-            <soap:operation soapAction="urn:editEventStreamDefinition" style="document"></soap:operation>
+        <wsdl:operation name="getStreamNames">
+            <soap:operation soapAction="urn:getStreamNames" style="document"></soap:operation>
             <wsdl:input>
                 <soap:body use="literal"></soap:body>
             </wsdl:input>
@@ -437,8 +450,8 @@
                 <soap12:body use="literal"></soap12:body>
             </wsdl:output>
         </wsdl:operation>
-        <wsdl:operation name="addEventStreamDefinition">
-            <soap12:operation soapAction="urn:addEventStreamDefinition" style="document"></soap12:operation>
+        <wsdl:operation name="addEventStreamDefinitionAsDto">
+            <soap12:operation soapAction="urn:addEventStreamDefinitionAsDto" style="document"></soap12:operation>
             <wsdl:input>
                 <soap12:body use="literal"></soap12:body>
             </wsdl:input>
@@ -464,6 +477,15 @@
                 <soap12:body use="literal"></soap12:body>
             </wsdl:output>
         </wsdl:operation>
+        <wsdl:operation name="editEventStreamDefinitionAsDto">
+            <soap12:operation soapAction="urn:editEventStreamDefinitionAsDto" style="document"></soap12:operation>
+            <wsdl:input>
+                <soap12:body use="literal"></soap12:body>
+            </wsdl:input>
+            <wsdl:output>
+                <soap12:body use="literal"></soap12:body>
+            </wsdl:output>
+        </wsdl:operation>
         <wsdl:operation name="convertStringToEventStreamDefinitionDto">
             <soap12:operation soapAction="urn:convertStringToEventStreamDefinitionDto" style="document"></soap12:operation>
             <wsdl:input>
@@ -482,8 +504,8 @@
                 <soap12:body use="literal"></soap12:body>
             </wsdl:output>
         </wsdl:operation>
-        <wsdl:operation name="getStreamNames">
-            <soap12:operation soapAction="urn:getStreamNames" style="document"></soap12:operation>
+        <wsdl:operation name="editEventStreamDefinitionAsString">
+            <soap12:operation soapAction="urn:editEventStreamDefinitionAsString" style="document"></soap12:operation>
             <wsdl:input>
                 <soap12:body use="literal"></soap12:body>
             </wsdl:input>
@@ -491,8 +513,8 @@
                 <soap12:body use="literal"></soap12:body>
             </wsdl:output>
         </wsdl:operation>
-        <wsdl:operation name="editEventStreamDefinition">
-            <soap12:operation soapAction="urn:editEventStreamDefinition" style="document"></soap12:operation>
+        <wsdl:operation name="getStreamNames">
+            <soap12:operation soapAction="urn:getStreamNames" style="document"></soap12:operation>
             <wsdl:input>
                 <soap12:body use="literal"></soap12:body>
             </wsdl:input>
@@ -548,8 +570,8 @@
                 <mime:content type="text/xml" part="parameters"></mime:content>
             </wsdl:output>
         </wsdl:operation>
-        <wsdl:operation name="addEventStreamDefinition">
-            <http:operation location="addEventStreamDefinition"></http:operation>
+        <wsdl:operation name="addEventStreamDefinitionAsDto">
+            <http:operation location="addEventStreamDefinitionAsDto"></http:operation>
             <wsdl:input>
                 <mime:content type="text/xml" part="parameters"></mime:content>
             </wsdl:input>
@@ -575,6 +597,15 @@
                 <mime:content type="text/xml" part="parameters"></mime:content>
             </wsdl:output>
         </wsdl:operation>
+        <wsdl:operation name="editEventStreamDefinitionAsDto">
+            <http:operation location="editEventStreamDefinitionAsDto"></http:operation>
+            <wsdl:input>
+                <mime:content type="text/xml" part="parameters"></mime:content>
+            </wsdl:input>
+            <wsdl:output>
+                <mime:content type="text/xml" part="parameters"></mime:content>
+            </wsdl:output>
+        </wsdl:operation>
         <wsdl:operation name="convertStringToEventStreamDefinitionDto">
             <http:operation location="convertStringToEventStreamDefinitionDto"></http:operation>
             <wsdl:input>
@@ -593,8 +624,8 @@
                 <mime:content type="text/xml" part="parameters"></mime:content>
             </wsdl:output>
         </wsdl:operation>
-        <wsdl:operation name="getStreamNames">
-            <http:operation location="getStreamNames"></http:operation>
+        <wsdl:operation name="editEventStreamDefinitionAsString">
+            <http:operation location="editEventStreamDefinitionAsString"></http:operation>
             <wsdl:input>
                 <mime:content type="text/xml" part="parameters"></mime:content>
             </wsdl:input>
@@ -602,8 +633,8 @@
                 <mime:content type="text/xml" part="parameters"></mime:content>
             </wsdl:output>
         </wsdl:operation>
-        <wsdl:operation name="editEventStreamDefinition">
-            <http:operation location="editEventStreamDefinition"></http:operation>
+        <wsdl:operation name="getStreamNames">
+            <http:operation location="getStreamNames"></http:operation>
             <wsdl:input>
                 <mime:content type="text/xml" part="parameters"></mime:content>
             </wsdl:input>

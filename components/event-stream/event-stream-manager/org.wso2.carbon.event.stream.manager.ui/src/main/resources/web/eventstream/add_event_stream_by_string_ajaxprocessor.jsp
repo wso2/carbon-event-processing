@@ -26,8 +26,10 @@
     try {
         EventStreamAdminServiceStub stub = EventStreamUIUtils.getEventStreamAdminService(config, session, request);
         stub.addEventStreamDefinitionAsString(request.getParameter("eventStreamDefinitionString"));
+
         eventStreamDefinitionDtoString = "{\"success\":\"true\"}";
     } catch (Exception e) {
+
         char         c = 0;
         int          i;
         int          len = e.getMessage().length();
