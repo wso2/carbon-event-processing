@@ -44,29 +44,27 @@ public class EventStreamAdminService extends AbstractAdmin {
 
     private static Log log = LogFactory.getLog(EventStreamAdminService.class);
 
-
-    public void addEventStreamDefinition(String eventStreamName,
-                                         String eventStreamVersion,
-                                         EventStreamAttributeDto[] metaEventStreamAttributeDtos,
-                                         EventStreamAttributeDto[] correlationEventStreamAttributeDtos,
-                                         EventStreamAttributeDto[] payloadEventStreamAttributeDtos,
-                                         String eventStreamDescription, String eventStreamNickName)throws AxisFault {
-        if ((eventStreamName != null) && (!eventStreamName.isEmpty())) {
-            if ((eventStreamVersion != null) && (!eventStreamVersion.isEmpty())) {
+    public void addEventStreamDefinitionAsDto (EventStreamDefinitionDto eventStreamDefinitionDto)throws AxisFault {
+        if ((eventStreamDefinitionDto.getName() != null) && (!eventStreamDefinitionDto.getName().isEmpty())) {
+            if ((eventStreamDefinitionDto.getVersion() != null) && (!eventStreamDefinitionDto.getVersion().isEmpty())) {
                 try {
-                    StreamDefinition streamDefinition = new StreamDefinition(eventStreamName, eventStreamVersion);
-                    streamDefinition.setDescription(eventStreamDescription);
-                    streamDefinition.setNickName(eventStreamNickName);
-                    if (metaEventStreamAttributeDtos != null) {
+                    StreamDefinition streamDefinition = new StreamDefinition(eventStreamDefinitionDto.getName(), eventStreamDefinitionDto.getVersion());
+                    streamDefinition.setDescription(eventStreamDefinitionDto.getDescription());
+                    streamDefinition.setNickName(eventStreamDefinitionDto.getNickName());
+                    EventStreamAttributeDto[] metaEventStreamAttributeDtos = eventStreamDefinitionDto.getMetaData();
+                    if (eventStreamDefinitionDto.getMetaData() != null) {
+
                         for (EventStreamAttributeDto eventStreamAttributeDto : metaEventStreamAttributeDtos) {
                             streamDefinition.addMetaData(eventStreamAttributeDto.getAttributeName(), EventAttributeTypeConstants.STRING_ATTRIBUTE_TYPE_MAP.get(eventStreamAttributeDto.getAttributeType()));
                         }
                     }
+                    EventStreamAttributeDto[] correlationEventStreamAttributeDtos = eventStreamDefinitionDto.getCorrelationData();
                     if (correlationEventStreamAttributeDtos != null) {
                         for (EventStreamAttributeDto eventStreamAttributeDto : correlationEventStreamAttributeDtos) {
                             streamDefinition.addCorrelationData(eventStreamAttributeDto.getAttributeName(), EventAttributeTypeConstants.STRING_ATTRIBUTE_TYPE_MAP.get(eventStreamAttributeDto.getAttributeType()));
                         }
                     }
+                    EventStreamAttributeDto[] payloadEventStreamAttributeDtos = eventStreamDefinitionDto.getPayloadData();
                     if (payloadEventStreamAttributeDtos != null) {
                         for (EventStreamAttributeDto eventStreamAttributeDto : payloadEventStreamAttributeDtos) {
                             streamDefinition.addPayloadData(eventStreamAttributeDto.getAttributeName(), EventAttributeTypeConstants.STRING_ATTRIBUTE_TYPE_MAP.get(eventStreamAttributeDto.getAttributeType()));
@@ -97,11 +95,16 @@ public class EventStreamAdminService extends AbstractAdmin {
         StreamDefinition streamDefinition = null;
         try {
             streamDefinition = EventDefinitionConverterUtils.convertFromJson(streamStringDefinition);
+            if ((streamDefinition.getName().equals("")) || (streamDefinition.getVersion().equals(""))){
+                throw new AxisFault("Empty inputs fields are not allowed.");
+            }else if(streamDefinition.getCorrelationData() == null && streamDefinition.getMetaData() == null && streamDefinition.getPayloadData() == null){
+                throw new AxisFault("Mapping parameters cannot be empty.");
+            }else{
+                int tenantId = PrivilegedCarbonContext.getThreadLocalCarbonContext().getTenantId();
+                EventStreamService eventStreamService = EventStreamAdminServiceValueHolder.getEventStreamService();
+                eventStreamService.addEventStreamDefinition( streamDefinition, tenantId);
+            }
 
-            int tenantId = PrivilegedCarbonContext.getThreadLocalCarbonContext().getTenantId();
-
-            EventStreamService eventStreamService = EventStreamAdminServiceValueHolder.getEventStreamService();
-            eventStreamService.addEventStreamDefinition( streamDefinition, tenantId);
 
         } catch (MalformedStreamDefinitionException e) {
             throw new AxisFault(e.getMessage(), e);
@@ -111,32 +114,60 @@ public class EventStreamAdminService extends AbstractAdmin {
 
     }
 
-    public void editEventStreamDefinition(String oldStreamId, String eventStreamName,
-                                          String eventStreamVersion,
-                                          EventStreamAttributeDto[] metaEventStreamAttributeDtos,
-                                          EventStreamAttributeDto[] correlationEventStreamAttributeDtos,
-                                          EventStreamAttributeDto[] payloadEventStreamAttributeDtos,
-                                          String eventStreamDescription, String eventStreamNickName)throws AxisFault {
+    public void editEventStreamDefinitionAsString(String streamStringDefinition, String oldStreamId)throws AxisFault {
 
-        if ((eventStreamName != null) && (!eventStreamName.isEmpty())) {
-            if ((eventStreamVersion != null) && (!eventStreamVersion.isEmpty())) {
+        StreamDefinition streamDefinition = null;
+        try {
+            streamDefinition = EventDefinitionConverterUtils.convertFromJson(streamStringDefinition);
+
+            if ((streamDefinition.getName().equals("")) || (streamDefinition.getVersion().equals(""))) {
+                throw new AxisFault("Empty inputs fields are not allowed.");
+            }else if(streamDefinition.getCorrelationData() == null && streamDefinition.getMetaData() == null && streamDefinition.getPayloadData() == null){
+                throw new AxisFault("Mapping parameters cannot be empty.");
+            }else{
+                String[] oldStreamProperties = oldStreamId.split(":");
+                int tenantId = PrivilegedCarbonContext.getThreadLocalCarbonContext().getTenantId();
+
+                EventStreamService eventStreamService = EventStreamAdminServiceValueHolder.getEventStreamService();
+                eventStreamService.removeEventStreamDefinition(oldStreamProperties[0], oldStreamProperties[1],tenantId);
+                eventStreamService.addEventStreamDefinition(streamDefinition, tenantId);
+            }
+
+
+
+        } catch (MalformedStreamDefinitionException e) {
+            throw new AxisFault(e.getMessage(), e);
+        } catch (EventStreamConfigurationException e) {
+            throw new AxisFault(e.getMessage(), e);
+        }
+
+    }
+
+    public void editEventStreamDefinitionAsDto(EventStreamDefinitionDto eventStreamDefinitionDto, String oldStreamId)throws AxisFault {
+
+        if ((eventStreamDefinitionDto.getName() != null) && (!eventStreamDefinitionDto.getName().isEmpty())) {
+            if ((eventStreamDefinitionDto.getVersion() != null) && (!eventStreamDefinitionDto.getVersion().isEmpty())) {
 
                 String[] oldStreamProperties = oldStreamId.split(":");
 
                 try {
-                    StreamDefinition streamDefinition = new StreamDefinition( eventStreamName, eventStreamVersion);
-                    streamDefinition.setDescription(eventStreamDescription);
-                    streamDefinition.setNickName(eventStreamNickName);
+                    StreamDefinition streamDefinition = new StreamDefinition( eventStreamDefinitionDto.getName(), eventStreamDefinitionDto.getVersion());
+                    streamDefinition.setDescription(eventStreamDefinitionDto.getDescription());
+                    streamDefinition.setNickName(eventStreamDefinitionDto.getNickName());
+
+                    EventStreamAttributeDto[] metaEventStreamAttributeDtos = eventStreamDefinitionDto.getMetaData();
                     if (metaEventStreamAttributeDtos != null) {
                         for (EventStreamAttributeDto eventStreamAttributeDto : metaEventStreamAttributeDtos) {
                             streamDefinition.addMetaData( eventStreamAttributeDto.getAttributeName(), EventAttributeTypeConstants.STRING_ATTRIBUTE_TYPE_MAP.get(eventStreamAttributeDto.getAttributeType()));
                         }
                     }
+                    EventStreamAttributeDto[] correlationEventStreamAttributeDtos = eventStreamDefinitionDto.getCorrelationData();
                     if (correlationEventStreamAttributeDtos != null) {
                         for (EventStreamAttributeDto eventStreamAttributeDto : correlationEventStreamAttributeDtos) {
                             streamDefinition.addCorrelationData( eventStreamAttributeDto.getAttributeName(), EventAttributeTypeConstants.STRING_ATTRIBUTE_TYPE_MAP.get(eventStreamAttributeDto.getAttributeType()));
                         }
                     }
+                    EventStreamAttributeDto[] payloadEventStreamAttributeDtos = eventStreamDefinitionDto.getPayloadData();
                     if (payloadEventStreamAttributeDtos != null) {
                         for (EventStreamAttributeDto eventStreamAttributeDto : payloadEventStreamAttributeDtos) {
                             streamDefinition.addPayloadData(eventStreamAttributeDto.getAttributeName(),EventAttributeTypeConstants.STRING_ATTRIBUTE_TYPE_MAP.get(eventStreamAttributeDto.getAttributeType()));
@@ -376,6 +407,7 @@ public class EventStreamAdminService extends AbstractAdmin {
 
     public EventStreamDefinitionDto convertStringToEventStreamDefinitionDto(String streamStringDefinition) throws AxisFault {
         StreamDefinition streamDefinition = null;
+        System.out.println("CONVERTING TO DTO");
         try {
             streamDefinition = EventDefinitionConverterUtils.convertFromJson(streamStringDefinition);
         } catch (MalformedStreamDefinitionException e) {
