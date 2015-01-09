@@ -237,7 +237,11 @@ public class EventFormatter implements RawEventConsumer {
             String regexValue = "\\{\\{" + messageProperty + "\\}\\}";
             String entryValue = entry.getValue();
             if (entryValue != null && entryValue.contains(mapValue)) {
-                entry.setValue(entryValue.replaceAll(regexValue, eventData[position].toString()));
+                if(eventData[position] != null){
+                    entry.setValue(entryValue.replaceAll(regexValue, eventData[position].toString()));
+                }else {
+                    entry.setValue(entryValue.replaceAll(regexValue, ""));
+                }
             }
         }
 
