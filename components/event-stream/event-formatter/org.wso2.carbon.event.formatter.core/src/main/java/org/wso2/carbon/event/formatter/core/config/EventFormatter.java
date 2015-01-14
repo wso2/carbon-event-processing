@@ -222,7 +222,7 @@ public class EventFormatter implements RawEventConsumer {
     private void changeDynamicEventAdaptorMessageProperties(Object[] eventData, OutputEventAdaptorMessageConfiguration outputEventAdaptorMessageConfiguration) {
 
         for (String dynamicMessageProperty : dynamicMessagePropertyList) {
-            if (eventData.length != 0) {
+            if (eventData.length != 0 && dynamicMessageProperty != null) {
                 int position = propertyPositionMap.get(dynamicMessageProperty);
                 changePropertyValue(position, dynamicMessageProperty, eventData, outputEventAdaptorMessageConfiguration);
             }
@@ -236,8 +236,12 @@ public class EventFormatter implements RawEventConsumer {
             String mapValue = "{{" + messageProperty + "}}";
             String regexValue = "\\{\\{" + messageProperty + "\\}\\}";
             String entryValue = entry.getValue();
-            if (entryValue.contains(mapValue)) {
-                entry.setValue(entryValue.replaceAll(regexValue, eventData[position].toString()));
+            if (entryValue != null && entryValue.contains(mapValue)) {
+                if(eventData[position] != null){
+                    entry.setValue(entryValue.replaceAll(regexValue, eventData[position].toString()));
+                }else {
+                    entry.setValue(entryValue.replaceAll(regexValue, ""));
+                }
             }
         }
 
