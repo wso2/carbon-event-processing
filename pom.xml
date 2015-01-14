@@ -197,7 +197,7 @@
             <dependency>
                 <groupId>org.wso2.carbon</groupId>
                 <artifactId>org.wso2.carbon.databridge.core</artifactId>
-                <version>4.3.0</version>
+                <version>${databridge.version}</version>
             </dependency>
 
             <dependency>
