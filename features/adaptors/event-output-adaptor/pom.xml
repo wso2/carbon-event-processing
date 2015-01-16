@@ -54,6 +54,7 @@
         <module>org.wso2.carbon.event.output.adaptor.websocket.local.server.feature</module>
         <!--<module>org.wso2.carbon.event.output.adaptor.hbase.server.feature</module>-->
         <module>org.wso2.carbon.event.output.adaptor.kafka.server.feature</module>
+        <module>org.wso2.carbon.event.output.adaptor.rdbms.server.feature</module>
     </modules>
 
     <repositories>

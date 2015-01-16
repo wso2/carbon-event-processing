@@ -35,6 +35,7 @@ public final class OutputEventAdaptorManagerConstants {
 
     public static final String OEA_ATTR_NAME = "name";
     public static final String OEA_ATTR_TYPE = "type";
+    public static final String OEA_ATTR_ENCRYPTED = "encrypted";
 
     public static final String OEA_ATTR_TRACING = "trace";
     public static final String OEA_ATTR_STATISTICS = "statistics";

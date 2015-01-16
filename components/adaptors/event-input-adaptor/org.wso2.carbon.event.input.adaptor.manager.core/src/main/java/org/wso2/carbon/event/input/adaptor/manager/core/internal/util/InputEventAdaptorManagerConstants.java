@@ -34,6 +34,8 @@ public final class InputEventAdaptorManagerConstants {
     public static final String IEA_ATTR_STATISTICS = "statistics";
     public static final String IEA_VALUE_ENABLE = "enable";
     public static final String IEA_VALUE_DISABLE = "disable";
+    public static final String IEA_ATTR_ENCRYPTED = "encrypted";
+
 
     public static final String IEA_CONFIG_FILE_EXTENSION_WITH_DOT = ".xml";
 
