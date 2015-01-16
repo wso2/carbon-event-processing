@@ -1207,6 +1207,7 @@
         <httpcore.nio.version>4.2.4</httpcore.nio.version>
         <httpcore.version>4.2.4</httpcore.version>
         <httpclient.version>4.2.5</httpclient.version>
+        <httpclient.wso2.version>4.2.5.wso2v1</httpclient.wso2.version>
         <httpasyncclient.version>4.0-beta3</httpasyncclient.version>
         <ehcache.core.version>2.5.1</ehcache.core.version>
         <cxf.version>2.6.2</cxf.version>

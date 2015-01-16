@@ -77,7 +77,6 @@
 
     <properties>
         <jsmpp-version>2.0.1</jsmpp-version>
-        <httpclient.wso2.version>4.2.5.wso2v1</httpclient.wso2.version>
     </properties>
 
 </project>
