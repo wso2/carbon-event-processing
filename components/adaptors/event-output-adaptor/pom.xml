@@ -72,11 +72,11 @@
         <module>org.wso2.carbon.event.output.adaptor.manager.core</module>
         <module>org.wso2.carbon.event.output.adaptor.manager.ui</module>
         <module>org.wso2.carbon.event.output.adaptor.manager.admin</module>
+        <module>org.wso2.carbon.event.output.adaptor.rdbms</module>
     </modules>
 
     <properties>
         <jsmpp-version>2.0.1</jsmpp-version>
-        <httpclient.wso2.version>4.2.5.wso2v1</httpclient.wso2.version>
     </properties>
 
 </project>

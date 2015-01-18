@@ -18,10 +18,13 @@
 package org.wso2.carbon.event.output.adaptor.manager.core.internal.util.helper;
 
 import org.apache.axiom.om.OMAbstractFactory;
+import org.apache.axiom.om.OMAttribute;
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMFactory;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.wso2.carbon.core.util.CryptoException;
+import org.wso2.carbon.core.util.CryptoUtil;
 import org.wso2.carbon.event.output.adaptor.core.OutputEventAdaptorDto;
 import org.wso2.carbon.event.output.adaptor.core.OutputEventAdaptorService;
 import org.wso2.carbon.event.output.adaptor.core.Property;
@@ -29,6 +32,7 @@ import org.wso2.carbon.event.output.adaptor.core.config.InternalOutputEventAdapt
 import org.wso2.carbon.event.output.adaptor.core.config.OutputEventAdaptorConfiguration;
 import org.wso2.carbon.event.output.adaptor.manager.core.exception.OutputEventAdaptorManagerConfigurationException;
 import org.wso2.carbon.event.output.adaptor.manager.core.internal.ds.OutputEventAdaptorHolder;
+import org.wso2.carbon.event.output.adaptor.manager.core.internal.ds.OutputEventAdaptorManagerValueHolder;
 import org.wso2.carbon.event.output.adaptor.manager.core.internal.util.OutputEventAdaptorManagerConstants;
 
 import javax.xml.namespace.QName;
@@ -48,6 +52,7 @@ public class OutputEventAdaptorConfigurationHelper {
     private OutputEventAdaptorConfigurationHelper() {
     }
 
+    // need to encrypt for edit too.
     public static OutputEventAdaptorConfiguration fromOM(OMElement eventAdaptorConfigOMElement) {
 
         OutputEventAdaptorConfiguration eventAdaptorConfiguration = new OutputEventAdaptorConfiguration();
@@ -78,6 +83,18 @@ public class OutputEventAdaptorConfigurationHelper {
                 String name = propertyOMElement.getAttributeValue(
                         new QName(OutputEventAdaptorManagerConstants.OEA_ATTR_NAME));
                 String value = propertyOMElement.getText();
+                OMAttribute encryptedAttribute = propertyOMElement.getAttribute(new QName(OutputEventAdaptorManagerConstants.OEA_ATTR_ENCRYPTED));
+                if (encryptedAttribute != null) {
+                    if ("true".equals(encryptedAttribute.getAttributeValue())) {
+                        try {
+                            value = new String(CryptoUtil.getDefaultCryptoUtil().base64DecodeAndDecrypt(value));
+                        } catch (CryptoException e) {
+                            log.error("Unable to decrypt the encrypted field: " + name + " in adaptor: " + eventAdaptorConfiguration.getName());
+                            value = "";   // resetting the password if decryption is not possible.
+                        }
+                    }
+                }
+
                 outputEventAdaptorPropertyConfiguration.addEventAdaptorProperty(name, value);
             }
         }
@@ -93,41 +110,57 @@ public class OutputEventAdaptorConfigurationHelper {
         String eventAdaptorType = eventAdaptorConfiguration.getType();
 
         Map<String, String> outputEventAdaptorProperties = null;
+        List<String> encryptedProperties = null;
 
         OMFactory factory = OMAbstractFactory.getOMFactory();
         OMElement eventAdaptorItem = factory.createOMElement(new QName(
                 OutputEventAdaptorManagerConstants.OEA_ELE_ROOT_ELEMENT));
         eventAdaptorItem.declareDefaultNamespace(OutputEventAdaptorManagerConstants.OEA_CONF_NS);
         eventAdaptorItem.addAttribute(OutputEventAdaptorManagerConstants.OEA_ATTR_NAME, eventAdaptorName,
-                                      null);
+                null);
         eventAdaptorItem.addAttribute(OutputEventAdaptorManagerConstants.OEA_ATTR_TYPE, eventAdaptorType,
-                                      null);
+                null);
 
         if (eventAdaptorConfiguration.isEnableStatistics()) {
             eventAdaptorItem.addAttribute(OutputEventAdaptorManagerConstants.OEA_ATTR_STATISTICS, OutputEventAdaptorManagerConstants.OEA_VALUE_ENABLE,
-                                          null);
+                    null);
         } else if (!eventAdaptorConfiguration.isEnableStatistics()) {
             eventAdaptorItem.addAttribute(OutputEventAdaptorManagerConstants.OEA_ATTR_STATISTICS, OutputEventAdaptorManagerConstants.OEA_VALUE_DISABLE,
-                                          null);
+                    null);
         }
 
         if (eventAdaptorConfiguration.isEnableTracing()) {
             eventAdaptorItem.addAttribute(OutputEventAdaptorManagerConstants.OEA_ATTR_TRACING, OutputEventAdaptorManagerConstants.OEA_VALUE_ENABLE,
-                                          null);
+                    null);
         } else if (!eventAdaptorConfiguration.isEnableTracing()) {
             eventAdaptorItem.addAttribute(OutputEventAdaptorManagerConstants.OEA_ATTR_TRACING, OutputEventAdaptorManagerConstants.OEA_VALUE_DISABLE,
-                                          null);
+                    null);
         }
 
 
         if (eventAdaptorConfiguration.getOutputConfiguration() != null) {
             outputEventAdaptorProperties = eventAdaptorConfiguration.getOutputConfiguration().getProperties();
+            encryptedProperties = OutputEventAdaptorManagerValueHolder.getCarbonEventAdaptorManagerService().getEncryptedProperties(eventAdaptorType);
+
             for (Map.Entry<String, String> outputPropertyEntry : outputEventAdaptorProperties.entrySet()) {
                 OMElement propertyElement = factory.createOMElement(new QName(
                         OutputEventAdaptorManagerConstants.OEA_ELE_PROPERTY));
                 propertyElement.declareDefaultNamespace(OutputEventAdaptorManagerConstants.OEA_CONF_NS);
                 propertyElement.addAttribute(OutputEventAdaptorManagerConstants.OEA_ATTR_NAME, outputPropertyEntry.getKey(), null);
-                propertyElement.setText(outputPropertyEntry.getValue());
+
+                if (encryptedProperties.contains(outputPropertyEntry.getKey())) {
+                    // has to be encrypted
+                    try {
+
+                        propertyElement.setText(CryptoUtil.getDefaultCryptoUtil().encryptAndBase64Encode(outputPropertyEntry.getValue().getBytes()));
+                        propertyElement.addAttribute(OutputEventAdaptorManagerConstants.OEA_ATTR_ENCRYPTED, "true", null);
+                    } catch (Exception e) {
+                        log.error("Unable to encrypt the secure field: " + outputPropertyEntry.getKey() + " in output adaptor: " + eventAdaptorConfiguration.getName() + "   Saving in plain text.");
+                        propertyElement.setText(outputPropertyEntry.getValue());
+                    }
+                } else {
+                    propertyElement.setText(outputPropertyEntry.getValue());
+                }
                 eventAdaptorItem.addChild(propertyElement);
             }
         }
@@ -189,4 +222,30 @@ public class OutputEventAdaptorConfigurationHelper {
 
         return true;
     }
+
+    /*
+    Checks whether all the secure fields are encrypted.
+     */
+    public static boolean validateEncryptedProperties(OMElement eventAdaptorConfigOMElement) {
+
+        String type = eventAdaptorConfigOMElement.getAttributeValue(new QName(OutputEventAdaptorManagerConstants.OEA_ATTR_TYPE));
+        List<String> encryptedProperties = OutputEventAdaptorManagerValueHolder.getCarbonEventAdaptorManagerService().getEncryptedProperties(type);
+
+        Iterator propertyIter = eventAdaptorConfigOMElement.getChildrenWithName(
+                new QName(OutputEventAdaptorManagerConstants.OEA_CONF_NS, OutputEventAdaptorManagerConstants.OEA_ELE_PROPERTY));
+        while (propertyIter.hasNext()) {
+            OMElement propertyOMElement = (OMElement) propertyIter.next();
+            String name = propertyOMElement.getAttributeValue(
+                    new QName(OutputEventAdaptorManagerConstants.OEA_ATTR_NAME));
+            String value = propertyOMElement.getText();
+            if (encryptedProperties.contains(name.trim())) {
+                OMAttribute encryptedAttribute = propertyOMElement.getAttribute(new QName(OutputEventAdaptorManagerConstants.OEA_ATTR_ENCRYPTED));
+                if ((value != null && value.length() > 0) && (encryptedAttribute == null || (!"true".equals(encryptedAttribute.getAttributeValue())))) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
 }

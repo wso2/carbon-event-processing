@@ -33,6 +33,7 @@ import org.wso2.carbon.event.output.adaptor.manager.core.exception.OutputEventAd
 import org.wso2.carbon.event.output.adaptor.manager.core.internal.CarbonOutputEventAdaptorManagerService;
 import org.wso2.carbon.event.output.adaptor.manager.core.internal.ds.OutputEventAdaptorManagerValueHolder;
 import org.wso2.carbon.event.output.adaptor.manager.core.internal.util.OutputEventAdaptorManagerConstants;
+import org.wso2.carbon.event.output.adaptor.manager.core.internal.util.helper.OutputEventAdaptorConfigurationFilesystemInvoker;
 import org.wso2.carbon.event.output.adaptor.manager.core.internal.util.helper.OutputEventAdaptorConfigurationHelper;
 
 import javax.xml.namespace.QName;
@@ -65,8 +66,7 @@ public class OutputEventAdaptorDeployer extends AbstractDeployer {
      * Process the event adaptor file, create it and deploy it
      *
      * @param deploymentFileData information about the event adaptor
-     * @throws org.apache.axis2.deployment.DeploymentException
-     *          for any errors
+     * @throws org.apache.axis2.deployment.DeploymentException for any errors
      */
     public void deploy(DeploymentFileData deploymentFileData) throws DeploymentException {
 
@@ -130,7 +130,6 @@ public class OutputEventAdaptorDeployer extends AbstractDeployer {
      *
      * @param filePath the path to the bucket to be removed
      * @throws org.apache.axis2.deployment.DeploymentException
-     *
      */
     public void undeploy(String filePath) throws DeploymentException {
 
@@ -150,7 +149,7 @@ public class OutputEventAdaptorDeployer extends AbstractDeployer {
         int tenantId = PrivilegedCarbonContext.getThreadLocalCarbonContext().getTenantId();
 
         String eventAdaptorName = "";
-        if(!carbonEventAdaptorManagerService.isOutputEventAdaptorFileAlreadyExist(tenantId, eventAdaptorFile.getName())) {
+        if (!carbonEventAdaptorManagerService.isOutputEventAdaptorFileAlreadyExist(tenantId, eventAdaptorFile.getName())) {
             try {
                 OMElement eventAdaptorOMElement = getEventAdaptorOMElement(eventAdaptorFile);
                 OutputEventAdaptorConfiguration eventAdaptorConfiguration = OutputEventAdaptorConfigurationHelper.fromOM(eventAdaptorOMElement);
@@ -162,6 +161,17 @@ public class OutputEventAdaptorDeployer extends AbstractDeployer {
                 if (eventAdaptorConfiguration.getName() == null || eventAdaptorConfiguration.getType() == null || eventAdaptorConfiguration.getName().trim().isEmpty()) {
                     throw new DeploymentException(eventAdaptorFile.getName() + " is not a valid output event adaptor configuration file");
                 }
+
+
+                boolean isEncrypted = OutputEventAdaptorConfigurationHelper.validateEncryptedProperties(eventAdaptorOMElement);
+
+                if (!isEncrypted) {
+                    String fileName = eventAdaptorFile.getName();
+                    OutputEventAdaptorConfigurationFilesystemInvoker.delete(fileName, this.configurationContext.getAxisConfiguration());
+                    OutputEventAdaptorConfigurationFilesystemInvoker.encryptAndSave(eventAdaptorOMElement, eventAdaptorConfiguration.getName(), fileName, this.configurationContext.getAxisConfiguration());
+                    return;
+                }
+
 
                 eventAdaptorName = eventAdaptorOMElement.getAttributeValue(new QName(OutputEventAdaptorManagerConstants.OEA_ATTR_NAME));
 
@@ -193,7 +203,7 @@ public class OutputEventAdaptorDeployer extends AbstractDeployer {
                 throw new DeploymentException(e);
             }
         } else {
-            log.info("Output Event adaptor " + eventAdaptorName + " is already registered with this tenant ("+tenantId+"), hence ignoring redeployment");
+            log.info("Output Event adaptor " + eventAdaptorName + " is already registered with this tenant (" + tenantId + "), hence ignoring redeployment");
         }
 
     }
@@ -212,8 +222,8 @@ public class OutputEventAdaptorDeployer extends AbstractDeployer {
     }
 
     public void executeManualDeployment(String filePath) throws
-                                                         OutputEventAdaptorManagerConfigurationException,
-                                                         DeploymentException {
+            OutputEventAdaptorManagerConfigurationException,
+            DeploymentException {
         processDeploy(new DeploymentFileData(new File(filePath)));
     }
 

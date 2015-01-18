@@ -33,6 +33,7 @@ import org.wso2.carbon.event.input.adaptor.manager.core.exception.InputEventAdap
 import org.wso2.carbon.event.input.adaptor.manager.core.internal.CarbonInputEventAdaptorManagerService;
 import org.wso2.carbon.event.input.adaptor.manager.core.internal.ds.InputEventAdaptorManagerValueHolder;
 import org.wso2.carbon.event.input.adaptor.manager.core.internal.util.InputEventAdaptorManagerConstants;
+import org.wso2.carbon.event.input.adaptor.manager.core.internal.util.helper.InputEventAdaptorConfigurationFilesystemInvoker;
 import org.wso2.carbon.event.input.adaptor.manager.core.internal.util.helper.InputEventAdaptorConfigurationHelper;
 
 import javax.xml.namespace.QName;
@@ -69,8 +70,7 @@ public class InputEventAdaptorDeployer extends AbstractDeployer {
      * Process the event adaptor file, create it and deploy it
      *
      * @param deploymentFileData information about the event adaptor
-     * @throws org.apache.axis2.deployment.DeploymentException
-     *          for any errors
+     * @throws org.apache.axis2.deployment.DeploymentException for any errors
      */
     public void deploy(DeploymentFileData deploymentFileData) throws DeploymentException {
 
@@ -134,7 +134,6 @@ public class InputEventAdaptorDeployer extends AbstractDeployer {
      *
      * @param filePath the path to the bucket to be removed
      * @throws org.apache.axis2.deployment.DeploymentException
-     *
      */
     public void undeploy(String filePath) throws DeploymentException {
 
@@ -154,7 +153,7 @@ public class InputEventAdaptorDeployer extends AbstractDeployer {
         int tenantId = PrivilegedCarbonContext.getThreadLocalCarbonContext().getTenantId();
 
         String eventAdaptorName = "";
-        if(!carbonEventAdaptorManagerService.isInputEventAdaptorFileAlreadyExist(tenantId,eventAdaptorFile.getName())) {
+        if (!carbonEventAdaptorManagerService.isInputEventAdaptorFileAlreadyExist(tenantId, eventAdaptorFile.getName())) {
             try {
                 OMElement eventAdaptorOMElement = getEventAdaptorOMElement(eventAdaptorFile);
                 InputEventAdaptorConfiguration eventAdaptorConfiguration = InputEventAdaptorConfigurationHelper.fromOM(eventAdaptorOMElement);
@@ -163,8 +162,17 @@ public class InputEventAdaptorDeployer extends AbstractDeployer {
                     throw new DeploymentException("Wrong input event adaptor configuration file, Invalid root element " + eventAdaptorOMElement.getQName().getLocalPart() + " in " + eventAdaptorFile.getName());
                 }
 
+
                 if (eventAdaptorConfiguration.getName() == null || eventAdaptorConfiguration.getType() == null || eventAdaptorConfiguration.getName().trim().isEmpty()) {
                     throw new DeploymentException(eventAdaptorFile.getName() + " is not a valid input event adaptor configuration file");
+                }
+
+                boolean isEncrypted = InputEventAdaptorConfigurationHelper.validateEncryptedProperties(eventAdaptorOMElement);
+                if (!isEncrypted) {
+                    String fileName = eventAdaptorFile.getName();
+                    InputEventAdaptorConfigurationFilesystemInvoker.delete(fileName, this.configurationContext.getAxisConfiguration());
+                    InputEventAdaptorConfigurationFilesystemInvoker.encryptAndSave(eventAdaptorOMElement, eventAdaptorConfiguration.getName(), fileName, this.configurationContext.getAxisConfiguration());
+                    return;
                 }
 
                 eventAdaptorName = eventAdaptorOMElement.getAttributeValue(new QName(InputEventAdaptorManagerConstants.IEA_ATTR_NAME));
@@ -196,8 +204,8 @@ public class InputEventAdaptorDeployer extends AbstractDeployer {
                 log.error("Input Event Adaptor not deployed and in inactive state : " + eventAdaptorFile.getName() + " , " + e.getMessage(), e);
                 throw new DeploymentException(e.getMessage(), e);
             }
-        }else {
-            log.info("Input Event adaptor " + eventAdaptorName + " is already registered with this tenant ("+tenantId+"), hence ignoring redeployment");
+        } else {
+            log.info("Input Event adaptor " + eventAdaptorName + " is already registered with this tenant (" + tenantId + "), hence ignoring redeployment");
         }
 
     }
@@ -216,8 +224,8 @@ public class InputEventAdaptorDeployer extends AbstractDeployer {
     }
 
     public void executeManualDeployment(String filePath) throws
-                                                         InputEventAdaptorManagerConfigurationException,
-                                                         DeploymentException {
+            InputEventAdaptorManagerConfigurationException,
+            DeploymentException {
         processDeploy(new DeploymentFileData(new File(filePath)));
     }
 
