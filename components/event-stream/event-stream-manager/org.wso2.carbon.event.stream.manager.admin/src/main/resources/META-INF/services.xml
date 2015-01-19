@@ -36,25 +36,49 @@
             /permission/admin/manage/event-streams
         </parameter>
 
-        <operation name="addEventStreamInfo">
+        <operation name="addEventStreamDefinitionAsDto">
             <parameter name="AuthorizationAction" locked="true">
                 /permission/admin/manage/event-streams
             </parameter>
         </operation>
 
-        <operation name="editEventStreamInfo">
+        <operation name="addEventStreamDefinitionAsString">
             <parameter name="AuthorizationAction" locked="true">
                 /permission/admin/manage/event-streams
             </parameter>
         </operation>
 
-        <operation name="removeEventStreamInfo">
+        <operation name="convertStringToEventStreamDefinitionDto">
             <parameter name="AuthorizationAction" locked="true">
                 /permission/admin/manage/event-streams
             </parameter>
         </operation>
 
-        <operation name="getAllEventStreamInfoDto">
+        <operation name="convertEventStreamDefinitionDtoToString">
+            <parameter name="AuthorizationAction" locked="true">
+                /permission/admin/manage/event-streams
+            </parameter>
+        </operation>
+
+        <operation name="editEventStreamDefinitionAsString">
+            <parameter name="AuthorizationAction" locked="true">
+                /permission/admin/manage/event-streams
+            </parameter>
+        </operation>
+
+        <operation name="editEventStreamDefinitionAsDto">
+            <parameter name="AuthorizationAction" locked="true">
+                /permission/admin/manage/event-streams
+            </parameter>
+        </operation>
+
+        <operation name="removeEventStreamDefinition">
+            <parameter name="AuthorizationAction" locked="true">
+                /permission/admin/manage/event-streams
+            </parameter>
+        </operation>
+
+        <operation name="getAllEventStreamDefinitionDto">
             <parameter name="AuthorizationAction" locked="true">
                 /permission/admin/manage/event-streams
             </parameter>

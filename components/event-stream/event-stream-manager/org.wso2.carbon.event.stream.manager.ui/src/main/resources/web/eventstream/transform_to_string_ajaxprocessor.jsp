@@ -21,90 +21,140 @@
 <%@ page import="org.wso2.carbon.event.stream.manager.ui.EventStreamUIUtils" %>
 
 <%
-
-    String msg;
+	
+    String eventDefinitionString = null;
     try {
         EventStreamAdminServiceStub stub = EventStreamUIUtils.getEventStreamAdminService(config, session, request);
 
         EventStreamDefinitionDto eventStreamDefinitionDto = new EventStreamDefinitionDto();
-        String streamId = request.getParameter("oldStreamId");
         eventStreamDefinitionDto.setName(request.getParameter("eventStreamName"));
         eventStreamDefinitionDto.setVersion(request.getParameter("eventStreamVersion"));
         eventStreamDefinitionDto.setDescription(request.getParameter("eventStreamDescription"));
         eventStreamDefinitionDto.setNickName(request.getParameter("eventStreamNickName"));
+       
+       
         String metaDataSet = request.getParameter("metaData");
-        EventStreamAttributeDto[] metaWSO2EventAttributeDtos = null;
+        EventStreamAttributeDto[] metaAttributes = null;
 
         if (metaDataSet != null && !metaDataSet.equals("")) {
             String[] properties = metaDataSet.split("\\$=");
             if (properties != null) {
                 // construct property array for each property
-                metaWSO2EventAttributeDtos = new EventStreamAttributeDto[properties.length];
+                metaAttributes = new EventStreamAttributeDto[properties.length];
                 int index = 0;
                 for (String property : properties) {
                     String[] propertyConfiguration = property.split("\\^=");
                     if (propertyConfiguration != null) {
-                        metaWSO2EventAttributeDtos[index] = new EventStreamAttributeDto();
-                        metaWSO2EventAttributeDtos[index].setAttributeName(propertyConfiguration[0].trim());
-                        metaWSO2EventAttributeDtos[index].setAttributeType(propertyConfiguration[1].trim());
+                    	metaAttributes[index] = new EventStreamAttributeDto();
+                    	metaAttributes[index].setAttributeName(propertyConfiguration[0].trim());
+                    	metaAttributes[index].setAttributeType(propertyConfiguration[1].trim());
                         index++;
                     }
                 }
 
             }
         }
-        eventStreamDefinitionDto.setMetaData(metaWSO2EventAttributeDtos);
+        eventStreamDefinitionDto.setMetaData(metaAttributes);
+
         String correlationDataSet = request.getParameter("correlationData");
-        EventStreamAttributeDto[] correlationWSO2EventAttributeDtos = null;
+        EventStreamAttributeDto[] correlationAttributes = null;
 
         if (correlationDataSet != null && !correlationDataSet.equals("")) {
             String[] properties = correlationDataSet.split("\\$=");
             if (properties != null) {
                 // construct property array for each property
-                correlationWSO2EventAttributeDtos = new EventStreamAttributeDto[properties.length];
+                correlationAttributes = new EventStreamAttributeDto[properties.length];
                 int index = 0;
                 for (String property : properties) {
                     String[] propertyConfiguration = property.split("\\^=");
                     if (propertyConfiguration != null) {
-                        correlationWSO2EventAttributeDtos[index] = new EventStreamAttributeDto();
-                        correlationWSO2EventAttributeDtos[index].setAttributeName(propertyConfiguration[0].trim());
-                        correlationWSO2EventAttributeDtos[index].setAttributeType(propertyConfiguration[1].trim());
+                    	correlationAttributes[index] = new EventStreamAttributeDto();
+                    	correlationAttributes[index].setAttributeName(propertyConfiguration[0].trim());
+                    	correlationAttributes[index].setAttributeType(propertyConfiguration[1].trim());
                         index++;
                     }
                 }
 
             }
         }
-        eventStreamDefinitionDto.setCorrelationData(correlationWSO2EventAttributeDtos);
+        eventStreamDefinitionDto.setCorrelationData(correlationAttributes);
 
         String payloadDataSet = request.getParameter("payloadData");
-        EventStreamAttributeDto[] payloadWSO2EventAttributeDtos = null;
+        EventStreamAttributeDto[] payloadAttributes = null;
 
         if (payloadDataSet != null && !payloadDataSet.equals("")) {
             String[] properties = payloadDataSet.split("\\$=");
             if (properties != null) {
                 // construct property array for each property
-                payloadWSO2EventAttributeDtos = new EventStreamAttributeDto[properties.length];
+                payloadAttributes = new EventStreamAttributeDto[properties.length];
                 int index = 0;
                 for (String property : properties) {
                     String[] propertyConfiguration = property.split("\\^=");
                     if (propertyConfiguration != null) {
-                        payloadWSO2EventAttributeDtos[index] = new EventStreamAttributeDto();
-                        payloadWSO2EventAttributeDtos[index].setAttributeName(propertyConfiguration[0].trim());
-                        payloadWSO2EventAttributeDtos[index].setAttributeType(propertyConfiguration[1].trim());
+                    	payloadAttributes[index] = new EventStreamAttributeDto();
+                    	payloadAttributes[index].setAttributeName(propertyConfiguration[0].trim());
+                    	payloadAttributes[index].setAttributeType(propertyConfiguration[1].trim());
                         index++;
                     }
                 }
 
             }
         }
-        eventStreamDefinitionDto.setPayloadData(payloadWSO2EventAttributeDtos);
+        eventStreamDefinitionDto.setPayloadData(payloadAttributes);
 
-        stub.editEventStreamDefinitionAsDto(eventStreamDefinitionDto, streamId);
-        msg = "true";
+        eventDefinitionString = stub.convertEventStreamDefinitionDtoToString(eventStreamDefinitionDto);
+        char         c = 0;
+        int          i;
+        int          len = eventDefinitionString.length();
+        StringBuilder escapeString = new StringBuilder(len + 4);
+        String       t;
+
+        escapeString.append('"');
+        for (i = 0; i < len; i += 1) {
+            c = eventDefinitionString.charAt(i);
+            switch (c) {
+                case '\\':
+                case '"':
+                    escapeString.append('\\');
+                    escapeString.append(c);
+                    break;
+                case '/':
+                    //                if (b == '<') {
+                    escapeString.append('\\');
+                    //                }
+                    escapeString.append(c);
+                    break;
+                case '\b':
+                    escapeString.append("\\b");
+                    break;
+                case '\t':
+                    escapeString.append("\\t");
+                    break;
+                case '\n':
+                    escapeString.append("\\n");
+                    break;
+                case '\f':
+                    escapeString.append("\\f");
+                    break;
+                case '\r':
+                    escapeString.append("\\r");
+                    break;
+                default:
+                    if (c < ' ') {
+                        t = "000" + Integer.toHexString(c);
+                        escapeString.append("\\u" + t.substring(t.length() - 4));
+                    } else {
+                        escapeString.append(c);
+                    }
+            }
+        }
+        escapeString.append('"');
+        eventDefinitionString= "{\"success\":\"success\",\"message\":" +escapeString.toString()+ "}";
 
     } catch (Exception e) {
-        msg = e.getMessage();
+        eventDefinitionString = "{\"success\":\"fail\",\"message\":\"" +e.getMessage()+ "\"}";
+
     }
 %>
-<%=msg%>
+
+<%=eventDefinitionString%>
