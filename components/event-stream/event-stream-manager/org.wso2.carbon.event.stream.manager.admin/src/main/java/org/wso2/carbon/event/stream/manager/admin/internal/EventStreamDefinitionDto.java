@@ -17,6 +17,8 @@
 */
 package org.wso2.carbon.event.stream.manager.admin.internal;
 
+import java.util.Arrays;
+
 public class EventStreamDefinitionDto {
 
     private String name;
@@ -26,6 +28,7 @@ public class EventStreamDefinitionDto {
     private EventStreamAttributeDto[] metaAttributes;
     private EventStreamAttributeDto[] correlationAttributes;
     private EventStreamAttributeDto[] payloadAttributes;
+    private String streamDefinitionString;
 
     public EventStreamAttributeDto[] getMetaData() {
         return metaAttributes;
@@ -81,5 +84,45 @@ public class EventStreamDefinitionDto {
 
     public void setNickName(String nickName) {
         this.nickName = nickName;
+    }
+
+    public void setStreamDefinitionString(String streamDefinitionString){
+        this.streamDefinitionString = streamDefinitionString;
+    }
+
+    public String getStreamDefinitionString(){
+        return streamDefinitionString;
+    }
+
+
+    public String convertToJsonString() {
+        final StringBuffer sb = new StringBuffer('{');
+        sb.append("\"name\":\"").append(name).append("\",");
+        sb.append("\"version\":\"").append(version).append("\",");
+        sb.append("\"description\":\"").append(description).append("\",");
+        sb.append("\"nickName\":\"").append(nickName).append("\",");
+        sb.append("\"metaAttributes\":[").append(convertAttributeArrayToString(metaAttributes)).append("],");
+        sb.append("\"correlationAttributes\":[").append(convertAttributeArrayToString(correlationAttributes)).append("],");
+        sb.append("\"payloadAttributes\":[").append(convertAttributeArrayToString(payloadAttributes)).append("]");
+        sb.append('}');
+        return sb.toString();
+    }
+
+    private String convertAttributeArrayToString(EventStreamAttributeDto[] attributes){
+        String attributeString = "";
+
+        if(0<attributes.length){
+            final StringBuffer sb = new StringBuffer();
+            for(int i=0; i<attributes.length;i++){
+                if(i!=0){
+                    sb.append(',');
+                }
+                sb.append("{\"name\":\"").append(attributes[i].getAttributeName()).append("\",");
+                sb.append("\"type\":\"").append(attributes[i].getAttributeType()).append("\"}");
+            }
+            return sb.toString();
+        }
+        return attributeString;
+
     }
 }

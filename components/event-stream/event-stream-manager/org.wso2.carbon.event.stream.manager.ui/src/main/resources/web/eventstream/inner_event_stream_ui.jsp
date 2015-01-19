@@ -29,6 +29,7 @@
 <script type="text/javascript"
         src="../eventstream/js/create_eventStream_helper.js"></script>
 
+
 <table id="eventStreamInputTable" class="normal-nopadding"
        style="width:100%">
 <tbody>
@@ -97,6 +98,7 @@
 <tr>
     <td colspan="2">
         <div id="innerDiv4">
+        	
             <table class="styledLeft noBorders spacer-bot"
                    style="width:100%">
                 <tbody>

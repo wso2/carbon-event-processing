@@ -23,7 +23,7 @@
 <%
     // get Event Stream Definition
     EventStreamAdminServiceStub stub = EventStreamUIUtils.getEventStreamAdminService(config, session, request);
-    EventStreamInfoDto[] streamDefinitions = stub.getAllEventStreamInfoDto();
+    EventStreamInfoDto[] streamDefinitions = stub.getAllEventStreamDefinitionDto();
     String[] streamDefIds = null;
     String responseText = "";
     if (streamDefinitions != null && streamDefinitions.length > 0) {
