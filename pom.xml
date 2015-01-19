@@ -73,22 +73,22 @@
             <dependency>
                 <groupId>org.wso2.carbon</groupId>
                 <artifactId>org.wso2.carbon.databridge.agent.thrift</artifactId>
-                <version>${carbon.platform.version}</version>
+                <version>4.3.0-SNAPSHOT</version>
             </dependency>
             <dependency>
                 <groupId>org.wso2.carbon</groupId>
                 <artifactId>org.wso2.carbon.bam.data.publisher.util</artifactId>
-                <version>${carbon.platform.version}</version>
+                <version>4.3.0-SNAPSHOT</version>
             </dependency>
             <dependency>
                 <groupId>org.wso2.carbon</groupId>
                 <artifactId>org.wso2.carbon.databridge.commons</artifactId>
-                <version>${carbon.platform.version}</version>
+                <version>4.3.0-SNAPSHOT</version>
             </dependency>
             <dependency>
                 <groupId>org.wso2.carbon</groupId>
                 <artifactId>org.wso2.carbon.databridge.commons.thrift</artifactId>
-                <version>${carbon.platform.version}</version>
+                <version>4.3.0-SNAPSHOT</version>
             </dependency>
 
             <dependency>
@@ -706,6 +706,13 @@
 
             <dependency>
                 <groupId>org.wso2.carbon</groupId>
+                <artifactId>org.wso2.carbon.event.output.adaptor.rdbms.server.feature</artifactId>
+                <version>${carbon.event.processing.version}</version>
+                <type>zip</type>
+            </dependency>
+
+            <dependency>
+                <groupId>org.wso2.carbon</groupId>
                 <artifactId>org.wso2.carbon.event.output.adaptor.server.feature</artifactId>
                 <version>${carbon.event.processing.version}</version>
                 <type>zip</type>
@@ -1057,7 +1064,7 @@
         <carbon.event.processing.version>2.0.0-SNAPSHOT</carbon.event.processing.version>
         <storm.version>0.9.2-incubating.wso2v1</storm.version>
 
-        <carbon.version>4.3.0-SNAPSHOT</carbon.version>
+        <carbon.version>4.3.0</carbon.version>
 
         <geronimo-jms.version>1.1.1</geronimo-jms.version>
         <hector.wso2.version>1.1.4.wso2v1</hector.wso2.version>
@@ -1066,10 +1073,10 @@
 
 
         <!-- Carbon platform version comes here-->
-        <carbon.platform.version>4.3.0-SNAPSHOT</carbon.platform.version>
+        <carbon.platform.version>4.3.0</carbon.platform.version>
         <carbon.platform.package.export.version>4.3.0-SNAPSHOT
         </carbon.platform.package.export.version>
-        <carbon.platform.package.import.version.range>[4.3.0.SNAPSHOT, 4.4.0)
+        <carbon.platform.package.import.version.range>[4.3.0, 4.4.0)
         </carbon.platform.package.import.version.range>
         <stratos.version>2.2.0</stratos.version>
 
@@ -1200,6 +1207,7 @@
         <httpcore.nio.version>4.2.4</httpcore.nio.version>
         <httpcore.version>4.2.4</httpcore.version>
         <httpclient.version>4.2.5</httpclient.version>
+        <httpclient.wso2.version>4.2.5.wso2v1</httpclient.wso2.version>
         <httpasyncclient.version>4.0-beta3</httpasyncclient.version>
         <ehcache.core.version>2.5.1</ehcache.core.version>
         <cxf.version>2.6.2</cxf.version>

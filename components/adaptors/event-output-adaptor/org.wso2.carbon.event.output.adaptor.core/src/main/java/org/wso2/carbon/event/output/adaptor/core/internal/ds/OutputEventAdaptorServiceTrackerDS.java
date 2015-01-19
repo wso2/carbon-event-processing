@@ -40,7 +40,7 @@ public class OutputEventAdaptorServiceTrackerDS {
     /**
      * initialize the Event Adaptor Manager core service here.
      *
-     * @param context
+     * @param context the component context that will be passed in from the OSGi environment at activation
      */
     protected void activate(ComponentContext context) {
         try {
@@ -61,7 +61,12 @@ public class OutputEventAdaptorServiceTrackerDS {
                 outputEventAdaptorFactories.add(outputEventAdaptorFactory);
             }
         } catch (Throwable t) {
-            log.error(t);
+            String outputEventAdaptorFactoryClassName = "Unknown";
+            if (outputEventAdaptorFactory != null) {
+                outputEventAdaptorFactoryClassName = outputEventAdaptorFactory.getClass().getName();
+            }
+            log.error("Unexpected error at initializing output event adaptor factory "
+                    + outputEventAdaptorFactoryClassName + ": " + t.getMessage(), t);
         }
     }
 

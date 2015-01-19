@@ -291,7 +291,7 @@
 																		<tr>
 																			<td class="property-names"><%=correlationData.getAttributeName()%>
 																			</td>
-																			<td class="property-names"><%=correlationData.getAttributeType()%>
+																			<td class="promacbook Mini DisplayPort to VGA Adapterperty-names"><%=correlationData.getAttributeType()%>
 																			</td>
 																		</tr>
 																		<%

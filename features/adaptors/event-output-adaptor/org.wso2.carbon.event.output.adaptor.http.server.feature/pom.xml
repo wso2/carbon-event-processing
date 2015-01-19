@@ -63,6 +63,7 @@
                                 <bundleDef>
                                     org.wso2.carbon:org.wso2.carbon.event.output.adaptor.http:${carbon.event.processing.version}
                                 </bundleDef>
+                                <bundleDef>org.apache.httpcomponents.wso2:httpclient:${httpclient.wso2.version}</bundleDef>
                             </bundles>
                             <importFeatures>
                                 <importFeatureDef>org.wso2.carbon.core.server:${carbon.version}
