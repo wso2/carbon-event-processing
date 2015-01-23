@@ -26,14 +26,25 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.thrift7.TException;
 import org.json.simple.JSONValue;
+import org.w3c.dom.Document;
+import org.wso2.carbon.event.processor.core.ExecutionPlanConfiguration;
 import org.wso2.carbon.event.processor.core.exception.ExecutionPlanConfigurationException;
 import org.wso2.carbon.event.processor.core.exception.StormDeploymentException;
 import org.wso2.carbon.event.processor.core.internal.ds.EventProcessorValueHolder;
+import org.wso2.carbon.event.processor.core.internal.storm.util.StormQueryPlanBuilder;
 import org.wso2.carbon.event.processor.core.internal.storm.util.StormTopologyConstructor;
 import org.wso2.carbon.utils.CarbonUtils;
+import org.wso2.siddhi.query.api.definition.StreamDefinition;
 
 import javax.xml.stream.XMLStreamException;
+import javax.xml.transform.OutputKeys;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
 import java.io.File;
+import java.io.StringWriter;
 import java.util.List;
 import java.util.Map;
 
@@ -65,13 +76,18 @@ public class TopologyManager {
         }
     }
 
-    public static void submitTopology(String executionPlanName, String stormQueryPlan, int tenantId) throws StormDeploymentException, ExecutionPlanConfigurationException {
-
+    public static void submitTopology(ExecutionPlanConfiguration configuration, List<StreamDefinition> streamDefinitions, int tenantId) throws StormDeploymentException, ExecutionPlanConfigurationException {
+        Document document = StormQueryPlanBuilder.constructStormQueryPlanXML(configuration, streamDefinitions);
+        String executionPlanName = configuration.getName();
         TopologyBuilder builder = null;
         try {
+            String stormQueryPlan = getStringQueryPlan(document);
             builder = StormTopologyConstructor.constructTopologyBuilder(stormQueryPlan, executionPlanName, tenantId, EventProcessorValueHolder.getStormDeploymentConfig());
         } catch (XMLStreamException e) {
             throw new ExecutionPlanConfigurationException("Invalid Config for Execution Plan " + executionPlanName + " for tenant " + tenantId, e);
+        } catch (TransformerException e) {
+            throw new ExecutionPlanConfigurationException("Error while converting to storm query plan string. " +
+                    "Execution plan: " + executionPlanName + " Tenant: " + tenantId, e);
         }
 
         String uploadedJarLocation = StormSubmitter.submitJar(stormConfig, jarLocation);
@@ -101,4 +117,14 @@ public class TopologyManager {
         }
     }
 
+    private static String getStringQueryPlan(Document document) throws TransformerException {
+        Transformer transformer = TransformerFactory.newInstance().newTransformer();
+        transformer.setOutputProperty(OutputKeys.INDENT, "yes");
+        StringWriter sw = new StringWriter();
+        StreamResult result = new StreamResult(sw);
+        DOMSource source = new DOMSource(document);
+        transformer.transform(source, result);
+        String xmlString = sw.toString();
+        return xmlString;
+    }
 }

@@ -321,7 +321,7 @@ public class CarbonEventProcessorService implements EventProcessorService {
         if (distributed) {
             if (stormDeploymentConfig != null && stormDeploymentConfig.isManagerNode() && EventProcessorValueHolder.getStormManagerServer().isStormManager()) {
                 try {
-                    TopologyManager.submitTopology(executionPlanConfiguration.getName(), executionPlanConfiguration.getQueryExpressions(), tenantId);
+                    TopologyManager.submitTopology(executionPlanConfiguration, siddhiManager.getStreamDefinitions(), tenantId);
                 } catch (StormDeploymentException e) {
                     throw new ExecutionPlanConfigurationException("Invalid distributed query specified, " + e.getMessage(), e);
                 }
