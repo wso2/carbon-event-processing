@@ -19,6 +19,8 @@ package org.wso2.carbon.event.processor.core.internal.storm.util;
 
 import backtype.storm.topology.BoltDeclarer;
 import backtype.storm.topology.TopologyBuilder;
+import backtype.storm.tuple.Fields;
+import org.apache.axiom.om.OMAttribute;
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.util.AXIOMUtil;
 import org.apache.log4j.Logger;
@@ -36,7 +38,9 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-
+/**
+ * Reads the execution plan xml file and construct the Storm topology
+ */
 public class StormTopologyConstructor {
 
     private static Logger log = Logger.getLogger(StormTopologyConstructor.class);
@@ -58,6 +62,7 @@ public class StormTopologyConstructor {
 
             List<StreamDefinition> streamDefinitions = getStreamDefinitions(eventReceiverElement.getFirstChildWithName(new QName("streams")));
             for (StreamDefinition streamDefinition : streamDefinitions) {
+                //Receiver only passes through incoming events. Therefore, input all input streams are output streams
                 componentInfoHolder.addInputStream(streamDefinition.getStreamId(), streamDefinition);
                 componentInfoHolder.addOutputStream(streamDefinition.getStreamId(), streamDefinition);
             }
@@ -74,12 +79,15 @@ public class StormTopologyConstructor {
             String parallel = eventProcessorElement.getAttributeValue(new QName("parallel"));
             ComponentInfoHolder componentInfoHolder = new ComponentInfoHolder(name, ComponentInfoHolder.ComponentType.SIDDHI_BOLT);
 
-            List<StreamDefinition> inputStreamDefinitions = getStreamDefinitions(eventProcessorElement.getFirstChildWithName(new QName("input-streams")));
+            OMElement inputStreamsElement = eventProcessorElement.getFirstChildWithName(new QName("input-streams"));
+            List<StreamDefinition> inputStreamDefinitions = getStreamDefinitions(inputStreamsElement);
             for (StreamDefinition streamDefinition : inputStreamDefinitions) {
                 componentInfoHolder.addInputStream(streamDefinition.getStreamId(), streamDefinition);
             }
+            // Adding partitioning fields of input streams
+            addPartitionFields(inputStreamsElement, componentInfoHolder);
 
-            List<ExecutionPlan> executionPlans = new ArrayList<ExecutionPlan>(inputStreamDefinitions);
+            List<ExecutionPlan> executionPlans = new ArrayList<ExecutionPlan>();
             OMElement queryElement = eventProcessorElement.getFirstChildWithName(new QName("queries"));
             executionPlans.addAll(SiddhiCompiler.parse(queryElement.getText()));
             componentInfoHolder.addSiddhiQueries(executionPlans);
@@ -101,12 +109,15 @@ public class StormTopologyConstructor {
             String parallel = eventProcessorElement.getAttributeValue(new QName("parallel"));
             ComponentInfoHolder componentInfoHolder = new ComponentInfoHolder(name, ComponentInfoHolder.ComponentType.SIDDHI_BOLT);
 
-            List<StreamDefinition> inputStreamDefinitions = getStreamDefinitions(eventProcessorElement.getFirstChildWithName(new QName("input-streams")));
+            OMElement inputStreamsElement = eventProcessorElement.getFirstChildWithName(new QName("input-streams"));
+            List<StreamDefinition> inputStreamDefinitions = getStreamDefinitions(inputStreamsElement);
             for (StreamDefinition streamDefinition : inputStreamDefinitions) {
                 componentInfoHolder.addInputStream(streamDefinition.getStreamId(), streamDefinition);
             }
+            // Publisher might also partition the output. Adding partitioning fields of input streams.
+            addPartitionFields(inputStreamsElement, componentInfoHolder);
 
-            List<ExecutionPlan> executionPlans = new ArrayList<ExecutionPlan>(inputStreamDefinitions);
+            List<ExecutionPlan> executionPlans = new ArrayList<ExecutionPlan>();
             OMElement queryElement = eventProcessorElement.getFirstChildWithName(new QName("queries"));
             if (queryElement != null) {
                 executionPlans.addAll(SiddhiCompiler.parse(queryElement.getText()));
@@ -119,18 +130,39 @@ public class StormTopologyConstructor {
             }
             componentInfoHolder.setDeclarer(builder.setBolt(name, new EventPublisherBolt(stormDeploymentConfig, inputStreamDefinitions, executionPlans, outputStreamDefinitions, executionPlanName, tenantId), Integer.parseInt(parallel)));
             topologyInfoHolder.addComponent(componentInfoHolder);
-
         }
 
         topologyInfoHolder.indexComponents();
 
+        /**
+         * Connecting components together.
+         *  1) Get each component
+         *  2) Get input streams of that component
+         *  3) Find publishers who publishes each input stream
+         *  4) Connect with producer of input stream
+         */
         for (ComponentInfoHolder componentInfoHolder : topologyInfoHolder.getComponents()) {
+
             if (componentInfoHolder.getComponentType() != ComponentInfoHolder.ComponentType.EVENT_RECEIVER_SPOUT) {
                 BoltDeclarer boltDeclarer = (BoltDeclarer) componentInfoHolder.getDeclarer();
-                for (String streamId : componentInfoHolder.getInputStreamIds()) {
-                    for (ComponentInfoHolder pubComponent : topologyInfoHolder.getPublishingComponents(streamId)) {
+
+                for (String inputStreamId : componentInfoHolder.getInputStreamIds()) {
+                    for (ComponentInfoHolder pubComponent : topologyInfoHolder.getPublishingComponents(inputStreamId)) {
+
                         if (!pubComponent.getComponentName().equals(componentInfoHolder.getComponentName())) {
-                            boltDeclarer.shuffleGrouping(pubComponent.getComponentName(), streamId);
+                            String partitionedField = componentInfoHolder.getPartionenedField(inputStreamId);
+                            String groupingType = "AllGrouping";
+
+                            if (partitionedField == null){
+                                boltDeclarer.allGrouping(pubComponent.getComponentName(), inputStreamId);
+                            }else{
+                                groupingType = "FieldGrouping";
+                                boltDeclarer.fieldsGrouping(pubComponent.getComponentName(), inputStreamId, new Fields(partitionedField));
+                            }
+                            log.info("Connecting storm components [Consumer:" + componentInfoHolder.getComponentName()
+                                    + ", Stream:"+ inputStreamId
+                                    + ", Publisher:" + pubComponent.getComponentName()
+                                    + ", Grouping:" + groupingType + "]") ;
                         }
                     }
                 }
@@ -141,13 +173,29 @@ public class StormTopologyConstructor {
     }
 
     private static List<StreamDefinition> getStreamDefinitions(OMElement streamsElement) {
-        List<StreamDefinition> inputStreamDefinitions = new ArrayList<StreamDefinition>();
-        Iterator<OMElement> inputStreamIterator = streamsElement.getChildrenWithName(new QName("stream"));
-        while (inputStreamIterator.hasNext()) {
-            OMElement inputStreamElement = inputStreamIterator.next();
-            StreamDefinition streamDefinition = SiddhiCompiler.parseStreamDefinition(inputStreamElement.getText());
-            inputStreamDefinitions.add(streamDefinition);
+        List<StreamDefinition> streamDefinitions = new ArrayList<StreamDefinition>();
+        Iterator<OMElement> streamIterator = streamsElement.getChildrenWithName(new QName("stream"));
+        while (streamIterator.hasNext()) {
+            OMElement streamElement = streamIterator.next();
+            StreamDefinition streamDefinition = SiddhiCompiler.parseStreamDefinition(streamElement.getText());
+            streamDefinitions.add(streamDefinition);
         }
-        return inputStreamDefinitions;
+        return streamDefinitions;
+    }
+
+    /**
+     * Adding stream partitioned fields
+     */
+    private static void addPartitionFields(OMElement streamsElement, ComponentInfoHolder componentInfoHolder){
+        Iterator<OMElement> streamIterator = streamsElement.getChildrenWithName(new QName("stream"));
+        while (streamIterator.hasNext()) {
+            OMElement streamElement = streamIterator.next();
+            OMAttribute partitionAttribute = streamElement.getAttribute(new QName("partition"));
+
+            if (partitionAttribute != null){
+                StreamDefinition streamDefinition = SiddhiCompiler.parseStreamDefinition(streamElement.getText());
+                componentInfoHolder.addStreamPartitioningField(streamDefinition.getStreamId(), partitionAttribute.getAttributeValue());
+            }
+        }
     }
 }

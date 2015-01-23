@@ -27,7 +27,7 @@ import java.util.Map;
 
 public class ComponentInfoHolder {
 
-    public static int GROUPING_TYPE_SHUFFLE_GROUPING = 1;
+
 
     public enum ComponentType {EVENT_RECEIVER_SPOUT, SIDDHI_BOLT, EVENT_PUBLISHER_BOLT;}
 
@@ -35,11 +35,10 @@ public class ComponentInfoHolder {
     private String componentName = null;
     private Object declarer;
     private Map<String, StreamDefinition> inputStreams = new HashMap<String, StreamDefinition>();
+    private Map<String, String> inputStreamPartitoningFields = new HashMap<String, String>();
     private List<ExecutionPlan> siddhiQueries = new ArrayList<ExecutionPlan>();
     private Map<String, StreamDefinition> outputStreams = new HashMap<String, StreamDefinition>();
     private int parallelism = 1;
-    private int groupingType = GROUPING_TYPE_SHUFFLE_GROUPING;
-    private HashMap<String, String> groupingParameters = new HashMap<String, String>();
 
     public ComponentInfoHolder(String componentName, ComponentType componentType) {
         this.componentName = componentName;
@@ -54,16 +53,14 @@ public class ComponentInfoHolder {
         this.parallelism = parallelism;
     }
 
-    public void setGroupingType(int groupingType) {
-        this.groupingType = groupingType;
-    }
-
-    public void addGroupingParameter(String key, String value) {
-        groupingParameters.put(key, value);
-    }
-
     public void addInputStream(String streamId, StreamDefinition streamDefinition) {
         inputStreams.put(streamId, streamDefinition);
+    }
+
+    public void addStreamPartitioningField(String streamId, String partitioningField){
+        if (this.componentType != ComponentType.EVENT_RECEIVER_SPOUT){
+            inputStreamPartitoningFields.put(streamId, partitioningField);
+        }
     }
 
     public void addOutputStream(String streamId, StreamDefinition streamDefinition) {
@@ -78,16 +75,12 @@ public class ComponentInfoHolder {
         return outputStreams.keySet().toArray(new String[inputStreams.size()]);
     }
 
+    public String getPartionenedField(String streamId){
+        return inputStreamPartitoningFields.get(streamId);
+    }
+
     public int getParallelism() {
         return parallelism;
-    }
-
-    public int getGroupingType() {
-        return groupingType;
-    }
-
-    public String getGroupingParameter(String key) {
-        return groupingParameters.get(key);
     }
 
     public String getComponentName() {
