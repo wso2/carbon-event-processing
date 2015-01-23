@@ -77,7 +77,7 @@ public interface EventProcessorConstants {
     String INPUT_STREAMS = "input-streams";
     String OUTPUT_STREAMS = "output-streams";
     String EVENT_PROCESSOR_TAG = "event-processor";
-    String SIDDHI_BOLT = "SiddhiBolt";
+    String SIDDHI_BOLT = "SiddhiBolt ";
     String QUERIES = "queries";
     String EVENT_RECEIVER = "event-receiver";
     String EVENT_RECEIVER_SPOUT = "EventReceiverSpout";
@@ -86,4 +86,6 @@ public interface EventProcessorConstants {
     String DEFINE_STREAM = "define stream ";
     String EVENT_PUBLISHER = "event-publisher";
     String EVENT_PUBLISHER_BOLT = "EventPublisherBolt";
+    String PARALLEL = "parallel";
+    String NAME = "name";
 }
