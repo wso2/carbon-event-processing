@@ -39,6 +39,12 @@
             <groupId>org.apache.storm.wso2</groupId>
             <artifactId>storm</artifactId>
             <scope>provided</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.slf4j</groupId>
+                    <artifactId>log4j-over-slf4j</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>org.wso2.siddhi</groupId>
@@ -65,6 +71,7 @@
             <groupId>slf4j.wso2</groupId>
             <artifactId>slf4j</artifactId>
             <version>${slf4j.wso2.version}</version>
+
         </dependency>
         <dependency>
             <groupId>libthrift.wso2</groupId>
