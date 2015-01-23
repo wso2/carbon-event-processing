@@ -57,4 +57,9 @@ public class TenantMgtListenerImpl implements TenantMgtListener{
     public int getListenerOrder() {
         return 0;
     }
+
+	@Override
+	public void onPreDelete(int tenantId) throws StratosException {
+		// Implement this method to delete prdouct specific data
+	}
 }
