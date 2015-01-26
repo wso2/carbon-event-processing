@@ -40,7 +40,7 @@ import java.util.concurrent.Executors;
 
 /**
  * Receives events from the Event publisher bolt running on storm. There will be one SiddhiStormOutputEventListener instance
- * per execution plan per tenant (all exported streams of execution plan are handled form a single instance). When events are
+ * per execution plan per tenant (all exported streams of execution plan are handled form a single SiddhiStormOutputEventListener). When events are
  * received from storm, the event  will be directed to the relevant output stream listener depending on the stream to forward
  * the event to the relevant output adaptor for the stream.
  */
@@ -64,7 +64,7 @@ public class SiddhiStormOutputEventListener implements StreamCallback {
     }
 
     private void init() {
-        logPrefix = "[CEP Publisher] for execution plan '" + executionPlanConfiguration.getName() + "'" + "(TenantID=" + tenantId + ") ";
+        logPrefix = "[CEP Publisher|ExecPlan:" + executionPlanConfiguration.getName() + ", TenantID:" + tenantId + "] ";
         log.info(logPrefix + "Initializing storm output event listener");
 
         try {

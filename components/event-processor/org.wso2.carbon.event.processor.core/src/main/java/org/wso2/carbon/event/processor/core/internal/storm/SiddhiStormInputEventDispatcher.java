@@ -64,7 +64,7 @@ public class SiddhiStormInputEventDispatcher extends AbstractSiddhiInputEventDis
     }
 
     private void init(StreamDefinition streamDefinition, String siddhiStreamName, ExecutionPlanConfiguration executionPlanConfiguration) {
-        logPrefix = "[CEP Receiver] for execution plan '" + executionPlanConfiguration.getName() + "'" + "(TenantID=" + tenantId + ") ";
+        logPrefix = "[CEP Receiver|ExecPlan:" + executionPlanConfiguration.getName() + ", Tenant:" + tenantId + ", Stream:" + siddhiStreamName + "]";
 
         try {
             thisHostIp = Utils.findAddress("localhost");
@@ -144,7 +144,7 @@ public class SiddhiStormInputEventDispatcher extends AbstractSiddhiInputEventDis
                         + " for the Stream '" + siddhiStreamDefinition.getStreamId());
                 return true;
             } catch (Exception e) {
-                log.error(logPrefix + "Error in getting Storm receiver ", e);
+                log.error(logPrefix + "Error in getting Storm receiver :" + e.getMessage());
                 return false;
             } finally {
                 if (transport != null) {
