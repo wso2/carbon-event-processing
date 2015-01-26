@@ -58,7 +58,6 @@ public class TopologyManager {
     private static String jarLocation;
     private static final Log log = LogFactory.getLog(TopologyManager.class);
 
-
     static {
         String stormConfigDirPath = CarbonUtils.getCarbonConfigDirPath() + File.separator + "cep" + File.separator + "storm";
         System.setProperty("storm.yaml", stormConfigDirPath + File.separator + "storm.yaml");
@@ -68,7 +67,6 @@ public class TopologyManager {
     }
 
     public static List<TopologySummary> getTopologies() throws StormDeploymentException {
-
         try {
             return client.getClusterInfo().get_topologies();
         } catch (TException e) {
@@ -94,21 +92,25 @@ public class TopologyManager {
 
         try {
             String jsonConf = JSONValue.toJSONString(stormConfig);
-            client.submitTopology(executionPlanName,
-                    uploadedJarLocation, jsonConf, builder.createTopology());
-            log.info("Successfully submitted storm topology " + executionPlanName);
+            client.submitTopology(executionPlanName, uploadedJarLocation, jsonConf, builder.createTopology());
+            log.info("Successfully submitted storm topology '" + executionPlanName + "'");
         } catch (AlreadyAliveException e) {
-            throw new ExecutionPlanConfigurationException("Topology already exist with name " + executionPlanName, e);
+            log.warn("Topology '" + executionPlanName + "' already existing", e);
+            Thread retryThread = new Thread(new TopologySubmitter(executionPlanName, uploadedJarLocation, builder.createTopology(), tenantId, true));
+            retryThread.start();
         } catch (TException e) {
-            throw new StormDeploymentException("Error connecting to Storm", e);
+            log.warn("Error connecting to storm when trying to submit topology '" + executionPlanName + "'", e);
+            Thread retryThread = new Thread(new TopologySubmitter(executionPlanName, uploadedJarLocation, builder.createTopology(), tenantId, false));
+            retryThread.start();
         } catch (InvalidTopologyException e) {
+            // No point in retrying to submit if the topology is invalid. Therefore, throwing an exception without retrying.
             throw new ExecutionPlanConfigurationException("Invalid Execution Plan " + executionPlanName + " for tenant " + tenantId, e);
         }
     }
 
-    public static void killTopology(String executionPlanName, int tenantId) throws StormDeploymentException, ExecutionPlanConfigurationException {
-
+    public static void killTopology(String executionPlanName, int tenantId) throws StormDeploymentException{
         try {
+            log.info("Killing storm topology '" + executionPlanName + "'");
             client.killTopologyWithOpts(executionPlanName, new KillOptions()); //provide topology name
         } catch (NotAliveException e) {
             // do nothing
@@ -126,5 +128,67 @@ public class TopologyManager {
         transformer.transform(source, result);
         String xmlString = sw.toString();
         return xmlString;
+    }
+
+    /*public static String getTopologyName(String executionPlanName, int tenantId){
+        return (executionPlanName + ":" + tenantId);
+    }*/
+
+    static class TopologySubmitter implements Runnable{
+        String executionPlanName;
+        String uploadedJarLocation;
+        StormTopology topology;
+        int tenantId;
+        boolean isTopologyAlive;
+        public TopologySubmitter(String executionPlanName, String uploadedJarLocation, StormTopology topology, int tenantId, boolean isTopologyAlive){
+            this.executionPlanName = executionPlanName;
+            this.uploadedJarLocation = uploadedJarLocation;
+            this.topology = topology;
+            this.tenantId = tenantId;
+            this.isTopologyAlive = isTopologyAlive;
+        }
+
+        private boolean submitTopology(){
+            String jsonConf = JSONValue.toJSONString(stormConfig);
+            try {
+                if (isTopologyAlive){
+                    log.info("Killing already existing storm topology '" + executionPlanName + "' to re-submit");
+                    KillOptions options = new KillOptions();
+                    options.set_wait_secs(10);
+                    client.killTopologyWithOpts(executionPlanName, options);
+                    Thread.sleep(15000); // Sleep 15s till end of 10s waiting time in storm cluster for killed topology.
+                }
+
+                client.submitTopology(executionPlanName, uploadedJarLocation, jsonConf, topology);
+            } catch (AlreadyAliveException e) {
+                log.warn("Topology '" + executionPlanName + "' already existing", e);
+                return false;
+            } catch (TException e) {
+                log.warn("Error connecting to storm when trying to submit topology '" + executionPlanName + "'", e);
+                return false;
+            }  catch (NotAliveException e) {
+                log.info("Topology '" + executionPlanName + "' is not alive to kill");
+                isTopologyAlive = false;
+                return false;
+            } catch (InterruptedException e) {
+                // Ignore
+            } catch (InvalidTopologyException e) {
+                // Do nothing. Will not reach here since this exception will occur in the first attempt to submit by patent thread.
+            }
+            log.info("Successfully submitted storm topology '" + executionPlanName + "'");
+            return true;
+        }
+
+        @Override
+        public void run() {
+            do  {
+                log.info("Retrying to submit topology '" + executionPlanName + "' in 30 sec");
+                try {
+                    Thread.sleep(30000);
+                } catch (InterruptedException e1) {
+                    //ignore
+                }
+            } while (!submitTopology());
+        }
     }
 }
