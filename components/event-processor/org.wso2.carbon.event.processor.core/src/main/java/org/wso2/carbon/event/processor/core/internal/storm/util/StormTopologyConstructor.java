@@ -159,10 +159,13 @@ public class StormTopologyConstructor {
                                 groupingType = "FieldGrouping";
                                 boltDeclarer.fieldsGrouping(pubComponent.getComponentName(), inputStreamId, new Fields(partitionedField));
                             }
-                            log.info("Connecting storm components [Consumer:" + componentInfoHolder.getComponentName()
-                                    + ", Stream:"+ inputStreamId
-                                    + ", Publisher:" + pubComponent.getComponentName()
-                                    + ", Grouping:" + groupingType + "]") ;
+
+                            if (log.isDebugEnabled()){
+                                log.debug("Connecting storm components [Consumer:" + componentInfoHolder.getComponentName()
+                                        + ", Stream:" + inputStreamId
+                                        + ", Publisher:" + pubComponent.getComponentName()
+                                        + ", Grouping:" + groupingType + "]"); ;
+                            }
                         }
                     }
                 }
