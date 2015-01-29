@@ -190,10 +190,8 @@ public interface EventProcessorService {
      * @param inputStreamDefinitions input streams required by queries.
      * @param queryExpressions Siddhi queries.
      * @return  true if valid.
-     * @throws SiddhiParserException
      */
-    public boolean validateSiddhiQueries(String[] inputStreamDefinitions, String queryExpressions) throws
-             SiddhiParserException;
+    public boolean validateSiddhiQueries(String[] inputStreamDefinitions, String queryExpressions);
 
     /**
      * Fetches all the streams imported and exported by the Siddhi engine for the given set of queries.
@@ -202,8 +200,7 @@ public interface EventProcessorService {
      * @return a {@link List} of {@link StreamDefinition} objects that represent all the streams imported and exported by Siddhi queries
      * @throws SiddhiParserException
      */
-    public List<StreamDefinition> getSiddhiStreams(String[] inputStreamDefinitions, String queryExpressions) throws
-             SiddhiParserException;
+    public List<StreamDefinition> getSiddhiStreams(String[] inputStreamDefinitions, String queryExpressions);
 
     /**
      * Returns the deployment status and dependency information as a formatted string for execution plan associated
