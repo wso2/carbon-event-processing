@@ -22,7 +22,7 @@
 
     <parent>
         <artifactId>event-stream-feature</artifactId>
-        <groupId>org.wso2.carbon</groupId>
+        <groupId>org.wso2.carbon.event-processing</groupId>
         <version>2.0.0-SNAPSHOT</version>
     </parent>
 

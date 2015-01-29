@@ -21,7 +21,7 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
     <parent>
-        <groupId>org.wso2.carbon</groupId>
+        <groupId>org.wso2.carbon.event-processing</groupId>
         <artifactId>event-stream-manager</artifactId>
         <version>2.0.0-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>
@@ -41,13 +41,10 @@
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
-            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.wso2.carbon</groupId>
-            <artifactId>org.wso2.carbon.databridge.core</artifactId>
-            
-        </dependency>
+            <artifactId>org.wso2.carbon.databridge.core</artifactId>        </dependency>
         <dependency>
             <groupId>org.wso2.carbon</groupId>
             <artifactId>org.wso2.carbon.core</artifactId>
@@ -59,12 +56,10 @@
         <dependency>
             <groupId>org.wso2.siddhi</groupId>
             <artifactId>siddhi-core</artifactId>
-            
         </dependency>
         <dependency>
             <groupId>org.wso2.carbon</groupId>
             <artifactId>org.wso2.carbon.stratos.common</artifactId>
-            
         </dependency>
     </dependencies>
 

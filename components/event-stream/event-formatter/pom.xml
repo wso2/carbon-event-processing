@@ -21,7 +21,7 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
     <parent>
-        <groupId>org.wso2.carbon</groupId>
+        <groupId>org.wso2.carbon.event-processing</groupId>
         <artifactId>event-stream</artifactId>
         <version>2.0.0-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>
@@ -29,7 +29,6 @@
 
     <modelVersion>4.0.0</modelVersion>
     <artifactId>event-formatter</artifactId>
-    <groupId>org.wso2.carbon</groupId>
     <packaging>pom</packaging>
     <name>WSO2 Carbon - Event Formatter Aggregator Module</name>
     <description>WSO2 Carbon Event Formatter is used to build an event from an available event

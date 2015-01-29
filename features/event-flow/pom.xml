@@ -23,7 +23,7 @@
 
     <parent>
         <artifactId>carbon-event-processing</artifactId>
-        <groupId>org.wso2.carbon</groupId>
+        <groupId>org.wso2.carbon.event-processing</groupId>
         <version>4.3.0-SNAPSHOT</version>
         <relativePath>../../pom.xml</relativePath>
     </parent>

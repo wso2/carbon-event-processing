@@ -22,7 +22,7 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
     <parent>
-        <groupId>org.wso2.carbon</groupId>
+        <groupId>org.wso2.carbon.event-processing</groupId>
         <artifactId>event-output-adaptor</artifactId>
         <version>2.0.0-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>
@@ -41,12 +41,10 @@
         <dependency>
             <groupId>org.wso2.carbon</groupId>
             <artifactId>org.wso2.carbon.event.output.adaptor.manager.core</artifactId>
-            
         </dependency>
         <dependency>
             <groupId>org.wso2.carbon</groupId>
             <artifactId>org.wso2.carbon.event.output.adaptor.core</artifactId>
-            
         </dependency>
         <dependency>
             <groupId>org.wso2.carbon</groupId>
@@ -56,7 +54,6 @@
             <groupId>org.wso2.carbon</groupId>
             <artifactId>org.wso2.carbon.utils</artifactId>
         </dependency>
-
     </dependencies>
 
     <build>
