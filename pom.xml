@@ -1097,7 +1097,7 @@
 
     <properties>
         <!-- Carbon kernel version -->
-        <carbon.kernel.version>4.3.0-SNAPSHOT</carbon.kernel.version>
+        <carbon.kernel.version>4.3.0</carbon.kernel.version>
         <carbon.kernel.imp.pkg.version>[4.3.0, 4.4.0)
         </carbon.kernel.imp.pkg.version>
         <previous.version>4.2.0</previous.version>
