@@ -39,8 +39,4 @@
         <module>org.wso2.carbon.event.flow.ui</module>
     </modules>
 
-    <properties>
-        <wso2carbon.version.event-flow>${wso2carbon.version}</wso2carbon.version.event-flow>
-    </properties>
-
 </project>

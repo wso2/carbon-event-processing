@@ -42,7 +42,6 @@
         <dependency>
             <groupId>org.wso2.carbon</groupId>
             <artifactId>org.wso2.carbon.databridge.core</artifactId>
-            
         </dependency>
         <dependency>
             <groupId>org.wso2.carbon</groupId>
@@ -55,22 +54,18 @@
         <dependency>
             <groupId>org.wso2.carbon</groupId>
             <artifactId>org.wso2.carbon.event.output.adaptor.core</artifactId>
-            
         </dependency>
         <dependency>
             <groupId>org.wso2.carbon</groupId>
             <artifactId>org.wso2.carbon.event.output.adaptor.manager.core</artifactId>
-            
         </dependency>
         <dependency>
             <groupId>org.wso2.carbon</groupId>
             <artifactId>org.wso2.carbon.event.statistics</artifactId>
-            
         </dependency>
         <dependency>
             <groupId>org.wso2.carbon</groupId>
             <artifactId>org.wso2.carbon.event.stream.manager.core</artifactId>
-            
         </dependency>
     </dependencies>
 

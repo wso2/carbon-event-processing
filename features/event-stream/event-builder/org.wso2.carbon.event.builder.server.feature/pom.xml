@@ -43,27 +43,22 @@
         <dependency>
             <groupId>org.wso2.carbon</groupId>
             <artifactId>org.wso2.carbon.event.builder.core</artifactId>
-            
         </dependency>
         <dependency>
             <groupId>org.wso2.carbon</groupId>
             <artifactId>org.wso2.carbon.event.builder.admin</artifactId>
-            
         </dependency>
         <dependency>
             <groupId>com.jayway.jsonpath</groupId>
             <artifactId>json-path</artifactId>
-            <version>${jsonpath.version}</version>
         </dependency>
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
-            <version>${slf4j.version}</version>
         </dependency>
         <dependency>
             <groupId>net.minidev</groupId>
             <artifactId>json-smart</artifactId>
-            <version>${jsonsmart.version}</version>
         </dependency>
 
     </dependencies>
@@ -131,7 +126,7 @@
                                 <bundleDef>net.minidev:json-smart:${jsonsmart.version}</bundleDef>
                             </bundles>
                             <importFeatures>
-                                <importFeatureDef>org.wso2.carbon.core.server:${carbon.version}
+                                <importFeatureDef>org.wso2.carbon.core.server:${carbon.kernel.imp.pkg.version}
                                 </importFeatureDef>
                             </importFeatures>
                         </configuration>
@@ -140,11 +135,4 @@
             </plugin>
         </plugins>
     </build>
-
-    <properties>
-        <!--<cep.component.version.100>1.0.0</cep.component.version.100>-->
-        <jsonpath.version>0.9.1</jsonpath.version>
-        <slf4j.version>1.7.5</slf4j.version>
-        <jsonsmart.version>1.2</jsonsmart.version>
-    </properties>
 </project>

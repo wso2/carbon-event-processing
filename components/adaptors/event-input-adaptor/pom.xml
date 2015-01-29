@@ -37,24 +37,6 @@
     <description>This is a Carbon bundle that represent the event-adaptor module.</description>
     <url>http://wso2.org</url>
 
-    <dependencies>
-        <dependency>
-            <groupId>org.wso2.carbon</groupId>
-            <artifactId>org.wso2.carbon.logging</artifactId>
-            <version>${carbon.platform.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.wso2.carbon</groupId>
-            <artifactId>org.wso2.carbon.core</artifactId>
-            <version>${carbon.platform.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.wso2.carbon</groupId>
-            <artifactId>org.wso2.carbon.utils</artifactId>
-            <version>${carbon.platform.version}</version>
-        </dependency>
-    </dependencies>
-
     <modules>
         <module>org.wso2.carbon.event.input.adaptor.core</module>
         <module>org.wso2.carbon.event.input.adaptor.jms</module>

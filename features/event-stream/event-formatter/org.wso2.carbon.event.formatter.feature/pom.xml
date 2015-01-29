@@ -41,13 +41,11 @@
         <dependency>
             <groupId>org.wso2.carbon</groupId>
             <artifactId>org.wso2.carbon.event.formatter.server.feature</artifactId>
-            
             <type>zip</type>
         </dependency>
         <dependency>
             <groupId>org.wso2.carbon</groupId>
             <artifactId>org.wso2.carbon.event.formatter.ui.feature</artifactId>
-            
             <type>zip</type>
         </dependency>
     </dependencies>
@@ -69,7 +67,7 @@
                             <id>org.wso2.carbon.event.formatter</id>
                             <propertiesFile>../../../../etc/feature.properties</propertiesFile>
                             <importFeatures>
-                                <importFeatureDef>org.wso2.carbon.core:${carbon.version}
+                                <importFeatureDef>org.wso2.carbon.core:${carbon.kernel.imp.pkg.version}
                                 </importFeatureDef>
                             </importFeatures>
                             <includedFeatures>
