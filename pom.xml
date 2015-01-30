@@ -35,11 +35,11 @@
 
     <modules>
         <module>service-stubs</module>
-        <module>components/event-monitor</module>
         <module>components/adaptors</module>
         <module>components/event-processor</module>
         <module>components/event-stream</module>
         <module>components/event-flow</module>
+        <module>components/event-monitor</module>
         <module>features/adaptors</module>
         <module>features/event-processor</module>
         <module>features/event-monitor</module>
@@ -1036,7 +1036,7 @@
 
         <!--CEP versions-->
         <siddhi.version>2.2.0</siddhi.version>
-        <carbon.event.processing.version>2.0.0</carbon.event.processing.version>
+        <carbon.event.processing.version>2.0.0-SNAPSHOT</carbon.event.processing.version>
         <storm.version>0.9.2-incubating.wso2v1</storm.version>
 
         <stratos.version>2.2.0</stratos.version>
