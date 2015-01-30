@@ -76,9 +76,9 @@
                                 </properties>
                             </adviceFile>
                             <bundles>
-                                <bundleDef>org.wso2.carbon:org.wso2.carbon.event.statistics.ui:2.0.0-SNAPSHOT
+                                <bundleDef>org.wso2.carbon.event-processing:org.wso2.carbon.event.statistics.ui:${carbon.event.processing.version}
                                 </bundleDef>
-                                <bundleDef>org.wso2.carbon:org.wso2.carbon.event.statistics.stub:2.0.0-SNAPSHOT
+                                <bundleDef>org.wso2.carbon.event-processing:org.wso2.carbon.event.statistics.stub:${carbon.event.processing.version}
                                 </bundleDef>
                             </bundles>
                         </configuration>

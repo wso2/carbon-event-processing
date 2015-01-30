@@ -66,8 +66,8 @@
                             <id>org.wso2.carbon.event.flow</id>
                             <propertiesFile>../../../../etc/feature.properties</propertiesFile>
                             <includedFeatures>
-                                <includedFeatureDef>org.wso2.carbon:org.wso2.carbon.event.flow.server.feature:${carbon.event.processing.version}</includedFeatureDef>
-                                <includedFeatureDef>org.wso2.carbon:org.wso2.carbon.event.flow.ui.feature:${carbon.event.processing.version}</includedFeatureDef>
+                                <includedFeatureDef>org.wso2.carbon.event-processing:org.wso2.carbon.event.flow.server.feature:${carbon.event.processing.version}</includedFeatureDef>
+                                <includedFeatureDef>org.wso2.carbon.event-processing:org.wso2.carbon.event.flow.ui.feature:${carbon.event.processing.version}</includedFeatureDef>
                             </includedFeatures>
                         </configuration>
                     </execution>

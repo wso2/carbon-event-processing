@@ -69,7 +69,7 @@
                             </adviceFile>
                             <bundles>
                                 <bundleDef>
-                                    org.wso2.carbon:org.wso2.carbon.event.output.adaptor.hbase:${carbon.event.processing.version}
+                                    org.wso2.carbon.event-processing:org.wso2.carbon.event.output.adaptor.hbase:${carbon.event.processing.version}
                                 </bundleDef>
                                 <bundleDef>
                                     org.apache.hbase.wso2:hbase:0.94.10.wso2v1

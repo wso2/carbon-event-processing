@@ -140,13 +140,13 @@
                                 </properties>
                             </adviceFile>
                             <bundles>
-                                <bundleDef>org.wso2.carbon:org.wso2.carbon.event.processor.core:2.0.0-SNAPSHOT
+                                <bundleDef>org.wso2.carbon.event-processing:org.wso2.carbon.event.processor.core:${carbon.event.processing.version}
                                 </bundleDef>
                                 <bundleDef>
-                                    org.wso2.carbon:org.wso2.carbon.event.processor.admin:2.0.0-SNAPSHOT
+                                    org.wso2.carbon.event-processing:org.wso2.carbon.event.processor.admin:${carbon.event.processing.version}
                                 </bundleDef>
                                 <bundleDef>
-                                    org.wso2.carbon:org.wso2.carbon.event.processor.siddhi.extension:2.0.0-SNAPSHOT
+                                    org.wso2.carbon.event-processing:org.wso2.carbon.event.processor.siddhi.extension:${carbon.event.processing.version}
                                 </bundleDef>
                                 <bundleDef>
                                     org.wso2.siddhi:siddhi-core:${siddhi.version}
@@ -161,7 +161,7 @@
                                     org.apache.storm.wso2:storm:${storm.version}
                                 </bundleDef>
                                 <bundleDef>
-                                    org.wso2.carbon:org.wso2.carbon.event.processor.common:2.0.0-SNAPSHOT
+                                    org.wso2.carbon.event-processing:org.wso2.carbon.event.processor.common:${carbon.event.processing.version}
                                 </bundleDef>
                                 <bundleDef>
                                     com.lmax.wso2:disruptor:${disruptor.version}

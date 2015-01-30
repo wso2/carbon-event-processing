@@ -114,10 +114,10 @@
                                 </properties>
                             </adviceFile>
                             <bundles>
-                                <bundleDef>org.wso2.carbon:org.wso2.carbon.event.builder.core:${carbon.event.processing.version}
+                                <bundleDef>org.wso2.carbon.event-processing:org.wso2.carbon.event.builder.core:${carbon.event.processing.version}
                                 </bundleDef>
                                 <bundleDef>
-                                    org.wso2.carbon:org.wso2.carbon.event.builder.admin:${carbon.event.processing.version}
+                                    org.wso2.carbon.event-processing:org.wso2.carbon.event.builder.admin:${carbon.event.processing.version}
                                 </bundleDef>
                                 <bundleDef>com.jayway.jsonpath:json-path:${jsonpath.version}
                                 </bundleDef>

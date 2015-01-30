@@ -72,7 +72,7 @@
                             </adviceFile>
                             <bundles>
                                 <bundleDef>
-                                    org.wso2.carbon:org.wso2.carbon.event.input.adaptor.websocket:${carbon.event.processing.version}
+                                    org.wso2.carbon.event-processing:org.wso2.carbon.event.input.adaptor.websocket:${carbon.event.processing.version}
                                 </bundleDef>
                                 <bundleDef>
                                     org.glassfish.tyrus.bundles.wso2:tyrus-standalone-client:${org.glassfish.tyrus.wso2.version}

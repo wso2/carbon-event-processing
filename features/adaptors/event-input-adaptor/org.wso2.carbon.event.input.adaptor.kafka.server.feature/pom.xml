@@ -61,7 +61,7 @@
                             </adviceFile>
                             <bundles>
                                 <bundleDef>
-                                    org.wso2.carbon:org.wso2.carbon.event.input.adaptor.kafka:${carbon.event.processing.version}
+                                    org.wso2.carbon.event-processing:org.wso2.carbon.event.input.adaptor.kafka:${carbon.event.processing.version}
                                 </bundleDef>
                             </bundles>
                             <importFeatures>

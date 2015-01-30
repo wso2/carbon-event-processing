@@ -68,14 +68,14 @@
                             </adviceFile>
                             <bundles>
                                 <bundleDef>
-                                    org.wso2.carbon:org.wso2.carbon.event.input.adaptor.wso2event:${carbon.event.processing.version}
+                                    org.wso2.carbon.event-processing:org.wso2.carbon.event.input.adaptor.wso2event:${carbon.event.processing.version}
                                 </bundleDef>
                             </bundles>
                             <importFeatures>
                                 <importFeatureDef>org.wso2.carbon.core.server:${carbon.kernel.imp.pkg.version}
                                 </importFeatureDef>
                                 <importFeatureDef>
-                                    org.wso2.carbon.databridge.datareceiver:${carbon.commons.version}
+                                    org.wso2.carbon.databridge.datareceiver:${carbon.commons.imp.pkg.version}
                                 </importFeatureDef>
                             </importFeatures>
                         </configuration>

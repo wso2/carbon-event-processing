@@ -130,43 +130,43 @@
                             </importFeatures>
                             <includedFeatures>
                                 <includedFeatureDef>
-                                    org.wso2.carbon:org.wso2.carbon.event.input.adaptor.server.feature:${carbon.event.processing.version}
+                                    org.wso2.carbon.event-processing:org.wso2.carbon.event.input.adaptor.server.feature:${carbon.event.processing.version}
                                 </includedFeatureDef>
                                 <includedFeatureDef>
-                                    org.wso2.carbon:org.wso2.carbon.event.input.adaptor.jms.server.feature:${carbon.event.processing.version}
+                                    org.wso2.carbon.event-processing:org.wso2.carbon.event.input.adaptor.jms.server.feature:${carbon.event.processing.version}
                                 </includedFeatureDef>
                                 <includedFeatureDef>
-                                    org.wso2.carbon:org.wso2.carbon.event.input.adaptor.mqtt.server.feature:${carbon.event.processing.version}
+                                    org.wso2.carbon.event-processing:org.wso2.carbon.event.input.adaptor.mqtt.server.feature:${carbon.event.processing.version}
                                 </includedFeatureDef>
                                 <includedFeatureDef>
-                                    org.wso2.carbon:org.wso2.carbon.event.input.adaptor.http.server.feature:${carbon.event.processing.version}
+                                    org.wso2.carbon.event-processing:org.wso2.carbon.event.input.adaptor.http.server.feature:${carbon.event.processing.version}
                                 </includedFeatureDef>
                                 <includedFeatureDef>
-                                    org.wso2.carbon:org.wso2.carbon.event.input.adaptor.file.server.feature:${carbon.event.processing.version}
+                                    org.wso2.carbon.event-processing:org.wso2.carbon.event.input.adaptor.file.server.feature:${carbon.event.processing.version}
                                 </includedFeatureDef>
                                 <includedFeatureDef>
-                                    org.wso2.carbon:org.wso2.carbon.event.input.adaptor.email.server.feature:${carbon.event.processing.version}
+                                    org.wso2.carbon.event-processing:org.wso2.carbon.event.input.adaptor.email.server.feature:${carbon.event.processing.version}
                                 </includedFeatureDef>
                                 <includedFeatureDef>
-                                    org.wso2.carbon:org.wso2.carbon.event.input.adaptor.soap.server.feature:${carbon.event.processing.version}
+                                    org.wso2.carbon.event-processing:org.wso2.carbon.event.input.adaptor.soap.server.feature:${carbon.event.processing.version}
                                 </includedFeatureDef>
                                 <includedFeatureDef>
-                                    org.wso2.carbon:org.wso2.carbon.event.input.adaptor.kafka.server.feature:${carbon.event.processing.version}
+                                    org.wso2.carbon.event-processing:org.wso2.carbon.event.input.adaptor.kafka.server.feature:${carbon.event.processing.version}
                                 </includedFeatureDef>
                                 <includedFeatureDef>
-                                    org.wso2.carbon:org.wso2.carbon.event.input.adaptor.wso2event.server.feature:${carbon.event.processing.version}
+                                    org.wso2.carbon.event-processing:org.wso2.carbon.event.input.adaptor.wso2event.server.feature:${carbon.event.processing.version}
                                 </includedFeatureDef>
                                 <includedFeatureDef>
-                                    org.wso2.carbon:org.wso2.carbon.event.input.adaptor.manager.ui.feature:${carbon.event.processing.version}
+                                    org.wso2.carbon.event-processing:org.wso2.carbon.event.input.adaptor.manager.ui.feature:${carbon.event.processing.version}
                                 </includedFeatureDef>
                                 <includedFeatureDef>
-                                    org.wso2.carbon:org.wso2.carbon.event.input.adaptor.manager.server.feature:${carbon.event.processing.version}
+                                    org.wso2.carbon.event-processing:org.wso2.carbon.event.input.adaptor.manager.server.feature:${carbon.event.processing.version}
                                 </includedFeatureDef>
                                 <includedFeatureDef>
-                                    org.wso2.carbon:org.wso2.carbon.event.input.adaptor.websocket.server.feature:${carbon.event.processing.version}
+                                    org.wso2.carbon.event-processing:org.wso2.carbon.event.input.adaptor.websocket.server.feature:${carbon.event.processing.version}
                                 </includedFeatureDef>
                                 <includedFeatureDef>
-                                    org.wso2.carbon:org.wso2.carbon.event.input.adaptor.websocket.local.server.feature:${carbon.event.processing.version}
+                                    org.wso2.carbon.event-processing:org.wso2.carbon.event.input.adaptor.websocket.local.server.feature:${carbon.event.processing.version}
                                 </includedFeatureDef>
                             </includedFeatures>
                         </configuration>

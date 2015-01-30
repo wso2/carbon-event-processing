@@ -73,9 +73,9 @@
                                 </properties>
                             </adviceFile>
                             <bundles>
-                                <bundleDef>org.wso2.carbon:org.wso2.carbon.event.tracer.ui:2.0.0-SNAPSHOT
+                                <bundleDef>org.wso2.carbon.event-processing:org.wso2.carbon.event.tracer.ui:${carbon.event.processing.version}
                                 </bundleDef>
-                                <bundleDef>org.wso2.carbon:org.wso2.carbon.event.tracer.stub:2.0.0-SNAPSHOT
+                                <bundleDef>org.wso2.carbon.event-processing:org.wso2.carbon.event.tracer.stub:${carbon.event.processing.version}
                                 </bundleDef>
                             </bundles>
                         </configuration>

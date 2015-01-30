@@ -97,10 +97,10 @@
                                 </properties>
                             </adviceFile>
                             <bundles>
-                                <bundleDef>org.wso2.carbon:org.wso2.carbon.event.formatter.core:2.0.0-SNAPSHOT
+                                <bundleDef>org.wso2.carbon.event-processing:org.wso2.carbon.event.formatter.core:${carbon.event.processing.version}
                                 </bundleDef>
                                 <bundleDef>
-                                    org.wso2.carbon:org.wso2.carbon.event.formatter.admin:2.0.0-SNAPSHOT
+                                    org.wso2.carbon.event-processing:org.wso2.carbon.event.formatter.admin:${carbon.event.processing.version}
                                 </bundleDef>
                             </bundles>
                             <importFeatures>
