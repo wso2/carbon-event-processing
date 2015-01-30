@@ -47,7 +47,7 @@
             <artifactId>org.wso2.carbon.utils</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.wso2.carbon</groupId>
+            <groupId>org.wso2.carbon.event-processing</groupId>
             <artifactId>org.wso2.carbon.event.builder.stub</artifactId>
         </dependency>
         <dependency>
@@ -55,11 +55,11 @@
             <artifactId>gson</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.wso2.carbon</groupId>
+            <groupId>org.wso2.carbon.event-processing</groupId>
             <artifactId>org.wso2.carbon.event.stream.manager.stub</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.wso2.carbon</groupId>
+            <groupId>org.wso2.carbon.event-processing</groupId>
             <artifactId>org.wso2.carbon.event.input.adaptor.manager.stub</artifactId>
         </dependency>
     </dependencies>

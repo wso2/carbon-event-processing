@@ -70,7 +70,7 @@
                                 <importFeatureDef>org.wso2.carbon.core.server:${carbon.kernel.imp.pkg.version}
                                 </importFeatureDef>
                                 <importFeatureDef>
-                                    org.wso2.carbon.databridge.datareceiver:${carbon.kernel.imp.pkg.version}
+                                    org.wso2.carbon.databridge.datareceiver:${carbon.commons.version}
                                 </importFeatureDef>
                             </importFeatures>
                         </configuration>

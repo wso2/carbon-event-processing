@@ -38,11 +38,11 @@
 
     <dependencies>
         <dependency>
-            <groupId>org.wso2.carbon</groupId>
+            <groupId>org.wso2.carbon.event-processing</groupId>
             <artifactId>org.wso2.carbon.event.stream.manager.core</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.wso2.carbon</groupId>
+            <groupId>org.wso2.carbon.event-processing</groupId>
             <artifactId>org.wso2.carbon.event.stream.manager.admin</artifactId>
         </dependency>
     </dependencies>

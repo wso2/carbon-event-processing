@@ -57,27 +57,4 @@
         <module>org.wso2.carbon.event.output.adaptor.rdbms.server.feature</module>
     </modules>
 
-    <repositories>
-        <repository>
-            <id>wso2-nexus1</id>
-            <name>WSO2 internal Repository</name>
-            <url>http://sr5.us1.wso2.com/nexus/content/repositories/wso2-public/</url>
-            <releases>
-                <enabled>true</enabled>
-                <updatePolicy>daily</updatePolicy>
-                <checksumPolicy>ignore</checksumPolicy>
-            </releases>
-        </repository>
-        <repository>
-            <id>wso2-nexus2</id>
-            <name>WSO2 internal Repository</name>
-            <url>http://maven.wso2.org/nexus/content/repositories/wso2-public/</url>
-            <releases>
-                <enabled>true</enabled>
-                <updatePolicy>daily</updatePolicy>
-                <checksumPolicy>ignore</checksumPolicy>
-            </releases>
-        </repository>
-    </repositories>
-
 </project>

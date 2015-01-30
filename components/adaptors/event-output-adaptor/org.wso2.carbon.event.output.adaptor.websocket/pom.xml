@@ -47,14 +47,9 @@
             <artifactId>org.wso2.carbon.core</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.wso2.carbon</groupId>
+            <groupId>org.wso2.carbon.event-processing</groupId>
             <artifactId>org.wso2.carbon.event.output.adaptor.core</artifactId>
         </dependency>
-        <!--<dependency>-->
-            <!--<groupId>org.glassfish.tyrus.bundles</groupId>-->
-            <!--<artifactId>tyrus-standalone-client</artifactId>-->
-            <!--<version>1.7</version>-->
-        <!--</dependency>-->
         <dependency>
             <groupId>org.glassfish.tyrus.bundles.wso2</groupId>
             <artifactId>tyrus-standalone-client</artifactId>

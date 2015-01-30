@@ -38,17 +38,17 @@
         functionality
     </description>
 
-    
-        <dependencies>
-            <dependency>
-                <groupId>org.wso2.carbon</groupId>
-                <artifactId>org.wso2.carbon.event.statistics.ui</artifactId>
-            </dependency>
-            <dependency>
-                <groupId>org.wso2.carbon</groupId>
-                <artifactId>org.wso2.carbon.event.statistics.stub</artifactId>
-            </dependency>
-        </dependencies>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.wso2.carbon.event-processing</groupId>
+            <artifactId>org.wso2.carbon.event.statistics.ui</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.wso2.carbon.event-processing</groupId>
+            <artifactId>org.wso2.carbon.event.statistics.stub</artifactId>
+        </dependency>
+    </dependencies>
     
 
     <build>

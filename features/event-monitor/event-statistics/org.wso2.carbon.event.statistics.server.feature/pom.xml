@@ -36,13 +36,13 @@
     <url>http://wso2.org</url>
     <description>This feature contains the core bundles required for Back-end Event Statistics functionality</description>
 
-    
-        <dependencies>
-            <dependency>
-                <groupId>org.wso2.carbon</groupId>
-                <artifactId>org.wso2.carbon.event.statistics</artifactId>
-            </dependency>
-        </dependencies>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.wso2.carbon.event-processing</groupId>
+            <artifactId>org.wso2.carbon.event.statistics</artifactId>
+        </dependency>
+    </dependencies>
    
 
     <build>

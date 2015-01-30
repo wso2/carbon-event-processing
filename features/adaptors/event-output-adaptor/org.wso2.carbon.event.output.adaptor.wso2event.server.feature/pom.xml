@@ -36,7 +36,7 @@
 
     <dependencies>
         <dependency>
-            <groupId>org.wso2.carbon</groupId>
+            <groupId>org.wso2.carbon.commons</groupId>
             <artifactId>org.wso2.carbon.databridge.datareceiver.feature</artifactId>
             <type>zip</type>
         </dependency>
@@ -75,7 +75,7 @@
                                 <importFeatureDef>org.wso2.carbon.core.server:${carbon.kernel.imp.pkg.version}
                                 </importFeatureDef>
                                 <importFeatureDef>
-                                    org.wso2.carbon.databridge.carbon.kernel.imp.pkg.version{carbon.version}
+                                    org.wso2.carbon.databridge.datareceiver:${carbon.commons.version}
                                 </importFeatureDef>
                             </importFeatures>
                         </configuration>
