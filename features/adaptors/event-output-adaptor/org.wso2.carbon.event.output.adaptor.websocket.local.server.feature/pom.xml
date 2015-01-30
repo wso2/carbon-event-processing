@@ -59,7 +59,7 @@
                                 <artifactItem>
                                     <groupId>org.wso2.carbon</groupId>
                                     <artifactId>org.wso2.carbon.event.output.adaptor.websocket.endpoint</artifactId>
-                                    <version>${project.version}</version>
+                                    <version>${carbon.event.processing.version}</version>
                                     <type>war</type>
                                     <overWrite>true</overWrite>
                                     <outputDirectory>${project.build.directory}/webapp/</outputDirectory>

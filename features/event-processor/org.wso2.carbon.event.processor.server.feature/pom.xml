@@ -106,7 +106,7 @@
                                 <artifactItem>
                                     <groupId>org.wso2.carbon</groupId>
                                     <artifactId>org.wso2.carbon.event.processor.storm</artifactId>
-                                    <version>${project.version}</version>
+                                    <version>${carbon.event.processing.version}</version>
                                     <type>jar</type>
                                     <overWrite>true</overWrite>
                                     <outputDirectory>${project.build.directory}/storm-runtime/</outputDirectory>
