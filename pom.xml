@@ -162,11 +162,6 @@
             </dependency>
             <dependency>
                 <groupId>org.wso2.carbon</groupId>
-                <artifactId>org.wso2.carbon.cassandra.dataaccess</artifactId>
-                <version>${carbon.kernel.version.snapshot}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.wso2.carbon</groupId>
                 <artifactId>org.wso2.carbon.logging</artifactId>
                 <version>${carbon.kernel.version}</version>
             </dependency>
@@ -209,6 +204,14 @@
                 <version>${carbon.commons.version}</version>
             </dependency>
             <!--carbon-commons dependencies stop-->
+
+            <!--carbon-storage dependencies start-->
+            <dependency>
+                <groupId>org.wso2.carbon</groupId>
+                <artifactId>org.wso2.carbon.cassandra.dataaccess</artifactId>
+                <version>${carbon.kernel.version.snapshot}</version>
+            </dependency>
+            <!--carbon-storage dependencies end-->
 
             <!--third party dependencies start-->
             <dependency>
@@ -537,22 +540,26 @@
             <!--siddhi dependencies stop-->
 
             <!--features start-->
+            <!--carbon commons features start-->
             <dependency>
-                <groupId>org.wso2.carbon.event-processing</groupId>
-                <artifactId>org.wso2.carbon.event.tracer.ui.feature</artifactId>
-                <version>${carbon.event.processing.version}</version>
+                <groupId>org.wso2.carbon.commons</groupId>
+                <artifactId>org.wso2.carbon.databridge.datareceiver.feature</artifactId>
+                <version>${carbon.commons.version}</version>
                 <type>zip</type>
             </dependency>
+            <!--carbon commons features end-->
+            <!--carbon storage features start-->
             <dependency>
                 <groupId>org.wso2.carbon</groupId>
                 <artifactId>org.wso2.carbon.cassandra.server.feature</artifactId>
                 <version>${carbon.kernel.version.snapshot}</version>
                 <type>zip</type>
             </dependency>
+            <!--carbon storage features end-->
             <dependency>
-                <groupId>org.wso2.carbon.commons</groupId>
-                <artifactId>org.wso2.carbon.databridge.datareceiver.feature</artifactId>
-                <version>${carbon.commons.version}</version>
+                <groupId>org.wso2.carbon.event-processing</groupId>
+                <artifactId>org.wso2.carbon.event.tracer.ui.feature</artifactId>
+                <version>${carbon.event.processing.version}</version>
                 <type>zip</type>
             </dependency>
             <dependency>
@@ -826,7 +833,6 @@
                 <type>zip</type>
             </dependency>
             <!--features end-->
-
         </dependencies>
     </dependencyManagement>
 
@@ -1025,6 +1031,8 @@
         <carbon.commons.version>4.3.1</carbon.commons.version>
         <carbon.commons.imp.pkg.version>[4.3.0, 4.4.0)</carbon.commons.imp.pkg.version>
 
+        <carbon.storagemgt.version>4.3.0</carbon.storagemgt.version>
+
         <carbon.p2.plugin.version>1.5.3</carbon.p2.plugin.version>
 
         <!--CEP versions-->
@@ -1080,8 +1088,6 @@
         <commons-beanutils.version>1.8.3</commons-beanutils.version>
         <commons-digester.version>1.8</commons-digester.version>
         <commons-codec.version>1.3</commons-codec.version>
-
-        <!--<databridge.version>4.3.0-SNAPSHOT</databridge.version>-->
 
 
         <!-- Validate Utility Version -->
