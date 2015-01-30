@@ -72,10 +72,10 @@
                             </importFeatures>
                             <includedFeatures>
                                 <includedFeatureDef>
-                                    org.wso2.carbon:org.wso2.carbon.event.simulator.server.feature:2.0.0-SNAPSHOT
+                                    org.wso2.carbon:org.wso2.carbon.event.simulator.server.feature:${carbon.event.processing.version}
                                 </includedFeatureDef>
                                 <includedFeatureDef>
-                                    org.wso2.carbon:org.wso2.carbon.event.simulator.ui.feature:2.0.0-SNAPSHOT
+                                    org.wso2.carbon:org.wso2.carbon.event.simulator.ui.feature:${carbon.event.processing.version}
                                 </includedFeatureDef>
                             </includedFeatures>
                         </configuration>

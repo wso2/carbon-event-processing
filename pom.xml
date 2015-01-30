@@ -132,6 +132,16 @@
                 <artifactId>slf4j</artifactId>
                 <version>${slf4j.wso2.version}</version>
             </dependency>
+            <!--<dependency>
+                <groupId>org.apache.hbase.wso2</groupId>
+                <artifactId>hbase</artifactId>
+                <version>${org.apache.hbase.wso2.version}</version>
+            </dependency>-->
+            <!--<dependency>
+                <groupId>org.apache.hadoop.wso2</groupId>
+                <artifactId>hadoop-core</artifactId>
+                <version>${hadoop.wso2.version}</version>
+            </dependency>-->
             <!--orbit dependencies end-->
 
             <!--carbon-kernel dependencies start-->
@@ -273,6 +283,7 @@
                 <artifactId>slf4j-api</artifactId>
                 <version>${slf4j.version}</version>
             </dependency>
+
             <!--third party dependencies stop-->
 
             <!--carbon event processing dependencies start-->
@@ -903,26 +914,13 @@
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-source-plugin</artifactId>
-                    <version>2.1.2</version>
-                    <executions>
-                        <execution>
-                            <id>attach-sources</id>
-                            <phase>verify</phase>
-                            <goals>
-                                <goal>jar-no-fork</goal>
-                            </goals>
-                        </execution>
-                    </executions>
+                    <artifactId>maven-antrun-plugin</artifactId>
+                    <version>1.1</version>
                 </plugin>
                 <plugin>
-                    <artifactId>maven-assembly-plugin</artifactId>
-                    <version>2.2-beta-2</version>
-                </plugin>
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-project-info-reports-plugin</artifactId>
-                    <version>2.4</version>
+                    <groupId>org.codehaus.mojo</groupId>
+                    <artifactId>build-helper-maven-plugin</artifactId>
+                    <version>1.7</version>
                 </plugin>
             </plugins>
         </pluginManagement>
@@ -1136,8 +1134,8 @@
         <kafka.version>0.8.1</kafka.version>
         <org.eclipse.paho.version>0.4.0</org.eclipse.paho.version>
         <org.glassfish.tyrus.wso2.version>1.7-wso2v1</org.glassfish.tyrus.wso2.version>
-        <org.apache.hbase.wso2.version>0.94.10.wso2v1</org.apache.hbase.wso2.version>
-        <hadoop.wso2.version>0.20.203.1.wso2v2</hadoop.wso2.version>
+        <!--<org.apache.hbase.wso2.version>0.94.10.wso2v1</org.apache.hbase.wso2.version>-->
+        <!--<hadoop.wso2.version>0.20.203.1.wso2v2</hadoop.wso2.version>-->
         <mysql.connector.version>5.1.6</mysql.connector.version>
         <google.jsmpp.version>2.0.1</google.jsmpp.version>
         <apache.servicemix.version>4.0-m1</apache.servicemix.version>

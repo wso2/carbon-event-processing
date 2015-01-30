@@ -66,8 +66,8 @@
                             <id>org.wso2.carbon.event.tracer</id>
                             <propertiesFile>../../../../etc/feature.properties</propertiesFile>
                             <includedFeatures>
-                                <includedFeatureDef>org.wso2.carbon:org.wso2.carbon.event.tracer.server.feature:2.0.0-SNAPSHOT</includedFeatureDef>
-                                <includedFeatureDef>org.wso2.carbon:org.wso2.carbon.event.tracer.ui.feature:2.0.0-SNAPSHOT</includedFeatureDef>
+                                <includedFeatureDef>org.wso2.carbon:org.wso2.carbon.event.tracer.server.feature:${carbon.event.processing.version}</includedFeatureDef>
+                                <includedFeatureDef>org.wso2.carbon:org.wso2.carbon.event.tracer.ui.feature:${carbon.event.processing.version}</includedFeatureDef>
                             </includedFeatures>
                         </configuration>
                     </execution>

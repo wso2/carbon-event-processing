@@ -39,7 +39,6 @@
         <dependency>
             <groupId>org.apache.servicemix.bundles</groupId>
             <artifactId>org.apache.servicemix.bundles.jaxb-api-2.0</artifactId>
-            <version>4.0-m1</version>
         </dependency>
         <dependency>
             <groupId>org.glassfish.tyrus.bundles.wso2</groupId>
@@ -76,11 +75,11 @@
                                     org.wso2.carbon:org.wso2.carbon.event.input.adaptor.websocket:${carbon.event.processing.version}
                                 </bundleDef>
                                 <bundleDef>
-                                    org.glassfish.tyrus.bundles.wso2:tyrus-standalone-client:1.7-wso2v1
+                                    org.glassfish.tyrus.bundles.wso2:tyrus-standalone-client:${org.glassfish.tyrus.wso2.version}
                                 </bundleDef>
                                 <bundleDef>
                                     <!--javax.xml.bind:jaxb-api:2.1-->
-                                    org.apache.servicemix.bundles:org.apache.servicemix.bundles.jaxb-api-2.0:4.0-m1
+                                    org.apache.servicemix.bundles:org.apache.servicemix.bundles.jaxb-api-2.0:${apache.servicemix.version}
                                 </bundleDef>
                             </bundles>
                             <importFeatures>
