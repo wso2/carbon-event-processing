@@ -79,6 +79,11 @@ public class HAManager {
                     tryChangeState();
                 }
             }
+
+            @Override
+            public void memberAttributeChanged(MemberAttributeEvent memberAttributeEvent) {
+
+            }
         });
 
         membershipMap = hazelcastInstance.getMap(HA_PREFIX + ":MembershipMap");
