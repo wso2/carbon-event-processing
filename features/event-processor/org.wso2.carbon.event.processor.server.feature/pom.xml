@@ -177,8 +177,4 @@
         </plugins>
     </build>
 
-    <!--<properties>-->
-    <!--<siddhi.version>3.0.0-SNAPSHOT</siddhi.version>-->
-    <!--</properties>-->
-
 </project>
