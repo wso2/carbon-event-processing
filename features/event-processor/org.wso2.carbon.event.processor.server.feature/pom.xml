@@ -104,7 +104,7 @@
                         <configuration>
                             <artifactItems>
                                 <artifactItem>
-                                    <groupId>org.wso2.carbon</groupId>
+                                    <groupId>org.wso2.carbon.event-processing</groupId>
                                     <artifactId>org.wso2.carbon.event.processor.storm</artifactId>
                                     <version>${carbon.event.processing.version}</version>
                                     <type>jar</type>
