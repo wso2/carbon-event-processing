@@ -57,7 +57,7 @@
                         <configuration>
                             <artifactItems>
                                 <artifactItem>
-                                    <groupId>org.wso2.carbon</groupId>
+                                    <groupId>org.wso2.carbon.event-processing</groupId>
                                     <artifactId>org.wso2.carbon.event.output.adaptor.websocket.endpoint</artifactId>
                                     <version>${carbon.event.processing.version}</version>
                                     <type>war</type>
