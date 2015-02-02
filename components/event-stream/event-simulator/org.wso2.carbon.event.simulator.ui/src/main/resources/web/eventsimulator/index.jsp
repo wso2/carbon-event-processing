@@ -120,7 +120,7 @@
                                             </span>
                             <a href="#" onclick="changeView('fileArea');" class="icon-link"
                                style="background-image: url(images/design-view.gif); font-weight: normal">
-                                switch to data source insert</a>
+                                switch to add configuration for simulate by database</a>
                         </th>
                     </tr>
                     <tr>
@@ -189,11 +189,11 @@
                         <th colspan="3" class="middle-header">
                                                 <span
                                                         style="float: left; position: relative; margin-top: 2px;">
-                                                        <fmt:message key="input.by,ds" />
+                                                        <fmt:message key="input.by.ds" />
                                                 </span>
                             <a href="#" onclick="changeView('dataSourceArea');" class="icon-link"
                                style="background-image: url(images/design-view.gif); font-weight: normal">
-                                switch to file insert</a>
+                                switch to upload configuration file for simulate</a>
                         </th>
                     </tr>
                     </thead>

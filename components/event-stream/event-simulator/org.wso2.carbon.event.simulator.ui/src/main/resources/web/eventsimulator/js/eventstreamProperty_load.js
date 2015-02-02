@@ -504,6 +504,21 @@ function saveDBConfiguration(databaseType){
                                         msg = msg.responseText.trim();
                                         if(msg.localeCompare("Sent")==0){
                                             CARBON.showInfoDialog("Database configuration saved successfully.");
+
+                                            document.getElementById("dataSourceNameId2").value = "";
+                                            document.getElementById("tableNameId2").value = "";
+                                            document.getElementById("configurationNameId2").value = "";
+
+                                            var index = document.getElementById("formFields2").value;
+                                            for (var i = 0; i < index; i++) {
+                                                if (i != index - 1) {
+                                                    document.getElementById("DB" + i).value = "";
+                                                }
+                                                else {
+                                                    document.getElementById("DB" + i).value = "";
+                                                }
+                                            }
+
                                         }else{
                                             CARBON.showErrorDialog(msg);
                                         }
