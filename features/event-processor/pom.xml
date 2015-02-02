@@ -17,20 +17,18 @@
 ~ under the License.
 -->
 
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 
     <parent>
         <artifactId>carbon-event-processing</artifactId>
-        <groupId>org.wso2.carbon</groupId>
-        <version>4.3.0-SNAPSHOT</version>
+        <groupId>org.wso2.carbon.event-processing</groupId>
+        <version>2.0.2-SNAPSHOT</version>
         <relativePath>../../pom.xml</relativePath>
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
-    <groupId>org.wso2.carbon</groupId>
     <artifactId>event-processor-feature</artifactId>
-    <version>2.0.0-SNAPSHOT</version>
+    <version>2.0.2-SNAPSHOT</version>
     <packaging>pom</packaging>
     <name>WSO2 Carbon - Event Processor Aggregate Feature</name>
     <url>http://maven.apache.org</url>
@@ -40,7 +38,6 @@
         <module>org.wso2.carbon.event.processor.feature</module>
         <module>org.wso2.carbon.event.processor.ui.feature</module>
         <module>org.wso2.carbon.event.processor.server.feature</module>
-
     </modules>
 
 

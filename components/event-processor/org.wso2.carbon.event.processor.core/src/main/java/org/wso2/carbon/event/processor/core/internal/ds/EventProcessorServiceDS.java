@@ -18,6 +18,7 @@
 package org.wso2.carbon.event.processor.core.internal.ds;
 
 import com.hazelcast.core.HazelcastInstance;
+import com.hazelcast.core.MemberAttributeEvent;
 import com.hazelcast.core.MembershipEvent;
 import com.hazelcast.core.MembershipListener;
 import org.apache.commons.logging.Log;
@@ -162,6 +163,11 @@ public class EventProcessorServiceDS {
                 if (stormManagerServer != null) {
                     stormManagerServer.tryBecomeCoordinator();
                 }
+            }
+
+            @Override
+            public void memberAttributeChanged(MemberAttributeEvent memberAttributeEvent) {
+
             }
 
         });

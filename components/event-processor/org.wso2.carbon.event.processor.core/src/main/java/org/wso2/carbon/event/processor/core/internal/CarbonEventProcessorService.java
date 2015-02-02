@@ -61,7 +61,6 @@ import org.wso2.carbon.user.core.UserStoreException;
 import org.wso2.siddhi.core.SiddhiManager;
 import org.wso2.siddhi.core.config.SiddhiConfiguration;
 import org.wso2.siddhi.core.stream.input.InputHandler;
-import org.wso2.siddhi.query.compiler.exception.SiddhiParserException;
 
 import javax.sql.DataSource;
 import javax.xml.stream.XMLStreamException;
@@ -403,8 +402,7 @@ public class CarbonEventProcessorService implements EventProcessorService {
     }
 
     public List<StreamDefinition> getSiddhiStreams(String[] inputStreamDefinitions,
-                                                   String queryExpressions) throws
-            SiddhiParserException {
+                                                   String queryExpressions)  {
         SiddhiManager siddhiManager = createMockSiddhiManager(inputStreamDefinitions, queryExpressions);
         List<org.wso2.siddhi.query.api.definition.StreamDefinition> streamDefinitions = siddhiManager.getStreamDefinitions();
         List<StreamDefinition> databridgeStreamDefinitions = new ArrayList<StreamDefinition>(streamDefinitions.size());
@@ -437,17 +435,14 @@ public class CarbonEventProcessorService implements EventProcessorService {
         return EventProcessorConstants.NO_DEPENDENCY_INFO_MSG;
     }
 
-    public boolean validateSiddhiQueries(String[] inputStreamDefinitions, String queryExpressions)
-            throws
-            SiddhiParserException {
+    public boolean validateSiddhiQueries(String[] inputStreamDefinitions, String queryExpressions){
         SiddhiManager siddhiManager = createMockSiddhiManager(inputStreamDefinitions, queryExpressions);
         siddhiManager.shutdown();
         return true;
     }
 
     private SiddhiManager createMockSiddhiManager(String[] inputStreamDefinitions,
-                                                  String executionPlan)
-            throws SiddhiParserException {
+                                                  String executionPlan) {
         SiddhiConfiguration siddhiConfig = new SiddhiConfiguration();
         siddhiConfig.setSiddhiExtensions(SiddhiExtensionLoader.loadSiddhiExtensions());
         SiddhiManager siddhiManager = new SiddhiManager(siddhiConfig);

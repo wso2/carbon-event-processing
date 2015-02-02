@@ -16,48 +16,24 @@
  ~ specific language governing permissions and limitations
  ~ under the License.
 -->
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
     <parent>
-        <groupId>org.wso2.carbon</groupId>
+        <groupId>org.wso2.carbon.event-processing</groupId>
         <artifactId>event-stream</artifactId>
-        <version>2.0.0-SNAPSHOT</version>
+        <version>2.0.2-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
     <artifactId>event-formatter</artifactId>
-    <groupId>org.wso2.carbon</groupId>
     <packaging>pom</packaging>
     <name>WSO2 Carbon - Event Formatter Aggregator Module</name>
     <description>WSO2 Carbon Event Formatter is used to build an event from an available event
         adaptor or otherwise
     </description>
-    <version>2.0.0-SNAPSHOT</version>
+    <version>2.0.2-SNAPSHOT</version>
     <url>http://wso2.org</url>
-
-    
-        <dependencies>
-            <dependency>
-                <groupId>junit</groupId>
-                <artifactId>junit</artifactId>
-                
-            </dependency>
-            <dependency>
-                <groupId>org.wso2.carbon</groupId>
-                <artifactId>org.wso2.carbon.core</artifactId>
-                
-            </dependency>
-            <dependency>
-                <groupId>org.wso2.carbon</groupId>
-                <artifactId>org.wso2.carbon.utils</artifactId>
-                
-            </dependency>
-
-        </dependencies>
-    
 
     <modules>
         <module>org.wso2.carbon.event.formatter.core</module>
@@ -65,6 +41,5 @@
         <module>org.wso2.carbon.event.formatter.ui</module>
         <!--<module>org.wso2.carbon.event.formatter.test/1.0.1</module>-->
     </modules>
-
     
 </project>	

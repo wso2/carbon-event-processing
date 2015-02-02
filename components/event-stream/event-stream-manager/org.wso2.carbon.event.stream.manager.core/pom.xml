@@ -16,20 +16,18 @@
  ~ specific language governing permissions and limitations
  ~ under the License.
 -->
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
     <parent>
-        <groupId>org.wso2.carbon</groupId>
+        <groupId>org.wso2.carbon.event-processing</groupId>
         <artifactId>event-stream-manager</artifactId>
-        <version>2.0.0-SNAPSHOT</version>
+        <version>2.0.2-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
     <artifactId>org.wso2.carbon.event.stream.manager.core</artifactId>
-    <version>2.0.0-SNAPSHOT</version>
+    <version>2.0.2-SNAPSHOT</version>
     <packaging>bundle</packaging>
     <name>WSO2 Carbon - Event Stream Manager Core</name>
     <description>org.wso2.carbon.event.stream.manager.core provides the core functionality for event
@@ -41,12 +39,10 @@
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
-            <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>org.wso2.carbon</groupId>
+            <groupId>org.wso2.carbon.commons</groupId>
             <artifactId>org.wso2.carbon.databridge.core</artifactId>
-            
         </dependency>
         <dependency>
             <groupId>org.wso2.carbon</groupId>
@@ -59,12 +55,10 @@
         <dependency>
             <groupId>org.wso2.siddhi</groupId>
             <artifactId>siddhi-core</artifactId>
-            
         </dependency>
         <dependency>
             <groupId>org.wso2.carbon</groupId>
             <artifactId>org.wso2.carbon.stratos.common</artifactId>
-            
         </dependency>
     </dependencies>
 
@@ -73,7 +67,6 @@
             <plugin>
                 <groupId>org.apache.felix</groupId>
                 <artifactId>maven-scr-plugin</artifactId>
-                <version>1.7.4</version>
                 <executions>
                     <execution>
                         <id>generate-scr-scrdescriptor</id>

@@ -16,21 +16,19 @@
  ~ specific language governing permissions and limitations
  ~ under the License.
 -->
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
     <parent>
-        <groupId>org.wso2.carbon</groupId>
+        <groupId>org.wso2.carbon.event-processing</groupId>
         <artifactId>event-stream-manager</artifactId>
-        <version>2.0.0-SNAPSHOT</version>
-        
+        <version>2.0.2-SNAPSHOT</version>
+        <relativePath>../pom.xml</relativePath>
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
     <artifactId>org.wso2.carbon.event.stream.manager.ui</artifactId>
     <packaging>bundle</packaging>
-    <version>2.0.0-SNAPSHOT</version>
+    <version>2.0.2-SNAPSHOT</version>
     <name>WSO2 Carbon - Event Stream Manager UI</name>
     <description>This is a Carbon bundle that represent the event stream manager ui module.
     </description>
@@ -47,16 +45,13 @@
             <artifactId>org.wso2.carbon.utils</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.wso2.carbon</groupId>
+            <groupId>org.wso2.carbon.event-processing</groupId>
             <artifactId>org.wso2.carbon.event.stream.manager.stub</artifactId>
-            
         </dependency>
         <dependency>
             <groupId>com.google.code.gson</groupId>
             <artifactId>gson</artifactId>
-            
         </dependency>
-
     </dependencies>
 
 

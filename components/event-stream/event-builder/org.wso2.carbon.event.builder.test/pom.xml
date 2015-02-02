@@ -21,7 +21,7 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
     <parent>
-        <groupId>org.wso2.carbon</groupId>
+        <groupId>org.wso2.carbon.event-processing</groupId>
         <artifactId>event-builder</artifactId>
         <version>2.0.0-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>
@@ -37,21 +37,17 @@
 
     <dependencies>
         <dependency>
-            <groupId>org.wso2.carbon</groupId>
+            <groupId>org.wso2.carbon.event-processing</groupId>
             <artifactId>org.wso2.carbon.event.builder.core</artifactId>
-            
         </dependency>
         <dependency>
-            <groupId>org.wso2.carbon</groupId>
+            <groupId>org.wso2.carbon.event-processing</groupId>
             <artifactId>org.wso2.carbon.event.input.adaptor.core</artifactId>
-            
         </dependency>
         <dependency>
-            <groupId>org.wso2.carbon</groupId>
+            <groupId>org.wso2.carbon.event-processing</groupId>
             <artifactId>org.wso2.carbon.event.input.adaptor.manager.core</artifactId>
-            
         </dependency>
-
     </dependencies>
     <build>
         <plugins>
@@ -59,7 +55,6 @@
             <plugin>
                 <groupId>org.apache.felix</groupId>
                 <artifactId>maven-scr-plugin</artifactId>
-                <version>1.7.4</version>
                 <executions>
                     <execution>
                         <id>generate-scr-scrdescriptor</id>
@@ -72,7 +67,6 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
-                <version>2.3</version>
             </plugin>
             <plugin>
                 <groupId>org.apache.felix</groupId>
