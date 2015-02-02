@@ -27,6 +27,15 @@ public class EventFormatterConfigurationFile {
     private String fileName;
 
     private String eventFormatterName;
+    private String filePath;
+
+    public void setFilePath(String filePath) {
+        this.filePath = filePath;
+    }
+
+    public String getFilePath() {
+        return filePath;
+    }
 
     public enum Status {DEPLOYED, WAITING_FOR_DEPENDENCY, WAITING_FOR_STREAM_DEPENDENCY, ERROR}
 

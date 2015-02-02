@@ -139,10 +139,9 @@ public final class OutputEventAdaptorConfigurationFilesystemInvoker {
         return deploymentEngine.getDeployer(endpointDirPath, "xml");
     }
 
-    public static void reload(String fileName, AxisConfiguration axisConfiguration)
+    public static void reload(String filePath, AxisConfiguration axisConfiguration)
             throws OutputEventAdaptorManagerConfigurationException {
         OutputEventAdaptorDeployer deployer = (OutputEventAdaptorDeployer) getDeployer(axisConfiguration, OutputEventAdaptorManagerConstants.OEA_ELE_DIRECTORY);
-        String filePath = getFilePathFromFilename(fileName, axisConfiguration);
         DeploymentFileData deploymentFileData = new DeploymentFileData(new File(filePath));
         try {
             deployer.processUndeploy(filePath);

@@ -400,7 +400,7 @@ public class CarbonInputEventAdaptorManagerService
         List<InputEventAdaptorFile> inputEventAdaptorFileList = eventAdaptorFileMap.get(tenantId);
         if (inputEventAdaptorFileList != null) {
             for (InputEventAdaptorFile inputEventAdaptorFile : inputEventAdaptorFileList) {
-                if ((inputEventAdaptorFile.getFileName().equals(fileName))) {
+                if (inputEventAdaptorFile.getFileName().equals(fileName)) {
                     if (inputEventAdaptorFile.getStatus().equals(InputEventAdaptorFile.Status.DEPLOYED)) {
                         String eventAdaptorName = inputEventAdaptorFile.getEventAdaptorName();
                         removeFromTenantSpecificEventAdaptorInfoMap(tenantId, eventAdaptorName);
@@ -443,7 +443,7 @@ public class CarbonInputEventAdaptorManagerService
 
         for (InputEventAdaptorFile inputEventAdaptorFile : inputEventAdaptorFiles) {
             try {
-                InputEventAdaptorConfigurationFilesystemInvoker.reload(inputEventAdaptorFile.getFileName(), inputEventAdaptorFile.getAxisConfiguration());
+                InputEventAdaptorConfigurationFilesystemInvoker.reload(inputEventAdaptorFile.getFilePath(), inputEventAdaptorFile.getAxisConfiguration());
             } catch (Exception e) {
                 log.error("Exception occurred while trying to deploy the Input Event Adaptor configuration file : " + new File(inputEventAdaptorFile.getFileName()).getName());
             }

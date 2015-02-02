@@ -27,6 +27,7 @@ import org.apache.axis2.deployment.repository.util.DeploymentFileData;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.wso2.carbon.event.processing.application.deployer.CEPDeployer;
 import org.wso2.carbon.context.PrivilegedCarbonContext;
 import org.wso2.carbon.event.processor.core.exception.ExecutionPlanConfigurationException;
 import org.wso2.carbon.event.processor.core.exception.ExecutionPlanDependencyValidationException;
@@ -48,7 +49,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * Deploy query plans as axis2 service
  */
 @SuppressWarnings("unused")
-public class EventProcessorDeployer extends AbstractDeployer {
+public class EventProcessorDeployer extends AbstractDeployer implements CEPDeployer {
 
     private static Log log = LogFactory.getLog(org.wso2.carbon.event.processor.core.EventProcessorDeployer.class);
     private ConfigurationContext configurationContext;
@@ -140,6 +141,7 @@ public class EventProcessorDeployer extends AbstractDeployer {
                 executionPlanConfigurationFile.setExecutionPlanName(executionPlanConfiguration.getName());
                 executionPlanConfigurationFile.setAxisConfiguration(configurationContext.getAxisConfiguration());
                 executionPlanConfigurationFile.setFileName(deploymentFileData.getName());
+                executionPlanConfigurationFile.setFilePath(deploymentFileData.getAbsolutePath());
                 carbonEventProcessorService.addExecutionPlanConfigurationFile(executionPlanConfigurationFile, PrivilegedCarbonContext.getThreadLocalCarbonContext().getTenantId());
 
                 checkForDuplicatedStreams(executionPlanConfiguration);
@@ -153,6 +155,7 @@ public class EventProcessorDeployer extends AbstractDeployer {
                 executionPlanConfigurationFile.setExecutionPlanName(executionPlanName);
                 executionPlanConfigurationFile.setAxisConfiguration(configurationContext.getAxisConfiguration());
                 executionPlanConfigurationFile.setFileName(deploymentFileData.getName());
+                executionPlanConfigurationFile.setFilePath(deploymentFileData.getAbsolutePath());
                 carbonEventProcessorService.addExecutionPlanConfigurationFile(executionPlanConfigurationFile, PrivilegedCarbonContext.getThreadLocalCarbonContext().getTenantId());
 
                 log.info("Execution plan deployment held back and in inactive state : " + executionPlanName + ", waiting for dependency : " + ex.getDependency());
@@ -164,6 +167,7 @@ public class EventProcessorDeployer extends AbstractDeployer {
                 executionPlanConfigurationFile.setExecutionPlanName(executionPlanName);
                 executionPlanConfigurationFile.setAxisConfiguration(configurationContext.getAxisConfiguration());
                 executionPlanConfigurationFile.setFileName(deploymentFileData.getName());
+                executionPlanConfigurationFile.setFilePath(deploymentFileData.getAbsolutePath());
                 carbonEventProcessorService.addExecutionPlanConfigurationFile(executionPlanConfigurationFile, PrivilegedCarbonContext.getThreadLocalCarbonContext().getTenantId());
 
                 log.info("Execution plan deployment held back and in inactive state : " + executionPlanName + ", waiting for dependency : " + ex.getDependency());
@@ -174,6 +178,7 @@ public class EventProcessorDeployer extends AbstractDeployer {
                 executionPlanConfigurationFile.setExecutionPlanName(executionPlanName);
                 executionPlanConfigurationFile.setAxisConfiguration(configurationContext.getAxisConfiguration());
                 executionPlanConfigurationFile.setFileName(deploymentFileData.getName());
+                executionPlanConfigurationFile.setFilePath(deploymentFileData.getAbsolutePath());
                 carbonEventProcessorService.addExecutionPlanConfigurationFile(executionPlanConfigurationFile, PrivilegedCarbonContext.getThreadLocalCarbonContext().getTenantId());
 
                 log.error("Execution plan is not deployed and in inactive state : " + executionPlanFile.getName(), ex);
@@ -184,6 +189,7 @@ public class EventProcessorDeployer extends AbstractDeployer {
                 executionPlanConfigurationFile.setExecutionPlanName(executionPlanName);
                 executionPlanConfigurationFile.setAxisConfiguration(configurationContext.getAxisConfiguration());
                 executionPlanConfigurationFile.setFileName(deploymentFileData.getName());
+                executionPlanConfigurationFile.setFilePath(deploymentFileData.getAbsolutePath());
                 carbonEventProcessorService.addExecutionPlanConfigurationFile(executionPlanConfigurationFile, PrivilegedCarbonContext.getThreadLocalCarbonContext().getTenantId());
 
                 log.error("Execution plan is not deployed and in inactive state : " + executionPlanConfigurationFile.getFileName() + ", " + ex.getMessage(), ex);
@@ -273,4 +279,13 @@ public class EventProcessorDeployer extends AbstractDeployer {
         }
     }
 
+    @Override
+    public void processDeployment(DeploymentFileData deploymentFileData) throws Exception {
+        processDeploy(deploymentFileData);
+    }
+
+    @Override
+    public void processUndeployment(String filePath) throws Exception {
+        processUndeploy(filePath);
+    }
 }

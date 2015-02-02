@@ -27,6 +27,7 @@ import org.apache.axis2.deployment.repository.util.DeploymentFileData;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.wso2.carbon.event.processing.application.deployer.CEPDeployer;
 import org.wso2.carbon.context.PrivilegedCarbonContext;
 import org.wso2.carbon.event.formatter.core.config.EventFormatterConfiguration;
 import org.wso2.carbon.event.formatter.core.config.EventFormatterConstants;
@@ -50,7 +51,7 @@ import java.util.concurrent.ConcurrentHashMap;
 /**
  * Deploy event formatter as axis2 service
  */
-public class EventFormatterDeployer extends AbstractDeployer {
+public class EventFormatterDeployer extends AbstractDeployer implements CEPDeployer {
 
     private static Log log = LogFactory.getLog(EventFormatterDeployer.class);
     private ConfigurationContext configurationContext;
@@ -148,6 +149,7 @@ public class EventFormatterDeployer extends AbstractDeployer {
         CarbonEventFormatterService carbonEventFormatterService = EventFormatterServiceValueHolder.getCarbonEventFormatterService();
         int tenantId = PrivilegedCarbonContext.getThreadLocalCarbonContext().getTenantId();
         String eventFormatterName = "";
+        String filePath = deploymentFileData.getFile().getPath();
         if(!carbonEventFormatterService.isEventFormatterFileAlreadyExist(eventFormatterFile.getName(),tenantId)) {
             try {
                 OMElement eventFormatterOMElement = getEventFormatterOMElement(eventFormatterFile);
@@ -164,7 +166,7 @@ public class EventFormatterDeployer extends AbstractDeployer {
                     if (carbonEventFormatterService.checkEventFormatterValidity(tenantId, eventFormatterName)) {
                         carbonEventFormatterService.addEventFormatterConfiguration(eventFormatterConfiguration);
                         carbonEventFormatterService.addEventFormatterConfigurationFile(tenantId, createEventFormatterConfigurationFile(eventFormatterName,
-                                deploymentFileData.getName(), EventFormatterConfigurationFile.Status.DEPLOYED, axisConfiguration, null, null));
+                                deploymentFileData.getFile(), EventFormatterConfigurationFile.Status.DEPLOYED, axisConfiguration, null, null));
                         log.info("Event Formatter configuration successfully deployed and in active state : " + eventFormatterName);
                     } else {
                         throw new EventFormatterConfigurationException("Event Formatter not deployed and in inactive state," +
@@ -177,24 +179,24 @@ public class EventFormatterDeployer extends AbstractDeployer {
             } catch (EventFormatterConfigurationException ex) {
                 log.error("Event Formatter not deployed and in inactive state, " + ex.getMessage(), ex);
                 carbonEventFormatterService.addEventFormatterConfigurationFile(tenantId,
-                        createEventFormatterConfigurationFile(eventFormatterName, deploymentFileData.getName(), EventFormatterConfigurationFile.Status.ERROR, null, null, null));
+                        createEventFormatterConfigurationFile(eventFormatterName, deploymentFileData.getFile(), EventFormatterConfigurationFile.Status.ERROR, null, null, null));
                 throw new EventFormatterConfigurationException(ex.getMessage(), ex);
             } catch (EventFormatterValidationException ex) {
                 carbonEventFormatterService.addEventFormatterConfigurationFile(tenantId,
-                        createEventFormatterConfigurationFile(eventFormatterName, deploymentFileData.getName(),
+                        createEventFormatterConfigurationFile(eventFormatterName, deploymentFileData.getFile(),
                                 EventFormatterConfigurationFile.Status.WAITING_FOR_DEPENDENCY, axisConfiguration, ex.getMessage(), ex.getDependency())
                 );
                 log.info("Event Formatter deployment held back and in inactive state : " + eventFormatterFile.getName() + ", waiting for dependency : " + ex.getDependency());
             } catch (EventFormatterStreamValidationException e) {
                 carbonEventFormatterService.addEventFormatterConfigurationFile(tenantId,
-                        createEventFormatterConfigurationFile(eventFormatterName, deploymentFileData.getName(),
+                        createEventFormatterConfigurationFile(eventFormatterName, deploymentFileData.getFile(),
                                 EventFormatterConfigurationFile.Status.WAITING_FOR_STREAM_DEPENDENCY, axisConfiguration, e.getMessage(), e.getDependency())
                 );
                 log.info("Event Formatter deployment held back and in inactive state :" + eventFormatterFile.getName() + ", Stream validation exception : " + e.getMessage());
             } catch (DeploymentException e) {
                 log.error("Event Formatter not deployed and in inactive state : " + eventFormatterFile.getName() + " , " + e.getMessage(), e);
                 carbonEventFormatterService.addEventFormatterConfigurationFile(tenantId, createEventFormatterConfigurationFile(eventFormatterName,
-                        deploymentFileData.getName(), EventFormatterConfigurationFile.Status.ERROR, null, "Deployment exception occurred", null));
+                        deploymentFileData.getFile(), EventFormatterConfigurationFile.Status.ERROR, null, "Deployment exception occurred", null));
                 throw new EventFormatterConfigurationException(e.getMessage(), e);
             }
         } else {
@@ -226,13 +228,14 @@ public class EventFormatterDeployer extends AbstractDeployer {
 
     private EventFormatterConfigurationFile createEventFormatterConfigurationFile(
             String eventFormatterName,
-            String fileName,
+            File file,
             EventFormatterConfigurationFile.Status status,
             AxisConfiguration axisConfiguration,
             String deploymentStatusMessage,
             String dependency) {
         EventFormatterConfigurationFile eventFormatterConfigurationFile = new EventFormatterConfigurationFile();
-        eventFormatterConfigurationFile.setFileName(fileName);
+        eventFormatterConfigurationFile.setFileName(file.getName());
+        eventFormatterConfigurationFile.setFilePath(file.getAbsolutePath());
         eventFormatterConfigurationFile.setEventFormatterName(eventFormatterName);
         eventFormatterConfigurationFile.setStatus(status);
         eventFormatterConfigurationFile.setDependency(dependency);
@@ -248,6 +251,16 @@ public class EventFormatterDeployer extends AbstractDeployer {
 
     public Set<String> getUndeployedEventFormatterFilePaths() {
         return undeployedEventFormatterFilePaths;
+    }
+
+    @Override
+    public void processDeployment(DeploymentFileData deploymentFileData) throws Exception {
+        processDeploy(deploymentFileData);
+    }
+
+    @Override
+    public void processUndeployment(String filePath) throws Exception {
+          processUndeploy(filePath);
     }
 }
 

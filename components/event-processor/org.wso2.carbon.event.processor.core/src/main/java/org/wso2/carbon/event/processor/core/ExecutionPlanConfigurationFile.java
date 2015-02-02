@@ -23,6 +23,15 @@ public class ExecutionPlanConfigurationFile {
     private String fileName;
 
     private String executionPlanName;
+    private String filePath;
+
+    public void setFilePath(String filePath) {
+        this.filePath = filePath;
+    }
+
+    public String getFilePath() {
+        return filePath;
+    }
 
     public enum Status {DEPLOYED, WAITING_FOR_DEPENDENCY, ERROR, WAITING_FOR_OSGI_SERVICE}
 

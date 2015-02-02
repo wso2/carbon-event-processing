@@ -95,10 +95,9 @@ public class EventProcessorConfigurationFilesystemInvoker {
         }
     }
 
-    public static void reload(String fileName, AxisConfiguration axisConfiguration) throws ExecutionPlanConfigurationException {
+    public static void reload(String filePath, AxisConfiguration axisConfiguration) throws ExecutionPlanConfigurationException {
         EventProcessorDeployer eventProcessorDeployer = (EventProcessorDeployer) getDeployer(axisConfiguration, EventProcessorConstants.EP_ELE_DIRECTORY);
         try {
-            String filePath = getFilePathFromFilename(fileName, axisConfiguration);
             eventProcessorDeployer.processUndeploy(filePath);
             eventProcessorDeployer.processDeploy(new DeploymentFileData(new File(filePath)));
         } catch (ExecutionPlanConfigurationException e) {

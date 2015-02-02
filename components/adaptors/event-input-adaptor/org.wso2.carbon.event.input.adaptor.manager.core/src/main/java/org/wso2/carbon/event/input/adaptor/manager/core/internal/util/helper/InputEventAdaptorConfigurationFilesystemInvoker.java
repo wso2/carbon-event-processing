@@ -144,10 +144,9 @@ public final class InputEventAdaptorConfigurationFilesystemInvoker {
         return deploymentEngine.getDeployer(endpointDirPath, "xml");
     }
 
-    public static void reload(String fileName, AxisConfiguration axisConfiguration)
+    public static void reload(String filePath, AxisConfiguration axisConfiguration)
             throws InputEventAdaptorManagerConfigurationException {
         InputEventAdaptorDeployer deployer = (InputEventAdaptorDeployer) getDeployer(axisConfiguration, InputEventAdaptorManagerConstants.IEA_ELE_DIRECTORY);
-        String filePath = getfilePathFromFilename(fileName, axisConfiguration);
 
         DeploymentFileData deploymentFileData = new DeploymentFileData(new File(filePath));
         try {
@@ -156,7 +155,6 @@ public final class InputEventAdaptorConfigurationFilesystemInvoker {
         } catch (DeploymentException e) {
             throw new InputEventAdaptorManagerConfigurationException(e);
         }
-
     }
 
     public static String readEventAdaptorConfigurationFile(String fileName,

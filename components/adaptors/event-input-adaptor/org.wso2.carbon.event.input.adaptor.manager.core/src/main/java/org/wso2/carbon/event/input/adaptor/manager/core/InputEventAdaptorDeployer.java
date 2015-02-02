@@ -35,6 +35,7 @@ import org.wso2.carbon.event.input.adaptor.manager.core.internal.ds.InputEventAd
 import org.wso2.carbon.event.input.adaptor.manager.core.internal.util.InputEventAdaptorManagerConstants;
 import org.wso2.carbon.event.input.adaptor.manager.core.internal.util.helper.InputEventAdaptorConfigurationFilesystemInvoker;
 import org.wso2.carbon.event.input.adaptor.manager.core.internal.util.helper.InputEventAdaptorConfigurationHelper;
+import org.wso2.carbon.event.processing.application.deployer.CEPDeployer;
 
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLInputFactory;
@@ -53,7 +54,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * Deploy event adaptors as axis2 service
  */
 @SuppressWarnings("unused")
-public class InputEventAdaptorDeployer extends AbstractDeployer {
+public class InputEventAdaptorDeployer extends AbstractDeployer implements CEPDeployer {
 
     private static Log log = LogFactory.getLog(InputEventAdaptorDeployer.class);
     private ConfigurationContext configurationContext;
@@ -180,7 +181,7 @@ public class InputEventAdaptorDeployer extends AbstractDeployer {
                 if (InputEventAdaptorConfigurationHelper.validateEventAdaptorConfiguration(InputEventAdaptorConfigurationHelper.fromOM(eventAdaptorOMElement))) {
                     if (carbonEventAdaptorManagerService.checkAdaptorValidity(tenantId, eventAdaptorName)) {
                         carbonEventAdaptorManagerService.addInputEventAdaptorConfiguration(tenantId, eventAdaptorConfiguration);
-                        carbonEventAdaptorManagerService.addInputEventAdaptorConfigurationFile(tenantId, createInputEventAdaptorFile(eventAdaptorName, eventAdaptorFile.getName(), InputEventAdaptorFile.Status.DEPLOYED, null, null, null));
+                        carbonEventAdaptorManagerService.addInputEventAdaptorConfigurationFile(tenantId, createInputEventAdaptorFile(eventAdaptorName, eventAdaptorFile, InputEventAdaptorFile.Status.DEPLOYED, null, null, null));
 
                         log.info("Input Event Adaptor deployed successfully and in active state : " + eventAdaptorName);
                         if (carbonEventAdaptorManagerService.inputEventAdaptorNotificationListener != null) {
@@ -192,15 +193,15 @@ public class InputEventAdaptorDeployer extends AbstractDeployer {
                         throw new InputEventAdaptorManagerConfigurationException(eventAdaptorName + " is already registered for this tenant");
                     }
                 } else {
-                    carbonEventAdaptorManagerService.addInputEventAdaptorConfigurationFile(tenantId, createInputEventAdaptorFile(eventAdaptorName, eventAdaptorFile.getName(), InputEventAdaptorFile.Status.WAITING_FOR_DEPENDENCY, configurationContext.getAxisConfiguration(), "Event Adaptor type is not found", eventAdaptorConfiguration.getType()));
+                    carbonEventAdaptorManagerService.addInputEventAdaptorConfigurationFile(tenantId, createInputEventAdaptorFile(eventAdaptorName, eventAdaptorFile, InputEventAdaptorFile.Status.WAITING_FOR_DEPENDENCY, configurationContext.getAxisConfiguration(), "Event Adaptor type is not found", eventAdaptorConfiguration.getType()));
                     log.info("Input Event Adaptor deployment held back and in inactive state : " + eventAdaptorName + ", waiting for input event adaptor type dependency " + eventAdaptorConfiguration.getType());
                 }
             } catch (InputEventAdaptorManagerConfigurationException ex) {
-                carbonEventAdaptorManagerService.addInputEventAdaptorConfigurationFile(tenantId, createInputEventAdaptorFile(eventAdaptorName, eventAdaptorFile.getName(), InputEventAdaptorFile.Status.ERROR, null, null, null));
+                carbonEventAdaptorManagerService.addInputEventAdaptorConfigurationFile(tenantId, createInputEventAdaptorFile(eventAdaptorName, eventAdaptorFile, InputEventAdaptorFile.Status.ERROR, null, null, null));
                 log.error("Input Event Adaptor not deployed and in inactive state : " + eventAdaptorFile.getName() + " , " + ex.getMessage(), ex);
                 throw new InputEventAdaptorManagerConfigurationException(ex.getMessage(), ex);
             } catch (DeploymentException e) {
-                carbonEventAdaptorManagerService.addInputEventAdaptorConfigurationFile(tenantId, createInputEventAdaptorFile(eventAdaptorName, eventAdaptorFile.getName(), InputEventAdaptorFile.Status.ERROR, configurationContext.getAxisConfiguration(), "Deployment exception occurred", null));
+                carbonEventAdaptorManagerService.addInputEventAdaptorConfigurationFile(tenantId, createInputEventAdaptorFile(eventAdaptorName, eventAdaptorFile, InputEventAdaptorFile.Status.ERROR, configurationContext.getAxisConfiguration(), "Deployment exception occurred", null));
                 log.error("Input Event Adaptor not deployed and in inactive state : " + eventAdaptorFile.getName() + " , " + e.getMessage(), e);
                 throw new DeploymentException(e.getMessage(), e);
             }
@@ -234,14 +235,15 @@ public class InputEventAdaptorDeployer extends AbstractDeployer {
     }
 
     private InputEventAdaptorFile createInputEventAdaptorFile(String eventAdaptorName,
-                                                              String fileName,
+                                                              File file,
                                                               InputEventAdaptorFile.Status status,
                                                               AxisConfiguration axisConfiguration,
                                                               String deploymentStatusMessage,
                                                               String dependency) {
 
         InputEventAdaptorFile inputEventAdaptorFile = new InputEventAdaptorFile();
-        inputEventAdaptorFile.setFileName(fileName);
+        inputEventAdaptorFile.setFileName(file.getName());
+        inputEventAdaptorFile.setFilePath(file.getAbsolutePath());
         inputEventAdaptorFile.setEventAdaptorName(eventAdaptorName);
         inputEventAdaptorFile.setAxisConfiguration(axisConfiguration);
         inputEventAdaptorFile.setDependency(dependency);
@@ -258,6 +260,16 @@ public class InputEventAdaptorDeployer extends AbstractDeployer {
 
     public Set<String> getUndeployedEventAdaptorFilePaths() {
         return undeployedEventAdaptorFilePaths;
+    }
+
+    @Override
+    public void processDeployment(DeploymentFileData deploymentFileData) throws Exception {
+        processDeploy(deploymentFileData);
+    }
+
+    @Override
+    public void processUndeployment(String filePath) throws Exception {
+         processUndeploy(filePath);
     }
 }
 

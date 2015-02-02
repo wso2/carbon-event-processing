@@ -422,7 +422,7 @@ public class CarbonEventProcessorService implements EventProcessorService {
         List<ExecutionPlanConfigurationFile> executionPlanConfigurationFileList = tenantSpecificExecutionPlanFiles.get(tenantId);
         if (executionPlanConfigurationFileList != null) {
             for (ExecutionPlanConfigurationFile executionPlanConfigurationFile : executionPlanConfigurationFileList) {
-                if (filename != null && filename.equals(executionPlanConfigurationFile.getFileName())) {
+                if (filename != null && filename.equals(new File(executionPlanConfigurationFile.getFileName()).getName())) {
                     String statusMsg = executionPlanConfigurationFile.getDeploymentStatusMessage();
                     if (executionPlanConfigurationFile.getDependency() != null) {
                         statusMsg = statusMsg + " [Dependency: " + executionPlanConfigurationFile.getDependency() + "]";
@@ -639,7 +639,7 @@ public class CarbonEventProcessorService implements EventProcessorService {
         List<ExecutionPlanConfigurationFile> executionPlanConfigurationFiles = tenantSpecificExecutionPlanFiles.get(tenantId);
         for (Iterator<ExecutionPlanConfigurationFile> iterator = executionPlanConfigurationFiles.iterator(); iterator.hasNext(); ) {
             ExecutionPlanConfigurationFile configurationFile = iterator.next();
-            if (configurationFile.getFileName().equals(fileName)) {
+            if (new File(configurationFile.getFileName()).getName().equals(fileName)) {
                 if (configurationFile.getStatus().equals(ExecutionPlanConfigurationFile.Status.DEPLOYED)) {
                     removeExecutionPlanConfiguration(configurationFile.getExecutionPlanName(), tenantId);
                 }
@@ -810,7 +810,7 @@ public class CarbonEventProcessorService implements EventProcessorService {
         }
         for (ExecutionPlanConfigurationFile executionPlanConfigurationFile : reloadFileList) {
             try {
-                EventProcessorConfigurationFilesystemInvoker.reload(executionPlanConfigurationFile.getFileName(), executionPlanConfigurationFile.getAxisConfiguration());
+                EventProcessorConfigurationFilesystemInvoker.reload(executionPlanConfigurationFile.getFilePath(), executionPlanConfigurationFile.getAxisConfiguration());
             } catch (Exception e) {
                 log.error("Exception occurred while trying to deploy the Execution Plan configuration file : " + new File(executionPlanConfigurationFile.getFileName()).getName());
             }
@@ -847,7 +847,7 @@ public class CarbonEventProcessorService implements EventProcessorService {
             for (String name : toDeactivateExecutionPlan) {
                 ExecutionPlanConfigurationFile executionPlanConfigurationFile = getExecutionPlanConfigurationFileByPlanName(name, tenantId);
                 try {
-                    EventProcessorConfigurationFilesystemInvoker.reload(executionPlanConfigurationFile.getFileName(), executionPlanConfigurationFile.getAxisConfiguration());
+                    EventProcessorConfigurationFilesystemInvoker.reload(executionPlanConfigurationFile.getFilePath(), executionPlanConfigurationFile.getAxisConfiguration());
                 } catch (Exception e) {
                     log.error("Exception occurred while trying to deploy the Execution Plan configuration file : " + new File(executionPlanConfigurationFile.getFileName()).getName());
                 }

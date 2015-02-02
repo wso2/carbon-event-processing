@@ -24,6 +24,16 @@ import org.apache.axis2.engine.AxisConfiguration;
  */
 public class InputEventAdaptorFile {
 
+    private String filePath;
+
+    public void setFilePath(String filePath) {
+        this.filePath = filePath;
+    }
+
+    public String getFilePath() {
+        return filePath;
+    }
+
     public enum Status {DEPLOYED, WAITING_FOR_DEPENDENCY, ERROR, ACTIVATE}
 
     ;

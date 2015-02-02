@@ -488,9 +488,9 @@ public class CarbonEventFormatterService
         }
         for (EventFormatterConfigurationFile eventFormatterConfigurationFile : fileList) {
             try {
-                EventFormatterConfigurationFilesystemInvoker.reload(eventFormatterConfigurationFile.getFileName(), eventFormatterConfigurationFile.getAxisConfiguration());
+                EventFormatterConfigurationFilesystemInvoker.reload(eventFormatterConfigurationFile.getFilePath(), eventFormatterConfigurationFile.getAxisConfiguration());
             } catch (Exception e) {
-                log.error("Exception occurred while trying to deploy the Event formatter configuration file : " + new File(eventFormatterConfigurationFile.getFileName()).getName(), e);
+                log.error("Exception occurred while trying to deploy the Event formatter configuration file : " + eventFormatterConfigurationFile.getFileName(), e);
             }
         }
     }
@@ -513,7 +513,7 @@ public class CarbonEventFormatterService
         }
         for (EventFormatterConfigurationFile eventFormatterConfigurationFile : fileList) {
             try {
-                EventFormatterConfigurationFilesystemInvoker.reload(eventFormatterConfigurationFile.getFileName(), eventFormatterConfigurationFile.getAxisConfiguration());
+                EventFormatterConfigurationFilesystemInvoker.reload(eventFormatterConfigurationFile.getFilePath(), eventFormatterConfigurationFile.getAxisConfiguration());
             } catch (Exception e) {
                 log.error("Exception occurred while trying to deploy the Event formatter configuration file : " + new File(eventFormatterConfigurationFile.getFileName()).getName(), e);
             }
@@ -542,7 +542,7 @@ public class CarbonEventFormatterService
         }
 
         for (EventFormatterConfigurationFile eventFormatterConfigurationFile : fileList) {
-            EventFormatterConfigurationFilesystemInvoker.reload(eventFormatterConfigurationFile.getFileName(), eventFormatterConfigurationFile.getAxisConfiguration());
+            EventFormatterConfigurationFilesystemInvoker.reload(eventFormatterConfigurationFile.getFilePath(), eventFormatterConfigurationFile.getAxisConfiguration());
             log.info("Event formatter : " + eventFormatterConfigurationFile.getEventFormatterName() + "  is in inactive state because dependency could not be found : " + dependency);
         }
     }
@@ -568,7 +568,7 @@ public class CarbonEventFormatterService
         }
 
         for (EventFormatterConfigurationFile eventFormatterConfigurationFile : fileList) {
-            EventFormatterConfigurationFilesystemInvoker.reload(eventFormatterConfigurationFile.getFileName(), eventFormatterConfigurationFile.getAxisConfiguration());
+            EventFormatterConfigurationFilesystemInvoker.reload(eventFormatterConfigurationFile.getFilePath(), eventFormatterConfigurationFile.getAxisConfiguration());
             log.info("Event formatter : " + eventFormatterConfigurationFile.getEventFormatterName() + "  is in inactive state because stream dependency could not be found : " + streamId);
         }
     }

@@ -97,11 +97,10 @@ public class EventFormatterConfigurationFilesystemInvoker {
         return file.exists();
     }
 
-    public static void reload(String fileName, AxisConfiguration axisConfiguration)
+    public static void reload(String filePath, AxisConfiguration axisConfiguration)
             throws EventFormatterConfigurationException {
         EventFormatterDeployer deployer = (EventFormatterDeployer) getDeployer(axisConfiguration, EventFormatterConstants.TM_ELE_DIRECTORY);
         try {
-            String filePath = getFilePathFromFilename(fileName, axisConfiguration);
             deployer.processUndeploy(filePath);
             deployer.processDeploy(new DeploymentFileData(new File(filePath)));
         } catch (DeploymentException e) {

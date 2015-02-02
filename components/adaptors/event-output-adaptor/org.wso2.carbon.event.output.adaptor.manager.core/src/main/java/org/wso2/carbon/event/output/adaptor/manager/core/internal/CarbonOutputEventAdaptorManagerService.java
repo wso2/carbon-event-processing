@@ -446,9 +446,9 @@ public class CarbonOutputEventAdaptorManagerService
 
         for (OutputEventAdaptorFile outputEventAdaptorFile : outputEventAdaptorFiles) {
             try {
-                OutputEventAdaptorConfigurationFilesystemInvoker.reload(outputEventAdaptorFile.getFileName(), outputEventAdaptorFile.getAxisConfiguration());
+                OutputEventAdaptorConfigurationFilesystemInvoker.reload(outputEventAdaptorFile.getFilePath(), outputEventAdaptorFile.getAxisConfiguration());
             } catch (Exception e) {
-                log.error("Exception occurred while trying to deploy the Output Event Adaptor configuration file : " + new File(outputEventAdaptorFile.getFileName()).getName());
+                log.error("Exception occurred while trying to deploy the Output Event Adaptor configuration file : " + outputEventAdaptorFile.getFileName());
             }
         }
     }

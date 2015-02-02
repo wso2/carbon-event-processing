@@ -91,6 +91,11 @@
             <groupId>org.apache.storm.wso2</groupId>
             <artifactId>storm</artifactId>
         </dependency>
+        <dependency>
+            <groupId>org.wso2.carbon</groupId>
+            <artifactId>org.wso2.carbon.event.processing.application.deployer</artifactId>
+        </dependency>
+
     </dependencies>
 
     <build>

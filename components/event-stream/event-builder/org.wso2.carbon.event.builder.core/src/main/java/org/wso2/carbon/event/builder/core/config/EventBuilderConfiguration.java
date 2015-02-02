@@ -27,6 +27,8 @@ public class EventBuilderConfiguration {
     private InputMapping inputMapping;
     private boolean traceEnabled;
     private boolean statisticsEnabled;
+    private String filePath;
+    private boolean isReadOnly;
 
     public boolean isTraceEnabled() {
         return traceEnabled;
@@ -82,5 +84,21 @@ public class EventBuilderConfiguration {
 
     public void setEventBuilderName(String eventBuilderName) {
         this.eventBuilderName = eventBuilderName;
+    }
+
+    public String getFilePath() {
+        return filePath;
+    }
+
+    public void setFilePath(String filePath) {
+        this.filePath = filePath;
+    }
+
+    public boolean isReadOnly() {
+        return isReadOnly;
+    }
+
+    public void setReadOnly(boolean isReadOnly) {
+        this.isReadOnly = isReadOnly;
     }
 }

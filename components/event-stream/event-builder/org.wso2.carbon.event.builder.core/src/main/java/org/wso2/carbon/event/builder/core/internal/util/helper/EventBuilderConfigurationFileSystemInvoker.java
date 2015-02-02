@@ -119,11 +119,10 @@ public class EventBuilderConfigurationFileSystemInvoker {
         return stringBuilder.toString().trim();
     }
 
-    public static void reload(String fileName, AxisConfiguration axisConfiguration)
+    public static void reload(String filePath, AxisConfiguration axisConfiguration)
             throws EventBuilderConfigurationException {
         EventBuilderDeployer deployer = EventBuilderConfigHelper.getEventBuilderDeployer(axisConfiguration);
         try {
-            String filePath = getFilePathFromFilename(fileName, axisConfiguration);
             deployer.processUndeployment(filePath);
             deployer.processDeployment(new DeploymentFileData(new File(filePath)));
         } catch (DeploymentException e) {

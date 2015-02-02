@@ -30,6 +30,8 @@ public class EventBuilderConfigurationFile {
     private String deploymentStatusMessage = "";
     private AxisConfiguration axisConfiguration;
     private OMElement ebConfigOmElement;
+    private String filePath;
+    private boolean isReadOnly;
 
     public EventBuilderConfigurationFile(String fileName) {
         this.fileName = fileName;
@@ -129,6 +131,22 @@ public class EventBuilderConfigurationFile {
         result = 31 * result + fileName.hashCode();
         result = 31 * result + (streamWithVersion != null ? streamWithVersion.hashCode() : 0);
         return result;
+    }
+
+    public String getFilePath() {
+        return filePath;
+    }
+
+    public void setFilePath(String filePath) {
+        this.filePath = filePath;
+    }
+
+    public boolean isReadOnly() {
+        return isReadOnly;
+    }
+
+    public void setReadOnly(boolean isReadOnly) {
+        this.isReadOnly = isReadOnly;
     }
 
     public static enum DeploymentStatus {
