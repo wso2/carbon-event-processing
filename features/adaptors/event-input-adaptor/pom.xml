@@ -22,13 +22,13 @@
     <parent>
         <artifactId>event-adaptors-feature</artifactId>
         <groupId>org.wso2.carbon.event-processing</groupId>
-        <version>2.0.1-SNAPSHOT</version>
+        <version>2.0.1</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
     <artifactId>event-input-adaptor-feature</artifactId>
-    <version>2.0.1-SNAPSHOT</version>
+    <version>2.0.1</version>
     <packaging>pom</packaging>
     <name>WSO2 Carbon - Event Input Adaptor Aggregate Feature</name>
     <url>http://maven.apache.org</url>
