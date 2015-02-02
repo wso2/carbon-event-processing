@@ -1,21 +1,22 @@
 <stromDeploymentConfig>
 
-    <stormEnabled>false</stormEnabled>
+    <stormEnabled>true</stormEnabled>
 
     <jar>org.wso2.carbon.event.processor.storm.jar</jar>
 
     <management>
         <managers>
             <manager>
-                <hostName>0.0.0.0</hostName>
+                <hostName>10.100.5.42</hostName>
                 <port>8904</port>
             </manager>
             <manager>
-                <hostName>0.0.0.0</hostName>
+                <hostName>10.100.5.42</hostName>
                 <port>8905</port>
             </manager>
         </managers>
-        <reconnectionInterval>20</reconnectionInterval>
+        <reconnectionInterval>20000</reconnectionInterval>
+	<heartbeatInterval>5000</heartbeatInterval>
     </management>
 
     <transport>
@@ -23,14 +24,15 @@
             <min>15000</min>
             <max>15100</max>
         </portRange>
-        <reconnectionInterval>20</reconnectionInterval>
+        <reconnectionInterval>20000</reconnectionInterval>
+	<topologyResubmitInterval>10000</topologyResubmitInterval>
     </transport>
 
     <node>
         <receiver enable="true"/>
-        <publisher enable="true"/>
+        <publisher enable="false"/>
         <manager enable="true">
-            <hostName>0.0.0.0</hostName>
+            <hostName>10.100.5.42</hostName>
             <port>8904</port>
         </manager>
     </node>
