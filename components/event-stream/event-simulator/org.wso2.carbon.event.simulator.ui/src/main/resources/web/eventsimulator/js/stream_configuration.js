@@ -31,7 +31,7 @@ function createPopupStreamConfigUI(filename){
 }
 
 function showCustomConfigurationPopupDialog(message, title, windowHight, okButton, callback,
-                                           windowWidth){
+                                            windowWidth){
     var strDialog = "<div id='custom_dialog' title='" + title + "'><div id='popupDialog'></div>" + message + "</div>";
     var requiredWidth = 750;
     if (windowWidth) {

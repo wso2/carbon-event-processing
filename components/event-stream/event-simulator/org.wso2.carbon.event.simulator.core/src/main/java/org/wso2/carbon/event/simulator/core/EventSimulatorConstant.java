@@ -36,4 +36,29 @@ public class EventSimulatorConstant {
     public static final String CONFIGURATION_XML_PREFIX="_streamConfiguration.xml";
     public static final String TEMP_DIR_PATH=File.separator + "tmp" ;
 
+    //public static final String DATA_SOURCE_DEPLOY_DIRECTORY_PATH= "eventsimulatorfiles"+File.separator+"dataSourceconfigfiles";
+    public static final String DATA_SOURCE_DEPLOY_DIRECTORY_PATH= "eventsimulatorfiles";
+
+    public static final String DATA_SOURCE_CONFIGURATION_XML_PREFIX="_datSourceStreamConfiguration.xml";
+
+    public static final String DATA_SOURCE_NAME = "dataSource";
+    public static final String CONFIGURATION_NAME = "name";
+    public static final String TABLE_NAME = "tableName";
+    public static final String EVENT_STREAM_ID = "streamID";
+    public static final String EVENT_STREAM_NAME = "eventStreamName";
+    public static final String DATABASE_COLUMNS_AND_STREAM_ATTRIBUTE_INFO = "dataSourceColumnsAndTypes";
+    public static final String STREAM_ATTRIBUTE_NAME = "streamAttribute";
+    public static final String COLUMN_NAME = "columnName";
+    public static final String COLUMN_TYPE = "columnType";
+
+    //public static final String TEMP_DIR_PATH=File.separator + "tmp" ;
+
+    public static final String DATA_SOURCE_NOT_FOUND_FOR_DATA_SOURCE_NAME = "There is no any data source found named: ";
+    public static final String CONNECTION_STRING_NOT_FOUND="Exception when getting connection string for : ";
+    public static final String JSON_EXCEPTION="Json Exception occurred";
+    //public static final String NO_TABLE_OR_NO_DATA=" table does not exist or no data";
+    //public static final String NO_DATA_IN_TABLE=" table does not contain data";
+    //public static final String DATA_TYPES_DOESNT_MATCH=" does not contain columns with specified data type";
+
+
 }

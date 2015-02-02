@@ -19,6 +19,7 @@ package org.wso2.carbon.event.simulator.core;
 
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.engine.AxisConfiguration;
+import org.json.JSONObject;
 import org.wso2.carbon.databridge.commons.StreamDefinition;
 
 import java.util.Collection;
@@ -36,7 +37,19 @@ public interface EventSimulator {
 
     public void uploadService(UploadedFileItem[] fileItems,AxisConfiguration axisConfiguration)throws AxisFault;
 
+    public String getEventStreamInfo(String fileName)throws AxisFault;
+
     public void createConfigurationXML(String fileName,String streamId,String separateChar,AxisConfiguration axisConfiguration);
 
     public void deleteFile(String fileName,AxisConfiguration axisConfiguration)throws AxisFault;
+
+    public List<DataSourceTableAndStreamInfo> getAllDataSourceInfo();
+
+    public void sendEventsViaDB(JSONObject allInfo, String preparedSelectStatement) throws AxisFault;
+
+    public void createConfigurationXMLForDataSource(String dataSourceConfigAndEventStreamInfo,AxisConfiguration axisConfiguration) throws AxisFault;
+
+    public void deleteDBConfigFile(String fileName,AxisConfiguration axisConfiguration)throws AxisFault;
+
+
 }
