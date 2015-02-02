@@ -65,7 +65,7 @@
                                 <bundleDef>org.apache.httpcomponents.wso2:httpclient:${httpclient.wso2.version}</bundleDef>
                             </bundles>
                             <importFeatures>
-                                <importFeatureDef>org.wso2.carbon.core.server:${carbon.kernel.imp.pkg.version}
+                                <importFeatureDef>org.wso2.carbon.core.server:${carbon.kernel.version}
                                 </importFeatureDef>
                             </importFeatures>
                         </configuration>

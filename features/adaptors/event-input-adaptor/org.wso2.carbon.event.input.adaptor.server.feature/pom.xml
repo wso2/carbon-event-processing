@@ -65,10 +65,10 @@
                                 </bundleDef>
                             </bundles>
                             <importFeatures>
-                                <importFeatureDef>org.wso2.carbon.core.server:${carbon.kernel.imp.pkg.version}
+                                <importFeatureDef>org.wso2.carbon.core.server:${carbon.kernel.version}
                                 </importFeatureDef>
                                 <importFeatureDef>
-                                    org.wso2.carbon.databridge.datareceiver:${carbon.commons.imp.pkg.version}
+                                    org.wso2.carbon.databridge.datareceiver:${carbon.commons.version}
                                 </importFeatureDef>
                             </importFeatures>
                         </configuration>

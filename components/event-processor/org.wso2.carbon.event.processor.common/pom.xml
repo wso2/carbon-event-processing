@@ -54,10 +54,10 @@
             <groupId>com.lmax.wso2</groupId>
             <artifactId>disruptor</artifactId>
         </dependency>
-        <dependency>
-            <groupId>slf4j.wso2</groupId>
-            <artifactId>slf4j</artifactId>
-        </dependency>
+        <!--<dependency>-->
+            <!--<groupId>slf4j.wso2</groupId>-->
+            <!--<artifactId>slf4j</artifactId>-->
+        <!--</dependency>-->
         <dependency>
             <groupId>libthrift.wso2</groupId>
             <artifactId>libthrift</artifactId>

@@ -46,7 +46,7 @@
         <module>org.wso2.carbon.event.output.adaptor.manager.server.feature</module>
         <module>org.wso2.carbon.event.output.adaptor.manager.ui.feature</module>
         <module>org.wso2.carbon.event.output.adaptor.cassandra.server.feature</module>
-        <module>org.wso2.carbon.event.output.adaptor.mysql.server.feature</module>
+        <!--<module>org.wso2.carbon.event.output.adaptor.mysql.server.feature</module>-->
         <module>org.wso2.carbon.event.output.adaptor.http.server.feature</module>
 	    <module>org.wso2.carbon.event.output.adaptor.logger.server.feature</module>
         <module>org.wso2.carbon.event.output.adaptor.websocket.server.feature</module>
