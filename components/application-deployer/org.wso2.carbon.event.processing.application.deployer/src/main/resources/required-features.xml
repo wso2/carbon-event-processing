@@ -1,0 +1,20 @@
+<featureSets>
+    <featureSet artifactType="cep/eventbuilder">
+        <feature id="org.wso2.carbon.event.builder.feature.group" version="[2.0.0.SNAPSHOT, 4.4.0)"/>
+    </featureSet>
+    <featureSet artifactType="cep/eventformatter">
+        <feature id="org.wso2.carbon.event.formatter.feature.group" version="[2.0.0.SNAPSHOT, 4.4.0)"/>
+    </featureSet>
+    <featureSet artifactType="cep/executionplan">
+        <feature id="org.wso2.carbon.event.processor.feature.group" version="[2.0.0.SNAPSHOT, 4.4.0)"/>
+    </featureSet>
+    <featureSet artifactType="cep/inputeventadaptor">
+        <feature id="org.wso2.carbon.event.input.adaptor.feature.group" version="[2.0.0.SNAPSHOT, 4.4.0)"/>
+    </featureSet>
+    <featureSet artifactType="cep/outputeventadaptor">
+        <feature id="org.wso2.carbon.event.output.adaptor.feature.group" version="[2.0.0.SNAPSHOT, 4.4.0)"/>
+    </featureSet>
+    <featureSet artifactType="cep/eventstream">
+        <!--<feature id="org.wso2.carbon.cep.server.feature.group" version="[4.3.0.SNAPSHOT, 4.4.0)"/>-->
+    </featureSet>
+</featureSets>
