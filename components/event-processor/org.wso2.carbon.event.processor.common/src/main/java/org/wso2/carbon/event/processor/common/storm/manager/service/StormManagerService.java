@@ -22,7 +22,7 @@ public class StormManagerService {
 
         public String getCEPPublisher(int tenantId, String executionPlanName, String stormPublisherHostName) throws org.wso2.carbon.event.processor.common.storm.manager.service.exception.NotStormManagerException, org.wso2.carbon.event.processor.common.storm.manager.service.exception.EndpointNotFoundException, org.apache.thrift.TException;
 
-    }
+     }
 
     public interface AsyncIface {
 

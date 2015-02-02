@@ -321,7 +321,7 @@ public class CarbonEventProcessorService implements EventProcessorService {
         if (distributed) {
             if (stormDeploymentConfig != null && stormDeploymentConfig.isManagerNode() && EventProcessorValueHolder.getStormManagerServer().isStormManager()) {
                 try {
-                    TopologyManager.submitTopology(executionPlanConfiguration, siddhiManager.getStreamDefinitions(), tenantId);
+                    TopologyManager.submitTopology(executionPlanConfiguration, siddhiManager.getStreamDefinitions(), tenantId, stormDeploymentConfig.getTopologySubmitRetryInterval());
                 } catch (StormDeploymentException e) {
                     throw new ExecutionPlanConfigurationException("Invalid distributed query specified, " + e.getMessage(), e);
                 }
@@ -340,7 +340,7 @@ public class CarbonEventProcessorService implements EventProcessorService {
         //subscribe output to junction
         SiddhiStormOutputEventListener stormOutputListener = null;
         if (distributed && stormDeploymentConfig != null && stormDeploymentConfig.isPublisherNode()) {
-            stormOutputListener = new SiddhiStormOutputEventListener(executionPlanConfiguration, tenantId, stormDeploymentConfig);
+            stormOutputListener = new SiddhiStormOutputEventListener(executionPlanConfiguration, tenantId, stormDeploymentConfig, stormDeploymentConfig.getHeartbeatInterval());
         }
         for (StreamConfiguration exportedStreamConfiguration : executionPlanConfiguration.getExportedStreams()) {
 

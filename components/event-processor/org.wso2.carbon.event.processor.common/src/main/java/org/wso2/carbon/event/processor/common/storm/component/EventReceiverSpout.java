@@ -44,7 +44,7 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 /**
- * Receive events from CEP receivers through data bridge thrift receiver and pass through
+ * Receive events from CEP receivers through thrift receiver and pass through
  * the events as tuples to the connected component(i.e. Siddhi Bolt).
  */
 public class EventReceiverSpout extends BaseRichSpout implements StreamCallback {
@@ -81,6 +81,7 @@ public class EventReceiverSpout extends BaseRichSpout implements StreamCallback 
     private String logPrefix;
     private int eventCount;
     private long batchStartTime;
+    private int heartbeatInterval;
 
     /**
      * Receives events from the CEP Receiver through Thrift using data bridge and pass through the events
@@ -91,14 +92,13 @@ public class EventReceiverSpout extends BaseRichSpout implements StreamCallback 
      * @param executionPlanName
      * @param tenantId
      */
-    public EventReceiverSpout(StormDeploymentConfig stormDeploymentConfig, List<StreamDefinition> incomingStreamDefinitions, String executionPlanName, int tenantId) {
+    public EventReceiverSpout(StormDeploymentConfig stormDeploymentConfig, List<StreamDefinition> incomingStreamDefinitions, String executionPlanName, int tenantId, int heartbeatInterval) {
         this.stormDeploymentConfig = stormDeploymentConfig;
         this.incomingStreamDefinitions = incomingStreamDefinitions;
         this.executionPlanName = executionPlanName;
         this.tenantId = tenantId;
-
+        this.heartbeatInterval = heartbeatInterval;
         this.logPrefix = "{" + executionPlanName + ":" + tenantId + "} - ";
-
     }
 
     @Override
@@ -144,19 +144,22 @@ public class EventReceiverSpout extends BaseRichSpout implements StreamCallback 
             if (incomingStreamIDs.contains(siddhiStreamName)) {
                 if (log.isDebugEnabled()) {
                     log.debug(logPrefix + "Sending event : " + siddhiStreamName + " => " + event.toString());
-
-                }
-                if (++eventCount % 10000 == 0) {
-                    double timeSpentInSecs = (System.currentTimeMillis() - batchStartTime) / 1000.0D;
-                    double throughput = 10000 / timeSpentInSecs;
-                    log.info("Processed 10000 events in " + timeSpentInSecs + " seconds, throughput : " + throughput + " events/sec");
-                    eventCount = 0;
-                    batchStartTime = System.currentTimeMillis();
                 }
                 spoutOutputCollector.emit(siddhiStreamName, Arrays.asList(event.getData()));
+                updateThroughputCounter();
             } else {
                 log.warn(logPrefix + "Event received for unknown stream : " + siddhiStreamName);
             }
+        }
+    }
+
+    private void updateThroughputCounter() {
+        if (++eventCount % 10000 == 0) {
+            double timeSpentInSecs = (System.currentTimeMillis() - batchStartTime) / 1000.0D;
+            double throughput = 10000 / timeSpentInSecs;
+            log.info("Processed 10000 events in " + timeSpentInSecs + " seconds, throughput : " + throughput + " events/sec");
+            eventCount = 0;
+            batchStartTime = System.currentTimeMillis();
         }
     }
 
@@ -181,32 +184,24 @@ public class EventReceiverSpout extends BaseRichSpout implements StreamCallback 
 
     class Registrar implements Runnable {
 
-        /**
-         * When an object implementing interface <code>Runnable</code> is used
-         * to create a thread, starting the thread causes the object's
-         * <code>run</code> method to be called in that separately executing
-         * thread.
-         * <p/>
-         * The general contract of the method <code>run</code> is that it may
-         * take any action whatsoever.
-         *
-         * @see Thread#run()
-         */
         @Override
         public void run() {
-            log.info(logPrefix + "Registering Storm receiver with " + thisHostIp + ":" + listeningPort);
-            if (!registerStormReceiverWithStormMangerService()) {
-                log.info(logPrefix + "Retry registering Storm receiver in 30 sec");
+            if (log.isDebugEnabled()){
+                log.debug(logPrefix + "Registering Storm receiver with " + thisHostIp + ":" + listeningPort);
+            }
+
+            // Infinitely call register. Each register call will act as a heartbeat
+            while (true) {
+                registerStormReceiverWithStormMangerService();
                 try {
-                    Thread.sleep(30000);
+                    Thread.sleep(heartbeatInterval);
                 } catch (InterruptedException e1) {
-                    //ignore
+                   continue;
                 }
             }
         }
 
         private boolean registerStormReceiverWithStormMangerService() {
-
             TTransport transport = null;
             try {
                 transport = new TSocket(stormDeploymentConfig.getManagers().get(0).getHostName(), stormDeploymentConfig.getManagers().get(0).getPort());

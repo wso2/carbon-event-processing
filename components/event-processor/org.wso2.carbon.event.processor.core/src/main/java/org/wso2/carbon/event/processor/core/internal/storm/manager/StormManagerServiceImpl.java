@@ -1,23 +1,24 @@
 package org.wso2.carbon.event.processor.core.internal.storm.manager;
 
+import org.apache.log4j.Logger;
 import org.apache.thrift.TException;
 import org.wso2.carbon.event.processor.common.storm.manager.service.StormManagerService;
 import org.wso2.carbon.event.processor.common.storm.manager.service.exception.EndpointNotFoundException;
 import org.wso2.carbon.event.processor.common.storm.manager.service.exception.NotStormManagerException;
 
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class StormManagerServiceImpl implements StormManagerService.Iface {
-
-    private HashMap<String, Set<Endpoint>> stormReceivers = new HashMap<String, Set<Endpoint>>();
-    private HashMap<String, Set<Endpoint>> cepPublishers = new HashMap<String, Set<Endpoint>>();
+    private static  Logger log = Logger.getLogger(StormManagerServiceImpl.class);
+    public static final long MILLISECONDS_PER_MINUTE = 60000;
+    private ConcurrentHashMap<String, Set<Endpoint>> stormReceivers = new ConcurrentHashMap<String, Set<Endpoint>>();
+    private ConcurrentHashMap<String, Set<Endpoint>> cepPublishers = new ConcurrentHashMap<String, Set<Endpoint>>();
     private boolean isStormManager;
     private String hostPort;
 
     public StormManagerServiceImpl(String hostPort) {
-
         this.hostPort = hostPort;
     }
 
@@ -27,7 +28,6 @@ public class StormManagerServiceImpl implements StormManagerService.Iface {
             throw new NotStormManagerException(hostPort + " not a storm manager");
         }
         insertToCollection(stormReceivers, constructKey(tenantId, executionPlanName), new Endpoint(port, hostName));
-
     }
 
     @Override
@@ -39,12 +39,12 @@ public class StormManagerServiceImpl implements StormManagerService.Iface {
     }
 
     @Override
-    public String getStormReceiver(int tenantId, String executionPlanName, String cepReceiverHostName) throws NotStormManagerException, EndpointNotFoundException, TException {
+    public synchronized String getStormReceiver(int tenantId, String executionPlanName, String cepReceiverHostName) throws NotStormManagerException, EndpointNotFoundException, TException {
         if (!isStormManager) {
             throw new NotStormManagerException(hostPort + " not a storm manager");
         }
         Set<Endpoint> endpointSet = stormReceivers.get(constructKey(tenantId, executionPlanName));
-        Endpoint selectedEndpoint = selectEndpoint(endpointSet, cepReceiverHostName);
+        Endpoint selectedEndpoint = getEndpoint(endpointSet, cepReceiverHostName);
 
         if (null != selectedEndpoint) {
             return selectedEndpoint.getHostName() + ":" + selectedEndpoint.getPort();
@@ -54,12 +54,12 @@ public class StormManagerServiceImpl implements StormManagerService.Iface {
     }
 
     @Override
-    public String getCEPPublisher(int tenantId, String executionPlanName, String stormPublisherHostName) throws NotStormManagerException, EndpointNotFoundException, TException {
+    public synchronized String getCEPPublisher(int tenantId, String executionPlanName, String stormPublisherHostName) throws NotStormManagerException, EndpointNotFoundException, TException {
         if (!isStormManager) {
             throw new NotStormManagerException(hostPort + " not a storm manager");
         }
         Set<Endpoint> endpointSet = cepPublishers.get(constructKey(tenantId, executionPlanName));
-        Endpoint selectedEndpoint = selectEndpoint(endpointSet, stormPublisherHostName);
+        Endpoint selectedEndpoint = getEndpoint(endpointSet, stormPublisherHostName);
 
         if (null != selectedEndpoint) {
             return selectedEndpoint.getHostName() + ":" + selectedEndpoint.getPort();
@@ -68,38 +68,27 @@ public class StormManagerServiceImpl implements StormManagerService.Iface {
         }
     }
 
-    private Endpoint selectEndpoint(Set<Endpoint> endpointSet, String requesterIp) {
+    private synchronized Endpoint getEndpoint(Set<Endpoint> endpointSet, String requesterIp) {
         Endpoint selectedEndpoint = null;
 
+        Set<Endpoint> sameHostEndpoints = new HashSet<Endpoint>();
         if (endpointSet != null && !endpointSet.isEmpty()) {
-            // If  there's a storm receiver/cep publisher in the same host as requester IP select it
+
             if (!"".equals(requesterIp)) {
                 for (Endpoint endpoint : endpointSet) {
                     if (endpoint.getHostName().equals(requesterIp)) {
-                        selectedEndpoint = endpoint;
-
-//                        if (log.isDebugEnabled()) {
-//                            log.debug("Selecting" + endpoint.toString() + " since it's in the same host as the requester");
-//                        }
-                        break;
+                        sameHostEndpoints.add(endpoint);
                     }
                 }
             }
-            // If there are no endpoints in the same host. Select the endpoint with lease number of connections
-            if (selectedEndpoint == null) {
-                int minConnectionCount = Integer.MAX_VALUE;
 
-                for (Endpoint endpoint : endpointSet) {
-//                    if (log.isDebugEnabled()) {
-//                        log.debug("Endpoint " + endpoint.toString() + " has " + endpoint.getConnectionCount() + " connections.");
-//                    }
-
-                    if (endpoint.getConnectionCount() < minConnectionCount) {
-                        minConnectionCount = endpoint.getConnectionCount();
-                        selectedEndpoint = endpoint;
-                    }
-                }
+            // If  there's a storm receivers/cep publishers in the same host as requester IP select among them
+            if (!sameHostEndpoints.isEmpty()) {
+                selectedEndpoint = selectEndpoint(sameHostEndpoints);
+            }else{
+                selectedEndpoint = selectEndpoint(endpointSet);
             }
+
             if (selectedEndpoint != null) {
                 selectedEndpoint.setConnectionCount(selectedEndpoint.getConnectionCount() + 1);
 
@@ -108,14 +97,44 @@ public class StormManagerServiceImpl implements StormManagerService.Iface {
         return selectedEndpoint;
     }
 
-    private static void insertToCollection(HashMap<String, Set<Endpoint>> collection, String key, Endpoint endpoint) {
+    // TODO : Heart beat time configurable
+    private synchronized Endpoint selectEndpoint(Set<Endpoint> endpointSet) {
+        Endpoint selectedEndpoint = null;
+        int minConnectionCount = Integer.MAX_VALUE;
+        for (Endpoint endpoint : endpointSet) {
+            if (endpoint.getConnectionCount() < minConnectionCount){
+                if (endpoint.getLastRegisterTimestamp() >= (System.currentTimeMillis() - MILLISECONDS_PER_MINUTE)){
+                    minConnectionCount = endpoint.getConnectionCount();
+                    selectedEndpoint = endpoint;
+                }else{
+                    log.warn("End point " + endpoint.getHostName() + ":" + endpoint.getPort() + " have not send a heart beat for "
+                            + Math.floor(System.currentTimeMillis() - endpoint.getLastRegisterTimestamp()/ MILLISECONDS_PER_MINUTE) + "mins");
+                }
+            }
+        }
+        return selectedEndpoint;
+    }
+
+    private static synchronized void insertToCollection(ConcurrentHashMap<String, Set<Endpoint>> collection, String key, Endpoint endpoint) {
         Set<Endpoint> endpointSet = collection.get(key);
+        boolean isHeartbeat = false;
 
         if (endpointSet == null) {
             endpointSet = new HashSet<Endpoint>();
             collection.put(key, endpointSet);
+        }else{
+            for (Endpoint currentEndpoint : endpointSet){
+                if (currentEndpoint.equals(endpoint)){
+                    isHeartbeat = true;
+                    currentEndpoint.updateLastRegisteredTimestamp();
+                    break;
+                }
+            }
         }
-        endpointSet.add(endpoint);
+
+        if (!isHeartbeat){
+            endpointSet.add(endpoint);
+        }
     }
 
     private static String constructKey(int tenantId, String executionPlanName) {
@@ -126,24 +145,22 @@ public class StormManagerServiceImpl implements StormManagerService.Iface {
         this.isStormManager = stormManager;
     }
 
-
     private class Endpoint {
-        //    public static final String ENDPOINT_TYPE_STORM_RECEIVER = "StormReceiver";
-        //    public static final String ENDPOINT_TYPE_CEP_PUBLISHER = "CepPublisher";
-        //
-        //    enum EndpointType{
-        //         STORM_RECEOVE
-        //    }
-
         private int port;
         private String hostName;
         private int connectionCount = 0;
-        //    private String type;
+        private long lastRegisterTimestamp;
 
         Endpoint(int port, String hostName) {
             this.port = port;
             this.hostName = hostName;
-            //        this.type = type;
+            this.lastRegisterTimestamp = System.currentTimeMillis();
+        }
+
+        public long getLastRegisterTimestamp(){return lastRegisterTimestamp;}
+
+        public void updateLastRegisteredTimestamp(){
+            lastRegisterTimestamp = System.currentTimeMillis();
         }
 
         public String getHostName() {
@@ -162,9 +179,15 @@ public class StormManagerServiceImpl implements StormManagerService.Iface {
             return connectionCount;
         }
 
-        //    public String toString(){
-        //        return ("[" + type + "]" + hostName + ":" + port);
-        //    }
+        @Override
+        public boolean equals(Object object){
+            if (object == null || (this.getClass() != object.getClass())){
+                return false;
+            }
+            final Endpoint argument = (Endpoint)object;
+
+            return ((this.hostName.equals(argument.getHostName())) && (this.port == argument.getPort()));
+        }
     }
 
     public boolean isStormManager() {

@@ -62,6 +62,8 @@ public class StormDeploymentConfigReader {
             stormDeploymentConfig.addManager(hostName, port);
         }
 
+
+        stormDeploymentConfig.setHeartbeatInterval(Integer.parseInt(management.getFirstChildWithName(new QName("heartbeatInterval")).getText()));
         stormDeploymentConfig.setManagementReconnectInterval(Integer.parseInt(management.getFirstChildWithName(new QName("reconnectionInterval")).getText()));
 
         //Reading transport
@@ -71,7 +73,7 @@ public class StormDeploymentConfigReader {
         stormDeploymentConfig.setTransportMinPort(Integer.parseInt(portRange.getFirstChildWithName(new QName("min")).getText()));
 
         stormDeploymentConfig.setTransportReconnectInterval(Integer.parseInt(transport.getFirstChildWithName(new QName("reconnectionInterval")).getText()));
-
+        stormDeploymentConfig.setTopologySubmitRetryInterval(Integer.parseInt(transport.getFirstChildWithName(new QName("topologyResubmitInterval")).getText()));
 
         //Reading node info
         OMElement node = configurations.getFirstChildWithName(new QName("node"));
