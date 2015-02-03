@@ -35,6 +35,13 @@
         functionality
     </description>
 
+    <dependencies>
+        <dependency>
+            <groupId>org.apache.axis2.transport</groupId>
+            <artifactId>axis2-transport-jms</artifactId>
+        </dependency>
+    </dependencies>
+
     <build>
         <plugins>
             <plugin>
@@ -62,6 +69,9 @@
                             <bundles>
                                 <bundleDef>
                                     org.wso2.carbon.event-processing:org.wso2.carbon.event.output.adaptor.jms:${carbon.event.processing.version}
+                                </bundleDef>
+                                <bundleDef>
+                                    org.apache.axis2.transport:axis2-transport-jms:${axis2-transports.version}
                                 </bundleDef>
                             </bundles>
                             <importFeatures>

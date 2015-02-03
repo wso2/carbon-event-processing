@@ -212,6 +212,24 @@
             </dependency>
             <!--carbon-storage dependencies end-->
 
+            <!--axis2.transport dependencies start-->
+            <dependency>
+                <groupId>org.apache.axis2.transport</groupId>
+                <artifactId>axis2-transport-jms</artifactId>
+                <version>${axis2-transports.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.axis2.transport</groupId>
+                <artifactId>axis2-transport-mail</artifactId>
+                <version>${axis2-transports.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.axis2.transport</groupId>
+                <artifactId>axis2-transport-sms</artifactId>
+                <version>${axis2-transports.version}</version>
+            </dependency>
+            <!--axis2.transport dependencies end-->
+
             <!--third party dependencies start-->
             <dependency>
                 <groupId>org.apache.tomcat</groupId>
@@ -239,11 +257,6 @@
                 <artifactId>junit</artifactId>
                 <scope>test</scope>
                 <version>${junit.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.axis2.transport</groupId>
-                <artifactId>axis2-transport-mail</artifactId>
-                <version>${axis2-transports.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.apache.geronimo.specs</groupId>
