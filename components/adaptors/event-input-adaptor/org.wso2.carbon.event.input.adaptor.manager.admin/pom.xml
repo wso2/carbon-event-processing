@@ -86,7 +86,7 @@
                             org.wso2.carbon.utils,
                             org.wso2.carbon.event.input.adaptor.core.*,
                             org.wso2.carbon.event.input.adaptor.manager.core.*,
-                            org.apache.axis2.*; version="${imp.pkg.version.axis2}",
+                            org.apache.axis2.*; version="${imp.pkg.version.range.axis2}",
                             *;resolution:=optional
                         </Import-Package>
                         <DynamicImport-Package>*</DynamicImport-Package>

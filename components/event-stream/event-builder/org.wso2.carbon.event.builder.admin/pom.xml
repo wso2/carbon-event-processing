@@ -89,7 +89,7 @@
                         <Import-Package>
                             org.wso2.carbon.event.builder.core.*,
                             org.wso2.carbon.utils,
-                            org.apache.axis2.*; version="${imp.pkg.version.axis2}",
+                            org.apache.axis2.*; version="${imp.pkg.version.range.axis2}",
                             org.apache.axiom.*; version="${imp.pkg.version.range.axiom}",
                             *;resolution:=optional
                         </Import-Package>
