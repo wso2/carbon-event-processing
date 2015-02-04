@@ -29,9 +29,9 @@
     <modelVersion>4.0.0</modelVersion>
     <artifactId>org.wso2.carbon.event.processing.application.deployer.feature</artifactId>
     <packaging>pom</packaging>
-    <name>WSO2 Carbon - CEP Application Deployer Feature</name>
+    <name>WSO2 Carbon - Application Deployer Event Processing Feature</name>
     <url>http://wso2.org</url>
-    <description>This feature contains the core bundles required for CEP cApp deployment functionality</description>
+    <description>This feature contains the core bundles required for Event Processing CApp deployment functionality</description>
 
     <dependencies>
         <dependency>

@@ -33,19 +33,19 @@
     <url>http://wso2.org</url>
 
     <modules>
-        <module>components/application-deployer</module>
         <module>service-stubs</module>
         <module>components/adaptors</module>
         <module>components/event-processor</module>
         <module>components/event-stream</module>
         <module>components/event-flow</module>
         <module>components/event-monitor</module>
-        <module>features/application-deployer</module>
+        <module>components/application-deployer</module>
         <module>features/adaptors</module>
         <module>features/event-processor</module>
         <module>features/event-monitor</module>
         <module>features/event-stream</module>
         <module>features/event-flow</module>
+        <module>features/application-deployer</module>
     </modules>
 
     <dependencyManagement>
@@ -1120,6 +1120,7 @@
         <jsonsmart.version>1.2</jsonsmart.version>
         <javax.websocket.version>1.0</javax.websocket.version>
 
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.scm.id>my-scm-server</project.scm.id>
     </properties>
 
