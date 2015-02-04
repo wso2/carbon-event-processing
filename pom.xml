@@ -104,7 +104,7 @@
             <dependency>
                 <groupId>com.lmax.wso2</groupId>
                 <artifactId>disruptor</artifactId>
-                <version>${disruptor.version}</version>
+                <version>${disruptor.orbit.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.glassfish.tyrus.bundles.wso2</groupId>
@@ -1085,10 +1085,10 @@
         <!--<carbon.kernel.imp.pkg.version>[4.3.0, 4.4.0)</carbon.kernel.imp.pkg.version>-->
         <!--<previous.version>4.2.0</previous.version>-->
 
-        <carbon.commons.version>4.3.3</carbon.commons.version>
+        <carbon.commons.version>4.3.4</carbon.commons.version>
         <!--<carbon.commons.imp.pkg.version>[4.3.0, 4.4.0)</carbon.commons.imp.pkg.version>-->
 
-        <carbon.storagemgt.version>4.3.0</carbon.storagemgt.version>
+        <carbon.storagemgt.version>4.3.1-SNAPSHOT</carbon.storagemgt.version>
 
         <carbon.p2.plugin.version>1.5.3</carbon.p2.plugin.version>
 
@@ -1202,8 +1202,8 @@
         <!--<orbit.version.spring>3.1.0.wso2v1</orbit.version.spring>-->
         <!--<imp.pkg.version.spring>[3.1.0.wso2v1, 3.2.0)</imp.pkg.version.spring>-->
         <!--<disruptor.jar.version>3.2.1</disruptor.jar.version>-->
-        <!--<disruptor.version>${disruptor.jar.version}.wso2v1</disruptor.version>-->
-        <disruptor.version>3.2.1.wso2v1</disruptor.version>
+        <disruptor.version>3.2.1</disruptor.version>
+        <disruptor.orbit.version>${disruptor.version}.wso2v1</disruptor.orbit.version>
         <kafka.version>0.8.1</kafka.version>
         <org.eclipse.paho.version>0.4.0</org.eclipse.paho.version>
         <org.glassfish.tyrus.wso2.version>1.7-wso2v1</org.glassfish.tyrus.wso2.version>

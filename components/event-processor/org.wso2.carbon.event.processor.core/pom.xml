@@ -125,7 +125,7 @@
                         </Private-Package>
 
                         <Export-Package>
-                            !org.wso2.carbon.event.processor.core.internal,
+                            !org.wso2.carbon.event.processor.core.internal.*,
                             org.wso2.carbon.event.processor.core.*
                         </Export-Package>
                         <Import-Package>
@@ -134,7 +134,7 @@
                             org.wso2.siddhi.*,
                             junit.framework.*,
                             org.junit.*,
-                            org.wso2.carbon.event.processor.storm.common.*,
+                            org.wso2.carbon.event.processor.common.*,
                             *;resolution:=optional
                         </Import-Package>
                         <DynamicImport-Package>*</DynamicImport-Package>

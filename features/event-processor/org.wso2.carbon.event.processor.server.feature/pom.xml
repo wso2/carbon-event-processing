@@ -163,7 +163,7 @@
                                     org.wso2.carbon.event-processing:org.wso2.carbon.event.processor.common:${carbon.event.processing.version}
                                 </bundleDef>
                                 <bundleDef>
-                                    com.lmax.wso2:disruptor:${disruptor.version}
+                                    com.lmax.wso2:disruptor:${disruptor.orbit.version}
                                 </bundleDef>
                             </bundles>
                             <importFeatures>
