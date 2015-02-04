@@ -54,10 +54,10 @@
             <groupId>com.lmax.wso2</groupId>
             <artifactId>disruptor</artifactId>
         </dependency>
-        <dependency>
-            <groupId>slf4j.wso2</groupId>
-            <artifactId>slf4j</artifactId>
-        </dependency>
+        <!--<dependency>-->
+            <!--<groupId>slf4j.wso2</groupId>-->
+            <!--<artifactId>slf4j</artifactId>-->
+        <!--</dependency>-->
         <dependency>
             <groupId>libthrift.wso2</groupId>
             <artifactId>libthrift</artifactId>
@@ -102,6 +102,7 @@
                             !javax.xml.namespace,
                             javax.xml.namespace; version=0.0.0,
                             org.apache.axis2,
+                            com.lmax.disruptor.*; version=${disruptor.version},
                             *;resolution:=optional,
                         </Import-Package>
                         <DynamicImport-Package>*</DynamicImport-Package>

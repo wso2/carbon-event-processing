@@ -67,7 +67,7 @@ public class StormTopologyConstructor {
                 componentInfoHolder.addOutputStream(streamDefinition.getStreamId(), streamDefinition);
             }
 
-            componentInfoHolder.setDeclarer(builder.setSpout(name, new EventReceiverSpout(stormDeploymentConfig, streamDefinitions, executionPlanName, tenantId), Integer.parseInt(parallel)));
+            componentInfoHolder.setDeclarer(builder.setSpout(name, new EventReceiverSpout(stormDeploymentConfig, streamDefinitions, executionPlanName, tenantId, stormDeploymentConfig.getHeartbeatInterval()), Integer.parseInt(parallel)));
             topologyInfoHolder.addComponent(componentInfoHolder);
         }
 

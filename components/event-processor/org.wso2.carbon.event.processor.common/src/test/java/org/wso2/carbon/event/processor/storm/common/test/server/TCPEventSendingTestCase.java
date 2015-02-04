@@ -134,13 +134,13 @@ public class TCPEventSendingTestCase {
         public void run() {
             TCPEventPublisher TCPEventPublisher = null;
             try {
-                TCPEventPublisher = new TCPEventPublisher("localhost:7612");
+                TCPEventPublisher = new TCPEventPublisher("localhost:7612",true);
                 TCPEventPublisher.addStreamDefinition(streamDefinition);
                 Thread.sleep(1000);
                 log.info("Starting event client to send events to localhost:7612");
 
                 for (int i = 0; i < eventsToSend; i++) {
-                    TCPEventPublisher.sendEvent(streamDefinition.getStreamId(), dataProvider.getEvent());
+                    TCPEventPublisher.sendEvent(streamDefinition.getStreamId(), dataProvider.getEvent(),true);
                 }
             } catch (IOException e) {
                 e.printStackTrace();

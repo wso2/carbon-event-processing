@@ -28,9 +28,9 @@ import org.wso2.carbon.core.multitenancy.utils.TenantAxisUtils;
 import org.wso2.carbon.databridge.commons.StreamDefinition;
 import org.wso2.carbon.event.builder.core.EventBuilderService;
 import org.wso2.carbon.event.builder.core.config.EventBuilderConfiguration;
+import org.wso2.carbon.event.builder.core.config.EventBuilderConfigurationFile;
 import org.wso2.carbon.event.builder.core.exception.EventBuilderConfigurationException;
 import org.wso2.carbon.event.builder.core.exception.EventBuilderStreamValidationException;
-import org.wso2.carbon.event.builder.core.internal.config.EventBuilderConfigurationFile;
 import org.wso2.carbon.event.builder.core.internal.ds.EventBuilderServiceValueHolder;
 import org.wso2.carbon.event.builder.core.internal.util.EventBuilderConfigBuilder;
 import org.wso2.carbon.event.builder.core.internal.util.EventBuilderConstants;
@@ -54,8 +54,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-public class CarbonEventBuilderService
-        implements EventBuilderService {
+public class CarbonEventBuilderService implements EventBuilderService {
 
     private static final Log log = LogFactory.getLog(CarbonEventBuilderService.class);
     private Map<Integer, Map<String, List<EventBuilder>>> tenantSpecificEventBuilderMap;
@@ -110,7 +109,7 @@ public class CarbonEventBuilderService
             }
             if (removedCount == 0) {
                 throw new EventBuilderConfigurationException("Could not find the specified event builder '"
-                                                             + eventBuilderConfiguration.getEventBuilderName() + "' for removal for the given axis configuration");
+                        + eventBuilderConfiguration.getEventBuilderName() + "' for removal for the given axis configuration");
             }
         }
     }
@@ -332,7 +331,7 @@ public class CarbonEventBuilderService
                         getServerConfigContext().getAxisConfiguration();
             } else {
                 axisConfiguration = TenantAxisUtils.getTenantAxisConfiguration(CarbonContext.
-                        getThreadLocalCarbonContext().getTenantDomain(),
+                                getThreadLocalCarbonContext().getTenantDomain(),
                         EventBuilderServiceValueHolder.getConfigurationContextService().
                                 getServerConfigContext());
             }

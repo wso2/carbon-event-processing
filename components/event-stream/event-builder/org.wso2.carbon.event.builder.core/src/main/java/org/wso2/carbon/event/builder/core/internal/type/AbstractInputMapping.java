@@ -18,7 +18,7 @@
 package org.wso2.carbon.event.builder.core.internal.type;
 
 import org.wso2.carbon.event.builder.core.config.InputMapping;
-import org.wso2.carbon.event.builder.core.internal.config.InputMappingAttribute;
+import org.wso2.carbon.event.builder.core.config.InputMappingAttribute;
 
 import java.util.ArrayList;
 import java.util.List;

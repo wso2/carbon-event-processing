@@ -23,8 +23,8 @@ import org.wso2.carbon.event.builder.admin.internal.EventBuilderConfigurationInf
 import org.wso2.carbon.event.builder.admin.internal.EventBuilderMessagePropertyDto;
 import org.wso2.carbon.event.builder.admin.internal.ds.EventBuilderAdminServiceValueHolder;
 import org.wso2.carbon.event.builder.core.config.EventBuilderConfiguration;
-import org.wso2.carbon.event.builder.core.internal.config.InputStreamConfiguration;
-import org.wso2.carbon.event.builder.core.internal.type.AbstractInputMapping;
+import org.wso2.carbon.event.builder.core.config.InputMapping;
+import org.wso2.carbon.event.builder.core.config.InputStreamConfiguration;
 import org.wso2.carbon.event.input.adaptor.core.InputEventAdaptorService;
 import org.wso2.carbon.event.input.adaptor.core.Property;
 import org.wso2.carbon.event.input.adaptor.core.message.MessageDto;
@@ -122,7 +122,7 @@ public abstract class DtoConverter {
             EventBuilderConfiguration eventBuilderConfiguration,
             InputEventAdaptorMessageConfiguration inputEventAdaptorMessageConfiguration,
             String eventBuilderName, String streamNameWithVersion, String eventAdaptorName,
-            String eventAdaptorType, boolean mappingEnabled, AbstractInputMapping inputMapping) {
+            String eventAdaptorType, boolean mappingEnabled, InputMapping inputMapping) {
         inputMapping.setCustomMappingEnabled(mappingEnabled);
         eventBuilderConfiguration.setEventBuilderName(eventBuilderName);
         eventBuilderConfiguration.setInputMapping(inputMapping);

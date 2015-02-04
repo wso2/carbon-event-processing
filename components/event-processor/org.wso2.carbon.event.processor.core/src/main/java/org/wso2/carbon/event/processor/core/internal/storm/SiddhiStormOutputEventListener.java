@@ -55,11 +55,13 @@ public class SiddhiStormOutputEventListener implements StreamCallback {
     private TCPEventServer tcpEventServer;
     private String logPrefix = "";
     private ExecutorService executorService = Executors.newSingleThreadExecutor();
+    private int heartBeatInterval;
 
-    public SiddhiStormOutputEventListener(ExecutionPlanConfiguration executionPlanConfiguration, int tenantId, StormDeploymentConfig stormDeploymentConfig) {
+    public SiddhiStormOutputEventListener(ExecutionPlanConfiguration executionPlanConfiguration, int tenantId, StormDeploymentConfig stormDeploymentConfig, int heartBeatInterval) {
         this.executionPlanConfiguration = executionPlanConfiguration;
         this.tenantId = tenantId;
         this.stormDeploymentConfig = stormDeploymentConfig;
+        this.heartBeatInterval = heartBeatInterval;
         init();
     }
 
@@ -105,36 +107,33 @@ public class SiddhiStormOutputEventListener implements StreamCallback {
         throw new Exception("Cannot find free port in range " + stormDeploymentConfig.getTransportMinPort() + "~" + stormDeploymentConfig.getTransportMaxPort());
     }
 
+    public void shutdown() {
+        executorService.shutdown();
+        tcpEventServer.shutdown();
+    }
+
 
     class Registrar implements Runnable {
 
-        /**
-         * When an object implementing interface <code>Runnable</code> is used
-         * to create a thread, starting the thread causes the object's
-         * <code>run</code> method to be called in that separately executing
-         * thread.
-         * <p/>
-         * The general contract of the method <code>run</code> is that it may
-         * take any action whatsoever.
-         *
-         * @see Thread#run()
-         */
         @Override
         public void run() {
-            log.info(logPrefix + "Registering CEP publisher with " + thisHostIp + ":" + listeningPort);
-            while (!registerCEPPublisherWithStormMangerService()) {
-                log.info(logPrefix + "Retry registering CEP publisher in 30 sec");
+            if (log.isDebugEnabled()){
+                log.debug(logPrefix + "Registering CEP publisher with " + thisHostIp + ":" + listeningPort);
+            }
+
+            // Infinitely call register. Each register call will act as a heartbeat
+            while (true) {
+                registerCEPPublisherWithStormMangerService();
                 try {
-                    Thread.sleep(30000);
+                    Thread.sleep(heartBeatInterval);
                 } catch (InterruptedException e1) {
-                    //ignore
+                    continue;
                 }
             }
 
         }
 
         private boolean registerCEPPublisherWithStormMangerService() {
-
             TTransport transport = null;
             try {
                 transport = new TSocket(stormDeploymentConfig.getManagers().get(0).getHostName(), stormDeploymentConfig.getManagers().get(0).getPort());
@@ -143,7 +142,9 @@ public class SiddhiStormOutputEventListener implements StreamCallback {
 
                 StormManagerService.Client client = new StormManagerService.Client(protocol);
                 client.registerCEPPublisher(tenantId, executionPlanConfiguration.getName(), thisHostIp, listeningPort);
-                log.info(logPrefix + "Successfully registering CEP publisher with " + thisHostIp + ":" + listeningPort);
+                if (log.isDebugEnabled()){
+                    log.debug(logPrefix + "Successfully registeredCEP publisher with " + thisHostIp + ":" + listeningPort);
+                }
                 return true;
             } catch (Exception e) {
                 log.error(logPrefix + "Error in registering CEP publisher", e);
@@ -154,10 +155,5 @@ public class SiddhiStormOutputEventListener implements StreamCallback {
                 }
             }
         }
-    }
-
-    public void shutdown() {
-        executorService.shutdown();
-        tcpEventServer.shutdown();
     }
 }

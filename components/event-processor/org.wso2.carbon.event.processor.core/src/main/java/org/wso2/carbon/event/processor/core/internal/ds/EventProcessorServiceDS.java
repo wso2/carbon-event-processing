@@ -25,7 +25,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.osgi.service.component.ComponentContext;
 import org.wso2.carbon.base.api.ServerConfigurationService;
-import org.wso2.carbon.cassandra.dataaccess.DataAccessService;
+//import org.wso2.carbon.cassandra.dataaccess.DataAccessService;
 import org.wso2.carbon.databridge.core.definitionstore.AbstractStreamDefinitionStore;
 import org.wso2.carbon.event.processor.common.storm.config.StormDeploymentConfig;
 import org.wso2.carbon.event.processor.common.storm.config.StormDeploymentConfigReader;
@@ -58,8 +58,6 @@ import java.io.File;
  * @scr.reference name="hazelcast.instance.service"
  * interface="com.hazelcast.core.HazelcastInstance" cardinality="0..1"
  * policy="dynamic" bind="setHazelcastInstance" unbind="unsetHazelcastInstance"
- * @scr.reference name="dataaccess.service" interface="org.wso2.carbon.cassandra.dataaccess.DataAccessService"
- * cardinality="1..1" policy="dynamic" bind="setDataAccessService" unbind="unsetDataAccessService"
  * @scr.reference name="user.realm.delegating" interface="org.wso2.carbon.user.core.UserRealm"
  * cardinality="1..1" policy="dynamic" bind="setUserRealm" unbind="unsetUserRealm"
  * @scr.reference name="org.wso2.carbon.ndatasource" interface="org.wso2.carbon.ndatasource.core.DataSourceService"
@@ -177,14 +175,6 @@ public class EventProcessorServiceDS {
 
     protected void unsetHazelcastInstance(HazelcastInstance hazelcastInstance) {
         EventProcessorValueHolder.registerHazelcastInstance(null);
-    }
-
-    protected void setDataAccessService(DataAccessService dataAccessService) {
-        EventProcessorValueHolder.setDataAccessService(dataAccessService);
-    }
-
-    protected void unsetDataAccessService(DataAccessService dataAccessService) {
-        EventProcessorValueHolder.setDataAccessService(null);
     }
 
     protected void setUserRealm(UserRealm userRealm) {

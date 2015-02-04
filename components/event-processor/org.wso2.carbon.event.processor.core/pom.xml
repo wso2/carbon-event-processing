@@ -63,10 +63,10 @@
             <groupId>org.hectorclient.wso2</groupId>
             <artifactId>hector-core</artifactId>
         </dependency>
-        <dependency>
-            <groupId>org.wso2.carbon.storagemgt</groupId>
-            <artifactId>org.wso2.carbon.cassandra.dataaccess</artifactId>
-        </dependency>
+        <!--<dependency>-->
+            <!--<groupId>org.wso2.carbon.storagemgt</groupId>-->
+            <!--<artifactId>org.wso2.carbon.cassandra.dataaccess</artifactId>-->
+        <!--</dependency>-->
         <dependency>
             <groupId>org.wso2.carbon</groupId>
             <artifactId>org.wso2.carbon.ndatasource.core</artifactId>
@@ -126,11 +126,11 @@
                     <instructions>
                         <Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
                         <Bundle-Name>${project.artifactId}</Bundle-Name>
-                        <Private-Package>org.wso2.carbon.event.processor.core.internal.*
+                        <Private-Package>
+                            org.wso2.carbon.event.processor.core.internal.*
                         </Private-Package>
-
                         <Export-Package>
-                            !org.wso2.carbon.event.processor.core.internal,
+                            !org.wso2.carbon.event.processor.core.internal.*,
                             org.wso2.carbon.event.processor.core.*
                         </Export-Package>
                         <Import-Package>
@@ -139,7 +139,7 @@
                             org.wso2.siddhi.*,
                             junit.framework.*,
                             org.junit.*,
-                            org.wso2.carbon.event.processor.storm.common.*,
+                            org.wso2.carbon.event.processor.common.*,
                             *;resolution:=optional
                         </Import-Package>
                         <DynamicImport-Package>*</DynamicImport-Package>

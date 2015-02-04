@@ -17,13 +17,11 @@
  */
 package org.wso2.carbon.event.processor.core.internal;
 
-import me.prettyprint.hector.api.Cluster;
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.util.AXIOMUtil;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.wso2.carbon.cassandra.dataaccess.ClusterInformation;
 import org.wso2.carbon.context.PrivilegedCarbonContext;
 import org.wso2.carbon.databridge.commons.Attribute;
 import org.wso2.carbon.databridge.commons.StreamDefinition;
@@ -41,14 +39,12 @@ import org.wso2.carbon.event.processor.core.internal.ha.SiddhiHAOutputStreamList
 import org.wso2.carbon.event.processor.core.internal.listener.AbstractSiddhiInputEventDispatcher;
 import org.wso2.carbon.event.processor.core.internal.listener.SiddhiInputEventDispatcher;
 import org.wso2.carbon.event.processor.core.internal.listener.SiddhiOutputStreamListener;
-import org.wso2.carbon.event.processor.core.internal.persistence.CassandraPersistenceStore;
 import org.wso2.carbon.event.processor.core.internal.storm.SiddhiStormInputEventDispatcher;
 import org.wso2.carbon.event.processor.core.internal.storm.SiddhiStormOutputEventListener;
 import org.wso2.carbon.event.processor.core.internal.storm.TopologyManager;
 import org.wso2.carbon.event.processor.core.internal.util.EventProcessorConfigurationFilesystemInvoker;
 import org.wso2.carbon.event.processor.core.internal.util.EventProcessorConstants;
 import org.wso2.carbon.event.processor.core.internal.util.EventProcessorUtil;
-import org.wso2.carbon.event.processor.core.internal.util.helper.CassandraConnectionValidator;
 import org.wso2.carbon.event.processor.core.internal.util.helper.EventProcessorConfigurationHelper;
 import org.wso2.carbon.event.processor.core.internal.util.helper.SiddhiExtensionLoader;
 import org.wso2.carbon.event.stream.manager.core.EventProducer;
@@ -57,7 +53,6 @@ import org.wso2.carbon.event.stream.manager.core.exception.EventStreamConfigurat
 import org.wso2.carbon.ndatasource.common.DataSourceException;
 import org.wso2.carbon.ndatasource.core.CarbonDataSource;
 import org.wso2.carbon.ndatasource.core.DataSourceManager;
-import org.wso2.carbon.user.core.UserStoreException;
 import org.wso2.siddhi.core.SiddhiManager;
 import org.wso2.siddhi.core.config.SiddhiConfiguration;
 import org.wso2.siddhi.core.stream.input.InputHandler;
@@ -320,7 +315,7 @@ public class CarbonEventProcessorService implements EventProcessorService {
         if (distributed) {
             if (stormDeploymentConfig != null && stormDeploymentConfig.isManagerNode() && EventProcessorValueHolder.getStormManagerServer().isStormManager()) {
                 try {
-                    TopologyManager.submitTopology(executionPlanConfiguration, siddhiManager.getStreamDefinitions(), tenantId);
+                    TopologyManager.submitTopology(executionPlanConfiguration, siddhiManager.getStreamDefinitions(), tenantId, stormDeploymentConfig.getTopologySubmitRetryInterval());
                 } catch (StormDeploymentException e) {
                     throw new ExecutionPlanConfigurationException("Invalid distributed query specified, " + e.getMessage(), e);
                 }
@@ -339,7 +334,7 @@ public class CarbonEventProcessorService implements EventProcessorService {
         //subscribe output to junction
         SiddhiStormOutputEventListener stormOutputListener = null;
         if (distributed && stormDeploymentConfig != null && stormDeploymentConfig.isPublisherNode()) {
-            stormOutputListener = new SiddhiStormOutputEventListener(executionPlanConfiguration, tenantId, stormDeploymentConfig);
+            stormOutputListener = new SiddhiStormOutputEventListener(executionPlanConfiguration, tenantId, stormDeploymentConfig, stormDeploymentConfig.getHeartbeatInterval());
         }
         for (StreamConfiguration exportedStreamConfiguration : executionPlanConfiguration.getExportedStreams()) {
 
@@ -507,28 +502,28 @@ public class CarbonEventProcessorService implements EventProcessorService {
 
         if (persistenceTimeInterval > 0) {
             if (null == EventProcessorValueHolder.getPersistenceStore()) {
-                if (EventProcessorValueHolder.getClusterInformation() == null) {
-                    try {
-                        String adminPassword = EventProcessorValueHolder.getUserRealm().
-                                getRealmConfiguration().getAdminPassword();
-                        String adminUserName = EventProcessorValueHolder.getUserRealm().
-                                getRealmConfiguration().getAdminUserName();
-
-                        ClusterInformation clusterInformation = new ClusterInformation(adminUserName,
-                                adminPassword);
-                        clusterInformation.setClusterName(CassandraPersistenceStore.CLUSTER_NAME);
-                        EventProcessorValueHolder.setClusterInformation(clusterInformation);
-                    } catch (UserStoreException e) {
-                        log.error("Unable to get realm configuration.", e);
-                    }
-                }
-                if (CassandraConnectionValidator.getInstance().checkCassandraConnection(EventProcessorValueHolder.getClusterInformation().getUsername(), EventProcessorValueHolder.getClusterInformation().getPassword())) {
-                    Cluster cluster = EventProcessorValueHolder.getDataAccessService().getCluster(EventProcessorValueHolder.getClusterInformation());
-                    CassandraPersistenceStore casandraPersistenceStore = new CassandraPersistenceStore(cluster);
-                    EventProcessorValueHolder.setPersistenceStore(casandraPersistenceStore);
-                } else {
-                    throw new ExecutionPlanConfigurationException("Cannot connect to Cassandra. To run with embedded Cassandra enabled, start the server with command: ./wso2server.sh -Ddisable.cassandra.server.startup=false");
-                }
+//                if (EventProcessorValueHolder.getClusterInformation() == null) {
+//                    try {
+//                        String adminPassword = EventProcessorValueHolder.getUserRealm().
+//                                getRealmConfiguration().getAdminPassword();
+//                        String adminUserName = EventProcessorValueHolder.getUserRealm().
+//                                getRealmConfiguration().getAdminUserName();
+//
+//                        ClusterInformation clusterInformation = new ClusterInformation(adminUserName,
+//                                adminPassword);
+//                        clusterInformation.setClusterName(CassandraPersistenceStore.CLUSTER_NAME);
+//                        EventProcessorValueHolder.setClusterInformation(clusterInformation);
+//                    } catch (UserStoreException e) {
+//                        log.error("Unable to get realm configuration.", e);
+//                    }
+//                }
+//                if (CassandraConnectionValidator.getInstance().checkCassandraConnection(EventProcessorValueHolder.getClusterInformation().getUsername(), EventProcessorValueHolder.getClusterInformation().getPassword())) {
+//                    Cluster cluster = EventProcessorValueHolder.getDataAccessService().getCluster(EventProcessorValueHolder.getClusterInformation());
+//                    CassandraPersistenceStore casandraPersistenceStore = new CassandraPersistenceStore(cluster);
+//                    EventProcessorValueHolder.setPersistenceStore(casandraPersistenceStore);
+//                } else {
+//                    throw new ExecutionPlanConfigurationException("Cannot connect to Cassandra. To run with embedded Cassandra enabled, start the server with command: ./wso2server.sh -Ddisable.cassandra.server.startup=false");
+//                }
 
 
             }

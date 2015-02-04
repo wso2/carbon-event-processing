@@ -20,6 +20,7 @@ package org.wso2.carbon.event.processor.common.transport.client;
 
 import com.lmax.disruptor.EventFactory;
 import com.lmax.disruptor.EventHandler;
+import com.lmax.disruptor.ExceptionHandler;
 import com.lmax.disruptor.RingBuffer;
 import com.lmax.disruptor.dsl.Disruptor;
 import org.apache.log4j.Logger;
@@ -43,19 +44,23 @@ public class TCPEventPublisher {
     public static final String DEFAULT_CHARSET = "UTF-8";
     private static Logger log = Logger.getLogger(TCPEventPublisher.class);
     private final String hostUrl;
-    private final Disruptor<BiteArrayHolder> disruptor;
-    private final RingBuffer<BiteArrayHolder> ringBuffer;
+    private Disruptor<BiteArrayHolder> disruptor;
+    private RingBuffer<BiteArrayHolder> ringBuffer;
     private Map<String, StreamRuntimeInfo> streamRuntimeInfoMap;
     private OutputStream outputStream;
     private Socket clientSocket;
     private TCPEventPublisherConfig publisherConfig;
+    /**
+     * Indicate synchronous or asynchronous mode. In asynchronous mode Disruptor pattern is used and in synchronous mode sendEvent call
+     * returns only after writing the event to the socket.
+     */
+    private boolean isSynchronous;
 
-
-    public TCPEventPublisher(String hostUrl, TCPEventPublisherConfig publisherConfig) throws IOException {
-
+    public TCPEventPublisher(String hostUrl, TCPEventPublisherConfig publisherConfig, boolean isSynchronous) throws IOException {
         this.hostUrl = hostUrl;
         this.publisherConfig = publisherConfig;
         this.streamRuntimeInfoMap = new ConcurrentHashMap<String, StreamRuntimeInfo>();
+        this.isSynchronous = isSynchronous;
 
         String[] hp = hostUrl.split(":");
         String host = hp[0];
@@ -64,38 +69,18 @@ public class TCPEventPublisher {
         this.clientSocket = new Socket(host, port);
         this.outputStream = new BufferedOutputStream(this.clientSocket.getOutputStream());
 
-        //Cannot be used as Disruptor constructor is not backward compatible with storm
-//        this.disruptor = new Disruptor<BiteArrayHolder>(new EventFactory<BiteArrayHolder>() {
-//            @Override
-//            public BiteArrayHolder newInstance() {
-//                return new BiteArrayHolder();
-//            }
-//        }, publisherConfig.getBufferSize(), Executors.newSingleThreadExecutor(), publisherConfig.getProducerType(),
-//                new SleepingWaitStrategy());
-
-        this.disruptor = new Disruptor<BiteArrayHolder>(new EventFactory<BiteArrayHolder>() {
-            @Override
-            public BiteArrayHolder newInstance() {
-                return new BiteArrayHolder();
-            }
-        }, publisherConfig.getBufferSize(), Executors.newSingleThreadExecutor());
-
-        this.ringBuffer = disruptor.getRingBuffer();
-        this.disruptor.handleEventsWith(new EventHandler<BiteArrayHolder>() {
-            @Override
-            public void onEvent(BiteArrayHolder biteArrayHolder, long sequence, boolean endOfBatch) throws Exception {
-                outputStream.write(biteArrayHolder.bytes);
-                if (endOfBatch) {
-                    outputStream.flush();
-                }
-            }
-        });
-        disruptor.start();
+        if (!isSynchronous){
+            initializeDisruptor(publisherConfig);
+        }
         log.info("Client configured to send events to " + hostUrl);
     }
 
-    public TCPEventPublisher(String hostUrl) throws IOException {
-        this(hostUrl, new TCPEventPublisherConfig());
+    public TCPEventPublisher(String hostUrl, boolean isSynchronous) throws IOException {
+        this(hostUrl, new TCPEventPublisherConfig(), isSynchronous);
+    }
+
+    public String getHostUrl(){
+        return hostUrl;
     }
 
     public void addStreamDefinition(StreamDefinition streamDefinition) {
@@ -103,19 +88,14 @@ public class TCPEventPublisher {
         log.info("Stream definition added for stream: " + streamDefinition.getStreamId());
     }
 
-    public void shutdown() {
-        try {
-            disruptor.shutdown();
-            outputStream.flush();
-            clientSocket.close();
-        } catch (IOException e) {
-            log.warn("Error while closing stream to " + hostUrl + " : " + e.getMessage(), e);
-        }
-    }
-
-
-    public void sendEvent(String streamId, Object[] event) throws IOException {
-
+    /**
+     * Send Events to the remote server. In synchronous mode this method call returns only after writing data to the socket
+     * in asynchronous mode disruptor pattern is used
+     * @param streamId ID of the stream
+     * @param event event to send
+     * @throws IOException
+     */
+    public void sendEvent(String streamId, Object[] event, boolean flush) throws IOException {
         StreamRuntimeInfo streamRuntimeInfo = streamRuntimeInfoMap.get(streamId);
 
         ByteArrayOutputStream arrayOutputStream = new ByteArrayOutputStream();
@@ -163,12 +143,14 @@ public class TCPEventPublisher {
         }
         arrayOutputStream.write(buf.array());
 
-        send(arrayOutputStream.toByteArray());
-
+        if (!isSynchronous){
+            publishToDisruptor(arrayOutputStream.toByteArray());
+        }else {
+            publishEvent(arrayOutputStream.toByteArray(), flush);
+        }
     }
 
-    private void send(byte[] byteArray) throws IOException {
-
+    private void publishToDisruptor(byte[] byteArray){
         long sequenceNo = ringBuffer.next();
         try {
             BiteArrayHolder existingHolder = ringBuffer.get(sequenceNo);
@@ -178,8 +160,77 @@ public class TCPEventPublisher {
         }
     }
 
+    private void publishEvent(byte[] data, boolean flush) throws IOException {
+        outputStream.write(data);
+        if (flush) {
+            outputStream.flush();
+        }
+    }
+
+    private void initializeDisruptor(TCPEventPublisherConfig publisherConfig) {
+        this.disruptor = new Disruptor<BiteArrayHolder>(new EventFactory<BiteArrayHolder>() {
+            @Override
+            public BiteArrayHolder newInstance() {
+                return new BiteArrayHolder();
+            }
+        }, publisherConfig.getBufferSize(), Executors.newSingleThreadExecutor());
+
+        this.ringBuffer = disruptor.getRingBuffer();
+
+        this.disruptor.handleExceptionsWith(new ExceptionHandler() {
+            @Override
+            public void handleEventException(Throwable throwable, long l, Object o) {}
+            @Override
+            public void handleOnStartException(Throwable throwable) {}
+            @Override
+            public void handleOnShutdownException(Throwable throwable) {}
+        });
+
+        this.disruptor.handleEventsWith(new EventHandler<BiteArrayHolder>() {
+            @Override
+            public void onEvent(BiteArrayHolder biteArrayHolder, long sequence, boolean endOfBatch) throws IOException {
+                publishEvent(biteArrayHolder.bytes, endOfBatch);
+            }
+        });
+
+        disruptor.start();
+    }
+
+
+    /**
+     * Gracefully shutdown the TCPEventPublisher.
+     * When this method is used already consumer threads of distruptor will try to publishToDisruptor the queued messages in the RingBuffer.
+     * @param flushOutputStream
+     */
+    public void shutdown() {
+        try {
+            if (!isSynchronous){
+                disruptor.shutdown();
+            }
+            outputStream.flush();
+            outputStream.close();
+            clientSocket.close();
+        } catch (IOException e) {
+            log.warn("Error while closing stream to " + hostUrl + " : " + e.getMessage(), e);
+        }
+    }
+
+    /**
+     * Discard all buffered messages and terminate the connection
+     */
+    public void terminate(){
+        try {
+            if (!isSynchronous){
+                disruptor.halt();
+            }
+            outputStream.close();
+            clientSocket.close();
+        } catch (IOException e) {
+            log.warn("Error while closing stream to " + hostUrl + " : " + e.getMessage(), e);
+        }
+    }
+
     class BiteArrayHolder {
         byte[] bytes;
-
     }
 }

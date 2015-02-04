@@ -33,6 +33,12 @@
     <url>http://wso2.org</url>
     <description>This feature contains the bundles required for SMS Event Adaptor functionality</description>
 
+    <dependencies>
+        <dependency>
+            <groupId>org.apache.axis2.transport</groupId>
+            <artifactId>axis2-transport-sms</artifactId>
+        </dependency>
+    </dependencies>
 
     <build>
         <plugins>
@@ -62,9 +68,12 @@
                                 <bundleDef>
                                     org.wso2.carbon.event-processing:org.wso2.carbon.event.output.adaptor.sms:${carbon.event.processing.version}
                                 </bundleDef>
+                                <bundleDef>
+                                    org.apache.axis2.transport:axis2-transport-sms:${axis2-transports.version}
+                                </bundleDef>
                             </bundles>
                             <importFeatures>
-                                <importFeatureDef>org.wso2.carbon.core.server:${carbon.kernel.imp.pkg.version}
+                                <importFeatureDef>org.wso2.carbon.core.server:${carbon.kernel.version}
                                 </importFeatureDef>
                             </importFeatures>
                         </configuration>

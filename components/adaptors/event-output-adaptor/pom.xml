@@ -43,7 +43,7 @@
         <module>org.wso2.carbon.event.output.adaptor.kafka</module>
         <module>org.wso2.carbon.event.output.adaptor.wso2event</module>
         <module>org.wso2.carbon.event.output.adaptor.cassandra</module>
-        <module>org.wso2.carbon.event.output.adaptor.mysql</module>
+        <!--<module>org.wso2.carbon.event.output.adaptor.mysql</module>-->
         <module>org.wso2.carbon.event.output.adaptor.sms</module>
         <module>org.wso2.carbon.event.output.adaptor.email</module>
         <!--<module>org.wso2.carbon.event.output.adaptor.hbase/1.0.0</module>-->

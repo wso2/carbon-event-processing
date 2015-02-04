@@ -19,8 +19,6 @@ package org.wso2.carbon.event.processor.core.internal.ds;
 
 import com.hazelcast.core.HazelcastInstance;
 import org.wso2.carbon.base.api.ServerConfigurationService;
-import org.wso2.carbon.cassandra.dataaccess.ClusterInformation;
-import org.wso2.carbon.cassandra.dataaccess.DataAccessService;
 import org.wso2.carbon.databridge.core.definitionstore.AbstractStreamDefinitionStore;
 import org.wso2.carbon.event.processor.common.storm.config.StormDeploymentConfig;
 import org.wso2.carbon.event.processor.core.internal.CarbonEventProcessorService;
@@ -39,8 +37,6 @@ public class EventProcessorValueHolder {
     private static EventStreamService eventStreamService;
     private static HazelcastInstance hazelcastInstance;
     private static PersistenceStore persistenceStore;
-    private static DataAccessService dataAccessService;
-    private static ClusterInformation clusterInformation;
     private static UserRealm userRealm;
     private static DataSourceService dataSourceService;
     private static ServerConfigurationService serverConfiguration;
@@ -88,22 +84,22 @@ public class EventProcessorValueHolder {
     public static void setPersistenceStore(CassandraPersistenceStore persistenceStore) {
         EventProcessorValueHolder.persistenceStore = persistenceStore;
     }
-
-    public static DataAccessService getDataAccessService() {
-        return dataAccessService;
-    }
-
-    public static void setDataAccessService(DataAccessService dataAccessService) {
-        EventProcessorValueHolder.dataAccessService = dataAccessService;
-    }
-
-    public static ClusterInformation getClusterInformation() {
-        return clusterInformation;
-    }
-
-    public static void setClusterInformation(ClusterInformation clusterInformation) {
-        EventProcessorValueHolder.clusterInformation = clusterInformation;
-    }
+//
+//    public static DataAccessService getDataAccessService() {
+//        return dataAccessService;
+//    }
+//
+//    public static void setDataAccessService(DataAccessService dataAccessService) {
+//        EventProcessorValueHolder.dataAccessService = dataAccessService;
+//    }
+//
+//    public static ClusterInformation getClusterInformation() {
+//        return clusterInformation;
+//    }
+//
+//    public static void setClusterInformation(ClusterInformation clusterInformation) {
+//        EventProcessorValueHolder.clusterInformation = clusterInformation;
+//    }
 
     public static UserRealm getUserRealm() {
         return userRealm;

@@ -31,7 +31,7 @@ import org.wso2.carbon.event.builder.admin.internal.util.dto.converter.*;
 import org.wso2.carbon.event.builder.core.EventBuilderService;
 import org.wso2.carbon.event.builder.core.config.EventBuilderConfiguration;
 import org.wso2.carbon.event.builder.core.exception.EventBuilderConfigurationException;
-import org.wso2.carbon.event.builder.core.internal.config.EventBuilderConfigurationFile;
+import org.wso2.carbon.event.builder.core.config.EventBuilderConfigurationFile;
 import org.wso2.carbon.event.input.adaptor.core.InputEventAdaptorService;
 import org.wso2.carbon.event.input.adaptor.core.config.InputEventAdaptorConfiguration;
 import org.wso2.carbon.event.input.adaptor.core.message.MessageDto;

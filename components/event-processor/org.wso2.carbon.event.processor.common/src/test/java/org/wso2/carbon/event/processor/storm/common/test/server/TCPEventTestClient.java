@@ -44,7 +44,7 @@ public class TCPEventTestClient {
         streamDefinition1.attribute("att3", Attribute.Type.STRING);
         streamDefinition1.attribute("att4", Attribute.Type.DOUBLE);
         streamDefinition1.attribute("att5", Attribute.Type.BOOL);
-        TCPEventPublisher TCPEventPublisher = new TCPEventPublisher("localhost:7612");
+        TCPEventPublisher TCPEventPublisher = new TCPEventPublisher("localhost:7612",true);
         TCPEventPublisher.addStreamDefinition(streamDefinition);
         TCPEventPublisher.addStreamDefinition(streamDefinition1);
 
@@ -57,15 +57,15 @@ public class TCPEventTestClient {
 //            eventClient.sendEvent("TestStream1", new Object[]{90l, 77f, "Abcdefghijklmnop", 4.5,true});
 //
 //        }
-        Thread thread=new Thread(new Runner(TCPEventPublisher));
+        Thread thread = new Thread(new Runner(TCPEventPublisher));
         thread.start();
-        Thread thread1=new Thread(new Runner(TCPEventPublisher));
+        Thread thread1 = new Thread(new Runner(TCPEventPublisher));
         thread1.start();
-        Thread thread2=new Thread(new Runner(TCPEventPublisher));
+        Thread thread2 = new Thread(new Runner(TCPEventPublisher));
         thread2.start();
     }
 
-    static class Runner implements Runnable{
+    static class Runner implements Runnable {
 
 
         private TCPEventPublisher tcpEventPublisher;
@@ -89,8 +89,8 @@ public class TCPEventTestClient {
         public void run() {
             for (int i = 0; i < 1000000000; i++) {
                 try {
-                    tcpEventPublisher.sendEvent("TestStream", new Object[]{75, 45f, "Abcdefghijklmnop", 89});
-                    tcpEventPublisher.sendEvent("TestStream1", new Object[]{90l, 77f, "Abcdefghijklmnop", 4.5, true});
+                    tcpEventPublisher.sendEvent("TestStream", new Object[]{75, 45f, "Abcdefghijklmnop", 89,}, true);
+                    tcpEventPublisher.sendEvent("TestStream1", new Object[]{90l, 77f, "Abcdefghijklmnop", 4.5, true}, true);
                 } catch (IOException e) {
                     e.printStackTrace();
                 }

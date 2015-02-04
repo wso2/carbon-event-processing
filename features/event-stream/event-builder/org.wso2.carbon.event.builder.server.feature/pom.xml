@@ -46,14 +46,14 @@
             <groupId>org.wso2.carbon.event-processing</groupId>
             <artifactId>org.wso2.carbon.event.builder.admin</artifactId>
         </dependency>
-        <dependency>
-            <groupId>com.jayway.jsonpath</groupId>
-            <artifactId>json-path</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-api</artifactId>
-        </dependency>
+        <!--<dependency>-->
+            <!--<groupId>com.jayway.jsonpath</groupId>-->
+            <!--<artifactId>json-path</artifactId>-->
+        <!--</dependency>-->
+        <!--<dependency>-->
+            <!--<groupId>org.slf4j</groupId>-->
+            <!--<artifactId>slf4j-api</artifactId>-->
+        <!--</dependency>-->
         <dependency>
             <groupId>net.minidev</groupId>
             <artifactId>json-smart</artifactId>
@@ -105,25 +105,34 @@
                             <propertiesFile>../../../../etc/feature.properties</propertiesFile>
                             <adviceFile>
                                 <properties>
-                                    <propertyDef>org.wso2.carbon.p2.category.type:server
+                                    <propertyDef>
+                                        org.wso2.carbon.p2.category.type:server
                                     </propertyDef>
-                                    <propertyDef>org.eclipse.equinox.p2.type.group:false
+                                    <propertyDef>
+                                        org.eclipse.equinox.p2.type.group:false
                                     </propertyDef>
                                 </properties>
                             </adviceFile>
                             <bundles>
-                                <bundleDef>org.wso2.carbon.event-processing:org.wso2.carbon.event.builder.core:${carbon.event.processing.version}
+                                <bundleDef>
+                                    org.wso2.carbon.event-processing:org.wso2.carbon.event.builder.core:${carbon.event.processing.version}
                                 </bundleDef>
                                 <bundleDef>
                                     org.wso2.carbon.event-processing:org.wso2.carbon.event.builder.admin:${carbon.event.processing.version}
                                 </bundleDef>
-                                <bundleDef>com.jayway.jsonpath:json-path:${jsonpath.version}
+                                <!--<bundleDef>-->
+                                    <!--com.jayway.jsonpath:json-path:${jsonpath.version}-->
+                                <!--</bundleDef>-->
+                                <!--<bundleDef>-->
+                                    <!--org.slf4j:slf4j-api:${slf4j.version}-->
+                                <!--</bundleDef>-->
+                                <bundleDef>
+                                    net.minidev:json-smart:${jsonsmart.version}
                                 </bundleDef>
-                                <bundleDef>org.slf4j:slf4j-api:${slf4j.version}</bundleDef>
-                                <bundleDef>net.minidev:json-smart:${jsonsmart.version}</bundleDef>
                             </bundles>
                             <importFeatures>
-                                <importFeatureDef>org.wso2.carbon.core.server:${carbon.kernel.imp.pkg.version}
+                                <importFeatureDef>
+                                    org.wso2.carbon.core.server:${carbon.kernel.version}
                                 </importFeatureDef>
                             </importFeatures>
                         </configuration>

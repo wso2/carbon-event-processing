@@ -33,6 +33,11 @@ public class TenantMgtListenerImpl implements TenantMgtListener{
     }
 
     @Override
+    public void onTenantDelete(int i) {
+
+    }
+
+    @Override
     public void onTenantRename(int tenantId, String s, String s2) throws StratosException {
     }
 
@@ -56,5 +61,10 @@ public class TenantMgtListenerImpl implements TenantMgtListener{
     @Override
     public int getListenerOrder() {
         return 0;
+    }
+
+    @Override
+    public void onPreDelete(int i) throws StratosException {
+
     }
 }

@@ -94,11 +94,6 @@
         </dependency>
         <dependency>
             <groupId>org.wso2.carbon.event-processing</groupId>
-            <artifactId>org.wso2.carbon.event.output.adaptor.mysql.server.feature</artifactId>
-            <type>zip</type>
-        </dependency>
-        <dependency>
-            <groupId>org.wso2.carbon.event-processing</groupId>
             <artifactId>org.wso2.carbon.event.output.adaptor.rdbms.server.feature</artifactId>
             <type>zip</type>
         </dependency>
@@ -141,12 +136,11 @@
                             <id>org.wso2.carbon.event.output.adaptor</id>
                             <propertiesFile>../../../../etc/feature.properties</propertiesFile>
                             <importFeatures>
-                                <importFeatureDef>org.wso2.carbon.core:${carbon.kernel.imp.pkg.version}</importFeatureDef>
+                                <importFeatureDef>org.wso2.carbon.core:${carbon.kernel.version}</importFeatureDef>
                             </importFeatures>
                             <includedFeatures>
                                 <includedFeatureDef>org.wso2.carbon.event-processing:org.wso2.carbon.event.output.adaptor.server.feature:${carbon.event.processing.version}</includedFeatureDef>
                                 <includedFeatureDef>org.wso2.carbon.event-processing:org.wso2.carbon.event.output.adaptor.cassandra.server.feature:${carbon.event.processing.version}</includedFeatureDef>
-                                <includedFeatureDef>org.wso2.carbon.event-processing:org.wso2.carbon.event.output.adaptor.mysql.server.feature:${carbon.event.processing.version}</includedFeatureDef>
                                 <includedFeatureDef>org.wso2.carbon.event-processing:org.wso2.carbon.event.output.adaptor.rdbms.server.feature:${carbon.event.processing.version}</includedFeatureDef>
                                 <includedFeatureDef>org.wso2.carbon.event-processing:org.wso2.carbon.event.output.adaptor.jms.server.feature:${carbon.event.processing.version}</includedFeatureDef>
                                 <includedFeatureDef>org.wso2.carbon.event-processing:org.wso2.carbon.event.output.adaptor.mqtt.server.feature:${carbon.event.processing.version}</includedFeatureDef>

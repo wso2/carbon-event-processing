@@ -22,7 +22,7 @@ import org.apache.axiom.om.OMFactory;
 import org.wso2.carbon.databridge.commons.AttributeType;
 import org.wso2.carbon.event.builder.core.config.InputMapping;
 import org.wso2.carbon.event.builder.core.exception.EventBuilderConfigurationException;
-import org.wso2.carbon.event.builder.core.internal.config.InputMappingAttribute;
+import org.wso2.carbon.event.builder.core.config.InputMappingAttribute;
 import org.wso2.carbon.event.builder.core.internal.util.EventBuilderConfigBuilder;
 import org.wso2.carbon.event.builder.core.internal.util.EventBuilderConstants;
 

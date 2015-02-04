@@ -29,12 +29,33 @@ public class StormDeploymentConfig implements Serializable {
     private HostAndPort localManagerConfig;
 
     private List<HostAndPort> managers = new ArrayList<HostAndPort>();
-    private int managementReconnectInterval = 10;
+
 
     private int transportMaxPort = 15100;
     private int transportMinPort = 15000;
     private int transportReconnectInterval = 15000;
     private String jar;
+
+    private int topologySubmitRetryInterval = 10000;
+    private int heartbeatInterval = 5000;
+    private int managementReconnectInterval = 10000;
+
+
+    public int getHeartbeatInterval() {
+        return heartbeatInterval;
+    }
+
+    public void setHeartbeatInterval(int heartbeatInterval) {
+        this.heartbeatInterval = heartbeatInterval;
+    }
+
+    public int getTopologySubmitRetryInterval() {
+        return topologySubmitRetryInterval;
+    }
+
+    public void setTopologySubmitRetryInterval(int topologySubmitRetryInterval) {
+        this.topologySubmitRetryInterval = topologySubmitRetryInterval;
+    }
 
     public boolean isReceiverNode() {
         return receiverNode;
