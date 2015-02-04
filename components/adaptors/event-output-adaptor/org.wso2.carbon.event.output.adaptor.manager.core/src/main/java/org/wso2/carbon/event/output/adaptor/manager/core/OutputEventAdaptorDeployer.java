@@ -27,7 +27,7 @@ import org.apache.axis2.deployment.repository.util.DeploymentFileData;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.wso2.carbon.event.processing.application.deployer.CEPDeployer;
+import org.wso2.carbon.event.processing.application.deployer.EventProcessingDeployer;
 import org.wso2.carbon.context.PrivilegedCarbonContext;
 import org.wso2.carbon.event.output.adaptor.core.config.OutputEventAdaptorConfiguration;
 import org.wso2.carbon.event.output.adaptor.manager.core.exception.OutputEventAdaptorManagerConfigurationException;
@@ -50,7 +50,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * Deploy event adaptors as axis2 service
  */
 @SuppressWarnings("unused")
-public class OutputEventAdaptorDeployer extends AbstractDeployer implements CEPDeployer {
+public class OutputEventAdaptorDeployer extends AbstractDeployer implements EventProcessingDeployer {
 
     private static Log log = LogFactory.getLog(OutputEventAdaptorDeployer.class);
     private ConfigurationContext configurationContext;

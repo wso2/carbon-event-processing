@@ -26,7 +26,7 @@ import org.apache.axis2.deployment.repository.util.DeploymentFileData;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.wso2.carbon.event.processing.application.deployer.CEPDeployer;
+import org.wso2.carbon.event.processing.application.deployer.EventProcessingDeployer;
 import org.wso2.carbon.context.PrivilegedCarbonContext;
 import org.wso2.carbon.event.builder.core.config.EventBuilderConfiguration;
 import org.wso2.carbon.event.builder.core.exception.EventBuilderConfigurationException;
@@ -51,7 +51,7 @@ import java.util.concurrent.ConcurrentHashMap;
 /**
  * Deploy event builders as axis2 service
  */
-public class EventBuilderDeployer extends AbstractDeployer implements CEPDeployer {
+public class EventBuilderDeployer extends AbstractDeployer implements EventProcessingDeployer {
 
     private static Log log = LogFactory.getLog(EventBuilderDeployer.class);
     private ConfigurationContext configurationContext;

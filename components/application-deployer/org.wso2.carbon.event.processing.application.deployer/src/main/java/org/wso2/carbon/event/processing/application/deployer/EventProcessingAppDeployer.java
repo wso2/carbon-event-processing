@@ -9,7 +9,7 @@ import org.apache.commons.logging.LogFactory;
 import org.wso2.carbon.application.deployer.AppDeployerConstants;
 import org.wso2.carbon.application.deployer.AppDeployerUtils;
 import org.wso2.carbon.application.deployer.CarbonApplication;
-import org.wso2.carbon.event.processing.application.deployer.internal.CEPAppDeployerDS;
+import org.wso2.carbon.event.processing.application.deployer.internal.EventProcessingAppDeployerDS;
 import org.wso2.carbon.event.processing.application.deployer.internal.ServiceHolder;
 import org.wso2.carbon.application.deployer.config.Artifact;
 import org.wso2.carbon.application.deployer.config.CappFile;
@@ -25,9 +25,9 @@ import java.util.Map;
 import java.util.Scanner;
 
 
-public class CEPAppDeployer implements AppDeploymentHandler {
+public class EventProcessingAppDeployer implements AppDeploymentHandler {
 
-    private static final Log log = LogFactory.getLog(CEPAppDeployer.class);
+    private static final Log log = LogFactory.getLog(EventProcessingAppDeployer.class);
 
     private Map<String, Boolean> acceptanceList = null;
 
@@ -39,7 +39,7 @@ public class CEPAppDeployer implements AppDeploymentHandler {
     List<Artifact> eventStreams = new ArrayList<Artifact>();
 
     /**
-     * @param carbonApp  - CarbonApplication instance to check for cep artifacts
+     * @param carbonApp  - CarbonApplication instance to check for Event Processing artifacts
      * @param axisConfig - AxisConfiguration of the current tenant
      */
     public void deployArtifacts(CarbonApplication carbonApp, AxisConfiguration axisConfig)
@@ -60,15 +60,15 @@ public class CEPAppDeployer implements AppDeploymentHandler {
             deployEventStreams();
 
             deployTypeSpecifiedArtifacts(inputEventAdaptors, axisConfig,
-                    CEPAppDeployerConstants.CEP_INPUT_EVENT_ADAPTOR_DIR, CEPAppDeployerConstants.FILE_TYPE_XML);
-            deployTypeSpecifiedArtifacts(eventBuilders, axisConfig, CEPAppDeployerConstants.CEP_EVENT_BUILDER_DIR,
-                    CEPAppDeployerConstants.FILE_TYPE_XML);
+                    EventProcessingAppDeployerConstants.CEP_INPUT_EVENT_ADAPTOR_DIR, EventProcessingAppDeployerConstants.FILE_TYPE_XML);
+            deployTypeSpecifiedArtifacts(eventBuilders, axisConfig, EventProcessingAppDeployerConstants.CEP_EVENT_BUILDER_DIR,
+                    EventProcessingAppDeployerConstants.FILE_TYPE_XML);
             deployTypeSpecifiedArtifacts(outputEventAdaptors, axisConfig,
-                    CEPAppDeployerConstants.CEP_OUTPUT_EVENT_ADAPTOR_DIR, CEPAppDeployerConstants.FILE_TYPE_XML);
-            deployTypeSpecifiedArtifacts(eventFormatters, axisConfig, CEPAppDeployerConstants.CEP_EVENT_FORMATTER_DIR,
-                    CEPAppDeployerConstants.FILE_TYPE_XML);
-            deployTypeSpecifiedArtifacts(executionPlans, axisConfig, CEPAppDeployerConstants.CEP_EXECUTION_PLAN_DIR,
-                    CEPAppDeployerConstants.FILE_TYPE_XML);
+                    EventProcessingAppDeployerConstants.CEP_OUTPUT_EVENT_ADAPTOR_DIR, EventProcessingAppDeployerConstants.FILE_TYPE_XML);
+            deployTypeSpecifiedArtifacts(eventFormatters, axisConfig, EventProcessingAppDeployerConstants.CEP_EVENT_FORMATTER_DIR,
+                    EventProcessingAppDeployerConstants.FILE_TYPE_XML);
+            deployTypeSpecifiedArtifacts(executionPlans, axisConfig, EventProcessingAppDeployerConstants.CEP_EXECUTION_PLAN_DIR,
+                    EventProcessingAppDeployerConstants.FILE_TYPE_XML);
         } finally {
             eventBuilders.clear();
             eventFormatters.clear();
@@ -99,9 +99,9 @@ public class CEPAppDeployer implements AppDeploymentHandler {
     private void deployTypeSpecifiedArtifacts(List<Artifact> artifacts, AxisConfiguration axisConfig, String directory,
                                               String fileType) throws DeploymentException {
         for(Artifact artifact: artifacts) {
-            CEPDeployer deployer;
+            EventProcessingDeployer deployer;
 
-            deployer = (CEPDeployer)AppDeployerUtils.getArtifactDeployer(axisConfig,
+            deployer = (EventProcessingDeployer)AppDeployerUtils.getArtifactDeployer(axisConfig,
                     directory, fileType);
             if(deployer!=null) {
                 deploy(deployer,artifact);
@@ -109,7 +109,7 @@ public class CEPAppDeployer implements AppDeploymentHandler {
         }
     }
 
-    void deploy(CEPDeployer deployer, Artifact artifact) throws DeploymentException {
+    void deploy(EventProcessingDeployer deployer, Artifact artifact) throws DeploymentException {
         List<CappFile> files = artifact.getFiles();
         String fileName = artifact.getFiles().get(0).getName();
         String artifactPath = artifact.getExtractedPath() + File.separator + fileName;
@@ -124,17 +124,17 @@ public class CEPAppDeployer implements AppDeploymentHandler {
     }
 
     private void addArtifact(Artifact artifact) {
-        if (CEPAppDeployerConstants.CEP_EVENT_BUILDER_TYPE.equals(artifact.getType())) {
+        if (EventProcessingAppDeployerConstants.CEP_EVENT_BUILDER_TYPE.equals(artifact.getType())) {
             eventBuilders.add(artifact);
-        } else if (CEPAppDeployerConstants.CEP_EVENT_FORMATTER_TYPE.equals(artifact.getType())) {
+        } else if (EventProcessingAppDeployerConstants.CEP_EVENT_FORMATTER_TYPE.equals(artifact.getType())) {
             eventFormatters.add(artifact);
-        } else if (CEPAppDeployerConstants.CEP_EXECUTION_PLAN_TYPE.equals(artifact.getType())) {
+        } else if (EventProcessingAppDeployerConstants.CEP_EXECUTION_PLAN_TYPE.equals(artifact.getType())) {
             executionPlans.add(artifact);
-        } else if (CEPAppDeployerConstants.CEP_INPUT_EVENT_ADAPTOR_TYPE.equals(artifact.getType())) {
+        } else if (EventProcessingAppDeployerConstants.CEP_INPUT_EVENT_ADAPTOR_TYPE.equals(artifact.getType())) {
             inputEventAdaptors.add(artifact);
-        } else if (CEPAppDeployerConstants.CEP_OUTPUT_EVENT_ADAPTOR_TYPE.equals(artifact.getType())) {
+        } else if (EventProcessingAppDeployerConstants.CEP_OUTPUT_EVENT_ADAPTOR_TYPE.equals(artifact.getType())) {
             outputEventAdaptors.add(artifact);
-        } else if (CEPAppDeployerConstants.CEP_EVENT_STREAM_TYPE.equals(artifact.getType())) {
+        } else if (EventProcessingAppDeployerConstants.CEP_EVENT_STREAM_TYPE.equals(artifact.getType())) {
             eventStreams.add(artifact);
         }
     }
@@ -144,7 +144,7 @@ public class CEPAppDeployer implements AppDeploymentHandler {
                 .getDependencies();
 
         for (Artifact.Dependency dep : artifacts) {
-            CEPDeployer deployer;
+            EventProcessingDeployer deployer;
             Artifact artifact = dep.getArtifact();
             if (artifact == null) {
                 continue;
@@ -174,7 +174,7 @@ public class CEPAppDeployer implements AppDeploymentHandler {
                     artifact.setDeploymentStatus(AppDeployerConstants.DEPLOYMENT_STATUS_FAILED);
                     log.error("Error occured while trying to undeploy : " + artifact.getName() + " due to " + e.getMessage(), e);
                 }
-            } else if(CEPAppDeployerConstants.CEP_EVENT_STREAM_TYPE.equals(artifact.getType()) /*second condition to be added*/) {
+            } else if(EventProcessingAppDeployerConstants.CEP_EVENT_STREAM_TYPE.equals(artifact.getType()) /*second condition to be added*/) {
                 StreamDefinition streamDefinition;
                 try {
                     String path = artifact.getExtractedPath() + File.separator + artifact.getFiles().get(0).getName();
@@ -192,27 +192,27 @@ public class CEPAppDeployer implements AppDeploymentHandler {
         }
     }
 
-    private CEPDeployer getDeployer(Artifact artifact, AxisConfiguration axisConfig) {
+    private EventProcessingDeployer getDeployer(Artifact artifact, AxisConfiguration axisConfig) {
         Deployer deployer;
-        if (CEPAppDeployerConstants.CEP_EVENT_BUILDER_TYPE.equals(artifact.getType())) {
-            deployer =  AppDeployerUtils.getArtifactDeployer(axisConfig, CEPAppDeployerConstants.CEP_EVENT_BUILDER_DIR, "xml");
-        } else if(CEPAppDeployerConstants.CEP_EVENT_FORMATTER_TYPE.equals(artifact.getType())) {
-            deployer =  AppDeployerUtils.getArtifactDeployer(axisConfig, CEPAppDeployerConstants.CEP_EVENT_FORMATTER_DIR, "xml");
-        } else if(CEPAppDeployerConstants.CEP_EXECUTION_PLAN_TYPE.equals(artifact.getType())) {
-            deployer = AppDeployerUtils.getArtifactDeployer(axisConfig, CEPAppDeployerConstants.CEP_EXECUTION_PLAN_DIR, "xml");
-        } else if(CEPAppDeployerConstants.CEP_INPUT_EVENT_ADAPTOR_TYPE.equals(artifact.getType())) {
-            deployer =  AppDeployerUtils.getArtifactDeployer(axisConfig, CEPAppDeployerConstants.CEP_INPUT_EVENT_ADAPTOR_DIR, "xml");
-        } else if(CEPAppDeployerConstants.CEP_OUTPUT_EVENT_ADAPTOR_TYPE.equals(artifact.getType())) {
-            deployer =  AppDeployerUtils.getArtifactDeployer(axisConfig, CEPAppDeployerConstants.CEP_OUTPUT_EVENT_ADAPTOR_DIR, "xml");
+        if (EventProcessingAppDeployerConstants.CEP_EVENT_BUILDER_TYPE.equals(artifact.getType())) {
+            deployer =  AppDeployerUtils.getArtifactDeployer(axisConfig, EventProcessingAppDeployerConstants.CEP_EVENT_BUILDER_DIR, "xml");
+        } else if(EventProcessingAppDeployerConstants.CEP_EVENT_FORMATTER_TYPE.equals(artifact.getType())) {
+            deployer =  AppDeployerUtils.getArtifactDeployer(axisConfig, EventProcessingAppDeployerConstants.CEP_EVENT_FORMATTER_DIR, "xml");
+        } else if(EventProcessingAppDeployerConstants.CEP_EXECUTION_PLAN_TYPE.equals(artifact.getType())) {
+            deployer = AppDeployerUtils.getArtifactDeployer(axisConfig, EventProcessingAppDeployerConstants.CEP_EXECUTION_PLAN_DIR, "xml");
+        } else if(EventProcessingAppDeployerConstants.CEP_INPUT_EVENT_ADAPTOR_TYPE.equals(artifact.getType())) {
+            deployer =  AppDeployerUtils.getArtifactDeployer(axisConfig, EventProcessingAppDeployerConstants.CEP_INPUT_EVENT_ADAPTOR_DIR, "xml");
+        } else if(EventProcessingAppDeployerConstants.CEP_OUTPUT_EVENT_ADAPTOR_TYPE.equals(artifact.getType())) {
+            deployer =  AppDeployerUtils.getArtifactDeployer(axisConfig, EventProcessingAppDeployerConstants.CEP_OUTPUT_EVENT_ADAPTOR_DIR, "xml");
         } else {
             deployer = null;
         }
-        return (CEPDeployer)deployer;
+        return (EventProcessingDeployer)deployer;
     }
 
     private boolean isAccepted(String serviceType) {
         if (acceptanceList == null) {
-            acceptanceList = AppDeployerUtils.buildAcceptanceList(CEPAppDeployerDS
+            acceptanceList = AppDeployerUtils.buildAcceptanceList(EventProcessingAppDeployerDS
                     .getRequiredFeatures());
         }
         Boolean acceptance = acceptanceList.get(serviceType);

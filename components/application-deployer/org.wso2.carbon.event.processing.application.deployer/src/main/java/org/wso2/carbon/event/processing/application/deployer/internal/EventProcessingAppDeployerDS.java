@@ -11,7 +11,7 @@ import org.wso2.carbon.application.deployer.AppDeployerConstants;
 import org.wso2.carbon.application.deployer.AppDeployerUtils;
 import org.wso2.carbon.application.deployer.Feature;
 
-import org.wso2.carbon.event.processing.application.deployer.CEPAppDeployer;
+import org.wso2.carbon.event.processing.application.deployer.EventProcessingAppDeployer;
 import org.wso2.carbon.application.deployer.handler.AppDeploymentHandler;
 import org.wso2.carbon.databridge.core.definitionstore.AbstractStreamDefinitionStore;
 
@@ -27,9 +27,9 @@ import java.util.Map;
  * interface="org.wso2.carbon.databridge.core.definitionstore.AbstractStreamDefinitionStore" cardinality="1..1"
  * policy="dynamic" bind="setEventStreamStoreService" unbind="unsetEventStreamStoreService"
  */
-public class CEPAppDeployerDS {
+public class EventProcessingAppDeployerDS {
 
-    private static Log log = LogFactory.getLog(CEPAppDeployerDS.class);
+    private static Log log = LogFactory.getLog(EventProcessingAppDeployerDS.class);
 
     private static Map<String, List<Feature>> requiredFeatures;
 
@@ -41,8 +41,8 @@ public class CEPAppDeployerDS {
 
     protected void activate(ComponentContext ctxt) {
         try {
-            // Register CEP deployer as an OSGi service
-            CEPAppDeployer cepDeployer = new CEPAppDeployer();
+            // Register EventProcessing deployer as an OSGi service
+            EventProcessingAppDeployer cepDeployer = new EventProcessingAppDeployer();
             appHandlerRegistration = ctxt.getBundleContext().registerService(
                     AppDeploymentHandler.class.getName(), cepDeployer, null);
 
@@ -55,7 +55,7 @@ public class CEPAppDeployerDS {
                         .readRequiredFeaturs(new StAXOMBuilder(xmlStream).getDocumentElement());
             }
         } catch (Throwable e) {
-            log.error("Failed to activate CEP Application Deployer", e);
+            log.error("Failed to activate EventProcessing Application Deployer", e);
         }
     }
 

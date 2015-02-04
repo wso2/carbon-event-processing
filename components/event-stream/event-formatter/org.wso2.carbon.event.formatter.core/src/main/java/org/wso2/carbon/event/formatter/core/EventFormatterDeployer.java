@@ -27,7 +27,7 @@ import org.apache.axis2.deployment.repository.util.DeploymentFileData;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.wso2.carbon.event.processing.application.deployer.CEPDeployer;
+import org.wso2.carbon.event.processing.application.deployer.EventProcessingDeployer;
 import org.wso2.carbon.context.PrivilegedCarbonContext;
 import org.wso2.carbon.event.formatter.core.config.EventFormatterConfiguration;
 import org.wso2.carbon.event.formatter.core.config.EventFormatterConstants;
@@ -51,7 +51,7 @@ import java.util.concurrent.ConcurrentHashMap;
 /**
  * Deploy event formatter as axis2 service
  */
-public class EventFormatterDeployer extends AbstractDeployer implements CEPDeployer {
+public class EventFormatterDeployer extends AbstractDeployer implements EventProcessingDeployer {
 
     private static Log log = LogFactory.getLog(EventFormatterDeployer.class);
     private ConfigurationContext configurationContext;

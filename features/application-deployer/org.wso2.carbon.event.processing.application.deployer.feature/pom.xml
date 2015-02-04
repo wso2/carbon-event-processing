@@ -35,7 +35,7 @@
 
     <dependencies>
         <dependency>
-            <groupId>org.wso2.carbon</groupId>
+            <groupId>org.wso2.carbon.event-processing</groupId>
             <artifactId>org.wso2.carbon.event.processing.application.deployer</artifactId>
         </dependency>
     </dependencies>
@@ -57,7 +57,7 @@
                             <id>org.wso2.carbon.event.processing.application.deployer</id>
                             <propertiesFile>../../etc/feature.properties</propertiesFile>
                             <bundles>
-                                <bundleDef>org.wso2.carbon:org.wso2.carbon.event.processing.application.deployer</bundleDef>
+                                <bundleDef>org.wso2.carbon.event-processing:org.wso2.carbon.event.processing.application.deployer</bundleDef>
                             </bundles>
                         </configuration>
                     </execution>

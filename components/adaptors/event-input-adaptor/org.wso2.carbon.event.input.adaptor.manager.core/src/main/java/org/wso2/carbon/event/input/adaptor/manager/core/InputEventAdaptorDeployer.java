@@ -35,7 +35,7 @@ import org.wso2.carbon.event.input.adaptor.manager.core.internal.ds.InputEventAd
 import org.wso2.carbon.event.input.adaptor.manager.core.internal.util.InputEventAdaptorManagerConstants;
 import org.wso2.carbon.event.input.adaptor.manager.core.internal.util.helper.InputEventAdaptorConfigurationFilesystemInvoker;
 import org.wso2.carbon.event.input.adaptor.manager.core.internal.util.helper.InputEventAdaptorConfigurationHelper;
-import org.wso2.carbon.event.processing.application.deployer.CEPDeployer;
+import org.wso2.carbon.event.processing.application.deployer.EventProcessingDeployer;
 
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLInputFactory;
@@ -54,7 +54,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * Deploy event adaptors as axis2 service
  */
 @SuppressWarnings("unused")
-public class InputEventAdaptorDeployer extends AbstractDeployer implements CEPDeployer {
+public class InputEventAdaptorDeployer extends AbstractDeployer implements EventProcessingDeployer {
 
     private static Log log = LogFactory.getLog(InputEventAdaptorDeployer.class);
     private ConfigurationContext configurationContext;

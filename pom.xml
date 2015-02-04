@@ -397,11 +397,6 @@
             </dependency>
             <dependency>
                 <groupId>org.wso2.carbon</groupId>
-                <artifactId>org.wso2.carbon.event.processing.application.deployer</artifactId>
-                <version>${carbon.event.processing.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.wso2.carbon</groupId>
                 <artifactId>org.wso2.carbon.application.deployer</artifactId>
                 <version>${carbon.kernel.version}</version>
             </dependency>
@@ -529,6 +524,11 @@
             <dependency>
                 <groupId>org.wso2.carbon.event-processing</groupId>
                 <artifactId>org.wso2.carbon.event.processor.storm</artifactId>
+                <version>${carbon.event.processing.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.wso2.carbon.event-processing</groupId>
+                <artifactId>org.wso2.carbon.event.processing.application.deployer</artifactId>
                 <version>${carbon.event.processing.version}</version>
             </dependency>
             <!--carbon event processing dependencies stop-->

@@ -27,7 +27,7 @@ import org.apache.axis2.deployment.repository.util.DeploymentFileData;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.wso2.carbon.event.processing.application.deployer.CEPDeployer;
+import org.wso2.carbon.event.processing.application.deployer.EventProcessingDeployer;
 import org.wso2.carbon.context.PrivilegedCarbonContext;
 import org.wso2.carbon.event.processor.core.exception.ExecutionPlanConfigurationException;
 import org.wso2.carbon.event.processor.core.exception.ExecutionPlanDependencyValidationException;
@@ -49,7 +49,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * Deploy query plans as axis2 service
  */
 @SuppressWarnings("unused")
-public class EventProcessorDeployer extends AbstractDeployer implements CEPDeployer {
+public class EventProcessorDeployer extends AbstractDeployer implements EventProcessingDeployer {
 
     private static Log log = LogFactory.getLog(org.wso2.carbon.event.processor.core.EventProcessorDeployer.class);
     private ConfigurationContext configurationContext;

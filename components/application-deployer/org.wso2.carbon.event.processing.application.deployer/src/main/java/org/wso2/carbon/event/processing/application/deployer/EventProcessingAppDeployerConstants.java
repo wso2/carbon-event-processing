@@ -1,6 +1,6 @@
 package org.wso2.carbon.event.processing.application.deployer;
 
-public class CEPAppDeployerConstants {
+public class EventProcessingAppDeployerConstants {
     public static final String CEP_EVENT_BUILDER_TYPE = "cep/eventbuilder";
     public static final String CEP_EVENT_BUILDER_DIR  = "eventbuilders";
     public static final String CEP_EVENT_FORMATTER_TYPE = "cep/eventformatter";

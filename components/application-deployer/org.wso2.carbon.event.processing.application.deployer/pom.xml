@@ -24,7 +24,6 @@
         <relativePath>../pom.xml</relativePath>
     </parent>
 
-    <groupId>org.wso2.carbon</groupId>
     <modelVersion>4.0.0</modelVersion>
     <artifactId>org.wso2.carbon.event.processing.application.deployer</artifactId>
     <packaging>bundle</packaging>
@@ -59,10 +58,10 @@
                         <Bundle-Vendor>WSO2 Inc</Bundle-Vendor>
                         <Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
                         <Private-Package>
-                            org.wso2.carbon.event.processing.application.deployer.internal
+                            org.wso2.carbon.event.processing.application.deployer.internal.*
                         </Private-Package>
                         <Export-Package>
-                            !org.wso2.carbon.event.processing.application.deployer.internal,
+                            !org.wso2.carbon.event.processing.application.deployer.internal.*,
                             org.wso2.carbon.event.processing.application.deployer.*
                         </Export-Package>
                         <Import-Package>
@@ -70,7 +69,7 @@
                             org.apache.commons.logging.*,
                             *;resolution:=optional
                         </Import-Package>
-                        <WSO2-Application-Deployer>CEP cApp Deployer</WSO2-Application-Deployer>
+                        <WSO2-Application-Deployer>Event Processing cApp Deployer</WSO2-Application-Deployer>
                     </instructions>
                 </configuration>
             </plugin>
