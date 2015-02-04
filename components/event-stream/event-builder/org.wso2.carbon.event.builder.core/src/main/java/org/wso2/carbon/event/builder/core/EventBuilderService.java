@@ -19,8 +19,8 @@ package org.wso2.carbon.event.builder.core;
 
 import org.apache.axis2.engine.AxisConfiguration;
 import org.wso2.carbon.event.builder.core.config.EventBuilderConfiguration;
+import org.wso2.carbon.event.builder.core.config.EventBuilderConfigurationFile;
 import org.wso2.carbon.event.builder.core.exception.EventBuilderConfigurationException;
-import org.wso2.carbon.event.builder.core.internal.config.EventBuilderConfigurationFile;
 
 import java.util.List;
 

@@ -26,7 +26,8 @@ import org.wso2.carbon.event.builder.admin.internal.PropertyDto;
 import org.wso2.carbon.event.builder.admin.internal.util.DtoConverter;
 import org.wso2.carbon.event.builder.admin.internal.util.EventBuilderAdminConstants;
 import org.wso2.carbon.event.builder.core.config.EventBuilderConfiguration;
-import org.wso2.carbon.event.builder.core.internal.config.InputMappingAttribute;
+import org.wso2.carbon.event.builder.core.config.InputMapping;
+import org.wso2.carbon.event.builder.core.config.InputMappingAttribute;
 import org.wso2.carbon.event.builder.core.internal.type.json.JsonInputMapping;
 import org.wso2.carbon.event.builder.core.internal.util.EventBuilderConstants;
 import org.wso2.carbon.event.input.adaptor.core.message.config.InputEventAdaptorMessageConfiguration;
@@ -97,7 +98,7 @@ public class JsonDtoConverter extends DtoConverter {
     private EventInputPropertyConfigurationDto[] getJsonPathExpressions(
             EventBuilderConfiguration eventBuilderConfiguration) {
         List<EventInputPropertyConfigurationDto> eventInputPropertyConfigurationDtos = new ArrayList<EventInputPropertyConfigurationDto>();
-        JsonInputMapping jsonInputMapping = (JsonInputMapping) eventBuilderConfiguration.getInputMapping();
+        InputMapping jsonInputMapping = eventBuilderConfiguration.getInputMapping();
 
         for (InputMappingAttribute inputMappingAttribute : jsonInputMapping.getInputMappingAttributes()) {
             EventInputPropertyConfigurationDto eventBuilderMessagePropertyDto = getMappingSectionProperty(inputMappingAttribute);

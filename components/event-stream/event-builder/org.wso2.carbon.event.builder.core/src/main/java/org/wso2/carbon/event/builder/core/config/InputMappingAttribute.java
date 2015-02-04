@@ -15,7 +15,7 @@
 * specific language governing permissions and limitations
 * under the License.
 */
-package org.wso2.carbon.event.builder.core.internal.config;
+package org.wso2.carbon.event.builder.core.config;
 
 import org.wso2.carbon.databridge.commons.AttributeType;
 import org.wso2.carbon.event.builder.core.internal.util.EventBuilderConstants;

@@ -15,7 +15,7 @@
 * specific language governing permissions and limitations
 * under the License.
 */
-package org.wso2.carbon.event.builder.core.internal.config;
+package org.wso2.carbon.event.builder.core.config;
 
 import org.apache.axiom.om.OMElement;
 import org.apache.axis2.engine.AxisConfiguration;

@@ -29,7 +29,7 @@ import org.junit.Test;
 import org.wso2.carbon.databridge.commons.AttributeType;
 import org.wso2.carbon.event.builder.core.config.InputMapping;
 import org.wso2.carbon.event.builder.core.exception.EventBuilderConfigurationException;
-import org.wso2.carbon.event.builder.core.internal.config.InputMappingAttribute;
+import org.wso2.carbon.event.builder.core.config.InputMappingAttribute;
 import org.wso2.carbon.event.builder.core.internal.type.xml.XMLInputMapping;
 import org.wso2.carbon.event.builder.core.internal.type.xml.XMLInputMappingConfigBuilder;
 import org.wso2.carbon.event.builder.core.internal.type.xml.config.XPathDefinition;

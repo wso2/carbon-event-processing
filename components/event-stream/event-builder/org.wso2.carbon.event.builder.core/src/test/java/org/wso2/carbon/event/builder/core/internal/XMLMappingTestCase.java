@@ -25,7 +25,7 @@ import org.wso2.carbon.databridge.commons.Attribute;
 import org.wso2.carbon.databridge.commons.AttributeType;
 import org.wso2.carbon.databridge.commons.exception.MalformedStreamDefinitionException;
 import org.wso2.carbon.event.builder.core.config.EventBuilderConfiguration;
-import org.wso2.carbon.event.builder.core.internal.config.InputMappingAttribute;
+import org.wso2.carbon.event.builder.core.config.InputMappingAttribute;
 import org.wso2.carbon.event.builder.core.internal.type.xml.XMLInputMapping;
 import org.wso2.carbon.event.builder.core.internal.type.xml.config.XPathDefinition;
 import org.wso2.carbon.event.builder.core.internal.util.EventBuilderUtil;

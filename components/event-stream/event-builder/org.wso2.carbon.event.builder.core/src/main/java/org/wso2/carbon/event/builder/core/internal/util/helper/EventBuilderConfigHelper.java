@@ -22,7 +22,7 @@ import org.apache.axis2.deployment.DeploymentEngine;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.wso2.carbon.databridge.commons.Attribute;
 import org.wso2.carbon.event.builder.core.EventBuilderDeployer;
-import org.wso2.carbon.event.builder.core.internal.config.InputMappingAttribute;
+import org.wso2.carbon.event.builder.core.config.InputMappingAttribute;
 import org.wso2.carbon.event.builder.core.internal.ds.EventBuilderServiceValueHolder;
 import org.wso2.carbon.event.builder.core.internal.util.EventBuilderConstants;
 import org.wso2.carbon.event.input.adaptor.core.Property;

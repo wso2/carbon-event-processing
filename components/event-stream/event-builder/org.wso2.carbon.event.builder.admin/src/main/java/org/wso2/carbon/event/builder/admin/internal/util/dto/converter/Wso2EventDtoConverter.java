@@ -26,7 +26,7 @@ import org.wso2.carbon.event.builder.admin.internal.PropertyDto;
 import org.wso2.carbon.event.builder.admin.internal.util.DtoConverter;
 import org.wso2.carbon.event.builder.admin.internal.util.EventBuilderAdminConstants;
 import org.wso2.carbon.event.builder.core.config.EventBuilderConfiguration;
-import org.wso2.carbon.event.builder.core.internal.config.InputMappingAttribute;
+import org.wso2.carbon.event.builder.core.config.InputMappingAttribute;
 import org.wso2.carbon.event.builder.core.internal.type.AbstractInputMapping;
 import org.wso2.carbon.event.builder.core.internal.type.wso2event.Wso2EventInputMapping;
 import org.wso2.carbon.event.builder.core.internal.util.EventBuilderConstants;

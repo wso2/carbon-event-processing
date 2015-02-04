@@ -27,7 +27,7 @@ import org.wso2.carbon.databridge.commons.AttributeType;
 import org.wso2.carbon.event.builder.core.config.EventBuilderConfiguration;
 import org.wso2.carbon.event.builder.core.config.InputMapperFactory;
 import org.wso2.carbon.event.builder.core.exception.EventBuilderConfigurationException;
-import org.wso2.carbon.event.builder.core.internal.config.InputStreamConfiguration;
+import org.wso2.carbon.event.builder.core.config.InputStreamConfiguration;
 import org.wso2.carbon.event.builder.core.internal.ds.EventBuilderServiceValueHolder;
 import org.wso2.carbon.event.builder.core.internal.util.helper.ConfigurationValidator;
 import org.wso2.carbon.event.builder.core.internal.util.helper.EventBuilderConfigHelper;

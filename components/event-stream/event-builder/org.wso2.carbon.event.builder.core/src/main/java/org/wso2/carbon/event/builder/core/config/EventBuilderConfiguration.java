@@ -17,8 +17,6 @@
 */
 package org.wso2.carbon.event.builder.core.config;
 
-import org.wso2.carbon.event.builder.core.internal.config.InputStreamConfiguration;
-
 public class EventBuilderConfiguration {
     private String eventBuilderName;
     private String toStreamName;

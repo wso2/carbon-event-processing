@@ -35,9 +35,8 @@
 
     <dependencies>
         <dependency>
-            <groupId>org.wso2.carbon.storagemgt</groupId>
-            <artifactId>org.wso2.carbon.cassandra.server.feature</artifactId>
-            <type>zip</type>
+            <groupId>org.hectorclient.wso2</groupId>
+            <artifactId>hector-core</artifactId>
         </dependency>
     </dependencies>
 
@@ -68,6 +67,9 @@
                             <bundles>
                                 <bundleDef>
                                     org.wso2.carbon.event-processing:org.wso2.carbon.event.output.adaptor.cassandra:${carbon.event.processing.version}
+                                </bundleDef>
+                                <bundleDef>
+                                    org.hectorclient.wso2:hector-core:${hector.wso2.version}
                                 </bundleDef>
                             </bundles>
                             <importFeatures>

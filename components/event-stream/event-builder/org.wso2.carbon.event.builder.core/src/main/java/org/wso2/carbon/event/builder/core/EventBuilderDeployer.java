@@ -32,7 +32,7 @@ import org.wso2.carbon.event.builder.core.exception.EventBuilderConfigurationExc
 import org.wso2.carbon.event.builder.core.exception.EventBuilderStreamValidationException;
 import org.wso2.carbon.event.builder.core.exception.EventBuilderValidationException;
 import org.wso2.carbon.event.builder.core.internal.CarbonEventBuilderService;
-import org.wso2.carbon.event.builder.core.internal.config.EventBuilderConfigurationFile;
+import org.wso2.carbon.event.builder.core.config.EventBuilderConfigurationFile;
 import org.wso2.carbon.event.builder.core.internal.ds.EventBuilderServiceValueHolder;
 import org.wso2.carbon.event.builder.core.internal.util.EventBuilderConfigBuilder;
 import org.wso2.carbon.event.builder.core.internal.util.EventBuilderConstants;

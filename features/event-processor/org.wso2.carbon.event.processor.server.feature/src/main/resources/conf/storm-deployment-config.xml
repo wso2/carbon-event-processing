@@ -1,17 +1,17 @@
 <stromDeploymentConfig>
 
-    <stormEnabled>true</stormEnabled>
+    <stormEnabled>false</stormEnabled>
 
     <jar>org.wso2.carbon.event.processor.storm.jar</jar>
 
     <management>
         <managers>
             <manager>
-                <hostName>10.100.5.42</hostName>
+                <hostName>localhost</hostName>
                 <port>8904</port>
             </manager>
             <manager>
-                <hostName>10.100.5.42</hostName>
+                <hostName>localhost</hostName>
                 <port>8905</port>
             </manager>
         </managers>
@@ -32,7 +32,7 @@
         <receiver enable="true"/>
         <publisher enable="false"/>
         <manager enable="true">
-            <hostName>10.100.5.42</hostName>
+            <hostName>localhost</hostName>
             <port>8904</port>
         </manager>
     </node>

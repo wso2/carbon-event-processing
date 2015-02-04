@@ -205,11 +205,11 @@
             <!--carbon-commons dependencies stop-->
 
             <!--carbon-storage dependencies start-->
-            <dependency>
-                <groupId>org.wso2.carbon.storagemgt</groupId>
-                <artifactId>org.wso2.carbon.cassandra.dataaccess</artifactId>
-                <version>${carbon.storagemgt.version}</version>
-            </dependency>
+            <!--<dependency>-->
+            <!--<groupId>org.wso2.carbon.storagemgt</groupId>-->
+            <!--<artifactId>org.wso2.carbon.cassandra.dataaccess</artifactId>-->
+            <!--<version>${carbon.storagemgt.version}</version>-->
+            <!--</dependency>-->
             <!--carbon-storage dependencies end-->
 
             <!--axis2.transport dependencies start-->
@@ -288,11 +288,11 @@
                 <artifactId>json-smart</artifactId>
                 <version>${jsonsmart.version}</version>
             </dependency>
-            <!--<dependency>-->
-            <!--<groupId>org.slf4j</groupId>-->
-            <!--<artifactId>slf4j-api</artifactId>-->
-            <!--<version>${slf4j.version}</version>-->
-            <!--</dependency>-->
+            <dependency>
+                <groupId>org.slf4j</groupId>
+                <artifactId>slf4j-api</artifactId>
+                <version>${slf4j.version}</version>
+            </dependency>
 
             <!--third party dependencies stop-->
 
@@ -556,12 +556,12 @@
             </dependency>
             <!--carbon commons features end-->
             <!--carbon storage features start-->
-            <dependency>
-                <groupId>org.wso2.carbon.storagemgt</groupId>
-                <artifactId>org.wso2.carbon.cassandra.server.feature</artifactId>
-                <version>${carbon.storagemgt.version}</version>
-                <type>zip</type>
-            </dependency>
+            <!--<dependency>-->
+            <!--<groupId>org.wso2.carbon.storagemgt</groupId>-->
+            <!--<artifactId>org.wso2.carbon.cassandra.server.feature</artifactId>-->
+            <!--<version>${carbon.storagemgt.version}</version>-->
+            <!--<type>zip</type>-->
+            <!--</dependency>-->
             <!--carbon storage features end-->
             <dependency>
                 <groupId>org.wso2.carbon.event-processing</groupId>
@@ -1088,7 +1088,7 @@
         <carbon.commons.version>4.3.4</carbon.commons.version>
         <!--<carbon.commons.imp.pkg.version>[4.3.0, 4.4.0)</carbon.commons.imp.pkg.version>-->
 
-        <carbon.storagemgt.version>4.3.1-SNAPSHOT</carbon.storagemgt.version>
+        <!--<carbon.storagemgt.version>4.3.1-SNAPSHOT</carbon.storagemgt.version>-->
 
         <carbon.p2.plugin.version>1.5.3</carbon.p2.plugin.version>
 
@@ -1166,9 +1166,9 @@
         <!--&lt;!&ndash; gson Version &ndash;&gt;-->
         <gson.version>2.1</gson.version>
 
-        <!--&lt;!&ndash; slf4j Version &ndash;&gt;-->
-        <!--<slf4j.wso2.version>1.5.10.wso2v1</slf4j.wso2.version>-->
-        <!--<slf4j.version>1.7.5</slf4j.version>-->
+        <!-- slf4j Version -->
+        <!--<slf4j.wso2.version>1.7.10.wso2v1</slf4j.wso2.version>-->
+        <slf4j.version>1.7.5</slf4j.version>
 
         <!--&lt;!&ndash; Abdera &ndash;&gt;-->
         <!--<version.abdera>1.0-wso2v2</version.abdera>-->

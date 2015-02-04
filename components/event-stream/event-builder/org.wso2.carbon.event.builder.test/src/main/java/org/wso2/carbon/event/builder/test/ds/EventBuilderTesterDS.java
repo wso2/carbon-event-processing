@@ -28,7 +28,7 @@ import org.wso2.carbon.databridge.commons.exception.MalformedStreamDefinitionExc
 import org.wso2.carbon.event.builder.core.EventBuilderService;
 import org.wso2.carbon.event.builder.core.config.EventBuilderConfiguration;
 import org.wso2.carbon.event.builder.core.exception.EventBuilderConfigurationException;
-import org.wso2.carbon.event.builder.core.internal.config.InputStreamConfiguration;
+import org.wso2.carbon.event.builder.core.config.InputStreamConfiguration;
 import org.wso2.carbon.event.builder.test.TestBasicEventListener;
 import org.wso2.carbon.event.input.adaptor.core.InputEventAdaptorService;
 import org.wso2.carbon.event.input.adaptor.core.config.InputEventAdaptorConfiguration;

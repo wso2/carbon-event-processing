@@ -16,7 +16,8 @@
  ~ specific language governing permissions and limitations
  ~ under the License.
 -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
     <parent>
         <groupId>org.wso2.carbon.event-processing</groupId>
@@ -55,10 +56,6 @@
             <artifactId>org.wso2.carbon.event.input.adaptor.manager.core</artifactId>
         </dependency>
         <dependency>
-            <groupId>com.jayway.jsonpath</groupId>
-            <artifactId>json-path</artifactId>
-        </dependency>
-        <dependency>
             <groupId>com.google.guava.wso2</groupId>
             <artifactId>guava</artifactId>
         </dependency>
@@ -69,6 +66,14 @@
         <dependency>
             <groupId>org.wso2.carbon.event-processing</groupId>
             <artifactId>org.wso2.carbon.event.stream.manager.core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.jayway.jsonpath</groupId>
+            <artifactId>json-path</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
         </dependency>
     </dependencies>
 
@@ -94,18 +99,23 @@
                     <instructions>
                         <Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
                         <Bundle-Name>${project.artifactId}</Bundle-Name>
-
-                        <Private-Package>org.wso2.carbon.event.builder.core.internal.*
+                        <Private-Package>
+                            org.wso2.carbon.event.builder.core.internal.*,
+                            org.slf4j.*,
+                            com.jayway.jsonpath.*
                         </Private-Package>
-                        <Export-Package>!org.wso2.carbon.event.builder.core.internal,
+                        <Export-Package>
+                            <!--Todo fix-->
+                            <!--!org.wso2.carbon.event.builder.core.internal.*,-->
+                            !org.slf4j.*,
+                            !com.jayway.jsonpath.*,
                             org.wso2.carbon.event.builder.*
                         </Export-Package>
-
                         <Import-Package>
                             !javax.xml.namespace,
                             javax.xml.namespace; version=0.0.0,
-                            org.wso2.carbon.event.input.adaptor.core,
-                            org.wso2.carbon.event.input.adaptor.manager.core,
+                            org.wso2.carbon.event.input.adaptor.core.*,
+                            org.wso2.carbon.event.input.adaptor.manager.core.*,
                             *;resolution:=optional
                         </Import-Package>
                         <!--<Bundle-Activator>org.wso2.carbon.event.builder.Activator</Bundle-Activator>-->
@@ -119,10 +129,5 @@
             </plugin>
         </plugins>
     </build>
-
-    <properties>
-      
-        <jsonpath.version>0.9.1</jsonpath.version>
-    </properties>
 
 </project>

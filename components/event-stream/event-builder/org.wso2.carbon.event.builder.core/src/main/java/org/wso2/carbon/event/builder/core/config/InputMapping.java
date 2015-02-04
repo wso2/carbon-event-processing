@@ -17,6 +17,8 @@
 */
 package org.wso2.carbon.event.builder.core.config;
 
+import java.util.List;
+
 /**
  * This is used as a common interface for all input mapping classes.
  */
@@ -31,4 +33,9 @@ public interface InputMapping {
 
     public boolean isCustomMappingEnabled();
 
+    void setCustomMappingEnabled(boolean customMappingEnabled);
+
+    void addInputMappingAttribute(InputMappingAttribute inputMappingAttribute);
+
+    List<InputMappingAttribute> getInputMappingAttributes();
 }
