@@ -20,11 +20,11 @@
     <parent>
         <groupId>org.wso2.carbon.event-processing</groupId>
         <artifactId>event-simulator</artifactId>
-        <version>2.0.2</version>
+        <version>2.0.2-SNAPSHOT</version>
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
-    <version>2.0.2</version>
+    <version>2.0.2-SNAPSHOT</version>
     <artifactId>org.wso2.carbon.event.simulator.core</artifactId>
     <packaging>bundle</packaging>
     <name>WSO2 Carbon - Event Simulator Core</name>
