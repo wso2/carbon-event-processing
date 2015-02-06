@@ -101,7 +101,7 @@ public class FormatterConfigurationBuilder {
 
 
     public static EventFormatterConfiguration getEventFormatterConfiguration(
-            OMElement eventFormatterConfigOMElement, int tenantId, String mappingType)
+            OMElement eventFormatterConfigOMElement, boolean isEditable, int tenantId, String mappingType)
             throws EventFormatterConfigurationException, EventFormatterValidationException {
 
         EventFormatterConfiguration eventFormatterConfiguration = new EventFormatterConfiguration();
@@ -202,6 +202,7 @@ public class FormatterConfigurationBuilder {
         eventFormatterConfiguration.setFromStreamVersion(fromStreamVersion);
         eventFormatterConfiguration.setOutputMapping(EventFormatterServiceValueHolder.getMappingFactoryMap().get(mappingType).constructOutputMapping(mappingElement));
         eventFormatterConfiguration.setToPropertyConfiguration(toPropertyConfiguration);
+        eventFormatterConfiguration.setEditable(isEditable);
         return eventFormatterConfiguration;
 
     }

@@ -25,6 +25,7 @@ public class InputEventAdaptorConfigurationInfoDto {
     private String eventAdaptorType;
     private boolean enableTracing;
     private boolean enableStats;
+    private boolean editable;
 
     public InputEventAdaptorConfigurationInfoDto() {
         enableTracing = false;
@@ -61,5 +62,13 @@ public class InputEventAdaptorConfigurationInfoDto {
 
     public void setEventAdaptorType(String eventAdaptorType) {
         this.eventAdaptorType = eventAdaptorType;
+    }
+
+    public void setEditable(boolean editable) {
+        this.editable = editable;
+    }
+
+    public boolean isEditable() {
+        return editable;
     }
 }
