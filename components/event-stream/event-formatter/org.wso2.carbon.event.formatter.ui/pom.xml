@@ -21,14 +21,14 @@
     <parent>
         <groupId>org.wso2.carbon.event-processing</groupId>
         <artifactId>event-formatter</artifactId>
-        <version>2.0.3</version>
+        <version>2.0.3-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
     <artifactId>org.wso2.carbon.event.formatter.ui</artifactId>
     <packaging>bundle</packaging>
-    <version>2.0.3</version>
+    <version>2.0.3-SNAPSHOT</version>
     <name>WSO2 Carbon - Event Formatter UI</name>
     <description>This is a Carbon bundle that represent the event formatter ui module.
     </description>

@@ -21,14 +21,14 @@
     <parent>
         <groupId>org.wso2.carbon.event-processing</groupId>
         <artifactId>event-input-adaptor</artifactId>
-        <version>2.0.3</version>
+        <version>2.0.3-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
     <artifactId>org.wso2.carbon.event.input.adaptor.http</artifactId>
     <packaging>bundle</packaging>
-    <version>2.0.3</version>
+    <version>2.0.3-SNAPSHOT</version>
     <name>WSO2 Carbon - Event Input HTTP Adaptor Module</name>
     <description>org.wso2.carbon.event.input.adaptor.http provides the back-end
         functionality of input http adaptor
