@@ -21,13 +21,13 @@
     <parent>
         <groupId>org.wso2.carbon.event-processing</groupId>
         <artifactId>event-builder</artifactId>
-        <version>2.0.3-SNAPSHOT</version>
+        <version>2.0.3</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
     <artifactId>org.wso2.carbon.event.builder.core</artifactId>
-    <version>2.0.3-SNAPSHOT</version>
+    <version>2.0.3</version>
     <packaging>bundle</packaging>
     <name>WSO2 Carbon - Event Builder Core</name>
     <description>Provides core/backend functionality for Event Builder component</description>
