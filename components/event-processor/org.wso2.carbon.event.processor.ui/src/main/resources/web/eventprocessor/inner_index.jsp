@@ -113,6 +113,7 @@
         <td><%=executionPlanConfigurationDto.getDescription()%>
         </td>
         <td>
+            <% if(executionPlanConfigurationDto.getEditable()) { %>
             <% if (executionPlanConfigurationDto.getStatisticsEnabled()) {%>
             <div class="inlineDiv">
                 <div id="disableStat<%= executionPlanConfigurationDto.getName()%>">
@@ -198,6 +199,7 @@
                class="icon-link"
                href="../eventprocessor/edit_execution_plan.jsp?ordinal=1&execPlanName=<%=executionPlanConfigurationDto.getName()%>"><font
                     color="#4682b4">Edit</font></a>
+            <% } %>
 
         </td>
     </tr>

@@ -29,6 +29,7 @@ public class EventFormatterConfigurationInfoDto {
     private String inputStreamId;
     private boolean enableTracing;
     private boolean enableStats;
+    private boolean editable;
 
     public String getEventFormatterName() {
         return eventFormatterName;
@@ -76,5 +77,13 @@ public class EventFormatterConfigurationInfoDto {
 
     public void setEnableStats(boolean enableStats) {
         this.enableStats = enableStats;
+    }
+
+    public void setEditable(boolean editable) {
+        this.editable = editable;
+    }
+
+    public boolean isEditable() {
+        return editable;
     }
 }
