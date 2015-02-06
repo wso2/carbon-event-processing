@@ -15,9 +15,11 @@
 * specific language governing permissions and limitations
 * under the License.
 */
-package org.wso2.carbon.event.output.adaptor.manager.core;
+package org.wso2.carbon.event.output.adaptor.core;
 
 import org.wso2.carbon.event.output.adaptor.core.config.OutputEventAdaptorConfiguration;
+import org.wso2.carbon.event.output.adaptor.core.message.MessageDto;
+import org.wso2.carbon.event.output.adaptor.core.message.config.OutputEventAdaptorMessageConfiguration;
 
 import java.util.List;
 
@@ -38,14 +40,22 @@ public interface OutputEventAdaptorService {
     List<OutputEventAdaptorDto> getEventAdaptors();
 
     /**
+     * @return message DTO
+     */
+    MessageDto getEventAdaptorMessageDto(String eventAdaptorTypeName);
+
+    /**
      * publishes the message using the given event adaptor to the given topic.
      *
      * @param outputEventAdaptorConfiguration
      *                 - Configuration Details of the event adaptor
+     * @param outputEventMessageConfiguration
+     *                 - topic to publish
      * @param object   - message to send
      * @param tenantId
      */
     void publish(OutputEventAdaptorConfiguration outputEventAdaptorConfiguration,
+                 OutputEventAdaptorMessageConfiguration outputEventMessageConfiguration,
                  Object object, int tenantId);
 
     /**
@@ -67,6 +77,7 @@ public interface OutputEventAdaptorService {
 
 
     void removeConnectionInfo(
+            OutputEventAdaptorMessageConfiguration outputEventAdaptorMessageConfiguration,
             OutputEventAdaptorConfiguration outputEventAdaptorConfiguration, int tenantId);
 
 

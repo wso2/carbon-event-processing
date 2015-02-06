@@ -15,7 +15,7 @@
 * specific language governing permissions and limitations
 * under the License.
 */
-package org.wso2.carbon.event.output.adaptor.manager.core;
+package org.wso2.carbon.event.output.adaptor.core;
 
 /**
  * Event Adaptor property details are stored

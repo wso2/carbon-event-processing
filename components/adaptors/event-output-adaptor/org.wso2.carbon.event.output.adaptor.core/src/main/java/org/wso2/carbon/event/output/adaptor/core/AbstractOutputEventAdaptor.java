@@ -15,13 +15,15 @@
 * specific language governing permissions and limitations
 * under the License.
 */
-package org.wso2.carbon.event.output.adaptor.manager.core;
+package org.wso2.carbon.event.output.adaptor.core;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.log4j.Logger;
 import org.wso2.carbon.event.output.adaptor.core.config.OutputEventAdaptorConfiguration;
 import org.wso2.carbon.event.output.adaptor.core.internal.ds.OutputEventAdaptorServiceValueHolder;
+import org.wso2.carbon.event.output.adaptor.core.message.MessageDto;
+import org.wso2.carbon.event.output.adaptor.core.message.config.OutputEventAdaptorMessageConfiguration;
 import org.wso2.carbon.event.statistics.EventStatisticsMonitor;
 
 import java.util.Arrays;
@@ -38,20 +40,30 @@ public abstract class AbstractOutputEventAdaptor {
     private static final String EVENT_TRACE_LOGGER = "EVENT_TRACE_LOGGER";
     private Logger trace = Logger.getLogger(EVENT_TRACE_LOGGER);
     private OutputEventAdaptorDto outputEventAdaptorDto;
+    private MessageDto messageDto;
 
     protected AbstractOutputEventAdaptor() {
 
         init();
 
         this.outputEventAdaptorDto = new OutputEventAdaptorDto();
+        this.messageDto = new MessageDto();
         this.outputEventAdaptorDto.setEventAdaptorTypeName(this.getName());
         this.outputEventAdaptorDto.setSupportedMessageTypes(this.getSupportedOutputMessageTypes());
+
+        this.messageDto.setAdaptorName(this.getName());
+
         outputEventAdaptorDto.setAdaptorPropertyList(((this)).getOutputAdaptorProperties());
+        messageDto.setMessageOutPropertyList(((this)).getOutputMessageProperties());
 
     }
 
     public OutputEventAdaptorDto getOutputEventAdaptorDto() {
         return outputEventAdaptorDto;
+    }
+
+    public MessageDto getMessageDto() {
+        return messageDto;
     }
 
     /**
@@ -80,16 +92,25 @@ public abstract class AbstractOutputEventAdaptor {
      */
     protected abstract List<Property> getOutputAdaptorProperties();
 
+    /**
+     * to get message related output configuration details
+     *
+     * @return list of output message configuration properties
+     */
+    protected abstract List<Property> getOutputMessageProperties();
 
     /**
      * publish a message to a given connection.
      *
+     * @param outputEventAdaptorMessageConfiguration
+     *                 - message configuration event adaptor to publish messages
      * @param message  - message to send
      * @param outputEventAdaptorConfiguration
      *
      * @param tenantId
      */
     public void publishCall(
+            OutputEventAdaptorMessageConfiguration outputEventAdaptorMessageConfiguration,
             Object message,
             OutputEventAdaptorConfiguration outputEventAdaptorConfiguration, int tenantId) {
         if (outputEventAdaptorConfiguration.isEnableTracing()) {
@@ -100,18 +121,21 @@ public abstract class AbstractOutputEventAdaptor {
             statisticsMonitor.incrementResponse();
         }
 
-        publish(message, outputEventAdaptorConfiguration, tenantId);
+        publish(outputEventAdaptorMessageConfiguration, message, outputEventAdaptorConfiguration, tenantId);
     }
 
     /**
      * publish a message to a given connection.
      *
+     * @param outputEventAdaptorMessageConfiguration
+     *                 - message configuration event adaptor to publish messages
      * @param message  - message to send
      * @param outputEventAdaptorConfiguration
      *
      * @param tenantId
      */
     protected abstract void publish(
+            OutputEventAdaptorMessageConfiguration outputEventAdaptorMessageConfiguration,
             Object message,
             OutputEventAdaptorConfiguration outputEventAdaptorConfiguration, int tenantId);
 
@@ -128,6 +152,7 @@ public abstract class AbstractOutputEventAdaptor {
 
 
     public abstract void removeConnectionInfo(
+            OutputEventAdaptorMessageConfiguration outputEventAdaptorMessageConfiguration,
             OutputEventAdaptorConfiguration outputEventAdaptorConfiguration, int tenantId);
 
 

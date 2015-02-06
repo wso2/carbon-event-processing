@@ -15,7 +15,7 @@
 * specific language governing permissions and limitations
 * under the License.
 */
-package org.wso2.carbon.event.output.adaptor.manager.core.config;
+package org.wso2.carbon.event.output.adaptor.core.config;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;

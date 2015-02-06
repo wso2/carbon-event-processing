@@ -15,7 +15,7 @@
 * specific language governing permissions and limitations
 * under the License.
 */
-package org.wso2.carbon.event.output.adaptor.manager.core.internal;
+package org.wso2.carbon.event.output.adaptor.core.internal;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -27,7 +27,8 @@ import org.wso2.carbon.event.output.adaptor.core.config.OutputEventAdaptorConfig
 import org.wso2.carbon.event.output.adaptor.core.exception.OutputEventAdaptorEventProcessingException;
 import org.wso2.carbon.event.output.adaptor.core.exception.TestConnectionUnavailableException;
 import org.wso2.carbon.event.output.adaptor.core.internal.ds.OutputEventAdaptorServiceValueHolder;
-
+import org.wso2.carbon.event.output.adaptor.core.message.MessageDto;
+import org.wso2.carbon.event.output.adaptor.core.message.config.OutputEventAdaptorMessageConfiguration;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -70,13 +71,24 @@ public class CarbonOutputEventAdaptorService implements OutputEventAdaptorServic
         return outputEventAdaptorDtos;
     }
 
+    @Override
+    public MessageDto getEventAdaptorMessageDto(String eventAdaptorTypeName) {
+
+        for (AbstractOutputEventAdaptor abstractOutputEventAdaptor : this.eventAdaptorMap.values()) {
+            if (abstractOutputEventAdaptor.getOutputEventAdaptorDto().getEventAdaptorTypeName().equals(eventAdaptorTypeName)) {
+                return abstractOutputEventAdaptor.getMessageDto();
+            }
+        }
+        return null;
+    }
 
     @Override
     public void publish(OutputEventAdaptorConfiguration outputEventAdaptorConfiguration,
+                        OutputEventAdaptorMessageConfiguration outputEventMessageConfiguration,
                         Object object, int tenantId) {
         AbstractOutputEventAdaptor outputEventAdaptor = this.eventAdaptorMap.get(outputEventAdaptorConfiguration.getType());
         try {
-            outputEventAdaptor.publishCall(object, outputEventAdaptorConfiguration, tenantId);
+            outputEventAdaptor.publishCall(outputEventMessageConfiguration, object, outputEventAdaptorConfiguration, tenantId);
         } catch (OutputEventAdaptorEventProcessingException e) {
             log.error(e.getMessage(), e);
             throw new OutputEventAdaptorEventProcessingException(e.getMessage(), e);
@@ -92,11 +104,13 @@ public class CarbonOutputEventAdaptorService implements OutputEventAdaptorServic
             outputEventAdaptor.testConnection(outputEventAdaptorConfiguration, tenantId);
         } catch (TestConnectionUnavailableException e) {
             throw new TestConnectionUnavailableException(e.getMessage(), e);
-        } catch (OutputEventAdaptorEventProcessingException e) {
+        }catch (OutputEventAdaptorEventProcessingException e) {
             log.error(e.getMessage(), e);
             throw new OutputEventAdaptorEventProcessingException(e.getMessage(), e);
         }
     }
+
+
 
 
     @Override
@@ -111,10 +125,11 @@ public class CarbonOutputEventAdaptorService implements OutputEventAdaptorServic
 
     @Override
     public void removeConnectionInfo(
+            OutputEventAdaptorMessageConfiguration outputEventAdaptorMessageConfiguration,
             OutputEventAdaptorConfiguration outputEventAdaptorConfiguration, int tenantId) {
         AbstractOutputEventAdaptor outputEventAdaptor = this.eventAdaptorMap.get(outputEventAdaptorConfiguration.getType());
         try {
-            outputEventAdaptor.removeConnectionInfo(outputEventAdaptorConfiguration, tenantId);
+            outputEventAdaptor.removeConnectionInfo(outputEventAdaptorMessageConfiguration,outputEventAdaptorConfiguration, tenantId);
         } catch (OutputEventAdaptorEventProcessingException e) {
             log.error(e.getMessage(), e);
             throw new OutputEventAdaptorEventProcessingException(e.getMessage(), e);
