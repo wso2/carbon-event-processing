@@ -19,7 +19,7 @@ package org.wso2.carbon.event.output.adaptor.jms.internal.util;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.wso2.carbon.event.output.adaptor.core.exception.OutputEventAdaptorEventProcessingException;
+import org.wso2.carbon.event.output.adaptor.manager.core.exception.OutputEventAdaptorEventProcessingException;
 
 import javax.jms.*;
 import javax.naming.Context;

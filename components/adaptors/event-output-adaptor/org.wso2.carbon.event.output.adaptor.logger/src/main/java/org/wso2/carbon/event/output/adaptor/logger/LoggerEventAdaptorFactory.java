@@ -18,9 +18,8 @@
 package org.wso2.carbon.event.output.adaptor.logger;
 
 
-import org.wso2.carbon.event.output.adaptor.core.AbstractOutputEventAdaptor;
-import org.wso2.carbon.event.output.adaptor.core.OutputEventAdaptorFactory;
-
+import org.wso2.carbon.event.output.adaptor.manager.core.AbstractOutputEventAdaptor;
+import org.wso2.carbon.event.output.adaptor.manager.core.OutputEventAdaptorFactory;
 
 public class LoggerEventAdaptorFactory implements OutputEventAdaptorFactory {
 

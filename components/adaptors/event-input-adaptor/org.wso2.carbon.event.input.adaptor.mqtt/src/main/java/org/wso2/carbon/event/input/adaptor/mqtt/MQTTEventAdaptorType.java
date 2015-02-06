@@ -1,5 +1,5 @@
 /*
-*  Copyright (c) 2005-2014, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
+*  Copyright (c) 2015, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
 *
 *  WSO2 Inc. licenses this file to you under the Apache License,
 *  Version 2.0 (the "License"); you may not use this file except
@@ -15,6 +15,8 @@
 * specific language governing permissions and limitations
 * under the License.
 */
+
+
 package org.wso2.carbon.event.input.adaptor.mqtt;
 
 import org.apache.axis2.engine.AxisConfiguration;
@@ -34,11 +36,16 @@ import org.wso2.carbon.event.input.adaptor.mqtt.internal.util.MQTTAdaptorListene
 import org.wso2.carbon.event.input.adaptor.mqtt.internal.util.MQTTBrokerConnectionConfiguration;
 import org.wso2.carbon.event.input.adaptor.mqtt.internal.util.MQTTEventAdaptorConstants;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.ResourceBundle;
+import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
 public final class MQTTEventAdaptorType extends AbstractInputEventAdaptor implements
-                                                                          LateStartAdaptorListener {
+        LateStartAdaptorListener {
 
     private boolean readyToPoll = false;
     private static final Log log = LogFactory.getLog(MQTTEventAdaptorType.class);
@@ -259,7 +266,7 @@ public final class MQTTEventAdaptorType extends AbstractInputEventAdaptor implem
         }
 
         MQTTBrokerConnectionConfiguration mqttBrokerConnectionConfiguration = new MQTTBrokerConnectionConfiguration(inputEventAdaptorConfiguration.getInputProperties().get(MQTTEventAdaptorConstants.ADAPTOR_CONF_URL), inputEventAdaptorConfiguration.getInputProperties().get(MQTTEventAdaptorConstants.ADAPTOR_CONF_USERNAME), inputEventAdaptorConfiguration.getInputProperties().get(MQTTEventAdaptorConstants.ADAPTOR_CONF_PASSWORD), inputEventAdaptorConfiguration.getInputProperties().get(MQTTEventAdaptorConstants.ADAPTOR_CONF_CLEAN_SESSION), inputEventAdaptorConfiguration.getInputProperties().get(MQTTEventAdaptorConstants.ADAPTOR_CONF_KEEP_ALIVE));
-        MQTTAdaptorListener mqttAdaptorListener = new MQTTAdaptorListener(mqttBrokerConnectionConfiguration, inputEventAdaptorMessageConfiguration.getInputMessageProperties().get(MQTTEventAdaptorConstants.ADAPTOR_MESSAGE_TOPIC), inputEventAdaptorMessageConfiguration.getInputMessageProperties().get(MQTTEventAdaptorConstants.ADAPTOR_MESSAGE_CLIENTID), inputEventAdaptorListener,tenantId);
+        MQTTAdaptorListener mqttAdaptorListener = new MQTTAdaptorListener(mqttBrokerConnectionConfiguration, inputEventAdaptorMessageConfiguration.getInputMessageProperties().get(MQTTEventAdaptorConstants.ADAPTOR_MESSAGE_TOPIC), inputEventAdaptorMessageConfiguration.getInputMessageProperties().get(MQTTEventAdaptorConstants.ADAPTOR_MESSAGE_CLIENTID), inputEventAdaptorListener);
         topicSpecificListenMap.put(subscriptionId, mqttAdaptorListener);
         mqttAdaptorListener.createConnection();
 

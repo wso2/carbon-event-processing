@@ -17,8 +17,9 @@
 */
 package org.wso2.carbon.event.output.adaptor.http;
 
-import org.wso2.carbon.event.output.adaptor.core.AbstractOutputEventAdaptor;
-import org.wso2.carbon.event.output.adaptor.core.OutputEventAdaptorFactory;
+
+import org.wso2.carbon.event.output.adaptor.manager.core.AbstractOutputEventAdaptor;
+import org.wso2.carbon.event.output.adaptor.manager.core.OutputEventAdaptorFactory;
 
 /**
  * This class represents the HTTP output event adaptor factory implementation.

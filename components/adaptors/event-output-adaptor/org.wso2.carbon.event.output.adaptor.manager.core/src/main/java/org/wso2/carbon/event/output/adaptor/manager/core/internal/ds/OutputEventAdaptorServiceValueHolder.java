@@ -18,7 +18,7 @@
 package org.wso2.carbon.event.output.adaptor.manager.core.internal.ds;
 
 import org.osgi.service.component.ComponentContext;
-import org.wso2.carbon.event.output.adaptor.core.OutputEventAdaptorService;
+import org.wso2.carbon.event.output.adaptor.manager.core.OutputEventAdaptorService;
 import org.wso2.carbon.event.statistics.EventStatisticsService;
 
 /**

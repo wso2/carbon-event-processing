@@ -20,8 +20,8 @@ package org.wso2.carbon.event.output.adaptor.manager.core;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.log4j.Logger;
-import org.wso2.carbon.event.output.adaptor.core.config.OutputEventAdaptorConfiguration;
-import org.wso2.carbon.event.output.adaptor.core.internal.ds.OutputEventAdaptorServiceValueHolder;
+import org.wso2.carbon.event.output.adaptor.manager.core.config.OutputEventAdaptorConfiguration;
+import org.wso2.carbon.event.output.adaptor.manager.core.internal.ds.OutputEventAdaptorServiceValueHolder;
 import org.wso2.carbon.event.statistics.EventStatisticsMonitor;
 
 import java.util.Arrays;

@@ -19,13 +19,12 @@ package org.wso2.carbon.event.output.adaptor.logger;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.wso2.carbon.event.output.adaptor.core.AbstractOutputEventAdaptor;
-import org.wso2.carbon.event.output.adaptor.core.MessageType;
-import org.wso2.carbon.event.output.adaptor.core.Property;
-import org.wso2.carbon.event.output.adaptor.core.config.OutputEventAdaptorConfiguration;
-import org.wso2.carbon.event.output.adaptor.core.exception.TestConnectionUnavailableException;
-import org.wso2.carbon.event.output.adaptor.core.message.config.OutputEventAdaptorMessageConfiguration;
 import org.wso2.carbon.event.output.adaptor.logger.internal.util.LoggerEventAdaptorConstants;
+import org.wso2.carbon.event.output.adaptor.manager.core.AbstractOutputEventAdaptor;
+import org.wso2.carbon.event.output.adaptor.manager.core.MessageType;
+import org.wso2.carbon.event.output.adaptor.manager.core.Property;
+import org.wso2.carbon.event.output.adaptor.manager.core.config.OutputEventAdaptorConfiguration;
+import org.wso2.carbon.event.output.adaptor.manager.core.exception.TestConnectionUnavailableException;
 
 import java.util.*;
 
@@ -77,15 +76,6 @@ public final class LoggerEventAdaptorType extends AbstractOutputEventAdaptor {
      */
     @Override
     public List<Property> getOutputAdaptorProperties() {
-        return null;
-    }
-
-    /**
-     * @return output message configuration property list
-     */
-    @Override
-    public List<Property> getOutputMessageProperties() {
-
         List<Property> propertyList = new ArrayList<Property>();
 
         // set stream definition
@@ -101,22 +91,19 @@ public final class LoggerEventAdaptorType extends AbstractOutputEventAdaptor {
     }
 
     /**
-     * @param outputEventAdaptorMessageConfiguration
-     *                 - topic name to publish messages
      * @param message  - is and Object[]{Event, EventDefinition}
      * @param outputEventAdaptorConfiguration
      *
      * @param tenantId
      */
     public void publish(
-            OutputEventAdaptorMessageConfiguration outputEventAdaptorMessageConfiguration,
             Object message,
             OutputEventAdaptorConfiguration outputEventAdaptorConfiguration, int tenantId) {
 
         if (message instanceof Object[]) {
-            log.info("Unique ID : " + outputEventAdaptorMessageConfiguration.getOutputMessageProperties().get(LoggerEventAdaptorConstants.ADAPTOR_MESSAGE_UNIQUE_ID) + " , Event : " + Arrays.deepToString((Object[]) message));
+            log.info("Unique ID : " + outputEventAdaptorConfiguration.getOutputProperties().get(LoggerEventAdaptorConstants.ADAPTOR_MESSAGE_UNIQUE_ID) + " , Event : " + Arrays.deepToString((Object[]) message));
         } else {
-            log.info("Unique ID : " + outputEventAdaptorMessageConfiguration.getOutputMessageProperties().get(LoggerEventAdaptorConstants.ADAPTOR_MESSAGE_UNIQUE_ID) + " , Event : " + message);
+            log.info("Unique ID : " + outputEventAdaptorConfiguration.getOutputProperties().get(LoggerEventAdaptorConstants.ADAPTOR_MESSAGE_UNIQUE_ID) + " , Event : " + message);
         }
     }
 
@@ -130,7 +117,6 @@ public final class LoggerEventAdaptorType extends AbstractOutputEventAdaptor {
 
     @Override
     public void removeConnectionInfo(
-            OutputEventAdaptorMessageConfiguration outputEventAdaptorMessageConfiguration,
             OutputEventAdaptorConfiguration outputEventAdaptorConfiguration, int tenantId) {
         //not required
     }

@@ -34,12 +34,12 @@ import me.prettyprint.hector.api.mutation.Mutator;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.wso2.carbon.event.output.adaptor.cassandra.internal.util.CassandraEventAdaptorConstants;
-import org.wso2.carbon.event.output.adaptor.core.AbstractOutputEventAdaptor;
-import org.wso2.carbon.event.output.adaptor.core.MessageType;
-import org.wso2.carbon.event.output.adaptor.core.Property;
-import org.wso2.carbon.event.output.adaptor.core.config.OutputEventAdaptorConfiguration;
-import org.wso2.carbon.event.output.adaptor.core.exception.OutputEventAdaptorEventProcessingException;
-import org.wso2.carbon.event.output.adaptor.core.message.config.OutputEventAdaptorMessageConfiguration;
+import org.wso2.carbon.event.output.adaptor.manager.core.AbstractOutputEventAdaptor;
+import org.wso2.carbon.event.output.adaptor.manager.core.MessageType;
+import org.wso2.carbon.event.output.adaptor.manager.core.Property;
+import org.wso2.carbon.event.output.adaptor.manager.core.config.OutputEventAdaptorConfiguration;
+import org.wso2.carbon.event.output.adaptor.manager.core.exception.OutputEventAdaptorEventProcessingException;
+
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
@@ -147,18 +147,6 @@ public final class CassandraEventAdaptorType extends AbstractOutputEventAdaptor 
         indexAllColumns.setHint(resourceBundle.getString(CassandraEventAdaptorConstants.ADAPTOR_CASSANDRA_INDEX_ALL_COLUMNS_HINT));
         propertyList.add(indexAllColumns);
 
-        return propertyList;
-
-    }
-
-    /**
-     * @return output message configuration property list
-     */
-    @Override
-    public List<Property> getOutputMessageProperties() {
-
-        List<Property> propertyList = new ArrayList<Property>();
-
         // key space
         Property keySpace = new Property(CassandraEventAdaptorConstants.ADAPTOR_CASSANDRA_KEY_SPACE_NAME);
         keySpace.setDisplayName(
@@ -174,18 +162,16 @@ public final class CassandraEventAdaptorType extends AbstractOutputEventAdaptor 
         propertyList.add(columnFamily);
 
         return propertyList;
+
     }
 
     /**
-     * @param outputEventMessageConfiguration
-     *                 - topic name to publish messages
      * @param message  - is and Object[]{Event, EventDefinition}
      * @param outputEventAdaptorConfiguration
      *
      * @param tenantId
      */
     public void publish(
-            OutputEventAdaptorMessageConfiguration outputEventMessageConfiguration,
             Object message,
             OutputEventAdaptorConfiguration outputEventAdaptorConfiguration, int tenantId) {
         ConcurrentHashMap<OutputEventAdaptorConfiguration, EventAdaptorInfo> cassandraClusterCache = null;
@@ -215,9 +201,9 @@ public final class CassandraEventAdaptorType extends AbstractOutputEventAdaptor 
                     }
 
                     cluster = HFactory.createCluster(properties.get(CassandraEventAdaptorConstants.ADAPTOR_CASSANDRA_CLUSTER_NAME),
-                                                     new CassandraHostConfigurator(
-                                                             properties.get(CassandraEventAdaptorConstants.ADAPTOR_CASSANDRA_HOSTNAME) + ":" +
-                                                             properties.get(CassandraEventAdaptorConstants.ADAPTOR_CASSANDRA_PORT)), credentials);
+                            new CassandraHostConfigurator(
+                                    properties.get(CassandraEventAdaptorConstants.ADAPTOR_CASSANDRA_HOSTNAME) + ":" +
+                                            properties.get(CassandraEventAdaptorConstants.ADAPTOR_CASSANDRA_PORT)), credentials);
 
 
                     if (cluster.getKnownPoolHosts(true).size() < 1) {
@@ -240,14 +226,14 @@ public final class CassandraEventAdaptorType extends AbstractOutputEventAdaptor 
                 }
 
 
-                String keySpaceName = outputEventMessageConfiguration.getOutputMessageProperties().get(CassandraEventAdaptorConstants.ADAPTOR_CASSANDRA_KEY_SPACE_NAME);
-                String columnFamilyName = outputEventMessageConfiguration.getOutputMessageProperties().get(CassandraEventAdaptorConstants.ADAPTOR_CASSANDRA_COLUMN_FAMILY_NAME);
-                MessageInfo messageInfo = eventAdaptorInfo.getMessageInfoMap().get(outputEventMessageConfiguration);
+                String keySpaceName = outputEventAdaptorConfiguration.getOutputProperties().get(CassandraEventAdaptorConstants.ADAPTOR_CASSANDRA_KEY_SPACE_NAME);
+                String columnFamilyName = outputEventAdaptorConfiguration.getOutputProperties().get(CassandraEventAdaptorConstants.ADAPTOR_CASSANDRA_COLUMN_FAMILY_NAME);
+                MessageInfo messageInfo = eventAdaptorInfo.getMessageInfoMap().get(outputEventAdaptorConfiguration);
                 if (null == messageInfo) {
                     Keyspace keyspace = HFactory.createKeyspace(keySpaceName, eventAdaptorInfo.getCluster());
                     messageInfo = new MessageInfo(keyspace);
-                    if (null != eventAdaptorInfo.getMessageInfoMap().putIfAbsent(outputEventMessageConfiguration, messageInfo)) {
-                        messageInfo = eventAdaptorInfo.getMessageInfoMap().get(outputEventMessageConfiguration);
+                    if (null != eventAdaptorInfo.getMessageInfoMap().putIfAbsent(outputEventAdaptorConfiguration, messageInfo)) {
+                        messageInfo = eventAdaptorInfo.getMessageInfoMap().get(outputEventAdaptorConfiguration);
                     }
                 }
 
@@ -258,18 +244,18 @@ public final class CassandraEventAdaptorType extends AbstractOutputEventAdaptor 
                     columnFamilyDefinition.setComparatorType(ComparatorType.UTF8TYPE);
                     columnFamilyDefinition
                             .setDefaultValidationClass(ComparatorType.UTF8TYPE
-                                                               .getClassName());
+                                    .getClassName());
                     columnFamilyDefinition
                             .setKeyValidationClass(ComparatorType.UTF8TYPE
-                                                           .getClassName());
+                                    .getClassName());
 
                     ColumnFamilyDefinition cfDef = new ThriftCfDef(
                             columnFamilyDefinition);
 
                     KeyspaceDefinition keyspaceDefinition = HFactory
                             .createKeyspaceDefinition(keySpaceName,
-                                                      "org.apache.cassandra.locator.SimpleStrategy", 1,
-                                                      Arrays.asList(cfDef));
+                                    "org.apache.cassandra.locator.SimpleStrategy", 1,
+                                    Arrays.asList(cfDef));
                     eventAdaptorInfo.getCluster().addKeyspace(keyspaceDefinition);
                     KeyspaceDefinition fromCluster = eventAdaptorInfo.getCluster().describeKeyspace(keySpaceName);
                     messageInfo.setColumnFamilyDefinition(new BasicColumnFamilyDefinition(fromCluster.getCfDefs().get(0)));
@@ -296,7 +282,7 @@ public final class CassandraEventAdaptorType extends AbstractOutputEventAdaptor 
                         columnDefinition.setIndexType(ColumnIndexType.KEYS);
                         columnDefinition.setIndexName(keySpaceName + "_" + columnFamilyName + "_" + entry.getKey() + "_Index");
                         columnDefinition.setValidationClass(ComparatorType.UTF8TYPE
-                                                                    .getClassName());
+                                .getClassName());
                         columnFamilyDefinition.addColumnDefinition(columnDefinition);
                         eventAdaptorInfo.getCluster().updateColumnFamily(new ThriftCfDef(columnFamilyDefinition));
                         messageInfo.getColumnNames().add(entry.getKey());
@@ -338,7 +324,6 @@ public final class CassandraEventAdaptorType extends AbstractOutputEventAdaptor 
 
     @Override
     public void removeConnectionInfo(
-            OutputEventAdaptorMessageConfiguration outputEventAdaptorMessageConfiguration,
             OutputEventAdaptorConfiguration outputEventAdaptorConfiguration, int tenantId) {
         ConcurrentHashMap<OutputEventAdaptorConfiguration, EventAdaptorInfo> cassandraClusterCache = tenantedCassandraClusterCache.get(tenantId);
         if (cassandraClusterCache != null) {
@@ -377,7 +362,7 @@ public final class CassandraEventAdaptorType extends AbstractOutputEventAdaptor 
     class EventAdaptorInfo {
         private Cluster cluster;
         private boolean indexAllColumns;
-        private ConcurrentHashMap<OutputEventAdaptorMessageConfiguration, MessageInfo> messageInfoMap = new ConcurrentHashMap<OutputEventAdaptorMessageConfiguration, MessageInfo>();
+        private ConcurrentHashMap<OutputEventAdaptorConfiguration, MessageInfo> messageInfoMap = new ConcurrentHashMap<OutputEventAdaptorConfiguration, MessageInfo>();
 
         EventAdaptorInfo(Cluster cluster, boolean indexAllColumns) {
             this.cluster = cluster;
@@ -388,7 +373,7 @@ public final class CassandraEventAdaptorType extends AbstractOutputEventAdaptor 
             return cluster;
         }
 
-        public ConcurrentHashMap<OutputEventAdaptorMessageConfiguration, MessageInfo> getMessageInfoMap() {
+        public ConcurrentHashMap<OutputEventAdaptorConfiguration, MessageInfo> getMessageInfoMap() {
             return messageInfoMap;
         }
 

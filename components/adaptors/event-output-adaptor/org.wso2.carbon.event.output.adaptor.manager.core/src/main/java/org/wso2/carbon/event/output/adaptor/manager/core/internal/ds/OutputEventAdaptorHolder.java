@@ -17,7 +17,8 @@
 */
 package org.wso2.carbon.event.output.adaptor.manager.core.internal.ds;
 
-import org.wso2.carbon.event.output.adaptor.core.OutputEventAdaptorService;
+
+import org.wso2.carbon.event.output.adaptor.manager.core.OutputEventAdaptorService;
 
 /**
  * This method is used to hold the event adaptor service

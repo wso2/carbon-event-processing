@@ -41,10 +41,6 @@
             <artifactId>org.wso2.carbon.event.output.adaptor.manager.core</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.wso2.carbon.event-processing</groupId>
-            <artifactId>org.wso2.carbon.event.output.adaptor.core</artifactId>
-        </dependency>
-        <dependency>
             <groupId>org.wso2.carbon</groupId>
             <artifactId>org.wso2.carbon.core</artifactId>
         </dependency>

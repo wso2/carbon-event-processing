@@ -28,8 +28,6 @@ import org.wso2.carbon.event.input.adaptor.core.InputEventAdaptorService;
 import org.wso2.carbon.event.input.adaptor.core.config.InputEventAdaptorConfiguration;
 import org.wso2.carbon.event.input.adaptor.core.exception.InputEventAdaptorEventProcessingException;
 import org.wso2.carbon.event.input.adaptor.core.internal.ds.InputEventAdaptorServiceValueHolder;
-import org.wso2.carbon.event.input.adaptor.core.message.MessageDto;
-import org.wso2.carbon.event.input.adaptor.core.message.config.InputEventAdaptorMessageConfiguration;
 import org.wso2.carbon.event.statistics.EventStatisticsMonitor;
 
 import java.util.ArrayList;
@@ -70,20 +68,9 @@ public class CarbonInputEventAdaptorService implements InputEventAdaptorService 
         return inputEventAdaptorDtos;
     }
 
-    @Override
-    public MessageDto getEventMessageDto(String eventAdaptorTypeName) {
-
-        for (AbstractInputEventAdaptor abstractInputEventAdaptor : this.eventAdaptorMap.values()) {
-            if (abstractInputEventAdaptor.getInputEventAdaptorDto().getEventAdaptorTypeName().equals(eventAdaptorTypeName)) {
-                return abstractInputEventAdaptor.getMessageDto();
-            }
-        }
-        return null;
-    }
 
     @Override
     public String subscribe(InputEventAdaptorConfiguration inputEventAdaptorConfiguration,
-                            InputEventAdaptorMessageConfiguration inputEventAdaptorMessageConfiguration,
                             InputEventAdaptorListener inputEventAdaptorListener,
                             AxisConfiguration axisConfiguration) {
         AbstractInputEventAdaptor inputEventAdaptor = this.eventAdaptorMap.get(inputEventAdaptorConfiguration.getType());
@@ -102,7 +89,7 @@ public class CarbonInputEventAdaptorService implements InputEventAdaptorService 
         }
 
         try {
-            return inputEventAdaptor.subscribe(inputEventAdaptorMessageConfiguration, inputEventAdaptorListener, inputEventAdaptorConfiguration, axisConfiguration);
+            return inputEventAdaptor.subscribe(inputEventAdaptorListener, inputEventAdaptorConfiguration, axisConfiguration);
         } catch (InputEventAdaptorEventProcessingException e) {
             log.error(e.getMessage(), e);
             throw new InputEventAdaptorEventProcessingException(e.getMessage(), e);
@@ -111,14 +98,13 @@ public class CarbonInputEventAdaptorService implements InputEventAdaptorService 
 
     @Override
     public void unsubscribe(
-            InputEventAdaptorMessageConfiguration inputEventAdaptorMessageConfiguration,
             InputEventAdaptorConfiguration inputEventAdaptorConfiguration,
             AxisConfiguration axisConfiguration, String subscriptionId) {
         AbstractInputEventAdaptor abstractInputEventAdaptor = this.eventAdaptorMap.get(inputEventAdaptorConfiguration.getType());
         // We do not throw an error when trying to unsubscribing from an input event adaptor that is not there.
         if (abstractInputEventAdaptor != null) {
             try {
-                abstractInputEventAdaptor.unsubscribe(inputEventAdaptorMessageConfiguration, inputEventAdaptorConfiguration, axisConfiguration, subscriptionId);
+                abstractInputEventAdaptor.unsubscribe(inputEventAdaptorConfiguration, axisConfiguration, subscriptionId);
             } catch (InputEventAdaptorEventProcessingException e) {
                 log.error(e.getMessage(), e);
                 throw new InputEventAdaptorEventProcessingException(e.getMessage(), e);

@@ -20,8 +20,8 @@ package org.wso2.carbon.event.output.adaptor.manager.core.internal.ds;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.osgi.service.component.ComponentContext;
-import org.wso2.carbon.event.output.adaptor.core.OutputEventAdaptorService;
 import org.wso2.carbon.event.output.adaptor.manager.core.OutputEventAdaptorManagerService;
+import org.wso2.carbon.event.output.adaptor.manager.core.OutputEventAdaptorService;
 import org.wso2.carbon.event.output.adaptor.manager.core.exception.OutputEventAdaptorManagerConfigurationException;
 import org.wso2.carbon.event.output.adaptor.manager.core.internal.CarbonOutputEventAdaptorManagerService;
 import org.wso2.carbon.event.statistics.EventStatisticsService;
@@ -29,7 +29,7 @@ import org.wso2.carbon.event.statistics.EventStatisticsService;
 /**
  * @scr.component name="output.event.adaptor.manager.component" immediate="true"
  * @scr.reference name="output.event.adaptor.service"
- * interface="org.wso2.carbon.event.output.adaptor.core.OutputEventAdaptorService" cardinality="1..1"
+ * interface="org.wso2.carbon.event.output.adaptor.manager.core.OutputEventAdaptorService" cardinality="1..1"
  * policy="dynamic" bind="setEventAdaptorService" unbind="unSetEventAdaptorService"
  * @scr.reference name="eventStatistics.service"
  * interface="org.wso2.carbon.event.statistics.EventStatisticsService" cardinality="1..1"
@@ -72,11 +72,11 @@ public class OutputEventAdaptorManagerDS {
     }
 
 
-    public void setEventStatisticsService(EventStatisticsService eventStatisticsService) {
+    protected void setEventStatisticsService(EventStatisticsService eventStatisticsService) {
         OutputEventAdaptorManagerValueHolder.registerEventStatisticsService(eventStatisticsService);
     }
 
-    public void unsetEventStatisticsService(EventStatisticsService eventStatisticsService) {
+    protected void unsetEventStatisticsService(EventStatisticsService eventStatisticsService) {
         OutputEventAdaptorManagerValueHolder.registerEventStatisticsService(null);
     }
 

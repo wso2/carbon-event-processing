@@ -19,13 +19,12 @@ package org.wso2.carbon.event.output.adaptor.jms;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.wso2.carbon.event.output.adaptor.core.AbstractOutputEventAdaptor;
-import org.wso2.carbon.event.output.adaptor.core.MessageType;
-import org.wso2.carbon.event.output.adaptor.core.Property;
-import org.wso2.carbon.event.output.adaptor.core.config.OutputEventAdaptorConfiguration;
-import org.wso2.carbon.event.output.adaptor.core.exception.OutputEventAdaptorEventProcessingException;
-import org.wso2.carbon.event.output.adaptor.core.message.config.OutputEventAdaptorMessageConfiguration;
 import org.wso2.carbon.event.output.adaptor.jms.internal.util.*;
+import org.wso2.carbon.event.output.adaptor.manager.core.AbstractOutputEventAdaptor;
+import org.wso2.carbon.event.output.adaptor.manager.core.MessageType;
+import org.wso2.carbon.event.output.adaptor.manager.core.Property;
+import org.wso2.carbon.event.output.adaptor.manager.core.config.OutputEventAdaptorConfiguration;
+import org.wso2.carbon.event.output.adaptor.manager.core.exception.OutputEventAdaptorEventProcessingException;
 
 import javax.jms.Connection;
 import javax.jms.JMSException;
@@ -138,18 +137,6 @@ public final class JMSEventAdaptorType extends AbstractOutputEventAdaptor {
         destinationTypeProperty.setHint(resourceBundle.getString(JMSEventAdaptorConstants.ADAPTOR_JMS_DESTINATION_TYPE_HINT));
         propertyList.add(destinationTypeProperty);
 
-
-        return propertyList;
-
-    }
-
-    /**
-     * @return output message configuration property list
-     */
-    @Override
-    public List<Property> getOutputMessageProperties() {
-        List<Property> propertyList = new ArrayList<Property>();
-
         // Topic
         Property topicProperty = new Property(JMSEventAdaptorConstants.ADAPTOR_JMS_DESTINATION);
         topicProperty.setDisplayName(
@@ -164,13 +151,12 @@ public final class JMSEventAdaptorType extends AbstractOutputEventAdaptor {
         headerProperty.setHint(resourceBundle.getString(JMSEventAdaptorConstants.ADAPTOR_JMS_HEADER_HINT));
         propertyList.add(headerProperty);
 
+
         return propertyList;
 
     }
 
     /**
-     * @param outputEventAdaptorMessageConfiguration
-     *                 - topic name to publish messages
      * @param message  - is and Object[]{Event, EventDefinition}
      * @param outputEventAdaptorConfiguration
      *                 the {@link OutputEventAdaptorConfiguration} object that will be used to
@@ -178,7 +164,6 @@ public final class JMSEventAdaptorType extends AbstractOutputEventAdaptor {
      * @param tenantId tenant id of the calling thread.
      */
     public void publish(
-            OutputEventAdaptorMessageConfiguration outputEventAdaptorMessageConfiguration,
             Object message,
             OutputEventAdaptorConfiguration outputEventAdaptorConfiguration, int tenantId) {
 
@@ -190,7 +175,7 @@ public final class JMSEventAdaptorType extends AbstractOutputEventAdaptor {
             }
         }
 
-        String topicName = outputEventAdaptorMessageConfiguration.getOutputMessageProperties().get(JMSEventAdaptorConstants.ADAPTOR_JMS_DESTINATION);
+        String topicName = outputEventAdaptorConfiguration.getOutputProperties().get(JMSEventAdaptorConstants.ADAPTOR_JMS_DESTINATION);
         PublisherDetails publisherDetails = topicEventSender.get(topicName);
         Map<String, String> messageConfig = new HashMap<String, String>();
         messageConfig.put(JMSConstants.PARAM_DESTINATION, topicName);
@@ -199,7 +184,7 @@ public final class JMSEventAdaptorType extends AbstractOutputEventAdaptor {
                 publisherDetails = initPublisher(outputEventAdaptorConfiguration, topicEventSender, topicName, messageConfig);
             }
             Message jmsMessage = publisherDetails.getJmsMessageSender().convertToJMSMessage(message, messageConfig);
-            setJMSTransportHeaders(jmsMessage, outputEventAdaptorMessageConfiguration.getOutputMessageProperties().get(JMSEventAdaptorConstants.ADAPTOR_JMS_HEADER));
+            setJMSTransportHeaders(jmsMessage, outputEventAdaptorConfiguration.getOutputProperties().get(JMSEventAdaptorConstants.ADAPTOR_JMS_HEADER));
             publisherDetails.getJmsMessageSender().send(jmsMessage, messageConfig);
         } catch (RuntimeException e) {
             log.warn("Caught exception: " + e.getMessage() + ". Reinitializing connection and sending...");
@@ -212,7 +197,7 @@ public final class JMSEventAdaptorType extends AbstractOutputEventAdaptor {
             // Retry sending after reinitializing connection
             publisherDetails = initPublisher(outputEventAdaptorConfiguration, topicEventSender, topicName, messageConfig);
             Message jmsMessage = publisherDetails.getJmsMessageSender().convertToJMSMessage(message, messageConfig);
-            setJMSTransportHeaders(jmsMessage, outputEventAdaptorMessageConfiguration.getOutputMessageProperties().get(JMSEventAdaptorConstants.ADAPTOR_JMS_HEADER));
+            setJMSTransportHeaders(jmsMessage, outputEventAdaptorConfiguration.getOutputProperties().get(JMSEventAdaptorConstants.ADAPTOR_JMS_HEADER));
             publisherDetails.getJmsMessageSender().send(jmsMessage, messageConfig);
         }
     }
@@ -242,9 +227,9 @@ public final class JMSEventAdaptorType extends AbstractOutputEventAdaptor {
             if (headers != null && headers.length > 0) {
                 for (String header : headers) {
                     String[] headerPropertyWithValue = header.split(":");
-                    if(headerPropertyWithValue.length == 2){
+                    if (headerPropertyWithValue.length == 2) {
                         messageConfiguration.put(headerPropertyWithValue[0], headerPropertyWithValue[1]);
-                    }else {
+                    } else {
                         log.warn("Header property not defined in the correct format");
                     }
                 }
@@ -279,11 +264,10 @@ public final class JMSEventAdaptorType extends AbstractOutputEventAdaptor {
 
     @Override
     public void removeConnectionInfo(
-            OutputEventAdaptorMessageConfiguration outputEventAdaptorMessageConfiguration,
             OutputEventAdaptorConfiguration outputEventAdaptorConfiguration, int tenantId) {
         ConcurrentHashMap<String, PublisherDetails> topicEventSenderMap = publisherMap.get(outputEventAdaptorConfiguration.getName());
         if (topicEventSenderMap != null) {
-            String topicName = outputEventAdaptorMessageConfiguration.getOutputMessageProperties().get(JMSEventAdaptorConstants.ADAPTOR_JMS_DESTINATION);
+            String topicName = outputEventAdaptorConfiguration.getOutputProperties().get(JMSEventAdaptorConstants.ADAPTOR_JMS_DESTINATION);
             topicEventSenderMap.remove(topicName);
         }
     }

@@ -1,5 +1,5 @@
 /*
-*  Copyright (c) 2005-2014, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
+*  Copyright (c) 2015, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
 *
 *  WSO2 Inc. licenses this file to you under the Apache License,
 *  Version 2.0 (the "License"); you may not use this file except
@@ -15,18 +15,19 @@
 * specific language governing permissions and limitations
 * under the License.
 */
+
+
 package org.wso2.carbon.event.output.adaptor.rdbms;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.wso2.carbon.databridge.commons.Attribute;
 import org.wso2.carbon.databridge.commons.AttributeType;
-import org.wso2.carbon.event.output.adaptor.core.AbstractOutputEventAdaptor;
-import org.wso2.carbon.event.output.adaptor.core.MessageType;
-import org.wso2.carbon.event.output.adaptor.core.Property;
-import org.wso2.carbon.event.output.adaptor.core.config.OutputEventAdaptorConfiguration;
-import org.wso2.carbon.event.output.adaptor.core.exception.OutputEventAdaptorEventProcessingException;
-import org.wso2.carbon.event.output.adaptor.core.message.config.OutputEventAdaptorMessageConfiguration;
+import org.wso2.carbon.event.output.adaptor.manager.core.AbstractOutputEventAdaptor;
+import org.wso2.carbon.event.output.adaptor.manager.core.MessageType;
+import org.wso2.carbon.event.output.adaptor.manager.core.Property;
+import org.wso2.carbon.event.output.adaptor.manager.core.config.OutputEventAdaptorConfiguration;
+import org.wso2.carbon.event.output.adaptor.manager.core.exception.OutputEventAdaptorEventProcessingException;
 import org.wso2.carbon.event.output.adaptor.rdbms.exception.RDBMSConnectionException;
 import org.wso2.carbon.event.output.adaptor.rdbms.exception.RDBMSEventProcessingException;
 import org.wso2.carbon.event.output.adaptor.rdbms.internal.ExecutionInfo;
@@ -49,7 +50,6 @@ import java.sql.*;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
-;
 
 /**
  * Class will Insert or Update/Insert values to selected RDBMS
@@ -62,14 +62,12 @@ public final class RDBMSEventAdapterType extends AbstractOutputEventAdaptor {
 
     private static RDBMSEventAdapterType rdbmsEventAdaptor = new RDBMSEventAdapterType();
     private ResourceBundle resourceBundle;
-    private ConcurrentHashMap<String, ConcurrentHashMap<String, ExecutionInfo>> tables;
-    private ConcurrentHashMap<Integer, ConcurrentHashMap<OutputEventAdaptorConfiguration, ConcurrentHashMap<OutputEventAdaptorMessageConfiguration, ExecutionInfo>>> initialConfiguration;
-    private Map<String,Map<String,String>> dbTypeMappings;
+    private ConcurrentHashMap<Integer, ConcurrentHashMap<OutputEventAdaptorConfiguration, ExecutionInfo>> initialConfiguration;
+    private Map<String, Map<String, String>> dbTypeMappings;
 
 
     private RDBMSEventAdapterType() {
-        this.initialConfiguration=new ConcurrentHashMap<Integer, ConcurrentHashMap<OutputEventAdaptorConfiguration, ConcurrentHashMap<OutputEventAdaptorMessageConfiguration, ExecutionInfo>>>();
-        this.tables = new ConcurrentHashMap<String, ConcurrentHashMap<String, ExecutionInfo>>();
+        this.initialConfiguration = new ConcurrentHashMap<Integer, ConcurrentHashMap<OutputEventAdaptorConfiguration, ExecutionInfo>>();
     }
 
     /**
@@ -111,16 +109,6 @@ public final class RDBMSEventAdapterType extends AbstractOutputEventAdaptor {
         datasourceName.setDisplayName(resourceBundle.getString(RDBMSEventAdaptorConstants.ADAPTOR_GENERIC_RDBMS_DATASOURCE_NAME));
         datasourceName.setRequired(true);
         propertyList.add(datasourceName);
-        return propertyList;
-    }
-
-    /**
-     * @return output adaptor Message configuration property list
-     */
-    @Override
-    protected List<Property> getOutputMessageProperties() {
-
-        List<Property> propertyList = new ArrayList<Property>();
 
         Property tableName = new Property(RDBMSEventAdaptorConstants.ADAPTOR_GENERIC_RDBMS_TABLE_NAME);
         tableName.setDisplayName(resourceBundle.getString(RDBMSEventAdaptorConstants.ADAPTOR_GENERIC_RDBMS_TABLE_NAME));
@@ -139,12 +127,13 @@ public final class RDBMSEventAdapterType extends AbstractOutputEventAdaptor {
         updateColumnKeys.setHint(resourceBundle.getString(RDBMSEventAdaptorConstants.ADAPTOR_GENERIC_RDBMS_UPDATE_KEYS_HINT));
         propertyList.add(updateColumnKeys);
 
+
         return propertyList;
     }
 
+
     @Override
     protected void publish(
-            OutputEventAdaptorMessageConfiguration outputEventMessageConfiguration,
             Object message, OutputEventAdaptorConfiguration outputEventAdaptorConfiguration,
             int tenantId) {
 
@@ -153,86 +142,73 @@ public final class RDBMSEventAdapterType extends AbstractOutputEventAdaptor {
         try {
             if (message instanceof Map) {
 
-                tableName = outputEventMessageConfiguration.getOutputMessageProperties().get(RDBMSEventAdaptorConstants.ADAPTOR_GENERIC_RDBMS_TABLE_NAME);
-                String executionMode = outputEventMessageConfiguration.getOutputMessageProperties().get(RDBMSEventAdaptorConstants.ADAPTOR_GENERIC_RDBMS_EXECUTION_MODE);
-                String updateColumnKeys = outputEventMessageConfiguration.getOutputMessageProperties().get(RDBMSEventAdaptorConstants.ADAPTOR_GENERIC_RDBMS_UPDATE_KEYS);
+                tableName = outputEventAdaptorConfiguration.getOutputProperties().get(RDBMSEventAdaptorConstants.ADAPTOR_GENERIC_RDBMS_TABLE_NAME);
+                String executionMode = outputEventAdaptorConfiguration.getOutputProperties().get(RDBMSEventAdaptorConstants.ADAPTOR_GENERIC_RDBMS_EXECUTION_MODE);
+                String updateColumnKeys = outputEventAdaptorConfiguration.getOutputProperties().get(RDBMSEventAdaptorConstants.ADAPTOR_GENERIC_RDBMS_UPDATE_KEYS);
 
-                ConcurrentHashMap<OutputEventAdaptorMessageConfiguration, ExecutionInfo> outputMessageConfigurationMap = null;
-                ConcurrentHashMap<OutputEventAdaptorConfiguration, ConcurrentHashMap<OutputEventAdaptorMessageConfiguration, ExecutionInfo>> outputAdapterConfigurationMap=initialConfiguration.get(tenantId);
+                ConcurrentHashMap<OutputEventAdaptorConfiguration, ExecutionInfo> outputAdapterConfigurationMap = initialConfiguration.get(tenantId);
 
                 if (outputAdapterConfigurationMap != null) {
-                    outputMessageConfigurationMap = outputAdapterConfigurationMap.get(outputEventAdaptorConfiguration);
-                    if (outputMessageConfigurationMap != null) {
-                        executionInfo = outputMessageConfigurationMap.get(outputEventMessageConfiguration);
-                    } else {
-                        outputMessageConfigurationMap = new ConcurrentHashMap<OutputEventAdaptorMessageConfiguration, ExecutionInfo>();
-                        outputAdapterConfigurationMap.putIfAbsent(outputEventAdaptorConfiguration,outputMessageConfigurationMap);
-                        outputMessageConfigurationMap=outputAdapterConfigurationMap.get(outputEventAdaptorConfiguration);
-                    }
+                    executionInfo = outputAdapterConfigurationMap.get(outputEventAdaptorConfiguration);
                 } else {
-                    outputAdapterConfigurationMap = new ConcurrentHashMap<OutputEventAdaptorConfiguration, ConcurrentHashMap<OutputEventAdaptorMessageConfiguration, ExecutionInfo>>();
+                    outputAdapterConfigurationMap = new ConcurrentHashMap<OutputEventAdaptorConfiguration, ExecutionInfo>();
                     initialConfiguration.putIfAbsent(tenantId, outputAdapterConfigurationMap);
-                    outputAdapterConfigurationMap =initialConfiguration.get(tenantId);
-
-                    outputMessageConfigurationMap = new ConcurrentHashMap<OutputEventAdaptorMessageConfiguration, ExecutionInfo>();
-                    outputAdapterConfigurationMap.putIfAbsent(outputEventAdaptorConfiguration,outputMessageConfigurationMap);
-                    outputMessageConfigurationMap=outputAdapterConfigurationMap.get(outputEventAdaptorConfiguration);
                 }
 
                 if (executionInfo == null) {
                     executionInfo = new ExecutionInfo();
                     executionInfo.setDecayTimer(new DecayTimer());
 
-                    outputMessageConfigurationMap.put(outputEventMessageConfiguration,executionInfo);
+                    outputAdapterConfigurationMap.put(outputEventAdaptorConfiguration, executionInfo);
                     initializeDatabaseExecutionInfo(tableName, executionMode, updateColumnKeys, message, outputEventAdaptorConfiguration, executionInfo);
                 }
-                executeProcessActions(message,executionInfo,tableName);
+                executeProcessActions(message, executionInfo, tableName);
             } else {
                 throw new OutputEventAdaptorEventProcessingException(message.getClass().toString() + "is not a compatible type. Hence Event is dropped.");
             }
         } catch (RDBMSConnectionException e) {
             executionInfo.setIsConnectionLive(false);
-            log.error("Error while initializing connection for datasource "+outputEventAdaptorConfiguration.getOutputProperties().get(RDBMSEventAdaptorConstants.ADAPTOR_GENERIC_RDBMS_DATASOURCE_NAME)
+            log.error("Error while initializing connection for datasource " + outputEventAdaptorConfiguration.getOutputProperties().get(RDBMSEventAdaptorConstants.ADAPTOR_GENERIC_RDBMS_DATASOURCE_NAME)
                     + "Reconnection will try from " + (executionInfo.getNextConnectionTime() - System.currentTimeMillis()) + " milliseconds.", e);
             executionInfo.getDecayTimer().incrementPosition();
 
-            if(executionInfo.getNextConnectionTime() == 0){
+            if (executionInfo.getNextConnectionTime() == 0) {
                 try {
-                    executeProcessActions(message, executionInfo,tableName);
+                    executeProcessActions(message, executionInfo, tableName);
                 } catch (RDBMSConnectionException e1) {
-                    log.error("Error while initializing connection for datasource "+outputEventAdaptorConfiguration.getOutputProperties().get(RDBMSEventAdaptorConstants.ADAPTOR_GENERIC_RDBMS_DATASOURCE_NAME)
+                    log.error("Error while initializing connection for datasource " + outputEventAdaptorConfiguration.getOutputProperties().get(RDBMSEventAdaptorConstants.ADAPTOR_GENERIC_RDBMS_DATASOURCE_NAME)
                             + "Reconnection will try from " + (executionInfo.getNextConnectionTime() - System.currentTimeMillis()) + " milliseconds.", e);
                     executionInfo.getDecayTimer().incrementPosition();
-                } catch (RDBMSEventProcessingException e2){
+                } catch (RDBMSEventProcessingException e2) {
                     log.error(e2.getMessage() + " Hence Event is dropped.");
                 }
             }
-        } catch (RDBMSEventProcessingException e){
+        } catch (RDBMSEventProcessingException e) {
             log.error(e.getMessage() + " Hence Event is dropped.");
         }
     }
 
-    public void executeProcessActions(Object message, ExecutionInfo executionInfo, String tableName) throws RDBMSConnectionException,RDBMSEventProcessingException {
+    public void executeProcessActions(Object message, ExecutionInfo executionInfo, String tableName) throws RDBMSConnectionException, RDBMSEventProcessingException {
 
         if (!executionInfo.getIsConnectionLive()) {
             long nextConnectionTime = executionInfo.getNextConnectionTime();
             long currentTime = System.currentTimeMillis();
             if (currentTime >= nextConnectionTime) {
-                createTableIfNotExist(executionInfo,tableName);
-                executeDbActions(message,executionInfo);
+                createTableIfNotExist(executionInfo, tableName);
+                executeDbActions(message, executionInfo);
                 executionInfo.getDecayTimer().reset();
                 executionInfo.setIsConnectionLive(true);
             } else {
-                if(log.isDebugEnabled()){
+                if (log.isDebugEnabled()) {
                     log.debug("End point suspended hence dropping event. End point will be active after " + (executionInfo.getNextConnectionTime() - currentTime) + " milliseconds.");
                 }
             }
         } else {
-            executeDbActions(message,executionInfo);
+            executeDbActions(message, executionInfo);
         }
     }
 
-    public void executeDbActions(Object message, ExecutionInfo executionInfo) throws RDBMSConnectionException,RDBMSEventProcessingException {
+    public void executeDbActions(Object message, ExecutionInfo executionInfo) throws RDBMSConnectionException, RDBMSEventProcessingException {
 
         Connection con;
         PreparedStatement stmt = null;
@@ -271,7 +247,7 @@ public final class RDBMSEventAdapterType extends AbstractOutputEventAdaptor {
                 }
             }
         } catch (SQLException e) {
-            throw new RDBMSEventProcessingException("Cannot Execute Insert/Update Query for event " + message.toString() + " " + e.getMessage(),e);
+            throw new RDBMSEventProcessingException("Cannot Execute Insert/Update Query for event " + message.toString() + " " + e.getMessage(), e);
         } finally {
             cleanupConnections(stmt, con);
         }
@@ -313,9 +289,9 @@ public final class RDBMSEventAdapterType extends AbstractOutputEventAdaptor {
                             attribute.getName());
                 }
             }
-        } catch (SQLException e){
-            cleanupConnections(stmt,null);
-            throw new RDBMSEventProcessingException("Cannot set value to attribute name "+ attribute.getName() + ". Hence dropping the event." +e.getMessage() ,e);
+        } catch (SQLException e) {
+            cleanupConnections(stmt, null);
+            throw new RDBMSEventProcessingException("Cannot set value to attribute name " + attribute.getName() + ". Hence dropping the event." + e.getMessage(), e);
         }
     }
 
@@ -325,7 +301,7 @@ public final class RDBMSEventAdapterType extends AbstractOutputEventAdaptor {
     private void populateJaxbMappings() {
 
         JAXBContext jaxbContext;
-        dbTypeMappings =new HashMap<String, Map<String, String>>();
+        dbTypeMappings = new HashMap<String, Map<String, String>>();
         try {
             jaxbContext = JAXBContext.newInstance(Mappings.class);
             Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
@@ -335,37 +311,37 @@ public final class RDBMSEventAdapterType extends AbstractOutputEventAdaptor {
                 throw new OutputEventAdaptorEventProcessingException("The " + RDBMSEventAdaptorConstants.ADAPTOR_GENERIC_RDBMS_FILE_NAME + " can not found in " + path);
             }
             Mappings mappings = (Mappings) unmarshaller.unmarshal(configFile);
-            Map<String,Mapping> dbMap=new HashMap<String, Mapping>();
-            List<Mapping> mappingList=mappings.getMapping();
+            Map<String, Mapping> dbMap = new HashMap<String, Mapping>();
+            List<Mapping> mappingList = mappings.getMapping();
 
-            for(Mapping mapping : mappingList){
-                dbMap.put(mapping.getDb(),mapping);
+            for (Mapping mapping : mappingList) {
+                dbMap.put(mapping.getDb(), mapping);
             }
 
             //Constructs a map to contain all db wise elements and there values
-            for(Mapping mapping : mappingList){
-                if(mapping.getDb()!=null){
+            for (Mapping mapping : mappingList) {
+                if (mapping.getDb() != null) {
                     Mapping defaultMapping = dbMap.get(null);
                     Mapping specificMapping = dbMap.get(mapping.getDb());
                     List<Element> defaultElementList = defaultMapping.getElements().getElementList();
                     Map<String, String> elementMappings = new HashMap<String, String>();
-                    for(Element element : defaultElementList){
+                    for (Element element : defaultElementList) {
                         //Check if the mapping is present in the specific mapping
                         Element elementDetails = null;
-                        if( specificMapping.getElements().getElementList() != null){
+                        if (specificMapping.getElements().getElementList() != null) {
                             elementDetails = specificMapping.getElements().getType(element.getKey());
                         }
                         //If a specific mapping is not found then use the default mapping
-                        if(elementDetails == null){
+                        if (elementDetails == null) {
                             elementDetails = defaultMapping.getElements().getType(element.getKey());
                         }
-                        elementMappings.put(elementDetails.getKey(),elementDetails.getValue());
+                        elementMappings.put(elementDetails.getKey(), elementDetails.getValue());
                     }
                     dbTypeMappings.put(mapping.getDb(), elementMappings);
                 }
             }
         } catch (JAXBException e) {
-            throw new OutputEventAdaptorEventProcessingException(e.getMessage(),e);
+            throw new OutputEventAdaptorEventProcessingException(e.getMessage(), e);
         }
     }
 
@@ -373,7 +349,7 @@ public final class RDBMSEventAdapterType extends AbstractOutputEventAdaptor {
      * Construct all the queries and assign to executionInfo instance
      */
     private void initializeDatabaseExecutionInfo(String tableName, String executionMode, String updateColumnKeys, Object message,
-                OutputEventAdaptorConfiguration adaptorConfig, ExecutionInfo executionInfo) throws RDBMSConnectionException {
+                                                 OutputEventAdaptorConfiguration adaptorConfig, ExecutionInfo executionInfo) throws RDBMSConnectionException {
 
         if (resourceBundle.getString(RDBMSEventAdaptorConstants.ADAPTOR_GENERIC_RDBMS_EXECUTION_MODE_UPDATE).equalsIgnoreCase(executionMode)) {
             executionInfo.setUpdateMode(true);
@@ -448,13 +424,13 @@ public final class RDBMSEventAdapterType extends AbstractOutputEventAdaptor {
             }
 
             //Constructing quert to create a new table
-            String createTableQuery = constructQuery(tableName,elementMappings.get("createTable"),column_types,null,null,null,null);
+            String createTableQuery = constructQuery(tableName, elementMappings.get("createTable"), column_types, null, null, null, null);
 
             //constructing query to insert date into the table row
-            String insertTableRowQuery = constructQuery(tableName,elementMappings.get("insertDataToTable"),null,columns,valuePositionsBuilder,null,null);
+            String insertTableRowQuery = constructQuery(tableName, elementMappings.get("insertDataToTable"), null, columns, valuePositionsBuilder, null, null);
 
             //Constructing query to check for the table existence
-            String isTableExistQuery = constructQuery(tableName, elementMappings.get("isTableExist"), null, null, null,null,null);
+            String isTableExistQuery = constructQuery(tableName, elementMappings.get("isTableExist"), null, null, null, null, null);
 
             executionInfo.setPreparedInsertStatement(insertTableRowQuery);
             executionInfo.setPreparedCreateTableStatement(createTableQuery);
@@ -514,7 +490,7 @@ public final class RDBMSEventAdapterType extends AbstractOutputEventAdaptor {
             }
         } catch (DataSourceException e) {
             log.error("There is no any data-source found called : " + adaptorConfig.getOutputProperties().get(RDBMSEventAdaptorConstants.ADAPTOR_GENERIC_RDBMS_DATASOURCE_NAME), e);
-            throw new RDBMSConnectionException(e.getMessage(),e);
+            throw new RDBMSConnectionException(e.getMessage(), e);
         } finally {
             cleanupConnections(null, con);
         }
@@ -523,30 +499,30 @@ public final class RDBMSEventAdapterType extends AbstractOutputEventAdaptor {
     /**
      * Replace attribute values with target build queries
      */
-    public String constructQuery(String tableName, String query, StringBuilder column_types, StringBuilder columns, StringBuilder values, StringBuilder column_values, StringBuilder condition){
+    public String constructQuery(String tableName, String query, StringBuilder column_types, StringBuilder columns, StringBuilder values, StringBuilder column_values, StringBuilder condition) {
 
-        if(query.contains(RDBMSEventAdaptorConstants.ADAPTOR_GENERIC_RDBMS_ATTRIBUTE_TABLE_NAME)){
-            query = query.replace(RDBMSEventAdaptorConstants.ADAPTOR_GENERIC_RDBMS_ATTRIBUTE_TABLE_NAME,tableName);
+        if (query.contains(RDBMSEventAdaptorConstants.ADAPTOR_GENERIC_RDBMS_ATTRIBUTE_TABLE_NAME)) {
+            query = query.replace(RDBMSEventAdaptorConstants.ADAPTOR_GENERIC_RDBMS_ATTRIBUTE_TABLE_NAME, tableName);
         }
-        if(query.contains(RDBMSEventAdaptorConstants.ADAPTOR_GENERIC_RDBMS_ATTRIBUTE_COLUMN_TYPES)){
-            query = query.replace(RDBMSEventAdaptorConstants.ADAPTOR_GENERIC_RDBMS_ATTRIBUTE_COLUMN_TYPES,column_types.toString());
+        if (query.contains(RDBMSEventAdaptorConstants.ADAPTOR_GENERIC_RDBMS_ATTRIBUTE_COLUMN_TYPES)) {
+            query = query.replace(RDBMSEventAdaptorConstants.ADAPTOR_GENERIC_RDBMS_ATTRIBUTE_COLUMN_TYPES, column_types.toString());
         }
-        if(query.contains(RDBMSEventAdaptorConstants.ADAPTOR_GENERIC_RDBMS_ATTRIBUTE_COLUMNS)){
-            query = query.replace(RDBMSEventAdaptorConstants.ADAPTOR_GENERIC_RDBMS_ATTRIBUTE_COLUMNS,columns.toString());
+        if (query.contains(RDBMSEventAdaptorConstants.ADAPTOR_GENERIC_RDBMS_ATTRIBUTE_COLUMNS)) {
+            query = query.replace(RDBMSEventAdaptorConstants.ADAPTOR_GENERIC_RDBMS_ATTRIBUTE_COLUMNS, columns.toString());
         }
-        if(query.contains(RDBMSEventAdaptorConstants.ADAPTOR_GENERIC_RDBMS_ATTRIBUTE_VALUES)){
-            query = query.replace(RDBMSEventAdaptorConstants.ADAPTOR_GENERIC_RDBMS_ATTRIBUTE_VALUES,values.toString());
+        if (query.contains(RDBMSEventAdaptorConstants.ADAPTOR_GENERIC_RDBMS_ATTRIBUTE_VALUES)) {
+            query = query.replace(RDBMSEventAdaptorConstants.ADAPTOR_GENERIC_RDBMS_ATTRIBUTE_VALUES, values.toString());
         }
-        if(query.contains(RDBMSEventAdaptorConstants.ADAPTOR_GENERIC_RDBMS_ATTRIBUTE_COLUMN_VALUES)){
-            query = query.replace(RDBMSEventAdaptorConstants.ADAPTOR_GENERIC_RDBMS_ATTRIBUTE_COLUMN_VALUES,column_values.toString());
+        if (query.contains(RDBMSEventAdaptorConstants.ADAPTOR_GENERIC_RDBMS_ATTRIBUTE_COLUMN_VALUES)) {
+            query = query.replace(RDBMSEventAdaptorConstants.ADAPTOR_GENERIC_RDBMS_ATTRIBUTE_COLUMN_VALUES, column_values.toString());
         }
-        if(query.contains(RDBMSEventAdaptorConstants.ADAPTOR_GENERIC_RDBMS_ATTRIBUTE_CONDITION)){
-            query = query.replace(RDBMSEventAdaptorConstants.ADAPTOR_GENERIC_RDBMS_ATTRIBUTE_CONDITION,condition.toString());
+        if (query.contains(RDBMSEventAdaptorConstants.ADAPTOR_GENERIC_RDBMS_ATTRIBUTE_CONDITION)) {
+            query = query.replace(RDBMSEventAdaptorConstants.ADAPTOR_GENERIC_RDBMS_ATTRIBUTE_CONDITION, condition.toString());
         }
         return query;
     }
 
-    public void createTableIfNotExist(ExecutionInfo executionInfo,String tableName) throws RDBMSConnectionException,RDBMSEventProcessingException {
+    public void createTableIfNotExist(ExecutionInfo executionInfo, String tableName) throws RDBMSConnectionException, RDBMSEventProcessingException {
 
         Connection connection;
         Statement stmt = null;
@@ -564,16 +540,16 @@ public final class RDBMSEventAdapterType extends AbstractOutputEventAdaptor {
                 stmt.executeQuery(executionInfo.getPreparedTableExistenceCheckStatement());
             } catch (SQLException e) {
                 tableExists = false;
-                if(log.isDebugEnabled()) {
+                if (log.isDebugEnabled()) {
                     log.debug("Table " + tableName + " does not Exist. Table Will be created. ");
                 }
             }
 
-            if (!tableExists) {
+            if (!tableExists && stmt != null) {
                 stmt.executeUpdate(executionInfo.getPreparedCreateTableStatement());
             }
         } catch (SQLException e) {
-            throw new RDBMSEventProcessingException("Cannot Execute Create Table Query. " + e.getMessage(),e);
+            throw new RDBMSEventProcessingException("Cannot Execute Create Table Query. " + e.getMessage(), e);
         } finally {
             cleanupConnections(stmt, connection);
         }
@@ -617,15 +593,14 @@ public final class RDBMSEventAdapterType extends AbstractOutputEventAdaptor {
     }
 
     @Override
-    public void removeConnectionInfo(OutputEventAdaptorMessageConfiguration outputEventAdaptorMessageConfiguration,
-                                     OutputEventAdaptorConfiguration outputEventAdaptorConfiguration, int tenantId) {
+    public void removeConnectionInfo(OutputEventAdaptorConfiguration outputEventAdaptorConfiguration, int tenantId) {
 
-        initialConfiguration.get(tenantId).get(outputEventAdaptorConfiguration).remove(outputEventAdaptorMessageConfiguration);
+        initialConfiguration.get(tenantId).remove(outputEventAdaptorConfiguration);
 
-        if(initialConfiguration.get(tenantId).get(outputEventAdaptorConfiguration).isEmpty()){
+        if (initialConfiguration.get(tenantId).isEmpty()) {
             initialConfiguration.get(tenantId).remove(outputEventAdaptorConfiguration);
         }
-        if(initialConfiguration.get(tenantId).isEmpty()){
+        if (initialConfiguration.get(tenantId).isEmpty()) {
             initialConfiguration.remove(tenantId);
         }
     }

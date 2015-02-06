@@ -391,7 +391,7 @@
             </dependency>
             <dependency>
                 <groupId>org.wso2.carbon.event-processing</groupId>
-                <artifactId>org.wso2.carbon.event.output.adaptor.core</artifactId>
+                <artifactId>org.wso2.carbon.event.output.adaptor.manager.core</artifactId>
                 <version>${carbon.event.processing.version}</version>
             </dependency>
             <dependency>

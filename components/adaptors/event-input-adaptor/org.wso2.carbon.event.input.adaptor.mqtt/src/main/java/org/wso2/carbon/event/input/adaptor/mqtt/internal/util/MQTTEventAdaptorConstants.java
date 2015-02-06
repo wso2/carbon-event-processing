@@ -1,5 +1,5 @@
 /*
-*  Copyright (c) 2005-2014, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
+*  Copyright (c) 2015, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
 *
 *  WSO2 Inc. licenses this file to you under the Apache License,
 *  Version 2.0 (the "License"); you may not use this file except
@@ -15,6 +15,7 @@
 * specific language governing permissions and limitations
 * under the License.
 */
+
 package org.wso2.carbon.event.input.adaptor.mqtt.internal.util;
 
 
@@ -36,9 +37,6 @@ public final class MQTTEventAdaptorConstants {
     public static final String ADAPTOR_CONF_CLEAN_SESSION = "cleanSession";
     public static final String ADAPTOR_CONF_CLEAN_SESSION_HINT = "cleanSession.hint";
     public static final String ADAPTOR_CONF_KEEP_ALIVE = "keepAlive";
-
-    public static int initialReconnectDuration = 10000;
-    public static final int reconnectionProgressionFactor = 2;
 
 
 }

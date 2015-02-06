@@ -22,13 +22,12 @@ import kafka.producer.KeyedMessage;
 import kafka.producer.ProducerConfig;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.wso2.carbon.event.output.adaptor.core.AbstractOutputEventAdaptor;
-import org.wso2.carbon.event.output.adaptor.core.MessageType;
-import org.wso2.carbon.event.output.adaptor.core.Property;
-import org.wso2.carbon.event.output.adaptor.core.config.OutputEventAdaptorConfiguration;
-import org.wso2.carbon.event.output.adaptor.core.exception.TestConnectionUnavailableException;
-import org.wso2.carbon.event.output.adaptor.core.message.config.OutputEventAdaptorMessageConfiguration;
 import org.wso2.carbon.event.output.adaptor.kafka.internal.util.KafkaOutEventAdaptorConstants;
+import org.wso2.carbon.event.output.adaptor.manager.core.AbstractOutputEventAdaptor;
+import org.wso2.carbon.event.output.adaptor.manager.core.MessageType;
+import org.wso2.carbon.event.output.adaptor.manager.core.Property;
+import org.wso2.carbon.event.output.adaptor.manager.core.config.OutputEventAdaptorConfiguration;
+import org.wso2.carbon.event.output.adaptor.manager.core.exception.TestConnectionUnavailableException;
 
 import java.util.*;
 
@@ -78,13 +77,6 @@ public final class KafkaEventAdaptorType extends AbstractOutputEventAdaptor {
         optionConfigProperties.setHint(resourceBundle.getString(KafkaOutEventAdaptorConstants.ADAPTOR_OPTIONAL_CONFIGURATION_PROPERTIES_HINT));
         propertyList.add(optionConfigProperties);
 
-        return propertyList;
-    }
-
-    @Override
-    protected List<Property> getOutputMessageProperties() {
-        List<Property> propertyList = new ArrayList<Property>();
-
         //set Topic of broker
         Property webTopic = new Property(KafkaOutEventAdaptorConstants.ADAPTOR_PUBLISH_TOPIC);
         webTopic.setDisplayName(resourceBundle.getString(KafkaOutEventAdaptorConstants.ADAPTOR_PUBLISH_TOPIC));
@@ -94,15 +86,15 @@ public final class KafkaEventAdaptorType extends AbstractOutputEventAdaptor {
         return propertyList;
     }
 
+
     @Override
     public void publish(
-            OutputEventAdaptorMessageConfiguration outputEventAdaptorMessageConfiguration,
             Object event, OutputEventAdaptorConfiguration outputEventAdaptorConfiguration,
             int tenantId) {
         Map<String, String> brokerProperties = outputEventAdaptorConfiguration.getOutputProperties();
         String kafkaConnect = brokerProperties.get(KafkaOutEventAdaptorConstants.ADAPTOR_META_BROKER_LIST);
 
-        Map<String, String> messageProperties = outputEventAdaptorMessageConfiguration.getOutputMessageProperties();
+        Map<String, String> messageProperties = outputEventAdaptorConfiguration.getOutputProperties();
         String topic = messageProperties.get(KafkaOutEventAdaptorConstants.ADAPTOR_PUBLISH_TOPIC);
         String optionalConfigs = brokerProperties.get(KafkaOutEventAdaptorConstants.ADAPTOR_OPTIONAL_CONFIGURATION_PROPERTIES);
         Properties props = new Properties();
@@ -115,9 +107,9 @@ public final class KafkaEventAdaptorType extends AbstractOutputEventAdaptor {
             if (optionalProperties != null && optionalProperties.length > 0) {
                 for (String header : optionalProperties) {
                     String[] configPropertyWithValue = header.split(":");
-                    if(configPropertyWithValue.length == 2){
+                    if (configPropertyWithValue.length == 2) {
                         props.put(configPropertyWithValue[0], configPropertyWithValue[1]);
-                    }else {
+                    } else {
                         log.warn("Optional configuration property not defined in the correct format");
                     }
                 }
@@ -126,7 +118,7 @@ public final class KafkaEventAdaptorType extends AbstractOutputEventAdaptor {
 
         ProducerConfig config = new ProducerConfig(props);
         Producer<String, Object> producer = new Producer<String, Object>(config);
-        KeyedMessage<String, Object> data = new KeyedMessage<String, Object>(topic,event.toString());
+        KeyedMessage<String, Object> data = new KeyedMessage<String, Object>(topic, event.toString());
         producer.send(data);
         producer.close();
     }
@@ -139,7 +131,6 @@ public final class KafkaEventAdaptorType extends AbstractOutputEventAdaptor {
 
     @Override
     public void removeConnectionInfo(
-            OutputEventAdaptorMessageConfiguration outputEventAdaptorMessageConfiguration,
             OutputEventAdaptorConfiguration outputEventAdaptorConfiguration, int tenantId) {
         //not-required
     }

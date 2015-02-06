@@ -21,7 +21,7 @@ import org.apache.axiom.om.OMElement;
 import org.apache.axis2.transport.base.BaseConstants;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.wso2.carbon.event.output.adaptor.core.exception.OutputEventAdaptorEventProcessingException;
+import org.wso2.carbon.event.output.adaptor.manager.core.exception.OutputEventAdaptorEventProcessingException;
 
 import javax.jms.*;
 import java.util.Map;

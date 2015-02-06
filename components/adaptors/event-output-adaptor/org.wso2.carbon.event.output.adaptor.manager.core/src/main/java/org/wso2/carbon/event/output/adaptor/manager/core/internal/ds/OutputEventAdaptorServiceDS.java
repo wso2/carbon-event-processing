@@ -17,16 +17,16 @@
 */
 package org.wso2.carbon.event.output.adaptor.manager.core.internal.ds;
 
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.osgi.service.component.ComponentContext;
-import org.wso2.carbon.event.output.adaptor.core.OutputEventAdaptorFactory;
-import org.wso2.carbon.event.output.adaptor.core.OutputEventAdaptorService;
-import org.wso2.carbon.event.output.adaptor.core.internal.CarbonOutputEventAdaptorService;
+import org.wso2.carbon.event.output.adaptor.manager.core.OutputEventAdaptorFactory;
+import org.wso2.carbon.event.output.adaptor.manager.core.OutputEventAdaptorService;
+import org.wso2.carbon.event.output.adaptor.manager.core.internal.CarbonOutputEventAdaptorService;
 import org.wso2.carbon.event.statistics.EventStatisticsService;
 
 import java.util.List;
-
 
 /**
  * @scr.component name="output.event.adaptor.service.component" immediate="true"

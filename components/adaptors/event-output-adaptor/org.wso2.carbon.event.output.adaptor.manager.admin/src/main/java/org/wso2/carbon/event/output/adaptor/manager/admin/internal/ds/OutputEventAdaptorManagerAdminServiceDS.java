@@ -18,10 +18,10 @@
 package org.wso2.carbon.event.output.adaptor.manager.admin.internal.ds;
 
 import org.osgi.service.component.ComponentContext;
-import org.wso2.carbon.event.output.adaptor.core.OutputEventAdaptorService;
 import org.wso2.carbon.event.output.adaptor.manager.admin.internal.util.OutputEventAdaptorHolder;
 import org.wso2.carbon.event.output.adaptor.manager.admin.internal.util.OutputEventAdaptorManagerHolder;
 import org.wso2.carbon.event.output.adaptor.manager.core.OutputEventAdaptorManagerService;
+import org.wso2.carbon.event.output.adaptor.manager.core.OutputEventAdaptorService;
 
 /**
  * this class is used to get the EventAdaptorManager service.
@@ -31,7 +31,7 @@ import org.wso2.carbon.event.output.adaptor.manager.core.OutputEventAdaptorManag
  * interface="org.wso2.carbon.event.output.adaptor.manager.core.OutputEventAdaptorManagerService" cardinality="1..1"
  * policy="dynamic" bind="setEventAdaptorManagerService" unbind="unSetEventAdaptorManagerService"
  * @scr.reference name="output.event.adaptor.service"
- * interface="org.wso2.carbon.event.output.adaptor.core.OutputEventAdaptorService" cardinality="1..1"
+ * interface="org.wso2.carbon.event.output.adaptor.manager.core.OutputEventAdaptorService" cardinality="1..1"
  * policy="dynamic" bind="setEventAdaptorService" unbind="unSetEventAdaptorService"
  */
 public class OutputEventAdaptorManagerAdminServiceDS {

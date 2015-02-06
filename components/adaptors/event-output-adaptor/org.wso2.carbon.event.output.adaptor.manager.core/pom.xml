@@ -50,11 +50,11 @@
         </dependency>
         <dependency>
             <groupId>org.wso2.carbon.event-processing</groupId>
-            <artifactId>org.wso2.carbon.event.output.adaptor.core</artifactId>
+            <artifactId>org.wso2.carbon.event.processing.application.deployer</artifactId>
         </dependency>
         <dependency>
             <groupId>org.wso2.carbon.event-processing</groupId>
-            <artifactId>org.wso2.carbon.event.processing.application.deployer</artifactId>
+            <artifactId>org.wso2.carbon.event.statistics</artifactId>
         </dependency>
     </dependencies>
 

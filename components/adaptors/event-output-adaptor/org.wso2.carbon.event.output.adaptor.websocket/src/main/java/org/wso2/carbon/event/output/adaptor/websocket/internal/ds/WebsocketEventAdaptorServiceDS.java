@@ -20,8 +20,7 @@ package org.wso2.carbon.event.output.adaptor.websocket.internal.ds;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.osgi.service.component.ComponentContext;
-
-import org.wso2.carbon.event.output.adaptor.core.OutputEventAdaptorFactory;
+import org.wso2.carbon.event.output.adaptor.manager.core.OutputEventAdaptorFactory;
 import org.wso2.carbon.event.output.adaptor.websocket.WebsocketEventAdaptorFactory;
 
 /**

@@ -26,89 +26,82 @@ import java.util.concurrent.ConcurrentHashMap;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.glassfish.tyrus.client.ClientManager;
-import org.wso2.carbon.event.output.adaptor.core.AbstractOutputEventAdaptor;
-import org.wso2.carbon.event.output.adaptor.core.MessageType;
-import org.wso2.carbon.event.output.adaptor.core.Property;
-import org.wso2.carbon.event.output.adaptor.core.config.OutputEventAdaptorConfiguration;
-import org.wso2.carbon.event.output.adaptor.core.exception.OutputEventAdaptorEventProcessingException;
-import org.wso2.carbon.event.output.adaptor.core.message.config.OutputEventAdaptorMessageConfiguration;
+import org.wso2.carbon.event.output.adaptor.manager.core.AbstractOutputEventAdaptor;
+import org.wso2.carbon.event.output.adaptor.manager.core.MessageType;
+import org.wso2.carbon.event.output.adaptor.manager.core.Property;
+import org.wso2.carbon.event.output.adaptor.manager.core.config.OutputEventAdaptorConfiguration;
+import org.wso2.carbon.event.output.adaptor.manager.core.exception.OutputEventAdaptorEventProcessingException;
 import org.wso2.carbon.event.output.adaptor.websocket.internal.WebsocketClient;
 import org.wso2.carbon.event.output.adaptor.websocket.internal.util.WebsocketEventAdaptorConstants;
 
 import javax.websocket.*;
 
-public class WebsocketEventAdaptor extends AbstractOutputEventAdaptor{
+public class WebsocketEventAdaptor extends AbstractOutputEventAdaptor {
 
     private static final Log log = LogFactory.getLog(WebsocketEventAdaptor.class);
 
     private List<Property> outputAdapterProps;
-    private List<Property> outputMessageProps;
     private List<String> supportOutputMessageTypes;
-    private ConcurrentHashMap<Integer,ConcurrentHashMap<String,Session>> outputEventAdaptorSessionMap = new ConcurrentHashMap<Integer,ConcurrentHashMap<String,Session>>();        //<tenantId, <url,session> >
+    private ConcurrentHashMap<Integer, ConcurrentHashMap<String, Session>> outputEventAdaptorSessionMap = new ConcurrentHashMap<Integer, ConcurrentHashMap<String, Session>>();        //<tenantId, <url,session> >
 
-	private static WebsocketEventAdaptor instance = new WebsocketEventAdaptor();
+    private static WebsocketEventAdaptor instance = new WebsocketEventAdaptor();
 
     public static WebsocketEventAdaptor getInstance() {
         return instance;
     }
 
-	@Override
-	protected String getName() {
-		return WebsocketEventAdaptorConstants.ADAPTER_TYPE_WEBSOCKET;
-	}
+    @Override
+    protected String getName() {
+        return WebsocketEventAdaptorConstants.ADAPTER_TYPE_WEBSOCKET;
+    }
 
-	@Override
-	protected List<String> getSupportedOutputMessageTypes() {
-		return supportOutputMessageTypes;
-	}
+    @Override
+    protected List<String> getSupportedOutputMessageTypes() {
+        return supportOutputMessageTypes;
+    }
 
-	@Override
-	protected void init() {
-		populateAdapterMessageProps();
+    @Override
+    protected void init() {
+        populateAdapterMessageProps();
         this.supportOutputMessageTypes = new ArrayList<String>();
         this.supportOutputMessageTypes.add(MessageType.XML);
         this.supportOutputMessageTypes.add(MessageType.JSON);
         this.supportOutputMessageTypes.add(MessageType.TEXT);
-	}
+    }
 
-	@Override
-	protected List<Property> getOutputAdaptorProperties() {
-		return outputAdapterProps;
-	}
+    @Override
+    protected List<Property> getOutputAdaptorProperties() {
+        return outputAdapterProps;
+    }
 
-	@Override
-	protected List<Property> getOutputMessageProperties() {
-		return outputMessageProps;
-	}
 
-	@Override
-	protected void publish(
-			OutputEventAdaptorMessageConfiguration outputEventAdaptorMessageConfiguration,
-			Object message,
-			OutputEventAdaptorConfiguration outputEventAdaptorConfiguration,
-			int tenantId) {
-        String topic = outputEventAdaptorMessageConfiguration.getOutputMessageProperties().get(WebsocketEventAdaptorConstants.ADAPTER_TOPIC);
+    @Override
+    protected void publish(
+            Object message,
+            OutputEventAdaptorConfiguration outputEventAdaptorConfiguration,
+            int tenantId) {
+        String topic = outputEventAdaptorConfiguration.getOutputProperties().get(WebsocketEventAdaptorConstants.ADAPTER_TOPIC);
         String socketServerUrl = outputEventAdaptorConfiguration.getOutputProperties().get(WebsocketEventAdaptorConstants.ADAPTER_SERVER_URL);
-        if (!socketServerUrl.startsWith("ws://")){
-            throw new OutputEventAdaptorEventProcessingException("Provided websocket URL - "+socketServerUrl+" is invalid.");
+        if (!socketServerUrl.startsWith("ws://")) {
+            throw new OutputEventAdaptorEventProcessingException("Provided websocket URL - " + socketServerUrl + " is invalid.");
         }
-        if (topic != null){
-            socketServerUrl = socketServerUrl+"/"+topic;
+        if (topic != null) {
+            socketServerUrl = socketServerUrl + "/" + topic;
         }
-        ConcurrentHashMap<String,Session> urlSessionMap = outputEventAdaptorSessionMap.get(tenantId);
-        if (urlSessionMap == null){
-            urlSessionMap = new ConcurrentHashMap<String,Session>();
-            if (null != outputEventAdaptorSessionMap.putIfAbsent(tenantId,urlSessionMap)){
+        ConcurrentHashMap<String, Session> urlSessionMap = outputEventAdaptorSessionMap.get(tenantId);
+        if (urlSessionMap == null) {
+            urlSessionMap = new ConcurrentHashMap<String, Session>();
+            if (null != outputEventAdaptorSessionMap.putIfAbsent(tenantId, urlSessionMap)) {
                 urlSessionMap = outputEventAdaptorSessionMap.get(tenantId);
             }
         }
         Session session = urlSessionMap.get(socketServerUrl);
-        if (session == null){                                                                  //TODO: Handle reconnecting, in case server disconnects. Suggestion: Create a scheduler.
+        if (session == null) {                                                                  //TODO: Handle reconnecting, in case server disconnects. Suggestion: Create a scheduler.
             ClientEndpointConfig cec = ClientEndpointConfig.Builder.create().build();
             ClientManager client = ClientManager.createClient();
             try {
                 session = client.connectToServer(new WebsocketClient(), cec, new URI(socketServerUrl));
-                if (null != urlSessionMap.putIfAbsent(socketServerUrl, session)){
+                if (null != urlSessionMap.putIfAbsent(socketServerUrl, session)) {
                     session.close();
                     session = urlSessionMap.get(socketServerUrl);
                 }
@@ -120,15 +113,15 @@ public class WebsocketEventAdaptor extends AbstractOutputEventAdaptor{
                 throw new OutputEventAdaptorEventProcessingException(e);
             }
         }
-        synchronized (session){
+        synchronized (session) {
             session.getAsyncRemote().sendText(message.toString());      //this method call was synchronized to fix CEP-996
         }
     }
 
-	@Override
-	public void testConnection(
-			OutputEventAdaptorConfiguration outputEventAdaptorConfiguration,
-			int tenantId) {
+    @Override
+    public void testConnection(
+            OutputEventAdaptorConfiguration outputEventAdaptorConfiguration,
+            int tenantId) {
         Map<String, String> adaptorProps = outputEventAdaptorConfiguration.getOutputProperties();
         String url = adaptorProps.get(WebsocketEventAdaptorConstants.ADAPTER_SERVER_URL);
         ClientEndpointConfig cec = ClientEndpointConfig.Builder.create().build();
@@ -149,17 +142,16 @@ public class WebsocketEventAdaptor extends AbstractOutputEventAdaptor{
                 log.error(e.getMessage(), e);
             }
         }
-	}
+    }
 
     @Override
     public void removeConnectionInfo(
-            OutputEventAdaptorMessageConfiguration outputEventAdaptorMessageConfiguration,
             OutputEventAdaptorConfiguration outputEventAdaptorConfiguration, int tenantId) {
         /**
          * Clearing all the sessions created.
          */
-        for (ConcurrentHashMap<String,Session> urlSessionMap : outputEventAdaptorSessionMap.values()){
-            for (Session session : urlSessionMap.values()){
+        for (ConcurrentHashMap<String, Session> urlSessionMap : outputEventAdaptorSessionMap.values()) {
+            for (Session session : urlSessionMap.values()) {
                 try {
                     session.close();
                 } catch (IOException e) {
@@ -168,10 +160,9 @@ public class WebsocketEventAdaptor extends AbstractOutputEventAdaptor{
             }
         }
     }
-	
+
     private void populateAdapterMessageProps() {
         this.outputAdapterProps = new ArrayList<Property>();
-        this.outputMessageProps = new ArrayList<Property>();
         ResourceBundle resourceBundle = ResourceBundle.getBundle(
                 "org.wso2.carbon.event.output.adaptor.websocket.i18n.Resources", Locale.getDefault());
         Property socketUrlProp = new Property(WebsocketEventAdaptorConstants.ADAPTER_SERVER_URL);
@@ -183,7 +174,7 @@ public class WebsocketEventAdaptor extends AbstractOutputEventAdaptor{
         topicProp.setHint(resourceBundle.getString(WebsocketEventAdaptorConstants.ADAPTER_TOPIC_HINT));
         topicProp.setRequired(false);
         this.outputAdapterProps.add(socketUrlProp);
-        this.outputMessageProps.add(topicProp);
+        this.outputAdapterProps.add(topicProp);
     }
 
 }

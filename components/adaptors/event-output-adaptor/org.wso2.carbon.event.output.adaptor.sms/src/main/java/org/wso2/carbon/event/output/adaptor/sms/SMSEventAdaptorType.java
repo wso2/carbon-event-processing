@@ -29,12 +29,11 @@ import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.transport.base.BaseConstants;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.wso2.carbon.event.output.adaptor.core.AbstractOutputEventAdaptor;
-import org.wso2.carbon.event.output.adaptor.core.MessageType;
-import org.wso2.carbon.event.output.adaptor.core.Property;
-import org.wso2.carbon.event.output.adaptor.core.config.OutputEventAdaptorConfiguration;
-import org.wso2.carbon.event.output.adaptor.core.exception.TestConnectionUnavailableException;
-import org.wso2.carbon.event.output.adaptor.core.message.config.OutputEventAdaptorMessageConfiguration;
+import org.wso2.carbon.event.output.adaptor.manager.core.AbstractOutputEventAdaptor;
+import org.wso2.carbon.event.output.adaptor.manager.core.MessageType;
+import org.wso2.carbon.event.output.adaptor.manager.core.Property;
+import org.wso2.carbon.event.output.adaptor.manager.core.config.OutputEventAdaptorConfiguration;
+import org.wso2.carbon.event.output.adaptor.manager.core.exception.TestConnectionUnavailableException;
 import org.wso2.carbon.event.output.adaptor.sms.internal.ds.SMSEventAdaptorServiceValueHolder;
 import org.wso2.carbon.event.output.adaptor.sms.internal.util.SMSEventAdaptorConstants;
 
@@ -49,7 +48,7 @@ public final class SMSEventAdaptorType extends AbstractOutputEventAdaptor {
     private static final Log log = LogFactory.getLog(SMSEventAdaptorType.class);
 
     private static SMSEventAdaptorType SMSEventAdaptor = new SMSEventAdaptorType();
-    private ConcurrentHashMap<OutputEventAdaptorMessageConfiguration, List<String>> smsSenderConfigurationMap = new ConcurrentHashMap<OutputEventAdaptorMessageConfiguration, List<String>>();
+    private ConcurrentHashMap<OutputEventAdaptorConfiguration, List<String>> smsSenderConfigurationMap = new ConcurrentHashMap<OutputEventAdaptorConfiguration, List<String>>();
     private ResourceBundle resourceBundle;
 
     private SMSEventAdaptorType() {
@@ -94,14 +93,7 @@ public final class SMSEventAdaptorType extends AbstractOutputEventAdaptor {
      */
     @Override
     public List<Property> getOutputAdaptorProperties() {
-        return null;
-    }
 
-    /**
-     * @return output message configuration property list
-     */
-    @Override
-    public List<Property> getOutputMessageProperties() {
         List<Property> propertyList = new ArrayList<Property>();
 
         // set sms address
@@ -115,24 +107,22 @@ public final class SMSEventAdaptorType extends AbstractOutputEventAdaptor {
         return propertyList;
     }
 
+
     /**
-     * @param outputEventAdaptorMessageConfiguration
-     *                 - outputEventAdaptorMessageConfiguration to publish messages
      * @param message
      * @param outputEventAdaptorConfiguration
      *
      * @param tenantId
      */
     public void publish(
-            OutputEventAdaptorMessageConfiguration outputEventAdaptorMessageConfiguration,
             Object message,
             OutputEventAdaptorConfiguration outputEventAdaptorConfiguration, int tenantId) {
 
-        List<String> smsList = smsSenderConfigurationMap.get(outputEventAdaptorMessageConfiguration.getOutputMessageProperties().get(SMSEventAdaptorConstants.ADAPTOR_MESSAGE_SMS_NO));
+        List<String> smsList = smsSenderConfigurationMap.get(outputEventAdaptorConfiguration.getOutputProperties().get(SMSEventAdaptorConstants.ADAPTOR_MESSAGE_SMS_NO));
         if (smsList == null) {
             smsList = new ArrayList<String>();
-            smsList.add(outputEventAdaptorMessageConfiguration.getOutputMessageProperties().get(SMSEventAdaptorConstants.ADAPTOR_MESSAGE_SMS_NO));
-            smsSenderConfigurationMap.putIfAbsent(outputEventAdaptorMessageConfiguration, smsList);
+            smsList.add(outputEventAdaptorConfiguration.getOutputProperties().get(SMSEventAdaptorConstants.ADAPTOR_MESSAGE_SMS_NO));
+            smsSenderConfigurationMap.putIfAbsent(outputEventAdaptorConfiguration, smsList);
         }
 
         String[] smsNOs = smsList.toArray(new String[0]);
@@ -157,13 +147,13 @@ public final class SMSEventAdaptorType extends AbstractOutputEventAdaptor {
                     serviceClient.fireAndForget(payload);
 
                 } catch (AxisFault axisFault) {
-                    smsSenderConfigurationMap.remove(outputEventAdaptorMessageConfiguration.getOutputMessageProperties().get(SMSEventAdaptorConstants.ADAPTOR_MESSAGE_SMS_NO));
+                    smsSenderConfigurationMap.remove(outputEventAdaptorConfiguration.getOutputProperties().get(SMSEventAdaptorConstants.ADAPTOR_MESSAGE_SMS_NO));
                     String msg = "Error in delivering the message, " +
-                                 "message: " + message + ", to: " + smsNo + ".";
+                            "message: " + message + ", to: " + smsNo + ".";
                     log.error(msg, axisFault);
                 } catch (Exception ex) {
                     String msg = "Error in delivering the message, " +
-                                 "message: " + message + ", to: " + smsNo + ".";
+                            "message: " + message + ", to: " + smsNo + ".";
                     log.error(msg, ex);
                 }
             }
@@ -179,9 +169,8 @@ public final class SMSEventAdaptorType extends AbstractOutputEventAdaptor {
 
     @Override
     public void removeConnectionInfo(
-            OutputEventAdaptorMessageConfiguration outputEventAdaptorMessageConfiguration,
             OutputEventAdaptorConfiguration outputEventAdaptorConfiguration, int tenantId) {
-        smsSenderConfigurationMap.remove(outputEventAdaptorMessageConfiguration);
+        smsSenderConfigurationMap.remove(outputEventAdaptorConfiguration);
     }
 
 }

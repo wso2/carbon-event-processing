@@ -20,13 +20,15 @@ package org.wso2.carbon.event.output.adaptor.manager.core.internal;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.wso2.carbon.context.PrivilegedCarbonContext;
-import org.wso2.carbon.event.output.adaptor.core.AbstractOutputEventAdaptor;
-import org.wso2.carbon.event.output.adaptor.core.OutputEventAdaptorDto;
-import org.wso2.carbon.event.output.adaptor.core.OutputEventAdaptorService;
-import org.wso2.carbon.event.output.adaptor.core.config.OutputEventAdaptorConfiguration;
-import org.wso2.carbon.event.output.adaptor.core.exception.OutputEventAdaptorEventProcessingException;
-import org.wso2.carbon.event.output.adaptor.core.exception.TestConnectionUnavailableException;
-import org.wso2.carbon.event.output.adaptor.core.internal.ds.OutputEventAdaptorServiceValueHolder;
+import org.wso2.carbon.event.output.adaptor.manager.core.AbstractOutputEventAdaptor;
+import org.wso2.carbon.event.output.adaptor.manager.core.OutputEventAdaptorDto;
+import org.wso2.carbon.event.output.adaptor.manager.core.OutputEventAdaptorService;
+import org.wso2.carbon.event.output.adaptor.manager.core.config.OutputEventAdaptorConfiguration;
+import org.wso2.carbon.event.output.adaptor.manager.core.exception.OutputEventAdaptorEventProcessingException;
+import org.wso2.carbon.event.output.adaptor.manager.core.exception.OutputEventAdaptorManagerConfigurationException;
+import org.wso2.carbon.event.output.adaptor.manager.core.exception.TestConnectionUnavailableException;
+import org.wso2.carbon.event.output.adaptor.manager.core.internal.ds.OutputEventAdaptorManagerValueHolder;
+import org.wso2.carbon.event.output.adaptor.manager.core.internal.ds.OutputEventAdaptorServiceValueHolder;
 
 
 import java.util.ArrayList;
@@ -72,12 +74,19 @@ public class CarbonOutputEventAdaptorService implements OutputEventAdaptorServic
 
 
     @Override
-    public void publish(OutputEventAdaptorConfiguration outputEventAdaptorConfiguration,
+    public void publish(String outputEventAdaptorName,
                         Object object, int tenantId) {
-        AbstractOutputEventAdaptor outputEventAdaptor = this.eventAdaptorMap.get(outputEventAdaptorConfiguration.getType());
+
         try {
+            CarbonOutputEventAdaptorManagerService carbonOutputEventAdaptorService = OutputEventAdaptorManagerValueHolder.getCarbonEventAdaptorManagerService();
+            OutputEventAdaptorConfiguration outputEventAdaptorConfiguration = carbonOutputEventAdaptorService.getActiveOutputEventAdaptorConfiguration(outputEventAdaptorName, tenantId);
+            AbstractOutputEventAdaptor outputEventAdaptor = this.eventAdaptorMap.get(outputEventAdaptorConfiguration.getType());
+
             outputEventAdaptor.publishCall(object, outputEventAdaptorConfiguration, tenantId);
         } catch (OutputEventAdaptorEventProcessingException e) {
+            log.error(e.getMessage(), e);
+            throw new OutputEventAdaptorEventProcessingException(e.getMessage(), e);
+        } catch (OutputEventAdaptorManagerConfigurationException e) {
             log.error(e.getMessage(), e);
             throw new OutputEventAdaptorEventProcessingException(e.getMessage(), e);
         }

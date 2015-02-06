@@ -20,14 +20,14 @@ package org.wso2.carbon.event.output.adaptor.manager.core.internal.ds;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.osgi.service.component.ComponentContext;
-import org.wso2.carbon.event.output.adaptor.core.AbstractOutputEventAdaptor;
+import org.wso2.carbon.event.output.adaptor.manager.core.AbstractOutputEventAdaptor;
 import org.wso2.carbon.event.output.adaptor.manager.core.exception.OutputEventAdaptorManagerConfigurationException;
 
 
 /**
  * @scr.component name="output.event.adaptor.type.service.tracker.component" immediate="true"
  * @scr.reference name="abstract.output.event.adaptor.type.service"
- * interface="org.wso2.carbon.event.output.adaptor.core.AbstractOutputEventAdaptor" cardinality="0..n"
+ * interface="org.wso2.carbon.event.output.adaptor.manager.core.AbstractOutputEventAdaptor" cardinality="0..n"
  * policy="dynamic" bind="notifyNewEventAdaptorType" unbind="notifyRemovalEventAdaptorType"
  */
 public class OutputEventAdaptorTypeServiceTrackerDS {

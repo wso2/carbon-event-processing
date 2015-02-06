@@ -38,7 +38,7 @@
     <dependencies>
         <dependency>
             <groupId>org.wso2.carbon.event-processing</groupId>
-            <artifactId>org.wso2.carbon.event.output.adaptor.core</artifactId>
+            <artifactId>org.wso2.carbon.event.output.adaptor.manager.core</artifactId>
         </dependency>
         <dependency>
             <groupId>org.wso2.carbon</groupId>
@@ -92,8 +92,8 @@
                             org.wso2.carbon.event.output.adaptor.cassandra.*
                         </Export-Package>
                         <Import-Package>
-                            org.wso2.carbon.event.output.adaptor.core,
-                            org.wso2.carbon.event.output.adaptor.core.*,
+                            org.wso2.carbon.event.output.adaptor.manager.core,
+                            org.wso2.carbon.event.output.adaptor.manager.core.*,
                             !javax.xml.namespace,
                             javax.xml.namespace; version=0.0.0,
                             *;resolution:=optional,

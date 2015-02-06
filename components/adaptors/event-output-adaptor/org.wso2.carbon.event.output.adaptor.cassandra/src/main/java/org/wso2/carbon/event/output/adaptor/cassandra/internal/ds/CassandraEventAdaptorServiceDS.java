@@ -21,7 +21,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.osgi.service.component.ComponentContext;
 import org.wso2.carbon.event.output.adaptor.cassandra.CassandraEventAdaptorFactory;
-import org.wso2.carbon.event.output.adaptor.core.OutputEventAdaptorFactory;
+import org.wso2.carbon.event.output.adaptor.manager.core.OutputEventAdaptorFactory;
 
 /**
  * @scr.component name="output.CassandraEventAdaptorService.component" immediate="true"

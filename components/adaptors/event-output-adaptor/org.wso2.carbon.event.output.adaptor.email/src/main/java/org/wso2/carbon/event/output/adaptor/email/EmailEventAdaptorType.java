@@ -30,14 +30,13 @@ import org.apache.axis2.transport.base.BaseConstants;
 import org.apache.axis2.transport.mail.MailConstants;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.wso2.carbon.event.output.adaptor.core.AbstractOutputEventAdaptor;
-import org.wso2.carbon.event.output.adaptor.core.MessageType;
-import org.wso2.carbon.event.output.adaptor.core.Property;
-import org.wso2.carbon.event.output.adaptor.core.config.OutputEventAdaptorConfiguration;
-import org.wso2.carbon.event.output.adaptor.core.exception.TestConnectionUnavailableException;
-import org.wso2.carbon.event.output.adaptor.core.message.config.OutputEventAdaptorMessageConfiguration;
 import org.wso2.carbon.event.output.adaptor.email.internal.ds.EmailEventAdaptorServiceValueHolder;
 import org.wso2.carbon.event.output.adaptor.email.internal.util.EmailEventAdaptorConstants;
+import org.wso2.carbon.event.output.adaptor.manager.core.AbstractOutputEventAdaptor;
+import org.wso2.carbon.event.output.adaptor.manager.core.MessageType;
+import org.wso2.carbon.event.output.adaptor.manager.core.Property;
+import org.wso2.carbon.event.output.adaptor.manager.core.config.OutputEventAdaptorConfiguration;
+import org.wso2.carbon.event.output.adaptor.manager.core.exception.TestConnectionUnavailableException;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
@@ -51,7 +50,7 @@ public final class EmailEventAdaptorType extends AbstractOutputEventAdaptor {
 
     private static EmailEventAdaptorType emailEventAdaptor = new EmailEventAdaptorType();
     private ThreadPoolExecutor threadPoolExecutor = new ThreadPoolExecutor(EmailEventAdaptorConstants.MIN_THREAD, EmailEventAdaptorConstants.MAX_THREAD, EmailEventAdaptorConstants.DEFAULT_KEEP_ALIVE_TIME, TimeUnit.SECONDS, new LinkedBlockingQueue<Runnable>(1000));
-    private ConcurrentHashMap<OutputEventAdaptorMessageConfiguration, EmailSenderConfiguration> emailSenderConfigurationMap = new ConcurrentHashMap<OutputEventAdaptorMessageConfiguration, EmailSenderConfiguration>();
+    private ConcurrentHashMap<OutputEventAdaptorConfiguration, EmailSenderConfiguration> emailSenderConfigurationMap = new ConcurrentHashMap<OutputEventAdaptorConfiguration, EmailSenderConfiguration>();
     private ResourceBundle resourceBundle;
 
     private EmailEventAdaptorType() {
@@ -96,14 +95,7 @@ public final class EmailEventAdaptorType extends AbstractOutputEventAdaptor {
      */
     @Override
     public List<Property> getOutputAdaptorProperties() {
-        return null;
-    }
 
-    /**
-     * @return output message configuration property list
-     */
-    @Override
-    public List<Property> getOutputMessageProperties() {
         List<Property> propertyList = new ArrayList<Property>();
 
         // set email address
@@ -125,23 +117,21 @@ public final class EmailEventAdaptorType extends AbstractOutputEventAdaptor {
         return propertyList;
     }
 
+
     /**
-     * @param outputEventMessageConfiguration
-     *                 - outputEventMessageConfiguration to publish messages
      * @param message
      * @param outputEventAdaptorConfiguration
      *
      * @param tenantId
      */
     public void publish(
-            OutputEventAdaptorMessageConfiguration outputEventMessageConfiguration,
             Object message,
             OutputEventAdaptorConfiguration outputEventAdaptorConfiguration, int tenantId) {
 
-        EmailSenderConfiguration emailSenderConfiguration = emailSenderConfigurationMap.get(outputEventMessageConfiguration);
+        EmailSenderConfiguration emailSenderConfiguration = emailSenderConfigurationMap.get(outputEventAdaptorConfiguration);
         if (emailSenderConfiguration == null) {
-            emailSenderConfiguration = new EmailSenderConfiguration(outputEventMessageConfiguration);
-            emailSenderConfigurationMap.putIfAbsent(outputEventMessageConfiguration, emailSenderConfiguration);
+            emailSenderConfiguration = new EmailSenderConfiguration(outputEventAdaptorConfiguration);
+            emailSenderConfigurationMap.putIfAbsent(outputEventAdaptorConfiguration, emailSenderConfiguration);
         }
 
         String[] emailIds = emailSenderConfiguration.getEmailIds();
@@ -161,9 +151,8 @@ public final class EmailEventAdaptorType extends AbstractOutputEventAdaptor {
 
     @Override
     public void removeConnectionInfo(
-            OutputEventAdaptorMessageConfiguration outputEventAdaptorMessageConfiguration,
             OutputEventAdaptorConfiguration outputEventAdaptorConfiguration, int tenantId) {
-        emailSenderConfigurationMap.remove(outputEventAdaptorMessageConfiguration);
+        emailSenderConfigurationMap.remove(outputEventAdaptorConfiguration);
     }
 
 
@@ -198,7 +187,7 @@ public final class EmailEventAdaptorType extends AbstractOutputEventAdaptor {
                 options.setProperty(Constants.Configuration.ENABLE_REST, Constants.VALUE_TRUE);
                 options.setProperty(MessageContext.TRANSPORT_HEADERS, headerMap);
                 options.setProperty(MailConstants.TRANSPORT_MAIL_FORMAT,
-                                    MailConstants.TRANSPORT_FORMAT_TEXT);
+                        MailConstants.TRANSPORT_FORMAT_TEXT);
                 options.setTo(new EndpointReference("mailto:" + to));
 
 
@@ -207,11 +196,11 @@ public final class EmailEventAdaptorType extends AbstractOutputEventAdaptor {
                 log.debug("Sending confirmation mail to " + to);
             } catch (AxisFault e) {
                 String msg = "Error in delivering the message, " +
-                             "subject: " + subject + ", to: " + to + ".";
+                        "subject: " + subject + ", to: " + to + ".";
                 log.error(msg);
             } catch (Throwable t) {
                 String msg = "Error in delivering the message, " +
-                             "subject: " + subject + ", to: " + to + ".";
+                        "subject: " + subject + ", to: " + to + ".";
                 log.error(msg);
                 log.error(t);
             }
@@ -225,15 +214,11 @@ public final class EmailEventAdaptorType extends AbstractOutputEventAdaptor {
         private String[] emailIds;
 
         private EmailSenderConfiguration(
-                OutputEventAdaptorMessageConfiguration outputEventAdaptorMessageConfiguration) {
+                OutputEventAdaptorConfiguration outputEventAdaptorConfiguration) {
 
-            String emailIdString = null;
-            if (outputEventAdaptorMessageConfiguration.getOutputMessageProperties().size() == 2) {
-                subject = outputEventAdaptorMessageConfiguration.getOutputMessageProperties().get(EmailEventAdaptorConstants.ADAPTOR_MESSAGE_EMAIL_SUBJECT);
-                emailIdString = outputEventAdaptorMessageConfiguration.getOutputMessageProperties().get(EmailEventAdaptorConstants.ADAPTOR_MESSAGE_EMAIL_ADDRESS);
-            } else {
-                log.error("Doesn't contains E-mail ids hence no message will be sent");
-            }
+            subject = outputEventAdaptorConfiguration.getOutputProperties().get(EmailEventAdaptorConstants.ADAPTOR_MESSAGE_EMAIL_SUBJECT);
+            String emailIdString = outputEventAdaptorConfiguration.getOutputProperties().get(EmailEventAdaptorConstants.ADAPTOR_MESSAGE_EMAIL_ADDRESS);
+
             emailIds = null;
             if (emailIdString != null) {
                 emailIds = emailIdString.replaceAll(" ", "").split(",");

@@ -20,8 +20,8 @@ package org.wso2.carbon.event.output.adaptor.manager.core.internal.ds;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.osgi.service.component.ComponentContext;
-import org.wso2.carbon.event.output.adaptor.core.OutputEventAdaptorFactory;
-import org.wso2.carbon.event.output.adaptor.core.internal.CarbonOutputEventAdaptorService;
+import org.wso2.carbon.event.output.adaptor.manager.core.OutputEventAdaptorFactory;
+import org.wso2.carbon.event.output.adaptor.manager.core.internal.CarbonOutputEventAdaptorService;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -29,7 +29,7 @@ import java.util.List;
 /**
  * @scr.component name="output.event.adaptor.service.tracker.component" immediate="true"
  * @scr.reference name="output.event.adaptor.tracker.service"
- * interface="org.wso2.carbon.event.output.adaptor.core.OutputEventAdaptorFactory" cardinality="0..n"
+ * interface="org.wso2.carbon.event.output.adaptor.manager.core.OutputEventAdaptorFactory" cardinality="0..n"
  * policy="dynamic" bind="setEventAdaptorType" unbind="unSetEventAdaptorType"
  */
 public class OutputEventAdaptorServiceTrackerDS {

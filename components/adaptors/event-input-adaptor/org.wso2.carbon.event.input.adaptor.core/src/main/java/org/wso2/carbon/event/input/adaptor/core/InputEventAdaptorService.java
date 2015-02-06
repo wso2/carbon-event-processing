@@ -19,8 +19,6 @@ package org.wso2.carbon.event.input.adaptor.core;
 
 import org.apache.axis2.engine.AxisConfiguration;
 import org.wso2.carbon.event.input.adaptor.core.config.InputEventAdaptorConfiguration;
-import org.wso2.carbon.event.input.adaptor.core.message.MessageDto;
-import org.wso2.carbon.event.input.adaptor.core.message.config.InputEventAdaptorMessageConfiguration;
 
 import java.util.List;
 
@@ -40,35 +38,25 @@ public interface InputEventAdaptorService {
      */
     List<InputEventAdaptorDto> getEventAdaptors();
 
-    /**
-     * @return message DTO
-     */
-    MessageDto getEventMessageDto(String eventAdaptorTypeName);
 
     /**
      * subscribe to a particular event configuration. When the EventAdaptor receives the
      * message it send that to the user through the listener interface.
      *
      * @param inputEventAdaptorConfiguration - Configuration details of the event
-     * @param inputEventAdaptorMessageConfiguration
-     *                                       - topic to subscribe
      * @param inputEventAdaptorListener      - listener interface to notify
      */
     String subscribe(InputEventAdaptorConfiguration inputEventAdaptorConfiguration,
-                     InputEventAdaptorMessageConfiguration inputEventAdaptorMessageConfiguration,
                      InputEventAdaptorListener inputEventAdaptorListener,
                      AxisConfiguration axisConfiguration);
 
     /**
      * un subscribes from the event.
      *
-     * @param inputEventAdaptorMessageConfiguration
-     *                                       - topic name to which previously subscribed
      * @param inputEventAdaptorConfiguration - event configuration to be used
-     * @param axisConfiguration              - acis configuration
+     * @param axisConfiguration              - axis configuration
      */
-    void unsubscribe(InputEventAdaptorMessageConfiguration inputEventAdaptorMessageConfiguration,
-                     InputEventAdaptorConfiguration inputEventAdaptorConfiguration,
+    void unsubscribe(InputEventAdaptorConfiguration inputEventAdaptorConfiguration,
                      AxisConfiguration axisConfiguration, String subscriptionId);
 
 

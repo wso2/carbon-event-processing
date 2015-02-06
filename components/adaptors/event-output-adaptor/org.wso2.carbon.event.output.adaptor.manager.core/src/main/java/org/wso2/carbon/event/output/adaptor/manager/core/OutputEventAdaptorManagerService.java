@@ -18,7 +18,7 @@
 package org.wso2.carbon.event.output.adaptor.manager.core;
 
 import org.apache.axis2.engine.AxisConfiguration;
-import org.wso2.carbon.event.output.adaptor.core.config.OutputEventAdaptorConfiguration;
+import org.wso2.carbon.event.output.adaptor.manager.core.config.OutputEventAdaptorConfiguration;
 import org.wso2.carbon.event.output.adaptor.manager.core.exception.OutputEventAdaptorManagerConfigurationException;
 
 import java.util.List;

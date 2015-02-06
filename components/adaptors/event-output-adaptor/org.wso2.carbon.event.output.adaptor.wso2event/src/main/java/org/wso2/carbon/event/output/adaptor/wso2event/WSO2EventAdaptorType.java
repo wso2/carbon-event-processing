@@ -30,12 +30,11 @@ import org.wso2.carbon.databridge.commons.Event;
 import org.wso2.carbon.databridge.commons.StreamDefinition;
 import org.wso2.carbon.databridge.commons.exception.AuthenticationException;
 import org.wso2.carbon.databridge.commons.exception.TransportException;
-import org.wso2.carbon.event.output.adaptor.core.AbstractOutputEventAdaptor;
-import org.wso2.carbon.event.output.adaptor.core.MessageType;
-import org.wso2.carbon.event.output.adaptor.core.Property;
-import org.wso2.carbon.event.output.adaptor.core.config.OutputEventAdaptorConfiguration;
-import org.wso2.carbon.event.output.adaptor.core.exception.OutputEventAdaptorEventProcessingException;
-import org.wso2.carbon.event.output.adaptor.core.message.config.OutputEventAdaptorMessageConfiguration;
+import org.wso2.carbon.event.output.adaptor.manager.core.AbstractOutputEventAdaptor;
+import org.wso2.carbon.event.output.adaptor.manager.core.MessageType;
+import org.wso2.carbon.event.output.adaptor.manager.core.Property;
+import org.wso2.carbon.event.output.adaptor.manager.core.config.OutputEventAdaptorConfiguration;
+import org.wso2.carbon.event.output.adaptor.manager.core.exception.OutputEventAdaptorEventProcessingException;
 import org.wso2.carbon.event.output.adaptor.wso2event.internal.ds.WSO2EventAdaptorServiceValueHolder;
 import org.wso2.carbon.event.output.adaptor.wso2event.internal.util.WSO2EventAdaptorConstants;
 
@@ -104,12 +103,11 @@ public final class WSO2EventAdaptorType extends AbstractOutputEventAdaptor {
 
         // set authenticator url of event adaptor
         Property authenticatorIpProperty = new Property(WSO2EventAdaptorConstants.
-                                                                ADAPTOR_CONF_WSO2EVENT_PROP_AUTHENTICATOR_URL);
+                ADAPTOR_CONF_WSO2EVENT_PROP_AUTHENTICATOR_URL);
         authenticatorIpProperty.setDisplayName(
                 resourceBundle.getString(WSO2EventAdaptorConstants.ADAPTOR_CONF_WSO2EVENT_PROP_AUTHENTICATOR_URL));
         authenticatorIpProperty.setRequired(false);
         authenticatorIpProperty.setHint(resourceBundle.getString(WSO2EventAdaptorConstants.ADAPTOR_CONF_WSO2EVENT_HINT_AUTHENTICATOR_URL));
-
 
         // set connection user name as property
         Property userNameProperty = new Property(WSO2EventAdaptorConstants.ADAPTOR_CONF_WSO2EVENT_PROP_USER_NAME);
@@ -125,23 +123,6 @@ public final class WSO2EventAdaptorType extends AbstractOutputEventAdaptor {
         passwordProperty.setDisplayName(
                 resourceBundle.getString(WSO2EventAdaptorConstants.ADAPTOR_CONF_WSO2EVENT_PROP_PASSWORD));
         passwordProperty.setHint(resourceBundle.getString(WSO2EventAdaptorConstants.ADAPTOR_CONF_WSO2EVENT_HINT_PASSWORD));
-
-        propertyList.add(ipProperty);
-        propertyList.add(authenticatorIpProperty);
-        propertyList.add(userNameProperty);
-        propertyList.add(passwordProperty);
-
-        return propertyList;
-
-    }
-
-    /**
-     * @return output message configuration property list
-     */
-    @Override
-    public List<Property> getOutputMessageProperties() {
-
-        List<Property> propertyList = new ArrayList<Property>();
 
         // set stream definition
         Property streamDefinitionProperty = new Property(WSO2EventAdaptorConstants.ADAPTOR_MESSAGE_STREAM_NAME);
@@ -159,20 +140,23 @@ public final class WSO2EventAdaptorType extends AbstractOutputEventAdaptor {
 
         propertyList.add(streamDefinitionProperty);
         propertyList.add(streamVersionProperty);
+        propertyList.add(ipProperty);
+        propertyList.add(authenticatorIpProperty);
+        propertyList.add(userNameProperty);
+        propertyList.add(passwordProperty);
 
         return propertyList;
+
     }
 
+
     /**
-     * @param outputEventAdaptorMessageConfiguration
-     *                 - topic name to publish messages
      * @param message  - is and Object[]{Event, EventDefinition}
      * @param outputEventAdaptorConfiguration
      *
      * @param tenantId
      */
     public void publish(
-            OutputEventAdaptorMessageConfiguration outputEventAdaptorMessageConfiguration,
             Object message,
             OutputEventAdaptorConfiguration outputEventAdaptorConfiguration, int tenantId) {
         ConcurrentHashMap<OutputEventAdaptorConfiguration, LoadBalancingDataPublisher> dataPublishers = dataPublisherMap.get(tenantId);
@@ -245,7 +229,7 @@ public final class WSO2EventAdaptorType extends AbstractOutputEventAdaptor {
                     String receiverUrl = receiverUrls[i1];
                     String authenticatorUrl = authenticatorUrls[i1];
                     DataPublisherHolder aNode = new DataPublisherHolder(authenticatorUrl.trim(), receiverUrl.trim(), userName,
-                                                                        password);
+                            password);
                     dataPublisherHolders.add(aNode);
                 }
                 ReceiverGroup group = new ReceiverGroup(dataPublisherHolders);
@@ -263,7 +247,7 @@ public final class WSO2EventAdaptorType extends AbstractOutputEventAdaptor {
                 String[] receiverUrls = aReceiverGroupURL.split(",");
                 for (String receiverUrl : receiverUrls) {
                     DataPublisherHolder aNode = new DataPublisherHolder(null, receiverUrl.trim(), userName,
-                                                                        password);
+                            password);
                     dataPublisherHolders.add(aNode);
                 }
                 ReceiverGroup group = new ReceiverGroup(dataPublisherHolders);
@@ -286,7 +270,7 @@ public final class WSO2EventAdaptorType extends AbstractOutputEventAdaptor {
         } catch (AgentException ex) {
             throw new OutputEventAdaptorEventProcessingException(
                     "Cannot publish data via DataPublisher for the adaptor configuration:" +
-                    outputEventAdaptorConfiguration.getName() + " for the  event " + event, ex);
+                            outputEventAdaptorConfiguration.getName() + " for the  event " + event, ex);
         }
 
     }
@@ -311,7 +295,6 @@ public final class WSO2EventAdaptorType extends AbstractOutputEventAdaptor {
 
     @Override
     public void removeConnectionInfo(
-            OutputEventAdaptorMessageConfiguration outputEventAdaptorMessageConfiguration,
             OutputEventAdaptorConfiguration outputEventAdaptorConfiguration, int tenantId) {
         ConcurrentHashMap<OutputEventAdaptorConfiguration, LoadBalancingDataPublisher> tenantSpecificAdaptorMap = dataPublisherMap.get(tenantId);
         if (tenantSpecificAdaptorMap != null) {

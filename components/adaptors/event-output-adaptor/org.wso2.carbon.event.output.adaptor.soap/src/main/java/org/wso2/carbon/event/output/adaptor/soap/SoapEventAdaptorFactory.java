@@ -17,8 +17,9 @@
 */
 package org.wso2.carbon.event.output.adaptor.soap;
 
-import org.wso2.carbon.event.output.adaptor.core.AbstractOutputEventAdaptor;
-import org.wso2.carbon.event.output.adaptor.core.OutputEventAdaptorFactory;
+
+import org.wso2.carbon.event.output.adaptor.manager.core.AbstractOutputEventAdaptor;
+import org.wso2.carbon.event.output.adaptor.manager.core.OutputEventAdaptorFactory;
 
 public class SoapEventAdaptorFactory implements OutputEventAdaptorFactory {
 

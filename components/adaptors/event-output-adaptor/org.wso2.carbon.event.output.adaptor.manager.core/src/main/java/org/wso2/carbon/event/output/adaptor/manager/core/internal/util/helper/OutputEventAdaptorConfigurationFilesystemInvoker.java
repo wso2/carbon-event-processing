@@ -28,8 +28,8 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.wso2.carbon.core.util.CryptoException;
 import org.wso2.carbon.core.util.CryptoUtil;
-import org.wso2.carbon.event.output.adaptor.core.config.InternalOutputEventAdaptorConfiguration;
 import org.wso2.carbon.event.output.adaptor.manager.core.OutputEventAdaptorDeployer;
+import org.wso2.carbon.event.output.adaptor.manager.core.config.InternalOutputEventAdaptorConfiguration;
 import org.wso2.carbon.event.output.adaptor.manager.core.exception.OutputEventAdaptorManagerConfigurationException;
 import org.wso2.carbon.event.output.adaptor.manager.core.internal.ds.OutputEventAdaptorManagerValueHolder;
 import org.wso2.carbon.event.output.adaptor.manager.core.internal.util.OutputEventAdaptorManagerConstants;
@@ -68,7 +68,7 @@ public final class OutputEventAdaptorConfigurationFilesystemInvoker {
                         new QName(OutputEventAdaptorManagerConstants.OEA_ATTR_NAME));
 
                 if (encryptedProperties.contains(name.trim())) {
-                OMAttribute encryptedAttribute = propertyOMElement.getAttribute(new QName(OutputEventAdaptorManagerConstants.OEA_ATTR_ENCRYPTED));
+                    OMAttribute encryptedAttribute = propertyOMElement.getAttribute(new QName(OutputEventAdaptorManagerConstants.OEA_ATTR_ENCRYPTED));
 
                     if (encryptedAttribute == null || (!"true".equals(encryptedAttribute.getAttributeValue()))) {
                         String value = propertyOMElement.getText();
@@ -89,7 +89,7 @@ public final class OutputEventAdaptorConfigurationFilesystemInvoker {
     }
 
     private static void save(String eventAdaptorConfig, String eventAdaptorName,
-                            String fileName, AxisConfiguration axisConfiguration)
+                             String fileName, AxisConfiguration axisConfiguration)
             throws OutputEventAdaptorManagerConfigurationException {
         OutputEventAdaptorDeployer deployer = (OutputEventAdaptorDeployer) getDeployer(axisConfiguration, OutputEventAdaptorManagerConstants.OEA_ELE_DIRECTORY);
         String filePath = getFilePathFromFilename(fileName, axisConfiguration);
@@ -128,7 +128,7 @@ public final class OutputEventAdaptorConfigurationFilesystemInvoker {
                 }
             }
         } catch (Exception e) {
-            log.error("Error while deleting the Output Event Adaptor : " + e.getMessage(),e);
+            log.error("Error while deleting the Output Event Adaptor : " + e.getMessage(), e);
             throw new OutputEventAdaptorManagerConfigurationException("Error while deleting the Output Event Adaptor : " + e.getMessage());
         }
     }

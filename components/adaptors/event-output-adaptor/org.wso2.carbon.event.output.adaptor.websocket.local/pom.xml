@@ -45,7 +45,7 @@
         </dependency>
         <dependency>
             <groupId>org.wso2.carbon.event-processing</groupId>
-            <artifactId>org.wso2.carbon.event.output.adaptor.core</artifactId>
+            <artifactId>org.wso2.carbon.event.output.adaptor.manager.core</artifactId>
         </dependency>
         <dependency>
             <groupId>javax.websocket</groupId>
@@ -86,7 +86,7 @@
                             org.wso2.carbon.event.output.adaptor.websocket.local.*,
                         </Export-Package>
                         <Import-Package>
-                            org.wso2.carbon.event.output.adaptor.core.*,
+                            org.wso2.carbon.event.output.adaptor.manager.core.*,
                             javax.xml.namespace; version=0.0.0,
                             *;resolution:=optional,
                         </Import-Package>

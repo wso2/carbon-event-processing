@@ -23,14 +23,9 @@ import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.wso2.carbon.context.PrivilegedCarbonContext;
-import org.wso2.carbon.event.output.adaptor.core.OutputEventAdaptorDto;
-import org.wso2.carbon.event.output.adaptor.core.Property;
-import org.wso2.carbon.event.output.adaptor.core.config.InternalOutputEventAdaptorConfiguration;
-import org.wso2.carbon.event.output.adaptor.core.config.OutputEventAdaptorConfiguration;
-import org.wso2.carbon.event.output.adaptor.manager.core.OutputEventAdaptorFile;
-import org.wso2.carbon.event.output.adaptor.manager.core.OutputEventAdaptorInfo;
-import org.wso2.carbon.event.output.adaptor.manager.core.OutputEventAdaptorManagerService;
-import org.wso2.carbon.event.output.adaptor.manager.core.OutputEventAdaptorNotificationListener;
+import org.wso2.carbon.event.output.adaptor.manager.core.*;
+import org.wso2.carbon.event.output.adaptor.manager.core.config.InternalOutputEventAdaptorConfiguration;
+import org.wso2.carbon.event.output.adaptor.manager.core.config.OutputEventAdaptorConfiguration;
 import org.wso2.carbon.event.output.adaptor.manager.core.exception.OutputEventAdaptorManagerConfigurationException;
 import org.wso2.carbon.event.output.adaptor.manager.core.internal.ds.OutputEventAdaptorHolder;
 import org.wso2.carbon.event.output.adaptor.manager.core.internal.ds.OutputEventAdaptorManagerValueHolder;
@@ -46,8 +41,7 @@ import java.util.concurrent.ConcurrentHashMap;
 /**
  * carbon implementation of the event adaptor manager.
  */
-public class CarbonOutputEventAdaptorManagerService
-        implements OutputEventAdaptorManagerService {
+public class CarbonOutputEventAdaptorManagerService implements OutputEventAdaptorManagerService {
     private static final Log log = LogFactory.getLog(CarbonOutputEventAdaptorManagerService.class);
     private static final String OUTPUT_EVENT_ADAPTOR = "Output Event Adaptor";
     /**
@@ -404,6 +398,7 @@ public class CarbonOutputEventAdaptorManagerService
      * to add to the tenant specific event adaptor configuration map (only the correctly deployed event adaptors)
      *
      * @throws org.wso2.carbon.event.output.adaptor.manager.core.exception.OutputEventAdaptorManagerConfigurationException
+     *
      */
     public void addOutputEventAdaptorConfiguration(
             int tenantId, OutputEventAdaptorConfiguration eventAdaptorConfiguration)
@@ -494,6 +489,7 @@ public class CarbonOutputEventAdaptorManagerService
      * for event adaptor configuration
      *
      * @throws org.wso2.carbon.event.output.adaptor.manager.core.exception.OutputEventAdaptorManagerConfigurationException
+     *
      */
     private void addToTenantSpecificEventAdaptorInfoMap(int tenantId,
                                                         OutputEventAdaptorConfiguration eventAdaptorConfiguration)
@@ -553,6 +549,7 @@ public class CarbonOutputEventAdaptorManagerService
      * this stores the event adaptor configuration to the file system after validating the event adaptor when doing editing
      *
      * @throws org.wso2.carbon.event.output.adaptor.manager.core.exception.OutputEventAdaptorManagerConfigurationException
+     *
      */
     private void validateAndSaveConfiguration(int tenantId, String eventAdaptorName,
                                               AxisConfiguration axisConfiguration,

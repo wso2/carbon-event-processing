@@ -19,12 +19,11 @@ package org.wso2.carbon.event.output.adaptor.mqtt;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.wso2.carbon.event.output.adaptor.core.AbstractOutputEventAdaptor;
-import org.wso2.carbon.event.output.adaptor.core.MessageType;
-import org.wso2.carbon.event.output.adaptor.core.Property;
-import org.wso2.carbon.event.output.adaptor.core.config.OutputEventAdaptorConfiguration;
-import org.wso2.carbon.event.output.adaptor.core.exception.OutputEventAdaptorEventProcessingException;
-import org.wso2.carbon.event.output.adaptor.core.message.config.OutputEventAdaptorMessageConfiguration;
+import org.wso2.carbon.event.output.adaptor.manager.core.AbstractOutputEventAdaptor;
+import org.wso2.carbon.event.output.adaptor.manager.core.MessageType;
+import org.wso2.carbon.event.output.adaptor.manager.core.Property;
+import org.wso2.carbon.event.output.adaptor.manager.core.config.OutputEventAdaptorConfiguration;
+import org.wso2.carbon.event.output.adaptor.manager.core.exception.OutputEventAdaptorEventProcessingException;
 import org.wso2.carbon.event.output.adaptor.mqtt.internal.util.MQTTAdaptorPublisher;
 import org.wso2.carbon.event.output.adaptor.mqtt.internal.util.MQTTBrokerConnectionConfiguration;
 import org.wso2.carbon.event.output.adaptor.mqtt.internal.util.MQTTEventAdaptorConstants;
@@ -132,17 +131,6 @@ public final class MQTTEventAdaptorType extends AbstractOutputEventAdaptor {
         keepAlive.setRequired(false);
         propertyList.add(keepAlive);
 
-        return propertyList;
-
-    }
-
-    /**
-     * @return output message configuration property list
-     */
-    @Override
-    public List<Property> getOutputMessageProperties() {
-
-        List<Property> propertyList = new ArrayList<Property>();
 
         // set topic
         Property topicProperty = new Property(MQTTEventAdaptorConstants.ADAPTOR_MESSAGE_TOPIC);
@@ -168,11 +156,12 @@ public final class MQTTEventAdaptorType extends AbstractOutputEventAdaptor {
         propertyList.add(qos);
 
         return propertyList;
+
     }
 
+
+
     /**
-     * @param outputEventAdaptorMessageConfiguration
-     *                 - topic name to publish messages
      * @param message  - is and Object[]{Event, EventDefinition}
      * @param outputEventAdaptorConfiguration
      *                 the {@link OutputEventAdaptorConfiguration} object that will be used to
@@ -180,7 +169,6 @@ public final class MQTTEventAdaptorType extends AbstractOutputEventAdaptor {
      * @param tenantId tenant id of the calling thread.
      */
     public void publish(
-            OutputEventAdaptorMessageConfiguration outputEventAdaptorMessageConfiguration,
             Object message,
             OutputEventAdaptorConfiguration outputEventAdaptorConfiguration, int tenantId) {
 
@@ -192,7 +180,7 @@ public final class MQTTEventAdaptorType extends AbstractOutputEventAdaptor {
             }
         }
 
-        String clientId = outputEventAdaptorMessageConfiguration.getOutputMessageProperties().get(MQTTEventAdaptorConstants.ADAPTOR_MESSAGE_CLIENTID);
+        String clientId = outputEventAdaptorConfiguration.getOutputProperties().get(MQTTEventAdaptorConstants.ADAPTOR_MESSAGE_CLIENTID);
         ConcurrentHashMap<String, MQTTAdaptorPublisher> topicSpecificEventPublisherMap = clientIdSpecificEventSenderMap.get(clientId);
         if (null == topicSpecificEventPublisherMap) {
             topicSpecificEventPublisherMap = new ConcurrentHashMap<String, MQTTAdaptorPublisher>();
@@ -201,14 +189,14 @@ public final class MQTTEventAdaptorType extends AbstractOutputEventAdaptor {
             }
         }
 
-        String topic = outputEventAdaptorMessageConfiguration.getOutputMessageProperties().get(MQTTEventAdaptorConstants.ADAPTOR_MESSAGE_TOPIC);
+        String topic = outputEventAdaptorConfiguration.getOutputProperties().get(MQTTEventAdaptorConstants.ADAPTOR_MESSAGE_TOPIC);
         MQTTAdaptorPublisher mqttAdaptorPublisher = topicSpecificEventPublisherMap.get(topic);
         if (mqttAdaptorPublisher == null) {
             MQTTBrokerConnectionConfiguration mqttBrokerConnectionConfiguration = new MQTTBrokerConnectionConfiguration(outputEventAdaptorConfiguration.getOutputProperties().get(MQTTEventAdaptorConstants.ADAPTOR_CONF_URL), outputEventAdaptorConfiguration.getOutputProperties().get(MQTTEventAdaptorConstants.ADAPTOR_CONF_USERNAME), outputEventAdaptorConfiguration.getOutputProperties().get(MQTTEventAdaptorConstants.ADAPTOR_CONF_PASSWORD), outputEventAdaptorConfiguration.getOutputProperties().get(MQTTEventAdaptorConstants.ADAPTOR_CONF_CLEAN_SESSION), outputEventAdaptorConfiguration.getOutputProperties().get(MQTTEventAdaptorConstants.ADAPTOR_CONF_KEEP_ALIVE));
-            mqttAdaptorPublisher = new MQTTAdaptorPublisher(mqttBrokerConnectionConfiguration, outputEventAdaptorMessageConfiguration.getOutputMessageProperties().get(MQTTEventAdaptorConstants.ADAPTOR_MESSAGE_TOPIC), outputEventAdaptorMessageConfiguration.getOutputMessageProperties().get(MQTTEventAdaptorConstants.ADAPTOR_MESSAGE_CLIENTID));
+            mqttAdaptorPublisher = new MQTTAdaptorPublisher(mqttBrokerConnectionConfiguration, outputEventAdaptorConfiguration.getOutputProperties().get(MQTTEventAdaptorConstants.ADAPTOR_MESSAGE_TOPIC), outputEventAdaptorConfiguration.getOutputProperties().get(MQTTEventAdaptorConstants.ADAPTOR_MESSAGE_CLIENTID));
             topicSpecificEventPublisherMap.put(topic,mqttAdaptorPublisher);
         }
-        String qos = outputEventAdaptorMessageConfiguration.getOutputMessageProperties().get(MQTTEventAdaptorConstants.ADAPTOR_MESSAGE_QOS);
+        String qos = outputEventAdaptorConfiguration.getOutputProperties().get(MQTTEventAdaptorConstants.ADAPTOR_MESSAGE_QOS);
 
         try {
             if (qos == null) {
@@ -237,15 +225,14 @@ public final class MQTTEventAdaptorType extends AbstractOutputEventAdaptor {
 
     @Override
     public void removeConnectionInfo(
-            OutputEventAdaptorMessageConfiguration outputEventAdaptorMessageConfiguration,
             OutputEventAdaptorConfiguration outputEventAdaptorConfiguration, int tenantId) {
 
         ConcurrentHashMap<String, ConcurrentHashMap<String, MQTTAdaptorPublisher>> clientIdSpecificEventSenderMap = publisherMap.get(outputEventAdaptorConfiguration.getName());
         if (clientIdSpecificEventSenderMap != null) {
-            String clientId = outputEventAdaptorMessageConfiguration.getOutputMessageProperties().get(MQTTEventAdaptorConstants.ADAPTOR_MESSAGE_CLIENTID);
+            String clientId = outputEventAdaptorConfiguration.getOutputProperties().get(MQTTEventAdaptorConstants.ADAPTOR_MESSAGE_CLIENTID);
             ConcurrentHashMap<String, MQTTAdaptorPublisher> topicSpecificEventSenderMap = clientIdSpecificEventSenderMap.get(clientId);
             if (topicSpecificEventSenderMap != null) {
-                String topicName = outputEventAdaptorMessageConfiguration.getOutputMessageProperties().get(MQTTEventAdaptorConstants.ADAPTOR_MESSAGE_TOPIC);
+                String topicName = outputEventAdaptorConfiguration.getOutputProperties().get(MQTTEventAdaptorConstants.ADAPTOR_MESSAGE_TOPIC);
                 MQTTAdaptorPublisher mqttAdaptorPublisher = topicSpecificEventSenderMap.get(topicName);
                 if (mqttAdaptorPublisher != null) {
                     try {

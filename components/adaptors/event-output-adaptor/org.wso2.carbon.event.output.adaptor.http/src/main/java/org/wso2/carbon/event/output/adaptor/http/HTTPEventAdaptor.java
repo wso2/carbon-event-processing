@@ -26,13 +26,12 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.conn.params.ConnRoutePNames;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.SystemDefaultHttpClient;
-import org.wso2.carbon.event.output.adaptor.core.AbstractOutputEventAdaptor;
-import org.wso2.carbon.event.output.adaptor.core.MessageType;
-import org.wso2.carbon.event.output.adaptor.core.Property;
-import org.wso2.carbon.event.output.adaptor.core.config.OutputEventAdaptorConfiguration;
-import org.wso2.carbon.event.output.adaptor.core.exception.OutputEventAdaptorEventProcessingException;
-import org.wso2.carbon.event.output.adaptor.core.message.config.OutputEventAdaptorMessageConfiguration;
 import org.wso2.carbon.event.output.adaptor.http.internal.util.HTTPEventAdaptorConstants;
+import org.wso2.carbon.event.output.adaptor.manager.core.AbstractOutputEventAdaptor;
+import org.wso2.carbon.event.output.adaptor.manager.core.MessageType;
+import org.wso2.carbon.event.output.adaptor.manager.core.Property;
+import org.wso2.carbon.event.output.adaptor.manager.core.config.OutputEventAdaptorConfiguration;
+import org.wso2.carbon.event.output.adaptor.manager.core.exception.OutputEventAdaptorEventProcessingException;
 
 import java.io.IOException;
 import java.net.Socket;
@@ -51,8 +50,6 @@ public class HTTPEventAdaptor extends AbstractOutputEventAdaptor {
     private static HTTPEventAdaptor instance = new HTTPEventAdaptor();
 
     private List<Property> outputAdapterProps;
-
-    private List<Property> outputMessageProps;
 
     private List<String> supportOutputMessageTypes;
 
@@ -80,18 +77,12 @@ public class HTTPEventAdaptor extends AbstractOutputEventAdaptor {
     }
 
     @Override
-    protected List<Property> getOutputMessageProperties() {
-        return outputMessageProps;
-    }
-
-    @Override
     protected List<String> getSupportedOutputMessageTypes() {
         return supportOutputMessageTypes;
     }
 
-    private void populateAdapterMessageProps() {
+    private void populateAdapterProps() {
         this.outputAdapterProps = new ArrayList<Property>();
-        this.outputMessageProps = new ArrayList<Property>();
         ResourceBundle resourceBundle = ResourceBundle.getBundle(
                 "org.wso2.carbon.event.output.adaptor.http.i18n.Resources", Locale.getDefault());
         Property urlProp = new Property(HTTPEventAdaptorConstants.ADAPTER_MESSAGE_URL);
@@ -119,28 +110,28 @@ public class HTTPEventAdaptor extends AbstractOutputEventAdaptor {
         proxyPortProp.setDisplayName(resourceBundle.getString(HTTPEventAdaptorConstants.ADAPTER_PROXY_PORT));
         proxyPortProp.setHint(resourceBundle.getString(HTTPEventAdaptorConstants.ADAPTER_PROXY_PORT_HINT));
         proxyPortProp.setRequired(false);
-        this.outputMessageProps.add(urlProp);
-        this.outputMessageProps.add(usernameProp);
-        this.outputMessageProps.add(passwordProp);
-        this.outputMessageProps.add(headersProp);
+        this.outputAdapterProps.add(urlProp);
+        this.outputAdapterProps.add(usernameProp);
+        this.outputAdapterProps.add(passwordProp);
+        this.outputAdapterProps.add(headersProp);
         this.outputAdapterProps.add(proxyHostProp);
         this.outputAdapterProps.add(proxyPortProp);
     }
 
     @Override
     protected void init() {
-        this.populateAdapterMessageProps();
+        this.populateAdapterProps();
         this.supportOutputMessageTypes = new ArrayList<String>();
         this.supportOutputMessageTypes.add(MessageType.XML);
         this.supportOutputMessageTypes.add(MessageType.JSON);
         this.supportOutputMessageTypes.add(MessageType.TEXT);
         this.executorService = new ThreadPoolExecutor(HTTPEventAdaptorConstants.ADAPTER_MIN_THREAD_POOL_SIZE,
-                                                      HTTPEventAdaptorConstants.ADAPTER_MAX_THREAD_POOL_SIZE, HTTPEventAdaptorConstants.DEFAULT_KEEP_ALIVE_TIME, TimeUnit.SECONDS,
-                                                      new LinkedBlockingQueue<Runnable>(HTTPEventAdaptorConstants.ADAPTER_EXECUTOR_JOB_QUEUE_SIZE));
+                HTTPEventAdaptorConstants.ADAPTER_MAX_THREAD_POOL_SIZE, HTTPEventAdaptorConstants.DEFAULT_KEEP_ALIVE_TIME, TimeUnit.SECONDS,
+                new LinkedBlockingQueue<Runnable>(HTTPEventAdaptorConstants.ADAPTER_EXECUTOR_JOB_QUEUE_SIZE));
     }
 
     private void checkHTTPClientInit(
-            OutputEventAdaptorMessageConfiguration outputEventMessageConfiguration) {
+            OutputEventAdaptorConfiguration outputEventAdaptorConfiguration) {
         if (this.httpClient != null) {
             return;
         }
@@ -151,8 +142,7 @@ public class HTTPEventAdaptor extends AbstractOutputEventAdaptor {
             /* this needs to be created as late as possible, for the SSL truststore properties 
              * to be set by Carbon in Java system properties */
             this.httpClient = new SystemDefaultHttpClient();
-            Map<String, String> props = outputEventMessageConfiguration
-                    .getOutputMessageProperties();
+            Map<String, String> props = outputEventAdaptorConfiguration.getOutputProperties();
             String proxyHost = props.get(HTTPEventAdaptorConstants.ADAPTER_PROXY_HOST);
             String proxyPort = props.get(HTTPEventAdaptorConstants.ADAPTER_PROXY_PORT);
             if (proxyHost != null && proxyHost.trim().length() > 0) {
@@ -161,7 +151,7 @@ public class HTTPEventAdaptor extends AbstractOutputEventAdaptor {
                     this.httpClient.getParams().setParameter(ConnRoutePNames.DEFAULT_PROXY, host);
                 } catch (NumberFormatException e) {
                     log.error("Invalid proxy port: " + proxyPort + ", "
-                              + "ignoring proxy settings for HTTP output event adaptor...");
+                            + "ignoring proxy settings for HTTP output event adaptor...");
                 }
             }
         }
@@ -188,12 +178,11 @@ public class HTTPEventAdaptor extends AbstractOutputEventAdaptor {
 
     @Override
     public void publish(
-            OutputEventAdaptorMessageConfiguration outputEventMessageConfiguration,
             Object message,
             OutputEventAdaptorConfiguration outputEventAdaptorConfiguration, int tenantId) {
         /* outputEventAdaptorConfiguration should come to init()? */
-        this.checkHTTPClientInit(outputEventMessageConfiguration);
-        Map<String, String> messageProps = outputEventMessageConfiguration.getOutputMessageProperties();
+        this.checkHTTPClientInit(outputEventAdaptorConfiguration);
+        Map<String, String> messageProps = outputEventAdaptorConfiguration.getOutputProperties();
         String url = messageProps.get(HTTPEventAdaptorConstants.ADAPTER_MESSAGE_URL);
         String username = messageProps.get(HTTPEventAdaptorConstants.ADAPTER_USERNAME);
         String password = messageProps.get(HTTPEventAdaptorConstants.ADAPTER_PASSWORD);
@@ -227,7 +216,6 @@ public class HTTPEventAdaptor extends AbstractOutputEventAdaptor {
 
     @Override
     public void removeConnectionInfo(
-            OutputEventAdaptorMessageConfiguration outputEventAdaptorMessageConfiguration,
             OutputEventAdaptorConfiguration outputEventAdaptorConfiguration, int tenantId) {
         //no required
     }

@@ -17,7 +17,8 @@
 */
 package org.wso2.carbon.event.output.adaptor.manager.core;
 
-import org.wso2.carbon.event.output.adaptor.core.config.OutputEventAdaptorConfiguration;
+
+import org.wso2.carbon.event.output.adaptor.manager.core.config.OutputEventAdaptorConfiguration;
 
 import java.util.List;
 
@@ -40,12 +41,12 @@ public interface OutputEventAdaptorService {
     /**
      * publishes the message using the given event adaptor to the given topic.
      *
-     * @param outputEventAdaptorConfiguration
-     *                 - Configuration Details of the event adaptor
+     * @param outputEventAdaptorName
+     *                 - name of the event adaptor
      * @param object   - message to send
      * @param tenantId
      */
-    void publish(OutputEventAdaptorConfiguration outputEventAdaptorConfiguration,
+    void publish(String outputEventAdaptorName,
                  Object object, int tenantId);
 
     /**
