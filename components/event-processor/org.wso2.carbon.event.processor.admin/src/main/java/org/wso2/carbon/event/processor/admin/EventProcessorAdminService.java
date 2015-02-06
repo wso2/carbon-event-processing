@@ -371,7 +371,6 @@ public class EventProcessorAdminService extends AbstractAdmin {
         dto.setQueryExpressions(config.getQueryExpressions());
         dto.setStatisticsEnabled(config.isStatisticsEnabled());
         dto.setTracingEnabled(config.isTracingEnabled());
-        dto.setEditable(config.isEditable());
         if (config.getSiddhiConfigurationProperties() != null) {
             SiddhiConfigurationDto[] siddhiConfigs = new SiddhiConfigurationDto[config.getSiddhiConfigurationProperties().size()];
             int i = 0;

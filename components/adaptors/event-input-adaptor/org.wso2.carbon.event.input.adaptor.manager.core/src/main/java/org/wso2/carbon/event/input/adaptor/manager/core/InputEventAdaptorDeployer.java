@@ -150,7 +150,6 @@ public class InputEventAdaptorDeployer extends AbstractDeployer implements Event
             throws DeploymentException, InputEventAdaptorManagerConfigurationException {
 
         File eventAdaptorFile = deploymentFileData.getFile();
-        boolean isEditable = !eventAdaptorFile.getAbsolutePath().contains(File.separator+ "carbonapps" + File.separator);
         CarbonInputEventAdaptorManagerService carbonEventAdaptorManagerService = InputEventAdaptorManagerValueHolder.getCarbonEventAdaptorManagerService();
         int tenantId = PrivilegedCarbonContext.getThreadLocalCarbonContext().getTenantId();
 
@@ -159,7 +158,6 @@ public class InputEventAdaptorDeployer extends AbstractDeployer implements Event
             try {
                 OMElement eventAdaptorOMElement = getEventAdaptorOMElement(eventAdaptorFile);
                 InputEventAdaptorConfiguration eventAdaptorConfiguration = InputEventAdaptorConfigurationHelper.fromOM(eventAdaptorOMElement);
-                eventAdaptorConfiguration.setEditable(isEditable);
 
                 if (!(eventAdaptorOMElement.getQName().getLocalPart()).equals(InputEventAdaptorManagerConstants.IEA_ELE_ROOT_ELEMENT)) {
                     throw new DeploymentException("Wrong input event adaptor configuration file, Invalid root element " + eventAdaptorOMElement.getQName().getLocalPart() + " in " + eventAdaptorFile.getName());
@@ -171,7 +169,7 @@ public class InputEventAdaptorDeployer extends AbstractDeployer implements Event
                 }
 
                 boolean isEncrypted = InputEventAdaptorConfigurationHelper.validateEncryptedProperties(eventAdaptorOMElement);
-                if (isEditable && !isEncrypted) {
+                if (!isEncrypted) {
                     String fileName = eventAdaptorFile.getName();
                     InputEventAdaptorConfigurationFilesystemInvoker.delete(fileName, this.configurationContext.getAxisConfiguration());
                     InputEventAdaptorConfigurationFilesystemInvoker.encryptAndSave(eventAdaptorOMElement, eventAdaptorConfiguration.getName(), fileName, this.configurationContext.getAxisConfiguration());

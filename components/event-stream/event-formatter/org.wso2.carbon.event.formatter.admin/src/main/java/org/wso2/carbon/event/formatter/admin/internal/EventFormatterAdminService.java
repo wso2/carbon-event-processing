@@ -126,7 +126,6 @@ public class EventFormatterAdminService extends AbstractAdmin {
                     eventFormatterConfigurationInfoDtoArray[index].setOutEventAdaptorName(outputEventAdaptorName);
                     eventFormatterConfigurationInfoDtoArray[index].setEnableStats(eventFormatterConfiguration.isEnableStatistics());
                     eventFormatterConfigurationInfoDtoArray[index].setEnableTracing(eventFormatterConfiguration.isEnableTracing());
-                    eventFormatterConfigurationInfoDtoArray[index].setEditable(eventFormatterConfiguration.isEditable());
                 }
                 return eventFormatterConfigurationInfoDtoArray;
             } else {

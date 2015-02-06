@@ -94,7 +94,6 @@ public abstract class DtoConverter {
                                                    EventBuilderAdminConstants.STREAM_NAME_VER_DELIMITER + eventBuilderConfiguration.getToStreamVersion());
         eventBuilderConfigurationDto.setEnableTracing(eventBuilderConfiguration.isTraceEnabled());
         eventBuilderConfigurationDto.setEnableStats(eventBuilderConfiguration.isStatisticsEnabled());
-        eventBuilderConfigurationDto.setEditable(eventBuilderConfiguration.isEditable());
 
         return eventBuilderConfigurationDto;
     }

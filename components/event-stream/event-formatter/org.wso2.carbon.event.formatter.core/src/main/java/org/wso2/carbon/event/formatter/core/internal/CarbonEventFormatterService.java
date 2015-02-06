@@ -614,7 +614,7 @@ public class CarbonEventFormatterService
             EventFormatterConfigurationHelper.validateEventFormatterConfiguration(omElement);
             String mappingType = EventFormatterConfigurationHelper.getOutputMappingType(omElement);
             if (mappingType != null) {
-                EventFormatterConfiguration eventFormatterConfigurationObject = FormatterConfigurationBuilder.getEventFormatterConfiguration(omElement, true, tenantId, mappingType);
+                EventFormatterConfiguration eventFormatterConfigurationObject = FormatterConfigurationBuilder.getEventFormatterConfiguration(omElement, tenantId, mappingType);
                 if (!(eventFormatterConfigurationObject.getEventFormatterName().equals(originalEventFormatterName))) {
                     if (checkEventFormatterValidity(tenantId, eventFormatterConfigurationObject.getEventFormatterName())) {
                         EventFormatterConfigurationFilesystemInvoker.delete(filename, axisConfiguration);

@@ -92,11 +92,6 @@
                     </exclusion>
                 </exclusions>
             </dependency>
-            <dependency>
-                <groupId>org.yaml</groupId>
-                <artifactId>snakeyaml</artifactId>
-                <version>${snakeyaml.version}</version>
-            </dependency>
 
             <dependency>
                 <groupId>org.hectorclient.wso2</groupId>
@@ -1123,7 +1118,6 @@
         <jsonpath.version>0.9.1</jsonpath.version>
         <jsonsmart.version>1.2</jsonsmart.version>
         <javax.websocket.version>1.0</javax.websocket.version>
-        <snakeyaml.version>1.11</snakeyaml.version>
 
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.scm.id>my-scm-server</project.scm.id>

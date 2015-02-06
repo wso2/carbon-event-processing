@@ -36,7 +36,6 @@ public class EventBuilderConfigurationDto {
     private EventInputPropertyConfigurationDto[] payloadEventBuilderProperties;
     private EventInputPropertyConfigurationDto[] xpathDefinitions;
     private EventBuilderMessagePropertyDto[] eventBuilderMessageProperties;
-    private boolean editable;
 
     public String getParentSelectorXpath() {
         return parentSelectorXpath;
@@ -156,13 +155,5 @@ public class EventBuilderConfigurationDto {
 
     public void setMetaEventBuilderProperties(EventInputPropertyConfigurationDto[] eventBuilderProperties) {
         this.metaEventBuilderProperties = eventBuilderProperties;
-    }
-
-    public void setEditable(boolean editable) {
-        this.editable = editable;
-    }
-
-    public boolean isEditable() {
-        return editable;
     }
 }

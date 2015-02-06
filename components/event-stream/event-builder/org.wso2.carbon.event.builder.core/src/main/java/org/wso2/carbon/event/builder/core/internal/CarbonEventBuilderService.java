@@ -508,7 +508,7 @@ public class CarbonEventBuilderService implements EventBuilderService {
             }
             String mappingType = EventBuilderConfigHelper.getInputMappingType(omElement);
             if (mappingType != null) {
-                EventBuilderConfiguration eventBuilderConfigurationObject = EventBuilderConfigBuilder.getEventBuilderConfiguration(omElement, mappingType, true, tenantId);
+                EventBuilderConfiguration eventBuilderConfigurationObject = EventBuilderConfigBuilder.getEventBuilderConfiguration(omElement, mappingType, tenantId);
                 if (!(eventBuilderConfigurationObject.getEventBuilderName().equals(originalEventBuilderName))) {
                     if (!isEventBuilderAlreadyExists(tenantId, eventBuilderConfigurationObject.getEventBuilderName())) {
                         EventBuilderConfigurationFileSystemInvoker.delete(filename, axisConfiguration);

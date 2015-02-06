@@ -68,10 +68,7 @@
                     <instructions>
                         <Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
                         <Bundle-Name>${project.artifactId}</Bundle-Name>
-                        <Export-Package>
-                            !org.slf4j.*,
-                            * ; -split-package:=merge-first
-                        </Export-Package>
+                        <Export-Package>*</Export-Package>
                         <Embed-Dependency>
                             siddhi-core|siddhi-api|siddhi-query|org.wso2.carbon.event.processor.common|libthrift|disruptor;scope=compile|runtime;inline=true
                         </Embed-Dependency>

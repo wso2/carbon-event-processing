@@ -97,7 +97,6 @@ public class InputEventAdaptorManagerAdminService extends AbstractAdmin {
                     inputEventAdaptorConfigurationInfoDtoArray[index].setEventAdaptorType(eventAdaptorType);
                     inputEventAdaptorConfigurationInfoDtoArray[index].setEnableTracing(eventAdaptorConfiguration.isEnableTracing());
                     inputEventAdaptorConfigurationInfoDtoArray[index].setEnableStats(eventAdaptorConfiguration.isEnableStatistics());
-                    inputEventAdaptorConfigurationInfoDtoArray[index].setEditable(eventAdaptorConfiguration.isEditable());
                 }
                 return inputEventAdaptorConfigurationInfoDtoArray;
             } else {

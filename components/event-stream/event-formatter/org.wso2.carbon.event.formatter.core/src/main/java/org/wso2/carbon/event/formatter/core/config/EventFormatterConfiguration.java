@@ -34,7 +34,6 @@ public class EventFormatterConfiguration {
     private boolean enableTracing;
 
     private boolean enableStatistics;
-    private boolean editable;
 
     public String getEventFormatterName() {
         return eventFormatterName;
@@ -91,13 +90,5 @@ public class EventFormatterConfiguration {
 
     public void setEnableStatistics(boolean enableStatistics) {
         this.enableStatistics = enableStatistics;
-    }
-
-    public void setEditable(boolean editable) {
-        this.editable = editable;
-    }
-
-    public boolean isEditable() {
-        return editable;
     }
 }

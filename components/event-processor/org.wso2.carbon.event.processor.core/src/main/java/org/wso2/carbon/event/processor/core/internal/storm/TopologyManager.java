@@ -59,16 +59,12 @@ public class TopologyManager {
 
     static {
         String stormConfigDirPath = CarbonUtils.getCarbonConfigDirPath() + File.separator + "cep" + File.separator + "storm";
+        stormConfig = Utils.readDefaultConfig();
         try {
             InputStream stormConf = new FileInputStream(new File(stormConfigDirPath + File.separator + "storm.yaml"));
             Yaml yaml = new Yaml();
             Map data = (Map)yaml.load(stormConf);
-            if(data != null) {                          //Can be null for a commented out config
-                stormConfig = Utils.readDefaultConfig();
-                stormConfig.putAll(data);
-            }else{
-                stormConfig = Utils.readStormConfig();
-            }
+            stormConfig.putAll(data);
         } catch (FileNotFoundException e) {
             log.warn("Error occurred while reading storm configurations. Using default configurations", e);
         }

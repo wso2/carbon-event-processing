@@ -146,7 +146,6 @@ public class OutputEventAdaptorDeployer extends AbstractDeployer implements Even
             throws DeploymentException, OutputEventAdaptorManagerConfigurationException {
 
         File eventAdaptorFile = deploymentFileData.getFile();
-        boolean isEditable = !eventAdaptorFile.getAbsolutePath().contains(File.separator+ "carbonapps" + File.separator);
         CarbonOutputEventAdaptorManagerService carbonEventAdaptorManagerService = OutputEventAdaptorManagerValueHolder.getCarbonEventAdaptorManagerService();
         int tenantId = PrivilegedCarbonContext.getThreadLocalCarbonContext().getTenantId();
 
@@ -155,7 +154,6 @@ public class OutputEventAdaptorDeployer extends AbstractDeployer implements Even
             try {
                 OMElement eventAdaptorOMElement = getEventAdaptorOMElement(eventAdaptorFile);
                 OutputEventAdaptorConfiguration eventAdaptorConfiguration = OutputEventAdaptorConfigurationHelper.fromOM(eventAdaptorOMElement);
-                eventAdaptorConfiguration.setEditable(isEditable);
 
                 if (!(eventAdaptorOMElement.getQName().getLocalPart()).equals(OutputEventAdaptorManagerConstants.OEA_ELE_ROOT_ELEMENT)) {
                     throw new DeploymentException("Wrong output event adaptor configuration file, Invalid root element " + eventAdaptorOMElement.getQName().getLocalPart() + " in " + eventAdaptorFile.getName());
@@ -168,7 +166,7 @@ public class OutputEventAdaptorDeployer extends AbstractDeployer implements Even
 
                 boolean isEncrypted = OutputEventAdaptorConfigurationHelper.validateEncryptedProperties(eventAdaptorOMElement);
 
-                if (isEditable && !isEncrypted) {
+                if (!isEncrypted) {
                     String fileName = eventAdaptorFile.getName();
                     OutputEventAdaptorConfigurationFilesystemInvoker.delete(fileName, this.configurationContext.getAxisConfiguration());
                     OutputEventAdaptorConfigurationFilesystemInvoker.encryptAndSave(eventAdaptorOMElement, eventAdaptorConfiguration.getName(), fileName, this.configurationContext.getAxisConfiguration());

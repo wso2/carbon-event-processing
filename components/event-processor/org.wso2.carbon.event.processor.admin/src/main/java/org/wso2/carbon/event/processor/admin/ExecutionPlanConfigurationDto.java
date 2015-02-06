@@ -27,7 +27,6 @@ public class ExecutionPlanConfigurationDto {
     private String queryExpressions;
     private boolean tracingEnabled;
     private boolean statisticsEnabled;
-    private boolean editable;
 
     public SiddhiConfigurationDto[] getSiddhiConfigurations() {
         return siddhiConfigurations;
@@ -91,13 +90,5 @@ public class ExecutionPlanConfigurationDto {
 
     public void setStatisticsEnabled(boolean statisticsEnabled) {
         this.statisticsEnabled = statisticsEnabled;
-    }
-
-    public void setEditable(boolean editable) {
-        this.editable = editable;
-    }
-
-    public boolean isEditable() {
-        return editable;
     }
 }

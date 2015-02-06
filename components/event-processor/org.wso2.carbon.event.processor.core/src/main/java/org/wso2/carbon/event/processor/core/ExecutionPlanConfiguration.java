@@ -32,7 +32,6 @@ public class ExecutionPlanConfiguration {
     private List<StreamConfiguration> importedStreams;
     private List<StreamConfiguration> exportedStreams;
     private String queryExpressions;
-    private boolean editable;
 
     public ExecutionPlanConfiguration() {
         siddhiConfigurationProperties = new ConcurrentHashMap<String, String>();
@@ -112,13 +111,5 @@ public class ExecutionPlanConfiguration {
 
     public void setStatisticsEnabled(boolean statisticsEnabled) {
         isStatisticsEnabled = statisticsEnabled;
-    }
-
-    public void setEditable(boolean editable) {
-        this.editable = editable;
-    }
-
-    public boolean isEditable() {
-        return editable;
     }
 }

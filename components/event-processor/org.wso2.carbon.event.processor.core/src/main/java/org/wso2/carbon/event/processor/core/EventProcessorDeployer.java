@@ -119,7 +119,6 @@ public class EventProcessorDeployer extends AbstractDeployer implements EventPro
         CarbonEventProcessorService carbonEventProcessorService = EventProcessorValueHolder.getEventProcessorService();
 
         File executionPlanFile = deploymentFileData.getFile();
-        boolean isEditable = !executionPlanFile.getAbsolutePath().contains(File.separator+ "carbonapps" + File.separator);
         int tenantId = PrivilegedCarbonContext.getThreadLocalCarbonContext().getTenantId();
         ExecutionPlanConfigurationFile executionPlanConfigurationFile = new ExecutionPlanConfigurationFile();
         if (!carbonEventProcessorService.isExecutionPlanFileAlreadyExist(executionPlanFile.getName(), tenantId)) {
@@ -130,7 +129,6 @@ public class EventProcessorDeployer extends AbstractDeployer implements EventPro
                     throw new ExecutionPlanConfigurationException("Wrong event formatter configuration file, Invalid root element " + executionPlanOMElement.getQName() + " in " + executionPlanFile.getName());
                 }
                 ExecutionPlanConfiguration executionPlanConfiguration = EventProcessorConfigurationHelper.fromOM(executionPlanOMElement);
-                executionPlanConfiguration.setEditable(isEditable);
 
                 if (executionPlanConfiguration.getName() == null || executionPlanConfiguration.getName().trim().isEmpty()) {
                     throw new ExecutionPlanConfigurationException(executionPlanFile.getName() + " is not a valid execution plan configuration file, does not contain a valid execution plan name");

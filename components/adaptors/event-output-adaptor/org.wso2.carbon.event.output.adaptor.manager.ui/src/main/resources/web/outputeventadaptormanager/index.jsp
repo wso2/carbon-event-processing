@@ -216,8 +216,7 @@
             <td><%=eventDetails.getEventAdaptorType()%>
             </td>
             <td>
-                <% if(eventDetails.getEditable()) { %>
-                <% if(eventDetails.getEnableStats()) { %>
+                <% if (eventDetails.getEnableStats()) {%>
                 <div class="inlineDiv">
                     <div id="disableStat<%= eventDetails.getEventAdaptorName()%>">
                         <a href="#"
@@ -300,7 +299,6 @@
                    class="icon-link"
                    href="edit_event_details.jsp?ordinal=1&eventName=<%=eventDetails.getEventAdaptorName()%>"><font
                         color="#4682b4">Edit</font></a>
-                <% } %>
 
             </td>
         </tr>

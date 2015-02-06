@@ -34,7 +34,6 @@ public class InputEventAdaptorConfiguration {
     private boolean enableStatistics;
 
     private InternalInputEventAdaptorConfiguration internalInputEventAdaptorConfiguration = null;
-    private boolean editable;
 
     public InputEventAdaptorConfiguration() {
         enableStatistics = false;
@@ -88,13 +87,5 @@ public class InputEventAdaptorConfiguration {
 
     public void setEnableStatistics(boolean enableStatistics) {
         this.enableStatistics = enableStatistics;
-    }
-
-    public void setEditable(boolean editable) {
-        this.editable = editable;
-    }
-
-    public boolean isEditable() {
-        return editable;
     }
 }
