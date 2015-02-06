@@ -145,6 +145,7 @@ public class EventFormatterDeployer extends AbstractDeployer implements EventPro
             throws DeploymentException, EventFormatterConfigurationException {
 
         File eventFormatterFile = deploymentFileData.getFile();
+        boolean isEditable = !eventFormatterFile.getAbsolutePath().contains(File.separator+ "carbonapps" + File.separator);
         AxisConfiguration axisConfiguration = configurationContext.getAxisConfiguration();
         CarbonEventFormatterService carbonEventFormatterService = EventFormatterServiceValueHolder.getCarbonEventFormatterService();
         int tenantId = PrivilegedCarbonContext.getThreadLocalCarbonContext().getTenantId();
@@ -161,7 +162,7 @@ public class EventFormatterDeployer extends AbstractDeployer implements EventPro
                 String mappingType = EventFormatterConfigurationHelper.getOutputMappingType(eventFormatterOMElement);
                 if (mappingType != null) {
                     mappingType = mappingType.toLowerCase();
-                    EventFormatterConfiguration eventFormatterConfiguration = FormatterConfigurationBuilder.getEventFormatterConfiguration(eventFormatterOMElement, tenantId, mappingType);
+                    EventFormatterConfiguration eventFormatterConfiguration = FormatterConfigurationBuilder.getEventFormatterConfiguration(eventFormatterOMElement, isEditable, tenantId, mappingType);
                     eventFormatterName = eventFormatterConfiguration.getEventFormatterName();
                     if (carbonEventFormatterService.checkEventFormatterValidity(tenantId, eventFormatterName)) {
                         carbonEventFormatterService.addEventFormatterConfiguration(eventFormatterConfiguration);

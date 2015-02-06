@@ -104,7 +104,9 @@
             </td>
             <td><%=eventBuilderConfigurationDto.getToStreamId()%>
             </td>
+
             <td>
+            <% if(eventBuilderConfigurationDto.getEditable()) { %>
                 <% if (eventBuilderConfigurationDto.getEnableStats()) {%>
                 <div class="inlineDiv">
                     <div id="disableStat<%= eventBuilderConfigurationDto.getEventBuilderName()%>">
@@ -188,6 +190,7 @@
                    class="icon-link"
                    href="../eventbuilder/edit_event_builder_details.jsp?ordinal=1&eventBuilderName=<%=eventBuilderConfigurationDto.getEventBuilderName()%>"><font
                         color="#4682b4">Edit</font></a>
+                <% } %>
             </td>
 
         </tr>

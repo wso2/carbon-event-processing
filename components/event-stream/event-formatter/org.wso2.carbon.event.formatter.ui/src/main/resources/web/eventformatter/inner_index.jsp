@@ -102,6 +102,7 @@
             <td><%=eventFormatterDetails.getInputStreamId()%>
             </td>
             <td>
+                <% if(eventFormatterDetails.getEditable()) { %>
                 <% if (eventFormatterDetails.getEnableStats()) {%>
                 <div class="inlineDiv">
                     <div id="disableStat<%= eventFormatterDetails.getEventFormatterName()%>">
@@ -187,6 +188,7 @@
                    class="icon-link"
                    href="../eventformatter/edit_event_formatter_details.jsp?ordinal=1&eventFormatterName=<%=eventFormatterDetails.getEventFormatterName()%>"><font
                         color="#4682b4">Edit</font></a>
+                <% } %>
 
             </td>
 

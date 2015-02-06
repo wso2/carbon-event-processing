@@ -25,6 +25,7 @@ public class OutputEventAdaptorConfigurationInfoDto {
     private String eventAdaptorType;
     private boolean enableTracing;
     private boolean enableStats;
+    private boolean editable;
 
     public String getEventAdaptorName() {
         return eventAdaptorName;
@@ -56,5 +57,13 @@ public class OutputEventAdaptorConfigurationInfoDto {
 
     public void setEnableStats(boolean enableStats) {
         this.enableStats = enableStats;
+    }
+
+    public void setEditable(boolean editable) {
+        this.editable = editable;
+    }
+
+    public boolean isEditable() {
+        return editable;
     }
 }
