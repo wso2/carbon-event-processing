@@ -81,6 +81,10 @@
             <groupId>org.hectorclient.wso2</groupId>
             <artifactId>hector-core</artifactId>
         </dependency>
+        <dependency>
+            <groupId>org.yaml</groupId>
+            <artifactId>snakeyaml</artifactId>
+        </dependency>
     </dependencies>
 
 
@@ -171,6 +175,9 @@
                                 </bundleDef>
                                 <bundleDef>
                                     org.hectorclient.wso2:hector-core:${hector.wso2.version}
+                                </bundleDef>
+                                <bundleDef>
+                                    org.yaml:snakeyaml:${snakeyaml.version}
                                 </bundleDef>
                             </bundles>
                             <importFeatures>

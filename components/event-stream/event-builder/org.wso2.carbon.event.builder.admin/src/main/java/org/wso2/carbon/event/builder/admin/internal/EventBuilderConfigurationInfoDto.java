@@ -30,6 +30,7 @@ public class EventBuilderConfigurationInfoDto {
     private String toStreamId;
     private boolean enableTracing;
     private boolean enableStats;
+    private boolean editable;
 
     public String getInputEventAdaptorType() {
         return inputEventAdaptorType;
@@ -85,5 +86,13 @@ public class EventBuilderConfigurationInfoDto {
 
     public void setEnableStats(boolean enableStats) {
         this.enableStats = enableStats;
+    }
+
+    public void setEditable(boolean editable) {
+        this.editable = editable;
+    }
+
+    public boolean isEditable() {
+        return editable;
     }
 }

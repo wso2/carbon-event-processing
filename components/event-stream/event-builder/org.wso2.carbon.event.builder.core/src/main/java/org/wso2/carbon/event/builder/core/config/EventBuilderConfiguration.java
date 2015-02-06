@@ -27,6 +27,7 @@ public class EventBuilderConfiguration {
     private boolean statisticsEnabled;
     private String filePath;
     private boolean isReadOnly;
+    private boolean isEditable;
 
     public boolean isTraceEnabled() {
         return traceEnabled;
@@ -98,5 +99,13 @@ public class EventBuilderConfiguration {
 
     public void setReadOnly(boolean isReadOnly) {
         this.isReadOnly = isReadOnly;
+    }
+
+    public boolean isEditable() {
+        return isEditable;
+    }
+
+    public void setEditable(boolean isEditable) {
+        this.isEditable = isEditable;
     }
 }

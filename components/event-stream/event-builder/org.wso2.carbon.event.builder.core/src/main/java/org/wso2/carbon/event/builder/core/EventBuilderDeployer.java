@@ -156,6 +156,7 @@ public class EventBuilderDeployer extends AbstractDeployer implements EventProce
             throws DeploymentException, EventBuilderConfigurationException {
 
         File ebConfigXmlFile = deploymentFileData.getFile();
+        boolean isEditable = !ebConfigXmlFile.getAbsolutePath().contains(File.separator+ "carbonapps" + File.separator);
         String fileName = deploymentFileData.getName();
         CarbonEventBuilderService carbonEventBuilderService = EventBuilderServiceValueHolder.getCarbonEventBuilderService();
         int tenantId = PrivilegedCarbonContext.getThreadLocalCarbonContext().getTenantId();
@@ -177,7 +178,7 @@ public class EventBuilderDeployer extends AbstractDeployer implements EventProce
                     throw new EventBuilderConfigurationException(ebConfigXmlFile.getName() + " is not a valid event builder configuration file, does not contain a valid event-builder name");
                 }
 
-                EventBuilderConfiguration eventBuilderConfiguration = EventBuilderConfigBuilder.getEventBuilderConfiguration(ebConfigOMElement, inputMappingType, tenantId);
+                EventBuilderConfiguration eventBuilderConfiguration = EventBuilderConfigBuilder.getEventBuilderConfiguration(ebConfigOMElement, inputMappingType, isEditable, tenantId);
                 if (eventBuilderConfiguration != null && (!carbonEventBuilderService.isEventBuilderAlreadyExists(tenantId, eventBuilderName))) {
                     streamNameWithVersion = eventBuilderConfiguration.getToStreamName() + EventBuilderConstants.STREAM_NAME_VER_DELIMITER + eventBuilderConfiguration.getToStreamVersion();
                     carbonEventBuilderService.addEventBuilder(eventBuilderConfiguration, configurationContext.getAxisConfiguration());
