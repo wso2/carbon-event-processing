@@ -22,12 +22,12 @@
     <parent>
         <artifactId>event-stream-feature</artifactId>
         <groupId>org.wso2.carbon.event-processing</groupId>
-        <version>2.0.3</version>
+        <version>2.0.4-SNAPSHOT</version>
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
     <artifactId>event-formatter-feature</artifactId>
-    <version>2.0.3</version>
+    <version>2.0.4-SNAPSHOT</version>
     <packaging>pom</packaging>
     <name>WSO2 Carbon - Event Formatter Aggregate Feature</name>
     <url>http://maven.apache.org</url>
