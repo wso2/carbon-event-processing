@@ -21,7 +21,7 @@
     <parent>
         <groupId>org.wso2.carbon.event-processing</groupId>
         <artifactId>event-input-adaptor-feature</artifactId>
-        <version>2.0.4-SNAPSHOT</version>
+        <version>2.0.3</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
@@ -29,7 +29,7 @@
     <artifactId>org.wso2.carbon.event.input.adaptor.wso2event.server.feature</artifactId>
     <packaging>pom</packaging>
     <name>WSO2 Carbon - Event Input WSO2Event Adaptor Server Feature</name>
-    <version>2.0.4-SNAPSHOT</version>
+    <version>2.0.3</version>
     <url>http://wso2.org</url>
     <description>This feature contains the bundles required for Input WSO2Event Event Adaptor functionality</description>
 

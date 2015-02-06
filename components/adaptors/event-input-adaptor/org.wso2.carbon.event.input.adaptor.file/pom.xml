@@ -21,14 +21,14 @@
     <parent>
         <groupId>org.wso2.carbon.event-processing</groupId>
         <artifactId>event-input-adaptor</artifactId>
-        <version>2.0.4-SNAPSHOT</version>
+        <version>2.0.3</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
     <artifactId>org.wso2.carbon.event.input.adaptor.file</artifactId>
     <packaging>bundle</packaging>
-    <version>2.0.4-SNAPSHOT</version>
+    <version>2.0.3</version>
     <name>WSO2 Carbon - Event Input File Adaptor Module</name>
     <description>org.wso2.carbon.event.input.adaptor.file provides the back-end
         functionality of input file adaptor
