@@ -15,13 +15,17 @@
 * specific language governing permissions and limitations
 * under the License.
 */
-package org.wso2.carbon.event.output.adaptor.core;
+package org.wso2.carbon.event.output.adaptor.manager.core;
 
-public interface OutputEventAdaptorFactory {
+/**
+ * Adaptor type that supports
+ */
+public class MessageType {
 
-    /**
-     * @return event adaptor object
-     */
-    AbstractOutputEventAdaptor getEventAdaptor();
+    public static final String XML = "xml";
+    public static final String WSO2EVENT = "wso2event";
+    public static final String MAP = "map";
+    public static final String TEXT = "text";
+    public static final String JSON = "json";
 
 }

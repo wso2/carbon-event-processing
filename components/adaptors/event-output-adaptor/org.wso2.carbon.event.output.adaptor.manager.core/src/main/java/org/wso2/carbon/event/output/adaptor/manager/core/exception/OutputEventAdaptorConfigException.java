@@ -15,7 +15,7 @@
 * specific language governing permissions and limitations
 * under the License.
 */
-package org.wso2.carbon.event.output.adaptor.core.exception;
+package org.wso2.carbon.event.output.adaptor.manager.core.exception;
 
 /**
  * this class represents the exceptions related to deploy time configuration
