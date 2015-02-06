@@ -35,6 +35,7 @@ public class OutputEventAdaptorConfiguration {
     private boolean enableStatistics;
 
     private InternalOutputEventAdaptorConfiguration internalOutputEventAdaptorConfiguration = null;
+    private boolean editable;
 
     public InternalOutputEventAdaptorConfiguration getOutputConfiguration() {
         return internalOutputEventAdaptorConfiguration;
@@ -115,5 +116,13 @@ public class OutputEventAdaptorConfiguration {
         result = 31 * result + type.hashCode();
         result = 31 * result + (internalOutputEventAdaptorConfiguration != null ? internalOutputEventAdaptorConfiguration.hashCode() : 0);
         return result;
+    }
+
+    public void setEditable(boolean editable) {
+        this.editable = editable;
+    }
+
+    public boolean isEditable() {
+        return editable;
     }
 }

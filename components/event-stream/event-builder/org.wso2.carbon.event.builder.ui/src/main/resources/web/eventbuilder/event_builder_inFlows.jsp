@@ -139,6 +139,8 @@
             <td><%=eventBuilderConfigurationDto.getInputEventAdaptorName()%>
             </td>
             <td>
+            <% if(eventBuilderConfigurationDto.getEditable()) { %>
+
                 <% if (eventBuilderConfigurationDto.getStatisticsEnabled()) {%>
                 <div class="inlineDiv">
                     <div id="disableStat<%= eventBuilderConfigurationDto.getEventBuilderConfigName()%>">
@@ -222,6 +224,8 @@
                    class="icon-link"
                    href="../eventbuilder/edit_event_builder_details.jsp?ordinal=1&eventBuilderName=<%=eventBuilderConfigurationDto.getEventBuilderConfigName()%>"><font
                         color="#4682b4">Edit</font></a>
+
+            <% } %>
             </td>
 
         </tr>

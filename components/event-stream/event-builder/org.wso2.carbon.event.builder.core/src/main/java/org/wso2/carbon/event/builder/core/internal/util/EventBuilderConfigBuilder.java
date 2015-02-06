@@ -103,7 +103,7 @@ public class EventBuilderConfigBuilder {
     }
 
     public static EventBuilderConfiguration getEventBuilderConfiguration(
-            OMElement eventBuilderConfigOMElement, String mappingType, int tenantId)
+            OMElement eventBuilderConfigOMElement, String mappingType, boolean isEditable, int tenantId)
             throws EventBuilderConfigurationException {
 
         if (!eventBuilderConfigOMElement.getLocalName().equals(EventBuilderConstants.EB_ELEMENT_ROOT_ELEMENT)) {
@@ -210,6 +210,7 @@ public class EventBuilderConfigBuilder {
         InputMapperFactory mapperFactory = EventBuilderServiceValueHolder.getMappingFactoryMap().get(mappingType);
         eventBuilderConfiguration.setInputMapping(mapperFactory.constructInputMappingFromOM(mappingElement));
         eventBuilderConfiguration.setInputStreamConfiguration(inputStreamConfiguration);
+        eventBuilderConfiguration.setEditable(isEditable);
         return eventBuilderConfiguration;
     }
 
