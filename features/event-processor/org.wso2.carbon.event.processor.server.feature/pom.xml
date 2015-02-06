@@ -177,7 +177,7 @@
                                     org.hectorclient.wso2:hector-core:${hector.wso2.version}
                                 </bundleDef>
                                 <bundleDef>
-                                    org.yaml:snakeyaml:${storm.version}
+                                    org.yaml:snakeyaml:${snakeyaml.version}
                                 </bundleDef>
                             </bundles>
                             <importFeatures>
