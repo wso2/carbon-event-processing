@@ -20,19 +20,18 @@ package org.wso2.carbon.event.output.adaptor.websocket.local;
 import java.util.*;
 import java.util.concurrent.CopyOnWriteArrayList;
 
-import org.wso2.carbon.event.output.adaptor.core.AbstractOutputEventAdaptor;
-import org.wso2.carbon.event.output.adaptor.core.MessageType;
-import org.wso2.carbon.event.output.adaptor.core.Property;
-import org.wso2.carbon.event.output.adaptor.core.config.OutputEventAdaptorConfiguration;
-import org.wso2.carbon.event.output.adaptor.core.exception.TestConnectionUnavailableException;
-import org.wso2.carbon.event.output.adaptor.core.message.config.OutputEventAdaptorMessageConfiguration;
+import org.wso2.carbon.event.output.adaptor.manager.core.AbstractOutputEventAdaptor;
+import org.wso2.carbon.event.output.adaptor.manager.core.MessageType;
+import org.wso2.carbon.event.output.adaptor.manager.core.Property;
+import org.wso2.carbon.event.output.adaptor.manager.core.config.OutputEventAdaptorConfiguration;
+import org.wso2.carbon.event.output.adaptor.manager.core.exception.TestConnectionUnavailableException;
 import org.wso2.carbon.event.output.adaptor.websocket.local.internal.WebsocketLocalOutputCallbackRegisterServiceInternal;
 import org.wso2.carbon.event.output.adaptor.websocket.local.internal.ds.WebsocketLocalEventAdaptorServiceInternalValueHolder;
 import org.wso2.carbon.event.output.adaptor.websocket.local.internal.util.WebsocketLocalEventAdaptorConstants;
 
 import javax.websocket.*;
 
-public class WebsocketLocalEventAdaptor extends AbstractOutputEventAdaptor{
+public class WebsocketLocalEventAdaptor extends AbstractOutputEventAdaptor {
 
     private List<Property> outputMessageProps;
     
@@ -69,17 +68,11 @@ public class WebsocketLocalEventAdaptor extends AbstractOutputEventAdaptor{
 	}
 
 	@Override
-	protected List<Property> getOutputMessageProperties() {
-		return outputMessageProps;
-	}
-
-	@Override
 	protected void publish(
-			OutputEventAdaptorMessageConfiguration outputEventAdaptorMessageConfiguration,
 			Object message,
 			OutputEventAdaptorConfiguration outputEventAdaptorConfiguration,
 			int tenantId) {
-        String topic = outputEventAdaptorMessageConfiguration.getOutputMessageProperties().get(WebsocketLocalEventAdaptorConstants.ADAPTER_TOPIC);
+        String topic = outputEventAdaptorConfiguration.getOutputProperties().get(WebsocketLocalEventAdaptorConstants.ADAPTER_TOPIC);
         WebsocketLocalOutputCallbackRegisterServiceInternal websocketLocalOutputCallbackRegisterServiceInternal = WebsocketLocalEventAdaptorServiceInternalValueHolder.getWebsocketLocalOutputCallbackRegisterServiceInternal();
         CopyOnWriteArrayList<Session> sessions = websocketLocalOutputCallbackRegisterServiceInternal.getSessions(tenantId, outputEventAdaptorConfiguration.getName(), topic);
         if (sessions != null){
@@ -100,7 +93,6 @@ public class WebsocketLocalEventAdaptor extends AbstractOutputEventAdaptor{
 
     @Override
     public void removeConnectionInfo(
-            OutputEventAdaptorMessageConfiguration outputEventAdaptorMessageConfiguration,
             OutputEventAdaptorConfiguration outputEventAdaptorConfiguration, int tenantId) {
         //not required
     }
