@@ -151,10 +151,10 @@ public class StormTopologyConstructor {
 
                         if (!pubComponent.getComponentName().equals(componentInfoHolder.getComponentName())) {
                             String partitionedField = componentInfoHolder.getPartionenedField(inputStreamId);
-                            String groupingType = "AllGrouping";
+                            String groupingType = "ShuffleGrouping";
 
                             if (partitionedField == null){
-                                boltDeclarer.allGrouping(pubComponent.getComponentName(), inputStreamId);
+                                boltDeclarer.shuffleGrouping(pubComponent.getComponentName(), inputStreamId);
                             }else{
                                 groupingType = "FieldGrouping";
                                 boltDeclarer.fieldsGrouping(pubComponent.getComponentName(), inputStreamId, new Fields(partitionedField));
