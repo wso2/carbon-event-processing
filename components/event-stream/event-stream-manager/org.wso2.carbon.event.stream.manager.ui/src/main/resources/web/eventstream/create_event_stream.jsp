@@ -26,21 +26,21 @@
 		resourceBundle="org.wso2.carbon.event.stream.manager.ui.i18n.Resources"
 		topPage="false" request="<%=request%>" />
 
-	<link type="text/css" href="css/eventStream.css" rel="stylesheet" />
-	<script type="text/javascript" src="../admin/js/breadcrumbs.js"></script>
-	<script type="text/javascript" src="../admin/js/cookies.js"></script>
-	<script type="text/javascript" src="../admin/js/main.js"></script>
-	<script type="text/javascript"
+	<link endpointType="text/css" href="css/eventStream.css" rel="stylesheet" />
+	<script endpointType="text/javascript" src="../admin/js/breadcrumbs.js"></script>
+	<script endpointType="text/javascript" src="../admin/js/cookies.js"></script>
+	<script endpointType="text/javascript" src="../admin/js/main.js"></script>
+	<script endpointType="text/javascript"
 		src="../yui/build/yahoo-dom-event/yahoo-dom-event.js"></script>
-	<script type="text/javascript"
+	<script endpointType="text/javascript"
 		src="../yui/build/connection/connection-min.js"></script>
-	<script type="text/javascript" src="js/event_stream.js"></script>
-	<script type="text/javascript" src="js/create_eventStream_helper.js"></script>
-	<script type="text/javascript"
+	<script endpointType="text/javascript" src="js/event_stream.js"></script>
+	<script endpointType="text/javascript" src="js/create_eventStream_helper.js"></script>
+	<script endpointType="text/javascript"
 		src="../eventbuilder/js/create_event_builder_helper.js"></script>
-	<script type="text/javascript" src="../ajax/js/prototype.js"></script>
+	<script endpointType="text/javascript" src="../ajax/js/prototype.js"></script>
 
-	<script type="text/javascript">
+	<script endpointType="text/javascript">
 		jQuery(document).ready(function() {
 			document.getElementById("sourceWorkArea").style.display = "none";
 			document.getElementById("designWorkArea").style.display = "inline";
@@ -84,7 +84,7 @@
 										file="inner_event_stream_ui.jsp"%></td>
 							</tr>
 							<tr>
-								<td class="buttonRow"><input type="button"
+								<td class="buttonRow"><input endpointType="button"
 									value="<fmt:message key="add.event.stream"/>"
 									onclick="addEventStream(document.getElementById('addEventStreamDesign'),'add')" />
 								</td>
@@ -119,7 +119,7 @@
 								</td>
 							</tr>
 							<tr>
-								<td class="buttonRow"><input type="button"
+								<td class="buttonRow"><input endpointType="button"
 									value="<fmt:message key="add.event.stream"/>"
 									onclick="addEventStreamByString(document.getElementById('addEventStreamSource'))" />
 								</td>

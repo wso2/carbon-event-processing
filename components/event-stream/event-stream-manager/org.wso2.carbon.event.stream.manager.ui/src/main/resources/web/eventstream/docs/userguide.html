@@ -19,7 +19,7 @@
 <html>
 <head><title>Event Stream Manager - User Guide</title>
 
-    <link href="../../admin/css/documentation.css" rel="stylesheet" type="text/css" media="all"/>
+    <link href="../../admin/css/documentation.css" rel="stylesheet" endpointType="text/css" media="all"/>
 </head>
 <body>
 <h1>Event Stream Manager</h1>
@@ -58,27 +58,27 @@
 <pre>&lt;streamManagerConfiguration xmlns="http://wso2.org/carbon/streammanager"&gt;
     &lt;streamDefinition name="org.wso2.sample.stock.quote.basic" version="1.0.0"&gt;
         &lt;payloadData&gt;
-            &lt;property name="price" type="DOUBLE"/&gt;
-            &lt;property name="symbol" type="STRING"/&gt;
+            &lt;property name="price" endpointType="DOUBLE"/&gt;
+            &lt;property name="symbol" endpointType="STRING"/&gt;
         &lt;/payloadData&gt;
     &lt;/streamDefinition&gt;
     &lt;streamDefinition name="org.wso2.sample.twitter.feed" version="1.0.0"&gt;
         &lt;payloadData&gt;
-            &lt;property name="company" type="STRING"/&gt;
-            &lt;property name="wordCount" type="INT"/&gt;
+            &lt;property name="company" endpointType="STRING"/&gt;
+            &lt;property name="wordCount" endpointType="INT"/&gt;
         &lt;/payloadData&gt;
     &lt;/streamDefinition&gt;
     &lt;streamDefinition name="org.wso2.sample.predicted.stock.quotes" version="1.0.0"&gt;
         &lt;payloadData&gt;
-            &lt;property name="company" type="STRING"/&gt;
-            &lt;property name="amount" type="DOUBLE"/&gt;
-            &lt;property name="words" type="LONG"/&gt;
+            &lt;property name="company" endpointType="STRING"/&gt;
+            &lt;property name="amount" endpointType="DOUBLE"/&gt;
+            &lt;property name="words" endpointType="LONG"/&gt;
         &lt;/payloadData&gt;
     &lt;/streamDefinition&gt;
     &lt;streamDefinition name="twitterFeed" version="1.0.0"&gt;
         &lt;payloadData&gt;
-            &lt;property name="company" type="STRING"/&gt;
-            &lt;property name="wordCount" type="INT"/&gt;
+            &lt;property name="company" endpointType="STRING"/&gt;
+            &lt;property name="wordCount" endpointType="INT"/&gt;
         &lt;/payloadData&gt;
     &lt;/streamDefinition&gt;
 

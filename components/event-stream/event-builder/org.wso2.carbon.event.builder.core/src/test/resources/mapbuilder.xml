@@ -21,18 +21,18 @@
     <from eventAdaptorType="jms" eventAdaptorName="jmsActiveMqAdaptor">
         <property name="event.jms.Destination">stockQuotes</property>
     </from>
-    <mapping type="map">
+    <mapping endpointType="map">
         <property>
             <from name="meta_ipAdd"/>
-            <to name="meta_ipAddress" type="string"/>
+            <to name="meta_ipAddress" endpointType="string"/>
         </property>
         <property>
             <from name="userID"/>
-            <to name="user" type="string"/>
+            <to name="user" endpointType="string"/>
         </property>
         <property>
             <from name="searchTerms"/>
-            <to name="keywords" type="string"/>
+            <to name="keywords" endpointType="string"/>
         </property>
     </mapping>
     <to streamName="summarizedStatistics" version="1.2.0"/>

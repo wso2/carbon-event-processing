@@ -22,39 +22,39 @@
         <xs:schema attributeFormDefault="qualified" elementFormDefault="qualified" targetNamespace="http://admin.simulator.event.carbon.wso2.org/xsd">
             <xs:complexType name="UploadedFileItemDto">
                 <xs:sequence>
-                    <xs:element minOccurs="0" name="dataHandler" nillable="true" type="xs:base64Binary"/>
-                    <xs:element minOccurs="0" name="fileName" nillable="true" type="xs:string"/>
-                    <xs:element minOccurs="0" name="fileType" nillable="true" type="xs:string"/>
+                    <xs:element minOccurs="0" name="dataHandler" nillable="true" endpointType="xs:base64Binary"/>
+                    <xs:element minOccurs="0" name="fileName" nillable="true" endpointType="xs:string"/>
+                    <xs:element minOccurs="0" name="fileType" nillable="true" endpointType="xs:string"/>
                 </xs:sequence>
             </xs:complexType>
             <xs:complexType name="EventDto">
                 <xs:sequence>
-                    <xs:element maxOccurs="unbounded" minOccurs="0" name="attributeValues" nillable="true" type="xs:string"/>
-                    <xs:element minOccurs="0" name="eventStreamId" nillable="true" type="xs:string"/>
+                    <xs:element maxOccurs="unbounded" minOccurs="0" name="attributeValues" nillable="true" endpointType="xs:string"/>
+                    <xs:element minOccurs="0" name="eventStreamId" nillable="true" endpointType="xs:string"/>
                 </xs:sequence>
             </xs:complexType>
             <xs:complexType name="StreamDefinitionInfoDto">
                 <xs:sequence>
-                    <xs:element maxOccurs="unbounded" minOccurs="0" name="correlationAttributes" nillable="true" type="ax2116:StreamAttributeDto"/>
-                    <xs:element maxOccurs="unbounded" minOccurs="0" name="metaAttributes" nillable="true" type="ax2116:StreamAttributeDto"/>
-                    <xs:element maxOccurs="unbounded" minOccurs="0" name="payloadAttributes" nillable="true" type="ax2116:StreamAttributeDto"/>
-                    <xs:element minOccurs="0" name="streamDefinition" nillable="true" type="xs:string"/>
-                    <xs:element minOccurs="0" name="streamDescription" nillable="true" type="xs:string"/>
-                    <xs:element minOccurs="0" name="streamName" nillable="true" type="xs:string"/>
-                    <xs:element minOccurs="0" name="streamVersion" nillable="true" type="xs:string"/>
+                    <xs:element maxOccurs="unbounded" minOccurs="0" name="correlationAttributes" nillable="true" endpointType="ax2116:StreamAttributeDto"/>
+                    <xs:element maxOccurs="unbounded" minOccurs="0" name="metaAttributes" nillable="true" endpointType="ax2116:StreamAttributeDto"/>
+                    <xs:element maxOccurs="unbounded" minOccurs="0" name="payloadAttributes" nillable="true" endpointType="ax2116:StreamAttributeDto"/>
+                    <xs:element minOccurs="0" name="streamDefinition" nillable="true" endpointType="xs:string"/>
+                    <xs:element minOccurs="0" name="streamDescription" nillable="true" endpointType="xs:string"/>
+                    <xs:element minOccurs="0" name="streamName" nillable="true" endpointType="xs:string"/>
+                    <xs:element minOccurs="0" name="streamVersion" nillable="true" endpointType="xs:string"/>
                 </xs:sequence>
             </xs:complexType>
             <xs:complexType name="StreamAttributeDto">
                 <xs:sequence>
-                    <xs:element minOccurs="0" name="attributeName" nillable="true" type="xs:string"/>
-                    <xs:element minOccurs="0" name="attributeType" nillable="true" type="xs:string"/>
+                    <xs:element minOccurs="0" name="attributeName" nillable="true" endpointType="xs:string"/>
+                    <xs:element minOccurs="0" name="attributeType" nillable="true" endpointType="xs:string"/>
                 </xs:sequence>
             </xs:complexType>
             <xs:complexType name="CSVFileInfoDto">
                 <xs:sequence>
-                    <xs:element minOccurs="0" name="fileName" nillable="true" type="xs:string"/>
-                    <xs:element minOccurs="0" name="filePath" nillable="true" type="xs:string"/>
-                    <xs:element minOccurs="0" name="streamID" nillable="true" type="xs:string"/>
+                    <xs:element minOccurs="0" name="fileName" nillable="true" endpointType="xs:string"/>
+                    <xs:element minOccurs="0" name="filePath" nillable="true" endpointType="xs:string"/>
+                    <xs:element minOccurs="0" name="streamID" nillable="true" endpointType="xs:string"/>
                 </xs:sequence>
             </xs:complexType>
         </xs:schema>
@@ -64,30 +64,30 @@
             <xs:element name="uploadService">
                 <xs:complexType>
                     <xs:sequence>
-                        <xs:element maxOccurs="unbounded" minOccurs="0" name="fileItems" nillable="true" type="ax2116:UploadedFileItemDto"/>
+                        <xs:element maxOccurs="unbounded" minOccurs="0" name="fileItems" nillable="true" endpointType="ax2116:UploadedFileItemDto"/>
                     </xs:sequence>
                 </xs:complexType>
             </xs:element>
             <xs:element name="sendEventsViaFile">
                 <xs:complexType>
                     <xs:sequence>
-                        <xs:element minOccurs="0" name="fileName" nillable="true" type="xs:string"/>
+                        <xs:element minOccurs="0" name="fileName" nillable="true" endpointType="xs:string"/>
                     </xs:sequence>
                 </xs:complexType>
             </xs:element>
             <xs:element name="sendEvent">
                 <xs:complexType>
                     <xs:sequence>
-                        <xs:element minOccurs="0" name="eventDto" nillable="true" type="ax2116:EventDto"/>
+                        <xs:element minOccurs="0" name="eventDto" nillable="true" endpointType="ax2116:EventDto"/>
                     </xs:sequence>
                 </xs:complexType>
             </xs:element>
             <xs:element name="sendConfigDetails">
                 <xs:complexType>
                     <xs:sequence>
-                        <xs:element minOccurs="0" name="fileName" nillable="true" type="xs:string"/>
-                        <xs:element minOccurs="0" name="streamId" nillable="true" type="xs:string"/>
-                        <xs:element minOccurs="0" name="separateChar" nillable="true" type="xs:string"/>
+                        <xs:element minOccurs="0" name="fileName" nillable="true" endpointType="xs:string"/>
+                        <xs:element minOccurs="0" name="streamId" nillable="true" endpointType="xs:string"/>
+                        <xs:element minOccurs="0" name="separateChar" nillable="true" endpointType="xs:string"/>
                     </xs:sequence>
                 </xs:complexType>
             </xs:element>
@@ -99,7 +99,7 @@
             <xs:element name="getAllEventStreamInfoDtoResponse">
                 <xs:complexType>
                     <xs:sequence>
-                        <xs:element maxOccurs="unbounded" minOccurs="0" name="return" nillable="true" type="ax2116:StreamDefinitionInfoDto"/>
+                        <xs:element maxOccurs="unbounded" minOccurs="0" name="return" nillable="true" endpointType="ax2116:StreamDefinitionInfoDto"/>
                     </xs:sequence>
                 </xs:complexType>
             </xs:element>
@@ -111,14 +111,14 @@
             <xs:element name="getAllCSVFileInfoResponse">
                 <xs:complexType>
                     <xs:sequence>
-                        <xs:element maxOccurs="unbounded" minOccurs="0" name="return" nillable="true" type="ax2116:CSVFileInfoDto"/>
+                        <xs:element maxOccurs="unbounded" minOccurs="0" name="return" nillable="true" endpointType="ax2116:CSVFileInfoDto"/>
                     </xs:sequence>
                 </xs:complexType>
             </xs:element>
             <xs:element name="deleteFile">
                 <xs:complexType>
                     <xs:sequence>
-                        <xs:element minOccurs="0" name="fileName" nillable="true" type="xs:string"/>
+                        <xs:element minOccurs="0" name="fileName" nillable="true" endpointType="xs:string"/>
                     </xs:sequence>
                 </xs:complexType>
             </xs:element>
@@ -186,7 +186,7 @@
             <wsdl:output message="ns:sendEventResponse" wsaw:Action="urn:sendEventResponse"/>
         </wsdl:operation>
     </wsdl:portType>
-    <wsdl:binding name="EventSimulatorAdminServiceSoap11Binding" type="ns:EventSimulatorAdminServicePortType">
+    <wsdl:binding name="EventSimulatorAdminServiceSoap11Binding" endpointType="ns:EventSimulatorAdminServicePortType">
         <soap:binding transport="http://schemas.xmlsoap.org/soap/http" style="document"/>
         <wsdl:operation name="getAllCSVFileInfo">
             <soap:operation soapAction="urn:getAllCSVFileInfo" style="document"/>
@@ -252,7 +252,7 @@
             </wsdl:output>
         </wsdl:operation>
     </wsdl:binding>
-    <wsdl:binding name="EventSimulatorAdminServiceSoap12Binding" type="ns:EventSimulatorAdminServicePortType">
+    <wsdl:binding name="EventSimulatorAdminServiceSoap12Binding" endpointType="ns:EventSimulatorAdminServicePortType">
         <soap12:binding transport="http://schemas.xmlsoap.org/soap/http" style="document"/>
         <wsdl:operation name="getAllCSVFileInfo">
             <soap12:operation soapAction="urn:getAllCSVFileInfo" style="document"/>
@@ -318,69 +318,69 @@
             </wsdl:output>
         </wsdl:operation>
     </wsdl:binding>
-    <wsdl:binding name="EventSimulatorAdminServiceHttpBinding" type="ns:EventSimulatorAdminServicePortType">
+    <wsdl:binding name="EventSimulatorAdminServiceHttpBinding" endpointType="ns:EventSimulatorAdminServicePortType">
         <http:binding verb="POST"/>
         <wsdl:operation name="getAllCSVFileInfo">
             <http:operation location="getAllCSVFileInfo"/>
             <wsdl:input>
-                <mime:content type="text/xml" part="parameters"/>
+                <mime:content endpointType="text/xml" part="parameters"/>
             </wsdl:input>
             <wsdl:output>
-                <mime:content type="text/xml" part="parameters"/>
+                <mime:content endpointType="text/xml" part="parameters"/>
             </wsdl:output>
         </wsdl:operation>
         <wsdl:operation name="sendEventsViaFile">
             <http:operation location="sendEventsViaFile"/>
             <wsdl:input>
-                <mime:content type="text/xml" part="parameters"/>
+                <mime:content endpointType="text/xml" part="parameters"/>
             </wsdl:input>
             <wsdl:output>
-                <mime:content type="text/xml" part="parameters"/>
+                <mime:content endpointType="text/xml" part="parameters"/>
             </wsdl:output>
         </wsdl:operation>
         <wsdl:operation name="getAllEventStreamInfoDto">
             <http:operation location="getAllEventStreamInfoDto"/>
             <wsdl:input>
-                <mime:content type="text/xml" part="parameters"/>
+                <mime:content endpointType="text/xml" part="parameters"/>
             </wsdl:input>
             <wsdl:output>
-                <mime:content type="text/xml" part="parameters"/>
+                <mime:content endpointType="text/xml" part="parameters"/>
             </wsdl:output>
         </wsdl:operation>
         <wsdl:operation name="deleteFile">
             <http:operation location="deleteFile"/>
             <wsdl:input>
-                <mime:content type="text/xml" part="parameters"/>
+                <mime:content endpointType="text/xml" part="parameters"/>
             </wsdl:input>
             <wsdl:output>
-                <mime:content type="text/xml" part="parameters"/>
+                <mime:content endpointType="text/xml" part="parameters"/>
             </wsdl:output>
         </wsdl:operation>
         <wsdl:operation name="sendConfigDetails">
             <http:operation location="sendConfigDetails"/>
             <wsdl:input>
-                <mime:content type="text/xml" part="parameters"/>
+                <mime:content endpointType="text/xml" part="parameters"/>
             </wsdl:input>
             <wsdl:output>
-                <mime:content type="text/xml" part="parameters"/>
+                <mime:content endpointType="text/xml" part="parameters"/>
             </wsdl:output>
         </wsdl:operation>
         <wsdl:operation name="uploadService">
             <http:operation location="uploadService"/>
             <wsdl:input>
-                <mime:content type="text/xml" part="parameters"/>
+                <mime:content endpointType="text/xml" part="parameters"/>
             </wsdl:input>
             <wsdl:output>
-                <mime:content type="text/xml" part="parameters"/>
+                <mime:content endpointType="text/xml" part="parameters"/>
             </wsdl:output>
         </wsdl:operation>
         <wsdl:operation name="sendEvent">
             <http:operation location="sendEvent"/>
             <wsdl:input>
-                <mime:content type="text/xml" part="parameters"/>
+                <mime:content endpointType="text/xml" part="parameters"/>
             </wsdl:input>
             <wsdl:output>
-                <mime:content type="text/xml" part="parameters"/>
+                <mime:content endpointType="text/xml" part="parameters"/>
             </wsdl:output>
         </wsdl:operation>
     </wsdl:binding>

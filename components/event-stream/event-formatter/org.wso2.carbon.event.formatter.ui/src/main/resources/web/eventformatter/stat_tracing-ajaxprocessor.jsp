@@ -22,7 +22,7 @@
         import="org.wso2.carbon.event.formatter.ui.EventFormatterUIUtils" %>
 
 <%
-    String eventAdaptorName = request.getParameter("eventFormatterName");
+    String eventAdaptorName = request.getParameter("eventNotifierName");
     String action = request.getParameter("action");
 
     if (eventAdaptorName != null && action != null) {

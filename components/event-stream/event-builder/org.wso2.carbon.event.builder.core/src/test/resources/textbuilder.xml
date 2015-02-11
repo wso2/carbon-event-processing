@@ -21,15 +21,15 @@
     <from eventAdaptorName="emailEventAdaptor" eventAdaptorType="email">
         <property name="email.in.subject">TestEmailService</property>
     </from>
-    <mapping type="text">
+    <mapping endpointType="text">
         <property>
             <from regex="(\w+)\sin\s(\w+)"/>
-            <to name="person" type="string"/>
-            <to name="location" type="string"/>
+            <to name="person" endpointType="string"/>
+            <to name="location" endpointType="string"/>
         </property>
         <property>
             <from regex="USD\s(\d*\.\d{2})"/>
-            <to name="amount" type="double"/>
+            <to name="amount" endpointType="double"/>
         </property>
     </mapping>
     <to streamName="correlationStream" version="1.4.0"/>

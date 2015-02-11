@@ -21,14 +21,14 @@
 <%
     // get required parameters to add a event formatter to back end.
     EventFormatterAdminServiceStub stub = EventFormatterUIUtils.getEventFormatterAdminService(config, session, request);
-    String eventFormatterName = request.getParameter("eventFormatterName");
+    String eventNotifierName = request.getParameter("eventNotifierName");
     String eventFormatterPath = request.getParameter("eventFormatterPath");
-    String eventFormatterConfiguration = request.getParameter("eventFormatterConfiguration");
+    String eventNotifierConfiguration = request.getParameter("eventNotifierConfiguration");
     String msg = null;
-    if (eventFormatterName != null) {
+    if (eventNotifierName != null) {
         try {
             // add event formatter via admin service
-            stub.editActiveEventFormatterConfiguration(eventFormatterConfiguration, eventFormatterName);
+            stub.editActiveEventFormatterConfiguration(eventNotifierConfiguration, eventNotifierName);
             msg = "true";
         } catch (Exception e) {
             msg = e.getMessage();
@@ -37,7 +37,7 @@
     } else if (eventFormatterPath != null) {
         try {
             // add event formatter via admin service
-            stub.editInactiveEventFormatterConfiguration(eventFormatterConfiguration, eventFormatterPath);
+            stub.editInactiveEventFormatterConfiguration(eventNotifierConfiguration, eventFormatterPath);
             msg = "true";
         } catch (Exception e) {
             msg = e.getMessage();

@@ -30,115 +30,115 @@
                    targetNamespace="http://internal.admin.formatter.event.carbon.wso2.org/xsd">
             <xs:complexType name="EventFormatterPropertyDto">
                 <xs:sequence>
-                    <xs:element minOccurs="0" name="defaultValue" nillable="true" type="xs:string"/>
-                    <xs:element minOccurs="0" name="displayName" nillable="true" type="xs:string"/>
-                    <xs:element minOccurs="0" name="hint" nillable="true" type="xs:string"/>
-                    <xs:element minOccurs="0" name="key" nillable="true" type="xs:string"/>
-                    <xs:element maxOccurs="unbounded" minOccurs="0" name="options" nillable="true" type="xs:string"/>
-                    <xs:element minOccurs="0" name="required" type="xs:boolean"/>
-                    <xs:element minOccurs="0" name="secured" type="xs:boolean"/>
-                    <xs:element minOccurs="0" name="value" nillable="true" type="xs:string"/>
+                    <xs:element minOccurs="0" name="defaultValue" nillable="true" endpointType="xs:string"/>
+                    <xs:element minOccurs="0" name="displayName" nillable="true" endpointType="xs:string"/>
+                    <xs:element minOccurs="0" name="hint" nillable="true" endpointType="xs:string"/>
+                    <xs:element minOccurs="0" name="key" nillable="true" endpointType="xs:string"/>
+                    <xs:element maxOccurs="unbounded" minOccurs="0" name="options" nillable="true" endpointType="xs:string"/>
+                    <xs:element minOccurs="0" name="required" endpointType="xs:boolean"/>
+                    <xs:element minOccurs="0" name="secured" endpointType="xs:boolean"/>
+                    <xs:element minOccurs="0" name="value" nillable="true" endpointType="xs:string"/>
                 </xs:sequence>
             </xs:complexType>
             <xs:complexType name="EventFormatterConfigurationInfoDto">
                 <xs:sequence>
-                    <xs:element minOccurs="0" name="enableStats" type="xs:boolean"/>
-                    <xs:element minOccurs="0" name="enableTracing" type="xs:boolean"/>
-                    <xs:element minOccurs="0" name="eventFormatterName" nillable="true" type="xs:string"/>
-                    <xs:element minOccurs="0" name="inputStreamId" nillable="true" type="xs:string"/>
-                    <xs:element minOccurs="0" name="mappingType" nillable="true" type="xs:string"/>
-                    <xs:element minOccurs="0" name="outEventAdaptorName" nillable="true" type="xs:string"/>
+                    <xs:element minOccurs="0" name="enableStats" endpointType="xs:boolean"/>
+                    <xs:element minOccurs="0" name="enableTracing" endpointType="xs:boolean"/>
+                    <xs:element minOccurs="0" name="eventNotifierName" nillable="true" endpointType="xs:string"/>
+                    <xs:element minOccurs="0" name="inputStreamId" nillable="true" endpointType="xs:string"/>
+                    <xs:element minOccurs="0" name="mappingType" nillable="true" endpointType="xs:string"/>
+                    <xs:element minOccurs="0" name="outEventAdaptorName" nillable="true" endpointType="xs:string"/>
                 </xs:sequence>
             </xs:complexType>
             <xs:complexType name="EventFormatterConfigurationFileDto">
                 <xs:sequence>
-                    <xs:element minOccurs="0" name="deploymentStatusMsg" nillable="true" type="xs:string"/>
-                    <xs:element minOccurs="0" name="eventFormatterName" nillable="true" type="xs:string"/>
-                    <xs:element minOccurs="0" name="fileName" nillable="true" type="xs:string"/>
+                    <xs:element minOccurs="0" name="deploymentStatusMsg" nillable="true" endpointType="xs:string"/>
+                    <xs:element minOccurs="0" name="eventNotifierName" nillable="true" endpointType="xs:string"/>
+                    <xs:element minOccurs="0" name="fileName" nillable="true" endpointType="xs:string"/>
                 </xs:sequence>
             </xs:complexType>
             <xs:complexType name="EventFormatterConfigurationDto">
                 <xs:sequence>
-                    <xs:element minOccurs="0" name="eventFormatterName" nillable="true" type="xs:string"/>
-                    <xs:element minOccurs="0" name="fromStreamNameWithVersion" nillable="true" type="xs:string"/>
+                    <xs:element minOccurs="0" name="eventNotifierName" nillable="true" endpointType="xs:string"/>
+                    <xs:element minOccurs="0" name="fromStreamNameWithVersion" nillable="true" endpointType="xs:string"/>
                     <xs:element minOccurs="0" name="jsonOutputMappingDto" nillable="true"
-                                type="ax2108:JSONOutputMappingDto"/>
+                                endpointType="ax2108:JSONOutputMappingDto"/>
                     <xs:element minOccurs="0" name="mapOutputMappingDto" nillable="true"
-                                type="ax2108:MapOutputMappingDto"/>
-                    <xs:element minOccurs="0" name="mappingType" nillable="true" type="xs:string"/>
-                    <xs:element minOccurs="0" name="streamDefinition" nillable="true" type="xs:string"/>
+                                endpointType="ax2108:MapOutputMappingDto"/>
+                    <xs:element minOccurs="0" name="mappingType" nillable="true" endpointType="xs:string"/>
+                    <xs:element minOccurs="0" name="streamDefinition" nillable="true" endpointType="xs:string"/>
                     <xs:element minOccurs="0" name="textOutputMappingDto" nillable="true"
-                                type="ax2108:TextOutputMappingDto"/>
+                                endpointType="ax2108:TextOutputMappingDto"/>
                     <xs:element minOccurs="0" name="toPropertyConfigurationDto" nillable="true"
-                                type="ax2108:ToPropertyConfigurationDto"/>
+                                endpointType="ax2108:ToPropertyConfigurationDto"/>
                     <xs:element minOccurs="0" name="wso2EventOutputMappingDto" nillable="true"
-                                type="ax2108:WSO2EventOutputMappingDto"/>
+                                endpointType="ax2108:WSO2EventOutputMappingDto"/>
                     <xs:element minOccurs="0" name="xmlOutputMappingDto" nillable="true"
-                                type="ax2108:XMLOutputMappingDto"/>
+                                endpointType="ax2108:XMLOutputMappingDto"/>
                 </xs:sequence>
             </xs:complexType>
             <xs:complexType name="JSONOutputMappingDto">
                 <xs:sequence>
-                    <xs:element minOccurs="0" name="mappingText" nillable="true" type="xs:string"/>
-                    <xs:element minOccurs="0" name="registryResource" type="xs:boolean"/>
+                    <xs:element minOccurs="0" name="mappingText" nillable="true" endpointType="xs:string"/>
+                    <xs:element minOccurs="0" name="registryResource" endpointType="xs:boolean"/>
                 </xs:sequence>
             </xs:complexType>
             <xs:complexType name="MapOutputMappingDto">
                 <xs:sequence>
                     <xs:element maxOccurs="unbounded" minOccurs="0" name="outputPropertyConfiguration" nillable="true"
-                                type="ax2108:EventOutputPropertyDto"/>
+                                endpointType="ax2108:EventOutputPropertyDto"/>
                 </xs:sequence>
             </xs:complexType>
             <xs:complexType name="EventOutputPropertyDto">
                 <xs:sequence>
-                    <xs:element minOccurs="0" name="name" nillable="true" type="xs:string"/>
-                    <xs:element minOccurs="0" name="type" nillable="true" type="xs:string"/>
-                    <xs:element minOccurs="0" name="valueOf" nillable="true" type="xs:string"/>
+                    <xs:element minOccurs="0" name="name" nillable="true" endpointType="xs:string"/>
+                    <xs:element minOccurs="0" name="endpointType" nillable="true" endpointType="xs:string"/>
+                    <xs:element minOccurs="0" name="valueOf" nillable="true" endpointType="xs:string"/>
                 </xs:sequence>
             </xs:complexType>
             <xs:complexType name="TextOutputMappingDto">
                 <xs:sequence>
-                    <xs:element minOccurs="0" name="mappingText" nillable="true" type="xs:string"/>
-                    <xs:element minOccurs="0" name="registryResource" type="xs:boolean"/>
+                    <xs:element minOccurs="0" name="mappingText" nillable="true" endpointType="xs:string"/>
+                    <xs:element minOccurs="0" name="registryResource" endpointType="xs:boolean"/>
                 </xs:sequence>
             </xs:complexType>
             <xs:complexType name="ToPropertyConfigurationDto">
                 <xs:sequence>
-                    <xs:element minOccurs="0" name="eventAdaptorName" nillable="true" type="xs:string"/>
-                    <xs:element minOccurs="0" name="eventAdaptorType" nillable="true" type="xs:string"/>
-                    <xs:element maxOccurs="unbounded" minOccurs="0" name="outputEventAdaptorMessageConfiguration"
-                                nillable="true" type="ax2108:EventFormatterPropertyDto"/>
+                    <xs:element minOccurs="0" name="eventAdaptorName" nillable="true" endpointType="xs:string"/>
+                    <xs:element minOccurs="0" name="eventAdaptorType" nillable="true" endpointType="xs:string"/>
+                    <xs:element maxOccurs="unbounded" minOccurs="0" name="endpointAdaptorConfiguration"
+                                nillable="true" endpointType="ax2108:EventFormatterPropertyDto"/>
                 </xs:sequence>
             </xs:complexType>
             <xs:complexType name="WSO2EventOutputMappingDto">
                 <xs:sequence>
                     <xs:element maxOccurs="unbounded" minOccurs="0"
                                 name="correlationWSO2EventOutputPropertyConfigurationDto" nillable="true"
-                                type="ax2108:EventOutputPropertyDto"/>
+                                endpointType="ax2108:EventOutputPropertyDto"/>
                     <xs:element maxOccurs="unbounded" minOccurs="0" name="metaWSO2EventOutputPropertyConfigurationDto"
-                                nillable="true" type="ax2108:EventOutputPropertyDto"/>
+                                nillable="true" endpointType="ax2108:EventOutputPropertyDto"/>
                     <xs:element maxOccurs="unbounded" minOccurs="0"
                                 name="payloadWSO2EventOutputPropertyConfigurationDto" nillable="true"
-                                type="ax2108:EventOutputPropertyDto"/>
+                                endpointType="ax2108:EventOutputPropertyDto"/>
                 </xs:sequence>
             </xs:complexType>
             <xs:complexType name="XMLOutputMappingDto">
                 <xs:sequence>
-                    <xs:element minOccurs="0" name="mappingXMLText" nillable="true" type="xs:string"/>
-                    <xs:element minOccurs="0" name="registryResource" type="xs:boolean"/>
+                    <xs:element minOccurs="0" name="mappingXMLText" nillable="true" endpointType="xs:string"/>
+                    <xs:element minOccurs="0" name="registryResource" endpointType="xs:boolean"/>
                 </xs:sequence>
             </xs:complexType>
             <xs:complexType name="PropertyDto">
                 <xs:sequence>
-                    <xs:element minOccurs="0" name="key" nillable="true" type="xs:string"/>
-                    <xs:element minOccurs="0" name="value" nillable="true" type="xs:string"/>
+                    <xs:element minOccurs="0" name="key" nillable="true" endpointType="xs:string"/>
+                    <xs:element minOccurs="0" name="value" nillable="true" endpointType="xs:string"/>
                 </xs:sequence>
             </xs:complexType>
             <xs:complexType name="EventOutputPropertyConfigurationDto">
                 <xs:sequence>
-                    <xs:element minOccurs="0" name="name" nillable="true" type="xs:string"/>
-                    <xs:element minOccurs="0" name="type" nillable="true" type="xs:string"/>
-                    <xs:element minOccurs="0" name="valueOf" nillable="true" type="xs:string"/>
+                    <xs:element minOccurs="0" name="name" nillable="true" endpointType="xs:string"/>
+                    <xs:element minOccurs="0" name="endpointType" nillable="true" endpointType="xs:string"/>
+                    <xs:element minOccurs="0" name="valueOf" nillable="true" endpointType="xs:string"/>
                 </xs:sequence>
             </xs:complexType>
         </xs:schema>
@@ -148,51 +148,51 @@
             <xs:element name="undeployInactiveEventFormatterConfiguration">
                 <xs:complexType>
                     <xs:sequence>
-                        <xs:element minOccurs="0" name="fileName" nillable="true" type="xs:string"/>
+                        <xs:element minOccurs="0" name="fileName" nillable="true" endpointType="xs:string"/>
                     </xs:sequence>
                 </xs:complexType>
             </xs:element>
             <xs:element name="undeployActiveEventFormatterConfiguration">
                 <xs:complexType>
                     <xs:sequence>
-                        <xs:element minOccurs="0" name="eventFormatterName" nillable="true" type="xs:string"/>
+                        <xs:element minOccurs="0" name="eventNotifierName" nillable="true" endpointType="xs:string"/>
                     </xs:sequence>
                 </xs:complexType>
             </xs:element>
             <xs:element name="setTracingEnabled">
                 <xs:complexType>
                     <xs:sequence>
-                        <xs:element minOccurs="0" name="eventFormatterName" nillable="true" type="xs:string"/>
-                        <xs:element minOccurs="0" name="flag" type="xs:boolean"/>
+                        <xs:element minOccurs="0" name="eventNotifierName" nillable="true" endpointType="xs:string"/>
+                        <xs:element minOccurs="0" name="flag" endpointType="xs:boolean"/>
                     </xs:sequence>
                 </xs:complexType>
             </xs:element>
             <xs:element name="setStatisticsEnabled">
                 <xs:complexType>
                     <xs:sequence>
-                        <xs:element minOccurs="0" name="eventFormatterName" nillable="true" type="xs:string"/>
-                        <xs:element minOccurs="0" name="flag" type="xs:boolean"/>
+                        <xs:element minOccurs="0" name="eventNotifierName" nillable="true" endpointType="xs:string"/>
+                        <xs:element minOccurs="0" name="flag" endpointType="xs:boolean"/>
                     </xs:sequence>
                 </xs:complexType>
             </xs:element>
             <xs:element name="getInactiveEventFormatterConfigurationContent">
                 <xs:complexType>
                     <xs:sequence>
-                        <xs:element minOccurs="0" name="fileName" nillable="true" type="xs:string"/>
+                        <xs:element minOccurs="0" name="fileName" nillable="true" endpointType="xs:string"/>
                     </xs:sequence>
                 </xs:complexType>
             </xs:element>
             <xs:element name="getInactiveEventFormatterConfigurationContentResponse">
                 <xs:complexType>
                     <xs:sequence>
-                        <xs:element minOccurs="0" name="return" nillable="true" type="xs:string"/>
+                        <xs:element minOccurs="0" name="return" nillable="true" endpointType="xs:string"/>
                     </xs:sequence>
                 </xs:complexType>
             </xs:element>
             <xs:element name="getEventFormatterMessageProperties">
                 <xs:complexType>
                     <xs:sequence>
-                        <xs:element minOccurs="0" name="eventAdaptorName" nillable="true" type="xs:string"/>
+                        <xs:element minOccurs="0" name="eventAdaptorName" nillable="true" endpointType="xs:string"/>
                     </xs:sequence>
                 </xs:complexType>
             </xs:element>
@@ -200,14 +200,14 @@
                 <xs:complexType>
                     <xs:sequence>
                         <xs:element maxOccurs="unbounded" minOccurs="0" name="return" nillable="true"
-                                    type="ax2109:EventFormatterPropertyDto"/>
+                                    endpointType="ax2109:EventFormatterPropertyDto"/>
                     </xs:sequence>
                 </xs:complexType>
             </xs:element>
             <xs:element name="getAllStreamSpecificActiveEventFormatterConfiguration">
                 <xs:complexType>
                     <xs:sequence>
-                        <xs:element minOccurs="0" name="streamId" nillable="true" type="xs:string"/>
+                        <xs:element minOccurs="0" name="streamId" nillable="true" endpointType="xs:string"/>
                     </xs:sequence>
                 </xs:complexType>
             </xs:element>
@@ -215,7 +215,7 @@
                 <xs:complexType>
                     <xs:sequence>
                         <xs:element maxOccurs="unbounded" minOccurs="0" name="return" nillable="true"
-                                    type="ax2109:EventFormatterConfigurationInfoDto"/>
+                                    endpointType="ax2109:EventFormatterConfigurationInfoDto"/>
                     </xs:sequence>
                 </xs:complexType>
             </xs:element>
@@ -228,7 +228,7 @@
                 <xs:complexType>
                     <xs:sequence>
                         <xs:element maxOccurs="unbounded" minOccurs="0" name="return" nillable="true"
-                                    type="ax2109:EventFormatterConfigurationFileDto"/>
+                                    endpointType="ax2109:EventFormatterConfigurationFileDto"/>
                     </xs:sequence>
                 </xs:complexType>
             </xs:element>
@@ -241,28 +241,28 @@
                 <xs:complexType>
                     <xs:sequence>
                         <xs:element maxOccurs="unbounded" minOccurs="0" name="return" nillable="true"
-                                    type="ax2109:EventFormatterConfigurationInfoDto"/>
+                                    endpointType="ax2109:EventFormatterConfigurationInfoDto"/>
                     </xs:sequence>
                 </xs:complexType>
             </xs:element>
             <xs:element name="getActiveEventFormatterConfigurationContent">
                 <xs:complexType>
                     <xs:sequence>
-                        <xs:element minOccurs="0" name="eventFormatterName" nillable="true" type="xs:string"/>
+                        <xs:element minOccurs="0" name="eventNotifierName" nillable="true" endpointType="xs:string"/>
                     </xs:sequence>
                 </xs:complexType>
             </xs:element>
             <xs:element name="getActiveEventFormatterConfigurationContentResponse">
                 <xs:complexType>
                     <xs:sequence>
-                        <xs:element minOccurs="0" name="return" nillable="true" type="xs:string"/>
+                        <xs:element minOccurs="0" name="return" nillable="true" endpointType="xs:string"/>
                     </xs:sequence>
                 </xs:complexType>
             </xs:element>
             <xs:element name="getActiveEventFormatterConfiguration">
                 <xs:complexType>
                     <xs:sequence>
-                        <xs:element minOccurs="0" name="eventFormatterName" nillable="true" type="xs:string"/>
+                        <xs:element minOccurs="0" name="eventNotifierName" nillable="true" endpointType="xs:string"/>
                     </xs:sequence>
                 </xs:complexType>
             </xs:element>
@@ -270,116 +270,116 @@
                 <xs:complexType>
                     <xs:sequence>
                         <xs:element minOccurs="0" name="return" nillable="true"
-                                    type="ax2109:EventFormatterConfigurationDto"/>
+                                    endpointType="ax2109:EventFormatterConfigurationDto"/>
                     </xs:sequence>
                 </xs:complexType>
             </xs:element>
             <xs:element name="editInactiveEventFormatterConfiguration">
                 <xs:complexType>
                     <xs:sequence>
-                        <xs:element minOccurs="0" name="eventFormatterConfiguration" nillable="true" type="xs:string"/>
-                        <xs:element minOccurs="0" name="fileName" nillable="true" type="xs:string"/>
+                        <xs:element minOccurs="0" name="eventNotifierConfiguration" nillable="true" endpointType="xs:string"/>
+                        <xs:element minOccurs="0" name="fileName" nillable="true" endpointType="xs:string"/>
                     </xs:sequence>
                 </xs:complexType>
             </xs:element>
             <xs:element name="editActiveEventFormatterConfiguration">
                 <xs:complexType>
                     <xs:sequence>
-                        <xs:element minOccurs="0" name="eventFormatterConfiguration" nillable="true" type="xs:string"/>
-                        <xs:element minOccurs="0" name="eventFormatterName" nillable="true" type="xs:string"/>
+                        <xs:element minOccurs="0" name="eventNotifierConfiguration" nillable="true" endpointType="xs:string"/>
+                        <xs:element minOccurs="0" name="eventNotifierName" nillable="true" endpointType="xs:string"/>
                     </xs:sequence>
                 </xs:complexType>
             </xs:element>
             <xs:element name="deployXmlEventFormatterConfiguration">
                 <xs:complexType>
                     <xs:sequence>
-                        <xs:element minOccurs="0" name="eventFormatterName" nillable="true" type="xs:string"/>
-                        <xs:element minOccurs="0" name="streamNameWithVersion" nillable="true" type="xs:string"/>
-                        <xs:element minOccurs="0" name="eventAdaptorName" nillable="true" type="xs:string"/>
-                        <xs:element minOccurs="0" name="eventAdaptorType" nillable="true" type="xs:string"/>
-                        <xs:element minOccurs="0" name="textData" nillable="true" type="xs:string"/>
+                        <xs:element minOccurs="0" name="eventNotifierName" nillable="true" endpointType="xs:string"/>
+                        <xs:element minOccurs="0" name="streamNameWithVersion" nillable="true" endpointType="xs:string"/>
+                        <xs:element minOccurs="0" name="eventAdaptorName" nillable="true" endpointType="xs:string"/>
+                        <xs:element minOccurs="0" name="eventAdaptorType" nillable="true" endpointType="xs:string"/>
+                        <xs:element minOccurs="0" name="textData" nillable="true" endpointType="xs:string"/>
                         <xs:element maxOccurs="unbounded" minOccurs="0" name="outputPropertyConfiguration"
-                                    nillable="true" type="ax2109:PropertyDto"/>
-                        <xs:element minOccurs="0" name="dataFrom" nillable="true" type="xs:string"/>
-                        <xs:element minOccurs="0" name="mappingEnabled" type="xs:boolean"/>
+                                    nillable="true" endpointType="ax2109:PropertyDto"/>
+                        <xs:element minOccurs="0" name="dataFrom" nillable="true" endpointType="xs:string"/>
+                        <xs:element minOccurs="0" name="mappingEnabled" endpointType="xs:boolean"/>
                     </xs:sequence>
                 </xs:complexType>
             </xs:element>
             <xs:element name="deployWSO2EventFormatterConfiguration">
                 <xs:complexType>
                     <xs:sequence>
-                        <xs:element minOccurs="0" name="eventFormatterName" nillable="true" type="xs:string"/>
-                        <xs:element minOccurs="0" name="streamNameWithVersion" nillable="true" type="xs:string"/>
-                        <xs:element minOccurs="0" name="eventAdaptorName" nillable="true" type="xs:string"/>
-                        <xs:element minOccurs="0" name="eventAdaptorType" nillable="true" type="xs:string"/>
+                        <xs:element minOccurs="0" name="eventNotifierName" nillable="true" endpointType="xs:string"/>
+                        <xs:element minOccurs="0" name="streamNameWithVersion" nillable="true" endpointType="xs:string"/>
+                        <xs:element minOccurs="0" name="eventAdaptorName" nillable="true" endpointType="xs:string"/>
+                        <xs:element minOccurs="0" name="eventAdaptorType" nillable="true" endpointType="xs:string"/>
                         <xs:element maxOccurs="unbounded" minOccurs="0" name="metaData" nillable="true"
-                                    type="ax2109:EventOutputPropertyConfigurationDto"/>
+                                    endpointType="ax2109:EventOutputPropertyConfigurationDto"/>
                         <xs:element maxOccurs="unbounded" minOccurs="0" name="correlationData" nillable="true"
-                                    type="ax2109:EventOutputPropertyConfigurationDto"/>
+                                    endpointType="ax2109:EventOutputPropertyConfigurationDto"/>
                         <xs:element maxOccurs="unbounded" minOccurs="0" name="payloadData" nillable="true"
-                                    type="ax2109:EventOutputPropertyConfigurationDto"/>
+                                    endpointType="ax2109:EventOutputPropertyConfigurationDto"/>
                         <xs:element maxOccurs="unbounded" minOccurs="0" name="outputPropertyConfiguration"
-                                    nillable="true" type="ax2109:PropertyDto"/>
-                        <xs:element minOccurs="0" name="mappingEnabled" type="xs:boolean"/>
+                                    nillable="true" endpointType="ax2109:PropertyDto"/>
+                        <xs:element minOccurs="0" name="mappingEnabled" endpointType="xs:boolean"/>
                     </xs:sequence>
                 </xs:complexType>
             </xs:element>
             <xs:element name="deployTextEventFormatterConfiguration">
                 <xs:complexType>
                     <xs:sequence>
-                        <xs:element minOccurs="0" name="eventFormatterName" nillable="true" type="xs:string"/>
-                        <xs:element minOccurs="0" name="streamNameWithVersion" nillable="true" type="xs:string"/>
-                        <xs:element minOccurs="0" name="eventAdaptorName" nillable="true" type="xs:string"/>
-                        <xs:element minOccurs="0" name="eventAdaptorType" nillable="true" type="xs:string"/>
-                        <xs:element minOccurs="0" name="textData" nillable="true" type="xs:string"/>
+                        <xs:element minOccurs="0" name="eventNotifierName" nillable="true" endpointType="xs:string"/>
+                        <xs:element minOccurs="0" name="streamNameWithVersion" nillable="true" endpointType="xs:string"/>
+                        <xs:element minOccurs="0" name="eventAdaptorName" nillable="true" endpointType="xs:string"/>
+                        <xs:element minOccurs="0" name="eventAdaptorType" nillable="true" endpointType="xs:string"/>
+                        <xs:element minOccurs="0" name="textData" nillable="true" endpointType="xs:string"/>
                         <xs:element maxOccurs="unbounded" minOccurs="0" name="outputPropertyConfiguration"
-                                    nillable="true" type="ax2109:PropertyDto"/>
-                        <xs:element minOccurs="0" name="dataFrom" nillable="true" type="xs:string"/>
-                        <xs:element minOccurs="0" name="mappingEnabled" type="xs:boolean"/>
+                                    nillable="true" endpointType="ax2109:PropertyDto"/>
+                        <xs:element minOccurs="0" name="dataFrom" nillable="true" endpointType="xs:string"/>
+                        <xs:element minOccurs="0" name="mappingEnabled" endpointType="xs:boolean"/>
                     </xs:sequence>
                 </xs:complexType>
             </xs:element>
             <xs:element name="deployMapEventFormatterConfiguration">
                 <xs:complexType>
                     <xs:sequence>
-                        <xs:element minOccurs="0" name="eventFormatterName" nillable="true" type="xs:string"/>
-                        <xs:element minOccurs="0" name="streamNameWithVersion" nillable="true" type="xs:string"/>
-                        <xs:element minOccurs="0" name="eventAdaptorName" nillable="true" type="xs:string"/>
-                        <xs:element minOccurs="0" name="eventAdaptorType" nillable="true" type="xs:string"/>
+                        <xs:element minOccurs="0" name="eventNotifierName" nillable="true" endpointType="xs:string"/>
+                        <xs:element minOccurs="0" name="streamNameWithVersion" nillable="true" endpointType="xs:string"/>
+                        <xs:element minOccurs="0" name="eventAdaptorName" nillable="true" endpointType="xs:string"/>
+                        <xs:element minOccurs="0" name="eventAdaptorType" nillable="true" endpointType="xs:string"/>
                         <xs:element maxOccurs="unbounded" minOccurs="0" name="mapData" nillable="true"
-                                    type="ax2109:EventOutputPropertyConfigurationDto"/>
+                                    endpointType="ax2109:EventOutputPropertyConfigurationDto"/>
                         <xs:element maxOccurs="unbounded" minOccurs="0" name="outputPropertyConfiguration"
-                                    nillable="true" type="ax2109:PropertyDto"/>
-                        <xs:element minOccurs="0" name="mappingEnabled" type="xs:boolean"/>
+                                    nillable="true" endpointType="ax2109:PropertyDto"/>
+                        <xs:element minOccurs="0" name="mappingEnabled" endpointType="xs:boolean"/>
                     </xs:sequence>
                 </xs:complexType>
             </xs:element>
             <xs:element name="deployJsonEventFormatterConfiguration">
                 <xs:complexType>
                     <xs:sequence>
-                        <xs:element minOccurs="0" name="eventFormatterName" nillable="true" type="xs:string"/>
-                        <xs:element minOccurs="0" name="streamNameWithVersion" nillable="true" type="xs:string"/>
-                        <xs:element minOccurs="0" name="eventAdaptorName" nillable="true" type="xs:string"/>
-                        <xs:element minOccurs="0" name="eventAdaptorType" nillable="true" type="xs:string"/>
-                        <xs:element minOccurs="0" name="jsonData" nillable="true" type="xs:string"/>
+                        <xs:element minOccurs="0" name="eventNotifierName" nillable="true" endpointType="xs:string"/>
+                        <xs:element minOccurs="0" name="streamNameWithVersion" nillable="true" endpointType="xs:string"/>
+                        <xs:element minOccurs="0" name="eventAdaptorName" nillable="true" endpointType="xs:string"/>
+                        <xs:element minOccurs="0" name="eventAdaptorType" nillable="true" endpointType="xs:string"/>
+                        <xs:element minOccurs="0" name="jsonData" nillable="true" endpointType="xs:string"/>
                         <xs:element maxOccurs="unbounded" minOccurs="0" name="outputPropertyConfiguration"
-                                    nillable="true" type="ax2109:PropertyDto"/>
-                        <xs:element minOccurs="0" name="dataFrom" nillable="true" type="xs:string"/>
-                        <xs:element minOccurs="0" name="mappingEnabled" type="xs:boolean"/>
+                                    nillable="true" endpointType="ax2109:PropertyDto"/>
+                        <xs:element minOccurs="0" name="dataFrom" nillable="true" endpointType="xs:string"/>
+                        <xs:element minOccurs="0" name="mappingEnabled" endpointType="xs:boolean"/>
                     </xs:sequence>
                 </xs:complexType>
             </xs:element>
             <xs:element name="deployEventFormatterConfiguration">
                 <xs:complexType>
                     <xs:sequence>
-                        <xs:element minOccurs="0" name="eventFormatterConfigXml" nillable="true" type="xs:string"/>
+                        <xs:element minOccurs="0" name="eventFormatterConfigXml" nillable="true" endpointType="xs:string"/>
                     </xs:sequence>
                 </xs:complexType>
             </xs:element>
             <xs:element name="deployDefaultEventSender">
                 <xs:complexType>
                     <xs:sequence>
-                        <xs:element minOccurs="0" name="streamId" nillable="true" type="xs:string"/>
+                        <xs:element minOccurs="0" name="streamId" nillable="true" endpointType="xs:string"/>
                     </xs:sequence>
                 </xs:complexType>
             </xs:element>
@@ -596,7 +596,7 @@
                          wsaw:Action="urn:editActiveEventFormatterConfigurationResponse"/>
         </wsdl:operation>
     </wsdl:portType>
-    <wsdl:binding name="EventFormatterAdminServiceSoap11Binding" type="ns:EventFormatterAdminServicePortType">
+    <wsdl:binding name="EventFormatterAdminServiceSoap11Binding" endpointType="ns:EventFormatterAdminServicePortType">
         <soap:binding transport="http://schemas.xmlsoap.org/soap/http" style="document"/>
         <wsdl:operation name="deployEventFormatterConfiguration">
             <soap:operation soapAction="urn:deployEventFormatterConfiguration" style="document"/>
@@ -779,7 +779,7 @@
             </wsdl:output>
         </wsdl:operation>
     </wsdl:binding>
-    <wsdl:binding name="EventFormatterAdminServiceSoap12Binding" type="ns:EventFormatterAdminServicePortType">
+    <wsdl:binding name="EventFormatterAdminServiceSoap12Binding" endpointType="ns:EventFormatterAdminServicePortType">
         <soap12:binding transport="http://schemas.xmlsoap.org/soap/http" style="document"/>
         <wsdl:operation name="deployEventFormatterConfiguration">
             <soap12:operation soapAction="urn:deployEventFormatterConfiguration" style="document"/>
@@ -962,186 +962,186 @@
             </wsdl:output>
         </wsdl:operation>
     </wsdl:binding>
-    <wsdl:binding name="EventFormatterAdminServiceHttpBinding" type="ns:EventFormatterAdminServicePortType">
+    <wsdl:binding name="EventFormatterAdminServiceHttpBinding" endpointType="ns:EventFormatterAdminServicePortType">
         <http:binding verb="POST"/>
         <wsdl:operation name="deployEventFormatterConfiguration">
             <http:operation location="deployEventFormatterConfiguration"/>
             <wsdl:input>
-                <mime:content type="text/xml" part="parameters"/>
+                <mime:content endpointType="text/xml" part="parameters"/>
             </wsdl:input>
             <wsdl:output>
-                <mime:content type="text/xml" part="parameters"/>
+                <mime:content endpointType="text/xml" part="parameters"/>
             </wsdl:output>
         </wsdl:operation>
         <wsdl:operation name="getAllStreamSpecificActiveEventFormatterConfiguration">
             <http:operation location="getAllStreamSpecificActiveEventFormatterConfiguration"/>
             <wsdl:input>
-                <mime:content type="text/xml" part="parameters"/>
+                <mime:content endpointType="text/xml" part="parameters"/>
             </wsdl:input>
             <wsdl:output>
-                <mime:content type="text/xml" part="parameters"/>
+                <mime:content endpointType="text/xml" part="parameters"/>
             </wsdl:output>
         </wsdl:operation>
         <wsdl:operation name="deployTextEventFormatterConfiguration">
             <http:operation location="deployTextEventFormatterConfiguration"/>
             <wsdl:input>
-                <mime:content type="text/xml" part="parameters"/>
+                <mime:content endpointType="text/xml" part="parameters"/>
             </wsdl:input>
             <wsdl:output>
-                <mime:content type="text/xml" part="parameters"/>
+                <mime:content endpointType="text/xml" part="parameters"/>
             </wsdl:output>
         </wsdl:operation>
         <wsdl:operation name="getActiveEventFormatterConfigurationContent">
             <http:operation location="getActiveEventFormatterConfigurationContent"/>
             <wsdl:input>
-                <mime:content type="text/xml" part="parameters"/>
+                <mime:content endpointType="text/xml" part="parameters"/>
             </wsdl:input>
             <wsdl:output>
-                <mime:content type="text/xml" part="parameters"/>
+                <mime:content endpointType="text/xml" part="parameters"/>
             </wsdl:output>
         </wsdl:operation>
         <wsdl:operation name="deployDefaultEventSender">
             <http:operation location="deployDefaultEventSender"/>
             <wsdl:input>
-                <mime:content type="text/xml" part="parameters"/>
+                <mime:content endpointType="text/xml" part="parameters"/>
             </wsdl:input>
             <wsdl:output>
-                <mime:content type="text/xml" part="parameters"/>
+                <mime:content endpointType="text/xml" part="parameters"/>
             </wsdl:output>
         </wsdl:operation>
         <wsdl:operation name="getEventFormatterMessageProperties">
             <http:operation location="getEventFormatterMessageProperties"/>
             <wsdl:input>
-                <mime:content type="text/xml" part="parameters"/>
+                <mime:content endpointType="text/xml" part="parameters"/>
             </wsdl:input>
             <wsdl:output>
-                <mime:content type="text/xml" part="parameters"/>
+                <mime:content endpointType="text/xml" part="parameters"/>
             </wsdl:output>
         </wsdl:operation>
         <wsdl:operation name="setStatisticsEnabled">
             <http:operation location="setStatisticsEnabled"/>
             <wsdl:input>
-                <mime:content type="text/xml" part="parameters"/>
+                <mime:content endpointType="text/xml" part="parameters"/>
             </wsdl:input>
             <wsdl:output>
-                <mime:content type="text/xml" part="parameters"/>
+                <mime:content endpointType="text/xml" part="parameters"/>
             </wsdl:output>
         </wsdl:operation>
         <wsdl:operation name="undeployInactiveEventFormatterConfiguration">
             <http:operation location="undeployInactiveEventFormatterConfiguration"/>
             <wsdl:input>
-                <mime:content type="text/xml" part="parameters"/>
+                <mime:content endpointType="text/xml" part="parameters"/>
             </wsdl:input>
             <wsdl:output>
-                <mime:content type="text/xml" part="parameters"/>
+                <mime:content endpointType="text/xml" part="parameters"/>
             </wsdl:output>
         </wsdl:operation>
         <wsdl:operation name="getAllInactiveEventFormatterConfiguration">
             <http:operation location="getAllInactiveEventFormatterConfiguration"/>
             <wsdl:input>
-                <mime:content type="text/xml" part="parameters"/>
+                <mime:content endpointType="text/xml" part="parameters"/>
             </wsdl:input>
             <wsdl:output>
-                <mime:content type="text/xml" part="parameters"/>
+                <mime:content endpointType="text/xml" part="parameters"/>
             </wsdl:output>
         </wsdl:operation>
         <wsdl:operation name="deployJsonEventFormatterConfiguration">
             <http:operation location="deployJsonEventFormatterConfiguration"/>
             <wsdl:input>
-                <mime:content type="text/xml" part="parameters"/>
+                <mime:content endpointType="text/xml" part="parameters"/>
             </wsdl:input>
             <wsdl:output>
-                <mime:content type="text/xml" part="parameters"/>
+                <mime:content endpointType="text/xml" part="parameters"/>
             </wsdl:output>
         </wsdl:operation>
         <wsdl:operation name="undeployActiveEventFormatterConfiguration">
             <http:operation location="undeployActiveEventFormatterConfiguration"/>
             <wsdl:input>
-                <mime:content type="text/xml" part="parameters"/>
+                <mime:content endpointType="text/xml" part="parameters"/>
             </wsdl:input>
             <wsdl:output>
-                <mime:content type="text/xml" part="parameters"/>
+                <mime:content endpointType="text/xml" part="parameters"/>
             </wsdl:output>
         </wsdl:operation>
         <wsdl:operation name="deployMapEventFormatterConfiguration">
             <http:operation location="deployMapEventFormatterConfiguration"/>
             <wsdl:input>
-                <mime:content type="text/xml" part="parameters"/>
+                <mime:content endpointType="text/xml" part="parameters"/>
             </wsdl:input>
             <wsdl:output>
-                <mime:content type="text/xml" part="parameters"/>
+                <mime:content endpointType="text/xml" part="parameters"/>
             </wsdl:output>
         </wsdl:operation>
         <wsdl:operation name="getAllActiveEventFormatterConfiguration">
             <http:operation location="getAllActiveEventFormatterConfiguration"/>
             <wsdl:input>
-                <mime:content type="text/xml" part="parameters"/>
+                <mime:content endpointType="text/xml" part="parameters"/>
             </wsdl:input>
             <wsdl:output>
-                <mime:content type="text/xml" part="parameters"/>
+                <mime:content endpointType="text/xml" part="parameters"/>
             </wsdl:output>
         </wsdl:operation>
         <wsdl:operation name="deployWSO2EventFormatterConfiguration">
             <http:operation location="deployWSO2EventFormatterConfiguration"/>
             <wsdl:input>
-                <mime:content type="text/xml" part="parameters"/>
+                <mime:content endpointType="text/xml" part="parameters"/>
             </wsdl:input>
             <wsdl:output>
-                <mime:content type="text/xml" part="parameters"/>
+                <mime:content endpointType="text/xml" part="parameters"/>
             </wsdl:output>
         </wsdl:operation>
         <wsdl:operation name="getInactiveEventFormatterConfigurationContent">
             <http:operation location="getInactiveEventFormatterConfigurationContent"/>
             <wsdl:input>
-                <mime:content type="text/xml" part="parameters"/>
+                <mime:content endpointType="text/xml" part="parameters"/>
             </wsdl:input>
             <wsdl:output>
-                <mime:content type="text/xml" part="parameters"/>
+                <mime:content endpointType="text/xml" part="parameters"/>
             </wsdl:output>
         </wsdl:operation>
         <wsdl:operation name="deployXmlEventFormatterConfiguration">
             <http:operation location="deployXmlEventFormatterConfiguration"/>
             <wsdl:input>
-                <mime:content type="text/xml" part="parameters"/>
+                <mime:content endpointType="text/xml" part="parameters"/>
             </wsdl:input>
             <wsdl:output>
-                <mime:content type="text/xml" part="parameters"/>
+                <mime:content endpointType="text/xml" part="parameters"/>
             </wsdl:output>
         </wsdl:operation>
         <wsdl:operation name="setTracingEnabled">
             <http:operation location="setTracingEnabled"/>
             <wsdl:input>
-                <mime:content type="text/xml" part="parameters"/>
+                <mime:content endpointType="text/xml" part="parameters"/>
             </wsdl:input>
             <wsdl:output>
-                <mime:content type="text/xml" part="parameters"/>
+                <mime:content endpointType="text/xml" part="parameters"/>
             </wsdl:output>
         </wsdl:operation>
         <wsdl:operation name="getActiveEventFormatterConfiguration">
             <http:operation location="getActiveEventFormatterConfiguration"/>
             <wsdl:input>
-                <mime:content type="text/xml" part="parameters"/>
+                <mime:content endpointType="text/xml" part="parameters"/>
             </wsdl:input>
             <wsdl:output>
-                <mime:content type="text/xml" part="parameters"/>
+                <mime:content endpointType="text/xml" part="parameters"/>
             </wsdl:output>
         </wsdl:operation>
         <wsdl:operation name="editActiveEventFormatterConfiguration">
             <http:operation location="editActiveEventFormatterConfiguration"/>
             <wsdl:input>
-                <mime:content type="text/xml" part="parameters"/>
+                <mime:content endpointType="text/xml" part="parameters"/>
             </wsdl:input>
             <wsdl:output>
-                <mime:content type="text/xml" part="parameters"/>
+                <mime:content endpointType="text/xml" part="parameters"/>
             </wsdl:output>
         </wsdl:operation>
         <wsdl:operation name="editInactiveEventFormatterConfiguration">
             <http:operation location="editInactiveEventFormatterConfiguration"/>
             <wsdl:input>
-                <mime:content type="text/xml" part="parameters"/>
+                <mime:content endpointType="text/xml" part="parameters"/>
             </wsdl:input>
             <wsdl:output>
-                <mime:content type="text/xml" part="parameters"/>
+                <mime:content endpointType="text/xml" part="parameters"/>
             </wsdl:output>
         </wsdl:operation>
     </wsdl:binding>

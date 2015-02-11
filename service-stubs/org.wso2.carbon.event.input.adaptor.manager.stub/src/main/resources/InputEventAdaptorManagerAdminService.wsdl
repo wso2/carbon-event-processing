@@ -32,51 +32,51 @@
             <xs:element name="undeployInactiveInputEventAdaptorConfiguration">
                 <xs:complexType>
                     <xs:sequence>
-                        <xs:element minOccurs="0" name="fileName" nillable="true" type="xs:string"/>
+                        <xs:element minOccurs="0" name="fileName" nillable="true" endpointType="xs:string"/>
                     </xs:sequence>
                 </xs:complexType>
             </xs:element>
             <xs:element name="undeployActiveInputEventAdaptorConfiguration">
                 <xs:complexType>
                     <xs:sequence>
-                        <xs:element minOccurs="0" name="eventAdaptorName" nillable="true" type="xs:string"/>
+                        <xs:element minOccurs="0" name="eventAdaptorName" nillable="true" endpointType="xs:string"/>
                     </xs:sequence>
                 </xs:complexType>
             </xs:element>
             <xs:element name="setTracingEnabled">
                 <xs:complexType>
                     <xs:sequence>
-                        <xs:element minOccurs="0" name="eventAdaptorName" nillable="true" type="xs:string"/>
-                        <xs:element minOccurs="0" name="flag" type="xs:boolean"/>
+                        <xs:element minOccurs="0" name="eventAdaptorName" nillable="true" endpointType="xs:string"/>
+                        <xs:element minOccurs="0" name="flag" endpointType="xs:boolean"/>
                     </xs:sequence>
                 </xs:complexType>
             </xs:element>
             <xs:element name="setStatisticsEnabled">
                 <xs:complexType>
                     <xs:sequence>
-                        <xs:element minOccurs="0" name="eventAdaptorName" nillable="true" type="xs:string"/>
-                        <xs:element minOccurs="0" name="flag" type="xs:boolean"/>
+                        <xs:element minOccurs="0" name="eventAdaptorName" nillable="true" endpointType="xs:string"/>
+                        <xs:element minOccurs="0" name="flag" endpointType="xs:boolean"/>
                     </xs:sequence>
                 </xs:complexType>
             </xs:element>
             <xs:element name="getSupportedInputMappingTypes">
                 <xs:complexType>
                     <xs:sequence>
-                        <xs:element minOccurs="0" name="inputEventAdaptorName" nillable="true" type="xs:string"/>
+                        <xs:element minOccurs="0" name="inputEventAdaptorName" nillable="true" endpointType="xs:string"/>
                     </xs:sequence>
                 </xs:complexType>
             </xs:element>
             <xs:element name="getSupportedInputMappingTypesResponse">
                 <xs:complexType>
                     <xs:sequence>
-                        <xs:element maxOccurs="unbounded" minOccurs="0" name="return" nillable="true" type="xs:string"/>
+                        <xs:element maxOccurs="unbounded" minOccurs="0" name="return" nillable="true" endpointType="xs:string"/>
                     </xs:sequence>
                 </xs:complexType>
             </xs:element>
             <xs:element name="getInputEventAdaptorProperties">
                 <xs:complexType>
                     <xs:sequence>
-                        <xs:element minOccurs="0" name="eventAdaptorName" nillable="true" type="xs:string"/>
+                        <xs:element minOccurs="0" name="eventAdaptorName" nillable="true" endpointType="xs:string"/>
                     </xs:sequence>
                 </xs:complexType>
             </xs:element>
@@ -84,21 +84,21 @@
                 <xs:complexType>
                     <xs:sequence>
                         <xs:element minOccurs="0" name="return" nillable="true"
-                                    type="ax2111:InputEventAdaptorPropertiesDto"/>
+                                    endpointType="ax2111:InputEventAdaptorPropertiesDto"/>
                     </xs:sequence>
                 </xs:complexType>
             </xs:element>
             <xs:element name="getInactiveInputEventAdaptorConfigurationContent">
                 <xs:complexType>
                     <xs:sequence>
-                        <xs:element minOccurs="0" name="fileName" nillable="true" type="xs:string"/>
+                        <xs:element minOccurs="0" name="fileName" nillable="true" endpointType="xs:string"/>
                     </xs:sequence>
                 </xs:complexType>
             </xs:element>
             <xs:element name="getInactiveInputEventAdaptorConfigurationContentResponse">
                 <xs:complexType>
                     <xs:sequence>
-                        <xs:element minOccurs="0" name="return" nillable="true" type="xs:string"/>
+                        <xs:element minOccurs="0" name="return" nillable="true" endpointType="xs:string"/>
                     </xs:sequence>
                 </xs:complexType>
             </xs:element>
@@ -110,7 +110,7 @@
             <xs:element name="getAllInputEventAdaptorTypeNamesResponse">
                 <xs:complexType>
                     <xs:sequence>
-                        <xs:element maxOccurs="unbounded" minOccurs="0" name="return" nillable="true" type="xs:string"/>
+                        <xs:element maxOccurs="unbounded" minOccurs="0" name="return" nillable="true" endpointType="xs:string"/>
                     </xs:sequence>
                 </xs:complexType>
             </xs:element>
@@ -123,7 +123,7 @@
                 <xs:complexType>
                     <xs:sequence>
                         <xs:element maxOccurs="unbounded" minOccurs="0" name="return" nillable="true"
-                                    type="ax2111:InputEventAdaptorFileDto"/>
+                                    endpointType="ax2111:InputEventAdaptorFileDto"/>
                     </xs:sequence>
                 </xs:complexType>
             </xs:element>
@@ -136,28 +136,28 @@
                 <xs:complexType>
                     <xs:sequence>
                         <xs:element maxOccurs="unbounded" minOccurs="0" name="return" nillable="true"
-                                    type="ax2111:InputEventAdaptorConfigurationInfoDto"/>
+                                    endpointType="ax2111:InputEventAdaptorConfigurationInfoDto"/>
                     </xs:sequence>
                 </xs:complexType>
             </xs:element>
             <xs:element name="getActiveInputEventAdaptorConfigurationContent">
                 <xs:complexType>
                     <xs:sequence>
-                        <xs:element minOccurs="0" name="eventAdaptorName" nillable="true" type="xs:string"/>
+                        <xs:element minOccurs="0" name="eventAdaptorName" nillable="true" endpointType="xs:string"/>
                     </xs:sequence>
                 </xs:complexType>
             </xs:element>
             <xs:element name="getActiveInputEventAdaptorConfigurationContentResponse">
                 <xs:complexType>
                     <xs:sequence>
-                        <xs:element minOccurs="0" name="return" nillable="true" type="xs:string"/>
+                        <xs:element minOccurs="0" name="return" nillable="true" endpointType="xs:string"/>
                     </xs:sequence>
                 </xs:complexType>
             </xs:element>
             <xs:element name="getActiveInputEventAdaptorConfiguration">
                 <xs:complexType>
                     <xs:sequence>
-                        <xs:element minOccurs="0" name="eventAdaptorName" nillable="true" type="xs:string"/>
+                        <xs:element minOccurs="0" name="eventAdaptorName" nillable="true" endpointType="xs:string"/>
                     </xs:sequence>
                 </xs:complexType>
             </xs:element>
@@ -165,33 +165,33 @@
                 <xs:complexType>
                     <xs:sequence>
                         <xs:element minOccurs="0" name="return" nillable="true"
-                                    type="ax2111:InputEventAdaptorPropertiesDto"/>
+                                    endpointType="ax2111:InputEventAdaptorPropertiesDto"/>
                     </xs:sequence>
                 </xs:complexType>
             </xs:element>
             <xs:element name="editInactiveInputEventAdaptorConfiguration">
                 <xs:complexType>
                     <xs:sequence>
-                        <xs:element minOccurs="0" name="eventAdaptorConfiguration" nillable="true" type="xs:string"/>
-                        <xs:element minOccurs="0" name="fileName" nillable="true" type="xs:string"/>
+                        <xs:element minOccurs="0" name="eventAdaptorConfiguration" nillable="true" endpointType="xs:string"/>
+                        <xs:element minOccurs="0" name="fileName" nillable="true" endpointType="xs:string"/>
                     </xs:sequence>
                 </xs:complexType>
             </xs:element>
             <xs:element name="editActiveInputEventAdaptorConfiguration">
                 <xs:complexType>
                     <xs:sequence>
-                        <xs:element minOccurs="0" name="eventAdaptorConfiguration" nillable="true" type="xs:string"/>
-                        <xs:element minOccurs="0" name="eventAdaptorName" nillable="true" type="xs:string"/>
+                        <xs:element minOccurs="0" name="eventAdaptorConfiguration" nillable="true" endpointType="xs:string"/>
+                        <xs:element minOccurs="0" name="eventAdaptorName" nillable="true" endpointType="xs:string"/>
                     </xs:sequence>
                 </xs:complexType>
             </xs:element>
             <xs:element name="deployInputEventAdaptorConfiguration">
                 <xs:complexType>
                     <xs:sequence>
-                        <xs:element minOccurs="0" name="eventAdaptorName" nillable="true" type="xs:string"/>
-                        <xs:element minOccurs="0" name="eventAdaptorType" nillable="true" type="xs:string"/>
+                        <xs:element minOccurs="0" name="eventAdaptorName" nillable="true" endpointType="xs:string"/>
+                        <xs:element minOccurs="0" name="eventAdaptorType" nillable="true" endpointType="xs:string"/>
                         <xs:element maxOccurs="unbounded" minOccurs="0" name="inputAdaptorPropertyDtoInputs"
-                                    nillable="true" type="ax2111:InputEventAdaptorPropertyDto"/>
+                                    nillable="true" endpointType="ax2111:InputEventAdaptorPropertyDto"/>
                     </xs:sequence>
                 </xs:complexType>
             </xs:element>
@@ -201,33 +201,33 @@
             <xs:complexType name="InputEventAdaptorPropertiesDto">
                 <xs:sequence>
                     <xs:element maxOccurs="unbounded" minOccurs="0" name="inputEventAdaptorPropertyDtos" nillable="true"
-                                type="ax2110:InputEventAdaptorPropertyDto"/>
+                                endpointType="ax2110:InputEventAdaptorPropertyDto"/>
                 </xs:sequence>
             </xs:complexType>
             <xs:complexType name="InputEventAdaptorPropertyDto">
                 <xs:sequence>
-                    <xs:element minOccurs="0" name="defaultValue" nillable="true" type="xs:string"/>
-                    <xs:element minOccurs="0" name="displayName" nillable="true" type="xs:string"/>
-                    <xs:element minOccurs="0" name="hint" nillable="true" type="xs:string"/>
-                    <xs:element minOccurs="0" name="key" nillable="true" type="xs:string"/>
-                    <xs:element maxOccurs="unbounded" minOccurs="0" name="options" nillable="true" type="xs:string"/>
-                    <xs:element minOccurs="0" name="required" type="xs:boolean"/>
-                    <xs:element minOccurs="0" name="secured" type="xs:boolean"/>
-                    <xs:element minOccurs="0" name="value" nillable="true" type="xs:string"/>
+                    <xs:element minOccurs="0" name="defaultValue" nillable="true" endpointType="xs:string"/>
+                    <xs:element minOccurs="0" name="displayName" nillable="true" endpointType="xs:string"/>
+                    <xs:element minOccurs="0" name="hint" nillable="true" endpointType="xs:string"/>
+                    <xs:element minOccurs="0" name="key" nillable="true" endpointType="xs:string"/>
+                    <xs:element maxOccurs="unbounded" minOccurs="0" name="options" nillable="true" endpointType="xs:string"/>
+                    <xs:element minOccurs="0" name="required" endpointType="xs:boolean"/>
+                    <xs:element minOccurs="0" name="secured" endpointType="xs:boolean"/>
+                    <xs:element minOccurs="0" name="value" nillable="true" endpointType="xs:string"/>
                 </xs:sequence>
             </xs:complexType>
             <xs:complexType name="InputEventAdaptorFileDto">
                 <xs:sequence>
-                    <xs:element minOccurs="0" name="eventAdaptorName" nillable="true" type="xs:string"/>
-                    <xs:element minOccurs="0" name="fileName" nillable="true" type="xs:string"/>
+                    <xs:element minOccurs="0" name="eventAdaptorName" nillable="true" endpointType="xs:string"/>
+                    <xs:element minOccurs="0" name="fileName" nillable="true" endpointType="xs:string"/>
                 </xs:sequence>
             </xs:complexType>
             <xs:complexType name="InputEventAdaptorConfigurationInfoDto">
                 <xs:sequence>
-                    <xs:element minOccurs="0" name="enableStats" type="xs:boolean"/>
-                    <xs:element minOccurs="0" name="enableTracing" type="xs:boolean"/>
-                    <xs:element minOccurs="0" name="eventAdaptorName" nillable="true" type="xs:string"/>
-                    <xs:element minOccurs="0" name="eventAdaptorType" nillable="true" type="xs:string"/>
+                    <xs:element minOccurs="0" name="enableStats" endpointType="xs:boolean"/>
+                    <xs:element minOccurs="0" name="enableTracing" endpointType="xs:boolean"/>
+                    <xs:element minOccurs="0" name="eventAdaptorName" nillable="true" endpointType="xs:string"/>
+                    <xs:element minOccurs="0" name="eventAdaptorType" nillable="true" endpointType="xs:string"/>
                 </xs:sequence>
             </xs:complexType>
         </xs:schema>
@@ -397,7 +397,7 @@
         </wsdl:operation>
     </wsdl:portType>
     <wsdl:binding name="InputEventAdaptorManagerAdminServiceSoap11Binding"
-                  type="ns:InputEventAdaptorManagerAdminServicePortType">
+                  endpointType="ns:InputEventAdaptorManagerAdminServicePortType">
         <soap:binding transport="http://schemas.xmlsoap.org/soap/http" style="document"/>
         <wsdl:operation name="editInactiveInputEventAdaptorConfiguration">
             <soap:operation soapAction="urn:editInactiveInputEventAdaptorConfiguration" style="document"/>
@@ -536,7 +536,7 @@
         </wsdl:operation>
     </wsdl:binding>
     <wsdl:binding name="InputEventAdaptorManagerAdminServiceSoap12Binding"
-                  type="ns:InputEventAdaptorManagerAdminServicePortType">
+                  endpointType="ns:InputEventAdaptorManagerAdminServicePortType">
         <soap12:binding transport="http://schemas.xmlsoap.org/soap/http" style="document"/>
         <wsdl:operation name="editInactiveInputEventAdaptorConfiguration">
             <soap12:operation soapAction="urn:editInactiveInputEventAdaptorConfiguration" style="document"/>
@@ -675,141 +675,141 @@
         </wsdl:operation>
     </wsdl:binding>
     <wsdl:binding name="InputEventAdaptorManagerAdminServiceHttpBinding"
-                  type="ns:InputEventAdaptorManagerAdminServicePortType">
+                  endpointType="ns:InputEventAdaptorManagerAdminServicePortType">
         <http:binding verb="POST"/>
         <wsdl:operation name="editInactiveInputEventAdaptorConfiguration">
             <http:operation location="editInactiveInputEventAdaptorConfiguration"/>
             <wsdl:input>
-                <mime:content type="text/xml" part="parameters"/>
+                <mime:content endpointType="text/xml" part="parameters"/>
             </wsdl:input>
             <wsdl:output>
-                <mime:content type="text/xml" part="parameters"/>
+                <mime:content endpointType="text/xml" part="parameters"/>
             </wsdl:output>
         </wsdl:operation>
         <wsdl:operation name="undeployActiveInputEventAdaptorConfiguration">
             <http:operation location="undeployActiveInputEventAdaptorConfiguration"/>
             <wsdl:input>
-                <mime:content type="text/xml" part="parameters"/>
+                <mime:content endpointType="text/xml" part="parameters"/>
             </wsdl:input>
             <wsdl:output>
-                <mime:content type="text/xml" part="parameters"/>
+                <mime:content endpointType="text/xml" part="parameters"/>
             </wsdl:output>
         </wsdl:operation>
         <wsdl:operation name="getActiveInputEventAdaptorConfiguration">
             <http:operation location="getActiveInputEventAdaptorConfiguration"/>
             <wsdl:input>
-                <mime:content type="text/xml" part="parameters"/>
+                <mime:content endpointType="text/xml" part="parameters"/>
             </wsdl:input>
             <wsdl:output>
-                <mime:content type="text/xml" part="parameters"/>
+                <mime:content endpointType="text/xml" part="parameters"/>
             </wsdl:output>
         </wsdl:operation>
         <wsdl:operation name="undeployInactiveInputEventAdaptorConfiguration">
             <http:operation location="undeployInactiveInputEventAdaptorConfiguration"/>
             <wsdl:input>
-                <mime:content type="text/xml" part="parameters"/>
+                <mime:content endpointType="text/xml" part="parameters"/>
             </wsdl:input>
             <wsdl:output>
-                <mime:content type="text/xml" part="parameters"/>
+                <mime:content endpointType="text/xml" part="parameters"/>
             </wsdl:output>
         </wsdl:operation>
         <wsdl:operation name="getInputEventAdaptorProperties">
             <http:operation location="getInputEventAdaptorProperties"/>
             <wsdl:input>
-                <mime:content type="text/xml" part="parameters"/>
+                <mime:content endpointType="text/xml" part="parameters"/>
             </wsdl:input>
             <wsdl:output>
-                <mime:content type="text/xml" part="parameters"/>
+                <mime:content endpointType="text/xml" part="parameters"/>
             </wsdl:output>
         </wsdl:operation>
         <wsdl:operation name="getAllActiveInputEventAdaptorConfiguration">
             <http:operation location="getAllActiveInputEventAdaptorConfiguration"/>
             <wsdl:input>
-                <mime:content type="text/xml" part="parameters"/>
+                <mime:content endpointType="text/xml" part="parameters"/>
             </wsdl:input>
             <wsdl:output>
-                <mime:content type="text/xml" part="parameters"/>
+                <mime:content endpointType="text/xml" part="parameters"/>
             </wsdl:output>
         </wsdl:operation>
         <wsdl:operation name="getSupportedInputMappingTypes">
             <http:operation location="getSupportedInputMappingTypes"/>
             <wsdl:input>
-                <mime:content type="text/xml" part="parameters"/>
+                <mime:content endpointType="text/xml" part="parameters"/>
             </wsdl:input>
             <wsdl:output>
-                <mime:content type="text/xml" part="parameters"/>
+                <mime:content endpointType="text/xml" part="parameters"/>
             </wsdl:output>
         </wsdl:operation>
         <wsdl:operation name="deployInputEventAdaptorConfiguration">
             <http:operation location="deployInputEventAdaptorConfiguration"/>
             <wsdl:input>
-                <mime:content type="text/xml" part="parameters"/>
+                <mime:content endpointType="text/xml" part="parameters"/>
             </wsdl:input>
             <wsdl:output>
-                <mime:content type="text/xml" part="parameters"/>
+                <mime:content endpointType="text/xml" part="parameters"/>
             </wsdl:output>
         </wsdl:operation>
         <wsdl:operation name="getAllInputEventAdaptorTypeNames">
             <http:operation location="getAllInputEventAdaptorTypeNames"/>
             <wsdl:input>
-                <mime:content type="text/xml" part="parameters"/>
+                <mime:content endpointType="text/xml" part="parameters"/>
             </wsdl:input>
             <wsdl:output>
-                <mime:content type="text/xml" part="parameters"/>
+                <mime:content endpointType="text/xml" part="parameters"/>
             </wsdl:output>
         </wsdl:operation>
         <wsdl:operation name="setStatisticsEnabled">
             <http:operation location="setStatisticsEnabled"/>
             <wsdl:input>
-                <mime:content type="text/xml" part="parameters"/>
+                <mime:content endpointType="text/xml" part="parameters"/>
             </wsdl:input>
             <wsdl:output>
-                <mime:content type="text/xml" part="parameters"/>
+                <mime:content endpointType="text/xml" part="parameters"/>
             </wsdl:output>
         </wsdl:operation>
         <wsdl:operation name="editActiveInputEventAdaptorConfiguration">
             <http:operation location="editActiveInputEventAdaptorConfiguration"/>
             <wsdl:input>
-                <mime:content type="text/xml" part="parameters"/>
+                <mime:content endpointType="text/xml" part="parameters"/>
             </wsdl:input>
             <wsdl:output>
-                <mime:content type="text/xml" part="parameters"/>
+                <mime:content endpointType="text/xml" part="parameters"/>
             </wsdl:output>
         </wsdl:operation>
         <wsdl:operation name="getInactiveInputEventAdaptorConfigurationContent">
             <http:operation location="getInactiveInputEventAdaptorConfigurationContent"/>
             <wsdl:input>
-                <mime:content type="text/xml" part="parameters"/>
+                <mime:content endpointType="text/xml" part="parameters"/>
             </wsdl:input>
             <wsdl:output>
-                <mime:content type="text/xml" part="parameters"/>
+                <mime:content endpointType="text/xml" part="parameters"/>
             </wsdl:output>
         </wsdl:operation>
         <wsdl:operation name="setTracingEnabled">
             <http:operation location="setTracingEnabled"/>
             <wsdl:input>
-                <mime:content type="text/xml" part="parameters"/>
+                <mime:content endpointType="text/xml" part="parameters"/>
             </wsdl:input>
             <wsdl:output>
-                <mime:content type="text/xml" part="parameters"/>
+                <mime:content endpointType="text/xml" part="parameters"/>
             </wsdl:output>
         </wsdl:operation>
         <wsdl:operation name="getActiveInputEventAdaptorConfigurationContent">
             <http:operation location="getActiveInputEventAdaptorConfigurationContent"/>
             <wsdl:input>
-                <mime:content type="text/xml" part="parameters"/>
+                <mime:content endpointType="text/xml" part="parameters"/>
             </wsdl:input>
             <wsdl:output>
-                <mime:content type="text/xml" part="parameters"/>
+                <mime:content endpointType="text/xml" part="parameters"/>
             </wsdl:output>
         </wsdl:operation>
         <wsdl:operation name="getAllInactiveInputEventAdaptorConfigurationFile">
             <http:operation location="getAllInactiveInputEventAdaptorConfigurationFile"/>
             <wsdl:input>
-                <mime:content type="text/xml" part="parameters"/>
+                <mime:content endpointType="text/xml" part="parameters"/>
             </wsdl:input>
             <wsdl:output>
-                <mime:content type="text/xml" part="parameters"/>
+                <mime:content endpointType="text/xml" part="parameters"/>
             </wsdl:output>
         </wsdl:operation>
     </wsdl:binding>

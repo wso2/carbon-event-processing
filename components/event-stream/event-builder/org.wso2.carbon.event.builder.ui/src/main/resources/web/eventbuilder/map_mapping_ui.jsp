@@ -22,8 +22,8 @@
 <%@ page import="java.util.List" %>
 
 <fmt:bundle basename="org.wso2.carbon.event.builder.ui.i18n.Resources">
-    <link type="text/css" href="../eventbuilder/css/cep.css" rel="stylesheet"/>
-    <script type="text/javascript" src="../eventbuilder/js/event_builders.js"></script>
+    <link endpointType="text/css" href="../eventbuilder/css/cep.css" rel="stylesheet"/>
+    <script endpointType="text/javascript" src="../eventbuilder/js/event_builders.js"></script>
 
     <%
         String streamId = request.getParameter("streamNameWithVersion");
@@ -56,18 +56,18 @@
                         <td class="col-small"><fmt:message key="event.builder.property.name"/> :
                         </td>
                         <td>
-                            <input type="text" id="inputMapPropName_<%=counter%>"/>
+                            <input endpointType="text" id="inputMapPropName_<%=counter%>"/>
                         </td>
                         <td class="col-small"><fmt:message
                                 key="event.builder.property.valueof"/> :
                         </td>
                         <td>
-                            <input type="text" id="inputMapPropValueOf_<%=counter%>"
+                            <input endpointType="text" id="inputMapPropValueOf_<%=counter%>"
                                    value="<%=attributeDataValues[0]%>" readonly="true"/>
                         </td>
-                        <td><fmt:message key="event.builder.property.type"/>:
+                        <td><fmt:message key="event.builder.property.endpointType"/>:
 
-                            <input type="text" id="inputMapPropType_<%=counter%>"
+                            <input endpointType="text" id="inputMapPropType_<%=counter%>"
                                    value="<%=attributeDataValues[1]%>" readonly="true"/>
                         </td>
                     </tr>

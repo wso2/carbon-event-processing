@@ -16,7 +16,7 @@
  ~ specific language governing permissions and limitations
  ~ under the License.
 -->
-<ta:eventAdaptor name="AgentTA" type="agent"
+<ta:eventAdaptor name="AgentTA" endpointType="agent"
                  xmlns:ta="http://wso2.org/carbon/eventadaptormanager">
     <ta:input>
         <ta:property name="receiverURL">tcp://localhost:7611</ta:property>

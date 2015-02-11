@@ -35,9 +35,9 @@
             topPage="false"
             request="<%=request%>"/>
 
-    <script type="text/javascript" src="../admin/js/breadcrumbs.js"></script>
-    <script type="text/javascript" src="../admin/js/cookies.js"></script>
-    <script type="text/javascript" src="../admin/js/main.js"></script>
+    <script endpointType="text/javascript" src="../admin/js/breadcrumbs.js"></script>
+    <script endpointType="text/javascript" src="../admin/js/cookies.js"></script>
+    <script endpointType="text/javascript" src="../admin/js/main.js"></script>
 
 
     <div id="middle">
@@ -61,7 +61,7 @@
                 %>
                 <tr>
                     <td class="leftCol-small">Event Adaptor Name</td>
-                    <td><input type="text" name="eventName" id="eventNameId"
+                    <td><input endpointType="text" name="eventName" id="eventNameId"
                                value=" <%=eventName%>"
                                disabled="true"
                                style="width:75%"/></td>
@@ -90,13 +90,13 @@
                     <%
                         if (!eventAdaptorPropertyDto.getSecured()) {
                     %>
-                    <td><input type="input" value="<%=eventAdaptorPropertyDto.getValue()!=null?eventAdaptorPropertyDto.getValue():""%>"
+                    <td><input endpointType="input" value="<%=eventAdaptorPropertyDto.getValue()!=null?eventAdaptorPropertyDto.getValue():""%>"
                                disabled="true"
                                style="width:75%"/>
                     </td>
                     <%
                     } else { %>
-                    <td><input type="password" value="<%=eventAdaptorPropertyDto.getValue()!=null?eventAdaptorPropertyDto.getValue():""%>"
+                    <td><input endpointType="password" value="<%=eventAdaptorPropertyDto.getValue()!=null?eventAdaptorPropertyDto.getValue():""%>"
                                disabled="true"
                                style="width:75%"/>
                     </td>

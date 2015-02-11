@@ -22,39 +22,38 @@
     <parent>
         <groupId>org.wso2.carbon.event-processing</groupId>
         <artifactId>adaptors</artifactId>
-        <version>2.0.3-SNAPSHOT</version>
+        <version>2.0.4-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
     <artifactId>event-output-adaptor</artifactId>
-    <version>2.0.3-SNAPSHOT</version>
+    <version>2.0.4-SNAPSHOT</version>
     <packaging>pom</packaging>
     <name>WSO2 Carbon - Event Output Adaptor Aggregator Module</name>
     <description>This is a Carbon bundle that represent the event-adaptor module.</description>
     <url>http://wso2.org</url>
 
     <modules>
-        <module>org.wso2.carbon.event.output.adaptor.jms</module>
-        <module>org.wso2.carbon.event.output.adaptor.mqtt</module>
-        <module>org.wso2.carbon.event.output.adaptor.logger</module>
-        <module>org.wso2.carbon.event.output.adaptor.kafka</module>
-        <module>org.wso2.carbon.event.output.adaptor.wso2event</module>
-        <module>org.wso2.carbon.event.output.adaptor.cassandra</module>
-        <module>org.wso2.carbon.event.output.adaptor.sms</module>
-        <module>org.wso2.carbon.event.output.adaptor.email</module>
-        <!--&lt;!&ndash;<module>org.wso2.carbon.event.output.adaptor.hbase/1.0.0</module>&ndash;&gt;-->
-        <module>org.wso2.carbon.event.output.adaptor.soap</module>
-        <module>org.wso2.carbon.event.output.adaptor.http</module>
-        <module>org.wso2.carbon.event.output.adaptor.websocket</module>
+        <!--<module>org.wso2.carbon.event.output.adaptor.jms</module>-->
+        <!--<module>org.wso2.carbon.event.output.adaptor.mqtt</module>-->
+        <!--<module>org.wso2.carbon.event.output.adaptor.logger</module>-->
+        <!--<module>org.wso2.carbon.event.output.adaptor.kafka</module>-->
+        <!--<module>org.wso2.carbon.event.output.adaptor.wso2event</module>-->
+        <!--<module>org.wso2.carbon.event.output.adaptor.cassandra</module>-->
+        <!--<module>org.wso2.carbon.event.output.adaptor.sms</module>-->
+        <!--<module>org.wso2.carbon.event.output.adaptor.email</module>-->
+        <!--&lt;!&ndash;&lt;!&ndash;<module>org.wso2.carbon.event.output.adaptor.hbase/1.0.0</module>&ndash;&gt;&ndash;&gt;-->
+        <!--<module>org.wso2.carbon.event.output.adaptor.soap</module>-->
+        <!--<module>org.wso2.carbon.event.output.adaptor.http</module>-->
+        <!--<module>org.wso2.carbon.event.output.adaptor.websocket</module>-->
 
-        <module>org.wso2.carbon.event.output.adaptor.websocket.local</module>
-        <module>org.wso2.carbon.event.output.adaptor.websocket.local/org.wso2.carbon.event.output.adaptor.websocket.endpoint</module>
+        <!--<module>org.wso2.carbon.event.output.adaptor.websocket.local</module>-->
+        <!--<module>org.wso2.carbon.event.output.adaptor.websocket.local/org.wso2.carbon.event.output.adaptor.websocket.endpoint</module>-->
         <module>org.wso2.carbon.event.output.adaptor.manager.core</module>
         <module>org.wso2.carbon.event.output.adaptor.manager.ui</module>
         <module>org.wso2.carbon.event.output.adaptor.manager.admin</module>
-        <module>org.wso2.carbon.event.output.adaptor.rdbms</module>
-        <module>org.wso2.carbon.event.output.adaptor.Test</module>
+        <!--<module>org.wso2.carbon.event.output.adaptor.rdbms</module>-->
     </modules>
 </project>
 

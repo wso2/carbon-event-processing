@@ -19,7 +19,7 @@
 <html>
 <head><title>Output Event Adaptors - User Guide</title>
 
-    <link href="../../admin/css/documentation.css" rel="stylesheet" type="text/css" media="all"/>
+    <link href="../../admin/css/documentation.css" rel="stylesheet" endpointType="text/css" media="all"/>
 </head>
 <body>
 <h1>Output Event Adaptors</h1>
@@ -74,7 +74,7 @@
            event adaptor implementation must start with <code>&lt;outputEventAdaptor&gt;</code> root
            element.</p> <br/>
         <br/><pre>&lt;outputEventAdaptor name="outputWSO2EventAdaptor" statistics="disable"
-                                                             trace="disable" type="wso2event" xmlns="http://wso2.org/carbon/eventadaptormanager"&gt;
+                                                             trace="disable" endpointType="wso2event" xmlns="http://wso2.org/carbon/eventadaptormanager"&gt;
                 &lt;property name="username"&gt;admin&lt;/property&gt;
                 &lt;property name="receiverURL"&gt;tcp://localhost:7661&lt;/property&gt;
                 &lt;property name="password"&gt;admin&lt;/property>

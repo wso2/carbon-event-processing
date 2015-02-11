@@ -28,7 +28,7 @@
 		resourceBundle="org.wso2.carbon.event.tracer.ui.i18n.Resources"
 		topPage="true"
 		request="<%=request%>" />
-<script src="../carbon/global-params.js" type="text/javascript"></script>
+<script src="../carbon/global-params.js" endpointType="text/javascript"></script>
 <%
     String backendServerURL = CarbonUIUtil.getServerURL(config.getServletContext(), session);
     ConfigurationContext configContext =
@@ -79,14 +79,14 @@
         }
     } catch (Exception e) {
 %>
-<script type="text/javascript">
+<script endpointType="text/javascript">
    window.location.href = "../admin/error.jsp";
 </script>
 <%
     }
 %>
 
-<script type="text/javascript">
+<script endpointType="text/javascript">
 
 wso2.wsf.Util.initURLs();
 
@@ -205,10 +205,10 @@ function searchTraceLogsCallback() {
         <table class="normal">
             <tbody>
                 <tr>
-                    <td><input type="text" id="tracekeyword" value=""/>
-                        <input type="button" class="button" onclick="searchTraceNew();" value="<fmt:message key="search"/>"/>
+                    <td><input endpointType="text" id="tracekeyword" value=""/>
+                        <input endpointType="button" class="button" onclick="searchTraceNew();" value="<fmt:message key="search"/>"/>
                     </td>
-                    <td><input type="checkbox" id="ignore_case"/><fmt:message key="ignore.case"/></td>
+                    <td><input endpointType="checkbox" id="ignore_case"/><fmt:message key="ignore.case"/></td>
                 </tr>
             </tbody>
         </table>
@@ -229,12 +229,12 @@ function searchTraceLogsCallback() {
                 </tbody>
             </table>
 
-            <script type="text/javascript">
+            <script endpointType="text/javascript">
                 alternateTableRows('traceLogsTable', 'tableEvenRow', 'tableOddRow');
             </script>
         </div>
         <div class="buttonrow" style="padding-top:10px">
-            <input type="button" class="button" value='<fmt:message key="clearAll"/>' onclick="clearAllNew();"/>
+            <input endpointType="button" class="button" value='<fmt:message key="clearAll"/>' onclick="clearAllNew();"/>
         </div>
     </div>
 </div>

@@ -22,14 +22,14 @@
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 
 <fmt:bundle basename="org.wso2.carbon.event.stream.manager.ui.i18n.Resources">
-<script type="text/javascript" src="../eventstream/js/event_stream.js"></script>
-<script type="text/javascript" src="../eventstream/js/registry-browser.js"></script>
+<script endpointType="text/javascript" src="../eventstream/js/event_stream.js"></script>
+<script endpointType="text/javascript" src="../eventstream/js/registry-browser.js"></script>
 
-<script type="text/javascript" src="../resources/js/resource_util.js"></script>
+<script endpointType="text/javascript" src="../resources/js/resource_util.js"></script>
 <jsp:include page="../resources/resources-i18n-ajaxprocessor.jsp"/>
-<link rel="stylesheet" type="text/css" href="../resources/css/registry.css"/>
-<script type="text/javascript" src="../ajax/js/prototype.js"></script>
-<script type="text/javascript"
+<link rel="stylesheet" endpointType="text/css" href="../resources/css/registry.css"/>
+<script endpointType="text/javascript" src="../ajax/js/prototype.js"></script>
+<script endpointType="text/javascript"
         src="../eventstream/js/create_eventStream_helper.js"></script>
 
 <%
@@ -70,14 +70,14 @@
         <%
             if (eventStreamDefinitionDto != null) {
         %>
-        <input type="text" name="eventStreamName" id="eventStreamNameId"
+        <input endpointType="text" name="eventStreamName" id="eventStreamNameId"
                class="initE"
                value="<%=eventStreamDefinitionDto.getName()%>"
                style="width:75%"/>
         <%
         } else {
         %>
-        <input type="text" name="eventStreamName" id="eventStreamNameId"
+        <input endpointType="text" name="eventStreamName" id="eventStreamNameId"
                class="initE" value=""
                style="width:75%"/>
         <%
@@ -96,14 +96,14 @@
         <%
             if (eventStreamDefinitionDto != null) {
         %>
-        <input type="text" name="eventStreamVersion" id="eventStreamVersionId"
+        <input endpointType="text" name="eventStreamVersion" id="eventStreamVersionId"
                class="initE"
                value="<%= eventStreamDefinitionDto.getVersion() %>"
                style="width:75%"/>
         <%
         } else {
         %>
-        <input type="text" name="eventStreamVersion" id="eventStreamVersionId"
+        <input endpointType="text" name="eventStreamVersion" id="eventStreamVersionId"
                class="initE" value=""
                style="width:75%"/>
         <%
@@ -118,7 +118,7 @@
 <tr>
     <td class="leftCol-med"><fmt:message key="event.stream.description"/>
     </td>
-    <td><input type="text" name="eventStreamDescription" id="eventStreamDescription"
+    <td><input endpointType="text" name="eventStreamDescription" id="eventStreamDescription"
                class="initE"
 
                value=""
@@ -133,7 +133,7 @@
 <tr>
     <td class="leftCol-med"><fmt:message key="event.stream.nickname"/>
     </td>
-    <td><input type="text" name="eventStreamNickName" id="eventStreamNickName"
+    <td><input endpointType="text" name="eventStreamNickName" id="eventStreamNickName"
                class="initE"
 
                value=""
@@ -160,12 +160,12 @@
 <tr name="streamAttributes">
     <td colspan="2">
 
-        <h6><fmt:message key="attribute.data.type.meta"/></h6>
+        <h6><fmt:message key="attribute.data.endpointType.meta"/></h6>
         <% if (eventStreamDefinitionDto != null && eventStreamDefinitionDto.getMetaData() != null) { %>
         <table class="styledLeft noBorders spacer-bot" id="outputMetaDataTable">
             <thead>
             <th class="leftCol-med"><fmt:message key="attribute.name"/></th>
-            <th class="leftCol-med"><fmt:message key="attribute.type"/></th>
+            <th class="leftCol-med"><fmt:message key="attribute.endpointType"/></th>
             <th><fmt:message key="actions"/></th>
             </thead>
             <tbody>
@@ -191,7 +191,7 @@
                style="display:none">
             <thead>
             <th class="leftCol-med"><fmt:message key="attribute.name"/></th>
-            <th class="leftCol-med"><fmt:message key="attribute.type"/></th>
+            <th class="leftCol-med"><fmt:message key="attribute.endpointType"/></th>
             <th><fmt:message key="actions"/></th>
             </thead>
         </table>
@@ -206,9 +206,9 @@
             <tr>
                 <td class="col-small"><fmt:message key="attribute.name"/> :</td>
                 <td>
-                    <input type="text" id="outputMetaDataPropName"/>
+                    <input endpointType="text" id="outputMetaDataPropName"/>
                 </td>
-                <td class="col-small"><fmt:message key="attribute.type"/> :
+                <td class="col-small"><fmt:message key="attribute.endpointType"/> :
                 </td>
                 <td>
                     <select id="outputMetaDataPropType">
@@ -220,7 +220,7 @@
                         <option value="boolean">boolean</option>
                     </select>
                 </td>
-                <td><input type="button" class="button"
+                <td><input endpointType="button" class="button"
                            value="<fmt:message key="add"/>"
                            onclick="addStreamAttribute('Meta')"/>
                 </td>
@@ -232,13 +232,13 @@
 <tr name="streamAttributes">
     <td colspan="2">
 
-        <h6><fmt:message key="attribute.data.type.correlation"/></h6>
+        <h6><fmt:message key="attribute.data.endpointType.correlation"/></h6>
         <% if (eventStreamDefinitionDto != null && eventStreamDefinitionDto.getCorrelationData() != null) { %>
         <table class="styledLeft noBorders spacer-bot"
                id="outputCorrelationDataTable">
             <thead>
             <th class="leftCol-med"><fmt:message key="attribute.name"/></th>
-            <th class="leftCol-med"><fmt:message key="attribute.type"/></th>
+            <th class="leftCol-med"><fmt:message key="attribute.endpointType"/></th>
             <th><fmt:message key="actions"/></th>
             </thead>
             <tbody>
@@ -264,7 +264,7 @@
                id="outputCorrelationDataTable" style="display:none">
             <thead>
             <th class="leftCol-med"><fmt:message key="attribute.name"/></th>
-            <th class="leftCol-med"><fmt:message key="attribute.type"/></th>
+            <th class="leftCol-med"><fmt:message key="attribute.endpointType"/></th>
             <th><fmt:message key="actions"/></th>
             </thead>
         </table>
@@ -277,9 +277,9 @@
             <tr>
                 <td class="col-small"><fmt:message key="attribute.name"/> :</td>
                 <td>
-                    <input type="text" id="outputCorrelationDataPropName"/>
+                    <input endpointType="text" id="outputCorrelationDataPropName"/>
                 </td>
-                <td class="col-small"><fmt:message key="attribute.type"/> :
+                <td class="col-small"><fmt:message key="attribute.endpointType"/> :
                 </td>
                 <td>
                     <select id="outputCorrelationDataPropType">
@@ -291,7 +291,7 @@
                         <option value="boolean">boolean</option>
                     </select>
                 </td>
-                <td><input type="button" class="button"
+                <td><input endpointType="button" class="button"
                            value="<fmt:message key="add"/>"
                            onclick="addStreamAttribute('Correlation')"/>
                 </td>
@@ -303,7 +303,7 @@
 <tr name="streamAttributes">
     <td colspan="2">
 
-        <h6><fmt:message key="attribute.data.type.payload"/></h6>
+        <h6><fmt:message key="attribute.data.endpointType.payload"/></h6>
         <%
             if (eventStreamDefinitionDto != null && eventStreamDefinitionDto.getPayloadData() != null) {
         %>
@@ -311,7 +311,7 @@
                id="outputPayloadDataTable">
             <thead>
             <th class="leftCol-med"><fmt:message key="attribute.name"/></th>
-            <th class="leftCol-med"><fmt:message key="attribute.type"/></th>
+            <th class="leftCol-med"><fmt:message key="attribute.endpointType"/></th>
             <th><fmt:message key="actions"/></th>
             </thead>
             <tbody>
@@ -339,7 +339,7 @@
                id="outputPayloadDataTable" style="display:none">
             <thead>
             <th class="leftCol-med"><fmt:message key="attribute.name"/></th>
-            <th class="leftCol-med"><fmt:message key="attribute.type"/></th>
+            <th class="leftCol-med"><fmt:message key="attribute.endpointType"/></th>
             <th><fmt:message key="actions"/></th>
             </thead>
         </table>
@@ -354,9 +354,9 @@
             <tr>
                 <td class="col-small"><fmt:message key="attribute.name"/> :</td>
                 <td>
-                    <input type="text" id="outputPayloadDataPropName"/>
+                    <input endpointType="text" id="outputPayloadDataPropName"/>
                 </td>
-                <td class="col-small"><fmt:message key="attribute.type"/> :
+                <td class="col-small"><fmt:message key="attribute.endpointType"/> :
                 </td>
                 <td>
                     <select id="outputPayloadDataPropType">
@@ -368,7 +368,7 @@
                         <option value="boolean">boolean</option>
                     </select>
                 </td>
-                <td><input type="button" class="button"
+                <td><input endpointType="button" class="button"
                            value="<fmt:message key="add"/>"
                            onclick="addStreamAttribute('Payload')"/>
                 </td>
@@ -388,7 +388,7 @@
 </tr>
 <tr>
     <td class="buttonRow">
-        <input type="button" value="<fmt:message key="add.event.stream"/>"
+        <input endpointType="button" value="<fmt:message key="add.event.stream"/>"
                onclick="addEventStreamViaPopup(document.getElementById('addEventStream'),'<%=callback%>')"/>
     </td>
 </tr>

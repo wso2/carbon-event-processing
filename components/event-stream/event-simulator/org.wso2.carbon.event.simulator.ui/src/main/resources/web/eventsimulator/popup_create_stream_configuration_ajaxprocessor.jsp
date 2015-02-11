@@ -21,17 +21,17 @@
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 
 
-<script type="text/javascript" src="../ajax/js/prototype.js"></script>
-<script type="text/javascript" src="../admin/js/breadcrumbs.js"></script>
-<script type="text/javascript" src="../admin/js/cookies.js"></script>
-<script type="text/javascript" src="../admin/js/main.js"></script>
-<script type="text/javascript" src="../admin/js/main.js"></script>
+<script endpointType="text/javascript" src="../ajax/js/prototype.js"></script>
+<script endpointType="text/javascript" src="../admin/js/breadcrumbs.js"></script>
+<script endpointType="text/javascript" src="../admin/js/cookies.js"></script>
+<script endpointType="text/javascript" src="../admin/js/main.js"></script>
+<script endpointType="text/javascript" src="../admin/js/main.js"></script>
 
-<script type="text/javascript"
+<script endpointType="text/javascript"
         src="../eventsimulator/js/eventstreamProperty_load.js"></script>
-<script type="text/javascript"
+<script endpointType="text/javascript"
         src="../eventsimulator/js/stream_configuration.js"></script>
-<link type="text/css" href="css/eventSimulator.css" rel="stylesheet"/>
+<link endpointType="text/css" href="css/eventSimulator.css" rel="stylesheet"/>
 
 <div id="middle">
 
@@ -85,11 +85,11 @@
         </tr>
         <tr>
             <td class="leftCol-med">Field delimiter<span class="required">*</span></td>
-            <td ><input type="text" id="seperateChar" class="initE" style="width:75%"></td>
+            <td ><input endpointType="text" id="seperateChar" class="initE" style="width:75%"></td>
         </tr>
         <tr>
             <td class="buttonRow" colspan="2">
-                <input type="button" value="Configure" onclick="sendConfiguration(document.getElementById('configForm'))">
+                <input endpointType="button" value="Configure" onclick="sendConfiguration(document.getElementById('configForm'))">
             </td>
         </tr>
         </tbody>

@@ -22,8 +22,8 @@
 <%@ page import="java.util.List" %>
 
 <fmt:bundle basename="org.wso2.carbon.event.builder.ui.i18n.Resources">
-    <link type="text/css" href="../eventbuilder/css/cep.css" rel="stylesheet"/>
-    <script type="text/javascript" src="../eventbuilder/js/event_builders.js"></script>
+    <link endpointType="text/css" href="../eventbuilder/css/cep.css" rel="stylesheet"/>
+    <script endpointType="text/javascript" src="../eventbuilder/js/event_builders.js"></script>
 
     <%
         String streamId = request.getParameter("streamNameWithVersion");
@@ -60,20 +60,20 @@
                                 key="event.builder.property.jsonpath"/> :
                         </td>
                         <td>
-                            <input type="text" id="inputPropertyValue_<%=counter%>"/>
+                            <input endpointType="text" id="inputPropertyValue_<%=counter%>"/>
                         </td>
                         <td class="col-small"><fmt:message key="event.builder.property.mappedto"/> :
                         </td>
                         <td>
-                            <input type="text" id="inputPropertyName_<%=counter%>"
+                            <input endpointType="text" id="inputPropertyName_<%=counter%>"
                                    value="<%=attributeValues[0]%>" readonly="true"/>
                         </td>
-                        <td><input type="text" id="inputPropertyType_<%=counter%>"
+                        <td><input endpointType="text" id="inputPropertyType_<%=counter%>"
                                    value="<%=attributeValues[1]%>" readonly="true"/>
                         </td>
                         <td class="col-small"><fmt:message
                                 key="event.builder.property.default"/></td>
-                        <td><input type="text" id="inputPropertyDefault_<%=counter%>"/></td>
+                        <td><input endpointType="text" id="inputPropertyDefault_<%=counter%>"/></td>
                     </tr>
                     <%
                             counter++;

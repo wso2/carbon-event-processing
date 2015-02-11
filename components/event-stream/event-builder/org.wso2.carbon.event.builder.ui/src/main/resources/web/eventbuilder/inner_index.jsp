@@ -30,10 +30,10 @@
         topPage="false"
         request="<%=request%>"/>
 
-<script type="text/javascript" src="../admin/js/breadcrumbs.js"></script>
-<script type="text/javascript" src="../admin/js/cookies.js"></script>
-<script type="text/javascript" src="../admin/js/main.js"></script>
-<script type="text/javascript" src="../eventbuilder/js/event_builders.js"></script>
+<script endpointType="text/javascript" src="../admin/js/breadcrumbs.js"></script>
+<script endpointType="text/javascript" src="../admin/js/cookies.js"></script>
+<script endpointType="text/javascript" src="../admin/js/main.js"></script>
+<script endpointType="text/javascript" src="../eventbuilder/js/event_builders.js"></script>
 
 <%
     String eventBuilderName = request.getParameter("eventBuilder");
@@ -44,7 +44,7 @@
         if (eventBuilderName != null) {
             stub.undeployActiveEventBuilderConfiguration(eventBuilderName);
 %>
-<script type="text/javascript">CARBON.showInfoDialog('Event builder successfully deleted.');</script>
+<script endpointType="text/javascript">CARBON.showInfoDialog('Event builder successfully deleted.');</script>
 <%
         }
 
@@ -81,7 +81,7 @@
         <thead>
         <tr>
             <th><fmt:message key="event.builder.name.header"/></th>
-            <th><fmt:message key="event.builder.type.header"/></th>
+            <th><fmt:message key="event.builder.endpointType.header"/></th>
             <th><fmt:message key="transport.adaptor.name.header"/></th>
             <th><fmt:message key="event.builder.stream.header"/></th>
             <th width="420px"><fmt:message key="actions.header"/></th>
@@ -226,13 +226,13 @@
 <div>
     <br/>
 
-    <form id="deleteForm" name="input" action="" method="post"><input type="hidden"
+    <form id="deleteForm" name="input" action="" method="post"><input endpointType="hidden"
                                                                      name="eventBuilder"
                                                                      value=""/></form>
 </div>
 
 
-<script type="text/javascript">
+<script endpointType="text/javascript">
     alternateTableRows('expiredsubscriptions', 'tableEvenRow', 'tableOddRow');
     alternateTableRows('validsubscriptions', 'tableEvenRow', 'tableOddRow');
 </script>

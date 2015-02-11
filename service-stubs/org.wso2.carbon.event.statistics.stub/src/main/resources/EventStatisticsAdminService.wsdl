@@ -31,52 +31,52 @@
             <xs:element name="getGlobalCountResponse">
                 <xs:complexType>
                     <xs:sequence>
-                        <xs:element minOccurs="0" name="return" nillable="true" type="ax2111:StatsDTO"/>
+                        <xs:element minOccurs="0" name="return" nillable="true" endpointType="ax2111:StatsDTO"/>
                     </xs:sequence>
                 </xs:complexType>
             </xs:element>
             <xs:element name="getElementCount">
                 <xs:complexType>
                     <xs:sequence>
-                        <xs:element minOccurs="0" name="categoryName" nillable="true" type="xs:string"/>
-                        <xs:element minOccurs="0" name="deploymentName" nillable="true" type="xs:string"/>
-                        <xs:element minOccurs="0" name="elementName" nillable="true" type="xs:string"/>
+                        <xs:element minOccurs="0" name="categoryName" nillable="true" endpointType="xs:string"/>
+                        <xs:element minOccurs="0" name="deploymentName" nillable="true" endpointType="xs:string"/>
+                        <xs:element minOccurs="0" name="elementName" nillable="true" endpointType="xs:string"/>
                     </xs:sequence>
                 </xs:complexType>
             </xs:element>
             <xs:element name="getElementCountResponse">
                 <xs:complexType>
                     <xs:sequence>
-                        <xs:element minOccurs="0" name="return" nillable="true" type="ax2111:StatsDTO"/>
+                        <xs:element minOccurs="0" name="return" nillable="true" endpointType="ax2111:StatsDTO"/>
                     </xs:sequence>
                 </xs:complexType>
             </xs:element>
             <xs:element name="getDeploymentCount">
                 <xs:complexType>
                     <xs:sequence>
-                        <xs:element minOccurs="0" name="categoryName" nillable="true" type="xs:string"/>
-                        <xs:element minOccurs="0" name="deploymentName" nillable="true" type="xs:string"/>
+                        <xs:element minOccurs="0" name="categoryName" nillable="true" endpointType="xs:string"/>
+                        <xs:element minOccurs="0" name="deploymentName" nillable="true" endpointType="xs:string"/>
                     </xs:sequence>
                 </xs:complexType>
             </xs:element>
             <xs:element name="getDeploymentCountResponse">
                 <xs:complexType>
                     <xs:sequence>
-                        <xs:element minOccurs="0" name="return" nillable="true" type="ax2111:StatsDTO"/>
+                        <xs:element minOccurs="0" name="return" nillable="true" endpointType="ax2111:StatsDTO"/>
                     </xs:sequence>
                 </xs:complexType>
             </xs:element>
             <xs:element name="getCategoryCount">
                 <xs:complexType>
                     <xs:sequence>
-                        <xs:element minOccurs="0" name="categoryName" nillable="true" type="xs:string"/>
+                        <xs:element minOccurs="0" name="categoryName" nillable="true" endpointType="xs:string"/>
                     </xs:sequence>
                 </xs:complexType>
             </xs:element>
             <xs:element name="getCategoryCountResponse">
                 <xs:complexType>
                     <xs:sequence>
-                        <xs:element minOccurs="0" name="return" nillable="true" type="ax2111:StatsDTO"/>
+                        <xs:element minOccurs="0" name="return" nillable="true" endpointType="ax2111:StatsDTO"/>
                     </xs:sequence>
                 </xs:complexType>
             </xs:element>
@@ -84,29 +84,29 @@
         <xs:schema attributeFormDefault="qualified" elementFormDefault="qualified" targetNamespace="http://data.internal.statistics.event.carbon.wso2.org/xsd">
             <xs:complexType name="StatsDTO">
                 <xs:sequence>
-                    <xs:element maxOccurs="unbounded" minOccurs="0" name="childStats" nillable="true" type="xs:string"/>
-                    <xs:element minOccurs="0" name="name" nillable="true" type="xs:string"/>
-                    <xs:element minOccurs="0" name="requestAvgCountPerSec" type="xs:double"/>
-                    <xs:element minOccurs="0" name="requestLast15MinCount" type="xs:long"/>
-                    <xs:element minOccurs="0" name="requestLast6HourCount" type="xs:long"/>
-                    <xs:element minOccurs="0" name="requestLastDayCount" type="xs:long"/>
-                    <xs:element minOccurs="0" name="requestLastHourCount" type="xs:long"/>
-                    <xs:element minOccurs="0" name="requestLastMinCount" type="xs:long"/>
-                    <xs:element minOccurs="0" name="requestLastSecCount" type="xs:long"/>
-                    <xs:element minOccurs="0" name="requestLastUpdatedTime" nillable="true" type="xs:string"/>
-                    <xs:element minOccurs="0" name="requestMaxCountPerSec" type="xs:long"/>
-                    <xs:element minOccurs="0" name="requestTotalCount" type="xs:long"/>
-                    <xs:element minOccurs="0" name="responseAvgCountPerSec" type="xs:double"/>
-                    <xs:element minOccurs="0" name="responseLast15MinCount" type="xs:long"/>
-                    <xs:element minOccurs="0" name="responseLast6HourCount" type="xs:long"/>
-                    <xs:element minOccurs="0" name="responseLastDayCount" type="xs:long"/>
-                    <xs:element minOccurs="0" name="responseLastHourCount" type="xs:long"/>
-                    <xs:element minOccurs="0" name="responseLastMinCount" type="xs:long"/>
-                    <xs:element minOccurs="0" name="responseLastSecCount" type="xs:long"/>
-                    <xs:element minOccurs="0" name="responseLastUpdatedTime" nillable="true" type="xs:string"/>
-                    <xs:element minOccurs="0" name="responseMaxCountPerSec" type="xs:long"/>
-                    <xs:element minOccurs="0" name="responseTotalCount" type="xs:long"/>
-                    <xs:element minOccurs="0" name="type" nillable="true" type="xs:string"/>
+                    <xs:element maxOccurs="unbounded" minOccurs="0" name="childStats" nillable="true" endpointType="xs:string"/>
+                    <xs:element minOccurs="0" name="name" nillable="true" endpointType="xs:string"/>
+                    <xs:element minOccurs="0" name="requestAvgCountPerSec" endpointType="xs:double"/>
+                    <xs:element minOccurs="0" name="requestLast15MinCount" endpointType="xs:long"/>
+                    <xs:element minOccurs="0" name="requestLast6HourCount" endpointType="xs:long"/>
+                    <xs:element minOccurs="0" name="requestLastDayCount" endpointType="xs:long"/>
+                    <xs:element minOccurs="0" name="requestLastHourCount" endpointType="xs:long"/>
+                    <xs:element minOccurs="0" name="requestLastMinCount" endpointType="xs:long"/>
+                    <xs:element minOccurs="0" name="requestLastSecCount" endpointType="xs:long"/>
+                    <xs:element minOccurs="0" name="requestLastUpdatedTime" nillable="true" endpointType="xs:string"/>
+                    <xs:element minOccurs="0" name="requestMaxCountPerSec" endpointType="xs:long"/>
+                    <xs:element minOccurs="0" name="requestTotalCount" endpointType="xs:long"/>
+                    <xs:element minOccurs="0" name="responseAvgCountPerSec" endpointType="xs:double"/>
+                    <xs:element minOccurs="0" name="responseLast15MinCount" endpointType="xs:long"/>
+                    <xs:element minOccurs="0" name="responseLast6HourCount" endpointType="xs:long"/>
+                    <xs:element minOccurs="0" name="responseLastDayCount" endpointType="xs:long"/>
+                    <xs:element minOccurs="0" name="responseLastHourCount" endpointType="xs:long"/>
+                    <xs:element minOccurs="0" name="responseLastMinCount" endpointType="xs:long"/>
+                    <xs:element minOccurs="0" name="responseLastSecCount" endpointType="xs:long"/>
+                    <xs:element minOccurs="0" name="responseLastUpdatedTime" nillable="true" endpointType="xs:string"/>
+                    <xs:element minOccurs="0" name="responseMaxCountPerSec" endpointType="xs:long"/>
+                    <xs:element minOccurs="0" name="responseTotalCount" endpointType="xs:long"/>
+                    <xs:element minOccurs="0" name="endpointType" nillable="true" endpointType="xs:string"/>
                 </xs:sequence>
             </xs:complexType>
         </xs:schema>
@@ -153,7 +153,7 @@
             <wsdl:output message="tns:getElementCountResponse" wsaw:Action="urn:getElementCountResponse"/>
         </wsdl:operation>
     </wsdl:portType>
-    <wsdl:binding name="EventStatisticsAdminServiceSoap11Binding" type="tns:EventStatisticsAdminServicePortType">
+    <wsdl:binding name="EventStatisticsAdminServiceSoap11Binding" endpointType="tns:EventStatisticsAdminServicePortType">
         <soap:binding transport="http://schemas.xmlsoap.org/soap/http" style="document"/>
         <wsdl:operation name="getGlobalCount">
             <soap:operation soapAction="urn:getGlobalCount" style="document"/>
@@ -192,7 +192,7 @@
             </wsdl:output>
         </wsdl:operation>
     </wsdl:binding>
-    <wsdl:binding name="EventStatisticsAdminServiceSoap12Binding" type="tns:EventStatisticsAdminServicePortType">
+    <wsdl:binding name="EventStatisticsAdminServiceSoap12Binding" endpointType="tns:EventStatisticsAdminServicePortType">
         <soap12:binding transport="http://schemas.xmlsoap.org/soap/http" style="document"/>
         <wsdl:operation name="getGlobalCount">
             <soap12:operation soapAction="urn:getGlobalCount" style="document"/>
@@ -231,42 +231,42 @@
             </wsdl:output>
         </wsdl:operation>
     </wsdl:binding>
-    <wsdl:binding name="EventStatisticsAdminServiceHttpBinding" type="tns:EventStatisticsAdminServicePortType">
+    <wsdl:binding name="EventStatisticsAdminServiceHttpBinding" endpointType="tns:EventStatisticsAdminServicePortType">
         <http:binding verb="POST"/>
         <wsdl:operation name="getGlobalCount">
             <http:operation location="getGlobalCount"/>
             <wsdl:input>
-                <mime:content type="text/xml" part="parameters"/>
+                <mime:content endpointType="text/xml" part="parameters"/>
             </wsdl:input>
             <wsdl:output>
-                <mime:content type="text/xml" part="parameters"/>
+                <mime:content endpointType="text/xml" part="parameters"/>
             </wsdl:output>
         </wsdl:operation>
         <wsdl:operation name="getCategoryCount">
             <http:operation location="getCategoryCount"/>
             <wsdl:input>
-                <mime:content type="text/xml" part="parameters"/>
+                <mime:content endpointType="text/xml" part="parameters"/>
             </wsdl:input>
             <wsdl:output>
-                <mime:content type="text/xml" part="parameters"/>
+                <mime:content endpointType="text/xml" part="parameters"/>
             </wsdl:output>
         </wsdl:operation>
         <wsdl:operation name="getDeploymentCount">
             <http:operation location="getDeploymentCount"/>
             <wsdl:input>
-                <mime:content type="text/xml" part="parameters"/>
+                <mime:content endpointType="text/xml" part="parameters"/>
             </wsdl:input>
             <wsdl:output>
-                <mime:content type="text/xml" part="parameters"/>
+                <mime:content endpointType="text/xml" part="parameters"/>
             </wsdl:output>
         </wsdl:operation>
         <wsdl:operation name="getElementCount">
             <http:operation location="getElementCount"/>
             <wsdl:input>
-                <mime:content type="text/xml" part="parameters"/>
+                <mime:content endpointType="text/xml" part="parameters"/>
             </wsdl:input>
             <wsdl:output>
-                <mime:content type="text/xml" part="parameters"/>
+                <mime:content endpointType="text/xml" part="parameters"/>
             </wsdl:output>
         </wsdl:operation>
     </wsdl:binding>

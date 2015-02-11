@@ -30,8 +30,8 @@
     if (eventFormatters != null && eventFormatters.length > 0) {
         eventFormatterNames = new String[eventFormatters.length];
         int i = 0;
-        for (EventFormatterConfigurationInfoDto eventFormatter : eventFormatters) {
-            eventFormatterNames[i++] = eventFormatter.getEventFormatterName();
+        for (EventFormatterConfigurationInfoDto eventNotifier : eventFormatters) {
+            eventFormatterNames[i++] = eventNotifier.getEventFormatterName();
         }
         responseText = new Gson().toJson(eventFormatterNames);
     }

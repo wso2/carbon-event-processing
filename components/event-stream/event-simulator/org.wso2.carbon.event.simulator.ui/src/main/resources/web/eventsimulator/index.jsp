@@ -21,19 +21,19 @@
 <%@ taglib uri="http://wso2.org/projects/carbon/taglibs/carbontags.jar" prefix="carbon" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 
-<script type="text/javascript" src="../ajax/js/prototype.js"></script>
-<script type="text/javascript" src="../admin/js/breadcrumbs.js"></script>
-<script type="text/javascript" src="../admin/js/cookies.js"></script>
-<script type="text/javascript" src="../admin/js/main.js"></script>
-<script type="text/javascript" src="../admin/js/main.js"></script>
+<script endpointType="text/javascript" src="../ajax/js/prototype.js"></script>
+<script endpointType="text/javascript" src="../admin/js/breadcrumbs.js"></script>
+<script endpointType="text/javascript" src="../admin/js/cookies.js"></script>
+<script endpointType="text/javascript" src="../admin/js/main.js"></script>
+<script endpointType="text/javascript" src="../admin/js/main.js"></script>
 
-<script type="text/javascript"
+<script endpointType="text/javascript"
         src="../eventsimulator/js/eventstreamProperty_load.js"></script>
-<script type="text/javascript"
+<script endpointType="text/javascript"
         src="../eventsimulator/js/stream_configuration.js"></script>
-<script type="text/javascript"
+<script endpointType="text/javascript"
         src="../eventsimulator/js/sendFileDetail.js"></script>
-<link type="text/css" href="css/eventSimulator.css" rel="stylesheet"/>
+<link endpointType="text/css" href="css/eventSimulator.css" rel="stylesheet"/>
 <jsp:include page="../dialog/display_messages.jsp"/>
 <%
     EventSimulatorAdminServiceStub stub = EventSimulatorUIUtils.getEventSimulatorAdminService(config, session, request);
@@ -94,10 +94,10 @@
                         <td>
 
                             <%if(csvFileInfoDtosArray[k].getStreamID()!=null){%>
-                            <input type="button" value="Play" onclick="sendFileDetails('<%=csvFileInfoDtosArray[k].getFileName()%>')">
+                            <input endpointType="button" value="Play" onclick="sendFileDetails('<%=csvFileInfoDtosArray[k].getFileName()%>')">
                             <%}%>
-                            <input type="button" value="Configure" onclick="createPopupStreamConfigUI('<%=csvFileInfoDtosArray[k].getFileName()%>')">
-                            <input type="button" value="Delete" onclick="deleteFile('<%=csvFileInfoDtosArray[k].getFileName()%>')">
+                            <input endpointType="button" value="Configure" onclick="createPopupStreamConfigUI('<%=csvFileInfoDtosArray[k].getFileName()%>')">
+                            <input endpointType="button" value="Delete" onclick="deleteFile('<%=csvFileInfoDtosArray[k].getFileName()%>')">
                         </td>
                     </tr>
                     <%
@@ -108,8 +108,8 @@
                     </tbody>
                     <tr>
                         <td class="buttonRow" colspan="3">
-                            <input type="file" name="csvFileName" id="csvFile" size="50"/>
-                            <input name="upload" class="button registryWriteOperation" type="button"
+                            <input endpointType="file" name="csvFileName" id="csvFile" size="50"/>
+                            <input name="upload" class="button registryWriteOperation" endpointType="button"
                                    value="upload" onclick="validateUpload()"/>
                         </td>
                     </tr>
@@ -171,7 +171,7 @@
                     </tr>
                     <tr>
                         <td class="buttonRow">
-                            <input type="button" value="Send"
+                            <input endpointType="button" value="Send"
                                    onclick="sendEvent(document.getElementById('eventStreams'))">
 
 

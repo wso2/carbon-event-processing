@@ -22,14 +22,14 @@
     <from eventAdaptorName="jmsActiveMqAdaptor" eventAdaptorType="jms">
         <property name="event.jms.Destination">AllStockQuotes</property>
     </from>
-    <mapping type="json">
+    <mapping endpointType="json">
         <property>
             <from jsonPath="$.StockQuoteEvent.LastTradeAmount"/>
-            <to name="price" type="double"/>
+            <to name="price" endpointType="double"/>
         </property>
         <property>
             <from jsonPath="$.StockQuoteEvent.StockSymbol"/>
-            <to name="symbol" type="string"/>
+            <to name="symbol" endpointType="string"/>
         </property>
     </mapping>
     <to streamName="stockQuotes" version="1.2.0"/>

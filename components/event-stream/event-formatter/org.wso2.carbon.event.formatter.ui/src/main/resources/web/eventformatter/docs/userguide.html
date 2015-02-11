@@ -19,7 +19,7 @@
 <html>
 <head><title>Event Formatter - User Guide</title>
 
-    <link href="../../admin/css/documentation.css" rel="stylesheet" type="text/css" media="all"/>
+    <link href="../../admin/css/documentation.css" rel="stylesheet" endpointType="text/css" media="all"/>
 </head>
 <body>
 <h1>Event Formatter</h1>
@@ -31,7 +31,7 @@
 
 <p>Hence WSO2Event has three data types (Meta, Correlation and Payload), the CEP back end runtime
    event attributes can be mapped to any one of them by adding the mapping configuration under their
-   type names.</p>
+   endpointType names.</p>
 
 <h3>Configuring through the Management Console UI</h3>
 
@@ -65,9 +65,9 @@
     </li>
     <li>Output Mapping Type - This property can be change based on the event adaptor selected. Some
         event adaptors can support for multiple types of mappings. User can select the required
-        mapping type from the list. Is is numbered as "3".
+        mapping endpointType from the list. Is is numbered as "3".
     </li>
-    <li>Stream Definition - Since, you have selected WSO2Event type event adaptor "wso2EventSender";
+    <li>Stream Definition - Since, you have selected WSO2Event endpointType event adaptor "wso2EventSender";
         you need a stream to send events from CEP.
     </li>
     <li>Stream Version - Version of the event stream.</li>
@@ -115,19 +115,19 @@
 <p>1. Create a xml file and enter the following WSO2Event mapping event formatter configurations
    inside the above mentioned hot deployment directory. Event formatter implementation needs to be
    start with "eventformatter" root element.</p>
-<pre>&lt;eventFormatter name="StatisticsFormatter" xmlns="http://wso2.org/carbon/eventformatter"&gt;
+<pre>&lt;eventNotifier name="StatisticsFormatter" xmlns="http://wso2.org/carbon/eventformatter"&gt;
         &lt;from streamName="statisticsStream" version="1.0.0"/&gt;
-        &lt;mapping type="wso2event"&gt;
+        &lt;mapping endpointType="wso2event"&gt;
             &lt;metaData&gt;
                 &lt;property&gt;
                     &lt;from name="ipAddress"/&gt;
-                    &lt;to name="ipAdd" type="string"/&gt;
+                    &lt;to name="ipAdd" endpointType="string"/&gt;
                 &lt;/property&gt;
             &lt;/metaData&gt;
             &lt;payloadData&gt;
                 &lt;property&gt;
                     &lt;from name="user"/&gt;
-                    &lt;to name="username" type="string"/&gt;
+                    &lt;to name="username" endpointType="string"/&gt;
                 &lt;/property&gt;
             &lt;/payloadData&gt;
         &lt;/mapping&gt;
@@ -135,7 +135,7 @@
             &lt;property name="stream"&gt;statisticsOutStream&lt;/property&gt;
             &lt;property name="version"&gt;1.0.0&lt;/property&gt;
             &lt;/to>
-    &lt;/eventFormatter></pre>
+    &lt;/eventNotifier></pre>
 
 <p>For more details on creating different types of event formatters, Please refer the official
    documentation <a

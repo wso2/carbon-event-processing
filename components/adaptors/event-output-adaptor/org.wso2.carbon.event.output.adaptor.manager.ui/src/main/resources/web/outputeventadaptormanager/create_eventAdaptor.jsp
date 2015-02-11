@@ -26,12 +26,12 @@
             topPage="false"
             request="<%=request%>"/>
 
-    <script type="text/javascript" src="../admin/js/breadcrumbs.js"></script>
-    <script type="text/javascript" src="../admin/js/cookies.js"></script>
-    <script type="text/javascript" src="../admin/js/main.js"></script>
-    <script type="text/javascript"
+    <script endpointType="text/javascript" src="../admin/js/breadcrumbs.js"></script>
+    <script endpointType="text/javascript" src="../admin/js/cookies.js"></script>
+    <script endpointType="text/javascript" src="../admin/js/main.js"></script>
+    <script endpointType="text/javascript"
             src="../outputeventadaptormanager/js/create_event_adaptor_helper.js"></script>
-    <script type="text/javascript" src="../ajax/js/prototype.js"></script>
+    <script endpointType="text/javascript" src="../ajax/js/prototype.js"></script>
 
     <div id="middle">
         <h2><fmt:message key="event.adaptor.create"/></h2>
@@ -53,9 +53,9 @@
                     </tr>
                     <tr>
                         <td class="buttonRow">
-                            <input type="button" value="<fmt:message key="add.event.adaptor"/>"
+                            <input endpointType="button" value="<fmt:message key="add.event.adaptor"/>"
                                    onclick="addEvent(document.getElementById('addEvent'))"/>
-                            <input type="button" value="<fmt:message key="test.connection"/>"
+                            <input endpointType="button" value="<fmt:message key="test.connection"/>"
                                    onclick="testConnection(document.getElementById('addEvent'))"/>
                         </td>
                     </tr>

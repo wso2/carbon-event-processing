@@ -35,11 +35,11 @@
         topPage="false"
         request="<%=request%>"/>
 
-<script type="text/javascript" src="../admin/js/breadcrumbs.js"></script>
-<script type="text/javascript" src="../admin/js/cookies.js"></script>
-<script type="text/javascript" src="../admin/js/main.js"></script>
+<script endpointType="text/javascript" src="../admin/js/breadcrumbs.js"></script>
+<script endpointType="text/javascript" src="../admin/js/cookies.js"></script>
+<script endpointType="text/javascript" src="../admin/js/main.js"></script>
 
-<script type="text/javascript">
+<script endpointType="text/javascript">
 
     var ENABLE = "enable";
     var DISABLE = "disable";
@@ -154,7 +154,7 @@
         OutputEventAdaptorManagerAdminServiceStub stub = OutputEventAdaptorUIUtils.getOutputEventManagerAdminService(config, session, request);
         stub.undeployActiveOutputEventAdaptorConfiguration(eventName);
 %>
-<script type="text/javascript">CARBON.showInfoDialog('Event adaptor successfully deleted.');</script>
+<script endpointType="text/javascript">CARBON.showInfoDialog('Event adaptor successfully deleted.');</script>
 <%
     }
 
@@ -199,7 +199,7 @@
         <thead>
         <tr>
             <th><fmt:message key="event.adaptor.name"/></th>
-            <th><fmt:message key="event.adaptor.type"/></th>
+            <th><fmt:message key="event.adaptor.endpointType"/></th>
             <th width="420px"><fmt:message key="actions"/></th>
         </tr>
         </thead>
@@ -330,14 +330,14 @@
     <div>
         <br/>
 
-        <form id="deleteForm" name="input" action="" method="post"><input type="HIDDEN"
+        <form id="deleteForm" name="input" action="" method="post"><input endpointType="HIDDEN"
                                                                          name="eventname"
                                                                          value=""/></form>
     </div>
 </div>
 
 
-<script type="text/javascript">
+<script endpointType="text/javascript">
     alternateTableRows('expiredsubscriptions', 'tableEvenRow', 'tableOddRow');
     alternateTableRows('validsubscriptions', 'tableEvenRow', 'tableOddRow');
 </script>

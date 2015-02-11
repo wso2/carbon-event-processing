@@ -22,4 +22,4 @@
      configurations are created using default values.
 -->     
 <inputEventAdaptor name="DefaultWSO2EventInputAdaptor"
-  statistics="disable" trace="disable" type="wso2event" xmlns="http://wso2.org/carbon/eventadaptormanager"/>
+  statistics="disable" trace="disable" endpointType="wso2event" xmlns="http://wso2.org/carbon/eventadaptormanager"/>

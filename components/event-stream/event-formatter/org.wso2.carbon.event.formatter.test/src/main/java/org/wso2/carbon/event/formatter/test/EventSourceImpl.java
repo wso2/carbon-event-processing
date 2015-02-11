@@ -22,7 +22,7 @@ import org.wso2.carbon.databridge.commons.StreamDefinition;
 import org.wso2.carbon.databridge.commons.exception.MalformedStreamDefinitionException;
 import org.wso2.carbon.event.formatter.core.EventFormatterListener;
 import org.wso2.carbon.event.formatter.core.EventSource;
-import org.wso2.carbon.event.formatter.core.exception.EventFormatterConfigurationException;
+import org.wso2.carbon.event.notifier.core.exception.EventFormatterConfigurationException;
 
 import java.util.ArrayList;
 import java.util.List;

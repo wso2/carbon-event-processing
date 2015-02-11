@@ -23,8 +23,8 @@
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 
 <fmt:bundle basename="org.wso2.carbon.event.builder.ui.i18n.Resources">
-    <link type="text/css" href="../eventbuilder/css/cep.css" rel="stylesheet"/>
-    <script type="text/javascript" src="../eventbuilder/js/event_builders.js"></script>
+    <link endpointType="text/css" href="../eventbuilder/css/cep.css" rel="stylesheet"/>
+    <script endpointType="text/javascript" src="../eventbuilder/js/event_builders.js"></script>
 
     <%
         String streamId = request.getParameter("streamNameWithVersion");
@@ -59,20 +59,20 @@
                         <td class="col-small">Input Attribute Name :
                         </td>
                         <td>
-                            <input type="text" id="metaEventPropertyName_<%=counter%>"
+                            <input endpointType="text" id="metaEventPropertyName_<%=counter%>"
                                     />
                         </td>
                         <td class="col-small">Mapped To :
                         </td>
                         <td>
-                            <input type="text" id="metaEventMappedValue_<%=counter%>"
+                            <input endpointType="text" id="metaEventMappedValue_<%=counter%>"
                                    value="<%=EventBuilderUIConstants.META_PREFIX + metaAttribute.getAttributeName()%>"
                                    readonly="true"/>
                         </td>
                         <td class="col-small">Attribute Type :
                         </td>
                         <td>
-                            <input type="text" id="metaEventType_<%=counter%>"
+                            <input endpointType="text" id="metaEventType_<%=counter%>"
                                    value="<%=metaAttribute.getAttributeType()%>" readonly="true"/>
                         </td>
                     </tr>
@@ -109,20 +109,20 @@
                         <td class="col-small">Input Attribute Name :
                         </td>
                         <td>
-                            <input type="text" id="correlationEventPropertyName_<%=counter%>"
+                            <input endpointType="text" id="correlationEventPropertyName_<%=counter%>"
                                     />
                         </td>
                         <td class="col-small">Mapped To :
                         </td>
                         <td>
-                            <input type="text" id="correlationEventMappedValue_<%=counter%>"
+                            <input endpointType="text" id="correlationEventMappedValue_<%=counter%>"
                                    value="<%=EventBuilderUIConstants.CORRELATION_PREFIX + correlationAttribute.getAttributeName()%>"
                                    readonly="true"/>
                         </td>
                         <td class="col-small">Attribute Type :
                         </td>
                         <td>
-                            <input type="text" id="correlationEventType_<%=counter%>"
+                            <input endpointType="text" id="correlationEventType_<%=counter%>"
                                    value="<%=correlationAttribute.getAttributeType()%>" readonly="true"/>
                         </td>
                     </tr>
@@ -160,19 +160,19 @@
                         <td class="col-small">Input Attribute Name :
                         </td>
                         <td>
-                            <input type="text" id="payloadEventPropertyName_<%=counter%>"
+                            <input endpointType="text" id="payloadEventPropertyName_<%=counter%>"
                                     />
                         </td>
                         <td class="col-small">Mapped To :
                         </td>
                         <td>
-                            <input type="text" id="payloadEventMappedValue_<%=counter%>"
+                            <input endpointType="text" id="payloadEventMappedValue_<%=counter%>"
                                    value="<%=payloadAttribute.getAttributeName()%>" readonly="true"/>
                         </td>
                         <td class="col-small">Attribute Type :
                         </td>
                         <td>
-                            <input type="text" id="payloadEventType_<%=counter%>"
+                            <input endpointType="text" id="payloadEventType_<%=counter%>"
                                    value="<%=payloadAttribute.getAttributeType()%>" readonly="true"/>
                         </td>
                     </tr>

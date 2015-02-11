@@ -27,7 +27,7 @@
     try {
         EventFormatterAdminServiceStub stub = EventFormatterUIUtils.getEventFormatterAdminService(config, session, request);
 
-        String eventFormatterName = request.getParameter("eventFormatter");
+        String eventNotifierName = request.getParameter("eventNotifier");
         String streamNameWithVersion = request.getParameter("streamNameWithVersion");
         String eventAdaptorInfo = request.getParameter("eventAdaptorInfo");
         String[] eventAdaptorNameAndType = eventAdaptorInfo.split("\\$=");
@@ -136,14 +136,14 @@
                 }
             }
             // add event adaptor via admin service
-            stub.deployWSO2EventFormatterConfiguration(eventFormatterName, streamNameWithVersion, eventAdaptorName, eventAdaptorType, metaWSO2EventConfiguration, correlationWSO2EventConfiguration, payloadWSO2EventConfiguration, eventFormatterProperties, customMappingEnabled);
+            stub.deployWSO2EventFormatterConfiguration(eventNotifierName, streamNameWithVersion, eventAdaptorName, eventAdaptorType, metaWSO2EventConfiguration, correlationWSO2EventConfiguration, payloadWSO2EventConfiguration, eventFormatterProperties, customMappingEnabled);
             msg = "true";
         } else if (mappingType.equals("text")) {
             String dataSet = request.getParameter("textData");
             String dataFrom = request.getParameter("dataFrom");
 
             // add event adaptor via admin service
-            stub.deployTextEventFormatterConfiguration(eventFormatterName, streamNameWithVersion, eventAdaptorName, eventAdaptorType, dataSet, eventFormatterProperties, dataFrom, customMappingEnabled);
+            stub.deployTextEventFormatterConfiguration(eventNotifierName, streamNameWithVersion, eventAdaptorName, eventAdaptorType, dataSet, eventFormatterProperties, dataFrom, customMappingEnabled);
             msg = "true";
 
         } else if (mappingType.equals("xml")) {
@@ -151,7 +151,7 @@
             String dataFrom = request.getParameter("dataFrom");
 
             // add event adaptor via admin service
-            stub.deployXmlEventFormatterConfiguration(eventFormatterName, streamNameWithVersion, eventAdaptorName, eventAdaptorType, dataSet, eventFormatterProperties, dataFrom, customMappingEnabled);
+            stub.deployXmlEventFormatterConfiguration(eventNotifierName, streamNameWithVersion, eventAdaptorName, eventAdaptorType, dataSet, eventFormatterProperties, dataFrom, customMappingEnabled);
             msg = "true";
 
         } else if (mappingType.equals("map")) {
@@ -179,14 +179,14 @@
             }
 
             // add event adaptor via admin service
-            stub.deployMapEventFormatterConfiguration(eventFormatterName, streamNameWithVersion, eventAdaptorName, eventAdaptorType, eventOutputPropertyConfiguration, eventFormatterProperties, customMappingEnabled);
+            stub.deployMapEventFormatterConfiguration(eventNotifierName, streamNameWithVersion, eventAdaptorName, eventAdaptorType, eventOutputPropertyConfiguration, eventFormatterProperties, customMappingEnabled);
             msg = "true";
 
         } else if (mappingType.equals("json")) {
             String dataSet = request.getParameter("jsonData");
             String dataFrom = request.getParameter("dataFrom");
             // add event adaptor via admin service
-            stub.deployJsonEventFormatterConfiguration(eventFormatterName, streamNameWithVersion, eventAdaptorName, eventAdaptorType, dataSet, eventFormatterProperties, dataFrom, customMappingEnabled);
+            stub.deployJsonEventFormatterConfiguration(eventNotifierName, streamNameWithVersion, eventAdaptorName, eventAdaptorType, dataSet, eventFormatterProperties, dataFrom, customMappingEnabled);
             msg = "true";
         }
 

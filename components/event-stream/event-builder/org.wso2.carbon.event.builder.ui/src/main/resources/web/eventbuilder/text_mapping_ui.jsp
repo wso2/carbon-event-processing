@@ -22,8 +22,8 @@
 <%@ page import="java.util.List" %>
 
 <fmt:bundle basename="org.wso2.carbon.event.builder.ui.i18n.Resources">
-    <link type="text/css" href="../eventbuilder/css/cep.css" rel="stylesheet"/>
-    <script type="text/javascript" src="../eventbuilder/js/event_builders.js"></script>
+    <link endpointType="text/css" href="../eventbuilder/css/cep.css" rel="stylesheet"/>
+    <script endpointType="text/javascript" src="../eventbuilder/js/event_builders.js"></script>
     <%
         String streamId = request.getParameter("streamNameWithVersion");
         EventStreamAdminServiceStub eventStreamAdminServiceStub = EventBuilderUIUtils.getEventStreamAdminService(config, session, request);
@@ -62,9 +62,9 @@
                                 class="required">*</span>
                         </td>
                         <td>
-                            <input type="text" id="inputRegexDef"/>
+                            <input endpointType="text" id="inputRegexDef"/>
                         </td>
-                        <td><input type="button" class="button"
+                        <td><input endpointType="button" class="button"
                                    value="<fmt:message key="add"/>"
                                    onclick="addInputRegexDef()"/>
                         </td>
@@ -86,7 +86,7 @@
                     <th class="leftCol-med"><fmt:message
                             key="event.builder.property.valueof"/></th>
                     <th class="leftCol-med"><fmt:message
-                            key="event.builder.property.type"/></th>
+                            key="event.builder.property.endpointType"/></th>
                     <th class="leftCol-med"><fmt:message
                             key="event.builder.property.default"/></th>
                     <th><fmt:message key="event.builder.mapping.actions"/></th>
@@ -118,7 +118,7 @@
                             </select>
 
                         </td>
-                        <td><fmt:message key="event.builder.property.type"/>:
+                        <td><fmt:message key="event.builder.property.endpointType"/>:
                             <select id="inputPropertyType">
                                 <option value="int">int</option>
                                 <option value="long">long</option>
@@ -130,8 +130,8 @@
                         </td>
                         <td class="col-small"><fmt:message
                                 key="event.builder.property.default"/></td>
-                        <td><input type="text" id="inputPropertyDefault"/></td>
-                        <td><input type="button" class="button"
+                        <td><input endpointType="text" id="inputPropertyDefault"/></td>
+                        <td><input endpointType="button" class="button"
                                    value="<fmt:message key="add"/>"
                                    onclick="addInputTextProperty()"/>
                         </td>

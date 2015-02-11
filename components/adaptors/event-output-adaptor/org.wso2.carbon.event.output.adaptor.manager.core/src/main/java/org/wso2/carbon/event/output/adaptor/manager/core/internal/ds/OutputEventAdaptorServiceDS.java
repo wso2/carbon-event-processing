@@ -74,7 +74,12 @@ public class OutputEventAdaptorServiceDS {
         List<OutputEventAdaptorFactory> outputEventAdaptorFactories = OutputEventAdaptorServiceTrackerDS.outputEventAdaptorFactories;
 
         for (OutputEventAdaptorFactory outputEventAdaptorFactory : outputEventAdaptorFactories) {
-            ((CarbonOutputEventAdaptorService) OutputEventAdaptorServiceValueHolder.getCarbonOutputEventAdaptorService()).registerEventAdaptor(outputEventAdaptorFactory.getEventAdaptor());
+            try {
+                ((CarbonOutputEventAdaptorService) OutputEventAdaptorServiceValueHolder.getCarbonOutputEventAdaptorService()).registerEventAdaptor(outputEventAdaptorFactory.getEventAdaptor());
+            } catch (Throwable t) {
+                log.error("Unexpected error at initializing output event adaptor instances "
+                        + outputEventAdaptorFactory + ": " + t.getMessage(), t);
+            }
         }
     }
 

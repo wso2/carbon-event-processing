@@ -21,15 +21,15 @@
     <from eventAdaptorType="ws-event-local" eventAdaptorName="localEventAdaptor">
         <property name="topic">AllStockQuotes</property>
     </from>
-    <mapping type="xml" parentXpath="//quotedata:AllStockQuotes">
+    <mapping endpointType="xml" parentXpath="//quotedata:AllStockQuotes">
         <xpathDefinition prefix="quotedata" namespace="http://ws.cdyne.com/"/>
         <property>
             <from xpath="//quotedata:StockQuoteEvent/quotedata:LastTradeAmount"/>
-            <to name="price" type="double"/>
+            <to name="price" endpointType="double"/>
         </property>
         <property>
             <from xpath="//quotedata:StockQuoteEvent/quotedata:StockSymbol"/>
-            <to name="symbol" type="string"/>
+            <to name="symbol" endpointType="string"/>
         </property>
     </mapping>
     <to streamName="stockQuotes" version="1.0.0"/>

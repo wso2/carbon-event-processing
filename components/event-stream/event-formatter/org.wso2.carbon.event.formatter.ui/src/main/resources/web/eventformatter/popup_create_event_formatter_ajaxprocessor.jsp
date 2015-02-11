@@ -29,17 +29,17 @@
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 
 <fmt:bundle basename="org.wso2.carbon.event.formatter.ui.i18n.Resources">
-<script type="text/javascript" src="../eventformatter/js/event_formatter.js"></script>
-<script type="text/javascript" src="../eventformatter/js/registry-browser.js"></script>
+<script endpointType="text/javascript" src="../eventformatter/js/event_formatter.js"></script>
+<script endpointType="text/javascript" src="../eventformatter/js/registry-browser.js"></script>
 
-<script type="text/javascript" src="../resources/js/resource_util.js"></script>
+<script endpointType="text/javascript" src="../resources/js/resource_util.js"></script>
 <jsp:include page="../resources/resources-i18n-ajaxprocessor.jsp"/>
-<link rel="stylesheet" type="text/css" href="../resources/css/registry.css"/>
-<script type="text/javascript" src="../ajax/js/prototype.js"></script>
-<script type="text/javascript"
+<link rel="stylesheet" endpointType="text/css" href="../resources/css/registry.css"/>
+<script endpointType="text/javascript" src="../ajax/js/prototype.js"></script>
+<script endpointType="text/javascript"
         src="../eventformatter/js/create_eventFormatter_helper.js"></script>
 
-<script type="text/javascript">
+<script endpointType="text/javascript">
     jQuery(document).ready(function () {
         showMappingContext();
     });
@@ -109,7 +109,7 @@
 <tr>
     <td class="leftCol-med"><fmt:message key="event.formatter.name"/><span class="required">*</span>
     </td>
-    <td><input type="text" name="eventFormatterName" id="eventFormatterId"
+    <td><input endpointType="text" name="eventNotifierName" id="eventFormatterId"
                class="initE"
 
                value=""
@@ -203,9 +203,9 @@
         %>
     </td>
     <%
-        String type = "text";
+        String endpointType = "text";
         if (eventFormatterProperties[index].getSecured()) {
-            type = "password";
+            endpointType = "password";
         }
     %>
 
@@ -232,7 +232,7 @@
             </select>
 
             <% } else { %>
-            <input type="<%=type%>"
+            <input endpointType="<%=endpointType%>"
                    name="<%=eventFormatterProperties[index].getKey()%>"
                    id="<%=propertyId%><%=index%>" class="initE"
                    style="width:75%"
@@ -262,7 +262,7 @@
 </tr>
 
 <tr>
-    <td><fmt:message key="mapping.type"/><span class="required">*</span></td>
+    <td><fmt:message key="mapping.endpointType"/><span class="required">*</span></td>
     <td><select name="mappingTypeFilter"
                 onchange="showMappingContext()" id="mappingTypeFilter">
         <%
@@ -282,7 +282,7 @@
     </select>
 
         <div class="sectionHelp">
-            <fmt:message key="mapping.type.help"/>
+            <fmt:message key="mapping.endpointType.help"/>
         </div>
     </td>
 
@@ -315,7 +315,7 @@
         <tr name="outputWSO2EventMapping">
             <td colspan="2">
 
-                <h6><fmt:message key="property.data.type.meta"/></h6>
+                <h6><fmt:message key="property.data.endpointType.meta"/></h6>
                 <table class="styledLeft noBorders spacer-bot" id="outputMetaDataTable"
                        style="display:none">
                     <thead>
@@ -332,7 +332,7 @@
                     <tr>
                         <td class="col-small"><fmt:message key="property.name"/> :</td>
                         <td>
-                            <input type="text" id="outputMetaDataPropName"/>
+                            <input endpointType="text" id="outputMetaDataPropName"/>
                         </td>
                         <td class="col-small"><fmt:message key="property.value.of"/> :
                         </td>
@@ -346,7 +346,7 @@
                                 <% }%>
                             </select>
                         </td>
-                        <td><input type="button" class="button"
+                        <td><input endpointType="button" class="button"
                                    value="<fmt:message key="add"/>"
                                    onclick="addOutputWSO2EventProperty('Meta')"/>
                         </td>
@@ -360,7 +360,7 @@
         <tr name="outputWSO2EventMapping">
             <td colspan="2">
 
-                <h6><fmt:message key="property.data.type.correlation"/></h6>
+                <h6><fmt:message key="property.data.endpointType.correlation"/></h6>
                 <table class="styledLeft noBorders spacer-bot"
                        id="outputCorrelationDataTable" style="display:none">
                     <thead>
@@ -377,7 +377,7 @@
                     <tr>
                         <td class="col-small"><fmt:message key="property.name"/> :</td>
                         <td>
-                            <input type="text" id="outputCorrelationDataPropName"/>
+                            <input endpointType="text" id="outputCorrelationDataPropName"/>
                         </td>
                         <td class="col-small"><fmt:message key="property.value.of"/> :
                         </td>
@@ -391,7 +391,7 @@
                                 <% }%>
                             </select>
                         </td>
-                        <td><input type="button" class="button"
+                        <td><input endpointType="button" class="button"
                                    value="<fmt:message key="add"/>"
                                    onclick="addOutputWSO2EventProperty('Correlation')"/>
                         </td>
@@ -403,7 +403,7 @@
         <tr name="outputWSO2EventMapping">
             <td colspan="2">
 
-                <h6><fmt:message key="property.data.type.payload"/></h6>
+                <h6><fmt:message key="property.data.endpointType.payload"/></h6>
                 <table class="styledLeft noBorders spacer-bot"
                        id="outputPayloadDataTable" style="display:none">
                     <thead>
@@ -420,7 +420,7 @@
                     <tr>
                         <td class="col-small"><fmt:message key="property.name"/> :</td>
                         <td>
-                            <input type="text" id="outputPayloadDataPropName"/>
+                            <input endpointType="text" id="outputPayloadDataPropName"/>
                         </td>
                         <td class="col-small"><fmt:message key="property.value.of"/> :
                         </td>
@@ -434,7 +434,7 @@
                                 <% }%>
                             </select>
                         </td>
-                        <td><input type="button" class="button"
+                        <td><input endpointType="button" class="button"
                                    value="<fmt:message key="add"/>"
                                    onclick="addOutputWSO2EventProperty('Payload')"/>
                         </td>
@@ -462,10 +462,10 @@
             <td class="leftCol-med" colspan="1"><fmt:message key="output.mapping.content"/><span
                     class="required">*</span></td>
             <td colspan="2">
-                <input id="inline_text" type="radio" checked="checked" value="content"
+                <input id="inline_text" endpointType="radio" checked="checked" value="content"
                        name="inline_text" onclick="enable_disable_Registry(this)">
                 <label for="inline_text"><fmt:message key="inline.input"/></label>
-                <input id="registry_text" type="radio" value="reg" name="registry_text"
+                <input id="registry_text" endpointType="radio" value="reg" name="registry_text"
                        onclick="enable_disable_Registry(this)">
                 <label for="registry_text"><fmt:message key="registry.input"/></label>
             </td>
@@ -483,7 +483,7 @@
         <tr name="outputTextMappingRegistry" style="display:none" id="outputTextMappingRegistry">
             <td class="leftCol-med" colspan="1"><fmt:message key="resource.path"/><span
                     class="required">*</span></td>
-            <td colspan="1"><input type="text" id="textSourceRegistry" disabled="disabled"
+            <td colspan="1"><input endpointType="text" id="textSourceRegistry" disabled="disabled"
                                    class="initE"
                                    value=""
                                    style="width:100%"/></td>
@@ -517,10 +517,10 @@
             <td class="leftCol-med" colspan="1"><fmt:message key="output.mapping.content"/><span
                     class="required">*</span></td>
             <td colspan="2">
-                <input id="inline_xml" type="radio" checked="checked" value="content"
+                <input id="inline_xml" endpointType="radio" checked="checked" value="content"
                        name="inline_xml" onclick="enable_disable_Registry(this)">
                 <label for="inline_xml"><fmt:message key="inline.input"/></label>
-                <input id="registry_xml" type="radio" value="reg" name="registry_xml"
+                <input id="registry_xml" endpointType="radio" value="reg" name="registry_xml"
                        onclick="enable_disable_Registry(this)">
                 <label for="registry_xml"><fmt:message key="registry.input"/></label>
             </td>
@@ -539,7 +539,7 @@
             <td class="leftCol-med" colspan="1"><fmt:message key="resource.path"/><span
                     class="required">*</span></td>
             <td colspan="1">
-                <input type="text" id="xmlSourceRegistry" disabled="disabled" class="initE" value=""
+                <input endpointType="text" id="xmlSourceRegistry" disabled="disabled" class="initE" value=""
                        style="width:100%"/>
             </td>
             <td class="nopadding" style="border:none" colspan="1">
@@ -587,7 +587,7 @@
                     <tr>
                         <td class="col-small"><fmt:message key="property.name"/> :</td>
                         <td>
-                            <input type="text" id="outputMapPropName"/>
+                            <input endpointType="text" id="outputMapPropName"/>
                         </td>
                         <td class="col-small"><fmt:message key="property.value.of"/> :</td>
                         <td>
@@ -600,7 +600,7 @@
                                 <% }%>
                             </select>
                         </td>
-                        <td><input type="button" class="button" value="<fmt:message key="add"/>"
+                        <td><input endpointType="button" class="button" value="<fmt:message key="add"/>"
                                    onclick="addOutputMapProperty()"/>
                         </td>
                     </tr>
@@ -626,10 +626,10 @@
             <td class="leftCol-med" colspan="1"><fmt:message key="output.mapping.content"/><span
                     class="required">*</span></td>
             <td colspan="2">
-                <input id="inline_json" type="radio" checked="checked" value="content"
+                <input id="inline_json" endpointType="radio" checked="checked" value="content"
                        name="inline_json" onclick="enable_disable_Registry(this)">
                 <label for="inline_json"><fmt:message key="inline.input"/></label>
-                <input id="registry_json" type="radio" value="reg" name="registry_json"
+                <input id="registry_json" endpointType="radio" value="reg" name="registry_json"
                        onclick="enable_disable_Registry(this)">
                 <label for="registry_json"><fmt:message key="registry.input"/></label>
             </td>
@@ -648,7 +648,7 @@
             <td class="leftCol-med" colspan="1"><fmt:message key="resource.path"/><span
                     class="required">*</span></td>
             <td colspan="1">
-                <input type="text" id="jsonSourceRegistry" disabled="disabled" class="initE"
+                <input endpointType="text" id="jsonSourceRegistry" disabled="disabled" class="initE"
                        value=""
                        style="width:100%"/>
             </td>
@@ -679,7 +679,7 @@
 </tr>
 <tr>
     <td class="buttonRow">
-        <input type="button" value="<fmt:message key="add.event.formatter"/>"
+        <input endpointType="button" value="<fmt:message key="add.event.formatter"/>"
                onclick="addEventFormatterViaPopup(document.getElementById('addEventFormatter') ,'<%=streamId%>','<%=redirectPage%>')"/>
     </td>
 </tr>

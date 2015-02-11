@@ -21,11 +21,11 @@
     <parent>
         <groupId>org.wso2.carbon.event-processing</groupId>
         <artifactId>event-output-adaptor</artifactId>
-        <version>2.0.3-SNAPSHOT</version>
+        <version>2.0.4-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
-    <version>2.0.3-SNAPSHOT</version>
+    <version>2.0.4-SNAPSHOT</version>
     <modelVersion>4.0.0</modelVersion>
     <artifactId>org.wso2.carbon.event.output.adaptor.cassandra</artifactId>
     <packaging>bundle</packaging>
@@ -38,7 +38,7 @@
     <dependencies>
         <dependency>
             <groupId>org.wso2.carbon.event-processing</groupId>
-            <artifactId>org.wso2.carbon.event.output.adaptor.manager.core</artifactId>
+            <artifactId>org.wso2.carbon.event.notifier.core</artifactId>
         </dependency>
         <dependency>
             <groupId>org.wso2.carbon</groupId>

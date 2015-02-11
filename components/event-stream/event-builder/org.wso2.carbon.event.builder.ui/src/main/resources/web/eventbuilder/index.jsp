@@ -26,10 +26,10 @@
             topPage="false"
             request="<%=request%>"/>
 
-    <script type="text/javascript" src="../admin/js/breadcrumbs.js"></script>
-    <script type="text/javascript" src="../admin/js/cookies.js"></script>
-    <script type="text/javascript" src="../admin/js/main.js"></script>
-    <script type="text/javascript" src="../eventbuilder/js/event_builders.js"></script>
+    <script endpointType="text/javascript" src="../admin/js/breadcrumbs.js"></script>
+    <script endpointType="text/javascript" src="../admin/js/cookies.js"></script>
+    <script endpointType="text/javascript" src="../admin/js/main.js"></script>
+    <script endpointType="text/javascript" src="../eventbuilder/js/event_builders.js"></script>
 
 
     <div id="middle">

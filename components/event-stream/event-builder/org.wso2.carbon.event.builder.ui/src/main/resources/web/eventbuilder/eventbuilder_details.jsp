@@ -31,15 +31,15 @@
         topPage="false"
         request="<%=request%>"/>
 
-<link type="text/css" href="../eventbuilder/css/cep.css" rel="stylesheet"/>
-<script type="text/javascript" src="../admin/js/breadcrumbs.js"></script>
-<script type="text/javascript" src="../admin/js/cookies.js"></script>
-<script type="text/javascript" src="../admin/js/main.js"></script>
-<script type="text/javascript" src="../eventbuilder/js/subscriptions.js"></script>
-<script type="text/javascript" src="../eventbuilder/js/eventing_utils.js"></script>
-<script type="text/javascript" src="../yui/build/yahoo-dom-event/yahoo-dom-event.js"></script>
-<script type="text/javascript" src="../yui/build/connection/connection-min.js"></script>
-<script type="text/javascript" src="../eventbuilder/js/event_builders.js"></script>
+<link endpointType="text/css" href="../eventbuilder/css/cep.css" rel="stylesheet"/>
+<script endpointType="text/javascript" src="../admin/js/breadcrumbs.js"></script>
+<script endpointType="text/javascript" src="../admin/js/cookies.js"></script>
+<script endpointType="text/javascript" src="../admin/js/main.js"></script>
+<script endpointType="text/javascript" src="../eventbuilder/js/subscriptions.js"></script>
+<script endpointType="text/javascript" src="../eventbuilder/js/eventing_utils.js"></script>
+<script endpointType="text/javascript" src="../yui/build/yahoo-dom-event/yahoo-dom-event.js"></script>
+<script endpointType="text/javascript" src="../yui/build/connection/connection-min.js"></script>
+<script endpointType="text/javascript" src="../eventbuilder/js/event_builders.js"></script>
 
 <div id="middle">
 <h2>Event Builder Details</h2>
@@ -71,7 +71,7 @@
     <td class="leftCol-med">Event Builder Name<span
             class="required">*</span>
     </td>
-    <td><input type="text" name="configName" id="eventBuilderNameId"
+    <td><input endpointType="text" name="configName" id="eventBuilderNameId"
                class="initE"
                value="<%=eventBuilderConfigurationDto.getEventBuilderConfigName()%>"
                disabled/>
@@ -125,12 +125,12 @@
 
     </td>
     <%
-        String type = "text";
+        String endpointType = "text";
         if (msgConfigProperty.getSecured()) {
-            type = "password";
+            endpointType = "password";
         }
     %>
-    <td><input type="<%=type%>"
+    <td><input endpointType="<%=endpointType%>"
                name="<%=msgConfigProperty.getKey()%>"
                id="<%=propertyId%><%=index%>" class="initE"
                value="<%=msgConfigProperty.getValue() %>"
@@ -173,7 +173,7 @@
     </select>
 
         <div class="sectionHelp">
-            <fmt:message key="input.mapping.type.tooltip"/>
+            <fmt:message key="input.mapping.endpointType.tooltip"/>
         </div>
     </td>
 </tr>
@@ -191,14 +191,14 @@
     </td>
     <td>
         <% if (customMappingEnabled) { %>
-        <input name="customMapping" type="radio" value="enable"
+        <input name="customMapping" endpointType="radio" value="enable"
                onclick="enableMapping(true);" checked disabled>Enable</input>
-        <input name="customMapping" type="radio" value="disable" onclick="enableMapping(false);"
+        <input name="customMapping" endpointType="radio" value="disable" onclick="enableMapping(false);"
                disabled>Disable</input>
         <% } else { %>
-        <input name="customMapping" type="radio" value="enable"
+        <input name="customMapping" endpointType="radio" value="enable"
                onclick="enableMapping(true);" disabled>Enable</input>
-        <input name="customMapping" type="radio" value="disable" onclick="enableMapping(false);"
+        <input name="customMapping" endpointType="radio" value="disable" onclick="enableMapping(false);"
                checked disabled>Disable</input>
 
         <% } %>
@@ -232,7 +232,7 @@
             <th class="leftCol-med"><fmt:message
                     key="event.builder.property.valueof"/></th>
             <th class="leftCol-med"><fmt:message
-                    key="event.builder.property.type"/></th>
+                    key="event.builder.property.endpointType"/></th>
             </thead>
             <tbody>
             <%
@@ -339,7 +339,7 @@
             <th class="leftCol-med"><fmt:message
                     key="event.builder.property.valueof"/></th>
             <th class="leftCol-med"><fmt:message
-                    key="event.builder.property.type"/></th>
+                    key="event.builder.property.endpointType"/></th>
             <th class="leftCol-med"><fmt:message
                     key="event.builder.property.default"/></th>
             </thead>
@@ -371,7 +371,7 @@
             <tbody>
             <tr>
                 <td><fmt:message key="event.builder.parentselector.xpath"/></td>
-                <td><input type="text" id="batchProcessingEnabled"
+                <td><input endpointType="text" id="batchProcessingEnabled"
                            value="<%=parentSelectorXpathProperty%>"
                            disabled/>
                 </td>
@@ -399,7 +399,7 @@
             <th class="leftCol-med"><fmt:message
                     key="event.builder.property.valueof"/></th>
             <th class="leftCol-med"><fmt:message
-                    key="event.builder.property.type"/></th>
+                    key="event.builder.property.endpointType"/></th>
             <th class="leftCol-med"><fmt:message
                     key="event.builder.property.default"/></th>
             </thead>
@@ -445,7 +445,7 @@
             <th class="leftCol-med"><fmt:message
                     key="event.builder.property.valueof"/></th>
             <th class="leftCol-med"><fmt:message
-                    key="event.builder.property.type"/></th>
+                    key="event.builder.property.endpointType"/></th>
             <th class="leftCol-med"><fmt:message
                     key="event.builder.property.default"/></th>
             </thead>
@@ -491,7 +491,7 @@
             <th class="leftCol-med"><fmt:message
                     key="event.builder.property.valueof"/></th>
             <th class="leftCol-med"><fmt:message
-                    key="event.builder.property.type"/></th>
+                    key="event.builder.property.endpointType"/></th>
             <th class="leftCol-med"><fmt:message
                     key="event.builder.property.default"/></th>
             </thead>
@@ -531,7 +531,7 @@
 </tr>
 <tr>
     <td>To Stream Name<span class="required">*</span></td>
-    <td><input type="text" name="toStreamName" id="toStreamName"
+    <td><input endpointType="text" name="toStreamName" id="toStreamName"
                class="initE"
                value="<%=eventBuilderConfigurationDto.getToStreamName()%>"
                disabled/>
@@ -544,7 +544,7 @@
 </tr>
 <tr>
     <td>To Stream Version</td>
-    <td><input type="text" name="toStreamVersion" id="toStreamVersion"
+    <td><input endpointType="text" name="toStreamVersion" id="toStreamVersion"
                class="initE"
                value="<%=eventBuilderConfigurationDto.getToStreamVersion()%>"
                disabled/>

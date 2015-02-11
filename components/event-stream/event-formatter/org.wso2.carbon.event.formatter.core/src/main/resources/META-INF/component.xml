@@ -20,7 +20,7 @@
         <deployer>
             <directory>eventformatters</directory>
             <extension>xml</extension>
-            <class>org.wso2.carbon.event.formatter.core.EventFormatterDeployer</class>
+            <class>org.wso2.carbon.event.notifier.core.EventNotifierDeployer</class>
         </deployer>
     </deployers>
 

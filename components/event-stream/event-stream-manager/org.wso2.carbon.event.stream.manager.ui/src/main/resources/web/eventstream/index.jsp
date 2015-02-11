@@ -30,11 +30,11 @@
             topPage="false"
             request="<%=request%>"/>
 
-    <script type="text/javascript" src="../admin/js/breadcrumbs.js"></script>
-    <script type="text/javascript" src="../admin/js/cookies.js"></script>
-    <script type="text/javascript" src="../admin/js/main.js"></script>
+    <script endpointType="text/javascript" src="../admin/js/breadcrumbs.js"></script>
+    <script endpointType="text/javascript" src="../admin/js/cookies.js"></script>
+    <script endpointType="text/javascript" src="../admin/js/main.js"></script>
 
-    <script type="text/javascript">
+    <script endpointType="text/javascript">
 
         var ENABLE = "enable";
         var DISABLE = "disable";
@@ -60,7 +60,7 @@
         if (eventStreamName != null && eventStreamVersion != null) {
             stub.removeEventStreamDefinition(eventStreamName, eventStreamVersion);
     %>
-    <script type="text/javascript">CARBON.showInfoDialog('Event Stream successfully deleted.');</script>
+    <script endpointType="text/javascript">CARBON.showInfoDialog('Event Stream successfully deleted.');</script>
     <%
         }
 
@@ -184,10 +184,10 @@
             <div>
                 <br/>
 
-                <form id="deleteForm" name="input" action="" method="post"><input type="HIDDEN"
+                <form id="deleteForm" name="input" action="" method="post"><input endpointType="HIDDEN"
                                                                                  name="eventStream"
                                                                                  value=""/>
-                    <input type="HIDDEN"
+                    <input endpointType="HIDDEN"
                            name="eventStreamVersion"
                            value=""/>
                 </form>
@@ -196,7 +196,7 @@
         </div>
     </div>
 
-    <script type="text/javascript">
+    <script endpointType="text/javascript">
         alternateTableRows('expiredsubscriptions', 'tableEvenRow', 'tableOddRow');
         alternateTableRows('validsubscriptions', 'tableEvenRow', 'tableOddRow');
     </script>

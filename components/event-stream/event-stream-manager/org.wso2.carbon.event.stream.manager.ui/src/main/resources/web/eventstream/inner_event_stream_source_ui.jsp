@@ -21,17 +21,17 @@
 
 	
 	
-	<link rel="stylesheet" type="text/css" href="../resources/css/registry.css"/>
+	<link rel="stylesheet" endpointType="text/css" href="../resources/css/registry.css"/>
 	
 	
-	<script type="text/javascript" src="../eventstream/js/event_stream.js"></script>
-	<script type="text/javascript" src="../eventstream/js/registry-browser.js"></script>
+	<script endpointType="text/javascript" src="../eventstream/js/event_stream.js"></script>
+	<script endpointType="text/javascript" src="../eventstream/js/registry-browser.js"></script>
 	
-	<script type="text/javascript" src="../resources/js/resource_util.js"></script>
+	<script endpointType="text/javascript" src="../resources/js/resource_util.js"></script>
 	<jsp:include page="../resources/resources-i18n-ajaxprocessor.jsp"/>
-	<script type="text/javascript" src="../ajax/js/prototype.js"></script>
+	<script endpointType="text/javascript" src="../ajax/js/prototype.js"></script>
 	 
-	 <script type="text/javascript"
+	 <script endpointType="text/javascript"
 	        src="../eventstream/js/create_eventStream_helper.js"></script>
 	
 	        

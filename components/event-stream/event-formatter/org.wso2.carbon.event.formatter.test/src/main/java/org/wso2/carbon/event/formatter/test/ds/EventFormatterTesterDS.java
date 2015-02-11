@@ -23,7 +23,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.osgi.service.component.ComponentContext;
 import org.wso2.carbon.event.formatter.core.EventFormatterService;
-import org.wso2.carbon.event.formatter.core.exception.EventFormatterConfigurationException;
+import org.wso2.carbon.event.notifier.core.exception.EventFormatterConfigurationException;
 import org.wso2.carbon.event.formatter.test.EventSourceImpl;
 import org.wso2.carbon.event.formatter.test.util.TestEventFormatterServiceHolder;
 import org.wso2.carbon.transport.adaptor.core.message.config.InputTransportMessageConfiguration;

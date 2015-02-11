@@ -33,22 +33,22 @@
             <xs:element name="EventTracerAdminServiceEventTracerAdminServiceException">
                 <xs:complexType>
                     <xs:sequence>
-                        <xs:element minOccurs="0" name="EventTracerAdminServiceException" nillable="true" type="ax2111:EventTracerAdminServiceException"/>
+                        <xs:element minOccurs="0" name="EventTracerAdminServiceException" nillable="true" endpointType="ax2111:EventTracerAdminServiceException"/>
                     </xs:sequence>
                 </xs:complexType>
             </xs:element>
             <xs:element name="searchTraceLog">
                 <xs:complexType>
                     <xs:sequence>
-                        <xs:element minOccurs="0" name="keyword" nillable="true" type="xs:string"/>
-                        <xs:element minOccurs="0" name="ignoreCase" type="xs:boolean"/>
+                        <xs:element minOccurs="0" name="keyword" nillable="true" endpointType="xs:string"/>
+                        <xs:element minOccurs="0" name="ignoreCase" endpointType="xs:boolean"/>
                     </xs:sequence>
                 </xs:complexType>
             </xs:element>
             <xs:element name="searchTraceLogResponse">
                 <xs:complexType>
                     <xs:sequence>
-                        <xs:element maxOccurs="unbounded" minOccurs="0" name="return" nillable="true" type="xs:string"/>
+                        <xs:element maxOccurs="unbounded" minOccurs="0" name="return" nillable="true" endpointType="xs:string"/>
                     </xs:sequence>
                 </xs:complexType>
             </xs:element>
@@ -60,7 +60,7 @@
             <xs:element name="getTraceLogsResponse">
                 <xs:complexType>
                     <xs:sequence>
-                        <xs:element maxOccurs="unbounded" minOccurs="0" name="return" nillable="true" type="xs:string"/>
+                        <xs:element maxOccurs="unbounded" minOccurs="0" name="return" nillable="true" endpointType="xs:string"/>
                     </xs:sequence>
                 </xs:complexType>
             </xs:element>
@@ -72,7 +72,7 @@
             <xs:element name="getLogsResponse">
                 <xs:complexType>
                     <xs:sequence>
-                        <xs:element maxOccurs="unbounded" minOccurs="0" name="return" nillable="true" type="xs:string"/>
+                        <xs:element maxOccurs="unbounded" minOccurs="0" name="return" nillable="true" endpointType="xs:string"/>
                     </xs:sequence>
                 </xs:complexType>
             </xs:element>
@@ -84,7 +84,7 @@
             <xs:element name="clearTraceLogsResponse">
                 <xs:complexType>
                     <xs:sequence>
-                        <xs:element minOccurs="0" name="return" type="xs:boolean"/>
+                        <xs:element minOccurs="0" name="return" endpointType="xs:boolean"/>
                     </xs:sequence>
                 </xs:complexType>
             </xs:element>
@@ -136,7 +136,7 @@
             <wsdl:output message="ns:clearTraceLogsResponse" wsaw:Action="urn:clearTraceLogsResponse"/>
         </wsdl:operation>
     </wsdl:portType>
-    <wsdl:binding name="EventTracerAdminServiceSoap11Binding" type="ns:EventTracerAdminServicePortType">
+    <wsdl:binding name="EventTracerAdminServiceSoap11Binding" endpointType="ns:EventTracerAdminServicePortType">
         <soap:binding transport="http://schemas.xmlsoap.org/soap/http" style="document"/>
         <wsdl:operation name="searchTraceLog">
             <soap:operation soapAction="urn:searchTraceLog" style="document"/>
@@ -178,7 +178,7 @@
             </wsdl:output>
         </wsdl:operation>
     </wsdl:binding>
-    <wsdl:binding name="EventTracerAdminServiceSoap12Binding" type="ns:EventTracerAdminServicePortType">
+    <wsdl:binding name="EventTracerAdminServiceSoap12Binding" endpointType="ns:EventTracerAdminServicePortType">
         <soap12:binding transport="http://schemas.xmlsoap.org/soap/http" style="document"/>
         <wsdl:operation name="searchTraceLog">
             <soap12:operation soapAction="urn:searchTraceLog" style="document"/>
@@ -220,42 +220,42 @@
             </wsdl:output>
         </wsdl:operation>
     </wsdl:binding>
-    <wsdl:binding name="EventTracerAdminServiceHttpBinding" type="ns:EventTracerAdminServicePortType">
+    <wsdl:binding name="EventTracerAdminServiceHttpBinding" endpointType="ns:EventTracerAdminServicePortType">
         <http:binding verb="POST"/>
         <wsdl:operation name="searchTraceLog">
             <http:operation location="searchTraceLog"/>
             <wsdl:input>
-                <mime:content type="text/xml" part="parameters"/>
+                <mime:content endpointType="text/xml" part="parameters"/>
             </wsdl:input>
             <wsdl:output>
-                <mime:content type="text/xml" part="parameters"/>
+                <mime:content endpointType="text/xml" part="parameters"/>
             </wsdl:output>
         </wsdl:operation>
         <wsdl:operation name="getTraceLogs">
             <http:operation location="getTraceLogs"/>
             <wsdl:input>
-                <mime:content type="text/xml" part="parameters"/>
+                <mime:content endpointType="text/xml" part="parameters"/>
             </wsdl:input>
             <wsdl:output>
-                <mime:content type="text/xml" part="parameters"/>
+                <mime:content endpointType="text/xml" part="parameters"/>
             </wsdl:output>
         </wsdl:operation>
         <wsdl:operation name="getLogs">
             <http:operation location="getLogs"/>
             <wsdl:input>
-                <mime:content type="text/xml" part="parameters"/>
+                <mime:content endpointType="text/xml" part="parameters"/>
             </wsdl:input>
             <wsdl:output>
-                <mime:content type="text/xml" part="parameters"/>
+                <mime:content endpointType="text/xml" part="parameters"/>
             </wsdl:output>
         </wsdl:operation>
         <wsdl:operation name="clearTraceLogs">
             <http:operation location="clearTraceLogs"/>
             <wsdl:input>
-                <mime:content type="text/xml" part="parameters"/>
+                <mime:content endpointType="text/xml" part="parameters"/>
             </wsdl:input>
             <wsdl:output>
-                <mime:content type="text/xml" part="parameters"/>
+                <mime:content endpointType="text/xml" part="parameters"/>
             </wsdl:output>
         </wsdl:operation>
     </wsdl:binding>

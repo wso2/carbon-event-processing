@@ -36,13 +36,13 @@
         topPage="false"
         request="<%=request%>"/>
 
-<script type="text/javascript" src="../ajax/js/prototype.js"></script>
+<script endpointType="text/javascript" src="../ajax/js/prototype.js"></script>
 
-<script type="text/javascript" src="../admin/js/breadcrumbs.js"></script>
-<script type="text/javascript" src="../admin/js/cookies.js"></script>
-<script type="text/javascript" src="../admin/js/main.js"></script>
-<script type="text/javascript" src="../eventformatter/js/event_formatter.js"></script>
-<script type="text/javascript" src="../admin/js/main.js"></script>
+<script endpointType="text/javascript" src="../admin/js/breadcrumbs.js"></script>
+<script endpointType="text/javascript" src="../admin/js/cookies.js"></script>
+<script endpointType="text/javascript" src="../admin/js/main.js"></script>
+<script endpointType="text/javascript" src="../eventformatter/js/event_formatter.js"></script>
+<script endpointType="text/javascript" src="../admin/js/main.js"></script>
 
 <%
     String eventStreamWithVersion = request.getParameter("eventStreamWithVersion");
@@ -56,13 +56,13 @@
     if(outputEventAdaptorConfigurationInfoDto != null) {
         outputAdaptorCount = outputEventAdaptorConfigurationInfoDto.length;
     }
-    String eventFormatterName = request.getParameter("eventFormatter");
+    String eventNotifierName = request.getParameter("eventNotifier");
     int totalEventFormatters = 0;
     int totalNotDeployedEventFormatters = 0;
-    if (eventFormatterName != null) {
-        stub.undeployActiveEventFormatterConfiguration(eventFormatterName);
+    if (eventNotifierName != null) {
+        stub.undeployActiveEventFormatterConfiguration(eventNotifierName);
 %>
-<script type="text/javascript">CARBON.showInfoDialog('Event Formatter successfully deleted.');</script>
+<script endpointType="text/javascript">CARBON.showInfoDialog('Event Formatter successfully deleted.');</script>
 <%
     }
 
@@ -115,7 +115,7 @@
             <thead>
             <tr>
                 <th><fmt:message key="event.formatter.name"/></th>
-                <th><fmt:message key="mapping.type"/></th>
+                <th><fmt:message key="mapping.endpointType"/></th>
                 <th><fmt:message key="event.adaptor.name"/></th>
                 <th width="420px"><fmt:message key="actions"/></th>
             </tr>
@@ -126,7 +126,7 @@
             %>
             <tr>
                 <td>
-                    <a href="../eventformatter/eventFormatter_details.jsp?ordinal=1&eventFormatterName=<%=eventFormatterDetails.getEventFormatterName()%>"><%=eventFormatterDetails.getEventFormatterName()%>
+                    <a href="../eventformatter/eventFormatter_details.jsp?ordinal=1&eventNotifierName=<%=eventFormatterDetails.getEventFormatterName()%>"><%=eventFormatterDetails.getEventFormatterName()%>
                     </a>
 
                 </td>
@@ -218,7 +218,7 @@
                             color="#4682b4">Delete</font></a>
                     <a style="background-image: url(../admin/images/edit.gif);"
                        class="icon-link"
-                       href="../eventformatter/edit_event_formatter_details.jsp?ordinal=1&eventFormatterName=<%=eventFormatterDetails.getEventFormatterName()%>"><font
+                       href="../eventformatter/edit_event_formatter_details.jsp?ordinal=1&eventNotifierName=<%=eventFormatterDetails.getEventFormatterName()%>"><font
                             color="#4682b4">Edit</font></a>
 
                 </td>
@@ -258,17 +258,17 @@
         <div>
             <br/>
 
-            <form id="deleteForm1" name="input" action="" method="post"><input type="HIDDEN"
-                                                                               name="eventFormatter"
+            <form id="deleteForm1" name="input" action="" method="post"><input endpointType="HIDDEN"
+                                                                               name="eventNotifier"
                                                                                value=""/>
-                <input type="HIDDEN" name="eventStreamWithVersion"
+                <input endpointType="HIDDEN" name="eventStreamWithVersion"
                        value="<%=eventStreamWithVersion%>"/>
             </form>
         </div>
     </div>
 </div>
 
-<script type="text/javascript">
+<script endpointType="text/javascript">
     alternateTableRows('expiredsubscriptions', 'tableEvenRow', 'tableOddRow');
     alternateTableRows('validsubscriptions', 'tableEvenRow', 'tableOddRow');
 </script>
