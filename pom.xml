@@ -527,6 +527,11 @@
                 <artifactId>org.wso2.carbon.event.notifier.core</artifactId>
                 <version>${carbon.event.processing.version}</version>
             </dependency>
+            <dependency>
+                <groupId>org.wso2.carbon.event-processing</groupId>
+                <artifactId>org.wso2.carbon.event.notifier.stub</artifactId>
+                <version>${carbon.event.processing.version}</version>
+            </dependency>
 
             <!--carbon event processing dependencies stop-->
 

@@ -18,8 +18,8 @@
 <%@ page import="org.wso2.carbon.event.formatter.stub.EventFormatterAdminServiceStub" %>
 <%@ page import="org.wso2.carbon.event.formatter.stub.types.EventOutputPropertyConfigurationDto" %>
 <%@ page import="org.wso2.carbon.event.formatter.stub.types.PropertyDto" %>
-<%@ page import="org.wso2.carbon.event.formatter.ui.EventFormatterUIConstants" %>
-<%@ page import="org.wso2.carbon.event.formatter.ui.EventFormatterUIUtils" %>
+<%@ page import="org.wso2.carbon.event.notifier.ui.EventNotifierUIConstants" %>
+<%@ page import="org.wso2.carbon.event.notifier.ui.EventNotifierUIUtils" %>
 <%
 
 

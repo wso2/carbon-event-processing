@@ -15,9 +15,9 @@
 ~ specific language governing permissions and limitations
 ~ under the License.
 --%>
-<%@ page import="org.wso2.carbon.event.formatter.ui.EventFormatterUIConstants" %>
+<%@ page import="org.wso2.carbon.event.notifier.ui.EventNotifierUIConstants" %>
 <%@ page
-        import="org.wso2.carbon.event.formatter.ui.EventFormatterUIUtils" %>
+        import="org.wso2.carbon.event.notifier.ui.EventNotifierUIUtils" %>
 <%@ page import="org.wso2.carbon.event.stream.manager.stub.EventStreamAdminServiceStub" %>
 <%@ page import="org.wso2.carbon.event.stream.manager.stub.types.EventStreamAttributeDto" %>
 <%@ page import="org.wso2.carbon.event.stream.manager.stub.types.EventStreamDefinitionDto" %>

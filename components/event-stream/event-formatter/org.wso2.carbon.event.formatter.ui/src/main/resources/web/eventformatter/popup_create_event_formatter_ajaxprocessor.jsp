@@ -17,8 +17,8 @@
 --%>
 <%@ page import="org.wso2.carbon.event.formatter.stub.EventFormatterAdminServiceStub" %>
 <%@ page import="org.wso2.carbon.event.formatter.stub.types.EventFormatterPropertyDto" %>
-<%@ page import="org.wso2.carbon.event.formatter.ui.EventFormatterUIConstants" %>
-<%@ page import="org.wso2.carbon.event.formatter.ui.EventFormatterUIUtils" %>
+<%@ page import="org.wso2.carbon.event.notifier.ui.EventNotifierUIConstants" %>
+<%@ page import="org.wso2.carbon.event.notifier.ui.EventNotifierUIUtils" %>
 <%@ page import="org.wso2.carbon.event.output.adaptor.manager.stub.OutputEventAdaptorManagerAdminServiceStub" %>
 <%@ page import="org.wso2.carbon.event.output.adaptor.manager.stub.types.OutputEventAdaptorConfigurationInfoDto" %>
 <%@ page import="org.wso2.carbon.event.stream.manager.stub.EventStreamAdminServiceStub" %>

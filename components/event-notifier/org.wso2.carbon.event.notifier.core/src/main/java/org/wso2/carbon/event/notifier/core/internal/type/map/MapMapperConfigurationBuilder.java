@@ -24,7 +24,7 @@ import org.wso2.carbon.event.notifier.core.config.OutputMapping;
 import org.wso2.carbon.event.notifier.core.config.mapping.MapOutputMapping;
 import org.wso2.carbon.event.notifier.core.exception.EventNotifierConfigurationException;
 import org.wso2.carbon.event.notifier.core.exception.EventNotifierValidationException;
-import org.wso2.carbon.event.notifier.core.internal.config.EventOutputProperty;
+import org.wso2.carbon.event.notifier.core.config.EventOutputProperty;
 
 import javax.xml.namespace.QName;
 import java.util.Iterator;

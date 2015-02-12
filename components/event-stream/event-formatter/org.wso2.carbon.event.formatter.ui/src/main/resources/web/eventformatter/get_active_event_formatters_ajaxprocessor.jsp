@@ -19,7 +19,7 @@
 <%@ page
         import="org.wso2.carbon.event.formatter.stub.EventFormatterAdminServiceStub" %>
 <%@ page import="org.wso2.carbon.event.formatter.stub.types.EventFormatterConfigurationInfoDto" %>
-<%@ page import="org.wso2.carbon.event.formatter.ui.EventFormatterUIUtils" %>
+<%@ page import="org.wso2.carbon.event.notifier.ui.EventNotifierUIUtils" %>
 
 <%
     // get Event Stream Definition

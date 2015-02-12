@@ -24,7 +24,7 @@
         import="org.wso2.carbon.event.formatter.stub.types.EventFormatterPropertyDto" %>
 <%@ page import="org.wso2.carbon.event.formatter.stub.types.EventOutputPropertyDto" %>
 <%@ page import="org.wso2.carbon.event.formatter.stub.types.ToPropertyConfigurationDto" %>
-<%@ page import="org.wso2.carbon.event.formatter.ui.EventFormatterUIUtils" %>
+<%@ page import="org.wso2.carbon.event.notifier.ui.EventNotifierUIUtils" %>
 <%@ taglib uri="http://wso2.org/projects/carbon/taglibs/carbontags.jar" prefix="carbon" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 

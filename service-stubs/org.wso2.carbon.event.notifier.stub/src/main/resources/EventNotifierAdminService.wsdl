@@ -1,0 +1,1065 @@
+<wsdl:definitions xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:ns1="http://org.apache.axis2/xsd" xmlns:ns="http://internal.admin.notifier.event.carbon.wso2.org" xmlns:wsaw="http://www.w3.org/2006/05/addressing/wsdl" xmlns:http="http://schemas.xmlsoap.org/wsdl/http/" xmlns:ax298="http://internal.admin.notifier.event.carbon.wso2.org/xsd" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" targetNamespace="http://internal.admin.notifier.event.carbon.wso2.org">
+    <wsdl:documentation>EventNotifierAdminService</wsdl:documentation>
+    <wsdl:types>
+        <xs:schema attributeFormDefault="qualified" elementFormDefault="qualified" targetNamespace="http://internal.admin.notifier.event.carbon.wso2.org/xsd">
+            <xs:complexType name="EventNotifierConfigurationInfoDto">
+                <xs:sequence>
+                    <xs:element minOccurs="0" name="enableStats" type="xs:boolean"/>
+                    <xs:element minOccurs="0" name="enableTracing" type="xs:boolean"/>
+                    <xs:element minOccurs="0" name="eventNotifierName" nillable="true" type="xs:string"/>
+                    <xs:element minOccurs="0" name="inputStreamId" nillable="true" type="xs:string"/>
+                    <xs:element minOccurs="0" name="mappingType" nillable="true" type="xs:string"/>
+                    <xs:element minOccurs="0" name="outputEndpointType" nillable="true" type="xs:string"/>
+                </xs:sequence>
+            </xs:complexType>
+            <xs:complexType name="EventNotifierPropertyDto">
+                <xs:sequence>
+                    <xs:element minOccurs="0" name="defaultValue" nillable="true" type="xs:string"/>
+                    <xs:element minOccurs="0" name="displayName" nillable="true" type="xs:string"/>
+                    <xs:element minOccurs="0" name="hint" nillable="true" type="xs:string"/>
+                    <xs:element minOccurs="0" name="key" nillable="true" type="xs:string"/>
+                    <xs:element maxOccurs="unbounded" minOccurs="0" name="options" nillable="true" type="xs:string"/>
+                    <xs:element minOccurs="0" name="required" type="xs:boolean"/>
+                    <xs:element minOccurs="0" name="secured" type="xs:boolean"/>
+                    <xs:element minOccurs="0" name="value" nillable="true" type="xs:string"/>
+                </xs:sequence>
+            </xs:complexType>
+            <xs:complexType name="EventOutputPropertyConfigurationDto">
+                <xs:sequence>
+                    <xs:element minOccurs="0" name="name" nillable="true" type="xs:string"/>
+                    <xs:element minOccurs="0" name="type" nillable="true" type="xs:string"/>
+                    <xs:element minOccurs="0" name="valueOf" nillable="true" type="xs:string"/>
+                </xs:sequence>
+            </xs:complexType>
+            <xs:complexType name="PropertyDto">
+                <xs:sequence>
+                    <xs:element minOccurs="0" name="key" nillable="true" type="xs:string"/>
+                    <xs:element minOccurs="0" name="value" nillable="true" type="xs:string"/>
+                </xs:sequence>
+            </xs:complexType>
+            <xs:complexType name="EventNotifierConfigurationDto">
+                <xs:sequence>
+                    <xs:element minOccurs="0" name="endpointPropertyConfigurationDto" nillable="true" type="ax298:EndpointPropertyConfigurationDto"/>
+                    <xs:element minOccurs="0" name="eventNotifierName" nillable="true" type="xs:string"/>
+                    <xs:element minOccurs="0" name="fromStreamNameWithVersion" nillable="true" type="xs:string"/>
+                    <xs:element minOccurs="0" name="jsonOutputMappingDto" nillable="true" type="ax298:JSONOutputMappingDto"/>
+                    <xs:element minOccurs="0" name="mapOutputMappingDto" nillable="true" type="ax298:MapOutputMappingDto"/>
+                    <xs:element minOccurs="0" name="mappingType" nillable="true" type="xs:string"/>
+                    <xs:element minOccurs="0" name="streamDefinition" nillable="true" type="xs:string"/>
+                    <xs:element minOccurs="0" name="textOutputMappingDto" nillable="true" type="ax298:TextOutputMappingDto"/>
+                    <xs:element minOccurs="0" name="wso2EventOutputMappingDto" nillable="true" type="ax298:WSO2EventOutputMappingDto"/>
+                    <xs:element minOccurs="0" name="xmlOutputMappingDto" nillable="true" type="ax298:XMLOutputMappingDto"/>
+                </xs:sequence>
+            </xs:complexType>
+            <xs:complexType name="EndpointPropertyConfigurationDto">
+                <xs:sequence>
+                    <xs:element minOccurs="0" name="eventAdaptorType" nillable="true" type="xs:string"/>
+                    <xs:element maxOccurs="unbounded" minOccurs="0" name="outputEventAdaptorConfiguration" nillable="true" type="ax298:EventNotifierPropertyDto"/>
+                </xs:sequence>
+            </xs:complexType>
+            <xs:complexType name="JSONOutputMappingDto">
+                <xs:sequence>
+                    <xs:element minOccurs="0" name="mappingText" nillable="true" type="xs:string"/>
+                    <xs:element minOccurs="0" name="registryResource" type="xs:boolean"/>
+                </xs:sequence>
+            </xs:complexType>
+            <xs:complexType name="MapOutputMappingDto">
+                <xs:sequence>
+                    <xs:element maxOccurs="unbounded" minOccurs="0" name="outputPropertyConfiguration" nillable="true" type="ax298:EventOutputPropertyDto"/>
+                </xs:sequence>
+            </xs:complexType>
+            <xs:complexType name="EventOutputPropertyDto">
+                <xs:sequence>
+                    <xs:element minOccurs="0" name="name" nillable="true" type="xs:string"/>
+                    <xs:element minOccurs="0" name="type" nillable="true" type="xs:string"/>
+                    <xs:element minOccurs="0" name="valueOf" nillable="true" type="xs:string"/>
+                </xs:sequence>
+            </xs:complexType>
+            <xs:complexType name="TextOutputMappingDto">
+                <xs:sequence>
+                    <xs:element minOccurs="0" name="mappingText" nillable="true" type="xs:string"/>
+                    <xs:element minOccurs="0" name="registryResource" type="xs:boolean"/>
+                </xs:sequence>
+            </xs:complexType>
+            <xs:complexType name="WSO2EventOutputMappingDto">
+                <xs:sequence>
+                    <xs:element maxOccurs="unbounded" minOccurs="0" name="correlationWSO2EventOutputPropertyConfigurationDto" nillable="true" type="ax298:EventOutputPropertyDto"/>
+                    <xs:element maxOccurs="unbounded" minOccurs="0" name="metaWSO2EventOutputPropertyConfigurationDto" nillable="true" type="ax298:EventOutputPropertyDto"/>
+                    <xs:element maxOccurs="unbounded" minOccurs="0" name="payloadWSO2EventOutputPropertyConfigurationDto" nillable="true" type="ax298:EventOutputPropertyDto"/>
+                </xs:sequence>
+            </xs:complexType>
+            <xs:complexType name="XMLOutputMappingDto">
+                <xs:sequence>
+                    <xs:element minOccurs="0" name="mappingXMLText" nillable="true" type="xs:string"/>
+                    <xs:element minOccurs="0" name="registryResource" type="xs:boolean"/>
+                </xs:sequence>
+            </xs:complexType>
+            <xs:complexType name="EventNotifierConfigurationFileDto">
+                <xs:sequence>
+                    <xs:element minOccurs="0" name="deploymentStatusMsg" nillable="true" type="xs:string"/>
+                    <xs:element minOccurs="0" name="eventNotifierName" nillable="true" type="xs:string"/>
+                    <xs:element minOccurs="0" name="fileName" nillable="true" type="xs:string"/>
+                </xs:sequence>
+            </xs:complexType>
+        </xs:schema>
+        <xs:schema xmlns:ax299="http://internal.admin.notifier.event.carbon.wso2.org/xsd" attributeFormDefault="qualified" elementFormDefault="qualified" targetNamespace="http://internal.admin.notifier.event.carbon.wso2.org">
+            <xs:import namespace="http://internal.admin.notifier.event.carbon.wso2.org/xsd"/>
+            <xs:element name="getAllStreamSpecificActiveEventNotifierConfiguration">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element minOccurs="0" name="streamId" nillable="true" type="xs:string"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="getAllStreamSpecificActiveEventNotifierConfigurationResponse">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element maxOccurs="unbounded" minOccurs="0" name="return" nillable="true" type="ax298:EventNotifierConfigurationInfoDto"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="getEventNotifierAdaptorProperties">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element minOccurs="0" name="endpointAdaptorType" nillable="true" type="xs:string"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="getEventNotifierAdaptorPropertiesResponse">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element maxOccurs="unbounded" minOccurs="0" name="return" nillable="true" type="ax298:EventNotifierPropertyDto"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="deployWSO2EventNotifierConfiguration">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element minOccurs="0" name="eventNotifierName" nillable="true" type="xs:string"/>
+                        <xs:element minOccurs="0" name="streamNameWithVersion" nillable="true" type="xs:string"/>
+                        <xs:element minOccurs="0" name="eventAdaptorType" nillable="true" type="xs:string"/>
+                        <xs:element maxOccurs="unbounded" minOccurs="0" name="metaData" nillable="true" type="ax298:EventOutputPropertyConfigurationDto"/>
+                        <xs:element maxOccurs="unbounded" minOccurs="0" name="correlationData" nillable="true" type="ax298:EventOutputPropertyConfigurationDto"/>
+                        <xs:element maxOccurs="unbounded" minOccurs="0" name="payloadData" nillable="true" type="ax298:EventOutputPropertyConfigurationDto"/>
+                        <xs:element maxOccurs="unbounded" minOccurs="0" name="outputPropertyConfiguration" nillable="true" type="ax298:PropertyDto"/>
+                        <xs:element minOccurs="0" name="mappingEnabled" type="xs:boolean"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="deployTextEventNotifierConfiguration">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element minOccurs="0" name="eventNotifierName" nillable="true" type="xs:string"/>
+                        <xs:element minOccurs="0" name="streamNameWithVersion" nillable="true" type="xs:string"/>
+                        <xs:element minOccurs="0" name="eventAdaptorType" nillable="true" type="xs:string"/>
+                        <xs:element minOccurs="0" name="textData" nillable="true" type="xs:string"/>
+                        <xs:element maxOccurs="unbounded" minOccurs="0" name="outputPropertyConfiguration" nillable="true" type="ax298:PropertyDto"/>
+                        <xs:element minOccurs="0" name="dataFrom" nillable="true" type="xs:string"/>
+                        <xs:element minOccurs="0" name="mappingEnabled" type="xs:boolean"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="deployXmlEventNotifierConfiguration">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element minOccurs="0" name="eventNotifierName" nillable="true" type="xs:string"/>
+                        <xs:element minOccurs="0" name="streamNameWithVersion" nillable="true" type="xs:string"/>
+                        <xs:element minOccurs="0" name="eventAdaptorType" nillable="true" type="xs:string"/>
+                        <xs:element minOccurs="0" name="textData" nillable="true" type="xs:string"/>
+                        <xs:element maxOccurs="unbounded" minOccurs="0" name="outputPropertyConfiguration" nillable="true" type="ax298:PropertyDto"/>
+                        <xs:element minOccurs="0" name="dataFrom" nillable="true" type="xs:string"/>
+                        <xs:element minOccurs="0" name="mappingEnabled" type="xs:boolean"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="deployMapEventNotifierConfiguration">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element minOccurs="0" name="eventNotifierName" nillable="true" type="xs:string"/>
+                        <xs:element minOccurs="0" name="streamNameWithVersion" nillable="true" type="xs:string"/>
+                        <xs:element minOccurs="0" name="eventAdaptorType" nillable="true" type="xs:string"/>
+                        <xs:element maxOccurs="unbounded" minOccurs="0" name="mapData" nillable="true" type="ax298:EventOutputPropertyConfigurationDto"/>
+                        <xs:element maxOccurs="unbounded" minOccurs="0" name="outputPropertyConfiguration" nillable="true" type="ax298:PropertyDto"/>
+                        <xs:element minOccurs="0" name="mappingEnabled" type="xs:boolean"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="deployJsonEventNotifierConfiguration">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element minOccurs="0" name="eventNotifierName" nillable="true" type="xs:string"/>
+                        <xs:element minOccurs="0" name="streamNameWithVersion" nillable="true" type="xs:string"/>
+                        <xs:element minOccurs="0" name="eventAdaptorType" nillable="true" type="xs:string"/>
+                        <xs:element minOccurs="0" name="jsonData" nillable="true" type="xs:string"/>
+                        <xs:element maxOccurs="unbounded" minOccurs="0" name="outputPropertyConfiguration" nillable="true" type="ax298:PropertyDto"/>
+                        <xs:element minOccurs="0" name="dataFrom" nillable="true" type="xs:string"/>
+                        <xs:element minOccurs="0" name="mappingEnabled" type="xs:boolean"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="setTracingEnabled">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element minOccurs="0" name="eventNotifierName" nillable="true" type="xs:string"/>
+                        <xs:element minOccurs="0" name="flag" type="xs:boolean"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="setStatisticsEnabled">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element minOccurs="0" name="eventNotifierName" nillable="true" type="xs:string"/>
+                        <xs:element minOccurs="0" name="flag" type="xs:boolean"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="deployEventNotifierConfiguration">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element minOccurs="0" name="eventNotifierConfigXml" nillable="true" type="xs:string"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="deployDefaultEventSender">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element minOccurs="0" name="streamId" nillable="true" type="xs:string"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="undeployActiveEventNotifierConfiguration">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element minOccurs="0" name="eventNotifierName" nillable="true" type="xs:string"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="undeployInactiveEventNotifierConfiguration">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element minOccurs="0" name="fileName" nillable="true" type="xs:string"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="editInactiveEventNotifierConfiguration">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element minOccurs="0" name="eventNotifierConfiguration" nillable="true" type="xs:string"/>
+                        <xs:element minOccurs="0" name="fileName" nillable="true" type="xs:string"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="editActiveEventNotifierConfiguration">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element minOccurs="0" name="eventNotifierConfiguration" nillable="true" type="xs:string"/>
+                        <xs:element minOccurs="0" name="eventNotifierName" nillable="true" type="xs:string"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="getActiveEventNotifierConfiguration">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element minOccurs="0" name="eventNotifierName" nillable="true" type="xs:string"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="getActiveEventNotifierConfigurationResponse">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element minOccurs="0" name="return" nillable="true" type="ax298:EventNotifierConfigurationDto"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="getAllActiveEventNotifierConfiguration">
+                <xs:complexType>
+                    <xs:sequence/>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="getAllActiveEventNotifierConfigurationResponse">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element maxOccurs="unbounded" minOccurs="0" name="return" nillable="true" type="ax298:EventNotifierConfigurationInfoDto"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="getAllInactiveEventNotifierConfiguration">
+                <xs:complexType>
+                    <xs:sequence/>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="getAllInactiveEventNotifierConfigurationResponse">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element maxOccurs="unbounded" minOccurs="0" name="return" nillable="true" type="ax298:EventNotifierConfigurationFileDto"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="getInactiveEventNotifierConfigurationContent">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element minOccurs="0" name="fileName" nillable="true" type="xs:string"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="getInactiveEventNotifierConfigurationContentResponse">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element minOccurs="0" name="return" nillable="true" type="xs:string"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="getActiveEventNotifierConfigurationContent">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element minOccurs="0" name="eventNotifierName" nillable="true" type="xs:string"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="getActiveEventNotifierConfigurationContentResponse">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element minOccurs="0" name="return" nillable="true" type="xs:string"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+        </xs:schema>
+    </wsdl:types>
+    <wsdl:message name="getActiveEventNotifierConfigurationContentRequest">
+        <wsdl:part name="parameters" element="ns:getActiveEventNotifierConfigurationContent"/>
+    </wsdl:message>
+    <wsdl:message name="getActiveEventNotifierConfigurationContentResponse">
+        <wsdl:part name="parameters" element="ns:getActiveEventNotifierConfigurationContentResponse"/>
+    </wsdl:message>
+    <wsdl:message name="deployWSO2EventNotifierConfigurationRequest">
+        <wsdl:part name="parameters" element="ns:deployWSO2EventNotifierConfiguration"/>
+    </wsdl:message>
+    <wsdl:message name="deployWSO2EventNotifierConfigurationResponse"/>
+    <wsdl:message name="getAllInactiveEventNotifierConfigurationRequest">
+        <wsdl:part name="parameters" element="ns:getAllInactiveEventNotifierConfiguration"/>
+    </wsdl:message>
+    <wsdl:message name="getAllInactiveEventNotifierConfigurationResponse">
+        <wsdl:part name="parameters" element="ns:getAllInactiveEventNotifierConfigurationResponse"/>
+    </wsdl:message>
+    <wsdl:message name="deployDefaultEventSenderRequest">
+        <wsdl:part name="parameters" element="ns:deployDefaultEventSender"/>
+    </wsdl:message>
+    <wsdl:message name="deployDefaultEventSenderResponse"/>
+    <wsdl:message name="getEventNotifierAdaptorPropertiesRequest">
+        <wsdl:part name="parameters" element="ns:getEventNotifierAdaptorProperties"/>
+    </wsdl:message>
+    <wsdl:message name="getEventNotifierAdaptorPropertiesResponse">
+        <wsdl:part name="parameters" element="ns:getEventNotifierAdaptorPropertiesResponse"/>
+    </wsdl:message>
+    <wsdl:message name="editActiveEventNotifierConfigurationRequest">
+        <wsdl:part name="parameters" element="ns:editActiveEventNotifierConfiguration"/>
+    </wsdl:message>
+    <wsdl:message name="editActiveEventNotifierConfigurationResponse"/>
+    <wsdl:message name="getInactiveEventNotifierConfigurationContentRequest">
+        <wsdl:part name="parameters" element="ns:getInactiveEventNotifierConfigurationContent"/>
+    </wsdl:message>
+    <wsdl:message name="getInactiveEventNotifierConfigurationContentResponse">
+        <wsdl:part name="parameters" element="ns:getInactiveEventNotifierConfigurationContentResponse"/>
+    </wsdl:message>
+    <wsdl:message name="getAllActiveEventNotifierConfigurationRequest">
+        <wsdl:part name="parameters" element="ns:getAllActiveEventNotifierConfiguration"/>
+    </wsdl:message>
+    <wsdl:message name="getAllActiveEventNotifierConfigurationResponse">
+        <wsdl:part name="parameters" element="ns:getAllActiveEventNotifierConfigurationResponse"/>
+    </wsdl:message>
+    <wsdl:message name="setStatisticsEnabledRequest">
+        <wsdl:part name="parameters" element="ns:setStatisticsEnabled"/>
+    </wsdl:message>
+    <wsdl:message name="setStatisticsEnabledResponse"/>
+    <wsdl:message name="deployEventNotifierConfigurationRequest">
+        <wsdl:part name="parameters" element="ns:deployEventNotifierConfiguration"/>
+    </wsdl:message>
+    <wsdl:message name="deployEventNotifierConfigurationResponse"/>
+    <wsdl:message name="deployXmlEventNotifierConfigurationRequest">
+        <wsdl:part name="parameters" element="ns:deployXmlEventNotifierConfiguration"/>
+    </wsdl:message>
+    <wsdl:message name="deployXmlEventNotifierConfigurationResponse"/>
+    <wsdl:message name="deployJsonEventNotifierConfigurationRequest">
+        <wsdl:part name="parameters" element="ns:deployJsonEventNotifierConfiguration"/>
+    </wsdl:message>
+    <wsdl:message name="deployJsonEventNotifierConfigurationResponse"/>
+    <wsdl:message name="undeployInactiveEventNotifierConfigurationRequest">
+        <wsdl:part name="parameters" element="ns:undeployInactiveEventNotifierConfiguration"/>
+    </wsdl:message>
+    <wsdl:message name="undeployInactiveEventNotifierConfigurationResponse"/>
+    <wsdl:message name="getActiveEventNotifierConfigurationRequest">
+        <wsdl:part name="parameters" element="ns:getActiveEventNotifierConfiguration"/>
+    </wsdl:message>
+    <wsdl:message name="getActiveEventNotifierConfigurationResponse">
+        <wsdl:part name="parameters" element="ns:getActiveEventNotifierConfigurationResponse"/>
+    </wsdl:message>
+    <wsdl:message name="setTracingEnabledRequest">
+        <wsdl:part name="parameters" element="ns:setTracingEnabled"/>
+    </wsdl:message>
+    <wsdl:message name="setTracingEnabledResponse"/>
+    <wsdl:message name="deployMapEventNotifierConfigurationRequest">
+        <wsdl:part name="parameters" element="ns:deployMapEventNotifierConfiguration"/>
+    </wsdl:message>
+    <wsdl:message name="deployMapEventNotifierConfigurationResponse"/>
+    <wsdl:message name="deployTextEventNotifierConfigurationRequest">
+        <wsdl:part name="parameters" element="ns:deployTextEventNotifierConfiguration"/>
+    </wsdl:message>
+    <wsdl:message name="deployTextEventNotifierConfigurationResponse"/>
+    <wsdl:message name="undeployActiveEventNotifierConfigurationRequest">
+        <wsdl:part name="parameters" element="ns:undeployActiveEventNotifierConfiguration"/>
+    </wsdl:message>
+    <wsdl:message name="undeployActiveEventNotifierConfigurationResponse"/>
+    <wsdl:message name="getAllStreamSpecificActiveEventNotifierConfigurationRequest">
+        <wsdl:part name="parameters" element="ns:getAllStreamSpecificActiveEventNotifierConfiguration"/>
+    </wsdl:message>
+    <wsdl:message name="getAllStreamSpecificActiveEventNotifierConfigurationResponse">
+        <wsdl:part name="parameters" element="ns:getAllStreamSpecificActiveEventNotifierConfigurationResponse"/>
+    </wsdl:message>
+    <wsdl:message name="editInactiveEventNotifierConfigurationRequest">
+        <wsdl:part name="parameters" element="ns:editInactiveEventNotifierConfiguration"/>
+    </wsdl:message>
+    <wsdl:message name="editInactiveEventNotifierConfigurationResponse"/>
+    <wsdl:portType name="EventNotifierAdminServicePortType">
+        <wsdl:operation name="getActiveEventNotifierConfigurationContent">
+            <wsdl:input message="ns:getActiveEventNotifierConfigurationContentRequest" wsaw:Action="urn:getActiveEventNotifierConfigurationContent"/>
+            <wsdl:output message="ns:getActiveEventNotifierConfigurationContentResponse" wsaw:Action="urn:getActiveEventNotifierConfigurationContentResponse"/>
+        </wsdl:operation>
+        <wsdl:operation name="deployWSO2EventNotifierConfiguration">
+            <wsdl:input message="ns:deployWSO2EventNotifierConfigurationRequest" wsaw:Action="urn:deployWSO2EventNotifierConfiguration"/>
+            <wsdl:output message="ns:deployWSO2EventNotifierConfigurationResponse" wsaw:Action="urn:deployWSO2EventNotifierConfigurationResponse"/>
+        </wsdl:operation>
+        <wsdl:operation name="getAllInactiveEventNotifierConfiguration">
+            <wsdl:input message="ns:getAllInactiveEventNotifierConfigurationRequest" wsaw:Action="urn:getAllInactiveEventNotifierConfiguration"/>
+            <wsdl:output message="ns:getAllInactiveEventNotifierConfigurationResponse" wsaw:Action="urn:getAllInactiveEventNotifierConfigurationResponse"/>
+        </wsdl:operation>
+        <wsdl:operation name="deployDefaultEventSender">
+            <wsdl:input message="ns:deployDefaultEventSenderRequest" wsaw:Action="urn:deployDefaultEventSender"/>
+            <wsdl:output message="ns:deployDefaultEventSenderResponse" wsaw:Action="urn:deployDefaultEventSenderResponse"/>
+        </wsdl:operation>
+        <wsdl:operation name="getEventNotifierAdaptorProperties">
+            <wsdl:input message="ns:getEventNotifierAdaptorPropertiesRequest" wsaw:Action="urn:getEventNotifierAdaptorProperties"/>
+            <wsdl:output message="ns:getEventNotifierAdaptorPropertiesResponse" wsaw:Action="urn:getEventNotifierAdaptorPropertiesResponse"/>
+        </wsdl:operation>
+        <wsdl:operation name="editActiveEventNotifierConfiguration">
+            <wsdl:input message="ns:editActiveEventNotifierConfigurationRequest" wsaw:Action="urn:editActiveEventNotifierConfiguration"/>
+            <wsdl:output message="ns:editActiveEventNotifierConfigurationResponse" wsaw:Action="urn:editActiveEventNotifierConfigurationResponse"/>
+        </wsdl:operation>
+        <wsdl:operation name="getInactiveEventNotifierConfigurationContent">
+            <wsdl:input message="ns:getInactiveEventNotifierConfigurationContentRequest" wsaw:Action="urn:getInactiveEventNotifierConfigurationContent"/>
+            <wsdl:output message="ns:getInactiveEventNotifierConfigurationContentResponse" wsaw:Action="urn:getInactiveEventNotifierConfigurationContentResponse"/>
+        </wsdl:operation>
+        <wsdl:operation name="getAllActiveEventNotifierConfiguration">
+            <wsdl:input message="ns:getAllActiveEventNotifierConfigurationRequest" wsaw:Action="urn:getAllActiveEventNotifierConfiguration"/>
+            <wsdl:output message="ns:getAllActiveEventNotifierConfigurationResponse" wsaw:Action="urn:getAllActiveEventNotifierConfigurationResponse"/>
+        </wsdl:operation>
+        <wsdl:operation name="setStatisticsEnabled">
+            <wsdl:input message="ns:setStatisticsEnabledRequest" wsaw:Action="urn:setStatisticsEnabled"/>
+            <wsdl:output message="ns:setStatisticsEnabledResponse" wsaw:Action="urn:setStatisticsEnabledResponse"/>
+        </wsdl:operation>
+        <wsdl:operation name="deployEventNotifierConfiguration">
+            <wsdl:input message="ns:deployEventNotifierConfigurationRequest" wsaw:Action="urn:deployEventNotifierConfiguration"/>
+            <wsdl:output message="ns:deployEventNotifierConfigurationResponse" wsaw:Action="urn:deployEventNotifierConfigurationResponse"/>
+        </wsdl:operation>
+        <wsdl:operation name="deployXmlEventNotifierConfiguration">
+            <wsdl:input message="ns:deployXmlEventNotifierConfigurationRequest" wsaw:Action="urn:deployXmlEventNotifierConfiguration"/>
+            <wsdl:output message="ns:deployXmlEventNotifierConfigurationResponse" wsaw:Action="urn:deployXmlEventNotifierConfigurationResponse"/>
+        </wsdl:operation>
+        <wsdl:operation name="deployJsonEventNotifierConfiguration">
+            <wsdl:input message="ns:deployJsonEventNotifierConfigurationRequest" wsaw:Action="urn:deployJsonEventNotifierConfiguration"/>
+            <wsdl:output message="ns:deployJsonEventNotifierConfigurationResponse" wsaw:Action="urn:deployJsonEventNotifierConfigurationResponse"/>
+        </wsdl:operation>
+        <wsdl:operation name="undeployInactiveEventNotifierConfiguration">
+            <wsdl:input message="ns:undeployInactiveEventNotifierConfigurationRequest" wsaw:Action="urn:undeployInactiveEventNotifierConfiguration"/>
+            <wsdl:output message="ns:undeployInactiveEventNotifierConfigurationResponse" wsaw:Action="urn:undeployInactiveEventNotifierConfigurationResponse"/>
+        </wsdl:operation>
+        <wsdl:operation name="getActiveEventNotifierConfiguration">
+            <wsdl:input message="ns:getActiveEventNotifierConfigurationRequest" wsaw:Action="urn:getActiveEventNotifierConfiguration"/>
+            <wsdl:output message="ns:getActiveEventNotifierConfigurationResponse" wsaw:Action="urn:getActiveEventNotifierConfigurationResponse"/>
+        </wsdl:operation>
+        <wsdl:operation name="setTracingEnabled">
+            <wsdl:input message="ns:setTracingEnabledRequest" wsaw:Action="urn:setTracingEnabled"/>
+            <wsdl:output message="ns:setTracingEnabledResponse" wsaw:Action="urn:setTracingEnabledResponse"/>
+        </wsdl:operation>
+        <wsdl:operation name="deployMapEventNotifierConfiguration">
+            <wsdl:input message="ns:deployMapEventNotifierConfigurationRequest" wsaw:Action="urn:deployMapEventNotifierConfiguration"/>
+            <wsdl:output message="ns:deployMapEventNotifierConfigurationResponse" wsaw:Action="urn:deployMapEventNotifierConfigurationResponse"/>
+        </wsdl:operation>
+        <wsdl:operation name="deployTextEventNotifierConfiguration">
+            <wsdl:input message="ns:deployTextEventNotifierConfigurationRequest" wsaw:Action="urn:deployTextEventNotifierConfiguration"/>
+            <wsdl:output message="ns:deployTextEventNotifierConfigurationResponse" wsaw:Action="urn:deployTextEventNotifierConfigurationResponse"/>
+        </wsdl:operation>
+        <wsdl:operation name="undeployActiveEventNotifierConfiguration">
+            <wsdl:input message="ns:undeployActiveEventNotifierConfigurationRequest" wsaw:Action="urn:undeployActiveEventNotifierConfiguration"/>
+            <wsdl:output message="ns:undeployActiveEventNotifierConfigurationResponse" wsaw:Action="urn:undeployActiveEventNotifierConfigurationResponse"/>
+        </wsdl:operation>
+        <wsdl:operation name="getAllStreamSpecificActiveEventNotifierConfiguration">
+            <wsdl:input message="ns:getAllStreamSpecificActiveEventNotifierConfigurationRequest" wsaw:Action="urn:getAllStreamSpecificActiveEventNotifierConfiguration"/>
+            <wsdl:output message="ns:getAllStreamSpecificActiveEventNotifierConfigurationResponse" wsaw:Action="urn:getAllStreamSpecificActiveEventNotifierConfigurationResponse"/>
+        </wsdl:operation>
+        <wsdl:operation name="editInactiveEventNotifierConfiguration">
+            <wsdl:input message="ns:editInactiveEventNotifierConfigurationRequest" wsaw:Action="urn:editInactiveEventNotifierConfiguration"/>
+            <wsdl:output message="ns:editInactiveEventNotifierConfigurationResponse" wsaw:Action="urn:editInactiveEventNotifierConfigurationResponse"/>
+        </wsdl:operation>
+    </wsdl:portType>
+    <wsdl:binding name="EventNotifierAdminServiceSoap11Binding" type="ns:EventNotifierAdminServicePortType">
+        <soap:binding transport="http://schemas.xmlsoap.org/soap/http" style="document"/>
+        <wsdl:operation name="getActiveEventNotifierConfigurationContent">
+            <soap:operation soapAction="urn:getActiveEventNotifierConfigurationContent" style="document"/>
+            <wsdl:input>
+                <soap:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal"/>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="deployWSO2EventNotifierConfiguration">
+            <soap:operation soapAction="urn:deployWSO2EventNotifierConfiguration" style="document"/>
+            <wsdl:input>
+                <soap:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal"/>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="getAllInactiveEventNotifierConfiguration">
+            <soap:operation soapAction="urn:getAllInactiveEventNotifierConfiguration" style="document"/>
+            <wsdl:input>
+                <soap:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal"/>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="deployDefaultEventSender">
+            <soap:operation soapAction="urn:deployDefaultEventSender" style="document"/>
+            <wsdl:input>
+                <soap:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal"/>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="editActiveEventNotifierConfiguration">
+            <soap:operation soapAction="urn:editActiveEventNotifierConfiguration" style="document"/>
+            <wsdl:input>
+                <soap:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal"/>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="getEventNotifierAdaptorProperties">
+            <soap:operation soapAction="urn:getEventNotifierAdaptorProperties" style="document"/>
+            <wsdl:input>
+                <soap:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal"/>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="getInactiveEventNotifierConfigurationContent">
+            <soap:operation soapAction="urn:getInactiveEventNotifierConfigurationContent" style="document"/>
+            <wsdl:input>
+                <soap:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal"/>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="getAllActiveEventNotifierConfiguration">
+            <soap:operation soapAction="urn:getAllActiveEventNotifierConfiguration" style="document"/>
+            <wsdl:input>
+                <soap:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal"/>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="setStatisticsEnabled">
+            <soap:operation soapAction="urn:setStatisticsEnabled" style="document"/>
+            <wsdl:input>
+                <soap:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal"/>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="deployEventNotifierConfiguration">
+            <soap:operation soapAction="urn:deployEventNotifierConfiguration" style="document"/>
+            <wsdl:input>
+                <soap:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal"/>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="deployXmlEventNotifierConfiguration">
+            <soap:operation soapAction="urn:deployXmlEventNotifierConfiguration" style="document"/>
+            <wsdl:input>
+                <soap:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal"/>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="deployJsonEventNotifierConfiguration">
+            <soap:operation soapAction="urn:deployJsonEventNotifierConfiguration" style="document"/>
+            <wsdl:input>
+                <soap:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal"/>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="undeployInactiveEventNotifierConfiguration">
+            <soap:operation soapAction="urn:undeployInactiveEventNotifierConfiguration" style="document"/>
+            <wsdl:input>
+                <soap:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal"/>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="getActiveEventNotifierConfiguration">
+            <soap:operation soapAction="urn:getActiveEventNotifierConfiguration" style="document"/>
+            <wsdl:input>
+                <soap:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal"/>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="setTracingEnabled">
+            <soap:operation soapAction="urn:setTracingEnabled" style="document"/>
+            <wsdl:input>
+                <soap:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal"/>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="deployMapEventNotifierConfiguration">
+            <soap:operation soapAction="urn:deployMapEventNotifierConfiguration" style="document"/>
+            <wsdl:input>
+                <soap:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal"/>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="deployTextEventNotifierConfiguration">
+            <soap:operation soapAction="urn:deployTextEventNotifierConfiguration" style="document"/>
+            <wsdl:input>
+                <soap:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal"/>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="undeployActiveEventNotifierConfiguration">
+            <soap:operation soapAction="urn:undeployActiveEventNotifierConfiguration" style="document"/>
+            <wsdl:input>
+                <soap:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal"/>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="getAllStreamSpecificActiveEventNotifierConfiguration">
+            <soap:operation soapAction="urn:getAllStreamSpecificActiveEventNotifierConfiguration" style="document"/>
+            <wsdl:input>
+                <soap:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal"/>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="editInactiveEventNotifierConfiguration">
+            <soap:operation soapAction="urn:editInactiveEventNotifierConfiguration" style="document"/>
+            <wsdl:input>
+                <soap:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal"/>
+            </wsdl:output>
+        </wsdl:operation>
+    </wsdl:binding>
+    <wsdl:binding name="EventNotifierAdminServiceSoap12Binding" type="ns:EventNotifierAdminServicePortType">
+        <soap12:binding transport="http://schemas.xmlsoap.org/soap/http" style="document"/>
+        <wsdl:operation name="getActiveEventNotifierConfigurationContent">
+            <soap12:operation soapAction="urn:getActiveEventNotifierConfigurationContent" style="document"/>
+            <wsdl:input>
+                <soap12:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap12:body use="literal"/>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="deployWSO2EventNotifierConfiguration">
+            <soap12:operation soapAction="urn:deployWSO2EventNotifierConfiguration" style="document"/>
+            <wsdl:input>
+                <soap12:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap12:body use="literal"/>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="getAllInactiveEventNotifierConfiguration">
+            <soap12:operation soapAction="urn:getAllInactiveEventNotifierConfiguration" style="document"/>
+            <wsdl:input>
+                <soap12:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap12:body use="literal"/>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="deployDefaultEventSender">
+            <soap12:operation soapAction="urn:deployDefaultEventSender" style="document"/>
+            <wsdl:input>
+                <soap12:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap12:body use="literal"/>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="editActiveEventNotifierConfiguration">
+            <soap12:operation soapAction="urn:editActiveEventNotifierConfiguration" style="document"/>
+            <wsdl:input>
+                <soap12:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap12:body use="literal"/>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="getEventNotifierAdaptorProperties">
+            <soap12:operation soapAction="urn:getEventNotifierAdaptorProperties" style="document"/>
+            <wsdl:input>
+                <soap12:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap12:body use="literal"/>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="getInactiveEventNotifierConfigurationContent">
+            <soap12:operation soapAction="urn:getInactiveEventNotifierConfigurationContent" style="document"/>
+            <wsdl:input>
+                <soap12:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap12:body use="literal"/>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="getAllActiveEventNotifierConfiguration">
+            <soap12:operation soapAction="urn:getAllActiveEventNotifierConfiguration" style="document"/>
+            <wsdl:input>
+                <soap12:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap12:body use="literal"/>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="setStatisticsEnabled">
+            <soap12:operation soapAction="urn:setStatisticsEnabled" style="document"/>
+            <wsdl:input>
+                <soap12:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap12:body use="literal"/>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="deployEventNotifierConfiguration">
+            <soap12:operation soapAction="urn:deployEventNotifierConfiguration" style="document"/>
+            <wsdl:input>
+                <soap12:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap12:body use="literal"/>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="deployXmlEventNotifierConfiguration">
+            <soap12:operation soapAction="urn:deployXmlEventNotifierConfiguration" style="document"/>
+            <wsdl:input>
+                <soap12:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap12:body use="literal"/>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="deployJsonEventNotifierConfiguration">
+            <soap12:operation soapAction="urn:deployJsonEventNotifierConfiguration" style="document"/>
+            <wsdl:input>
+                <soap12:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap12:body use="literal"/>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="undeployInactiveEventNotifierConfiguration">
+            <soap12:operation soapAction="urn:undeployInactiveEventNotifierConfiguration" style="document"/>
+            <wsdl:input>
+                <soap12:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap12:body use="literal"/>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="getActiveEventNotifierConfiguration">
+            <soap12:operation soapAction="urn:getActiveEventNotifierConfiguration" style="document"/>
+            <wsdl:input>
+                <soap12:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap12:body use="literal"/>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="setTracingEnabled">
+            <soap12:operation soapAction="urn:setTracingEnabled" style="document"/>
+            <wsdl:input>
+                <soap12:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap12:body use="literal"/>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="deployMapEventNotifierConfiguration">
+            <soap12:operation soapAction="urn:deployMapEventNotifierConfiguration" style="document"/>
+            <wsdl:input>
+                <soap12:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap12:body use="literal"/>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="deployTextEventNotifierConfiguration">
+            <soap12:operation soapAction="urn:deployTextEventNotifierConfiguration" style="document"/>
+            <wsdl:input>
+                <soap12:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap12:body use="literal"/>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="undeployActiveEventNotifierConfiguration">
+            <soap12:operation soapAction="urn:undeployActiveEventNotifierConfiguration" style="document"/>
+            <wsdl:input>
+                <soap12:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap12:body use="literal"/>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="getAllStreamSpecificActiveEventNotifierConfiguration">
+            <soap12:operation soapAction="urn:getAllStreamSpecificActiveEventNotifierConfiguration" style="document"/>
+            <wsdl:input>
+                <soap12:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap12:body use="literal"/>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="editInactiveEventNotifierConfiguration">
+            <soap12:operation soapAction="urn:editInactiveEventNotifierConfiguration" style="document"/>
+            <wsdl:input>
+                <soap12:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap12:body use="literal"/>
+            </wsdl:output>
+        </wsdl:operation>
+    </wsdl:binding>
+    <wsdl:binding name="EventNotifierAdminServiceHttpBinding" type="ns:EventNotifierAdminServicePortType">
+        <http:binding verb="POST"/>
+        <wsdl:operation name="getActiveEventNotifierConfigurationContent">
+            <http:operation location="getActiveEventNotifierConfigurationContent"/>
+            <wsdl:input>
+                <mime:content type="text/xml" part="parameters"/>
+            </wsdl:input>
+            <wsdl:output>
+                <mime:content type="text/xml" part="parameters"/>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="deployWSO2EventNotifierConfiguration">
+            <http:operation location="deployWSO2EventNotifierConfiguration"/>
+            <wsdl:input>
+                <mime:content type="text/xml" part="parameters"/>
+            </wsdl:input>
+            <wsdl:output>
+                <mime:content type="text/xml" part="parameters"/>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="getAllInactiveEventNotifierConfiguration">
+            <http:operation location="getAllInactiveEventNotifierConfiguration"/>
+            <wsdl:input>
+                <mime:content type="text/xml" part="parameters"/>
+            </wsdl:input>
+            <wsdl:output>
+                <mime:content type="text/xml" part="parameters"/>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="deployDefaultEventSender">
+            <http:operation location="deployDefaultEventSender"/>
+            <wsdl:input>
+                <mime:content type="text/xml" part="parameters"/>
+            </wsdl:input>
+            <wsdl:output>
+                <mime:content type="text/xml" part="parameters"/>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="editActiveEventNotifierConfiguration">
+            <http:operation location="editActiveEventNotifierConfiguration"/>
+            <wsdl:input>
+                <mime:content type="text/xml" part="parameters"/>
+            </wsdl:input>
+            <wsdl:output>
+                <mime:content type="text/xml" part="parameters"/>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="getEventNotifierAdaptorProperties">
+            <http:operation location="getEventNotifierAdaptorProperties"/>
+            <wsdl:input>
+                <mime:content type="text/xml" part="parameters"/>
+            </wsdl:input>
+            <wsdl:output>
+                <mime:content type="text/xml" part="parameters"/>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="getInactiveEventNotifierConfigurationContent">
+            <http:operation location="getInactiveEventNotifierConfigurationContent"/>
+            <wsdl:input>
+                <mime:content type="text/xml" part="parameters"/>
+            </wsdl:input>
+            <wsdl:output>
+                <mime:content type="text/xml" part="parameters"/>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="getAllActiveEventNotifierConfiguration">
+            <http:operation location="getAllActiveEventNotifierConfiguration"/>
+            <wsdl:input>
+                <mime:content type="text/xml" part="parameters"/>
+            </wsdl:input>
+            <wsdl:output>
+                <mime:content type="text/xml" part="parameters"/>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="setStatisticsEnabled">
+            <http:operation location="setStatisticsEnabled"/>
+            <wsdl:input>
+                <mime:content type="text/xml" part="parameters"/>
+            </wsdl:input>
+            <wsdl:output>
+                <mime:content type="text/xml" part="parameters"/>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="deployEventNotifierConfiguration">
+            <http:operation location="deployEventNotifierConfiguration"/>
+            <wsdl:input>
+                <mime:content type="text/xml" part="parameters"/>
+            </wsdl:input>
+            <wsdl:output>
+                <mime:content type="text/xml" part="parameters"/>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="deployXmlEventNotifierConfiguration">
+            <http:operation location="deployXmlEventNotifierConfiguration"/>
+            <wsdl:input>
+                <mime:content type="text/xml" part="parameters"/>
+            </wsdl:input>
+            <wsdl:output>
+                <mime:content type="text/xml" part="parameters"/>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="deployJsonEventNotifierConfiguration">
+            <http:operation location="deployJsonEventNotifierConfiguration"/>
+            <wsdl:input>
+                <mime:content type="text/xml" part="parameters"/>
+            </wsdl:input>
+            <wsdl:output>
+                <mime:content type="text/xml" part="parameters"/>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="undeployInactiveEventNotifierConfiguration">
+            <http:operation location="undeployInactiveEventNotifierConfiguration"/>
+            <wsdl:input>
+                <mime:content type="text/xml" part="parameters"/>
+            </wsdl:input>
+            <wsdl:output>
+                <mime:content type="text/xml" part="parameters"/>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="getActiveEventNotifierConfiguration">
+            <http:operation location="getActiveEventNotifierConfiguration"/>
+            <wsdl:input>
+                <mime:content type="text/xml" part="parameters"/>
+            </wsdl:input>
+            <wsdl:output>
+                <mime:content type="text/xml" part="parameters"/>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="setTracingEnabled">
+            <http:operation location="setTracingEnabled"/>
+            <wsdl:input>
+                <mime:content type="text/xml" part="parameters"/>
+            </wsdl:input>
+            <wsdl:output>
+                <mime:content type="text/xml" part="parameters"/>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="deployMapEventNotifierConfiguration">
+            <http:operation location="deployMapEventNotifierConfiguration"/>
+            <wsdl:input>
+                <mime:content type="text/xml" part="parameters"/>
+            </wsdl:input>
+            <wsdl:output>
+                <mime:content type="text/xml" part="parameters"/>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="deployTextEventNotifierConfiguration">
+            <http:operation location="deployTextEventNotifierConfiguration"/>
+            <wsdl:input>
+                <mime:content type="text/xml" part="parameters"/>
+            </wsdl:input>
+            <wsdl:output>
+                <mime:content type="text/xml" part="parameters"/>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="undeployActiveEventNotifierConfiguration">
+            <http:operation location="undeployActiveEventNotifierConfiguration"/>
+            <wsdl:input>
+                <mime:content type="text/xml" part="parameters"/>
+            </wsdl:input>
+            <wsdl:output>
+                <mime:content type="text/xml" part="parameters"/>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="getAllStreamSpecificActiveEventNotifierConfiguration">
+            <http:operation location="getAllStreamSpecificActiveEventNotifierConfiguration"/>
+            <wsdl:input>
+                <mime:content type="text/xml" part="parameters"/>
+            </wsdl:input>
+            <wsdl:output>
+                <mime:content type="text/xml" part="parameters"/>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="editInactiveEventNotifierConfiguration">
+            <http:operation location="editInactiveEventNotifierConfiguration"/>
+            <wsdl:input>
+                <mime:content type="text/xml" part="parameters"/>
+            </wsdl:input>
+            <wsdl:output>
+                <mime:content type="text/xml" part="parameters"/>
+            </wsdl:output>
+        </wsdl:operation>
+    </wsdl:binding>
+    <wsdl:service name="EventNotifierAdminService">
+        <wsdl:port name="EventNotifierAdminServiceHttpsSoap11Endpoint" binding="ns:EventNotifierAdminServiceSoap11Binding">
+            <soap:address location="https://10.100.0.44:9443/services/EventNotifierAdminService.EventNotifierAdminServiceHttpsSoap11Endpoint/"/>
+        </wsdl:port>
+        <wsdl:port name="EventNotifierAdminServiceHttpsSoap12Endpoint" binding="ns:EventNotifierAdminServiceSoap12Binding">
+            <soap12:address location="https://10.100.0.44:9443/services/EventNotifierAdminService.EventNotifierAdminServiceHttpsSoap12Endpoint/"/>
+        </wsdl:port>
+        <wsdl:port name="EventNotifierAdminServiceHttpsEndpoint" binding="ns:EventNotifierAdminServiceHttpBinding">
+            <http:address location="https://10.100.0.44:9443/services/EventNotifierAdminService.EventNotifierAdminServiceHttpsEndpoint/"/>
+        </wsdl:port>
+    </wsdl:service>
+</wsdl:definitions>
+

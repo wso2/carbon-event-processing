@@ -16,7 +16,7 @@
 ~ under the License.
 --%>
 <%@ page import="org.wso2.carbon.event.formatter.stub.EventFormatterAdminServiceStub" %>
-<%@ page import="org.wso2.carbon.event.formatter.ui.EventFormatterUIUtils" %>
+<%@ page import="org.wso2.carbon.event.notifier.ui.EventNotifierUIUtils" %>
 <%
 
 

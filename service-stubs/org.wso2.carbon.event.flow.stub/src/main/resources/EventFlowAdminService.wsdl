@@ -32,7 +32,7 @@
             <xs:element name="getEventFlowResponse">
                 <xs:complexType>
                     <xs:sequence>
-                        <xs:element minOccurs="0" name="return" nillable="true" endpointType="xs:string"></xs:element>
+                        <xs:element minOccurs="0" name="return" nillable="true" type="xs:string"></xs:element>
                     </xs:sequence>
                 </xs:complexType>
             </xs:element>
@@ -50,7 +50,7 @@
             <wsdl:output message="ns:getEventFlowResponse" wsaw:Action="urn:getEventFlowResponse"></wsdl:output>
         </wsdl:operation>
     </wsdl:portType>
-    <wsdl:binding name="EventFlowAdminServiceSoap11Binding" endpointType="ns:EventFlowAdminServicePortType">
+    <wsdl:binding name="EventFlowAdminServiceSoap11Binding" type="ns:EventFlowAdminServicePortType">
         <soap:binding transport="http://schemas.xmlsoap.org/soap/http" style="document"></soap:binding>
         <wsdl:operation name="getEventFlow">
             <soap:operation soapAction="urn:getEventFlow" style="document"></soap:operation>
@@ -62,7 +62,7 @@
             </wsdl:output>
         </wsdl:operation>
     </wsdl:binding>
-    <wsdl:binding name="EventFlowAdminServiceSoap12Binding" endpointType="ns:EventFlowAdminServicePortType">
+    <wsdl:binding name="EventFlowAdminServiceSoap12Binding" type="ns:EventFlowAdminServicePortType">
         <soap12:binding transport="http://schemas.xmlsoap.org/soap/http" style="document"></soap12:binding>
         <wsdl:operation name="getEventFlow">
             <soap12:operation soapAction="urn:getEventFlow" style="document"></soap12:operation>
@@ -74,15 +74,15 @@
             </wsdl:output>
         </wsdl:operation>
     </wsdl:binding>
-    <wsdl:binding name="EventFlowAdminServiceHttpBinding" endpointType="ns:EventFlowAdminServicePortType">
+    <wsdl:binding name="EventFlowAdminServiceHttpBinding" type="ns:EventFlowAdminServicePortType">
         <http:binding verb="POST"></http:binding>
         <wsdl:operation name="getEventFlow">
             <http:operation location="getEventFlow"></http:operation>
             <wsdl:input>
-                <mime:content endpointType="text/xml" part="parameters"></mime:content>
+                <mime:content type="text/xml" part="parameters"></mime:content>
             </wsdl:input>
             <wsdl:output>
-                <mime:content endpointType="text/xml" part="parameters"></mime:content>
+                <mime:content type="text/xml" part="parameters"></mime:content>
             </wsdl:output>
         </wsdl:operation>
     </wsdl:binding>

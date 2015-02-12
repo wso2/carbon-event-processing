@@ -23,7 +23,7 @@
 <%@ page
         import="org.wso2.carbon.event.formatter.stub.types.EventFormatterConfigurationFileDto" %>
 <%@ page import="org.wso2.carbon.event.formatter.stub.types.EventFormatterConfigurationInfoDto" %>
-<%@ page import="org.wso2.carbon.event.formatter.ui.EventFormatterUIUtils" %>
+<%@ page import="org.wso2.carbon.event.notifier.ui.EventNotifierUIUtils" %>
 
 <fmt:bundle basename="org.wso2.carbon.event.formatter.ui.i18n.Resources">
 

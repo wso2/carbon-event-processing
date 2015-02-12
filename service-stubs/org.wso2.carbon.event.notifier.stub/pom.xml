@@ -26,10 +26,10 @@
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
-    <artifactId>org.wso2.carbon.event.statistics.stub</artifactId>
+    <artifactId>org.wso2.carbon.event.notifier.stub</artifactId>
     <version>2.0.4-SNAPSHOT</version>
     <packaging>bundle</packaging>
-    <name>WSO2 Carbon - Event Statistics Stub</name>
+    <name>WSO2 Carbon - Event Notifier Stubs</name>
     <url>http://wso2.org</url>
 
     <build>
@@ -52,7 +52,7 @@
                                     <pathelement location="${settings.localRepository}/org/apache/axis2/wso2/axis2/${orbit.version.axis2}/axis2-${orbit.version.axis2}.jar" />
                                 </path>
                                 <java classname="org.apache.axis2.wsdl.WSDL2Java" fork="true">
-                                    <arg line="-uri src/main/resources/EventStatisticsAdminService.wsdl -uw -sn EventStatisticsAdminService -pn EventStatisticsAdminServiceHttpsSoap12Endpoint -o target/generated-code -ns2p http://statistics.event.carbon.wso2.org=org.wso2.carbon.event.statistics.stub.client" />
+                                    <arg line="-uri src/main/resources/EventNotifierAdminService.wsdl -u -uw -o target/generated-code -ns2p http://internal.admin.notifier.event.carbon.wso2.org=org.wso2.carbon.event.notifier.stub,http://internal.admin.notifier.event.carbon.wso2.org/xsd=org.wso2.carbon.event.notifier.stub.types" />
                                     <classpath refid="wsdl2java.classpath" />
                                 </java>
                             </tasks>
@@ -90,13 +90,13 @@
                         <Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
                         <Bundle-Name>${project.artifactId}</Bundle-Name>
                         <Export-Package>
-                            org.wso2.carbon.event.statistics.stub.*;
-                            version="${carbon.event.processing.version}",
-                            org.wso2.carbon.event.statistics.stub.client.*;
-                            version="${carbon.event.processing.version}"
+                            org.wso2.carbon.event.notifier.stub.*;version="${carbon.event.processing.version}",
                         </Export-Package>
-                        <_nouse>true</_nouse>
-                        <Carbon-Component>UIBundle</Carbon-Component>
+                        <Import-Package>
+                            !javax.xml.namespace,
+                            javax.xml.namespace; version=0.0.0,
+                            *;resolution:=optional,
+                        </Import-Package>
                         <DynamicImport-Package>*</DynamicImport-Package>
                     </instructions>
                 </configuration>
@@ -120,3 +120,4 @@
     </dependencies>
 
 </project>
+

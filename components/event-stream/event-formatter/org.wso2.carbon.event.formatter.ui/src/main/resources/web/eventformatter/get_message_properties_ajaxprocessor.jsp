@@ -20,7 +20,7 @@
         import="org.wso2.carbon.event.formatter.stub.EventFormatterAdminServiceStub" %>
 <%@ page
         import="org.wso2.carbon.event.formatter.stub.types.EventFormatterPropertyDto" %>
-<%@ page import="org.wso2.carbon.event.formatter.ui.EventFormatterUIUtils" %>
+<%@ page import="org.wso2.carbon.event.notifier.ui.EventNotifierUIUtils" %>
 
 <%
     // get Event Adaptor properties

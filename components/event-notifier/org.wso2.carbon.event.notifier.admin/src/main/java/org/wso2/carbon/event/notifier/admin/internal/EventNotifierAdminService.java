@@ -34,7 +34,6 @@ import org.wso2.carbon.event.notifier.core.Property;
 import org.wso2.carbon.event.notifier.core.config.*;
 import org.wso2.carbon.event.notifier.core.config.mapping.*;
 import org.wso2.carbon.event.notifier.core.exception.EventNotifierConfigurationException;
-import org.wso2.carbon.event.notifier.core.internal.config.EventOutputProperty;
 
 import java.util.ArrayList;
 import java.util.Iterator;

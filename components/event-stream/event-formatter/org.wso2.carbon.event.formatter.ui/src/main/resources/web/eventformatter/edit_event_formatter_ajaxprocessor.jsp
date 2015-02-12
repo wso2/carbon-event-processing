@@ -17,7 +17,7 @@
 --%>
 <%@ page
         import="org.wso2.carbon.event.formatter.stub.EventFormatterAdminServiceStub" %>
-<%@ page import="org.wso2.carbon.event.formatter.ui.EventFormatterUIUtils" %>
+<%@ page import="org.wso2.carbon.event.notifier.ui.EventNotifierUIUtils" %>
 <%
     // get required parameters to add a event formatter to back end.
     EventFormatterAdminServiceStub stub = EventFormatterUIUtils.getEventFormatterAdminService(config, session, request);

@@ -19,7 +19,7 @@ package org.wso2.carbon.event.notifier.core.config.mapping;
 
 import org.wso2.carbon.event.notifier.core.config.EventNotifierConstants;
 import org.wso2.carbon.event.notifier.core.config.OutputMapping;
-import org.wso2.carbon.event.notifier.core.internal.config.EventOutputProperty;
+import org.wso2.carbon.event.notifier.core.config.EventOutputProperty;
 
 import java.util.ArrayList;
 import java.util.List;
