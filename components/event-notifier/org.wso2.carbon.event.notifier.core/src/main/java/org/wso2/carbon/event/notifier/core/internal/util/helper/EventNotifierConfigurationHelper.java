@@ -21,7 +21,6 @@ import org.apache.axiom.om.OMElement;
 import org.wso2.carbon.event.notifier.core.OutputEventAdaptorDto;
 import org.wso2.carbon.event.notifier.core.OutputEventAdaptorService;
 import org.wso2.carbon.event.notifier.core.Property;
-import org.wso2.carbon.event.notifier.core.config.EndpointAdaptorConfiguration;
 import org.wso2.carbon.event.notifier.core.config.EventNotifierConstants;
 import org.wso2.carbon.event.notifier.core.config.InternalOutputEventAdaptorConfiguration;
 import org.wso2.carbon.event.notifier.core.exception.EventNotifierConfigurationException;
@@ -56,12 +55,12 @@ public class EventNotifierConfigurationHelper {
         }
 
         //From property of the event notifier configuration file
-        Iterator fromPropertyIter = eventNotifierOMElement.getChildrenWithName(
+        Iterator fromPropertyIterator = eventNotifierOMElement.getChildrenWithName(
                 new QName(EventNotifierConstants.EF_CONF_NS, EventNotifierConstants.EF_ELE_FROM_PROPERTY));
         OMElement fromPropertyOMElement = null;
         count = 0;
-        while (fromPropertyIter.hasNext()) {
-            fromPropertyOMElement = (OMElement) fromPropertyIter.next();
+        while (fromPropertyIterator.hasNext()) {
+            fromPropertyOMElement = (OMElement) fromPropertyIterator.next();
             count++;
         }
         if (count != 1) {
@@ -75,12 +74,12 @@ public class EventNotifierConfigurationHelper {
         }
 
         //Mapping property of the event notifier configuration file
-        Iterator mappingPropertyIter = eventNotifierOMElement.getChildrenWithName(
+        Iterator mappingPropertyIterator = eventNotifierOMElement.getChildrenWithName(
                 new QName(EventNotifierConstants.EF_CONF_NS, EventNotifierConstants.EF_ELE_MAPPING_PROPERTY));
         OMElement mappingPropertyOMElement = null;
         count = 0;
-        while (mappingPropertyIter.hasNext()) {
-            mappingPropertyOMElement = (OMElement) mappingPropertyIter.next();
+        while (mappingPropertyIterator.hasNext()) {
+            mappingPropertyOMElement = (OMElement) mappingPropertyIterator.next();
             count++;
         }
         if (count != 1) {
@@ -95,31 +94,31 @@ public class EventNotifierConfigurationHelper {
         }
 
         //To property of the event notifier configuration file
-        Iterator toPropertyIter = eventNotifierOMElement.getChildrenWithName(
+        Iterator endpointPropertyIterator = eventNotifierOMElement.getChildrenWithName(
                 new QName(EventNotifierConstants.EF_CONF_NS, EventNotifierConstants.EF_ELE_ENDPOINT_PROPERTY));
         OMElement endpointPropertyOMElement = null;
         count = 0;
-        while (toPropertyIter.hasNext()) {
-            endpointPropertyOMElement = (OMElement) toPropertyIter.next();
+        while (endpointPropertyIterator.hasNext()) {
+            endpointPropertyOMElement = (OMElement) endpointPropertyIterator.next();
             count++;
         }
         if (count != 1) {
             throw new EventNotifierConfigurationException("There can be only one 'To' element in Event Notifier configuration file.");
         }
-        String toEventAdaptorType = endpointPropertyOMElement.getAttributeValue(new QName(EventNotifierConstants.EF_ATTR_TA_TYPE));
+        String endpointAdaptorType = endpointPropertyOMElement.getAttributeValue(new QName(EventNotifierConstants.EF_ATTR_TA_TYPE));
 
-        if (toEventAdaptorType == null) {
-            throw new EventNotifierConfigurationException("There should be a event adaptor type in Notifier configuration file.");
+        if (endpointAdaptorType == null) {
+            throw new EventNotifierConfigurationException("There should be a endpoint adaptor type in Notifier configuration file.");
         }
 
-        if (!validateToPropertyConfiguration(endpointPropertyOMElement, toEventAdaptorType)) {
-            throw new EventNotifierConfigurationException("To property does not contains all the required values for event adaptor type " + toEventAdaptorType);
+        if (!validateEndpointPropertyConfiguration(endpointPropertyOMElement, endpointAdaptorType)) {
+            throw new EventNotifierConfigurationException("Endpoint adaptor property does not contains all the required values for event adaptor type " + endpointAdaptorType);
         }
     }
 
 
-    private static boolean validateToPropertyConfiguration(OMElement endpointElement,
-                                                           String eventAdaptorType)
+    private static boolean validateEndpointPropertyConfiguration(OMElement endpointElement,
+                                                                 String eventAdaptorType)
             throws EventNotifierConfigurationException {
 
         List<String> requiredProperties = new ArrayList<String>();

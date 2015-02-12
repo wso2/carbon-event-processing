@@ -20,6 +20,7 @@ package org.wso2.carbon.event.notifier.core.internal.ds;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.osgi.service.component.ComponentContext;
+import org.wso2.carbon.event.notifier.core.AbstractOutputEventAdaptor;
 import org.wso2.carbon.event.notifier.core.EventNotifierService;
 import org.wso2.carbon.event.notifier.core.EventStreamListenerImpl;
 import org.wso2.carbon.event.notifier.core.OutputEventAdaptorFactory;
@@ -80,19 +81,19 @@ public class EventNotifierServiceDS {
         EventNotifierServiceValueHolder.unSetRegistryService();
     }
 
-    public void setEventStatisticsService(EventStatisticsService eventStatisticsService) {
+    protected void setEventStatisticsService(EventStatisticsService eventStatisticsService) {
         EventNotifierServiceValueHolder.registerEventStatisticsService(eventStatisticsService);
     }
 
-    public void unsetEventStatisticsService(EventStatisticsService eventStatisticsService) {
+    protected void unsetEventStatisticsService(EventStatisticsService eventStatisticsService) {
         EventNotifierServiceValueHolder.registerEventStatisticsService(null);
     }
 
-    public void setEventStreamService(EventStreamService eventStreamService) {
+    protected void setEventStreamService(EventStreamService eventStreamService) {
         EventNotifierServiceValueHolder.registerEventStreamService(eventStreamService);
     }
 
-    public void unsetEventStreamService(EventStreamService eventStreamService) {
+    protected void unsetEventStreamService(EventStreamService eventStreamService) {
         EventNotifierServiceValueHolder.registerEventStreamService(null);
     }
 
@@ -103,7 +104,9 @@ public class EventNotifierServiceDS {
 
         for (OutputEventAdaptorFactory outputEventAdaptorFactory : outputEventAdaptorFactories) {
             try {
-                ((CarbonOutputEventAdaptorService) EventNotifierServiceValueHolder.getOutputEventAdaptorService()).registerEventAdaptor(outputEventAdaptorFactory.getEventAdaptor());
+                AbstractOutputEventAdaptor abstractOutputEventAdaptor = outputEventAdaptorFactory.getEventAdaptor();
+                ((CarbonOutputEventAdaptorService) EventNotifierServiceValueHolder.getOutputEventAdaptorService()).registerEventAdaptor(abstractOutputEventAdaptor);
+                EventNotifierServiceValueHolder.getCarbonEventNotifierService().activateInactiveEventFormatterConfigurationForAdaptor(abstractOutputEventAdaptor.getOutputEventAdaptorDto().getEventAdaptorTypeName());
             } catch (Throwable t) {
                 log.error("Unexpected error at initializing output event adaptor instances "
                         + outputEventAdaptorFactory + ": " + t.getMessage(), t);

@@ -44,10 +44,7 @@ import org.wso2.carbon.registry.core.utils.RegistryUtils;
 
 import javax.xml.stream.XMLStreamException;
 import java.io.File;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class CarbonEventNotifierService
@@ -472,23 +469,26 @@ public class CarbonEventNotifierService
         }
     }
 
-    public void activateInactiveEventFormatterConfigurationForAdaptor(int tenantId,
-                                                                      String dependency)
+    public void activateInactiveEventFormatterConfigurationForAdaptor(String dependency)
             throws EventNotifierConfigurationException {
 
         List<EventNotifierConfigurationFile> fileList = new ArrayList<EventNotifierConfigurationFile>();
 
         if (eventNotifierConfigurationFileMap != null && eventNotifierConfigurationFileMap.size() > 0) {
-            List<EventNotifierConfigurationFile> eventNotifierConfigurationFileList = eventNotifierConfigurationFileMap.get(tenantId);
 
-            if (eventNotifierConfigurationFileList != null) {
-                for (EventNotifierConfigurationFile eventNotifierConfigurationFile : eventNotifierConfigurationFileList) {
-                    if ((eventNotifierConfigurationFile.getStatus().equals(EventNotifierConfigurationFile.Status.WAITING_FOR_DEPENDENCY)) && eventNotifierConfigurationFile.getDependency().equalsIgnoreCase(dependency)) {
-                        fileList.add(eventNotifierConfigurationFile);
+            Iterator<List<EventNotifierConfigurationFile>> eventNotifierConfigurationFileIterator = eventNotifierConfigurationFileMap.values().iterator();
+            while (eventNotifierConfigurationFileIterator.hasNext()) {
+                List<EventNotifierConfigurationFile> eventNotifierConfigurationFileList = eventNotifierConfigurationFileIterator.next();
+                if (eventNotifierConfigurationFileList != null) {
+                    for (EventNotifierConfigurationFile eventNotifierConfigurationFile : eventNotifierConfigurationFileList) {
+                        if ((eventNotifierConfigurationFile.getStatus().equals(EventNotifierConfigurationFile.Status.WAITING_FOR_DEPENDENCY)) && eventNotifierConfigurationFile.getDependency().equalsIgnoreCase(dependency)) {
+                            fileList.add(eventNotifierConfigurationFile);
+                        }
                     }
                 }
             }
         }
+
         for (EventNotifierConfigurationFile eventNotifierConfigurationFile : fileList) {
             try {
                 EventNotifierConfigurationFilesystemInvoker.reload(eventNotifierConfigurationFile.getFilePath(), eventNotifierConfigurationFile.getAxisConfiguration());

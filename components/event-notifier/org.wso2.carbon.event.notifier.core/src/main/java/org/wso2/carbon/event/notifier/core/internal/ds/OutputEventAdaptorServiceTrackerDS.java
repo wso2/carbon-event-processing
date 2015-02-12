@@ -20,6 +20,7 @@ package org.wso2.carbon.event.notifier.core.internal.ds;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.osgi.service.component.ComponentContext;
+import org.wso2.carbon.event.notifier.core.AbstractOutputEventAdaptor;
 import org.wso2.carbon.event.notifier.core.OutputEventAdaptorFactory;
 import org.wso2.carbon.event.notifier.core.internal.CarbonOutputEventAdaptorService;
 
@@ -58,7 +59,9 @@ public class OutputEventAdaptorServiceTrackerDS {
             OutputEventAdaptorFactory outputEventAdaptorFactory) {
         try {
             if (EventNotifierServiceValueHolder.getOutputEventAdaptorService() != null) {
-                ((CarbonOutputEventAdaptorService) EventNotifierServiceValueHolder.getOutputEventAdaptorService()).registerEventAdaptor(outputEventAdaptorFactory.getEventAdaptor());
+                AbstractOutputEventAdaptor abstractOutputEventAdaptor = outputEventAdaptorFactory.getEventAdaptor();
+                ((CarbonOutputEventAdaptorService) EventNotifierServiceValueHolder.getOutputEventAdaptorService()).registerEventAdaptor(abstractOutputEventAdaptor);
+                EventNotifierServiceValueHolder.getCarbonEventNotifierService().activateInactiveEventFormatterConfigurationForAdaptor(abstractOutputEventAdaptor.getOutputEventAdaptorDto().getEventAdaptorTypeName());
             } else {
                 outputEventAdaptorFactories.add(outputEventAdaptorFactory);
             }
