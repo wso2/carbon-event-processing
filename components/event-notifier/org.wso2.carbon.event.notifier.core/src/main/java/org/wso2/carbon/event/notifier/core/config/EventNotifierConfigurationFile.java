@@ -15,7 +15,7 @@
 * specific language governing permissions and limitations
 * under the License.
 */
-package org.wso2.carbon.event.notifier.core.internal.util;
+package org.wso2.carbon.event.notifier.core.config;
 
 import org.apache.axis2.engine.AxisConfiguration;
 

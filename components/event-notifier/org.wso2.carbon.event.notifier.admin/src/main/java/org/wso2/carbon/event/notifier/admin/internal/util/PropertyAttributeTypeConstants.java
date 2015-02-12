@@ -15,7 +15,7 @@
 * specific language governing permissions and limitations
 * under the License.
 */
-package org.wso2.carbon.event.formatter.admin.internal.util;
+package org.wso2.carbon.event.notifier.admin.internal.util;
 
 import org.wso2.carbon.databridge.commons.AttributeType;
 

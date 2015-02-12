@@ -38,7 +38,7 @@ import org.wso2.carbon.event.processing.application.deployer.EventProcessingDepl
 import org.wso2.carbon.context.PrivilegedCarbonContext;
 import org.wso2.carbon.event.notifier.core.config.EventNotifierConfiguration;
 import org.wso2.carbon.event.notifier.core.internal.CarbonEventNotifierService;
-import org.wso2.carbon.event.notifier.core.internal.util.EventNotifierConfigurationFile;
+import org.wso2.carbon.event.notifier.core.config.EventNotifierConfigurationFile;
 
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamException;

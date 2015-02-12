@@ -15,7 +15,7 @@
 * specific language governing permissions and limitations
 * under the License.
 */
-package org.wso2.carbon.event.notifier.core.internal.type.wso2event;
+package org.wso2.carbon.event.notifier.core.config.mapping;
 
 import org.wso2.carbon.event.notifier.core.config.EventNotifierConstants;
 import org.wso2.carbon.event.notifier.core.config.OutputMapping;

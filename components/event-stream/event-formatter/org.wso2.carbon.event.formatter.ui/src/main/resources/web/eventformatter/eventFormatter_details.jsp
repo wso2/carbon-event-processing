@@ -90,7 +90,7 @@
 </thead>
 <% String eventNotifierName = request.getParameter("eventNotifierName");
     if (eventNotifierName != null) {
-        EventFormatterConfigurationDto eventFormatterConfigurationDto = stub.getActiveEventFormatterConfiguration(eventNotifierName);
+        EventFormatterConfigurationDto eventNotifierConfigurationDto = stub.getActiveEventFormatterConfiguration(eventNotifierName);
 %>
 <tbody>
 <tr>
@@ -105,7 +105,7 @@
     <td><input endpointType="text" name="eventNotifierName" id="eventFormatterId"
                class="initE"
 
-               value="<%= eventFormatterConfigurationDto.getEventFormatterName()%>"
+               value="<%= eventNotifierConfigurationDto.getEventFormatterName()%>"
                style="width:75%" disabled="disabled"/>
     </td>
 </tr>
@@ -117,7 +117,7 @@
         <%
 
         %>
-        <option><%=eventFormatterConfigurationDto.getFromStreamNameWithVersion()%>
+        <option><%=eventNotifierConfigurationDto.getFromStreamNameWithVersion()%>
         </option>
 
 
@@ -134,7 +134,7 @@
         <textArea class="expandedTextarea" id="streamDefinitionText" name="streamDefinitionText"
                   readonly="true"
                   cols="60"
-                  disabled="disabled"><%=eventFormatterConfigurationDto.getStreamDefinition()%>
+                  disabled="disabled"><%=eventNotifierConfigurationDto.getStreamDefinition()%>
         </textArea>
     </td>
 
@@ -144,7 +144,7 @@
     <td><fmt:message key="event.adaptor.name"/><span class="required">*</span></td>
     <td><select name="eventAdaptorNameFilter"
                 id="eventAdaptorNameFilter" disabled="disabled">
-        <option><%=eventFormatterConfigurationDto.getToPropertyConfigurationDto().getEventAdaptorName()%>
+        <option><%=eventNotifierConfigurationDto.getToPropertyConfigurationDto().getEventAdaptorName()%>
         </option>
     </select>
     </td>
@@ -154,7 +154,7 @@
     <td><fmt:message key="mapping.endpointType"/><span class="required">*</span></td>
     <td><select name="mappingTypeFilter"
                 id="mappingTypeFilter" disabled="disabled">
-        <option><%=eventFormatterConfigurationDto.getMappingType()%>
+        <option><%=eventNotifierConfigurationDto.getMappingType()%>
         </option>
     </select>
     </td>
@@ -165,7 +165,7 @@
 <td class="formRaw" colspan="2">
 <div id="outerDiv">
 <%
-    if (eventFormatterConfigurationDto.getMappingType().equalsIgnoreCase("wso2event")) {
+    if (eventNotifierConfigurationDto.getMappingType().equalsIgnoreCase("wso2event")) {
 %>
 <div id="innerDiv1">
     <table class="styledLeft noBorders spacer-bot"
@@ -180,14 +180,14 @@
             <td colspan="2">
 
                 <h6><fmt:message key="property.data.endpointType.meta"/></h6>
-                <% if (eventFormatterConfigurationDto.getWso2EventOutputMappingDto().getMetaWSO2EventOutputPropertyConfigurationDto() != null && eventFormatterConfigurationDto.getWso2EventOutputMappingDto().getMetaWSO2EventOutputPropertyConfigurationDto()[0] != null) { %>
+                <% if (eventNotifierConfigurationDto.getWso2EventOutputMappingDto().getMetaWSO2EventOutputPropertyConfigurationDto() != null && eventNotifierConfigurationDto.getWso2EventOutputMappingDto().getMetaWSO2EventOutputPropertyConfigurationDto()[0] != null) { %>
                 <table class="styledLeft noBorders spacer-bot" id="outputMetaDataTable">
                     <thead>
                     <th class="leftCol-med"><fmt:message key="property.name"/></th>
                     <th class="leftCol-med"><fmt:message key="property.value.of"/></th>
                     <th class="leftCol-med"><fmt:message key="property.endpointType"/></th>
                     </thead>
-                    <% EventOutputPropertyDto[] eventOutputPropertyDtos = eventFormatterConfigurationDto.getWso2EventOutputMappingDto().getMetaWSO2EventOutputPropertyConfigurationDto();
+                    <% EventOutputPropertyDto[] eventOutputPropertyDtos = eventNotifierConfigurationDto.getWso2EventOutputMappingDto().getMetaWSO2EventOutputPropertyConfigurationDto();
                         for (EventOutputPropertyDto eventOutputPropertyDto : eventOutputPropertyDtos) { %>
                     <tr>
                         <td class="property-names"><%=eventOutputPropertyDto.getName()%>
@@ -213,7 +213,7 @@
             <td colspan="2">
 
                 <h6><fmt:message key="property.data.endpointType.correlation"/></h6>
-                <% if (eventFormatterConfigurationDto.getWso2EventOutputMappingDto().getCorrelationWSO2EventOutputPropertyConfigurationDto() != null && eventFormatterConfigurationDto.getWso2EventOutputMappingDto().getCorrelationWSO2EventOutputPropertyConfigurationDto()[0] != null) { %>
+                <% if (eventNotifierConfigurationDto.getWso2EventOutputMappingDto().getCorrelationWSO2EventOutputPropertyConfigurationDto() != null && eventNotifierConfigurationDto.getWso2EventOutputMappingDto().getCorrelationWSO2EventOutputPropertyConfigurationDto()[0] != null) { %>
                 <table class="styledLeft noBorders spacer-bot"
                        id="outputCorrelationDataTable">
                     <thead>
@@ -221,7 +221,7 @@
                     <th class="leftCol-med"><fmt:message key="property.value.of"/></th>
                     <th class="leftCol-med"><fmt:message key="property.endpointType"/></th>
                     </thead>
-                    <% EventOutputPropertyDto[] eventOutputPropertyDtos = eventFormatterConfigurationDto.getWso2EventOutputMappingDto().getCorrelationWSO2EventOutputPropertyConfigurationDto();
+                    <% EventOutputPropertyDto[] eventOutputPropertyDtos = eventNotifierConfigurationDto.getWso2EventOutputMappingDto().getCorrelationWSO2EventOutputPropertyConfigurationDto();
                         for (EventOutputPropertyDto eventOutputPropertyDto : eventOutputPropertyDtos) { %>
                     <tr>
                         <td class="property-names"><%=eventOutputPropertyDto.getName()%>
@@ -244,7 +244,7 @@
         <tr name="outputWSO2EventMapping">
             <td colspan="2">
                 <h6><fmt:message key="property.data.endpointType.payload"/></h6>
-                <% if (eventFormatterConfigurationDto.getWso2EventOutputMappingDto().getPayloadWSO2EventOutputPropertyConfigurationDto() != null && eventFormatterConfigurationDto.getWso2EventOutputMappingDto().getPayloadWSO2EventOutputPropertyConfigurationDto()[0] != null) { %>
+                <% if (eventNotifierConfigurationDto.getWso2EventOutputMappingDto().getPayloadWSO2EventOutputPropertyConfigurationDto() != null && eventNotifierConfigurationDto.getWso2EventOutputMappingDto().getPayloadWSO2EventOutputPropertyConfigurationDto()[0] != null) { %>
                 <table class="styledLeft noBorders spacer-bot"
                        id="outputPayloadDataTable">
                     <thead>
@@ -252,7 +252,7 @@
                     <th class="leftCol-med"><fmt:message key="property.value.of"/></th>
                     <th class="leftCol-med"><fmt:message key="property.endpointType"/></th>
                     </thead>
-                    <% EventOutputPropertyDto[] eventOutputPropertyDtos = eventFormatterConfigurationDto.getWso2EventOutputMappingDto().getPayloadWSO2EventOutputPropertyConfigurationDto();
+                    <% EventOutputPropertyDto[] eventOutputPropertyDtos = eventNotifierConfigurationDto.getWso2EventOutputMappingDto().getPayloadWSO2EventOutputPropertyConfigurationDto();
                         for (EventOutputPropertyDto eventOutputPropertyDto : eventOutputPropertyDtos) { %>
                     <tr>
                         <td class="property-names"><%=eventOutputPropertyDto.getName()%>
@@ -277,7 +277,7 @@
 </div>
 
 <%
-} else if (eventFormatterConfigurationDto.getMappingType().equalsIgnoreCase("text")) {
+} else if (eventNotifierConfigurationDto.getMappingType().equalsIgnoreCase("text")) {
 %>
 
 <div id="innerDiv2">
@@ -289,7 +289,7 @@
                 <fmt:message key="text.mapping"/>
             </td>
         </tr>
-        <% if (!(eventFormatterConfigurationDto.getTextOutputMappingDto().getRegistryResource())) {%>
+        <% if (!(eventNotifierConfigurationDto.getTextOutputMappingDto().getRegistryResource())) {%>
         <tr>
             <td class="leftCol-med" colspan="1"><fmt:message key="output.mapping.content"/><span
                     class="required">*</span></td>
@@ -310,7 +310,7 @@
     height: 150px; margin-top: 5px;"
                               name="textSource"
                               rows="30"
-                              disabled="disabled"><%= eventFormatterConfigurationDto.getTextOutputMappingDto().getMappingText() %>
+                              disabled="disabled"><%= eventNotifierConfigurationDto.getTextOutputMappingDto().getMappingText() %>
                     </textarea>
                 </p>
             </td>
@@ -333,7 +333,7 @@
                     class="required">*</span></td>
             <td colspan="1">
                 <input endpointType="text" id="textSourceRegistry" disabled="disabled" class="initE"
-                       value="<%=eventFormatterConfigurationDto.getTextOutputMappingDto().getMappingText() !=null ? eventFormatterConfigurationDto.getTextOutputMappingDto().getMappingText() : ""%>"
+                       value="<%=eventNotifierConfigurationDto.getTextOutputMappingDto().getMappingText() !=null ? eventNotifierConfigurationDto.getTextOutputMappingDto().getMappingText() : ""%>"
                        style="width:100%"/>
             </td>
 
@@ -353,7 +353,7 @@
 </div>
 
 <%
-} else if (eventFormatterConfigurationDto.getMappingType().equalsIgnoreCase("xml")) {
+} else if (eventNotifierConfigurationDto.getMappingType().equalsIgnoreCase("xml")) {
 %>
 
 <div id="innerDiv3">
@@ -365,7 +365,7 @@
                 <fmt:message key="xml.mapping"/>
             </td>
         </tr>
-        <% if (!eventFormatterConfigurationDto.getXmlOutputMappingDto().getRegistryResource()) { %>
+        <% if (!eventNotifierConfigurationDto.getXmlOutputMappingDto().getRegistryResource()) { %>
         <tr>
             <td colspan="1" class="leftCol-med"><fmt:message key="output.mapping.content"/><span
                     class="required">*</span></td>
@@ -386,7 +386,7 @@
                                      height: 150px; margin-top: 5px;"
                               name="xmlSource"
                               rows="30"
-                              disabled="disabled"><%=eventFormatterConfigurationDto.getXmlOutputMappingDto().getMappingXMLText() != null ? eventFormatterConfigurationDto.getXmlOutputMappingDto().getMappingXMLText() : ""%>
+                              disabled="disabled"><%=eventNotifierConfigurationDto.getXmlOutputMappingDto().getMappingXMLText() != null ? eventNotifierConfigurationDto.getXmlOutputMappingDto().getMappingXMLText() : ""%>
                     </textarea>
                 </p>
             </td>
@@ -427,7 +427,7 @@
 </div>
 
 <%
-} else if (eventFormatterConfigurationDto.getMappingType().equalsIgnoreCase("map")) {
+} else if (eventNotifierConfigurationDto.getMappingType().equalsIgnoreCase("map")) {
 %>
 
 <div id="innerDiv4">
@@ -439,7 +439,7 @@
                 <fmt:message key="map.mapping"/>
             </td>
         </tr>
-        <% if (eventFormatterConfigurationDto.getMapOutputMappingDto().getOutputPropertyConfiguration() != null && eventFormatterConfigurationDto.getMapOutputMappingDto().getOutputPropertyConfiguration()[0] != null) { %>
+        <% if (eventNotifierConfigurationDto.getMapOutputMappingDto().getOutputPropertyConfiguration() != null && eventNotifierConfigurationDto.getMapOutputMappingDto().getOutputPropertyConfiguration()[0] != null) { %>
         <tr name="outputMapMapping">
             <td colspan="2">
                 <table class="styledLeft noBorders spacer-bot" id="outputMapPropertiesTable">
@@ -447,7 +447,7 @@
                     <th class="leftCol-med"><fmt:message key="property.name"/></th>
                     <th class="leftCol-med"><fmt:message key="property.value.of"/></th>
                     </thead>
-                    <% EventOutputPropertyDto[] eventOutputPropertyDtos = eventFormatterConfigurationDto.getMapOutputMappingDto().getOutputPropertyConfiguration();
+                    <% EventOutputPropertyDto[] eventOutputPropertyDtos = eventNotifierConfigurationDto.getMapOutputMappingDto().getOutputPropertyConfiguration();
                         for (EventOutputPropertyDto eventOutputPropertyDto : eventOutputPropertyDtos) { %>
                     <tr>
                         <td class="property-names"><%=eventOutputPropertyDto.getName()%>
@@ -469,7 +469,7 @@
     </table>
 </div>
 <%
-} else if (eventFormatterConfigurationDto.getMappingType().equalsIgnoreCase("json")) {
+} else if (eventNotifierConfigurationDto.getMappingType().equalsIgnoreCase("json")) {
 %>
 
 <div id="innerDiv5">
@@ -481,7 +481,7 @@
                 <fmt:message key="json.mapping"/>
             </td>
         </tr>
-        <% if (!eventFormatterConfigurationDto.getJsonOutputMappingDto().getRegistryResource()) { %>
+        <% if (!eventNotifierConfigurationDto.getJsonOutputMappingDto().getRegistryResource()) { %>
         <tr>
             <td colspan="1" class="leftCol-med"><fmt:message key="output.mapping.content"/><span
                     class="required">*</span></td>
@@ -502,7 +502,7 @@
                                      height: 150px; margin-top: 5px;"
                               name="jsonSource"
                               rows="30"
-                              disabled="disabled"><%=eventFormatterConfigurationDto.getJsonOutputMappingDto().getMappingText()!=null ? eventFormatterConfigurationDto.getJsonOutputMappingDto().getMappingText() : ""%>
+                              disabled="disabled"><%=eventNotifierConfigurationDto.getJsonOutputMappingDto().getMappingText()!=null ? eventNotifierConfigurationDto.getJsonOutputMappingDto().getMappingText() : ""%>
                     </textarea>
                 </p>
             </td>
@@ -525,7 +525,7 @@
                     class="required">*</span></td>
             <td colspan="1">
                 <input endpointType="text" id="jsonSourceRegistry" disabled="disabled" class="initE"
-                       value="<%=eventFormatterConfigurationDto.getJsonOutputMappingDto().getMappingText() != null ? eventFormatterConfigurationDto.getJsonOutputMappingDto().getMappingText() : ""%>"
+                       value="<%=eventNotifierConfigurationDto.getJsonOutputMappingDto().getMappingText() != null ? eventNotifierConfigurationDto.getJsonOutputMappingDto().getMappingText() : ""%>"
                        style="width:100%"/>
             </td>
             <td colspan="1" class="nopadding" style="border:none">
@@ -552,11 +552,11 @@
 </tr>
 
 <%
-    ToPropertyConfigurationDto toPropertyConfigurationDto = eventFormatterConfigurationDto.getToPropertyConfigurationDto();
-    if (toPropertyConfigurationDto != null && toPropertyConfigurationDto.getOutputEventAdaptorMessageConfiguration()[0] != null) {
+    ToPropertyConfigurationDto endpointPropertyConfigurationDto = eventNotifierConfigurationDto.getToPropertyConfigurationDto();
+    if (endpointPropertyConfigurationDto != null && endpointPropertyConfigurationDto.getOutputEventAdaptorMessageConfiguration()[0] != null) {
 
-        for (int index = 0; index < toPropertyConfigurationDto.getOutputEventAdaptorMessageConfiguration().length; index++) {
-            EventFormatterPropertyDto[] eventFormatterPropertyDto = toPropertyConfigurationDto.getOutputEventAdaptorMessageConfiguration();
+        for (int index = 0; index < endpointPropertyConfigurationDto.getOutputEventAdaptorMessageConfiguration().length; index++) {
+            EventFormatterPropertyDto[] eventFormatterPropertyDto = endpointPropertyConfigurationDto.getOutputEventAdaptorMessageConfiguration();
 %>
 <tr>
 

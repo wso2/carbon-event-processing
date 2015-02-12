@@ -32,7 +32,7 @@ import org.wso2.carbon.event.notifier.core.config.EventNotifierConstants;
 import org.wso2.carbon.event.notifier.core.exception.EventNotifierConfigurationException;
 import org.wso2.carbon.event.notifier.core.internal.ds.EventNotifierServiceValueHolder;
 import org.wso2.carbon.event.notifier.core.internal.util.EventNotifierConfigurationBuilder;
-import org.wso2.carbon.event.notifier.core.internal.util.EventNotifierConfigurationFile;
+import org.wso2.carbon.event.notifier.core.config.EventNotifierConfigurationFile;
 import org.wso2.carbon.event.notifier.core.internal.util.helper.EventNotifierConfigurationFilesystemInvoker;
 import org.wso2.carbon.event.notifier.core.internal.util.helper.EventNotifierConfigurationHelper;
 import org.wso2.carbon.event.stream.manager.core.EventStreamService;

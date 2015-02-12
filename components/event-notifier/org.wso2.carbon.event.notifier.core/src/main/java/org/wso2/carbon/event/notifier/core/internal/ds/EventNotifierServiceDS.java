@@ -20,10 +20,7 @@ package org.wso2.carbon.event.notifier.core.internal.ds;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.osgi.service.component.ComponentContext;
-import org.wso2.carbon.event.notifier.core.AbstractOutputEventAdaptor;
-import org.wso2.carbon.event.notifier.core.EventNotifierService;
-import org.wso2.carbon.event.notifier.core.EventStreamListenerImpl;
-import org.wso2.carbon.event.notifier.core.OutputEventAdaptorFactory;
+import org.wso2.carbon.event.notifier.core.*;
 import org.wso2.carbon.event.notifier.core.internal.CarbonEventNotifierService;
 import org.wso2.carbon.event.notifier.core.internal.CarbonOutputEventAdaptorService;
 import org.wso2.carbon.event.statistics.EventStatisticsService;
@@ -56,8 +53,10 @@ public class EventNotifierServiceDS {
 
             CarbonOutputEventAdaptorService carbonOutputEventAdaptorService = new CarbonOutputEventAdaptorService();
             EventNotifierServiceValueHolder.registerOutputEventAdaptorService(carbonOutputEventAdaptorService);
-
             context.getBundleContext().registerService(EventNotifierService.class.getName(), carbonEventNotifierService, null);
+
+            OutputEventAdaptorService outputEventAdaptorService = new CarbonOutputEventAdaptorService();
+            context.getBundleContext().registerService(OutputEventAdaptorService.class.getName(), outputEventAdaptorService, null);
 
             registerEventAdaptorTypes();
 

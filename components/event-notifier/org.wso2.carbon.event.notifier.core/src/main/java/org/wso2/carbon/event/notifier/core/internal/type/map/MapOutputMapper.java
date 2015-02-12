@@ -20,6 +20,7 @@ package org.wso2.carbon.event.notifier.core.internal.type.map;
 import org.wso2.carbon.databridge.commons.Attribute;
 import org.wso2.carbon.databridge.commons.StreamDefinition;
 import org.wso2.carbon.event.notifier.core.config.EventNotifierConfiguration;
+import org.wso2.carbon.event.notifier.core.config.mapping.MapOutputMapping;
 import org.wso2.carbon.event.notifier.core.exception.EventNotifierConfigurationException;
 import org.wso2.carbon.event.notifier.core.exception.EventNotifierStreamValidationException;
 import org.wso2.carbon.event.notifier.core.internal.OutputMapper;

@@ -22,6 +22,7 @@ import org.apache.axiom.om.OMFactory;
 import org.wso2.carbon.databridge.commons.AttributeType;
 import org.wso2.carbon.event.notifier.core.config.EventNotifierConstants;
 import org.wso2.carbon.event.notifier.core.config.OutputMapping;
+import org.wso2.carbon.event.notifier.core.config.mapping.WSO2EventOutputMapping;
 import org.wso2.carbon.event.notifier.core.exception.EventNotifierConfigurationException;
 import org.wso2.carbon.event.notifier.core.exception.EventNotifierValidationException;
 import org.wso2.carbon.event.notifier.core.internal.config.EventOutputProperty;

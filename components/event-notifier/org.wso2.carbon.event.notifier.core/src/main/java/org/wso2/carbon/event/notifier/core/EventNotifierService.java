@@ -21,7 +21,7 @@ import org.apache.axis2.engine.AxisConfiguration;
 import org.wso2.carbon.databridge.commons.StreamDefinition;
 import org.wso2.carbon.event.notifier.core.config.EventNotifierConfiguration;
 import org.wso2.carbon.event.notifier.core.exception.EventNotifierConfigurationException;
-import org.wso2.carbon.event.notifier.core.internal.util.EventNotifierConfigurationFile;
+import org.wso2.carbon.event.notifier.core.config.EventNotifierConfigurationFile;
 
 import java.util.List;
 

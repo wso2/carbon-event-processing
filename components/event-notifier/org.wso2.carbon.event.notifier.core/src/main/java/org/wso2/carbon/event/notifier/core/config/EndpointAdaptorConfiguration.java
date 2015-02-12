@@ -28,6 +28,7 @@ public class EndpointAdaptorConfiguration {
 
     private String endpointType;
 
+    //TODO check assigning proper name
     private String endpointAdaptorName;
 
     private InternalOutputEventAdaptorConfiguration internalOutputEventAdaptorConfiguration = null;

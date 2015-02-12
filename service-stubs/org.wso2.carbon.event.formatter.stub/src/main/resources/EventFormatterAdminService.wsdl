@@ -47,7 +47,7 @@
                     <xs:element minOccurs="0" name="eventNotifierName" nillable="true" endpointType="xs:string"/>
                     <xs:element minOccurs="0" name="inputStreamId" nillable="true" endpointType="xs:string"/>
                     <xs:element minOccurs="0" name="mappingType" nillable="true" endpointType="xs:string"/>
-                    <xs:element minOccurs="0" name="outEventAdaptorName" nillable="true" endpointType="xs:string"/>
+                    <xs:element minOccurs="0" name="outputEndpointType" nillable="true" endpointType="xs:string"/>
                 </xs:sequence>
             </xs:complexType>
             <xs:complexType name="EventFormatterConfigurationFileDto">
@@ -69,7 +69,7 @@
                     <xs:element minOccurs="0" name="streamDefinition" nillable="true" endpointType="xs:string"/>
                     <xs:element minOccurs="0" name="textOutputMappingDto" nillable="true"
                                 endpointType="ax2108:TextOutputMappingDto"/>
-                    <xs:element minOccurs="0" name="toPropertyConfigurationDto" nillable="true"
+                    <xs:element minOccurs="0" name="endpointPropertyConfigurationDto" nillable="true"
                                 endpointType="ax2108:ToPropertyConfigurationDto"/>
                     <xs:element minOccurs="0" name="wso2EventOutputMappingDto" nillable="true"
                                 endpointType="ax2108:WSO2EventOutputMappingDto"/>

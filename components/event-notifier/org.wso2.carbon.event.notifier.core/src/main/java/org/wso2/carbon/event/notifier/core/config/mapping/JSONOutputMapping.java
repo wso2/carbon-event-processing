@@ -15,30 +15,32 @@
 * specific language governing permissions and limitations
 * under the License.
 */
-package org.wso2.carbon.event.notifier.core.internal.type.xml;
+package org.wso2.carbon.event.notifier.core.config.mapping;
 
 import org.wso2.carbon.event.notifier.core.config.EventNotifierConstants;
 import org.wso2.carbon.event.notifier.core.config.OutputMapping;
 
-public class XMLOutputMapping extends OutputMapping {
+public class JSONOutputMapping extends OutputMapping {
 
-    private String mappingXMLText;
+    private String mappingText;
+
 
     private boolean registryResource;
 
-    public String getMappingXMLText() {
-        return mappingXMLText;
+    public String getMappingText() {
+        return mappingText;
     }
 
-    public void setMappingXMLText(String mappingXMLText) {
-        this.mappingXMLText = mappingXMLText;
+    public void setMappingText(String mappingText) {
+        this.mappingText = mappingText;
 
     }
 
     @Override
     public String getMappingType() {
-        return EventNotifierConstants.EF_XML_MAPPING_TYPE;
+        return EventNotifierConstants.EF_JSON_MAPPING_TYPE;
     }
+
 
     public boolean isRegistryResource() {
         return registryResource;
@@ -47,4 +49,6 @@ public class XMLOutputMapping extends OutputMapping {
     public void setRegistryResource(boolean registryResource) {
         this.registryResource = registryResource;
     }
+
+
 }

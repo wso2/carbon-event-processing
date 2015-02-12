@@ -16,7 +16,7 @@
  ~ under the License.
 -->
 <serviceGroup>
-    <service name="EventFormatterAdminService" scope="transportsession">
+    <service name="EventNotifierAdminService" scope="transportsession">
         <transports>
             <transport>https</transport>
         </transports>
@@ -33,112 +33,112 @@
         </parameter>
 
         <parameter name="AuthorizationAction" locked="false">
-            /permission/admin/manage/event-streams
+            /permission/admin/manage/event-notifier
         </parameter>
 
-        <operation name="getAllActiveEventFormatterConfiguration">
+        <operation name="getAllActiveEventNotifierConfiguration">
             <parameter name="AuthorizationAction" locked="true">
-                /permission/admin/manage/event-streams
+                /permission/admin/manage/event-notifier
             </parameter>
         </operation>
-        <operation name="getAllStreamSpecificActiveEventFormatterConfiguration">
+        <operation name="getAllStreamSpecificActiveEventNotifierConfiguration">
             <parameter name="AuthorizationAction" locked="true">
-                /permission/admin/manage/event-streams
+                /permission/admin/manage/event-notifier
             </parameter>
         </operation>
 
-        <operation name="undeployActiveEventFormatterConfiguration">
+        <operation name="undeployActiveEventNotifierConfiguration">
             <parameter name="AuthorizationAction" locked="true">
-                /permission/admin/manage/event-streams
+                /permission/admin/manage/event-notifier
             </parameter>
         </operation>
-        <operation name="getAllInactiveEventFormatterConfiguration">
+        <operation name="getAllInactiveEventNotifierConfiguration">
             <parameter name="AuthorizationAction" locked="true">
-                /permission/admin/manage/event-streams
+                /permission/admin/manage/event-notifier
             </parameter>
         </operation>
-        <operation name="undeployInactiveEventFormatterConfiguration">
+        <operation name="undeployInactiveEventNotifierConfiguration">
             <parameter name="AuthorizationAction" locked="true">
-                /permission/admin/manage/event-streams
+                /permission/admin/manage/event-notifier
             </parameter>
         </operation>
-        <operation name="getInactiveEventFormatterConfigurationContent">
+        <operation name="getInactiveEventNotifierConfigurationContent">
             <parameter name="AuthorizationAction" locked="true">
-                /permission/admin/manage/event-streams
+                /permission/admin/manage/event-notifier
             </parameter>
         </operation>
-        <operation name="editInactiveEventFormatterConfiguration">
+        <operation name="editInactiveEventNotifierConfiguration">
             <parameter name="AuthorizationAction" locked="true">
-                /permission/admin/manage/event-streams
+                /permission/admin/manage/event-notifier
             </parameter>
         </operation>
-        <operation name="getActiveEventFormatterConfigurationContent">
+        <operation name="getActiveEventNotifierConfigurationContent">
             <parameter name="AuthorizationAction" locked="true">
-                /permission/admin/manage/event-streams
+                /permission/admin/manage/event-notifier
             </parameter>
         </operation>
-        <operation name="editActiveEventFormatterConfiguration">
+        <operation name="editActiveEventNotifierConfiguration">
             <parameter name="AuthorizationAction" locked="true">
-                /permission/admin/manage/event-streams
+                /permission/admin/manage/event-notifier
             </parameter>
         </operation>
-        <operation name="getEventFormatterMessageProperties">
+        <operation name="getEventNotifierAdaptorProperties">
             <parameter name="AuthorizationAction" locked="true">
-                /permission/admin/manage/event-streams
+                /permission/admin/manage/event-notifier
             </parameter>
         </operation>
-        <operation name="deployEventFormatterConfiguration">
+        <operation name="deployEventNotifierConfiguration">
             <parameter name="AuthorizationAction" locked="true">
-                /permission/admin/manage/event-streams
+                /permission/admin/manage/event-notifier
             </parameter>
         </operation>
-        <operation name="deployWSO2EventFormatterConfiguration">
+        <operation name="deployWSO2EventNotifierConfiguration">
             <parameter name="AuthorizationAction" locked="true">
-                /permission/admin/manage/event-streams
+                /permission/admin/manage/event-notifier
             </parameter>
         </operation>
-        <operation name="deployTextEventFormatterConfiguration">
+        <operation name="deployTextEventNotifierConfiguration">
             <parameter name="AuthorizationAction" locked="true">
-                /permission/admin/manage/event-streams
+                /permission/admin/manage/event-notifier
             </parameter>
         </operation>
-        <operation name="deployXmlEventFormatterConfiguration">
+        <operation name="deployXmlEventNotifierConfiguration">
             <parameter name="AuthorizationAction" locked="true">
-                /permission/admin/manage/event-streams
+                /permission/admin/manage/event-notifier
             </parameter>
         </operation>
-        <operation name="deployMapEventFormatterConfiguration">
+        <operation name="deployMapEventNotifierConfiguration">
             <parameter name="AuthorizationAction" locked="true">
-                /permission/admin/manage/event-streams
+                /permission/admin/manage/event-notifier
             </parameter>
         </operation>
-        <operation name="deployJsonEventFormatterConfiguration">
+        <operation name="deployJsonEventNotifierConfiguration">
             <parameter name="AuthorizationAction" locked="true">
-                /permission/admin/manage/event-streams
+                /permission/admin/manage/event-notifier
             </parameter>
         </operation>
-        <operation name="getActiveEventFormatterConfiguration">
+        <operation name="getActiveEventNotifierConfiguration">
             <parameter name="AuthorizationAction" locked="true">
-                /permission/admin/manage/event-streams
+                /permission/admin/manage/event-notifier
             </parameter>
         </operation>
         <operation name="setStatisticsEnabled">
             <parameter name="AuthorizationAction" locked="true">
-                /permission/admin/manage/event-streams
+                /permission/admin/manage/event-notifier
             </parameter>
         </operation>
         <operation name="setTracingEnabled">
             <parameter name="AuthorizationAction" locked="true">
-                /permission/admin/manage/event-streams
+                /permission/admin/manage/event-notifier
             </parameter>
         </operation>
         <operation name="deployDefaultEventSender">
             <parameter name="AuthorizationAction" locked="true">
-                /permission/admin/manage/event-streams
+                /permission/admin/manage/event-notifier
             </parameter>
         </operation>
 
     </service>
-    <parameter name="adminService" locked="true">true</parameter>
-    <parameter name="hiddenService" locked="true">true</parameter>
+    <parameter name="adminService" locked="true">false</parameter>
+    <parameter name="hiddenService" locked="true">false</parameter>
 </serviceGroup>

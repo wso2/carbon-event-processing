@@ -15,21 +15,19 @@
 * specific language governing permissions and limitations
 * under the License.
 */
-package org.wso2.carbon.event.formatter.admin.internal.exception;
+package org.wso2.carbon.event.notifier.admin.internal;
 
-public class EventFormatterAdminServiceException extends Exception {
-    public EventFormatterAdminServiceException() {
+
+public class MapOutputMappingDto {
+
+    EventOutputPropertyDto[] outputPropertyConfiguration;
+
+    public EventOutputPropertyDto[] getOutputPropertyConfiguration() {
+        return outputPropertyConfiguration;
     }
 
-    public EventFormatterAdminServiceException(String message) {
-        super(message);
-    }
-
-    public EventFormatterAdminServiceException(String message, Throwable cause) {
-        super(message, cause);
-    }
-
-    public EventFormatterAdminServiceException(Throwable cause) {
-        super(cause);
+    public void setOutputPropertyConfiguration(
+            EventOutputPropertyDto[] outputPropertyConfiguration) {
+        this.outputPropertyConfiguration = outputPropertyConfiguration;
     }
 }

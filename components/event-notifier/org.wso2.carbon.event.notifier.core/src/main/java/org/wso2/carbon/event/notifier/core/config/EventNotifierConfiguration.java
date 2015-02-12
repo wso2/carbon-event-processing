@@ -19,7 +19,7 @@ package org.wso2.carbon.event.notifier.core.config;
 
 public class EventNotifierConfiguration {
 
-    private String eventFormatterName;
+    private String eventNotifierName;
 
     private String fromStreamName;
 
@@ -34,11 +34,11 @@ public class EventNotifierConfiguration {
     private boolean enableStatistics;
 
     public String getEventNotifierName() {
-        return eventFormatterName;
+        return eventNotifierName;
     }
 
-    public void setEventFormatterName(String eventFormatterName) {
-        this.eventFormatterName = eventFormatterName;
+    public void setEventNotifierName(String eventNotifierName) {
+        this.eventNotifierName = eventNotifierName;
     }
 
     public String getFromStreamName() {

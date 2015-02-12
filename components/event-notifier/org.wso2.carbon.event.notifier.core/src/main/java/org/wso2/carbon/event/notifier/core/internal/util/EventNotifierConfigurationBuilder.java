@@ -180,7 +180,7 @@ public class EventNotifierConfigurationBuilder {
         }
 
 
-        eventNotifierConfiguration.setEventFormatterName(eventNotifierConfigOMElement.getAttributeValue(new QName(EventNotifierConstants.EF_ATTR_NAME)));
+        eventNotifierConfiguration.setEventNotifierName(eventNotifierConfigOMElement.getAttributeValue(new QName(EventNotifierConstants.EF_ATTR_NAME)));
 
         if (eventNotifierConfigOMElement.getAttributeValue(new QName(EventNotifierConstants.TM_ATTR_STATISTICS)) != null && eventNotifierConfigOMElement.getAttributeValue(new QName(EventNotifierConstants.TM_ATTR_STATISTICS)).equals(EventNotifierConstants.TM_VALUE_ENABLE)) {
             eventNotifierConfiguration.setEnableStatistics(true);

@@ -20,7 +20,7 @@
 //import org.wso2.carbon.databridge.commons.utils.DataBridgeCommonsUtils;
 //import org.wso2.carbon.event.notifier.core.config.EventNotifierConfiguration;
 //import org.wso2.carbon.event.notifier.core.config.EventNotifierConstants;
-//import org.wso2.carbon.event.notifier.core.internal.type.text.TextOutputMapping;
+//import org.wso2.carbon.event.notifier.core.config.mapping.TextOutputMapping;
 //import org.wso2.carbon.event.output.adaptor.core.message.config.OutputEventAdaptorMessageConfiguration;
 //
 //public class EventFormatterUtil {
@@ -33,7 +33,7 @@
 //        EventNotifierConfiguration eventNotifierConfiguration =
 //                new EventNotifierConfiguration();
 //
-//        eventNotifierConfiguration.setEventFormatterName(streamId.replaceAll(EventNotifierConstants.STREAM_ID_SEPERATOR, EventNotifierConstants.NORMALIZATION_STRING) + EventNotifierConstants.DEFAULT_EVENT_NOTIFIER_POSTFIX);
+//        eventNotifierConfiguration.setEventNotifierName(streamId.replaceAll(EventNotifierConstants.STREAM_ID_SEPERATOR, EventNotifierConstants.NORMALIZATION_STRING) + EventNotifierConstants.DEFAULT_EVENT_NOTIFIER_POSTFIX);
 //        TextOutputMapping textOutputMapping = new TextOutputMapping();
 //        textOutputMapping.setCustomMappingEnabled(false);
 //        eventNotifierConfiguration.setOutputMapping(textOutputMapping);

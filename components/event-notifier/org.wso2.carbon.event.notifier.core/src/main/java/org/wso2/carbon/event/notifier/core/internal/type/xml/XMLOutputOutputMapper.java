@@ -28,6 +28,7 @@ import org.wso2.carbon.databridge.commons.Attribute;
 import org.wso2.carbon.databridge.commons.StreamDefinition;
 import org.wso2.carbon.event.notifier.core.config.EventNotifierConfiguration;
 import org.wso2.carbon.event.notifier.core.config.EventNotifierConstants;
+import org.wso2.carbon.event.notifier.core.config.mapping.XMLOutputMapping;
 import org.wso2.carbon.event.notifier.core.exception.EventNotifierConfigurationException;
 import org.wso2.carbon.event.notifier.core.exception.EventNotifierProcessingException;
 import org.wso2.carbon.event.notifier.core.exception.EventNotifierStreamValidationException;
