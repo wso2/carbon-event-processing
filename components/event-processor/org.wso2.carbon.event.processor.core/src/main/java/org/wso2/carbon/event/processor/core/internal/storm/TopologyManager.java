@@ -34,6 +34,7 @@ import org.wso2.carbon.event.processor.core.internal.ds.EventProcessorValueHolde
 import org.wso2.carbon.event.processor.core.internal.storm.util.StormQueryPlanBuilder;
 import org.wso2.carbon.event.processor.core.internal.storm.util.StormTopologyConstructor;
 import org.wso2.carbon.utils.CarbonUtils;
+import org.wso2.siddhi.query.api.definition.AbstractDefinition;
 import org.wso2.siddhi.query.api.definition.StreamDefinition;
 import org.yaml.snakeyaml.Yaml;
 
@@ -47,6 +48,7 @@ import javax.xml.transform.stream.StreamResult;
 import java.io.*;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentMap;
 
 /**
  * The Siddhi Topology Manager
@@ -126,9 +128,11 @@ public class TopologyManager {
          } catch (InterruptedException e) {}
     }
 
-
-    public static void submitTopology(ExecutionPlanConfiguration configuration, List<StreamDefinition> streamDefinitions, int tenantId, int resubmitRetryInterval) throws StormDeploymentException, ExecutionPlanConfigurationException {
-        Document document = StormQueryPlanBuilder.constructStormQueryPlanXML(configuration, streamDefinitions);
+//todo change to map
+    public static void submitTopology(ExecutionPlanConfiguration configuration, List<String> importStreams,
+                                      List<String> exportStreams, int tenantId, int resubmitRetryInterval) throws
+            StormDeploymentException, ExecutionPlanConfigurationException {
+        Document document = StormQueryPlanBuilder.constructStormQueryPlanXML(configuration, importStreams, exportStreams);
         String executionPlanName = configuration.getName();
         TopologyBuilder builder = null;
         try {

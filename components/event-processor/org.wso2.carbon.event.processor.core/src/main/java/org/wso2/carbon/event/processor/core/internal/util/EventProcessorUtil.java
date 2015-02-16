@@ -84,7 +84,7 @@ public class EventProcessorUtil {
     public static org.wso2.siddhi.query.api.definition.StreamDefinition convertToSiddhiStreamDefinition(
             StreamDefinition streamDefinition, StreamConfiguration streamConfiguration) {
         org.wso2.siddhi.query.api.definition.StreamDefinition siddhiStreamDefinition = new org.wso2.siddhi.query.api.definition.StreamDefinition();
-        siddhiStreamDefinition.name(streamConfiguration.getName());
+        siddhiStreamDefinition.setId(streamConfiguration.getName());
         if (streamDefinition.getMetaData() != null) {
             for (org.wso2.carbon.databridge.commons.Attribute attribute : streamDefinition.getMetaData()) {
                 siddhiStreamDefinition.attribute(attribute.getName(), convertToSiddhiAttribute(attribute, EventProcessorConstants.META + EventProcessorConstants.ATTRIBUTE_SEPARATOR).getType());
@@ -201,4 +201,82 @@ public class EventProcessorUtil {
         return streamId.split(EventProcessorConstants.STREAM_SEPARATOR)[0];
     }
 
+    public static String getDefinitionString(StreamDefinition streamDefinition) {   //todo testcase
+        StringBuilder builder = new StringBuilder();
+        builder.append(EventProcessorConstants.DEFINE_STREAM);
+        builder.append(streamDefinition.getStreamId());
+        builder.append(EventProcessorConstants.OPENING_BRACKETS);
+        if (streamDefinition.getMetaData() != null) {
+            for (org.wso2.carbon.databridge.commons.Attribute attribute : streamDefinition.getMetaData()) {
+                builder.append(EventProcessorConstants.META + EventProcessorConstants.ATTRIBUTE_SEPARATOR + attribute
+                        .getName() + EventProcessorConstants.SPACE + attribute.getType().toString().toLowerCase() +
+                        EventProcessorConstants.COMMA);
+            }
+        }
+
+        if (streamDefinition.getCorrelationData() != null) {
+            for (org.wso2.carbon.databridge.commons.Attribute attribute : streamDefinition.getCorrelationData()) {
+                builder.append(EventProcessorConstants.CORRELATION + EventProcessorConstants.ATTRIBUTE_SEPARATOR + attribute
+                        .getName() + EventProcessorConstants.SPACE + attribute.getType().toString().toLowerCase() +
+                        EventProcessorConstants.COMMA);
+            }
+        }
+
+        if (streamDefinition.getPayloadData() != null) {
+            for (org.wso2.carbon.databridge.commons.Attribute attribute : streamDefinition.getPayloadData()) {
+                builder.append(attribute.getName() + EventProcessorConstants.SPACE + attribute.getType().toString()
+                        .toLowerCase() + EventProcessorConstants.COMMA);
+            }
+        }
+        for (org.wso2.carbon.databridge.commons.Attribute attribute : streamDefinition.getMetaData()) {
+            builder.append(attribute.getName() + EventProcessorConstants.SPACE + attribute.getType().toString().toLowerCase() +
+                    EventProcessorConstants.COMMA);
+        }
+        builder.deleteCharAt(builder.length() - 2);         //remove last comma
+        builder.append(EventProcessorConstants.CLOSING_BRACKETS);
+        return builder.toString();
+    }
+
+    /**
+     * Construct Stream Definition query string for a given Siddhi Stream Definition
+     * @param siddhiStreamDefinition
+     * @return
+     */
+    public static String getDefinitionString(org.wso2.siddhi.query.api.definition.AbstractDefinition siddhiStreamDefinition) {
+        StringBuilder builder = new StringBuilder();
+        builder.append(EventProcessorConstants.DEFINE_STREAM);
+        builder.append(siddhiStreamDefinition.getId());
+        builder.append(EventProcessorConstants.OPENING_BRACKETS);
+        for (Attribute attribute : siddhiStreamDefinition.getAttributeList()) {
+            builder.append(attribute.getName() + EventProcessorConstants.SPACE + attribute.getType().toString().toLowerCase() +
+                    EventProcessorConstants.COMMA);
+        }
+        builder.deleteCharAt(builder.length() - 2);         //remove last comma
+        builder.append(EventProcessorConstants.CLOSING_BRACKETS);
+        return builder.toString();
+    }
+
+    /**
+     * Constructs full query expression as String
+     * @param importDefinitions List of imported definitions
+     * @param exportDefinitions List of exported definitions
+     * @param queryExpressions query expression given in the ExecutionPlanConfiguration
+     * @return
+     */
+    public static String constructQueryExpression(List<String> importDefinitions, List<String> exportDefinitions,
+                                       String queryExpressions) {
+        StringBuilder builder = new StringBuilder();
+
+        for(String definition : importDefinitions){
+            builder.append(definition);
+        }
+
+        for(String definition : exportDefinitions){
+            builder.append(definition);
+        }
+
+        builder.append(queryExpressions);
+
+        return builder.toString();
+    }
 }
