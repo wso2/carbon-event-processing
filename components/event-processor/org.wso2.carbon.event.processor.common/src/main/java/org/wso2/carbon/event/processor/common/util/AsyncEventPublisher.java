@@ -235,7 +235,7 @@ public class AsyncEventPublisher implements EventHandler<AsynchronousEventBuffer
 
                     for (StreamDefinition siddhiStreamDefinition : streams){
                         tcpEventPublisher.addStreamDefinition(siddhiStreamDefinition);
-                        streamsIDs.append(siddhiStreamDefinition.getStreamId() + ",");
+                        streamsIDs.append(siddhiStreamDefinition.getId() + ",");
                     }
 
                     log.info(logPrefix + "Connected to " + destinationTypeString + " at " + endpointHostPort + " for the Stream(s) " + streamsIDs.toString());
