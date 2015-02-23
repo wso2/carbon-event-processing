@@ -32,7 +32,7 @@ import me.prettyprint.hector.api.query.SliceQuery;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.wso2.carbon.context.PrivilegedCarbonContext;
-import org.wso2.siddhi.core.persistence.PersistenceStore;
+import org.wso2.siddhi.core.util.persistence.PersistenceStore;
 
 import java.util.Date;
 import java.util.HashMap;
