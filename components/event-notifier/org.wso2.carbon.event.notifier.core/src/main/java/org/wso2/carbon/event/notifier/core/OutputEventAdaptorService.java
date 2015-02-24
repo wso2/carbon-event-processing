@@ -42,11 +42,11 @@ public interface OutputEventAdaptorService {
     /**
      * publishes the message using the given event adaptor to the given topic.
      *
-     * @param outputEventAdaptorName - name of the event adaptor
+     * @param eventNotifierName - name of the event adaptor
      * @param object                 - message to send
      * @param tenantId
      */
-    void publish(String outputEventAdaptorName,
+    void publish(String eventNotifierName,
                  Object object, int tenantId);
 
 

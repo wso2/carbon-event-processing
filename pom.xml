@@ -40,6 +40,7 @@
         <module>components/event-flow</module>
         <module>components/event-monitor</module>
         <module>components/application-deployer</module>
+        <module>components/event-receiver</module>
         <module>features/adaptors</module>
         <module>features/event-processor</module>
         <module>features/event-monitor</module>
