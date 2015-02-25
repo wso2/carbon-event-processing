@@ -20,8 +20,8 @@ package org.wso2.carbon.event.receiver.core.internal;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.wso2.carbon.databridge.commons.utils.DataBridgeCommonsUtils;
-import org.wso2.carbon.event.receiver.core.exception.EventBuilderConfigurationException;
-import org.wso2.carbon.event.receiver.core.internal.ds.EventBuilderServiceValueHolder;
+import org.wso2.carbon.event.receiver.core.exception.EventReceiverConfigurationException;
+import org.wso2.carbon.event.receiver.core.internal.ds.EventReceiverServiceValueHolder;
 import org.wso2.carbon.event.stream.manager.core.EventStreamListener;
 
 public class EventStreamListenerImpl implements EventStreamListener {
@@ -31,11 +31,11 @@ public class EventStreamListenerImpl implements EventStreamListener {
     @Override
     public void removedEventStream(int tenantId, String streamName, String streamVersion) {
 
-        CarbonEventBuilderService carbonEventBuilderService = EventBuilderServiceValueHolder.getCarbonEventBuilderService();
+        CarbonEventReceiverService carbonEventReceiverService = EventReceiverServiceValueHolder.getCarbonEventReceiverService();
         String streamNameWithVersion = DataBridgeCommonsUtils.generateStreamId(streamName, streamVersion);
         try {
-            carbonEventBuilderService.deactivateActiveEventBuilderConfigurationsForStream(streamNameWithVersion, tenantId);
-        } catch (EventBuilderConfigurationException e) {
+            carbonEventReceiverService.deactivateActiveEventReceiverConfigurationsForStream(streamNameWithVersion, tenantId);
+        } catch (EventReceiverConfigurationException e) {
             log.error("Exception occurred while un-deploying the Event builder configuration files");
         }
 
@@ -44,11 +44,11 @@ public class EventStreamListenerImpl implements EventStreamListener {
     @Override
     public void addedEventStream(int tenantId, String streamName, String streamVersion) {
 
-        CarbonEventBuilderService carbonEventBuilderService = EventBuilderServiceValueHolder.getCarbonEventBuilderService();
+        CarbonEventReceiverService carbonEventReceiverService = EventReceiverServiceValueHolder.getCarbonEventReceiverService();
         String streamNameWithVersion = DataBridgeCommonsUtils.generateStreamId(streamName, streamVersion);
         try {
-            carbonEventBuilderService.activateInactiveEventBuilderConfigurationsForStream(streamNameWithVersion, tenantId);
-        } catch (EventBuilderConfigurationException e) {
+            carbonEventReceiverService.activateInactiveEventReceiverConfigurationsForStream(streamNameWithVersion, tenantId);
+        } catch (EventReceiverConfigurationException e) {
             log.error("Exception occurred while re-deploying the Event builder configuration files");
         }
 

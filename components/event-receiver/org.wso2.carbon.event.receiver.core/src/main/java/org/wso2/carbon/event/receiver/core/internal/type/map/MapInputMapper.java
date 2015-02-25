@@ -19,14 +19,14 @@ package org.wso2.carbon.event.receiver.core.internal.type.map;
 
 import org.wso2.carbon.databridge.commons.Attribute;
 import org.wso2.carbon.databridge.commons.StreamDefinition;
-import org.wso2.carbon.event.receiver.core.config.EventBuilderConfiguration;
+import org.wso2.carbon.event.receiver.core.config.EventReceiverConfiguration;
 import org.wso2.carbon.event.receiver.core.config.InputMapper;
 import org.wso2.carbon.event.receiver.core.config.InputMappingAttribute;
-import org.wso2.carbon.event.receiver.core.exception.EventBuilderConfigurationException;
-import org.wso2.carbon.event.receiver.core.exception.EventBuilderProcessingException;
-import org.wso2.carbon.event.receiver.core.exception.EventBuilderStreamValidationException;
-import org.wso2.carbon.event.receiver.core.internal.util.EventBuilderConstants;
-import org.wso2.carbon.event.receiver.core.internal.util.helper.EventBuilderConfigHelper;
+import org.wso2.carbon.event.receiver.core.exception.EventReceiverConfigurationException;
+import org.wso2.carbon.event.receiver.core.exception.EventReceiverProcessingException;
+import org.wso2.carbon.event.receiver.core.exception.EventReceiverStreamValidationException;
+import org.wso2.carbon.event.receiver.core.internal.util.EventReceiverConstants;
+import org.wso2.carbon.event.receiver.core.internal.util.helper.EventReceiverConfigHelper;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -39,16 +39,16 @@ public class MapInputMapper implements InputMapper {
     private int noPayloadData;
     private StreamDefinition streamDefinition;
     private Object[] attributePositionKeyMap = null;
-    private EventBuilderConfiguration eventBuilderConfiguration = null;
+    private EventReceiverConfiguration eventReceiverConfiguration = null;
 
-    public MapInputMapper(EventBuilderConfiguration eventBuilderConfiguration,
+    public MapInputMapper(EventReceiverConfiguration eventReceiverConfiguration,
                           StreamDefinition streamDefinition)
-            throws EventBuilderConfigurationException {
-        this.eventBuilderConfiguration = eventBuilderConfiguration;
+            throws EventReceiverConfigurationException {
+        this.eventReceiverConfiguration = eventReceiverConfiguration;
         this.streamDefinition = streamDefinition;
 
-        if (eventBuilderConfiguration != null && eventBuilderConfiguration.getInputMapping() instanceof MapInputMapping) {
-            MapInputMapping mapInputMapping = (MapInputMapping) eventBuilderConfiguration.getInputMapping();
+        if (eventReceiverConfiguration != null && eventReceiverConfiguration.getInputMapping() instanceof MapInputMapping) {
+            MapInputMapping mapInputMapping = (MapInputMapping) eventReceiverConfiguration.getInputMapping();
             if (mapInputMapping.isCustomMappingEnabled()) {
 
                 Map<Integer, Object> positionKeyMap = new HashMap<Integer, Object>();
@@ -56,7 +56,7 @@ public class MapInputMapper implements InputMapper {
                     positionKeyMap.put(inputMappingAttribute.getToStreamPosition(), inputMappingAttribute.getFromElementKey());
                     if (positionKeyMap.get(inputMappingAttribute.getToStreamPosition()) == null) {
                         this.attributePositionKeyMap = null;
-                        throw new EventBuilderStreamValidationException("Error creating map mapping. '"+inputMappingAttribute.getToElementKey()+"' position not found.",streamDefinition.getStreamId());
+                        throw new EventReceiverStreamValidationException("Error creating map mapping. '"+inputMappingAttribute.getToElementKey()+"' position not found.",streamDefinition.getStreamId());
                     }
                 }
                 this.attributePositionKeyMap = new Object[positionKeyMap.size()];
@@ -73,9 +73,9 @@ public class MapInputMapper implements InputMapper {
     }
 
     @Override
-    public Object convertToMappedInputEvent(Object obj) throws EventBuilderProcessingException {
+    public Object convertToMappedInputEvent(Object obj) throws EventReceiverProcessingException {
         if (attributePositionKeyMap == null) {
-            throw new EventBuilderProcessingException("Input mapping is not available for the current input stream definition:");
+            throw new EventReceiverProcessingException("Input mapping is not available for the current input stream definition:");
         }
         Object[] outObjArray;
         if (obj instanceof Map) {
@@ -86,14 +86,14 @@ public class MapInputMapper implements InputMapper {
             }
             outObjArray = outObjList.toArray();
         } else {
-            throw new EventBuilderProcessingException("Received event object is not of type map." + this.getClass() + " cannot convert this event.");
+            throw new EventReceiverProcessingException("Received event object is not of type map." + this.getClass() + " cannot convert this event.");
         }
 
         return outObjArray;
     }
 
     @Override
-    public Object convertToTypedInputEvent(Object obj) throws EventBuilderProcessingException {
+    public Object convertToTypedInputEvent(Object obj) throws EventReceiverProcessingException {
 
         Object attributeArray[] = new Object[noMetaData + noCorrelationData + noPayloadData];
         int attributeCount = 0;
@@ -105,7 +105,7 @@ public class MapInputMapper implements InputMapper {
 
                 if (noMetaData > 0) {
                     for (Attribute metaData : streamDefinition.getMetaData()) {
-                        if (eventAttribute.getKey().equals(EventBuilderConstants.META_DATA_PREFIX + metaData.getName())) {
+                        if (eventAttribute.getKey().equals(EventReceiverConstants.META_DATA_PREFIX + metaData.getName())) {
                             attributeArray[attributeCount++] = eventAttribute.getValue();
                             setFlag = true;
                             break;
@@ -115,7 +115,7 @@ public class MapInputMapper implements InputMapper {
 
                 if (noCorrelationData > 0 && !setFlag) {
                     for (Attribute correlationData : streamDefinition.getCorrelationData()) {
-                        if (eventAttribute.getKey().equals(EventBuilderConstants.CORRELATION_DATA_PREFIX + correlationData.getName())) {
+                        if (eventAttribute.getKey().equals(EventReceiverConstants.CORRELATION_DATA_PREFIX + correlationData.getName())) {
                             attributeArray[attributeCount++] = eventAttribute.getValue();
                             setFlag = true;
                             break;
@@ -135,11 +135,11 @@ public class MapInputMapper implements InputMapper {
             }
 
             if (noMetaData + noCorrelationData + noPayloadData != attributeCount) {
-                throw new EventBuilderProcessingException("Event attributes are not matching with the stream : " + this.eventBuilderConfiguration.getToStreamName() + ":" + eventBuilderConfiguration.getToStreamVersion());
+                throw new EventReceiverProcessingException("Event attributes are not matching with the stream : " + this.eventReceiverConfiguration.getToStreamName() + ":" + eventReceiverConfiguration.getToStreamVersion());
             }
 
         } else {
-            throw new EventBuilderProcessingException("Received event object is not of type map." + this.getClass() + " cannot convert this event.");
+            throw new EventReceiverProcessingException("Received event object is not of type map." + this.getClass() + " cannot convert this event.");
         }
 
         return attributeArray;
@@ -148,9 +148,9 @@ public class MapInputMapper implements InputMapper {
 
     @Override
     public Attribute[] getOutputAttributes() {
-        MapInputMapping mapInputMapping = (MapInputMapping) eventBuilderConfiguration.getInputMapping();
+        MapInputMapping mapInputMapping = (MapInputMapping) eventReceiverConfiguration.getInputMapping();
         List<InputMappingAttribute> inputMappingAttributes = mapInputMapping.getInputMappingAttributes();
-        return EventBuilderConfigHelper.getAttributes(inputMappingAttributes);
+        return EventReceiverConfigHelper.getAttributes(inputMappingAttributes);
     }
 
 }

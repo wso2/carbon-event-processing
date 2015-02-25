@@ -19,33 +19,33 @@ package org.wso2.carbon.event.receiver.core.internal.util.helper;
 
 import org.wso2.carbon.databridge.commons.Attribute;
 import org.wso2.carbon.databridge.commons.StreamDefinition;
-import org.wso2.carbon.event.receiver.core.config.EventBuilderConfiguration;
+import org.wso2.carbon.event.receiver.core.config.EventReceiverConfiguration;
 import org.wso2.carbon.event.receiver.core.config.InputMapper;
-import org.wso2.carbon.event.receiver.core.exception.EventBuilderStreamValidationException;
-import org.wso2.carbon.event.receiver.core.internal.util.EventBuilderConstants;
+import org.wso2.carbon.event.receiver.core.exception.EventReceiverStreamValidationException;
+import org.wso2.carbon.event.receiver.core.internal.util.EventReceiverConstants;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class EventBuilderRuntimeValidator {
+public class EventReceiverRuntimeValidator {
 
-    public static void validateExportedStream(EventBuilderConfiguration eventBuilderConfiguration,
+    public static void validateExportedStream(EventReceiverConfiguration eventReceiverConfiguration,
                                               StreamDefinition exportedStreamDefinition,
                                               InputMapper inputMapper) {
-        if (eventBuilderConfiguration != null && exportedStreamDefinition != null) {
-            if (eventBuilderConfiguration.getInputMapping().isCustomMappingEnabled()) {
+        if (eventReceiverConfiguration != null && exportedStreamDefinition != null) {
+            if (eventReceiverConfiguration.getInputMapping().isCustomMappingEnabled()) {
                 String streamId = exportedStreamDefinition.getStreamId();
                 if (inputMapper.getOutputAttributes() == null || inputMapper.getOutputAttributes().length == 0) {
-                    throw new EventBuilderStreamValidationException("The input mapper is not exporting any output attributes for stream " + streamId);
+                    throw new EventReceiverStreamValidationException("The input mapper is not exporting any output attributes for stream " + streamId);
                 }
                 List<Attribute> outputAttributes = new ArrayList<Attribute>(Arrays.asList(inputMapper.getOutputAttributes()));
                 List<Attribute> metaAttributeList = exportedStreamDefinition.getMetaData();
                 if (metaAttributeList != null) {
                     for (Attribute attribute : metaAttributeList) {
-                        Attribute prependedAttribute = new Attribute(EventBuilderConstants.META_DATA_PREFIX + attribute.getName(), attribute.getType());
+                        Attribute prependedAttribute = new Attribute(EventReceiverConstants.META_DATA_PREFIX + attribute.getName(), attribute.getType());
                         if (!outputAttributes.contains(prependedAttribute)) {
-                            throw new EventBuilderStreamValidationException("The meta data attribute '" + attribute.getName()
+                            throw new EventReceiverStreamValidationException("The meta data attribute '" + attribute.getName()
                                     + "' in stream : '" + streamId + "' cannot be found under attributes exported by this event builder mapping", streamId);
                         } else {
                             outputAttributes.remove(prependedAttribute);
@@ -55,9 +55,9 @@ public class EventBuilderRuntimeValidator {
                 List<Attribute> correlationAttributeList = exportedStreamDefinition.getCorrelationData();
                 if (correlationAttributeList != null) {
                     for (Attribute attribute : correlationAttributeList) {
-                        Attribute prependedAttribute = new Attribute(EventBuilderConstants.CORRELATION_DATA_PREFIX + attribute.getName(), attribute.getType());
+                        Attribute prependedAttribute = new Attribute(EventReceiverConstants.CORRELATION_DATA_PREFIX + attribute.getName(), attribute.getType());
                         if (!outputAttributes.contains(prependedAttribute)) {
-                            throw new EventBuilderStreamValidationException("The correlation data attribute '" + attribute.getName()
+                            throw new EventReceiverStreamValidationException("The correlation data attribute '" + attribute.getName()
                                     + "' in stream : '" + streamId + "' cannot be found under attributes exported by this event builder mapping", streamId);
                         } else {
                             outputAttributes.remove(prependedAttribute);
@@ -68,7 +68,7 @@ public class EventBuilderRuntimeValidator {
                 if (payloadAttributeList != null) {
                     for (Attribute attribute : payloadAttributeList) {
                         if (!outputAttributes.contains(attribute)) {
-                            throw new EventBuilderStreamValidationException("The payload data attribute '" + attribute.getName()
+                            throw new EventReceiverStreamValidationException("The payload data attribute '" + attribute.getName()
                                     + "' in stream : '" + streamId + "' cannot be found under attributes exported by this event builder mapping", streamId);
                         } else {
                             outputAttributes.remove(attribute);
@@ -76,7 +76,7 @@ public class EventBuilderRuntimeValidator {
                     }
                 }
                 if (outputAttributes.size() > 0) {
-                    throw new EventBuilderStreamValidationException("The attribute '" + outputAttributes.get(0).getName()
+                    throw new EventReceiverStreamValidationException("The attribute '" + outputAttributes.get(0).getName()
                             + "' exported by this event builder mapping cannot be found not in : '" + streamId + "'", streamId);
 
                 }

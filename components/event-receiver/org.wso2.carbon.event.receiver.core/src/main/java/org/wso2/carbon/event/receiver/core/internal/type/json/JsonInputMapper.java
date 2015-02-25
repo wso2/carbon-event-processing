@@ -26,13 +26,13 @@ import org.json.JSONException;
 import org.wso2.carbon.databridge.commons.Attribute;
 import org.wso2.carbon.databridge.commons.AttributeType;
 import org.wso2.carbon.databridge.commons.StreamDefinition;
-import org.wso2.carbon.event.receiver.core.config.EventBuilderConfiguration;
+import org.wso2.carbon.event.receiver.core.config.EventReceiverConfiguration;
 import org.wso2.carbon.event.receiver.core.config.InputMapper;
 import org.wso2.carbon.event.receiver.core.config.InputMappingAttribute;
-import org.wso2.carbon.event.receiver.core.exception.EventBuilderConfigurationException;
-import org.wso2.carbon.event.receiver.core.exception.EventBuilderProcessingException;
-import org.wso2.carbon.event.receiver.core.internal.util.EventBuilderConstants;
-import org.wso2.carbon.event.receiver.core.internal.util.helper.EventBuilderConfigHelper;
+import org.wso2.carbon.event.receiver.core.exception.EventReceiverConfigurationException;
+import org.wso2.carbon.event.receiver.core.exception.EventReceiverProcessingException;
+import org.wso2.carbon.event.receiver.core.internal.util.EventReceiverConstants;
+import org.wso2.carbon.event.receiver.core.internal.util.helper.EventReceiverConfigHelper;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -41,21 +41,21 @@ import java.util.Map;
 public class JsonInputMapper implements InputMapper {
 
     private static final Log log = LogFactory.getLog(JsonInputMapper.class);
-    private EventBuilderConfiguration eventBuilderConfiguration = null;
+    private EventReceiverConfiguration eventReceiverConfiguration = null;
     private List<JsonPathData> attributeJsonPathDataList = new ArrayList<JsonPathData>();
     private int noMetaData;
     private int noCorrelationData;
     private int noPayloadData;
     private StreamDefinition streamDefinition;
 
-    public JsonInputMapper(EventBuilderConfiguration eventBuilderConfiguration,
+    public JsonInputMapper(EventReceiverConfiguration eventReceiverConfiguration,
                            StreamDefinition streamDefinition)
-            throws EventBuilderConfigurationException {
-        this.eventBuilderConfiguration = eventBuilderConfiguration;
+            throws EventReceiverConfigurationException {
+        this.eventReceiverConfiguration = eventReceiverConfiguration;
         this.streamDefinition = streamDefinition;
 
-        if (eventBuilderConfiguration != null && eventBuilderConfiguration.getInputMapping() instanceof JsonInputMapping) {
-            JsonInputMapping jsonInputMapping = (JsonInputMapping) eventBuilderConfiguration.getInputMapping();
+        if (eventReceiverConfiguration != null && eventReceiverConfiguration.getInputMapping() instanceof JsonInputMapping) {
+            JsonInputMapping jsonInputMapping = (JsonInputMapping) eventReceiverConfiguration.getInputMapping();
             if (jsonInputMapping.isCustomMappingEnabled()) {
                 createAttributeJsonPathList(streamDefinition,jsonInputMapping.getInputMappingAttributes());
             } else {
@@ -67,11 +67,11 @@ public class JsonInputMapper implements InputMapper {
     }
 
     @Override
-    public Object convertToMappedInputEvent(Object obj) throws EventBuilderProcessingException {
+    public Object convertToMappedInputEvent(Object obj) throws EventReceiverProcessingException {
         Object outObject = null;
         if (obj instanceof String) {
             String jsonString = (String) obj;
-            if (jsonString.startsWith(EventBuilderConstants.JSON_ARRAY_START_CHAR)) {
+            if (jsonString.startsWith(EventReceiverConstants.JSON_ARRAY_START_CHAR)) {
                 outObject = processMultipleEvents(obj);
             } else {
                 outObject = processSingleEvent(obj);
@@ -81,12 +81,12 @@ public class JsonInputMapper implements InputMapper {
     }
 
     @Override
-    public Object convertToTypedInputEvent(Object obj) throws EventBuilderProcessingException {
+    public Object convertToTypedInputEvent(Object obj) throws EventReceiverProcessingException {
 
         Object outObject = null;
         if (obj instanceof String) {
             String jsonString = (String) obj;
-            if (jsonString.startsWith(EventBuilderConstants.JSON_ARRAY_START_CHAR)) {
+            if (jsonString.startsWith(EventReceiverConstants.JSON_ARRAY_START_CHAR)) {
                 outObject = processTypedMultipleEvents(obj);
             } else {
                 outObject = processTypedSingleEvent(obj);
@@ -98,12 +98,12 @@ public class JsonInputMapper implements InputMapper {
 
     @Override
     public Attribute[] getOutputAttributes() {
-        JsonInputMapping jsonInputMapping = (JsonInputMapping) eventBuilderConfiguration.getInputMapping();
+        JsonInputMapping jsonInputMapping = (JsonInputMapping) eventReceiverConfiguration.getInputMapping();
         List<InputMappingAttribute> inputMappingAttributes = jsonInputMapping.getInputMappingAttributes();
-        return EventBuilderConfigHelper.getAttributes(inputMappingAttributes);
+        return EventReceiverConfigHelper.getAttributes(inputMappingAttributes);
     }
 
-    private Object[][] processMultipleEvents(Object obj) throws EventBuilderProcessingException {
+    private Object[][] processMultipleEvents(Object obj) throws EventReceiverProcessingException {
         Object[][] objArray = null;
         if (obj instanceof String) {
             String events = (String) obj;
@@ -115,13 +115,13 @@ public class JsonInputMapper implements InputMapper {
                     objArray[i] = processSingleEvent(jsonArray.getJSONObject(i).toString());
                 }
             } catch (JSONException e) {
-                throw new EventBuilderProcessingException("Error in parsing JSON: ", e);
+                throw new EventReceiverProcessingException("Error in parsing JSON: ", e);
             }
         }
         return objArray;
     }
 
-    private Object[] processSingleEvent(Object obj) throws EventBuilderProcessingException {
+    private Object[] processSingleEvent(Object obj) throws EventReceiverProcessingException {
         Object[] outObjArray = null;
         if (obj instanceof String) {
             String jsonString = (String) obj;
@@ -153,7 +153,7 @@ public class JsonInputMapper implements InputMapper {
     }
 
     private Object[][] processTypedMultipleEvents(Object obj)
-            throws EventBuilderProcessingException {
+            throws EventReceiverProcessingException {
         Object[][] objArray = null;
         String events = (String) obj;
         JSONArray jsonArray;
@@ -164,13 +164,13 @@ public class JsonInputMapper implements InputMapper {
                 objArray[i] = processTypedSingleEvent(jsonArray.getJSONObject(i).toString());
             }
         } catch (JSONException e) {
-            throw new EventBuilderProcessingException("Error in parsing JSON: ", e);
+            throw new EventReceiverProcessingException("Error in parsing JSON: ", e);
         }
         return objArray;
     }
 
     private Object[] processTypedSingleEvent(Object obj)
-            throws EventBuilderProcessingException {
+            throws EventReceiverProcessingException {
 
         Object attributeArray[] = new Object[noMetaData + noCorrelationData + noPayloadData];
         int attributeCount = 0;
@@ -179,10 +179,10 @@ public class JsonInputMapper implements InputMapper {
 
             if (noMetaData > 0) {
                 for (Attribute metaData : streamDefinition.getMetaData()) {
-                    JsonPath jsonPath = JsonPath.compile("$." + EventBuilderConstants.EVENT_PARENT_TAG + "." + EventBuilderConstants.EVENT_META_TAG);
+                    JsonPath jsonPath = JsonPath.compile("$." + EventReceiverConstants.EVENT_PARENT_TAG + "." + EventReceiverConstants.EVENT_META_TAG);
                     Map<Object, Object> eventMap = jsonPath.read(jsonString);
                     if (eventMap == null) {
-                        throw new EventBuilderProcessingException("Missing event MetaData attributes, Event does not match with the stream : " + this.eventBuilderConfiguration.getToStreamName() + ":" + eventBuilderConfiguration.getToStreamVersion());
+                        throw new EventReceiverProcessingException("Missing event MetaData attributes, Event does not match with the stream : " + this.eventReceiverConfiguration.getToStreamName() + ":" + eventReceiverConfiguration.getToStreamVersion());
                     }
                     for (Map.Entry<Object, Object> eventAttribute : eventMap.entrySet()) {
                         if (eventAttribute.getKey().equals(metaData.getName())) {
@@ -194,10 +194,10 @@ public class JsonInputMapper implements InputMapper {
             }
             if (noCorrelationData > 0) {
                 for (Attribute correlationData : streamDefinition.getCorrelationData()) {
-                    JsonPath jsonPath = JsonPath.compile("$." + EventBuilderConstants.EVENT_PARENT_TAG + "." + EventBuilderConstants.EVENT_CORRELATION_TAG);
+                    JsonPath jsonPath = JsonPath.compile("$." + EventReceiverConstants.EVENT_PARENT_TAG + "." + EventReceiverConstants.EVENT_CORRELATION_TAG);
                     Map<Object, Object> eventMap = jsonPath.read(jsonString);
                     if (eventMap == null) {
-                        throw new EventBuilderProcessingException("Missing CorrelationData attributes, Event does not match with the stream : " + this.eventBuilderConfiguration.getToStreamName() + ":" + eventBuilderConfiguration.getToStreamVersion());
+                        throw new EventReceiverProcessingException("Missing CorrelationData attributes, Event does not match with the stream : " + this.eventReceiverConfiguration.getToStreamName() + ":" + eventReceiverConfiguration.getToStreamVersion());
                     }
                     for (Map.Entry<Object, Object> eventAttribute : eventMap.entrySet()) {
 
@@ -210,10 +210,10 @@ public class JsonInputMapper implements InputMapper {
             }
             if (noPayloadData > 0) {
                 for (Attribute payloadData : streamDefinition.getPayloadData()) {
-                    JsonPath jsonPath = JsonPath.compile("$." + EventBuilderConstants.EVENT_PARENT_TAG + "." + EventBuilderConstants.EVENT_PAYLOAD_TAG);
+                    JsonPath jsonPath = JsonPath.compile("$." + EventReceiverConstants.EVENT_PARENT_TAG + "." + EventReceiverConstants.EVENT_PAYLOAD_TAG);
                     Map<Object, Object> eventMap = jsonPath.read(jsonString);
                     if (eventMap == null) {
-                        throw new EventBuilderProcessingException("Missing PayloadData attributes, Event does not match with the stream : " + this.eventBuilderConfiguration.getToStreamName() + ":" + eventBuilderConfiguration.getToStreamVersion());
+                        throw new EventReceiverProcessingException("Missing PayloadData attributes, Event does not match with the stream : " + this.eventReceiverConfiguration.getToStreamName() + ":" + eventReceiverConfiguration.getToStreamVersion());
                     }
                     for (Map.Entry<Object, Object> eventAttribute : eventMap.entrySet()) {
 
@@ -225,7 +225,7 @@ public class JsonInputMapper implements InputMapper {
                 }
             }
             if (noMetaData + noCorrelationData + noPayloadData != attributeCount) {
-                throw new EventBuilderProcessingException("Event attributes are not matching with the stream : " + this.eventBuilderConfiguration.getToStreamName() + ":" + eventBuilderConfiguration.getToStreamVersion());
+                throw new EventReceiverProcessingException("Event attributes are not matching with the stream : " + this.eventReceiverConfiguration.getToStreamName() + ":" + eventReceiverConfiguration.getToStreamVersion());
             }
         }
         return attributeArray;
@@ -276,14 +276,14 @@ public class JsonInputMapper implements InputMapper {
                                              List<InputMappingAttribute> inputMappingAttributeList) {
         if (streamDefinition.getMetaData() != null && streamDefinition.getMetaData().size() > 0) {
             for (Attribute metaData : streamDefinition.getMetaData()) {
-                InputMappingAttribute inputMappingAttribute = getInputMappingAttribute(EventBuilderConstants.META_DATA_PREFIX + metaData.getName(), inputMappingAttributeList);
+                InputMappingAttribute inputMappingAttribute = getInputMappingAttribute(EventReceiverConstants.META_DATA_PREFIX + metaData.getName(), inputMappingAttributeList);
                 attributeJsonPathDataList.add(new JsonPathData(JsonPath.compile(inputMappingAttribute.getFromElementKey()), inputMappingAttribute.getToElementType(), inputMappingAttribute.getDefaultValue()));
             }
         }
 
         if (streamDefinition.getCorrelationData() != null &&streamDefinition.getCorrelationData().size() > 0) {
             for (Attribute correlationData : streamDefinition.getCorrelationData()) {
-                InputMappingAttribute inputMappingAttribute = getInputMappingAttribute(EventBuilderConstants.CORRELATION_DATA_PREFIX + correlationData.getName(), inputMappingAttributeList);
+                InputMappingAttribute inputMappingAttribute = getInputMappingAttribute(EventReceiverConstants.CORRELATION_DATA_PREFIX + correlationData.getName(), inputMappingAttributeList);
                 attributeJsonPathDataList.add(new JsonPathData(JsonPath.compile(inputMappingAttribute.getFromElementKey()), inputMappingAttribute.getToElementType(), inputMappingAttribute.getDefaultValue()));
 
             }

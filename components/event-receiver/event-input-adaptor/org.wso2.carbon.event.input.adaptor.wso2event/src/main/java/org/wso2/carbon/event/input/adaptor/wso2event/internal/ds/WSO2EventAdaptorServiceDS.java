@@ -22,8 +22,8 @@ import org.apache.commons.logging.LogFactory;
 import org.osgi.service.component.ComponentContext;
 import org.wso2.carbon.databridge.agent.thrift.Agent;
 import org.wso2.carbon.databridge.core.DataBridgeSubscriberService;
-import org.wso2.carbon.event.input.adaptor.manager.core.InputEventAdaptorFactory;
 import org.wso2.carbon.event.input.adaptor.wso2event.WSO2EventEventAdaptorFactory;
+import org.wso2.carbon.event.receiver.core.InputEventAdaptorFactory;
 
 
 /**

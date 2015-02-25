@@ -20,7 +20,7 @@ package org.wso2.carbon.event.receiver.core.internal.type.xml;
 
 import org.wso2.carbon.event.receiver.core.internal.type.AbstractInputMapping;
 import org.wso2.carbon.event.receiver.core.internal.type.xml.config.XPathDefinition;
-import org.wso2.carbon.event.receiver.core.internal.util.EventBuilderConstants;
+import org.wso2.carbon.event.receiver.core.internal.util.EventReceiverConstants;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -52,7 +52,7 @@ public class XMLInputMapping extends AbstractInputMapping {
 
     @Override
     public String getMappingType() {
-        return EventBuilderConstants.EB_XML_MAPPING_TYPE;
+        return EventReceiverConstants.EB_XML_MAPPING_TYPE;
     }
 
     @Override

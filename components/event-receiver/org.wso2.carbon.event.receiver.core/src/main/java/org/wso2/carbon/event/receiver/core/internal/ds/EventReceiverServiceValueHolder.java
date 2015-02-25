@@ -18,11 +18,11 @@
 package org.wso2.carbon.event.receiver.core.internal.ds;
 
 import org.wso2.carbon.databridge.core.DataBridgeReceiverService;
-import org.wso2.carbon.event.receiver.core.EventBuilderService;
-import org.wso2.carbon.event.receiver.core.InputEventAdaptorService;
+import org.wso2.carbon.event.receiver.core.EventReceiverService;
 import org.wso2.carbon.event.receiver.core.MessageType;
 import org.wso2.carbon.event.receiver.core.config.InputMapperFactory;
-import org.wso2.carbon.event.receiver.core.internal.CarbonEventBuilderService;
+import org.wso2.carbon.event.receiver.core.internal.CarbonEventReceiverService;
+import org.wso2.carbon.event.receiver.core.internal.CarbonInputEventAdaptorService;
 import org.wso2.carbon.event.receiver.core.internal.type.json.JsonInputMapperFactory;
 import org.wso2.carbon.event.receiver.core.internal.type.map.MapInputMapperFactory;
 import org.wso2.carbon.event.receiver.core.internal.type.text.TextInputMapperFactory;
@@ -35,10 +35,10 @@ import org.wso2.carbon.utils.ConfigurationContextService;
 
 import java.util.concurrent.ConcurrentHashMap;
 
-public class EventBuilderServiceValueHolder {
-    private static EventBuilderService eventBuilderService;
-    private static InputEventAdaptorService inputEventAdaptorService;
-    private static CarbonEventBuilderService carbonEventBuilderService;
+public class EventReceiverServiceValueHolder {
+    private static EventReceiverService eventReceiverService;
+    private static CarbonInputEventAdaptorService inputEventAdaptorService;
+    private static CarbonEventReceiverService carbonEventReceiverService;
     private static RegistryService registryService;
     private static EventStreamService eventStreamService;
     private static ConcurrentHashMap<String, InputMapperFactory> mappingFactoryMap;
@@ -56,7 +56,7 @@ public class EventBuilderServiceValueHolder {
 
     private static EventStatisticsService eventStatisticsService;
 
-    private EventBuilderServiceValueHolder() {
+    private EventReceiverServiceValueHolder() {
 
     }
 
@@ -64,33 +64,33 @@ public class EventBuilderServiceValueHolder {
         return mappingFactoryMap;
     }
 
-    public static CarbonEventBuilderService getCarbonEventBuilderService() {
-        return carbonEventBuilderService;
+    public static CarbonEventReceiverService getCarbonEventReceiverService() {
+        return carbonEventReceiverService;
     }
 
-    public static void registerEventBuilderService(EventBuilderService eventBuilderService) {
-        EventBuilderServiceValueHolder.eventBuilderService = eventBuilderService;
-        if (eventBuilderService instanceof CarbonEventBuilderService) {
-            EventBuilderServiceValueHolder.carbonEventBuilderService = (CarbonEventBuilderService) eventBuilderService;
+    public static void registerEventBuilderService(EventReceiverService eventReceiverService) {
+        EventReceiverServiceValueHolder.eventReceiverService = eventReceiverService;
+        if (eventReceiverService instanceof CarbonEventReceiverService) {
+            EventReceiverServiceValueHolder.carbonEventReceiverService = (CarbonEventReceiverService) eventReceiverService;
         }
     }
 
-    public static EventBuilderService getEventBuilderService() {
-        return EventBuilderServiceValueHolder.eventBuilderService;
+    public static EventReceiverService getEventBuilderService() {
+        return EventReceiverServiceValueHolder.eventReceiverService;
     }
 
-    public static void registerInputEventAdaptorService(
-            InputEventAdaptorService inputEventAdaptorService) {
-        EventBuilderServiceValueHolder.inputEventAdaptorService = inputEventAdaptorService;
+    public static void registerCarbonInputEventAdaptorService(
+            CarbonInputEventAdaptorService inputEventAdaptorService) {
+        EventReceiverServiceValueHolder.inputEventAdaptorService = inputEventAdaptorService;
     }
 
-    public static InputEventAdaptorService getInputEventAdaptorService() {
-        return EventBuilderServiceValueHolder.inputEventAdaptorService;
+    public static CarbonInputEventAdaptorService getCarbonInputEventAdaptorService() {
+        return EventReceiverServiceValueHolder.inputEventAdaptorService;
     }
 
     public static void registerEventStatisticsService(
             EventStatisticsService eventStatisticsService) {
-        EventBuilderServiceValueHolder.eventStatisticsService = eventStatisticsService;
+        EventReceiverServiceValueHolder.eventStatisticsService = eventStatisticsService;
     }
 
     public static EventStatisticsService getEventStatisticsService() {
@@ -98,7 +98,7 @@ public class EventBuilderServiceValueHolder {
     }
 
     public static void registerRegistryService(RegistryService registryService) {
-        EventBuilderServiceValueHolder.registryService = registryService;
+        EventReceiverServiceValueHolder.registryService = registryService;
     }
 
     public static RegistryService getRegistryService() {
@@ -106,16 +106,16 @@ public class EventBuilderServiceValueHolder {
     }
 
     public static void registerEventStreamService(EventStreamService eventStreamService) {
-        EventBuilderServiceValueHolder.eventStreamService = eventStreamService;
+        EventReceiverServiceValueHolder.eventStreamService = eventStreamService;
     }
 
     public static EventStreamService getEventStreamService() {
-        return EventBuilderServiceValueHolder.eventStreamService;
+        return EventReceiverServiceValueHolder.eventStreamService;
     }
 
     public static void registerDataBridgeReceiverService(
             DataBridgeReceiverService dataBridgeReceiverService) {
-        EventBuilderServiceValueHolder.dataBridgeReceiverService = dataBridgeReceiverService;
+        EventReceiverServiceValueHolder.dataBridgeReceiverService = dataBridgeReceiverService;
     }
 
     public static DataBridgeReceiverService getDataBridgeReceiverService() {
@@ -128,7 +128,7 @@ public class EventBuilderServiceValueHolder {
 
     public static void setConfigurationContextService(
             ConfigurationContextService configurationContextService) {
-        EventBuilderServiceValueHolder.configurationContextService = configurationContextService;
+        EventReceiverServiceValueHolder.configurationContextService = configurationContextService;
     }
 
 }

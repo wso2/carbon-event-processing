@@ -21,11 +21,12 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.osgi.service.component.ComponentContext;
 import org.wso2.carbon.databridge.core.DataBridgeReceiverService;
-import org.wso2.carbon.event.receiver.core.EventBuilderService;
+import org.wso2.carbon.event.receiver.core.AbstractInputEventAdaptor;
+import org.wso2.carbon.event.receiver.core.EventReceiverService;
 import org.wso2.carbon.event.receiver.core.InputEventAdaptorFactory;
 import org.wso2.carbon.event.receiver.core.InputEventAdaptorService;
-import org.wso2.carbon.event.receiver.core.exception.InputEventAdaptorManagerConfigurationException;
-import org.wso2.carbon.event.receiver.core.internal.CarbonEventBuilderService;
+import org.wso2.carbon.event.receiver.core.exception.EventReceiverConfigurationException;
+import org.wso2.carbon.event.receiver.core.internal.CarbonEventReceiverService;
 import org.wso2.carbon.event.receiver.core.internal.CarbonInputEventAdaptorService;
 import org.wso2.carbon.event.receiver.core.internal.DataBridgeStreamAddRemoveListenerImpl;
 import org.wso2.carbon.event.receiver.core.internal.EventStreamListenerImpl;
@@ -35,14 +36,12 @@ import org.wso2.carbon.registry.core.exceptions.RegistryException;
 import org.wso2.carbon.registry.core.service.RegistryService;
 import org.wso2.carbon.utils.ConfigurationContextService;
 
+import java.util.ArrayList;
 import java.util.List;
 
 
 /**
- * @scr.component name="eventBuilderService.component" immediate="true"
- * @scr.reference name="inputEventAdaptor.service"
- * interface="org.wso2.carbon.event.receiver.core.InputEventAdaptorService" cardinality="1..1"
- * policy="dynamic" bind="setInputEventAdaptorService" unbind="unsetInputEventAdaptorService"
+ * @scr.component name="eventReceiverService.component" immediate="true"
  * @scr.reference name="registry.service"
  * interface="org.wso2.carbon.registry.core.service.RegistryService"
  * cardinality="1..1" policy="dynamic" bind="setRegistryService" unbind="unsetRegistryService"
@@ -59,91 +58,99 @@ import java.util.List;
  * interface="org.wso2.carbon.utils.ConfigurationContextService" cardinality="0..1" policy="dynamic"
  * bind="setConfigurationContextService" unbind="unsetConfigurationContextService"
  */
-public class EventBuilderServiceDS {
+public class EventReceiverServiceDS {
 
-    private static final Log log = LogFactory.getLog(EventBuilderServiceDS.class);
+    public static List<InputEventAdaptorFactory> inputEventAdaptorFactories = new ArrayList<InputEventAdaptorFactory>();
+    private static final Log log = LogFactory.getLog(EventReceiverServiceDS.class);
 
     protected void activate(ComponentContext context) {
         try {
-            CarbonEventBuilderService carbonEventBuilderService = new CarbonEventBuilderService();
-            EventBuilderServiceValueHolder.registerEventBuilderService(carbonEventBuilderService);
-            context.getBundleContext().registerService(EventBuilderService.class.getName(), carbonEventBuilderService, null);
+            CarbonEventReceiverService carbonEventReceiverService = new CarbonEventReceiverService();
+            EventReceiverServiceValueHolder.registerEventBuilderService(carbonEventReceiverService);
+            context.getBundleContext().registerService(EventReceiverService.class.getName(), carbonEventReceiverService, null);
+
+            InputEventAdaptorService inputEventAdaptorService = new CarbonInputEventAdaptorService();
+            context.getBundleContext().registerService(InputEventAdaptorService.class.getName(), inputEventAdaptorService, null);
+            CarbonInputEventAdaptorService carbonInputEventAdaptorService = new CarbonInputEventAdaptorService();
+            EventReceiverServiceValueHolder.registerCarbonInputEventAdaptorService(carbonInputEventAdaptorService);
+
+
             if (log.isDebugEnabled()) {
                 log.debug("Successfully deployed EventReceiver Service.");
             }
 
 
-
-
-            EventBuilderServiceValueHolder.getEventStreamService().registerEventStreamListener(new EventStreamListenerImpl());
-            EventBuilderServiceValueHolder.getDataBridgeReceiverService().subscribe(new DataBridgeStreamAddRemoveListenerImpl());
+            EventReceiverServiceValueHolder.getEventStreamService().registerEventStreamListener(new EventStreamListenerImpl());
+            EventReceiverServiceValueHolder.getDataBridgeReceiverService().subscribe(new DataBridgeStreamAddRemoveListenerImpl());
 
             registerEventAdaptorTypes();
 
         } catch (RuntimeException e) {
-            log.error("Could not create EventBuilderService or EventReceiver : " + e.getMessage(), e);
+            log.error("Could not create EventReceiverService or EventReceiver : " + e.getMessage(), e);
         }
     }
 
     protected void setDataBridgeReceiverService(
             DataBridgeReceiverService dataBridgeReceiverService) {
-        EventBuilderServiceValueHolder.registerDataBridgeReceiverService(dataBridgeReceiverService);
+        EventReceiverServiceValueHolder.registerDataBridgeReceiverService(dataBridgeReceiverService);
     }
 
     protected void unSetDataBridgeReceiverService(
             DataBridgeReceiverService dataBridgeSubscriberService) {
-        EventBuilderServiceValueHolder.registerDataBridgeReceiverService(null);
+        EventReceiverServiceValueHolder.registerDataBridgeReceiverService(null);
 
-    }
-
-    protected void setInputEventAdaptorService(InputEventAdaptorService inputEventAdaptorService) {
-        EventBuilderServiceValueHolder.registerInputEventAdaptorService(inputEventAdaptorService);
-    }
-
-    protected void unsetInputEventAdaptorService(
-            InputEventAdaptorService inputEventAdaptorService) {
-        EventBuilderServiceValueHolder.registerInputEventAdaptorService(null);
     }
 
     protected void setEventStatisticsService(EventStatisticsService eventStatisticsService) {
-        EventBuilderServiceValueHolder.registerEventStatisticsService(eventStatisticsService);
+        EventReceiverServiceValueHolder.registerEventStatisticsService(eventStatisticsService);
     }
 
     protected void unsetEventStatisticsService(EventStatisticsService eventStatisticsService) {
-        EventBuilderServiceValueHolder.registerEventStatisticsService(null);
+        EventReceiverServiceValueHolder.registerEventStatisticsService(null);
     }
 
     protected void setRegistryService(RegistryService registryService) throws RegistryException {
-        EventBuilderServiceValueHolder.registerRegistryService(registryService);
+        EventReceiverServiceValueHolder.registerRegistryService(registryService);
     }
 
     protected void unsetRegistryService(RegistryService registryService) {
-        EventBuilderServiceValueHolder.registerRegistryService(null);
+        EventReceiverServiceValueHolder.registerRegistryService(null);
     }
 
     protected void setEventStreamService(EventStreamService eventStreamService) {
-        EventBuilderServiceValueHolder.registerEventStreamService(eventStreamService);
+        EventReceiverServiceValueHolder.registerEventStreamService(eventStreamService);
     }
 
     protected void unsetEventStreamService(EventStreamService eventStreamService) {
-        EventBuilderServiceValueHolder.registerEventStreamService(null);
+        EventReceiverServiceValueHolder.registerEventStreamService(null);
     }
 
     protected void setConfigurationContextService(
             ConfigurationContextService configurationContextService) {
-        EventBuilderServiceValueHolder.setConfigurationContextService(configurationContextService);
+        EventReceiverServiceValueHolder.setConfigurationContextService(configurationContextService);
     }
 
     protected void unsetConfigurationContextService(
             ConfigurationContextService configurationContextService) {
-        EventBuilderServiceValueHolder.setConfigurationContextService(null);
+        EventReceiverServiceValueHolder.setConfigurationContextService(null);
 
     }
 
     private void registerEventAdaptorTypes() {
+
+
         List<InputEventAdaptorFactory> inputEventAdaptorFactories = InputEventAdaptorServiceTrackerDS.inputEventAdaptorFactories;
         for (InputEventAdaptorFactory inputEventAdaptorFactory : inputEventAdaptorFactories) {
-            ((CarbonInputEventAdaptorService) InputEventAdaptorServiceValueHolder.getCarbonInputEventAdaptorService()).registerEventAdaptor(inputEventAdaptorFactory.getEventAdaptor());
+            AbstractInputEventAdaptor abstractInputEventAdaptor = inputEventAdaptorFactory.getEventAdaptor();
+            String adaptorType = abstractInputEventAdaptor.getInputEventAdaptorDto().getEventAdaptorTypeName();
+            (EventReceiverServiceValueHolder.getCarbonInputEventAdaptorService()).registerEventAdaptor(abstractInputEventAdaptor);
+            try {
+                EventReceiverServiceValueHolder.getCarbonEventReceiverService().activateInactiveEventReceiverConfigurationsForAdaptor(adaptorType);
+            } catch (EventReceiverConfigurationException e) {
+                log.error("Error while activating inactive event builder for event adaptor Type " + adaptorType, e);
+            } catch (Throwable t) {
+                log.error("Error while deploying input event adaptor Type " + adaptorType, t);
+            }
         }
     }
 

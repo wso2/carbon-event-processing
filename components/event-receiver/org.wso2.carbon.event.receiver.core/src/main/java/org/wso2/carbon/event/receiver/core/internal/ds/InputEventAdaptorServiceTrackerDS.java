@@ -21,7 +21,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.osgi.service.component.ComponentContext;
 import org.wso2.carbon.event.receiver.core.InputEventAdaptorFactory;
-import org.wso2.carbon.event.receiver.core.internal.CarbonInputEventAdaptorService;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -36,7 +35,6 @@ import java.util.List;
 public class InputEventAdaptorServiceTrackerDS {
 
     private static final Log log = LogFactory.getLog(InputEventAdaptorServiceTrackerDS.class);
-    private boolean adaptorServiceInitialised = false;
     public static List<InputEventAdaptorFactory> inputEventAdaptorFactories = new ArrayList<InputEventAdaptorFactory>();
 
     /**
@@ -57,9 +55,8 @@ public class InputEventAdaptorServiceTrackerDS {
     protected void setEventAdaptorType(
             InputEventAdaptorFactory inputEventAdaptorFactory) {
         try {
-            if (InputEventAdaptorServiceValueHolder.getCarbonInputEventAdaptorService() != null) {
-                ((CarbonInputEventAdaptorService) InputEventAdaptorServiceValueHolder.getCarbonInputEventAdaptorService()).registerEventAdaptor(inputEventAdaptorFactory.getEventAdaptor());
-                adaptorServiceInitialised = true;
+            if (EventReceiverServiceValueHolder.getCarbonInputEventAdaptorService() != null) {
+                (EventReceiverServiceValueHolder.getCarbonInputEventAdaptorService()).registerEventAdaptor(inputEventAdaptorFactory.getEventAdaptor());
             } else {
                 inputEventAdaptorFactories.add(inputEventAdaptorFactory);
             }
@@ -70,7 +67,7 @@ public class InputEventAdaptorServiceTrackerDS {
 
     protected void unSetEventAdaptorType(
             InputEventAdaptorFactory inputEventAdaptorFactory) {
-        ((CarbonInputEventAdaptorService) InputEventAdaptorServiceValueHolder.getCarbonInputEventAdaptorService()).unRegisterEventAdaptor(inputEventAdaptorFactory.getEventAdaptor());
+        (EventReceiverServiceValueHolder.getCarbonInputEventAdaptorService()).unRegisterEventAdaptor(inputEventAdaptorFactory.getEventAdaptor());
     }
 }
 

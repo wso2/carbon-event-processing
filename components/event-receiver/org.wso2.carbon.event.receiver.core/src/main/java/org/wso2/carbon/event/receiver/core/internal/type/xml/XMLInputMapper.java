@@ -28,18 +28,18 @@ import org.apache.commons.logging.LogFactory;
 import org.jaxen.JaxenException;
 import org.wso2.carbon.databridge.commons.Attribute;
 import org.wso2.carbon.databridge.commons.StreamDefinition;
-import org.wso2.carbon.event.receiver.core.config.EventBuilderConfiguration;
+import org.wso2.carbon.event.receiver.core.config.EventReceiverConfiguration;
 import org.wso2.carbon.event.receiver.core.config.InputMapper;
 import org.wso2.carbon.event.receiver.core.config.InputMappingAttribute;
-import org.wso2.carbon.event.receiver.core.exception.EventBuilderConfigurationException;
-import org.wso2.carbon.event.receiver.core.exception.EventBuilderProcessingException;
-import org.wso2.carbon.event.receiver.core.exception.EventBuilderStreamValidationException;
+import org.wso2.carbon.event.receiver.core.exception.EventReceiverConfigurationException;
+import org.wso2.carbon.event.receiver.core.exception.EventReceiverProcessingException;
+import org.wso2.carbon.event.receiver.core.exception.EventReceiverStreamValidationException;
 import org.wso2.carbon.event.receiver.core.internal.type.xml.config.ReflectionBasedObjectSupplier;
 import org.wso2.carbon.event.receiver.core.internal.type.xml.config.XPathData;
 import org.wso2.carbon.event.receiver.core.internal.type.xml.config.XPathDefinition;
-import org.wso2.carbon.event.receiver.core.internal.util.EventBuilderConstants;
-import org.wso2.carbon.event.receiver.core.internal.util.EventBuilderUtil;
-import org.wso2.carbon.event.receiver.core.internal.util.helper.EventBuilderConfigHelper;
+import org.wso2.carbon.event.receiver.core.internal.util.EventReceiverConstants;
+import org.wso2.carbon.event.receiver.core.internal.util.EventReceiverUtil;
+import org.wso2.carbon.event.receiver.core.internal.util.helper.EventReceiverConfigHelper;
 
 import javax.xml.stream.XMLStreamException;
 import java.lang.reflect.InvocationTargetException;
@@ -52,19 +52,19 @@ import java.util.List;
 public class XMLInputMapper implements InputMapper {
 
     private static final Log log = LogFactory.getLog(XMLInputMapper.class);
-    private EventBuilderConfiguration eventBuilderConfiguration = null;
+    private EventReceiverConfiguration eventReceiverConfiguration = null;
     private List<XPathData> attributeXpathList = null;
     private List<XPathDefinition> xPathDefinitions = null;
     private ReflectionBasedObjectSupplier reflectionBasedObjectSupplier = new ReflectionBasedObjectSupplier();
     private AXIOMXPath parentSelectorXpath = null;
 
-    public XMLInputMapper(EventBuilderConfiguration eventBuilderConfiguration,
+    public XMLInputMapper(EventReceiverConfiguration eventReceiverConfiguration,
                           StreamDefinition exportedStreamDefinition)
-            throws EventBuilderConfigurationException {
-        this.eventBuilderConfiguration = eventBuilderConfiguration;
+            throws EventReceiverConfigurationException {
+        this.eventReceiverConfiguration = eventReceiverConfiguration;
 
-        if (eventBuilderConfiguration != null && eventBuilderConfiguration.getInputMapping() instanceof XMLInputMapping) {
-            XMLInputMapping xmlInputMapping = (XMLInputMapping) eventBuilderConfiguration.getInputMapping();
+        if (eventReceiverConfiguration != null && eventReceiverConfiguration.getInputMapping() instanceof XMLInputMapping) {
+            XMLInputMapping xmlInputMapping = (XMLInputMapping) eventReceiverConfiguration.getInputMapping();
             if (xmlInputMapping.isCustomMappingEnabled()) {
                 try {
 
@@ -79,10 +79,10 @@ public class XMLInputMapper implements InputMapper {
                                 xpath.addNamespace(xPathDefinition.getPrefix(), xPathDefinition.getNamespaceUri());
                             }
                         }
-                        String type = EventBuilderConstants.ATTRIBUTE_TYPE_CLASS_TYPE_MAP.get(inputMappingAttribute.getToElementType());
-                        int position = EventBuilderUtil.getAttributePosition(inputMappingAttribute.getToElementKey(), exportedStreamDefinition);
+                        String type = EventReceiverConstants.ATTRIBUTE_TYPE_CLASS_TYPE_MAP.get(inputMappingAttribute.getToElementType());
+                        int position = EventReceiverUtil.getAttributePosition(inputMappingAttribute.getToElementKey(), exportedStreamDefinition);
                         if (position < 0 || position > xpathDataArray.length) {
-                            throw new EventBuilderStreamValidationException("Could not determine the stream position for attribute : "
+                            throw new EventReceiverStreamValidationException("Could not determine the stream position for attribute : "
                                     + inputMappingAttribute.getToElementKey() + " in stream exported by event builder "
                                     + exportedStreamDefinition.getStreamId(),exportedStreamDefinition.getStreamId());
                         }
@@ -98,18 +98,18 @@ public class XMLInputMapper implements InputMapper {
                         }
                     }
                 } catch (JaxenException e) {
-                    throw new EventBuilderConfigurationException("Error parsing XPath expression: " + e.getMessage(), e);
+                    throw new EventReceiverConfigurationException("Error parsing XPath expression: " + e.getMessage(), e);
                 }
             } else {
 
                 try {
-                    this.parentSelectorXpath = new AXIOMXPath("//" + EventBuilderConstants.MULTIPLE_EVENTS_PARENT_TAG);
+                    this.parentSelectorXpath = new AXIOMXPath("//" + EventReceiverConstants.MULTIPLE_EVENTS_PARENT_TAG);
                     attributeXpathList = new ArrayList<XPathData>();
                     if (exportedStreamDefinition.getMetaData() != null) {
                         for (Attribute attribute : exportedStreamDefinition.getMetaData()) {
-                            String xpathExpr = "//" + EventBuilderConstants.EVENT_META_TAG;
+                            String xpathExpr = "//" + EventReceiverConstants.EVENT_META_TAG;
                             AXIOMXPath xpath = new AXIOMXPath(xpathExpr + "/" + attribute.getName());
-                            String type = EventBuilderConstants.ATTRIBUTE_TYPE_CLASS_TYPE_MAP.get(attribute.getType());
+                            String type = EventReceiverConstants.ATTRIBUTE_TYPE_CLASS_TYPE_MAP.get(attribute.getType());
                             attributeXpathList.add(new XPathData(xpath, type, null));
 
                         }
@@ -117,9 +117,9 @@ public class XMLInputMapper implements InputMapper {
 
                     if (exportedStreamDefinition.getCorrelationData() != null) {
                         for (Attribute attribute : exportedStreamDefinition.getCorrelationData()) {
-                            String xpathExpr = "//" + EventBuilderConstants.EVENT_CORRELATION_TAG;
+                            String xpathExpr = "//" + EventReceiverConstants.EVENT_CORRELATION_TAG;
                             AXIOMXPath xpath = new AXIOMXPath(xpathExpr + "/" + attribute.getName());
-                            String type = EventBuilderConstants.ATTRIBUTE_TYPE_CLASS_TYPE_MAP.get(attribute.getType());
+                            String type = EventReceiverConstants.ATTRIBUTE_TYPE_CLASS_TYPE_MAP.get(attribute.getType());
                             attributeXpathList.add(new XPathData(xpath, type, null));
 
                         }
@@ -127,15 +127,15 @@ public class XMLInputMapper implements InputMapper {
 
                     if (exportedStreamDefinition.getPayloadData() != null) {
                         for (Attribute attribute : exportedStreamDefinition.getPayloadData()) {
-                            String xpathExpr = "//" + EventBuilderConstants.EVENT_PAYLOAD_TAG;
+                            String xpathExpr = "//" + EventReceiverConstants.EVENT_PAYLOAD_TAG;
                             AXIOMXPath xpath = new AXIOMXPath(xpathExpr + "/" + attribute.getName());
-                            String type = EventBuilderConstants.ATTRIBUTE_TYPE_CLASS_TYPE_MAP.get(attribute.getType());
+                            String type = EventReceiverConstants.ATTRIBUTE_TYPE_CLASS_TYPE_MAP.get(attribute.getType());
                             attributeXpathList.add(new XPathData(xpath, type, null));
 
                         }
                     }
                 } catch (JaxenException e) {
-                    throw new EventBuilderConfigurationException("Error parsing XPath expression: " + e.getMessage(), e);
+                    throw new EventReceiverConfigurationException("Error parsing XPath expression: " + e.getMessage(), e);
                 }
             }
         }
@@ -143,7 +143,7 @@ public class XMLInputMapper implements InputMapper {
     }
 
     @Override
-    public Object convertToMappedInputEvent(Object obj) throws EventBuilderProcessingException {
+    public Object convertToMappedInputEvent(Object obj) throws EventReceiverProcessingException {
         if (this.parentSelectorXpath != null) {
             return processMultipleEvents(obj);
         } else {
@@ -152,7 +152,7 @@ public class XMLInputMapper implements InputMapper {
     }
 
     @Override
-    public Object convertToTypedInputEvent(Object obj) throws EventBuilderProcessingException {
+    public Object convertToTypedInputEvent(Object obj) throws EventReceiverProcessingException {
         if (this.parentSelectorXpath != null) {
             return processMultipleEvents(obj);
         } else {
@@ -162,18 +162,18 @@ public class XMLInputMapper implements InputMapper {
 
     @Override
     public Attribute[] getOutputAttributes() {
-        XMLInputMapping xmlInputMapping = (XMLInputMapping) eventBuilderConfiguration.getInputMapping();
+        XMLInputMapping xmlInputMapping = (XMLInputMapping) eventReceiverConfiguration.getInputMapping();
         List<InputMappingAttribute> inputMappingAttributes = xmlInputMapping.getInputMappingAttributes();
-        return EventBuilderConfigHelper.getAttributes(inputMappingAttributes);
+        return EventReceiverConfigHelper.getAttributes(inputMappingAttributes);
     }
 
-    private Object[][] processMultipleEvents(Object obj) throws EventBuilderProcessingException {
+    private Object[][] processMultipleEvents(Object obj) throws EventReceiverProcessingException {
         if (obj instanceof String) {
             String textMessage = (String) obj;
             try {
                 obj = AXIOMUtil.stringToOM(textMessage);
             } catch (XMLStreamException e) {
-                throw new EventBuilderProcessingException("Error parsing incoming XML event : " + e.getMessage(), e);
+                throw new EventReceiverProcessingException("Error parsing incoming XML event : " + e.getMessage(), e);
             }
         }
         if (obj instanceof OMElement) {
@@ -201,13 +201,13 @@ public class XMLInputMapper implements InputMapper {
                 }
                 return objArrayList.toArray(new Object[objArrayList.size()][]);
             } catch (JaxenException e) {
-                throw new EventBuilderProcessingException("Unable to parse XPath for parent selector: " + e.getMessage(), e);
+                throw new EventReceiverProcessingException("Unable to parse XPath for parent selector: " + e.getMessage(), e);
             }
         }
         return null;
     }
 
-    private Object[] processSingleEvent(Object obj) throws EventBuilderProcessingException {
+    private Object[] processSingleEvent(Object obj) throws EventReceiverProcessingException {
         Object[] outObjArray = null;
         OMElement eventOMElement = null;
         if (obj instanceof String) {
@@ -215,7 +215,7 @@ public class XMLInputMapper implements InputMapper {
             try {
                 eventOMElement = AXIOMUtil.stringToOM(textMessage);
             } catch (XMLStreamException e) {
-                throw new EventBuilderProcessingException("Error parsing incoming XML event : " + e.getMessage(), e);
+                throw new EventReceiverProcessingException("Error parsing incoming XML event : " + e.getMessage(), e);
             }
         } else if (obj instanceof OMElement) {
             eventOMElement = (OMElement) obj;
@@ -249,24 +249,24 @@ public class XMLInputMapper implements InputMapper {
                         } else {
                             returnedObj = xpathData.getDefaultValue();
                         }
-//                        throw new  EventBuilderProcessingException ("Unable to parse XPath to retrieve required attribute. Sending defaults.");
+//                        throw new  EventReceiverProcessingException ("Unable to parse XPath to retrieve required attribute. Sending defaults.");
 //                        log.warn();
                     } else {
-                        throw new  EventBuilderProcessingException ("Unable to parse XPath "+xpathData.getXpath()+" to retrieve required attribute.");
+                        throw new EventReceiverProcessingException("Unable to parse XPath "+xpathData.getXpath()+" to retrieve required attribute.");
                     }
                     objList.add(returnedObj);
                 } catch (JaxenException e) {
-                    throw new EventBuilderProcessingException("Error parsing xpath for " + xpath, e);
+                    throw new EventReceiverProcessingException("Error parsing xpath for " + xpath, e);
                 } catch (ClassNotFoundException e) {
-                    throw new EventBuilderProcessingException("Cannot find specified class for type " + type);
+                    throw new EventReceiverProcessingException("Cannot find specified class for type " + type);
                 } catch (AxisFault axisFault) {
-                    throw new EventBuilderProcessingException("Error de-serializing OMElement " + omElementResult, axisFault);
+                    throw new EventReceiverProcessingException("Error de-serializing OMElement " + omElementResult, axisFault);
                 } catch (NoSuchMethodException e) {
-                    throw new EventBuilderProcessingException("Error trying to convert default value to specified target type.", e);
+                    throw new EventReceiverProcessingException("Error trying to convert default value to specified target type.", e);
                 } catch (InvocationTargetException e) {
-                    throw new EventBuilderProcessingException("Error trying to convert default value to specified target type.", e);
+                    throw new EventReceiverProcessingException("Error trying to convert default value to specified target type.", e);
                 } catch (IllegalAccessException e) {
-                    throw new EventBuilderProcessingException("Error trying to convert default value to specified target type.", e);
+                    throw new EventReceiverProcessingException("Error trying to convert default value to specified target type.", e);
                 }
             }
             outObjArray = objList.toArray(new Object[objList.size()]);

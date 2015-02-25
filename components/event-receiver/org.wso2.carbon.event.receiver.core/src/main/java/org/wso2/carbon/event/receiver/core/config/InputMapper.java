@@ -18,7 +18,7 @@
 package org.wso2.carbon.event.receiver.core.config;
 
 import org.wso2.carbon.databridge.commons.Attribute;
-import org.wso2.carbon.event.receiver.core.exception.EventBuilderProcessingException;
+import org.wso2.carbon.event.receiver.core.exception.EventReceiverProcessingException;
 
 public interface InputMapper {
     /**
@@ -28,10 +28,10 @@ public interface InputMapper {
      * @param obj the object to be converted
      * @return the converted object. This can be an object array or an array of object arrays
      *         in the case of the mapper supporting processing of batched events
-     * @throws EventBuilderProcessingException
+     * @throws EventReceiverProcessingException
      *
      */
-    public Object convertToMappedInputEvent(Object obj) throws EventBuilderProcessingException;
+    public Object convertToMappedInputEvent(Object obj) throws EventReceiverProcessingException;
 
     /**
      * Converts the passed in object and returns an object array(s) with attributes as array elements.
@@ -41,10 +41,10 @@ public interface InputMapper {
      * @param obj the object to be converted
      * @return the converted object. This can be an object array or an array of object arrays
      *         in the case of the mapper supporting processing of batched events
-     * @throws EventBuilderProcessingException
+     * @throws EventReceiverProcessingException
      *
      */
-    public Object convertToTypedInputEvent(Object obj) throws EventBuilderProcessingException;
+    public Object convertToTypedInputEvent(Object obj) throws EventReceiverProcessingException;
 
     /**
      * Returns an array of attributes that will be output from the stream definition.

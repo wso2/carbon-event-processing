@@ -22,9 +22,9 @@ import org.wso2.carbon.context.PrivilegedCarbonContext;
 import org.wso2.carbon.databridge.commons.Attribute;
 import org.wso2.carbon.databridge.commons.AttributeType;
 import org.wso2.carbon.databridge.commons.StreamDefinition;
-import org.wso2.carbon.event.receiver.core.config.EventBuilderConfiguration;
+import org.wso2.carbon.event.receiver.core.config.EventReceiverConfiguration;
 import org.wso2.carbon.event.receiver.core.config.InputMappingAttribute;
-import org.wso2.carbon.event.receiver.core.exception.EventBuilderConfigurationException;
+import org.wso2.carbon.event.receiver.core.exception.EventReceiverConfigurationException;
 import org.wso2.carbon.event.receiver.core.internal.type.AbstractInputMapping;
 import org.wso2.carbon.utils.multitenancy.MultitenantUtils;
 
@@ -32,7 +32,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
-public class EventBuilderUtil {
+public class EventReceiverUtil {
 
     public static Object getConvertedAttributeObject(String value, AttributeType type) {
         switch (type) {
@@ -53,27 +53,27 @@ public class EventBuilderUtil {
     }
 
     public static String getExportedStreamIdFrom(
-            EventBuilderConfiguration eventBuilderConfiguration) {
+            EventReceiverConfiguration eventReceiverConfiguration) {
         String streamId = null;
-        if (eventBuilderConfiguration != null && eventBuilderConfiguration.getToStreamName() != null && !eventBuilderConfiguration.getToStreamName().isEmpty()) {
-            streamId = eventBuilderConfiguration.getToStreamName() + EventBuilderConstants.STREAM_NAME_VER_DELIMITER +
-                    ((eventBuilderConfiguration.getToStreamVersion() != null && !eventBuilderConfiguration.getToStreamVersion().isEmpty()) ?
-                            eventBuilderConfiguration.getToStreamVersion() : EventBuilderConstants.DEFAULT_STREAM_VERSION);
+        if (eventReceiverConfiguration != null && eventReceiverConfiguration.getToStreamName() != null && !eventReceiverConfiguration.getToStreamName().isEmpty()) {
+            streamId = eventReceiverConfiguration.getToStreamName() + EventReceiverConstants.STREAM_NAME_VER_DELIMITER +
+                    ((eventReceiverConfiguration.getToStreamVersion() != null && !eventReceiverConfiguration.getToStreamVersion().isEmpty()) ?
+                            eventReceiverConfiguration.getToStreamVersion() : EventReceiverConstants.DEFAULT_STREAM_VERSION);
         }
 
         return streamId;
     }
 
     public static boolean isMetaAttribute(String attributeName) {
-        return attributeName != null && attributeName.startsWith(EventBuilderConstants.META_DATA_PREFIX);
+        return attributeName != null && attributeName.startsWith(EventReceiverConstants.META_DATA_PREFIX);
     }
 
     public static boolean isCorrelationAttribute(String attributeName) {
-        return attributeName != null && attributeName.startsWith(EventBuilderConstants.CORRELATION_DATA_PREFIX);
+        return attributeName != null && attributeName.startsWith(EventReceiverConstants.CORRELATION_DATA_PREFIX);
     }
 
     public static Attribute[] getOrderedAttributeArray(AbstractInputMapping inputMapping) {
-        List<InputMappingAttribute> orderedInputMappingAttributes = EventBuilderUtil.sortInputMappingAttributes(inputMapping.getInputMappingAttributes());
+        List<InputMappingAttribute> orderedInputMappingAttributes = EventReceiverUtil.sortInputMappingAttributes(inputMapping.getInputMappingAttributes());
         int currentCount = 0;
         int totalAttributeCount = orderedInputMappingAttributes.size();
         Attribute[] attributeArray = new Attribute[totalAttributeCount];
@@ -89,9 +89,9 @@ public class EventBuilderUtil {
         List<InputMappingAttribute> correlationAttributes = new ArrayList<InputMappingAttribute>();
         List<InputMappingAttribute> payloadAttributes = new ArrayList<InputMappingAttribute>();
         for (InputMappingAttribute inputMappingAttribute : inputMappingAttributes) {
-            if (inputMappingAttribute.getToElementKey().startsWith(EventBuilderConstants.META_DATA_PREFIX)) {
+            if (inputMappingAttribute.getToElementKey().startsWith(EventReceiverConstants.META_DATA_PREFIX)) {
                 metaAttributes.add(inputMappingAttribute);
-            } else if (inputMappingAttribute.getToElementKey().startsWith(EventBuilderConstants.CORRELATION_DATA_PREFIX)) {
+            } else if (inputMappingAttribute.getToElementKey().startsWith(EventReceiverConstants.CORRELATION_DATA_PREFIX)) {
                 correlationAttributes.add(inputMappingAttribute);
             } else {
                 payloadAttributes.add(inputMappingAttribute);
@@ -106,51 +106,51 @@ public class EventBuilderUtil {
         return orderedInputMappingAttributes;
     }
 
-    public static String generateFilePath(EventBuilderConfiguration eventBuilderConfiguration)
-            throws EventBuilderConfigurationException {
+    public static String generateFilePath(EventReceiverConfiguration eventReceiverConfiguration)
+            throws EventReceiverConfigurationException {
         int tenantId = PrivilegedCarbonContext.getThreadLocalCarbonContext().getTenantId();
         String repositoryPath = MultitenantUtils.getAxis2RepositoryPath(tenantId);
-        String eventBuilderName = eventBuilderConfiguration.getEventBuilderName();
-        return generateFilePath(eventBuilderName, repositoryPath);
+        String eventReceiverName = eventReceiverConfiguration.getEventReceiverName();
+        return generateFilePath(eventReceiverName, repositoryPath);
     }
 
-    public static String generateFilePath(String eventBuilderName)
-            throws EventBuilderConfigurationException {
+    public static String generateFilePath(String eventReceiverName)
+            throws EventReceiverConfigurationException {
         int tenantId = PrivilegedCarbonContext.getThreadLocalCarbonContext().getTenantId();
         String repositoryPath = MultitenantUtils.getAxis2RepositoryPath(tenantId);
-        return generateFilePath(eventBuilderName, repositoryPath);
+        return generateFilePath(eventReceiverName, repositoryPath);
     }
 
-    public static String generateFilePath(EventBuilderConfiguration eventBuilderConfiguration,
+    public static String generateFilePath(EventReceiverConfiguration eventReceiverConfiguration,
                                           AxisConfiguration axisConfiguration)
-            throws EventBuilderConfigurationException {
-        String eventBuilderName = eventBuilderConfiguration.getEventBuilderName();
-        return generateFilePath(eventBuilderName, axisConfiguration.getRepository().getPath());
+            throws EventReceiverConfigurationException {
+        String eventReceiverName = eventReceiverConfiguration.getEventReceiverName();
+        return generateFilePath(eventReceiverName, axisConfiguration.getRepository().getPath());
     }
 
-    private static String generateFilePath(String eventBuilderName, String repositoryPath) throws EventBuilderConfigurationException {
+    private static String generateFilePath(String eventReceiverName, String repositoryPath) throws EventReceiverConfigurationException {
         File repoDir = new File(repositoryPath);
         if (!repoDir.exists()) {
             synchronized (repositoryPath.intern()) {
                 if (!repoDir.exists()) {
                     if (!repoDir.mkdir()) {
-                        throw new EventBuilderConfigurationException("Cannot create directory to add tenant specific event builder :" + eventBuilderName);
+                        throw new EventReceiverConfigurationException("Cannot create directory to add tenant specific event builder :" + eventReceiverName);
                     }
                 }
             }
         }
-        String path = repoDir.getAbsolutePath() + File.separator + EventBuilderConstants.EB_CONFIG_DIRECTORY;
+        String path = repoDir.getAbsolutePath() + File.separator + EventReceiverConstants.EB_CONFIG_DIRECTORY;
         File subDir = new File(path);
         if (!subDir.exists()) {
             synchronized (path.intern()) {
                 if (!subDir.exists()) {
                     if (!subDir.mkdir()) {
-                        throw new EventBuilderConfigurationException("Cannot create directory " + EventBuilderConstants.EB_CONFIG_DIRECTORY + " to add tenant specific event builder :" + eventBuilderName);
+                        throw new EventReceiverConfigurationException("Cannot create directory " + EventReceiverConstants.EB_CONFIG_DIRECTORY + " to add tenant specific event builder :" + eventReceiverName);
                     }
                 }
             }
         }
-        return subDir.getAbsolutePath() + File.separator + eventBuilderName + EventBuilderConstants.EB_CONFIG_FILE_EXTENSION_WITH_DOT;
+        return subDir.getAbsolutePath() + File.separator + eventReceiverName + EventReceiverConstants.EB_CONFIG_FILE_EXTENSION_WITH_DOT;
     }
 
     /**
@@ -177,13 +177,13 @@ public class EventBuilderUtil {
         int index = 0;
         if (streamDefinition.getMetaData() != null) {
             for (Attribute attribute : streamDefinition.getMetaData()) {
-                attributes[index] = new Attribute(EventBuilderConstants.META_DATA_PREFIX + attribute.getName(), attribute.getType());
+                attributes[index] = new Attribute(EventReceiverConstants.META_DATA_PREFIX + attribute.getName(), attribute.getType());
                 index++;
             }
         }
         if (streamDefinition.getCorrelationData() != null) {
             for (Attribute attribute : streamDefinition.getCorrelationData()) {
-                attributes[index] = new Attribute(EventBuilderConstants.CORRELATION_DATA_PREFIX + attribute.getName(), attribute.getType());
+                attributes[index] = new Attribute(EventReceiverConstants.CORRELATION_DATA_PREFIX + attribute.getName(), attribute.getType());
                 index++;
             }
         }
@@ -199,32 +199,32 @@ public class EventBuilderUtil {
 
     //TODO check this code segement and fix it properly
 
-//    public static EventBuilderConfiguration createDefaultEventBuilder(String streamId,
+//    public static EventReceiverConfiguration createDefaultEventReceiver(String streamId,
 //                                                                      String transportAdaptorName) {
 //        String toStreamName = DataBridgeCommonsUtils.getStreamNameFromStreamId(streamId);
 //        String toStreamVersion = DataBridgeCommonsUtils.getStreamVersionFromStreamId(streamId);
 //
-//        EventBuilderConfiguration eventBuilderConfiguration =
-//                new EventBuilderConfiguration();
+//        EventReceiverConfiguration eventReceiverConfiguration =
+//                new EventReceiverConfiguration();
 //
-//        eventBuilderConfiguration.setEventBuilderName(streamId.replaceAll(":", "_") + EventBuilderConstants.DEFAULT_EVENT_BUILDER_POSTFIX);
+//        eventReceiverConfiguration.setEventReceiverName(streamId.replaceAll(":", "_") + EventReceiverConstants.DEFAULT_EVENT_BUILDER_POSTFIX);
 //
 //        Wso2EventInputMapping wso2EventInputMapping = new Wso2EventInputMapping();
 //        wso2EventInputMapping.setCustomMappingEnabled(false);
-//        eventBuilderConfiguration.setInputMapping(wso2EventInputMapping);
+//        eventReceiverConfiguration.setInputMapping(wso2EventInputMapping);
 //
 //        InputEventAdaptorConfiguration inputEventAdaptorConfiguration = new InputEventAdaptorConfiguration();
 //        InternalInputEventAdaptorConfiguration internalInputEventAdaptorConfiguration = new InternalInputEventAdaptorConfiguration();
-//        internalInputEventAdaptorConfiguration.addEventAdaptorProperty(EventBuilderConstants.ADAPTOR_MESSAGE_STREAM_NAME, toStreamName);
-//        internalInputEventAdaptorConfiguration.addEventAdaptorProperty(EventBuilderConstants.ADAPTOR_MESSAGE_STREAM_VERSION, toStreamVersion);
+//        internalInputEventAdaptorConfiguration.addEventAdaptorProperty(EventReceiverConstants.ADAPTOR_MESSAGE_STREAM_NAME, toStreamName);
+//        internalInputEventAdaptorConfiguration.addEventAdaptorProperty(EventReceiverConstants.ADAPTOR_MESSAGE_STREAM_VERSION, toStreamVersion);
 //        inputEventAdaptorConfiguration.setInputEventAdaptorName(transportAdaptorName);
-//        inputEventAdaptorConfiguration.setInputEventAdaptorType(EventBuilderConstants.ADAPTOR_TYPE_WSO2EVENT);
-//        eventBuilderConfiguration.setInputStreamConfiguration(inputEventAdaptorConfiguration);
+//        inputEventAdaptorConfiguration.setInputEventAdaptorType(EventReceiverConstants.ADAPTOR_TYPE_WSO2EVENT);
+//        eventReceiverConfiguration.setInputStreamConfiguration(inputEventAdaptorConfiguration);
 //
-//        eventBuilderConfiguration.setToStreamName(toStreamName);
-//        eventBuilderConfiguration.setToStreamVersion(toStreamVersion);
+//        eventReceiverConfiguration.setToStreamName(toStreamName);
+//        eventReceiverConfiguration.setToStreamVersion(toStreamVersion);
 //
-//        return eventBuilderConfiguration;
+//        return eventReceiverConfiguration;
 //    }
 
     /**
@@ -250,18 +250,18 @@ public class EventBuilderUtil {
                 correlationAttributeSize = correlationData.size();
             }
 
-            if (attributeName.startsWith(EventBuilderConstants.META_DATA_PREFIX)) {
+            if (attributeName.startsWith(EventReceiverConstants.META_DATA_PREFIX)) {
                 if (metaData != null) {
                     for (int i = 0; i < metaAttributeSize; i++) {
-                        if (metaData.get(i).getName().equals(attributeName.substring(EventBuilderConstants.META_DATA_PREFIX.length()))) {
+                        if (metaData.get(i).getName().equals(attributeName.substring(EventReceiverConstants.META_DATA_PREFIX.length()))) {
                             return i;
                         }
                     }
                 }
-            } else if (attributeName.startsWith(EventBuilderConstants.CORRELATION_DATA_PREFIX)) {
+            } else if (attributeName.startsWith(EventReceiverConstants.CORRELATION_DATA_PREFIX)) {
                 if (correlationData != null) {
                     for (int i = 0; i < correlationAttributeSize; i++) {
-                        if (correlationData.get(i).getName().equals(attributeName.substring(EventBuilderConstants.CORRELATION_DATA_PREFIX.length()))) {
+                        if (correlationData.get(i).getName().equals(attributeName.substring(EventReceiverConstants.CORRELATION_DATA_PREFIX.length()))) {
                             return metaAttributeSize + i;
                         }
                     }

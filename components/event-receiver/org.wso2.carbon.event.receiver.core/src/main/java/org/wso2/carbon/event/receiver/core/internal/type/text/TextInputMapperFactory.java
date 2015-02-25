@@ -21,17 +21,17 @@ package org.wso2.carbon.event.receiver.core.internal.type.text;
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMFactory;
 import org.wso2.carbon.databridge.commons.StreamDefinition;
-import org.wso2.carbon.event.receiver.core.config.EventBuilderConfiguration;
+import org.wso2.carbon.event.receiver.core.config.EventReceiverConfiguration;
 import org.wso2.carbon.event.receiver.core.config.InputMapper;
 import org.wso2.carbon.event.receiver.core.config.InputMapperFactory;
 import org.wso2.carbon.event.receiver.core.config.InputMapping;
-import org.wso2.carbon.event.receiver.core.exception.EventBuilderConfigurationException;
+import org.wso2.carbon.event.receiver.core.exception.EventReceiverConfigurationException;
 
 public class TextInputMapperFactory implements InputMapperFactory {
 
     @Override
     public InputMapping constructInputMappingFromOM(OMElement omElement)
-            throws EventBuilderConfigurationException {
+            throws EventReceiverConfigurationException {
         return TextInputMappingConfigBuilder.getInstance().fromOM(omElement);
     }
 
@@ -42,9 +42,9 @@ public class TextInputMapperFactory implements InputMapperFactory {
     }
 
     @Override
-    public InputMapper constructInputMapper(EventBuilderConfiguration eventBuilderConfiguration,
+    public InputMapper constructInputMapper(EventReceiverConfiguration eventReceiverConfiguration,
                                             StreamDefinition exportedStreamDefinition)
-            throws EventBuilderConfigurationException {
-        return new TextInputMapper(eventBuilderConfiguration, exportedStreamDefinition);
+            throws EventReceiverConfigurationException {
+        return new TextInputMapper(eventReceiverConfiguration, exportedStreamDefinition);
     }
 }

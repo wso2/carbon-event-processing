@@ -27,14 +27,14 @@ import org.wso2.carbon.databridge.commons.StreamDefinition;
 import org.wso2.carbon.databridge.core.AgentCallback;
 import org.wso2.carbon.databridge.core.exception.StreamDefinitionNotFoundException;
 import org.wso2.carbon.databridge.core.exception.StreamDefinitionStoreException;
-import org.wso2.carbon.event.input.adaptor.manager.core.AbstractInputEventAdaptor;
-import org.wso2.carbon.event.input.adaptor.manager.core.InputEventAdaptorListener;
-import org.wso2.carbon.event.input.adaptor.manager.core.MessageType;
-import org.wso2.carbon.event.input.adaptor.manager.core.Property;
-import org.wso2.carbon.event.input.adaptor.manager.core.config.InputEventAdaptorConfiguration;
-import org.wso2.carbon.event.input.adaptor.manager.core.exception.InputEventAdaptorEventProcessingException;
 import org.wso2.carbon.event.input.adaptor.wso2event.internal.ds.WSO2EventAdaptorServiceValueHolder;
 import org.wso2.carbon.event.input.adaptor.wso2event.internal.util.WSO2EventAdaptorConstants;
+import org.wso2.carbon.event.receiver.core.AbstractInputEventAdaptor;
+import org.wso2.carbon.event.receiver.core.InputEventAdaptorListener;
+import org.wso2.carbon.event.receiver.core.MessageType;
+import org.wso2.carbon.event.receiver.core.Property;
+import org.wso2.carbon.event.receiver.core.config.InputEventAdaptorConfiguration;
+import org.wso2.carbon.event.receiver.core.exception.InputEventAdaptorEventProcessingException;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
@@ -201,24 +201,24 @@ public final class WSO2EventEventAdaptorType extends AbstractInputEventAdaptor {
 
         @Override
         public void definedStream(StreamDefinition streamDefinition, int tenantId) {
-            InputEventAdaptorConfiguration inputEventAdaptorMessageConfiguration = createTopic(streamDefinition);
+            InputEventAdaptorConfiguration inputEventAdaptorConfiguration = createTopic(streamDefinition);
 
             ConcurrentHashMap<InputEventAdaptorConfiguration, StreamDefinition> tenantSpecificStreamDefinitionMap = inputStreamDefinitionMap.get(tenantId);
             if (tenantSpecificStreamDefinitionMap == null) {
                 tenantSpecificStreamDefinitionMap = new ConcurrentHashMap<InputEventAdaptorConfiguration, StreamDefinition>();
                 inputStreamDefinitionMap.put(tenantId, tenantSpecificStreamDefinitionMap);
             }
-            tenantSpecificStreamDefinitionMap.put(inputEventAdaptorMessageConfiguration, streamDefinition);
+            tenantSpecificStreamDefinitionMap.put(inputEventAdaptorConfiguration, streamDefinition);
 
             ConcurrentHashMap<InputEventAdaptorConfiguration, ConcurrentHashMap<String, EventAdaptorConf>> tenantSpecificAdaptorListenerMap = inputEventAdaptorListenerMap.get(tenantId);
             if (tenantSpecificAdaptorListenerMap == null) {
                 tenantSpecificAdaptorListenerMap = new ConcurrentHashMap<InputEventAdaptorConfiguration, ConcurrentHashMap<String, EventAdaptorConf>>();
                 inputEventAdaptorListenerMap.put(tenantId, tenantSpecificAdaptorListenerMap);
             }
-            ConcurrentHashMap<String, EventAdaptorConf> eventAdaptorListeners = tenantSpecificAdaptorListenerMap.get(inputEventAdaptorMessageConfiguration);
+            ConcurrentHashMap<String, EventAdaptorConf> eventAdaptorListeners = tenantSpecificAdaptorListenerMap.get(inputEventAdaptorConfiguration);
             if (eventAdaptorListeners == null) {
                 eventAdaptorListeners = new ConcurrentHashMap<String, EventAdaptorConf>();
-                tenantSpecificAdaptorListenerMap.put(inputEventAdaptorMessageConfiguration, eventAdaptorListeners);
+                tenantSpecificAdaptorListenerMap.put(inputEventAdaptorConfiguration, eventAdaptorListeners);
 
             }
 
@@ -241,19 +241,19 @@ public final class WSO2EventEventAdaptorType extends AbstractInputEventAdaptor {
                 tenantSpecificAdaptorMap = new ConcurrentHashMap<String, ConcurrentHashMap<String, EventAdaptorConf>>();
                 streamIdEventAdaptorListenerMap.put(PrivilegedCarbonContext.getThreadLocalCarbonContext().getTenantId(true), tenantSpecificAdaptorMap);
             }
-            tenantSpecificAdaptorMap.put(streamDefinition.getStreamId(), inputEventAdaptorListenerMap.get(tenantId).get(inputEventAdaptorMessageConfiguration));
+            tenantSpecificAdaptorMap.put(streamDefinition.getStreamId(), inputEventAdaptorListenerMap.get(tenantId).get(inputEventAdaptorConfiguration));
         }
 
         private InputEventAdaptorConfiguration createTopic(
                 StreamDefinition streamDefinition) {
 
-            InputEventAdaptorConfiguration inputEventAdaptorMessageConfiguration = new InputEventAdaptorConfiguration();
+            InputEventAdaptorConfiguration inputEventAdaptorConfiguration = new InputEventAdaptorConfiguration();
             Map<String, String> inputMessageProperties = new HashMap<String, String>();
             inputMessageProperties.put(WSO2EventAdaptorConstants.ADAPTOR_MESSAGE_STREAM_NAME, streamDefinition.getName());
             inputMessageProperties.put(WSO2EventAdaptorConstants.ADAPTOR_MESSAGE_STREAM_VERSION, streamDefinition.getVersion());
-            inputEventAdaptorMessageConfiguration.getInputConfiguration().setProperties(inputMessageProperties);
+            inputEventAdaptorConfiguration.getInternalInputEventAdaptorConfiguration().setProperties(inputMessageProperties);
 
-            return inputEventAdaptorMessageConfiguration;
+            return inputEventAdaptorConfiguration;
         }
 
         @Override

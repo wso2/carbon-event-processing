@@ -19,13 +19,13 @@ package org.wso2.carbon.event.receiver.core.internal.type.json;
 
 
 import org.wso2.carbon.event.receiver.core.internal.type.AbstractInputMapping;
-import org.wso2.carbon.event.receiver.core.internal.util.EventBuilderConstants;
+import org.wso2.carbon.event.receiver.core.internal.util.EventReceiverConstants;
 
 public class JsonInputMapping extends AbstractInputMapping {
 
     @Override
     public String getMappingType() {
-        return EventBuilderConstants.EB_JSON_MAPPING_TYPE;
+        return EventReceiverConstants.EB_JSON_MAPPING_TYPE;
     }
 
 }

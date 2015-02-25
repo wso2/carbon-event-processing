@@ -22,10 +22,10 @@ import org.apache.axiom.om.OMFactory;
 import org.wso2.carbon.databridge.commons.AttributeType;
 import org.wso2.carbon.event.receiver.core.config.InputMapping;
 import org.wso2.carbon.event.receiver.core.config.InputMappingAttribute;
-import org.wso2.carbon.event.receiver.core.exception.EventBuilderConfigurationException;
-import org.wso2.carbon.event.receiver.core.exception.EventBuilderValidationException;
-import org.wso2.carbon.event.receiver.core.internal.util.EventBuilderConfigBuilder;
-import org.wso2.carbon.event.receiver.core.internal.util.EventBuilderConstants;
+import org.wso2.carbon.event.receiver.core.exception.EventReceiverConfigurationException;
+import org.wso2.carbon.event.receiver.core.exception.EventReceiverValidationException;
+import org.wso2.carbon.event.receiver.core.internal.util.EventReceiverConfigBuilder;
+import org.wso2.carbon.event.receiver.core.internal.util.EventReceiverConstants;
 
 import javax.xml.namespace.QName;
 import java.util.ArrayList;
@@ -50,12 +50,12 @@ public class TextInputMappingConfigBuilder {
 
     @SuppressWarnings("unchecked")
     public static void validateTextMapping(OMElement omElement)
-            throws EventBuilderConfigurationException {
+            throws EventReceiverConfigurationException {
 
         List<String> supportedChildTags = new ArrayList<String>();
-        supportedChildTags.add(EventBuilderConstants.EB_ELEMENT_PROPERTY);
-        String customMappingEnabledAttribute = omElement.getAttributeValue(new QName(EventBuilderConstants.EB_ATTR_CUSTOM_MAPPING_ENABLED));
-        if (customMappingEnabledAttribute == null || customMappingEnabledAttribute.equalsIgnoreCase(EventBuilderConstants.ENABLE_CONST)) {
+        supportedChildTags.add(EventReceiverConstants.EB_ELEMENT_PROPERTY);
+        String customMappingEnabledAttribute = omElement.getAttributeValue(new QName(EventReceiverConstants.EB_ATTR_CUSTOM_MAPPING_ENABLED));
+        if (customMappingEnabledAttribute == null || customMappingEnabledAttribute.equalsIgnoreCase(EventReceiverConstants.ENABLE_CONST)) {
             int count = 0;
             Iterator<OMElement> mappingIterator = omElement.getChildElements();
             while (mappingIterator.hasNext()) {
@@ -63,39 +63,39 @@ public class TextInputMappingConfigBuilder {
                 OMElement childElement = mappingIterator.next();
                 String childTag = childElement.getLocalName();
                 if (!supportedChildTags.contains(childTag)) {
-                    throw new EventBuilderConfigurationException("Unsupported XML configuration element for Text Input Mapping : " + childTag);
+                    throw new EventReceiverConfigurationException("Unsupported XML configuration element for Text Input Mapping : " + childTag);
                 }
-                if (childTag.equals(EventBuilderConstants.EB_ELEMENT_PROPERTY)) {
-                    OMElement propertyFromElement = childElement.getFirstChildWithName(new QName(EventBuilderConstants.EB_CONF_NS, EventBuilderConstants.EB_ELEMENT_FROM));
-                    OMElement propertyToElement = childElement.getFirstChildWithName(new QName(EventBuilderConstants.EB_CONF_NS, EventBuilderConstants.EB_ELEMENT_TO));
+                if (childTag.equals(EventReceiverConstants.EB_ELEMENT_PROPERTY)) {
+                    OMElement propertyFromElement = childElement.getFirstChildWithName(new QName(EventReceiverConstants.EB_CONF_NS, EventReceiverConstants.EB_ELEMENT_FROM));
+                    OMElement propertyToElement = childElement.getFirstChildWithName(new QName(EventReceiverConstants.EB_CONF_NS, EventReceiverConstants.EB_ELEMENT_TO));
                     if (propertyFromElement == null) {
-                        throw new EventBuilderConfigurationException("An attribute mapping must provide a valid 'from' element");
+                        throw new EventReceiverConfigurationException("An attribute mapping must provide a valid 'from' element");
                     }
                     if (propertyToElement == null) {
-                        throw new EventBuilderConfigurationException("An attribute mapping must provide a valid 'to' element");
+                        throw new EventReceiverConfigurationException("An attribute mapping must provide a valid 'to' element");
                     }
-                    if (propertyToElement.getAttribute(new QName(EventBuilderConstants.EB_ATTR_NAME)) == null ||
-                        propertyToElement.getAttribute(new QName(EventBuilderConstants.EB_ATTR_TYPE)) == null) {
-                        throw new EventBuilderConfigurationException("An attribute mapping must provide name and type for its 'to' element.");
+                    if (propertyToElement.getAttribute(new QName(EventReceiverConstants.EB_ATTR_NAME)) == null ||
+                        propertyToElement.getAttribute(new QName(EventReceiverConstants.EB_ATTR_TYPE)) == null) {
+                        throw new EventReceiverConfigurationException("An attribute mapping must provide name and type for its 'to' element.");
                     }
                 }
             }
 
             if (count == 0) {
-                throw new EventBuilderConfigurationException("There must be at least 1 attribute mapping with Custom Mapping enabled.");
+                throw new EventReceiverConfigurationException("There must be at least 1 attribute mapping with Custom Mapping enabled.");
             }
         }
     }
 
     public InputMapping fromOM(
             OMElement mappingElement)
-            throws EventBuilderValidationException, EventBuilderConfigurationException {
+            throws EventReceiverValidationException, EventReceiverConfigurationException {
         TextInputMappingConfigBuilder.validateTextMapping(mappingElement);
         TextInputMapping textInputMapping = new TextInputMapping();
-        String customMappingEnabledAttribute = mappingElement.getAttributeValue(new QName(EventBuilderConstants.EB_ATTR_CUSTOM_MAPPING_ENABLED));
-        if (customMappingEnabledAttribute == null || customMappingEnabledAttribute.equalsIgnoreCase(EventBuilderConstants.ENABLE_CONST)) {
+        String customMappingEnabledAttribute = mappingElement.getAttributeValue(new QName(EventReceiverConstants.EB_ATTR_CUSTOM_MAPPING_ENABLED));
+        if (customMappingEnabledAttribute == null || customMappingEnabledAttribute.equalsIgnoreCase(EventReceiverConstants.ENABLE_CONST)) {
             textInputMapping.setCustomMappingEnabled(true);
-            Iterator propertyIterator = mappingElement.getChildrenWithName(new QName(EventBuilderConstants.EB_CONF_NS, EventBuilderConstants.EB_ELEMENT_PROPERTY));
+            Iterator propertyIterator = mappingElement.getChildrenWithName(new QName(EventReceiverConstants.EB_CONF_NS, EventReceiverConstants.EB_ELEMENT_PROPERTY));
             List<InputMappingAttribute> inputMappingAttributeList = new ArrayList<InputMappingAttribute>();
             while (propertyIterator.hasNext()) {
                 OMElement propertyOMElement = (OMElement) propertyIterator.next();
@@ -116,14 +116,14 @@ public class TextInputMappingConfigBuilder {
 
         TextInputMapping textInputMapping = (TextInputMapping) inputMapping;
 
-        OMElement mappingOMElement = factory.createOMElement(new QName(EventBuilderConstants.EB_ELEMENT_MAPPING));
-        mappingOMElement.declareDefaultNamespace(EventBuilderConstants.EB_CONF_NS);
-        mappingOMElement.addAttribute(EventBuilderConstants.EB_ATTR_TYPE, EventBuilderConstants.EB_TEXT_MAPPING_TYPE, null);
+        OMElement mappingOMElement = factory.createOMElement(new QName(EventReceiverConstants.EB_ELEMENT_MAPPING));
+        mappingOMElement.declareDefaultNamespace(EventReceiverConstants.EB_CONF_NS);
+        mappingOMElement.addAttribute(EventReceiverConstants.EB_ATTR_TYPE, EventReceiverConstants.EB_TEXT_MAPPING_TYPE, null);
 
         if (textInputMapping.isCustomMappingEnabled()) {
-            mappingOMElement.addAttribute(EventBuilderConstants.EB_ATTR_CUSTOM_MAPPING_ENABLED, EventBuilderConstants.ENABLE_CONST, null);
+            mappingOMElement.addAttribute(EventReceiverConstants.EB_ATTR_CUSTOM_MAPPING_ENABLED, EventReceiverConstants.ENABLE_CONST, null);
         } else {
-            mappingOMElement.addAttribute(EventBuilderConstants.EB_ATTR_CUSTOM_MAPPING_ENABLED, EventBuilderConstants.DISABLE_CONST, null);
+            mappingOMElement.addAttribute(EventReceiverConstants.EB_ATTR_CUSTOM_MAPPING_ENABLED, EventReceiverConstants.DISABLE_CONST, null);
         }
         List<InputMappingAttribute> inputMappingAttributes = textInputMapping.getInputMappingAttributes();
         InputMappingAttribute prevInputMappingAttribute = null;
@@ -143,17 +143,17 @@ public class TextInputMappingConfigBuilder {
     }
 
     private List<InputMappingAttribute> getInputMappingAttributesFromOM(OMElement omElement) {
-        OMElement propertyFromElement = omElement.getFirstChildWithName(new QName(EventBuilderConstants.EB_CONF_NS, EventBuilderConstants.EB_ELEMENT_FROM));
-        Iterator toElementIterator = omElement.getChildrenWithName(new QName(EventBuilderConstants.EB_CONF_NS, EventBuilderConstants.EB_ELEMENT_TO));
+        OMElement propertyFromElement = omElement.getFirstChildWithName(new QName(EventReceiverConstants.EB_CONF_NS, EventReceiverConstants.EB_ELEMENT_FROM));
+        Iterator toElementIterator = omElement.getChildrenWithName(new QName(EventReceiverConstants.EB_CONF_NS, EventReceiverConstants.EB_ELEMENT_TO));
 
         List<InputMappingAttribute> inputMappingAttributeList = new ArrayList<InputMappingAttribute>();
         while (toElementIterator.hasNext()) {
             OMElement propertyToElement = (OMElement) toElementIterator.next();
-            String regex = propertyFromElement.getAttributeValue(new QName(EventBuilderConstants.EB_ATTR_REGEX));
-            String outputPropertyName = propertyToElement.getAttributeValue(new QName(EventBuilderConstants.EB_ATTR_NAME));
-            String attributeType = propertyToElement.getAttributeValue(new QName(EventBuilderConstants.EB_ATTR_TYPE));
-            AttributeType outputPropertyType = EventBuilderConstants.STRING_ATTRIBUTE_TYPE_MAP.get(attributeType.toLowerCase());
-            String defaultValue = propertyToElement.getAttributeValue(new QName(EventBuilderConstants.EB_ATTR_DEFAULT_VALUE));
+            String regex = propertyFromElement.getAttributeValue(new QName(EventReceiverConstants.EB_ATTR_REGEX));
+            String outputPropertyName = propertyToElement.getAttributeValue(new QName(EventReceiverConstants.EB_ATTR_NAME));
+            String attributeType = propertyToElement.getAttributeValue(new QName(EventReceiverConstants.EB_ATTR_TYPE));
+            AttributeType outputPropertyType = EventReceiverConstants.STRING_ATTRIBUTE_TYPE_MAP.get(attributeType.toLowerCase());
+            String defaultValue = propertyToElement.getAttributeValue(new QName(EventReceiverConstants.EB_ATTR_DEFAULT_VALUE));
 
             InputMappingAttribute inputMappingAttribute = new InputMappingAttribute(regex, outputPropertyName, outputPropertyType);
             inputMappingAttribute.setDefaultValue(defaultValue);
@@ -164,18 +164,18 @@ public class TextInputMappingConfigBuilder {
 
     private OMElement getPropertyOmElement(OMFactory factory,
                                            InputMappingAttribute inputMappingAttribute) {
-        OMElement propertyOmElement = factory.createOMElement(new QName(EventBuilderConstants.EB_ELEMENT_PROPERTY));
+        OMElement propertyOmElement = factory.createOMElement(new QName(EventReceiverConstants.EB_ELEMENT_PROPERTY));
 
-        OMElement fromElement = factory.createOMElement(new QName(EventBuilderConstants.EB_ELEMENT_FROM));
-        fromElement.declareDefaultNamespace(EventBuilderConstants.EB_CONF_NS);
-        fromElement.addAttribute(EventBuilderConstants.EB_ATTR_REGEX, inputMappingAttribute.getFromElementKey(), null);
+        OMElement fromElement = factory.createOMElement(new QName(EventReceiverConstants.EB_ELEMENT_FROM));
+        fromElement.declareDefaultNamespace(EventReceiverConstants.EB_CONF_NS);
+        fromElement.addAttribute(EventReceiverConstants.EB_ATTR_REGEX, inputMappingAttribute.getFromElementKey(), null);
 
-        OMElement toElement = factory.createOMElement(new QName(EventBuilderConstants.EB_ELEMENT_TO));
-        toElement.declareDefaultNamespace(EventBuilderConstants.EB_CONF_NS);
-        toElement.addAttribute(EventBuilderConstants.EB_ATTR_NAME, inputMappingAttribute.getToElementKey(), null);
-        toElement.addAttribute(EventBuilderConstants.EB_ATTR_TYPE, EventBuilderConfigBuilder.getAttributeType(inputMappingAttribute.getToElementType()), null);
+        OMElement toElement = factory.createOMElement(new QName(EventReceiverConstants.EB_ELEMENT_TO));
+        toElement.declareDefaultNamespace(EventReceiverConstants.EB_CONF_NS);
+        toElement.addAttribute(EventReceiverConstants.EB_ATTR_NAME, inputMappingAttribute.getToElementKey(), null);
+        toElement.addAttribute(EventReceiverConstants.EB_ATTR_TYPE, EventReceiverConfigBuilder.getAttributeType(inputMappingAttribute.getToElementType()), null);
         if (inputMappingAttribute.getDefaultValue() != null && !inputMappingAttribute.getDefaultValue().isEmpty()) {
-            toElement.addAttribute(EventBuilderConstants.EB_ATTR_DEFAULT_VALUE, inputMappingAttribute.getDefaultValue(), null);
+            toElement.addAttribute(EventReceiverConstants.EB_ATTR_DEFAULT_VALUE, inputMappingAttribute.getDefaultValue(), null);
         }
 
         propertyOmElement.addChild(fromElement);
@@ -186,12 +186,12 @@ public class TextInputMappingConfigBuilder {
 
     private void addAnotherToProperty(OMFactory factory, OMElement propertyOmElement,
                                       InputMappingAttribute inputMappingAttribute) {
-        OMElement toElement = factory.createOMElement(new QName(EventBuilderConstants.EB_ELEMENT_TO));
-        toElement.declareDefaultNamespace(EventBuilderConstants.EB_CONF_NS);
-        toElement.addAttribute(EventBuilderConstants.EB_ATTR_NAME, inputMappingAttribute.getToElementKey(), null);
-        toElement.addAttribute(EventBuilderConstants.EB_ATTR_TYPE, EventBuilderConfigBuilder.getAttributeType(inputMappingAttribute.getToElementType()), null);
+        OMElement toElement = factory.createOMElement(new QName(EventReceiverConstants.EB_ELEMENT_TO));
+        toElement.declareDefaultNamespace(EventReceiverConstants.EB_CONF_NS);
+        toElement.addAttribute(EventReceiverConstants.EB_ATTR_NAME, inputMappingAttribute.getToElementKey(), null);
+        toElement.addAttribute(EventReceiverConstants.EB_ATTR_TYPE, EventReceiverConfigBuilder.getAttributeType(inputMappingAttribute.getToElementType()), null);
         if (inputMappingAttribute.getDefaultValue() != null && !inputMappingAttribute.getDefaultValue().isEmpty()) {
-            toElement.addAttribute(EventBuilderConstants.EB_ATTR_DEFAULT_VALUE, inputMappingAttribute.getDefaultValue(), null);
+            toElement.addAttribute(EventReceiverConstants.EB_ATTR_DEFAULT_VALUE, inputMappingAttribute.getDefaultValue(), null);
         }
 
         propertyOmElement.addChild(toElement);

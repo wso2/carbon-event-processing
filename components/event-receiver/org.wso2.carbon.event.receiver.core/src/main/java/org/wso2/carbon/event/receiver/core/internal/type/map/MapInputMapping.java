@@ -19,13 +19,13 @@ package org.wso2.carbon.event.receiver.core.internal.type.map;
 
 
 import org.wso2.carbon.event.receiver.core.internal.type.AbstractInputMapping;
-import org.wso2.carbon.event.receiver.core.internal.util.EventBuilderConstants;
+import org.wso2.carbon.event.receiver.core.internal.util.EventReceiverConstants;
 
 public class MapInputMapping extends AbstractInputMapping {
 
     @Override
     public String getMappingType() {
-        return EventBuilderConstants.EB_MAP_MAPPING_TYPE;
+        return EventReceiverConstants.EB_MAP_MAPPING_TYPE;
     }
 
 }

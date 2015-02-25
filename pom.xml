@@ -366,29 +366,29 @@
                 <artifactId>org.wso2.carbon.event.formatter.ui</artifactId>
                 <version>${carbon.event.processing.version}</version>
             </dependency>
+            <!--<dependency>-->
+                <!--<groupId>org.wso2.carbon.event-processing</groupId>-->
+                <!--<artifactId>org.wso2.carbon.event.input.adaptor.core</artifactId>-->
+                <!--<version>${carbon.event.processing.version}</version>-->
+            <!--</dependency>-->
+            <!--<dependency>-->
+                <!--<groupId>org.wso2.carbon.event-processing</groupId>-->
+                <!--<artifactId>org.wso2.carbon.event.input.adaptor.manager.admin</artifactId>-->
+                <!--<version>${carbon.event.processing.version}</version>-->
+            <!--</dependency>-->
+            <!--<dependency>-->
+                <!--<groupId>org.wso2.carbon.event-processing</groupId>-->
+                <!--<artifactId>org.wso2.carbon.event.input.adaptor.manager.core</artifactId>-->
+                <!--<version>${carbon.event.processing.version}</version>-->
+            <!--</dependency>-->
+            <!--<dependency>-->
+                <!--<groupId>org.wso2.carbon.event-processing</groupId>-->
+                <!--<artifactId>org.wso2.carbon.event.input.adaptor.manager.stub</artifactId>-->
+                <!--<version>${carbon.event.processing.version}</version>-->
+            <!--</dependency>-->
             <dependency>
                 <groupId>org.wso2.carbon.event-processing</groupId>
-                <artifactId>org.wso2.carbon.event.input.adaptor.core</artifactId>
-                <version>${carbon.event.processing.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.wso2.carbon.event-processing</groupId>
-                <artifactId>org.wso2.carbon.event.input.adaptor.manager.admin</artifactId>
-                <version>${carbon.event.processing.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.wso2.carbon.event-processing</groupId>
-                <artifactId>org.wso2.carbon.event.input.adaptor.manager.core</artifactId>
-                <version>${carbon.event.processing.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.wso2.carbon.event-processing</groupId>
-                <artifactId>org.wso2.carbon.event.input.adaptor.manager.stub</artifactId>
-                <version>${carbon.event.processing.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.wso2.carbon.event-processing</groupId>
-                <artifactId>org.wso2.carbon.event.input.adaptor.manager.ui</artifactId>
+                <artifactId>org.wso2.carbon.event.receiver.core</artifactId>
                 <version>${carbon.event.processing.version}</version>
             </dependency>
 

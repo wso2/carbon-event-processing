@@ -22,15 +22,15 @@ import org.apache.commons.logging.LogFactory;
 import org.wso2.carbon.databridge.commons.Attribute;
 import org.wso2.carbon.databridge.commons.AttributeType;
 import org.wso2.carbon.databridge.commons.StreamDefinition;
-import org.wso2.carbon.event.receiver.core.config.EventBuilderConfiguration;
+import org.wso2.carbon.event.receiver.core.config.EventReceiverConfiguration;
 import org.wso2.carbon.event.receiver.core.config.InputMapper;
 import org.wso2.carbon.event.receiver.core.config.InputMappingAttribute;
-import org.wso2.carbon.event.receiver.core.exception.EventBuilderConfigurationException;
-import org.wso2.carbon.event.receiver.core.exception.EventBuilderProcessingException;
+import org.wso2.carbon.event.receiver.core.exception.EventReceiverConfigurationException;
+import org.wso2.carbon.event.receiver.core.exception.EventReceiverProcessingException;
 import org.wso2.carbon.event.receiver.core.internal.type.text.config.RegexData;
-import org.wso2.carbon.event.receiver.core.internal.util.EventBuilderConstants;
-import org.wso2.carbon.event.receiver.core.internal.util.EventBuilderUtil;
-import org.wso2.carbon.event.receiver.core.internal.util.helper.EventBuilderConfigHelper;
+import org.wso2.carbon.event.receiver.core.internal.util.EventReceiverConstants;
+import org.wso2.carbon.event.receiver.core.internal.util.EventReceiverUtil;
+import org.wso2.carbon.event.receiver.core.internal.util.helper.EventReceiverConfigHelper;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -41,7 +41,7 @@ import java.util.regex.PatternSyntaxException;
 
 public class TextInputMapper implements InputMapper {
     private List<RegexData> attributeRegexList = new ArrayList<RegexData>();
-    private EventBuilderConfiguration eventBuilderConfiguration = null;
+    private EventReceiverConfiguration eventReceiverConfiguration = null;
     private int[] attributePositions;
     private static final Log log = LogFactory.getLog(TextInputMapper.class);
     private int noMetaData;
@@ -49,20 +49,20 @@ public class TextInputMapper implements InputMapper {
     private int noPayloadData;
     private StreamDefinition streamDefinition;
 
-    public TextInputMapper(EventBuilderConfiguration eventBuilderConfiguration,
+    public TextInputMapper(EventReceiverConfiguration eventReceiverConfiguration,
                            StreamDefinition streamDefinition)
-            throws EventBuilderConfigurationException {
-        this.eventBuilderConfiguration = eventBuilderConfiguration;
+            throws EventReceiverConfigurationException {
+        this.eventReceiverConfiguration = eventReceiverConfiguration;
         this.streamDefinition = streamDefinition;
 
-        if (eventBuilderConfiguration != null && eventBuilderConfiguration.getInputMapping() instanceof TextInputMapping) {
-            if (eventBuilderConfiguration.getInputMapping().isCustomMappingEnabled()) {
-                TextInputMapping textInputMapping = (TextInputMapping) eventBuilderConfiguration.getInputMapping();
+        if (eventReceiverConfiguration != null && eventReceiverConfiguration.getInputMapping() instanceof TextInputMapping) {
+            if (eventReceiverConfiguration.getInputMapping().isCustomMappingEnabled()) {
+                TextInputMapping textInputMapping = (TextInputMapping) eventReceiverConfiguration.getInputMapping();
                 RegexData regexData = null;
                 if (textInputMapping.getInputMappingAttributes() != null || textInputMapping.getInputMappingAttributes().size() == 0) {
                     attributePositions = new int[textInputMapping.getInputMappingAttributes().size()];
                 } else {
-                    throw new EventBuilderConfigurationException("Text input mapping attribute list cannot be null!");
+                    throw new EventReceiverConfigurationException("Text input mapping attribute list cannot be null!");
                 }
                 List<Integer> attribPositionList = new LinkedList<Integer>();
                 int metaCount = 0;
@@ -75,17 +75,17 @@ public class TextInputMapper implements InputMapper {
                             regexData = new RegexData(regex);
                             attributeRegexList.add(regexData);
                         } catch (PatternSyntaxException e) {
-                            throw new EventBuilderConfigurationException("Error parsing regular expression: " + regex, e);
+                            throw new EventReceiverConfigurationException("Error parsing regular expression: " + regex, e);
                         }
                     }
-                    if (EventBuilderUtil.isMetaAttribute(inputMappingAttribute.getToElementKey())) {
+                    if (EventReceiverUtil.isMetaAttribute(inputMappingAttribute.getToElementKey())) {
                         attribPositionList.add(metaCount++, attributeCount++);
-                    } else if (EventBuilderUtil.isCorrelationAttribute(inputMappingAttribute.getToElementKey())) {
+                    } else if (EventReceiverUtil.isCorrelationAttribute(inputMappingAttribute.getToElementKey())) {
                         attribPositionList.add(metaCount + correlationCount++, attributeCount++);
                     } else {
                         attribPositionList.add(attributeCount++);
                     }
-                    String type = EventBuilderConstants.ATTRIBUTE_TYPE_CLASS_TYPE_MAP.get(inputMappingAttribute.getToElementType());
+                    String type = EventReceiverConstants.ATTRIBUTE_TYPE_CLASS_TYPE_MAP.get(inputMappingAttribute.getToElementType());
                     String defaultValue = inputMappingAttribute.getDefaultValue();
                     regexData.addMapping(type, defaultValue);
                 }
@@ -104,7 +104,7 @@ public class TextInputMapper implements InputMapper {
     }
 
     @Override
-    public Object convertToMappedInputEvent(Object obj) throws EventBuilderProcessingException {
+    public Object convertToMappedInputEvent(Object obj) throws EventReceiverProcessingException {
         Object attributeArray[] = new Object[attributePositions.length];
         if (obj instanceof String) {
             String inputString = (String) obj;
@@ -127,14 +127,14 @@ public class TextInputMapper implements InputMapper {
                                 returnedAttribute = value;
                             }
                         } catch (ClassNotFoundException e) {
-                            throw new EventBuilderProcessingException("Cannot convert " + value + " to type " + type, e);
+                            throw new EventReceiverProcessingException("Cannot convert " + value + " to type " + type, e);
                         } catch (InvocationTargetException e) {
                             log.warn("Cannot convert " + value + " to type " + type + ": " + e.getMessage() + "; Sending null value.");
                             returnedAttribute = null;
                         } catch (NoSuchMethodException e) {
-                            throw new EventBuilderProcessingException("Cannot convert " + value + " to type " + type, e);
+                            throw new EventReceiverProcessingException("Cannot convert " + value + " to type " + type, e);
                         } catch (IllegalAccessException e) {
-                            throw new EventBuilderProcessingException("Cannot convert " + value + " to type " + type, e);
+                            throw new EventReceiverProcessingException("Cannot convert " + value + " to type " + type, e);
                         }
                     }
                     attributeArray[attributePositions[attributeCount++]] = returnedAttribute;
@@ -146,7 +146,7 @@ public class TextInputMapper implements InputMapper {
 
     //TODO use = for default text mapping  use a map instead of multiple for loops
     @Override
-    public Object convertToTypedInputEvent(Object obj) throws EventBuilderProcessingException {
+    public Object convertToTypedInputEvent(Object obj) throws EventReceiverProcessingException {
 
         Object attributeArray[] = new Object[noMetaData + noCorrelationData + noPayloadData];
         if (obj instanceof String) {
@@ -160,8 +160,8 @@ public class TextInputMapper implements InputMapper {
 
                 if(noMetaData>0) {
                     for (Attribute metaData : streamDefinition.getMetaData()) {
-                        if (eventAttribute.trim().startsWith(EventBuilderConstants.META_DATA_PREFIX + metaData.getName())) {
-                            attributeArray[attributeCount++] = getPropertyValue(eventAttribute.split(EventBuilderConstants.EVENT_ATTRIBUTE_SEPARATOR)[1], metaData.getType());
+                        if (eventAttribute.trim().startsWith(EventReceiverConstants.META_DATA_PREFIX + metaData.getName())) {
+                            attributeArray[attributeCount++] = getPropertyValue(eventAttribute.split(EventReceiverConstants.EVENT_ATTRIBUTE_SEPARATOR)[1], metaData.getType());
                             setFlag = true;
                             break;
                         }
@@ -171,8 +171,8 @@ public class TextInputMapper implements InputMapper {
                 if(noCorrelationData>0) {
                     if (!setFlag) {
                         for (Attribute correlationData : streamDefinition.getCorrelationData()) {
-                            if (eventAttribute.trim().startsWith(EventBuilderConstants.CORRELATION_DATA_PREFIX + correlationData.getName())) {
-                                attributeArray[attributeCount++] = getPropertyValue(eventAttribute.split(EventBuilderConstants.EVENT_ATTRIBUTE_SEPARATOR)[1], correlationData.getType());
+                            if (eventAttribute.trim().startsWith(EventReceiverConstants.CORRELATION_DATA_PREFIX + correlationData.getName())) {
+                                attributeArray[attributeCount++] = getPropertyValue(eventAttribute.split(EventReceiverConstants.EVENT_ATTRIBUTE_SEPARATOR)[1], correlationData.getType());
                                 setFlag = true;
                                 break;
                             }
@@ -184,7 +184,7 @@ public class TextInputMapper implements InputMapper {
                     if (!setFlag) {
                         for (Attribute payloadData : streamDefinition.getPayloadData()) {
                             if (eventAttribute.trim().startsWith(payloadData.getName())) {
-                                attributeArray[attributeCount++] = getPropertyValue(eventAttribute.split(EventBuilderConstants.EVENT_ATTRIBUTE_SEPARATOR)[1], payloadData.getType());
+                                attributeArray[attributeCount++] = getPropertyValue(eventAttribute.split(EventReceiverConstants.EVENT_ATTRIBUTE_SEPARATOR)[1], payloadData.getType());
                                 break;
                             }
                         }
@@ -193,7 +193,7 @@ public class TextInputMapper implements InputMapper {
             }
 
             if (noMetaData + noCorrelationData + noPayloadData != attributeCount) {
-                throw new EventBuilderProcessingException("Event attributes are not matching with the stream : " + this.eventBuilderConfiguration.getToStreamName() + ":" + eventBuilderConfiguration.getToStreamVersion());
+                throw new EventReceiverProcessingException("Event attributes are not matching with the stream : " + this.eventReceiverConfiguration.getToStreamName() + ":" + eventReceiverConfiguration.getToStreamVersion());
             }
         }
         return attributeArray;
@@ -201,9 +201,9 @@ public class TextInputMapper implements InputMapper {
 
     @Override
     public Attribute[] getOutputAttributes() {
-        TextInputMapping textInputMapping = (TextInputMapping) eventBuilderConfiguration.getInputMapping();
+        TextInputMapping textInputMapping = (TextInputMapping) eventReceiverConfiguration.getInputMapping();
         List<InputMappingAttribute> inputMappingAttributes = textInputMapping.getInputMappingAttributes();
-        return EventBuilderConfigHelper.getAttributes(inputMappingAttributes);
+        return EventReceiverConfigHelper.getAttributes(inputMappingAttributes);
 
     }
 

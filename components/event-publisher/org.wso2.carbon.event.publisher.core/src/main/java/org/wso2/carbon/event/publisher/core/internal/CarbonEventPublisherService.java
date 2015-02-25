@@ -468,7 +468,7 @@ public class CarbonEventPublisherService implements EventPublisherService {
         }
     }
 
-    public void activateInactiveEventFormatterConfigurationForAdaptor(String dependency)
+    public void activateInactiveEventFormatterConfigurationForAdaptor(String eventAdaptorType)
             throws EventPublisherConfigurationException {
 
         List<EventPublisherConfigurationFile> fileList = new ArrayList<EventPublisherConfigurationFile>();
@@ -480,7 +480,7 @@ public class CarbonEventPublisherService implements EventPublisherService {
                 List<EventPublisherConfigurationFile> eventPublisherConfigurationFileList = eventPublisherConfigurationFileIterator.next();
                 if (eventPublisherConfigurationFileList != null) {
                     for (EventPublisherConfigurationFile eventPublisherConfigurationFile : eventPublisherConfigurationFileList) {
-                        if ((eventPublisherConfigurationFile.getStatus().equals(EventPublisherConfigurationFile.Status.WAITING_FOR_DEPENDENCY)) && eventPublisherConfigurationFile.getDependency().equalsIgnoreCase(dependency)) {
+                        if ((eventPublisherConfigurationFile.getStatus().equals(EventPublisherConfigurationFile.Status.WAITING_FOR_DEPENDENCY)) && eventPublisherConfigurationFile.getDependency().equalsIgnoreCase(eventAdaptorType)) {
                             fileList.add(eventPublisherConfigurationFile);
                         }
                     }

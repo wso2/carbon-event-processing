@@ -17,8 +17,8 @@
 */
 package org.wso2.carbon.event.receiver.core.config;
 
-public class EventBuilderConfiguration {
-    private String eventBuilderName;
+public class EventReceiverConfiguration {
+    private String eventReceiverConfiguration;
     private String toStreamName;
     private String toStreamVersion = "1.0.0";
     private InputEventAdaptorConfiguration inputEventAdaptorConfiguration;
@@ -76,12 +76,12 @@ public class EventBuilderConfiguration {
         this.toStreamVersion = toStreamVersion;
     }
 
-    public String getEventBuilderName() {
-        return eventBuilderName;
+    public String getEventReceiverName() {
+        return eventReceiverConfiguration;
     }
 
-    public void setEventBuilderName(String eventBuilderName) {
-        this.eventBuilderName = eventBuilderName;
+    public void setEventReceiverName(String eventReceiverName) {
+        this.eventReceiverConfiguration = eventReceiverName;
     }
 
     public String getFilePath() {

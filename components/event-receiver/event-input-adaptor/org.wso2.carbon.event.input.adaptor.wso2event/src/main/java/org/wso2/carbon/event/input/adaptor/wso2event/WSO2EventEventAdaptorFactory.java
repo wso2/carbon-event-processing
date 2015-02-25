@@ -18,8 +18,8 @@
 package org.wso2.carbon.event.input.adaptor.wso2event;
 
 
-import org.wso2.carbon.event.input.adaptor.manager.core.AbstractInputEventAdaptor;
-import org.wso2.carbon.event.input.adaptor.manager.core.InputEventAdaptorFactory;
+import org.wso2.carbon.event.receiver.core.AbstractInputEventAdaptor;
+import org.wso2.carbon.event.receiver.core.InputEventAdaptorFactory;
 
 public class WSO2EventEventAdaptorFactory implements InputEventAdaptorFactory {
 

@@ -25,10 +25,10 @@ import java.util.HashMap;
 import java.util.Map;
 
 @SuppressWarnings("unchecked")
-public final class EventBuilderConstants {
+public final class EventReceiverConstants {
 
     public static final String EB_CONF_NS = "http://wso2.org/carbon/eventbuilder";
-    public static final String EB_ELEMENT_ROOT_ELEMENT = "eventBuilder";
+    public static final String EB_ELEMENT_ROOT_ELEMENT = "eventReceiver";
     public static final String EB_CONFIG_DIRECTORY = "eventbuilders";
     public static final String EB_ELEMENT_PROPERTY = "property";
     public static final String EB_ELEMENT_XPATH_DEFINITION = "xpathDefinition";
@@ -124,7 +124,7 @@ public final class EventBuilderConstants {
     public static final String EVENT_CORRELATION_TAG = "correlationData";
     public static final String EVENT_PAYLOAD_TAG = "payloadData";
 
-    private EventBuilderConstants() {
+    private EventReceiverConstants() {
 
     }
 

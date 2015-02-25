@@ -20,9 +20,9 @@ package org.wso2.carbon.event.receiver.core.config;
 import org.apache.axiom.om.OMElement;
 import org.apache.axis2.engine.AxisConfiguration;
 
-public class EventBuilderConfigurationFile {
+public class EventReceiverConfigurationFile {
 
-    private String eventBuilderName;
+    private String eventReceiverName;
     private String streamWithVersion;
     private String fileName;
     private DeploymentStatus deploymentStatus;
@@ -33,7 +33,7 @@ public class EventBuilderConfigurationFile {
     private String filePath;
     private boolean isReadOnly;
 
-    public EventBuilderConfigurationFile(String fileName) {
+    public EventReceiverConfigurationFile(String fileName) {
         this.fileName = fileName;
     }
 
@@ -85,12 +85,12 @@ public class EventBuilderConfigurationFile {
         this.axisConfiguration = axisConfiguration;
     }
 
-    public String getEventBuilderName() {
-        return eventBuilderName;
+    public String getEventReceiverName() {
+        return eventReceiverName;
     }
 
-    public void setEventBuilderName(String eventBuilderName) {
-        this.eventBuilderName = eventBuilderName;
+    public void setEventReceiverName(String eventReceiverName) {
+        this.eventReceiverName = eventReceiverName;
     }
 
     public String getFileName() {
@@ -110,9 +110,9 @@ public class EventBuilderConfigurationFile {
             return false;
         }
 
-        EventBuilderConfigurationFile that = (EventBuilderConfigurationFile) o;
+        EventReceiverConfigurationFile that = (EventReceiverConfigurationFile) o;
 
-        if (eventBuilderName != null ? !eventBuilderName.equals(that.eventBuilderName) : that.eventBuilderName != null) {
+        if (eventReceiverName != null ? !eventReceiverName.equals(that.eventReceiverName) : that.eventReceiverName != null) {
             return false;
         }
         if (streamWithVersion != null ? !streamWithVersion.equals(that.streamWithVersion) : that.streamWithVersion != null) {
@@ -127,7 +127,7 @@ public class EventBuilderConfigurationFile {
 
     @Override
     public int hashCode() {
-        int result = eventBuilderName.hashCode();
+        int result = eventReceiverName.hashCode();
         result = 31 * result + fileName.hashCode();
         result = 31 * result + (streamWithVersion != null ? streamWithVersion.hashCode() : 0);
         return result;

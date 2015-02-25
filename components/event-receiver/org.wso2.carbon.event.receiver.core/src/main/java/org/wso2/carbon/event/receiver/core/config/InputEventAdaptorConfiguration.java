@@ -22,7 +22,7 @@ public class InputEventAdaptorConfiguration {
 
     private String inputEventAdaptorName;
     private String inputEventAdaptorType;
-    private InternalInputEventAdaptorConfiguration internalInputEventAdaptorConfiguration;
+    private InternalInputEventAdaptorConfiguration internalInputEventAdaptorConfiguration = new InternalInputEventAdaptorConfiguration();
 
     public InternalInputEventAdaptorConfiguration getInternalInputEventAdaptorConfiguration() {
         return internalInputEventAdaptorConfiguration;

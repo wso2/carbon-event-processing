@@ -18,7 +18,7 @@
 package org.wso2.carbon.event.receiver.core.config;
 
 import org.wso2.carbon.databridge.commons.AttributeType;
-import org.wso2.carbon.event.receiver.core.internal.util.EventBuilderConstants;
+import org.wso2.carbon.event.receiver.core.internal.util.EventReceiverConstants;
 
 /**
  * This class contains properties of inputs and their outputs
@@ -34,7 +34,7 @@ public class InputMappingAttribute {
 
     public InputMappingAttribute(String fromElementKey, String toElementKey,
                                  AttributeType toElementType) {
-        this(fromElementKey, toElementKey, toElementType, EventBuilderConstants.PAYLOAD_DATA_VAL);
+        this(fromElementKey, toElementKey, toElementType, EventReceiverConstants.PAYLOAD_DATA_VAL);
     }
 
     public InputMappingAttribute(String fromElementKey, String toElementKey,

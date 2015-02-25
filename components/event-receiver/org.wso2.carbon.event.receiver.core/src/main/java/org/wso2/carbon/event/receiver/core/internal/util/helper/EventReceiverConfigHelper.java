@@ -21,24 +21,24 @@ import org.apache.axiom.om.OMElement;
 import org.apache.axis2.deployment.DeploymentEngine;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.wso2.carbon.databridge.commons.Attribute;
-import org.wso2.carbon.event.receiver.core.EventBuilderDeployer;
+import org.wso2.carbon.event.receiver.core.EventReceiverDeployer;
 import org.wso2.carbon.event.receiver.core.InputEventAdaptorDto;
 import org.wso2.carbon.event.receiver.core.Property;
 import org.wso2.carbon.event.receiver.core.config.InputEventAdaptorConfiguration;
 import org.wso2.carbon.event.receiver.core.config.InputMappingAttribute;
 import org.wso2.carbon.event.receiver.core.config.InternalInputEventAdaptorConfiguration;
-import org.wso2.carbon.event.receiver.core.internal.ds.EventBuilderServiceValueHolder;
-import org.wso2.carbon.event.receiver.core.internal.util.EventBuilderConstants;
+import org.wso2.carbon.event.receiver.core.internal.ds.EventReceiverServiceValueHolder;
+import org.wso2.carbon.event.receiver.core.internal.util.EventReceiverConstants;
 
 import javax.xml.namespace.QName;
 import java.util.ArrayList;
 import java.util.List;
 
-public class EventBuilderConfigHelper {
+public class EventReceiverConfigHelper {
 
     public static InputEventAdaptorConfiguration getInputEventAdaptorConfiguration(
             String eventAdaptorTypeName) {
-        InputEventAdaptorDto inputEventAdaptorDto = EventBuilderServiceValueHolder.getInputEventAdaptorService().getEventAdaptorDto(eventAdaptorTypeName);
+        InputEventAdaptorDto inputEventAdaptorDto = EventReceiverServiceValueHolder.getCarbonInputEventAdaptorService().getEventAdaptorDto(eventAdaptorTypeName);
         InputEventAdaptorConfiguration inputEventAdaptorConfiguration = null;
         if (inputEventAdaptorDto != null && inputEventAdaptorDto.getAdaptorPropertyList() != null) {
             inputEventAdaptorConfiguration = new InputEventAdaptorConfiguration();
@@ -52,19 +52,19 @@ public class EventBuilderConfigHelper {
         return inputEventAdaptorConfiguration;
     }
 
-    public static String getInputMappingType(OMElement eventBuilderOMElement) {
-        OMElement mappingElement = eventBuilderOMElement.getFirstChildWithName(new QName(EventBuilderConstants.EB_CONF_NS, EventBuilderConstants.EB_ELEMENT_MAPPING));
-        return mappingElement.getAttributeValue(new QName(EventBuilderConstants.EB_ATTR_TYPE));
+    public static String getInputMappingType(OMElement eventReceiverOMElement) {
+        OMElement mappingElement = eventReceiverOMElement.getFirstChildWithName(new QName(EventReceiverConstants.EB_CONF_NS, EventReceiverConstants.EB_ELEMENT_MAPPING));
+        return mappingElement.getAttributeValue(new QName(EventReceiverConstants.EB_ATTR_TYPE));
     }
 
-    public static String getEventBuilderName(OMElement eventBuilderOMElement) {
-        return eventBuilderOMElement.getAttributeValue(new QName(EventBuilderConstants.EB_ATTR_NAME));
+    public static String getEventReceiverName(OMElement eventReceiverOMElement) {
+        return eventReceiverOMElement.getAttributeValue(new QName(EventReceiverConstants.EB_ATTR_NAME));
     }
 
-    public static EventBuilderDeployer getEventBuilderDeployer(
+    public static EventReceiverDeployer getEventReceiverDeployer(
             AxisConfiguration axisConfiguration) {
         DeploymentEngine deploymentEngine = (DeploymentEngine) axisConfiguration.getConfigurator();
-        return (EventBuilderDeployer) deploymentEngine.getDeployer(EventBuilderConstants.EB_CONFIG_DIRECTORY, EventBuilderConstants.EB_CONFIG_FILE_EXTENSION);
+        return (EventReceiverDeployer) deploymentEngine.getDeployer(EventReceiverConstants.EB_CONFIG_DIRECTORY, EventReceiverConstants.EB_CONFIG_FILE_EXTENSION);
     }
 
     public static Attribute[] getAttributes(List<InputMappingAttribute> inputMappingAttributes) {
@@ -72,9 +72,9 @@ public class EventBuilderConfigHelper {
         List<Attribute> correlationAttributes = new ArrayList<Attribute>();
         List<Attribute> payloadAttributes = new ArrayList<Attribute>();
         for (InputMappingAttribute inputMappingAttribute : inputMappingAttributes) {
-            if (inputMappingAttribute.getToElementKey().startsWith(EventBuilderConstants.META_DATA_PREFIX)) {
+            if (inputMappingAttribute.getToElementKey().startsWith(EventReceiverConstants.META_DATA_PREFIX)) {
                 metaAttributes.add(new Attribute(inputMappingAttribute.getToElementKey(), inputMappingAttribute.getToElementType()));
-            } else if (inputMappingAttribute.getToElementKey().startsWith(EventBuilderConstants.CORRELATION_DATA_PREFIX)) {
+            } else if (inputMappingAttribute.getToElementKey().startsWith(EventReceiverConstants.CORRELATION_DATA_PREFIX)) {
                 correlationAttributes.add(new Attribute(inputMappingAttribute.getToElementKey(), inputMappingAttribute.getToElementType()));
             } else {
                 payloadAttributes.add(new Attribute(inputMappingAttribute.getToElementKey(), inputMappingAttribute.getToElementType()));

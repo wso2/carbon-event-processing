@@ -24,16 +24,16 @@ import org.wso2.carbon.databridge.commons.StreamDefinition;
 import org.wso2.carbon.event.receiver.core.InputEventAdaptorDto;
 import org.wso2.carbon.event.receiver.core.InputEventAdaptorService;
 import org.wso2.carbon.event.receiver.core.config.InputEventAdaptorConfiguration;
-import org.wso2.carbon.event.receiver.core.exception.EventBuilderConfigurationException;
-import org.wso2.carbon.event.receiver.core.exception.EventBuilderStreamValidationException;
-import org.wso2.carbon.event.receiver.core.exception.EventBuilderValidationException;
-import org.wso2.carbon.event.receiver.core.internal.ds.EventBuilderServiceValueHolder;
+import org.wso2.carbon.event.receiver.core.exception.EventReceiverConfigurationException;
+import org.wso2.carbon.event.receiver.core.exception.EventReceiverStreamValidationException;
+import org.wso2.carbon.event.receiver.core.exception.EventReceiverValidationException;
+import org.wso2.carbon.event.receiver.core.internal.ds.EventReceiverServiceValueHolder;
 import org.wso2.carbon.event.receiver.core.internal.type.json.JsonInputMappingConfigBuilder;
 import org.wso2.carbon.event.receiver.core.internal.type.map.MapInputMappingConfigBuilder;
 import org.wso2.carbon.event.receiver.core.internal.type.text.TextInputMappingConfigBuilder;
-import org.wso2.carbon.event.receiver.core.internal.type.wso2event.Wso2EventBuilderConfigBuilder;
+import org.wso2.carbon.event.receiver.core.internal.type.wso2event.Wso2EventInputMappingConfigBuilder;
 import org.wso2.carbon.event.receiver.core.internal.type.xml.XMLInputMappingConfigBuilder;
-import org.wso2.carbon.event.receiver.core.internal.util.EventBuilderConstants;
+import org.wso2.carbon.event.receiver.core.internal.util.EventReceiverConstants;
 import org.wso2.carbon.event.stream.manager.core.EventStreamService;
 import org.wso2.carbon.event.stream.manager.core.exception.EventStreamConfigurationException;
 
@@ -47,14 +47,14 @@ public class ConfigurationValidator {
     private static Log log = LogFactory.getLog(ConfigurationValidator.class);
 
     public static boolean validateInputEventAdaptor(
-            String inputEventAdaptorType) throws EventBuilderConfigurationException {
+            String inputEventAdaptorType) throws EventReceiverConfigurationException {
 
-        InputEventAdaptorService inputEventAdaptorService = EventBuilderServiceValueHolder.getInputEventAdaptorService();
+        InputEventAdaptorService inputEventAdaptorService = EventReceiverServiceValueHolder.getCarbonInputEventAdaptorService();
 
         List<InputEventAdaptorDto> eventAdaptorInfoList = inputEventAdaptorService.getEventAdaptors();
 
         if (eventAdaptorInfoList == null || eventAdaptorInfoList.size() == 0) {
-            throw new EventBuilderValidationException("Input event adaptor :" + inputEventAdaptorType + " does not exist.", inputEventAdaptorType);
+            throw new EventReceiverValidationException("Input event adaptor :" + inputEventAdaptorType + " does not exist.", inputEventAdaptorType);
         }
 
         Iterator<InputEventAdaptorDto> eventAdaIteratorInfoIterator = eventAdaptorInfoList.iterator();
@@ -65,85 +65,85 @@ public class ConfigurationValidator {
             }
         }
 
-        throw new EventBuilderValidationException("Input event adaptor :" + inputEventAdaptorType + " does not exist.", inputEventAdaptorType);
+        throw new EventReceiverValidationException("Input event adaptor :" + inputEventAdaptorType + " does not exist.", inputEventAdaptorType);
     }
 
-    public static void validateEventBuilderConfiguration(OMElement ebConfigOmElement)
-            throws EventBuilderConfigurationException {
-        if (!ebConfigOmElement.getLocalName().equals(EventBuilderConstants.EB_ELEMENT_ROOT_ELEMENT)) {
-            throw new EventBuilderConfigurationException("Invalid event builder configuration.");
+    public static void validateEventReceiverConfiguration(OMElement ebConfigOmElement)
+            throws EventReceiverConfigurationException {
+        if (!ebConfigOmElement.getLocalName().equals(EventReceiverConstants.EB_ELEMENT_ROOT_ELEMENT)) {
+            throw new EventReceiverConfigurationException("Invalid event builder configuration.");
         }
 
-        String eventBuilderName = ebConfigOmElement.getAttributeValue(new QName(EventBuilderConstants.EB_ATTR_NAME));
-        OMElement fromElement = ebConfigOmElement.getFirstChildWithName(new QName(EventBuilderConstants.EB_CONF_NS, EventBuilderConstants.EB_ELEMENT_FROM));
-        OMElement mappingElement = ebConfigOmElement.getFirstChildWithName(new QName(EventBuilderConstants.EB_CONF_NS, EventBuilderConstants.EB_ELEMENT_MAPPING));
-        OMElement toElement = ebConfigOmElement.getFirstChildWithName(new QName(EventBuilderConstants.EB_CONF_NS, EventBuilderConstants.EB_ELEMENT_TO));
+        String eventReceiverName = ebConfigOmElement.getAttributeValue(new QName(EventReceiverConstants.EB_ATTR_NAME));
+        OMElement fromElement = ebConfigOmElement.getFirstChildWithName(new QName(EventReceiverConstants.EB_CONF_NS, EventReceiverConstants.EB_ELEMENT_FROM));
+        OMElement mappingElement = ebConfigOmElement.getFirstChildWithName(new QName(EventReceiverConstants.EB_CONF_NS, EventReceiverConstants.EB_ELEMENT_MAPPING));
+        OMElement toElement = ebConfigOmElement.getFirstChildWithName(new QName(EventReceiverConstants.EB_CONF_NS, EventReceiverConstants.EB_ELEMENT_TO));
 
-        if (eventBuilderName == null || eventBuilderName.isEmpty() || fromElement == null || mappingElement == null || toElement == null) {
-            throw new EventBuilderConfigurationException("Invalid event builder configuration for event builder: " + eventBuilderName);
+        if (eventReceiverName == null || eventReceiverName.isEmpty() || fromElement == null || mappingElement == null || toElement == null) {
+            throw new EventReceiverConfigurationException("Invalid event builder configuration for event builder: " + eventReceiverName);
         }
 
-        String fromInputEventAdaptorName = fromElement.getAttributeValue(new QName(EventBuilderConstants.EB_ATTR_TA_NAME));
-        String fromInputEventAdaptorType = fromElement.getAttributeValue(new QName(EventBuilderConstants.EB_ATTR_TA_TYPE));
+        String fromInputEventAdaptorName = fromElement.getAttributeValue(new QName(EventReceiverConstants.EB_ATTR_TA_NAME));
+        String fromInputEventAdaptorType = fromElement.getAttributeValue(new QName(EventReceiverConstants.EB_ATTR_TA_TYPE));
 
         if (fromInputEventAdaptorName == null || fromInputEventAdaptorName.isEmpty() ||
                 fromInputEventAdaptorType == null || fromInputEventAdaptorType.isEmpty()) {
-            throw new EventBuilderConfigurationException("Invalid event builder configuration for event builder: " + eventBuilderName);
+            throw new EventReceiverConfigurationException("Invalid event builder configuration for event builder: " + eventReceiverName);
         }
 
-        InputEventAdaptorConfiguration inputEventAdaptorConfiguration = EventBuilderConfigHelper.getInputEventAdaptorConfiguration(fromInputEventAdaptorType);
+        InputEventAdaptorConfiguration inputEventAdaptorConfiguration = EventReceiverConfigHelper.getInputEventAdaptorConfiguration(fromInputEventAdaptorType);
 
         Iterator fromElementPropertyIterator = fromElement.getChildrenWithName(
-                new QName(EventBuilderConstants.EB_CONF_NS, EventBuilderConstants.EB_ELEMENT_PROPERTY));
+                new QName(EventReceiverConstants.EB_CONF_NS, EventReceiverConstants.EB_ELEMENT_PROPERTY));
         Map<String, String> fromPropertyMap = new HashMap<String, String>();
         while (fromElementPropertyIterator.hasNext()) {
             OMElement fromElementProperty = (OMElement) fromElementPropertyIterator.next();
-            String propertyName = fromElementProperty.getAttributeValue(new QName(EventBuilderConstants.EB_ATTR_NAME));
+            String propertyName = fromElementProperty.getAttributeValue(new QName(EventReceiverConstants.EB_ATTR_NAME));
             String propertyValue = fromElementProperty.getText();
             fromPropertyMap.put(propertyName, propertyValue);
         }
         for (String propertyKey : inputEventAdaptorConfiguration.getInternalInputEventAdaptorConfiguration().getProperties().keySet()) {
             if (fromPropertyMap.get(propertyKey) == null) {
-                throw new EventBuilderConfigurationException("Invalid event builder configuration for event builder: " + eventBuilderName);
+                throw new EventReceiverConfigurationException("Invalid event builder configuration for event builder: " + eventReceiverName);
             }
         }
 
-        String mappingType = mappingElement.getAttributeValue(new QName(EventBuilderConstants.EB_ATTR_TYPE));
+        String mappingType = mappingElement.getAttributeValue(new QName(EventReceiverConstants.EB_ATTR_TYPE));
         if (mappingType != null && !mappingType.isEmpty()) {
             validateMappingProperties(mappingElement, mappingType);
         } else {
-            throw new EventBuilderConfigurationException("Mapping type not specified for : " + eventBuilderName);
+            throw new EventReceiverConfigurationException("Mapping type not specified for : " + eventReceiverName);
         }
 
-        String toStreamName = toElement.getAttributeValue(new QName(EventBuilderConstants.EB_ATTR_STREAM_NAME));
-        String toStreamVersion = toElement.getAttributeValue(new QName(EventBuilderConstants.EB_ATTR_VERSION));
+        String toStreamName = toElement.getAttributeValue(new QName(EventReceiverConstants.EB_ATTR_STREAM_NAME));
+        String toStreamVersion = toElement.getAttributeValue(new QName(EventReceiverConstants.EB_ATTR_VERSION));
 
         if (toStreamName == null || toStreamName.isEmpty() || toStreamVersion == null || toStreamVersion.isEmpty()) {
-            throw new EventBuilderConfigurationException("Invalid event builder configuration for event builder: " + eventBuilderName);
+            throw new EventReceiverConfigurationException("Invalid event builder configuration for event builder: " + eventReceiverName);
         }
     }
 
-    public static void validateToStream(String toStreamName, String toStreamVersion, int tenantId) throws EventBuilderConfigurationException {
+    public static void validateToStream(String toStreamName, String toStreamVersion, int tenantId) throws EventReceiverConfigurationException {
 
 
-        EventStreamService eventStreamService = EventBuilderServiceValueHolder.getEventStreamService();
+        EventStreamService eventStreamService = EventReceiverServiceValueHolder.getEventStreamService();
         try {
             StreamDefinition streamDefinition = eventStreamService.getStreamDefinition(toStreamName, toStreamVersion, tenantId);
             if (streamDefinition != null) {
                 return;
             }
         } catch (EventStreamConfigurationException e) {
-            throw new EventBuilderConfigurationException("Error while validating stream definition with store : " + e.getMessage(), e);
+            throw new EventReceiverConfigurationException("Error while validating stream definition with store : " + e.getMessage(), e);
         }
 
-        throw new EventBuilderStreamValidationException("Stream " + toStreamName + ":" + toStreamVersion + " does not exist",
+        throw new EventReceiverStreamValidationException("Stream " + toStreamName + ":" + toStreamVersion + " does not exist",
                 toStreamName + ":" + toStreamVersion);
     }
 
     public static boolean validateSupportedMapping(String inputEventAdaptorType,
                                                    String messageType) {
 
-        InputEventAdaptorService inputEventAdaptorService = EventBuilderServiceValueHolder.getInputEventAdaptorService();
+        InputEventAdaptorService inputEventAdaptorService = EventReceiverServiceValueHolder.getCarbonInputEventAdaptorService();
         InputEventAdaptorDto inputEventAdaptorDto = inputEventAdaptorService.getEventAdaptorDto(inputEventAdaptorType);
 
         if (inputEventAdaptorDto == null) {
@@ -156,16 +156,16 @@ public class ConfigurationValidator {
 
     @SuppressWarnings("unchecked")
     public static void validateMappingProperties(OMElement mappingElement, String mappingType)
-            throws EventBuilderConfigurationException {
-        if (mappingType.equalsIgnoreCase(EventBuilderConstants.EB_WSO2EVENT_MAPPING_TYPE)) {
-            Wso2EventBuilderConfigBuilder.validateWso2EventMapping(mappingElement);
-        } else if (mappingType.equalsIgnoreCase(EventBuilderConstants.EB_TEXT_MAPPING_TYPE)) {
+            throws EventReceiverConfigurationException {
+        if (mappingType.equalsIgnoreCase(EventReceiverConstants.EB_WSO2EVENT_MAPPING_TYPE)) {
+            Wso2EventInputMappingConfigBuilder.validateWso2EventMapping(mappingElement);
+        } else if (mappingType.equalsIgnoreCase(EventReceiverConstants.EB_TEXT_MAPPING_TYPE)) {
             TextInputMappingConfigBuilder.validateTextMapping(mappingElement);
-        } else if (mappingType.equalsIgnoreCase(EventBuilderConstants.EB_MAP_MAPPING_TYPE)) {
+        } else if (mappingType.equalsIgnoreCase(EventReceiverConstants.EB_MAP_MAPPING_TYPE)) {
             MapInputMappingConfigBuilder.validateMapEventMapping(mappingElement);
-        } else if (mappingType.equalsIgnoreCase(EventBuilderConstants.EB_XML_MAPPING_TYPE)) {
+        } else if (mappingType.equalsIgnoreCase(EventReceiverConstants.EB_XML_MAPPING_TYPE)) {
             XMLInputMappingConfigBuilder.validateXMLEventMapping(mappingElement);
-        } else if (mappingType.equalsIgnoreCase(EventBuilderConstants.EB_JSON_MAPPING_TYPE)) {
+        } else if (mappingType.equalsIgnoreCase(EventReceiverConstants.EB_JSON_MAPPING_TYPE)) {
             JsonInputMappingConfigBuilder.validateJsonEventMapping(mappingElement);
         } else {
             log.info("No validations available for input mapping type :" + mappingType);

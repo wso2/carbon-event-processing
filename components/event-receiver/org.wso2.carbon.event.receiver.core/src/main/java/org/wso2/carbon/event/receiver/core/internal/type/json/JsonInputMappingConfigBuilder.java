@@ -22,9 +22,9 @@ import org.apache.axiom.om.OMFactory;
 import org.wso2.carbon.databridge.commons.AttributeType;
 import org.wso2.carbon.event.receiver.core.config.InputMapping;
 import org.wso2.carbon.event.receiver.core.config.InputMappingAttribute;
-import org.wso2.carbon.event.receiver.core.exception.EventBuilderConfigurationException;
-import org.wso2.carbon.event.receiver.core.internal.util.EventBuilderConfigBuilder;
-import org.wso2.carbon.event.receiver.core.internal.util.EventBuilderConstants;
+import org.wso2.carbon.event.receiver.core.exception.EventReceiverConfigurationException;
+import org.wso2.carbon.event.receiver.core.internal.util.EventReceiverConfigBuilder;
+import org.wso2.carbon.event.receiver.core.internal.util.EventReceiverConstants;
 
 import javax.xml.namespace.QName;
 import java.util.ArrayList;
@@ -50,14 +50,14 @@ public class JsonInputMappingConfigBuilder {
             InputMapping inputMapping, OMFactory factory) {
 
         JsonInputMapping jsonInputMapping = (JsonInputMapping) inputMapping;
-        OMElement mappingOMElement = factory.createOMElement(new QName(EventBuilderConstants.EB_ELEMENT_MAPPING));
-        mappingOMElement.declareDefaultNamespace(EventBuilderConstants.EB_CONF_NS);
-        mappingOMElement.addAttribute(EventBuilderConstants.EB_ATTR_TYPE, EventBuilderConstants.EB_JSON_MAPPING_TYPE, null);
+        OMElement mappingOMElement = factory.createOMElement(new QName(EventReceiverConstants.EB_ELEMENT_MAPPING));
+        mappingOMElement.declareDefaultNamespace(EventReceiverConstants.EB_CONF_NS);
+        mappingOMElement.addAttribute(EventReceiverConstants.EB_ATTR_TYPE, EventReceiverConstants.EB_JSON_MAPPING_TYPE, null);
 
         if (jsonInputMapping.isCustomMappingEnabled()) {
-            mappingOMElement.addAttribute(EventBuilderConstants.EB_ATTR_CUSTOM_MAPPING_ENABLED, EventBuilderConstants.ENABLE_CONST, null);
+            mappingOMElement.addAttribute(EventReceiverConstants.EB_ATTR_CUSTOM_MAPPING_ENABLED, EventReceiverConstants.ENABLE_CONST, null);
         } else {
-            mappingOMElement.addAttribute(EventBuilderConstants.EB_ATTR_CUSTOM_MAPPING_ENABLED, EventBuilderConstants.DISABLE_CONST, null);
+            mappingOMElement.addAttribute(EventReceiverConstants.EB_ATTR_CUSTOM_MAPPING_ENABLED, EventReceiverConstants.DISABLE_CONST, null);
         }
         for (InputMappingAttribute inputMappingAttribute : jsonInputMapping.getInputMappingAttributes()) {
             OMElement propertyOMElement = getPropertyOmElement(factory, inputMappingAttribute);
@@ -69,14 +69,14 @@ public class JsonInputMappingConfigBuilder {
     }
 
     private InputMappingAttribute getInputMappingAttributeFromOM(OMElement omElement) {
-        OMElement propertyFromElement = omElement.getFirstChildWithName(new QName(EventBuilderConstants.EB_CONF_NS, EventBuilderConstants.EB_ELEMENT_FROM));
-        OMElement propertyToElement = omElement.getFirstChildWithName(new QName(EventBuilderConstants.EB_CONF_NS, EventBuilderConstants.EB_ELEMENT_TO));
+        OMElement propertyFromElement = omElement.getFirstChildWithName(new QName(EventReceiverConstants.EB_CONF_NS, EventReceiverConstants.EB_ELEMENT_FROM));
+        OMElement propertyToElement = omElement.getFirstChildWithName(new QName(EventReceiverConstants.EB_CONF_NS, EventReceiverConstants.EB_ELEMENT_TO));
 
-        String jsonPath = propertyFromElement.getAttributeValue(new QName(EventBuilderConstants.EB_ATTR_JSONPATH));
-        String outputPropertyName = propertyToElement.getAttributeValue(new QName(EventBuilderConstants.EB_ATTR_NAME));
-        String attributeType = propertyToElement.getAttributeValue(new QName(EventBuilderConstants.EB_ATTR_TYPE));
-        AttributeType outputPropertyType = EventBuilderConstants.STRING_ATTRIBUTE_TYPE_MAP.get(attributeType.toLowerCase());
-        String defaultValue = propertyToElement.getAttributeValue(new QName(EventBuilderConstants.EB_ATTR_DEFAULT_VALUE));
+        String jsonPath = propertyFromElement.getAttributeValue(new QName(EventReceiverConstants.EB_ATTR_JSONPATH));
+        String outputPropertyName = propertyToElement.getAttributeValue(new QName(EventReceiverConstants.EB_ATTR_NAME));
+        String attributeType = propertyToElement.getAttributeValue(new QName(EventReceiverConstants.EB_ATTR_TYPE));
+        AttributeType outputPropertyType = EventReceiverConstants.STRING_ATTRIBUTE_TYPE_MAP.get(attributeType.toLowerCase());
+        String defaultValue = propertyToElement.getAttributeValue(new QName(EventReceiverConstants.EB_ATTR_DEFAULT_VALUE));
 
         InputMappingAttribute inputMappingAttribute = new InputMappingAttribute(jsonPath, outputPropertyName, outputPropertyType);
         inputMappingAttribute.setDefaultValue(defaultValue);
@@ -85,18 +85,18 @@ public class JsonInputMappingConfigBuilder {
 
     private OMElement getPropertyOmElement(OMFactory factory,
                                            InputMappingAttribute inputMappingAttribute) {
-        OMElement propertyOmElement = factory.createOMElement(new QName(EventBuilderConstants.EB_ELEMENT_PROPERTY));
+        OMElement propertyOmElement = factory.createOMElement(new QName(EventReceiverConstants.EB_ELEMENT_PROPERTY));
 
-        OMElement fromElement = factory.createOMElement(new QName(EventBuilderConstants.EB_ELEMENT_FROM));
-        fromElement.declareDefaultNamespace(EventBuilderConstants.EB_CONF_NS);
-        fromElement.addAttribute(EventBuilderConstants.EB_ATTR_JSONPATH, inputMappingAttribute.getFromElementKey(), null);
+        OMElement fromElement = factory.createOMElement(new QName(EventReceiverConstants.EB_ELEMENT_FROM));
+        fromElement.declareDefaultNamespace(EventReceiverConstants.EB_CONF_NS);
+        fromElement.addAttribute(EventReceiverConstants.EB_ATTR_JSONPATH, inputMappingAttribute.getFromElementKey(), null);
 
-        OMElement toElement = factory.createOMElement(new QName(EventBuilderConstants.EB_ELEMENT_TO));
-        toElement.declareDefaultNamespace(EventBuilderConstants.EB_CONF_NS);
-        toElement.addAttribute(EventBuilderConstants.EB_ATTR_NAME, inputMappingAttribute.getToElementKey(), null);
-        toElement.addAttribute(EventBuilderConstants.EB_ATTR_TYPE, EventBuilderConfigBuilder.getAttributeType(inputMappingAttribute.getToElementType()), null);
+        OMElement toElement = factory.createOMElement(new QName(EventReceiverConstants.EB_ELEMENT_TO));
+        toElement.declareDefaultNamespace(EventReceiverConstants.EB_CONF_NS);
+        toElement.addAttribute(EventReceiverConstants.EB_ATTR_NAME, inputMappingAttribute.getToElementKey(), null);
+        toElement.addAttribute(EventReceiverConstants.EB_ATTR_TYPE, EventReceiverConfigBuilder.getAttributeType(inputMappingAttribute.getToElementType()), null);
         if (inputMappingAttribute.getDefaultValue() != null && !inputMappingAttribute.getDefaultValue().isEmpty()) {
-            toElement.addAttribute(EventBuilderConstants.EB_ATTR_DEFAULT_VALUE, inputMappingAttribute.getDefaultValue(), null);
+            toElement.addAttribute(EventReceiverConstants.EB_ATTR_DEFAULT_VALUE, inputMappingAttribute.getDefaultValue(), null);
         }
 
         propertyOmElement.addChild(fromElement);
@@ -107,13 +107,13 @@ public class JsonInputMappingConfigBuilder {
 
     public InputMapping fromOM(
             OMElement mappingElement)
-            throws EventBuilderConfigurationException {
+            throws EventReceiverConfigurationException {
         JsonInputMappingConfigBuilder.validateJsonEventMapping(mappingElement);
         JsonInputMapping jsonInputMapping = new JsonInputMapping();
-        String customMappingEnabledAttribute = mappingElement.getAttributeValue(new QName(EventBuilderConstants.EB_ATTR_CUSTOM_MAPPING_ENABLED));
-        if (customMappingEnabledAttribute == null || customMappingEnabledAttribute.equalsIgnoreCase(EventBuilderConstants.ENABLE_CONST)) {
+        String customMappingEnabledAttribute = mappingElement.getAttributeValue(new QName(EventReceiverConstants.EB_ATTR_CUSTOM_MAPPING_ENABLED));
+        if (customMappingEnabledAttribute == null || customMappingEnabledAttribute.equalsIgnoreCase(EventReceiverConstants.ENABLE_CONST)) {
             jsonInputMapping.setCustomMappingEnabled(true);
-            Iterator propertyIterator = mappingElement.getChildrenWithName(new QName(EventBuilderConstants.EB_CONF_NS, EventBuilderConstants.EB_ELEMENT_PROPERTY));
+            Iterator propertyIterator = mappingElement.getChildrenWithName(new QName(EventReceiverConstants.EB_CONF_NS, EventReceiverConstants.EB_ELEMENT_PROPERTY));
             while (propertyIterator.hasNext()) {
                 OMElement propertyOMElement = (OMElement) propertyIterator.next();
                 InputMappingAttribute inputMappingAttribute = getInputMappingAttributeFromOM(propertyOMElement);
@@ -128,12 +128,12 @@ public class JsonInputMappingConfigBuilder {
 
     @SuppressWarnings("unchecked")
     public static void validateJsonEventMapping(OMElement omElement)
-            throws EventBuilderConfigurationException {
+            throws EventReceiverConfigurationException {
 
-        String customMappingEnabledAttribute = omElement.getAttributeValue(new QName(EventBuilderConstants.EB_ATTR_CUSTOM_MAPPING_ENABLED));
-        if (customMappingEnabledAttribute == null || customMappingEnabledAttribute.equalsIgnoreCase(EventBuilderConstants.ENABLE_CONST)) {
+        String customMappingEnabledAttribute = omElement.getAttributeValue(new QName(EventReceiverConstants.EB_ATTR_CUSTOM_MAPPING_ENABLED));
+        if (customMappingEnabledAttribute == null || customMappingEnabledAttribute.equalsIgnoreCase(EventReceiverConstants.ENABLE_CONST)) {
             List<String> supportedChildTags = new ArrayList<String>();
-            supportedChildTags.add(EventBuilderConstants.EB_ELEMENT_PROPERTY);
+            supportedChildTags.add(EventReceiverConstants.EB_ELEMENT_PROPERTY);
             Iterator<OMElement> mappingIterator = omElement.getChildElements();
 
             int count = 0;
@@ -142,26 +142,26 @@ public class JsonInputMappingConfigBuilder {
                 OMElement childElement = mappingIterator.next();
                 String childTag = childElement.getLocalName();
                 if (!supportedChildTags.contains(childTag)) {
-                    throw new EventBuilderConfigurationException("Unsupported XML configuration element for JSON Input Mapping : " + childTag);
+                    throw new EventReceiverConfigurationException("Unsupported XML configuration element for JSON Input Mapping : " + childTag);
                 }
-                if (childTag.equals(EventBuilderConstants.EB_ELEMENT_PROPERTY)) {
-                    OMElement propertyFromElement = childElement.getFirstChildWithName(new QName(EventBuilderConstants.EB_CONF_NS, EventBuilderConstants.EB_ELEMENT_FROM));
-                    OMElement propertyToElement = childElement.getFirstChildWithName(new QName(EventBuilderConstants.EB_CONF_NS, EventBuilderConstants.EB_ELEMENT_TO));
+                if (childTag.equals(EventReceiverConstants.EB_ELEMENT_PROPERTY)) {
+                    OMElement propertyFromElement = childElement.getFirstChildWithName(new QName(EventReceiverConstants.EB_CONF_NS, EventReceiverConstants.EB_ELEMENT_FROM));
+                    OMElement propertyToElement = childElement.getFirstChildWithName(new QName(EventReceiverConstants.EB_CONF_NS, EventReceiverConstants.EB_ELEMENT_TO));
                     if (propertyFromElement == null) {
-                        throw new EventBuilderConfigurationException("An attribute mapping must provide a valid 'from' element");
+                        throw new EventReceiverConfigurationException("An attribute mapping must provide a valid 'from' element");
                     }
                     if (propertyToElement == null) {
-                        throw new EventBuilderConfigurationException("An attribute mapping must provide a valid 'to' element");
+                        throw new EventReceiverConfigurationException("An attribute mapping must provide a valid 'to' element");
                     }
-                    if (propertyToElement.getAttribute(new QName(EventBuilderConstants.EB_ATTR_NAME)) == null ||
-                        propertyToElement.getAttribute(new QName(EventBuilderConstants.EB_ATTR_TYPE)) == null) {
-                        throw new EventBuilderConfigurationException("An attribute mapping must provide name and type for its 'to' element.");
+                    if (propertyToElement.getAttribute(new QName(EventReceiverConstants.EB_ATTR_NAME)) == null ||
+                        propertyToElement.getAttribute(new QName(EventReceiverConstants.EB_ATTR_TYPE)) == null) {
+                        throw new EventReceiverConfigurationException("An attribute mapping must provide name and type for its 'to' element.");
                     }
                 }
             }
 
             if (count == 0) {
-                throw new EventBuilderConfigurationException("There must be at least 1 attribute mapping with Custom Mapping enabled.");
+                throw new EventReceiverConfigurationException("There must be at least 1 attribute mapping with Custom Mapping enabled.");
             }
         }
     }

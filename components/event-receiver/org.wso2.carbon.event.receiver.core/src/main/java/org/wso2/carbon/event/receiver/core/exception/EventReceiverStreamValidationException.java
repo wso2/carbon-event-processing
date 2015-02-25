@@ -20,20 +20,38 @@ package org.wso2.carbon.event.receiver.core.exception;
 /**
  * If there is a problem when creating the event builder configuration.
  */
-public class EventBuilderProcessingException extends RuntimeException {
+public class EventReceiverStreamValidationException extends RuntimeException {
 
-    public EventBuilderProcessingException() {
+    private String dependency;
+
+    public EventReceiverStreamValidationException() {
+
     }
 
-    public EventBuilderProcessingException(String message) {
+    public EventReceiverStreamValidationException(String message) {
         super(message);
     }
 
-    public EventBuilderProcessingException(String message, Throwable cause) {
+    public EventReceiverStreamValidationException(String message, String dependency) {
+        super(message);
+        this.dependency = dependency;
+    }
+
+    public EventReceiverStreamValidationException(String message, Throwable cause) {
         super(message, cause);
     }
 
-    public EventBuilderProcessingException(Throwable cause) {
+    public EventReceiverStreamValidationException(String message, String dependency,
+                                                  Throwable cause) {
+        super(message, cause);
+        this.dependency = dependency;
+    }
+
+    public EventReceiverStreamValidationException(Throwable cause) {
         super(cause);
+    }
+
+    public String getDependency() {
+        return dependency;
     }
 }

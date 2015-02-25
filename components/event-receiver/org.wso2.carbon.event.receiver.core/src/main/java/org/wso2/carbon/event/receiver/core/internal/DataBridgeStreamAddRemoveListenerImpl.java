@@ -21,8 +21,6 @@ package org.wso2.carbon.event.receiver.core.internal;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.wso2.carbon.databridge.core.definitionstore.StreamAddRemoveListener;
-import org.wso2.carbon.event.receiver.core.exception.EventBuilderConfigurationException;
-import org.wso2.carbon.event.receiver.core.internal.ds.EventBuilderServiceValueHolder;
 
 public class DataBridgeStreamAddRemoveListenerImpl implements StreamAddRemoveListener {
 
@@ -34,8 +32,8 @@ public class DataBridgeStreamAddRemoveListenerImpl implements StreamAddRemoveLis
         //TODO fix this code to add default event builder
 
 //        try {
-//            EventBuilderServiceValueHolder.getCarbonEventBuilderService().saveDefaultEventBuilder(streamId, tenantId);
-//        } catch (EventBuilderConfigurationException e) {
+//            EventReceiverServiceValueHolder.getCarbonEventReceiverService().saveDefaultEventBuilder(streamId, tenantId);
+//        } catch (EventReceiverConfigurationException e) {
 //            log.error(e.getMessage(), e);
 //        }
     }

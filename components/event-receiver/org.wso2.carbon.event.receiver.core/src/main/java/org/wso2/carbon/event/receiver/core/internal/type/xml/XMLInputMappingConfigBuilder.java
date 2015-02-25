@@ -22,10 +22,10 @@ import org.apache.axiom.om.OMFactory;
 import org.wso2.carbon.databridge.commons.AttributeType;
 import org.wso2.carbon.event.receiver.core.config.InputMapping;
 import org.wso2.carbon.event.receiver.core.config.InputMappingAttribute;
-import org.wso2.carbon.event.receiver.core.exception.EventBuilderConfigurationException;
+import org.wso2.carbon.event.receiver.core.exception.EventReceiverConfigurationException;
 import org.wso2.carbon.event.receiver.core.internal.type.xml.config.XPathDefinition;
-import org.wso2.carbon.event.receiver.core.internal.util.EventBuilderConfigBuilder;
-import org.wso2.carbon.event.receiver.core.internal.util.EventBuilderConstants;
+import org.wso2.carbon.event.receiver.core.internal.util.EventReceiverConfigBuilder;
+import org.wso2.carbon.event.receiver.core.internal.util.EventReceiverConstants;
 
 import javax.xml.namespace.QName;
 import java.util.ArrayList;
@@ -53,24 +53,24 @@ public class XMLInputMappingConfigBuilder {
 
         XMLInputMapping xmlInputMapping = (XMLInputMapping) inputMapping;
         List<XPathDefinition> xPathDefinitions = xmlInputMapping.getXPathDefinitions();
-        OMElement mappingOMElement = factory.createOMElement(new QName(EventBuilderConstants.EB_ELEMENT_MAPPING));
-        mappingOMElement.declareDefaultNamespace(EventBuilderConstants.EB_CONF_NS);
+        OMElement mappingOMElement = factory.createOMElement(new QName(EventReceiverConstants.EB_ELEMENT_MAPPING));
+        mappingOMElement.declareDefaultNamespace(EventReceiverConstants.EB_CONF_NS);
         if (xmlInputMapping.getParentSelectorXpath() != null && !xmlInputMapping.getParentSelectorXpath().isEmpty()) {
-            mappingOMElement.addAttribute(EventBuilderConstants.EB_ATTR_PARENT_XPATH, xmlInputMapping.getParentSelectorXpath(), null);
+            mappingOMElement.addAttribute(EventReceiverConstants.EB_ATTR_PARENT_XPATH, xmlInputMapping.getParentSelectorXpath(), null);
         }
-        mappingOMElement.addAttribute(EventBuilderConstants.EB_ATTR_TYPE, EventBuilderConstants.EB_XML_MAPPING_TYPE, null);
+        mappingOMElement.addAttribute(EventReceiverConstants.EB_ATTR_TYPE, EventReceiverConstants.EB_XML_MAPPING_TYPE, null);
 
         if (xmlInputMapping.isCustomMappingEnabled()) {
-            mappingOMElement.addAttribute(EventBuilderConstants.EB_ATTR_CUSTOM_MAPPING_ENABLED, EventBuilderConstants.ENABLE_CONST, null);
+            mappingOMElement.addAttribute(EventReceiverConstants.EB_ATTR_CUSTOM_MAPPING_ENABLED, EventReceiverConstants.ENABLE_CONST, null);
         } else {
-            mappingOMElement.addAttribute(EventBuilderConstants.EB_ATTR_CUSTOM_MAPPING_ENABLED, EventBuilderConstants.DISABLE_CONST, null);
+            mappingOMElement.addAttribute(EventReceiverConstants.EB_ATTR_CUSTOM_MAPPING_ENABLED, EventReceiverConstants.DISABLE_CONST, null);
         }
         if (xPathDefinitions != null) {
             for (XPathDefinition xPathDefinition : xPathDefinitions) {
-                OMElement xpathDefOMElement = factory.createOMElement(new QName(EventBuilderConstants.EB_ELEMENT_XPATH_DEFINITION));
-                xpathDefOMElement.declareDefaultNamespace(EventBuilderConstants.EB_CONF_NS);
-                xpathDefOMElement.addAttribute(EventBuilderConstants.EB_ATTR_PREFIX, xPathDefinition.getPrefix(), null);
-                xpathDefOMElement.addAttribute(EventBuilderConstants.EB_ATTR_NAMESPACE, xPathDefinition.getNamespaceUri(), null);
+                OMElement xpathDefOMElement = factory.createOMElement(new QName(EventReceiverConstants.EB_ELEMENT_XPATH_DEFINITION));
+                xpathDefOMElement.declareDefaultNamespace(EventReceiverConstants.EB_CONF_NS);
+                xpathDefOMElement.addAttribute(EventReceiverConstants.EB_ATTR_PREFIX, xPathDefinition.getPrefix(), null);
+                xpathDefOMElement.addAttribute(EventReceiverConstants.EB_ATTR_NAMESPACE, xPathDefinition.getNamespaceUri(), null);
                 mappingOMElement.addChild(xpathDefOMElement);
             }
         }
@@ -85,14 +85,14 @@ public class XMLInputMappingConfigBuilder {
     }
 
     private InputMappingAttribute getInputMappingAttributeFromOM(OMElement omElement) {
-        OMElement propertyFromElement = omElement.getFirstChildWithName(new QName(EventBuilderConstants.EB_CONF_NS, EventBuilderConstants.EB_ELEMENT_FROM));
-        OMElement propertyToElement = omElement.getFirstChildWithName(new QName(EventBuilderConstants.EB_CONF_NS, EventBuilderConstants.EB_ELEMENT_TO));
+        OMElement propertyFromElement = omElement.getFirstChildWithName(new QName(EventReceiverConstants.EB_CONF_NS, EventReceiverConstants.EB_ELEMENT_FROM));
+        OMElement propertyToElement = omElement.getFirstChildWithName(new QName(EventReceiverConstants.EB_CONF_NS, EventReceiverConstants.EB_ELEMENT_TO));
 
-        String xpath = propertyFromElement.getAttributeValue(new QName(EventBuilderConstants.EB_ATTR_XPATH));
-        String outputPropertyName = propertyToElement.getAttributeValue(new QName(EventBuilderConstants.EB_ATTR_NAME));
-        String attributeType = propertyToElement.getAttributeValue(new QName(EventBuilderConstants.EB_ATTR_TYPE));
-        AttributeType outputPropertyType = EventBuilderConstants.STRING_ATTRIBUTE_TYPE_MAP.get(attributeType.toLowerCase());
-        String defaultValue = propertyToElement.getAttributeValue(new QName(EventBuilderConstants.EB_ATTR_DEFAULT_VALUE));
+        String xpath = propertyFromElement.getAttributeValue(new QName(EventReceiverConstants.EB_ATTR_XPATH));
+        String outputPropertyName = propertyToElement.getAttributeValue(new QName(EventReceiverConstants.EB_ATTR_NAME));
+        String attributeType = propertyToElement.getAttributeValue(new QName(EventReceiverConstants.EB_ATTR_TYPE));
+        AttributeType outputPropertyType = EventReceiverConstants.STRING_ATTRIBUTE_TYPE_MAP.get(attributeType.toLowerCase());
+        String defaultValue = propertyToElement.getAttributeValue(new QName(EventReceiverConstants.EB_ATTR_DEFAULT_VALUE));
 
         InputMappingAttribute inputMappingAttribute = new InputMappingAttribute(xpath, outputPropertyName, outputPropertyType);
         inputMappingAttribute.setDefaultValue(defaultValue);
@@ -102,18 +102,18 @@ public class XMLInputMappingConfigBuilder {
 
     private OMElement getPropertyOmElement(OMFactory factory,
                                            InputMappingAttribute inputMappingAttribute) {
-        OMElement propertyOmElement = factory.createOMElement(new QName(EventBuilderConstants.EB_ELEMENT_PROPERTY));
+        OMElement propertyOmElement = factory.createOMElement(new QName(EventReceiverConstants.EB_ELEMENT_PROPERTY));
 
-        OMElement fromElement = factory.createOMElement(new QName(EventBuilderConstants.EB_ELEMENT_FROM));
-        fromElement.declareDefaultNamespace(EventBuilderConstants.EB_CONF_NS);
-        fromElement.addAttribute(EventBuilderConstants.EB_ATTR_XPATH, inputMappingAttribute.getFromElementKey(), null);
+        OMElement fromElement = factory.createOMElement(new QName(EventReceiverConstants.EB_ELEMENT_FROM));
+        fromElement.declareDefaultNamespace(EventReceiverConstants.EB_CONF_NS);
+        fromElement.addAttribute(EventReceiverConstants.EB_ATTR_XPATH, inputMappingAttribute.getFromElementKey(), null);
 
-        OMElement toElement = factory.createOMElement(new QName(EventBuilderConstants.EB_ELEMENT_TO));
-        toElement.declareDefaultNamespace(EventBuilderConstants.EB_CONF_NS);
-        toElement.addAttribute(EventBuilderConstants.EB_ATTR_NAME, inputMappingAttribute.getToElementKey(), null);
-        toElement.addAttribute(EventBuilderConstants.EB_ATTR_TYPE, EventBuilderConfigBuilder.getAttributeType(inputMappingAttribute.getToElementType()), null);
+        OMElement toElement = factory.createOMElement(new QName(EventReceiverConstants.EB_ELEMENT_TO));
+        toElement.declareDefaultNamespace(EventReceiverConstants.EB_CONF_NS);
+        toElement.addAttribute(EventReceiverConstants.EB_ATTR_NAME, inputMappingAttribute.getToElementKey(), null);
+        toElement.addAttribute(EventReceiverConstants.EB_ATTR_TYPE, EventReceiverConfigBuilder.getAttributeType(inputMappingAttribute.getToElementType()), null);
         if (inputMappingAttribute.getDefaultValue() != null && !inputMappingAttribute.getDefaultValue().isEmpty()) {
-            toElement.addAttribute(EventBuilderConstants.EB_ATTR_DEFAULT_VALUE, inputMappingAttribute.getDefaultValue(), null);
+            toElement.addAttribute(EventReceiverConstants.EB_ATTR_DEFAULT_VALUE, inputMappingAttribute.getDefaultValue(), null);
         }
 
         propertyOmElement.addChild(fromElement);
@@ -124,31 +124,31 @@ public class XMLInputMappingConfigBuilder {
 
     public InputMapping fromOM(
             OMElement mappingElement)
-            throws EventBuilderConfigurationException {
+            throws EventReceiverConfigurationException {
 
         XMLInputMappingConfigBuilder.validateXMLEventMapping(mappingElement);
         XMLInputMapping xmlInputMapping = new XMLInputMapping();
-        String customMappingEnabledAttribute = mappingElement.getAttributeValue(new QName(EventBuilderConstants.EB_ATTR_CUSTOM_MAPPING_ENABLED));
-        if (customMappingEnabledAttribute == null || customMappingEnabledAttribute.equalsIgnoreCase(EventBuilderConstants.ENABLE_CONST)) {
+        String customMappingEnabledAttribute = mappingElement.getAttributeValue(new QName(EventReceiverConstants.EB_ATTR_CUSTOM_MAPPING_ENABLED));
+        if (customMappingEnabledAttribute == null || customMappingEnabledAttribute.equalsIgnoreCase(EventReceiverConstants.ENABLE_CONST)) {
             xmlInputMapping.setCustomMappingEnabled(true);
-            String parentSelectorXpath = mappingElement.getAttributeValue(new QName(EventBuilderConstants.EB_ATTR_PARENT_XPATH));
+            String parentSelectorXpath = mappingElement.getAttributeValue(new QName(EventReceiverConstants.EB_ATTR_PARENT_XPATH));
             if (parentSelectorXpath != null && !parentSelectorXpath.isEmpty()) {
                 xmlInputMapping.setParentSelectorXpath(parentSelectorXpath);
             }
 
-            Iterator xpathDefIterator = mappingElement.getChildrenWithName(new QName(EventBuilderConstants.EB_CONF_NS, EventBuilderConstants.EB_ELEMENT_XPATH_DEFINITION));
+            Iterator xpathDefIterator = mappingElement.getChildrenWithName(new QName(EventReceiverConstants.EB_CONF_NS, EventReceiverConstants.EB_ELEMENT_XPATH_DEFINITION));
             List<XPathDefinition> xPathDefinitions = new ArrayList<XPathDefinition>();
             while (xpathDefIterator.hasNext()) {
                 OMElement xpathDefElement = (OMElement) xpathDefIterator.next();
                 if (xpathDefElement != null) {
-                    String prefix = xpathDefElement.getAttributeValue(new QName(EventBuilderConstants.EB_ATTR_PREFIX));
-                    String namespace = xpathDefElement.getAttributeValue(new QName(EventBuilderConstants.EB_ATTR_NAMESPACE));
+                    String prefix = xpathDefElement.getAttributeValue(new QName(EventReceiverConstants.EB_ATTR_PREFIX));
+                    String namespace = xpathDefElement.getAttributeValue(new QName(EventReceiverConstants.EB_ATTR_NAMESPACE));
                     xPathDefinitions.add(new XPathDefinition(prefix, namespace));
                 }
             }
             xmlInputMapping.setXPathDefinitions(xPathDefinitions);
 
-            Iterator propertyIterator = mappingElement.getChildrenWithName(new QName(EventBuilderConstants.EB_CONF_NS, EventBuilderConstants.EB_ELEMENT_PROPERTY));
+            Iterator propertyIterator = mappingElement.getChildrenWithName(new QName(EventReceiverConstants.EB_CONF_NS, EventReceiverConstants.EB_ELEMENT_PROPERTY));
             while (propertyIterator.hasNext()) {
                 OMElement propertyOMElement = (OMElement) propertyIterator.next();
                 InputMappingAttribute inputMappingAttribute = getInputMappingAttributeFromOM(propertyOMElement);
@@ -163,13 +163,13 @@ public class XMLInputMappingConfigBuilder {
 
     @SuppressWarnings("unchecked")
     public static void validateXMLEventMapping(OMElement omElement)
-            throws EventBuilderConfigurationException {
+            throws EventReceiverConfigurationException {
 
-        String customMappingEnabledAttribute = omElement.getAttributeValue(new QName(EventBuilderConstants.EB_ATTR_CUSTOM_MAPPING_ENABLED));
-        if (customMappingEnabledAttribute == null || customMappingEnabledAttribute.equalsIgnoreCase(EventBuilderConstants.ENABLE_CONST)) {
+        String customMappingEnabledAttribute = omElement.getAttributeValue(new QName(EventReceiverConstants.EB_ATTR_CUSTOM_MAPPING_ENABLED));
+        if (customMappingEnabledAttribute == null || customMappingEnabledAttribute.equalsIgnoreCase(EventReceiverConstants.ENABLE_CONST)) {
             List<String> supportedChildTags = new ArrayList<String>();
-            supportedChildTags.add(EventBuilderConstants.EB_ELEMENT_PROPERTY);
-            supportedChildTags.add(EventBuilderConstants.EB_ELEMENT_XPATH_DEFINITION);
+            supportedChildTags.add(EventReceiverConstants.EB_ELEMENT_PROPERTY);
+            supportedChildTags.add(EventReceiverConstants.EB_ELEMENT_XPATH_DEFINITION);
 
             int propertyCount = 0;
             Iterator<OMElement> mappingIterator = omElement.getChildElements();
@@ -177,30 +177,30 @@ public class XMLInputMappingConfigBuilder {
                 OMElement childElement = mappingIterator.next();
                 String childTag = childElement.getLocalName();
                 if (!supportedChildTags.contains(childTag)) {
-                    throw new EventBuilderConfigurationException("Unsupported XML configuration element for XML Input Mapping : " + childTag);
+                    throw new EventReceiverConfigurationException("Unsupported XML configuration element for XML Input Mapping : " + childTag);
                 }
-                if (childTag.equals(EventBuilderConstants.EB_ELEMENT_PROPERTY)) {
+                if (childTag.equals(EventReceiverConstants.EB_ELEMENT_PROPERTY)) {
                     propertyCount++;
-                    OMElement propertyFromElement = childElement.getFirstChildWithName(new QName(EventBuilderConstants.EB_CONF_NS, EventBuilderConstants.EB_ELEMENT_FROM));
-                    OMElement propertyToElement = childElement.getFirstChildWithName(new QName(EventBuilderConstants.EB_CONF_NS, EventBuilderConstants.EB_ELEMENT_TO));
+                    OMElement propertyFromElement = childElement.getFirstChildWithName(new QName(EventReceiverConstants.EB_CONF_NS, EventReceiverConstants.EB_ELEMENT_FROM));
+                    OMElement propertyToElement = childElement.getFirstChildWithName(new QName(EventReceiverConstants.EB_CONF_NS, EventReceiverConstants.EB_ELEMENT_TO));
                     if (propertyFromElement == null) {
-                        throw new EventBuilderConfigurationException("An attribute mapping must provide a valid 'from' element");
+                        throw new EventReceiverConfigurationException("An attribute mapping must provide a valid 'from' element");
                     }
-                    if (propertyFromElement.getAttribute(new QName(EventBuilderConstants.EB_ATTR_XPATH)) == null) {
-                        throw new EventBuilderConfigurationException("XML Mapping must contain an XPath expression to map from");
+                    if (propertyFromElement.getAttribute(new QName(EventReceiverConstants.EB_ATTR_XPATH)) == null) {
+                        throw new EventReceiverConfigurationException("XML Mapping must contain an XPath expression to map from");
                     }
                     if (propertyToElement == null) {
-                        throw new EventBuilderConfigurationException("An attribute mapping must provide a valid 'to' element");
+                        throw new EventReceiverConfigurationException("An attribute mapping must provide a valid 'to' element");
                     }
-                    if (propertyToElement.getAttribute(new QName(EventBuilderConstants.EB_ATTR_NAME)) == null ||
-                        propertyToElement.getAttribute(new QName(EventBuilderConstants.EB_ATTR_TYPE)) == null) {
-                        throw new EventBuilderConfigurationException("An attribute mapping must provide name and type for its 'to' element.");
+                    if (propertyToElement.getAttribute(new QName(EventReceiverConstants.EB_ATTR_NAME)) == null ||
+                        propertyToElement.getAttribute(new QName(EventReceiverConstants.EB_ATTR_TYPE)) == null) {
+                        throw new EventReceiverConfigurationException("An attribute mapping must provide name and type for its 'to' element.");
                     }
                 }
             }
 
             if (propertyCount == 0) {
-                throw new EventBuilderConfigurationException("No Mapping properties in configuration");
+                throw new EventReceiverConfigurationException("No Mapping properties in configuration");
             }
         }
     }

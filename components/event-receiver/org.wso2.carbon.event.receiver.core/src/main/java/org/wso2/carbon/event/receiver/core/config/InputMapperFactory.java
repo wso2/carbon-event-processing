@@ -20,7 +20,7 @@ package org.wso2.carbon.event.receiver.core.config;
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMFactory;
 import org.wso2.carbon.databridge.commons.StreamDefinition;
-import org.wso2.carbon.event.receiver.core.exception.EventBuilderConfigurationException;
+import org.wso2.carbon.event.receiver.core.exception.EventReceiverConfigurationException;
 
 
 public interface InputMapperFactory {
@@ -32,7 +32,7 @@ public interface InputMapperFactory {
      * @return the constructed {@link InputMapping}
      */
     InputMapping constructInputMappingFromOM(OMElement omElement)
-            throws EventBuilderConfigurationException;
+            throws EventReceiverConfigurationException;
 
     /**
      * Construct an OMElement from a given input mapping
@@ -46,11 +46,11 @@ public interface InputMapperFactory {
     /**
      * Constructs an returns an appropriate InputMapper depending on the Factory Implementation
      *
-     * @param eventBuilderConfiguration the {@link EventBuilderConfiguration} to be used
+     * @param eventReceiverConfiguration the {@link EventReceiverConfiguration} to be used
      * @param exportedStreamDefinition  the {@link org.wso2.carbon.databridge.commons.StreamDefinition} exported from the event builder
      * @return the {@link InputMapper} instance based on the supplied configuration
      */
-    InputMapper constructInputMapper(EventBuilderConfiguration eventBuilderConfiguration,
+    InputMapper constructInputMapper(EventReceiverConfiguration eventReceiverConfiguration,
                                      StreamDefinition exportedStreamDefinition)
-            throws EventBuilderConfigurationException;
+            throws EventReceiverConfigurationException;
 }

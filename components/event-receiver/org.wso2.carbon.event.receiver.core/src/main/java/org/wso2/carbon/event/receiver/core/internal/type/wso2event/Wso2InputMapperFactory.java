@@ -21,31 +21,31 @@ package org.wso2.carbon.event.receiver.core.internal.type.wso2event;
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMFactory;
 import org.wso2.carbon.databridge.commons.StreamDefinition;
-import org.wso2.carbon.event.receiver.core.config.EventBuilderConfiguration;
+import org.wso2.carbon.event.receiver.core.config.EventReceiverConfiguration;
 import org.wso2.carbon.event.receiver.core.config.InputMapper;
 import org.wso2.carbon.event.receiver.core.config.InputMapperFactory;
 import org.wso2.carbon.event.receiver.core.config.InputMapping;
-import org.wso2.carbon.event.receiver.core.exception.EventBuilderConfigurationException;
+import org.wso2.carbon.event.receiver.core.exception.EventReceiverConfigurationException;
 
 public class Wso2InputMapperFactory implements InputMapperFactory {
 
 
     @Override
     public InputMapping constructInputMappingFromOM(OMElement omElement)
-            throws EventBuilderConfigurationException {
-        return Wso2EventBuilderConfigBuilder.getInstance().fromOM(omElement);
+            throws EventReceiverConfigurationException {
+        return Wso2EventInputMappingConfigBuilder.getInstance().fromOM(omElement);
     }
 
     @Override
     public OMElement constructOMFromInputMapping(
             InputMapping inputMapping, OMFactory factory) {
-        return Wso2EventBuilderConfigBuilder.getInstance().inputMappingToOM(inputMapping, factory);
+        return Wso2EventInputMappingConfigBuilder.getInstance().inputMappingToOM(inputMapping, factory);
     }
 
     @Override
-    public InputMapper constructInputMapper(EventBuilderConfiguration eventBuilderConfiguration,
+    public InputMapper constructInputMapper(EventReceiverConfiguration eventReceiverConfiguration,
                                             StreamDefinition exportedStreamDefinition)
-            throws EventBuilderConfigurationException {
-        return new Wso2EventInputMapper(eventBuilderConfiguration, exportedStreamDefinition);
+            throws EventReceiverConfigurationException {
+        return new Wso2EventInputMapper(eventReceiverConfiguration, exportedStreamDefinition);
     }
 }

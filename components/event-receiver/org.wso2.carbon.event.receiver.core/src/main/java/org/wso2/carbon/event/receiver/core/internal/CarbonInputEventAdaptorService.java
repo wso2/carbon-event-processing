@@ -27,7 +27,6 @@ import org.wso2.carbon.event.receiver.core.InputEventAdaptorListener;
 import org.wso2.carbon.event.receiver.core.InputEventAdaptorService;
 import org.wso2.carbon.event.receiver.core.config.InputEventAdaptorConfiguration;
 import org.wso2.carbon.event.receiver.core.exception.InputEventAdaptorEventProcessingException;
-import org.wso2.carbon.event.receiver.core.internal.ds.InputEventAdaptorServiceValueHolder;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -39,7 +38,6 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class CarbonInputEventAdaptorService implements InputEventAdaptorService {
 
-    private static final String INPUT_EVENT_ADAPTOR = "Input Event Adaptor";
     private static Log log = LogFactory.getLog(CarbonInputEventAdaptorService.class);
     private Map<String, AbstractInputEventAdaptor> eventAdaptorMap;
 
@@ -50,7 +48,6 @@ public class CarbonInputEventAdaptorService implements InputEventAdaptorService 
     public void registerEventAdaptor(AbstractInputEventAdaptor abstractInputEventAdaptor) {
         InputEventAdaptorDto inputEventAdaptorDto = abstractInputEventAdaptor.getInputEventAdaptorDto();
         this.eventAdaptorMap.put(inputEventAdaptorDto.getEventAdaptorTypeName(), abstractInputEventAdaptor);
-        InputEventAdaptorServiceValueHolder.getComponentContext().getBundleContext().registerService(AbstractInputEventAdaptor.class.getName(), abstractInputEventAdaptor, null);
     }
 
     public void unRegisterEventAdaptor(AbstractInputEventAdaptor abstractInputEventAdaptor) {
