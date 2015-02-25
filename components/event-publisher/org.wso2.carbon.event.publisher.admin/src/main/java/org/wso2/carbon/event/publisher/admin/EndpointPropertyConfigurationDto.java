@@ -22,6 +22,7 @@ public class EndpointPropertyConfigurationDto {
 
     private String eventAdaptorType;
 
+    //todo check naming
     private EventPublisherPropertyDto[] outputEventAdaptorConfiguration;
 
     public String getEventAdaptorType() {
