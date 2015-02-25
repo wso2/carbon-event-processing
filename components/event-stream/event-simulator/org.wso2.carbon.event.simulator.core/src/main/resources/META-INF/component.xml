@@ -23,7 +23,15 @@
             <class>org.wso2.carbon.event.simulator.core.CSVFileDeployer
             </class>
         </deployer>
+        <deployer>
+            <directory>eventsimulatorfiles</directory>
+            <extension>xml</extension>
+            <class>org.wso2.carbon.event.simulator.core.DataSourceAndEventStreamInfoDeployer
+            </class>
+        </deployer>
     </deployers>
+
+
 
     <!--<ManagementPermissions>-->
         <!--<ManagementPermission>-->
