@@ -38,7 +38,7 @@
     <dependencies>
         <dependency>
             <groupId>org.wso2.carbon.event-processing</groupId>
-            <artifactId>org.wso2.carbon.event.input.adaptor.core</artifactId>
+            <artifactId>org.wso2.carbon.event.receiver.core</artifactId>
         </dependency>
         <dependency>
             <groupId>org.wso2.carbon</groupId>
@@ -90,8 +90,8 @@
                             org.wso2.carbon.event.input.adaptor.jms.*,
                         </Export-Package>
                         <Import-Package>
-                            org.wso2.carbon.event.input.adaptor.core,
-                            org.wso2.carbon.event.input.adaptor.core.*,
+                            org.wso2.carbon.event.receiver.core,
+                            org.wso2.carbon.event.receiver.core.*,
                             !javax.xml.namespace,
                             javax.xml.namespace; version=0.0.0,
                             *;resolution:=optional,

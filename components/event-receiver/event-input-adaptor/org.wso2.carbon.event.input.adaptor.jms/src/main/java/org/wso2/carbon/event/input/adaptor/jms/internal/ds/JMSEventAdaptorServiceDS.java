@@ -20,8 +20,8 @@ package org.wso2.carbon.event.input.adaptor.jms.internal.ds;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.osgi.service.component.ComponentContext;
-import org.wso2.carbon.event.input.adaptor.core.InputEventAdaptorFactory;
 import org.wso2.carbon.event.input.adaptor.jms.JMSEventAdaptorFactory;
+import org.wso2.carbon.event.receiver.core.InputEventAdaptorFactory;
 import org.wso2.carbon.utils.ConfigurationContextService;
 
 

@@ -36,7 +36,7 @@ public interface InputMapper {
     /**
      * Converts the passed in object and returns an object array(s) with attributes as array elements.
      * The conversion will happen based on the mapping type where all incoming attributes of an event
-     * will be passed directly to consumers of event builder without any mapping happening.
+     * will be passed directly to consumers of event receiver without any mapping happening.
      *
      * @param obj the object to be converted
      * @return the converted object. This can be an object array or an array of object arrays

@@ -25,7 +25,7 @@ public class MapInputMapping extends AbstractInputMapping {
 
     @Override
     public String getMappingType() {
-        return EventReceiverConstants.EB_MAP_MAPPING_TYPE;
+        return EventReceiverConstants.ER_MAP_MAPPING_TYPE;
     }
 
 }

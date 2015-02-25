@@ -18,7 +18,7 @@
 package org.wso2.carbon.event.receiver.core.exception;
 
 /**
- * If there is a problem when creating the event builder configuration.
+ * If there is a problem when creating the event receiver configuration.
  */
 public class EventReceiverConfigurationException extends Exception {
 

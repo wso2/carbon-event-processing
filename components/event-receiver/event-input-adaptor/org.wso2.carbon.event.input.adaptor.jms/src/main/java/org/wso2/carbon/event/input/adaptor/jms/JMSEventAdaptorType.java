@@ -22,24 +22,23 @@ import org.apache.axis2.transport.base.threads.NativeWorkerPool;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.wso2.carbon.context.PrivilegedCarbonContext;
-import org.wso2.carbon.event.input.adaptor.core.AbstractInputEventAdaptor;
-import org.wso2.carbon.event.input.adaptor.core.InputEventAdaptorListener;
-import org.wso2.carbon.event.input.adaptor.core.MessageType;
-import org.wso2.carbon.event.input.adaptor.core.Property;
-import org.wso2.carbon.event.input.adaptor.core.config.InputEventAdaptorConfiguration;
-import org.wso2.carbon.event.input.adaptor.core.config.InternalInputEventAdaptorConfiguration;
-import org.wso2.carbon.event.input.adaptor.core.exception.InputEventAdaptorEventProcessingException;
-import org.wso2.carbon.event.input.adaptor.core.message.config.InputEventAdaptorMessageConfiguration;
 import org.wso2.carbon.event.input.adaptor.jms.internal.LateStartAdaptorListener;
 import org.wso2.carbon.event.input.adaptor.jms.internal.ds.JMSEventAdaptorServiceHolder;
 import org.wso2.carbon.event.input.adaptor.jms.internal.util.*;
+import org.wso2.carbon.event.receiver.core.AbstractInputEventAdaptor;
+import org.wso2.carbon.event.receiver.core.InputEventAdaptorListener;
+import org.wso2.carbon.event.receiver.core.MessageType;
+import org.wso2.carbon.event.receiver.core.Property;
+import org.wso2.carbon.event.receiver.core.config.InputEventAdaptorConfiguration;
+import org.wso2.carbon.event.receiver.core.config.InternalInputEventAdaptorConfiguration;
+import org.wso2.carbon.event.receiver.core.exception.InputEventAdaptorEventProcessingException;
 
 import javax.jms.JMSException;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 public final class JMSEventAdaptorType extends AbstractInputEventAdaptor implements
-                                                                         LateStartAdaptorListener {
+        LateStartAdaptorListener {
 
     private boolean readyToPoll = false;
     private static final Log log = LogFactory.getLog(JMSEventAdaptorType.class);
@@ -155,17 +154,6 @@ public final class JMSEventAdaptorType extends AbstractInputEventAdaptor impleme
         subscriberNameProperty.setHint(resourceBundle.getString(JMSEventAdaptorConstants.ADAPTOR_JMS_DURABLE_SUBSCRIBER_NAME_HINT));
         propertyList.add(subscriberNameProperty);
 
-        return propertyList;
-    }
-
-    /**
-     * @return input message configuration property list
-     */
-    @Override
-    public List<Property> getInputMessageProperties() {
-
-        List<Property> propertyList = new ArrayList<Property>();
-
         // Topic
         Property topicProperty = new Property(JMSEventAdaptorConstants.ADAPTOR_JMS_DESTINATION);
         topicProperty.setDisplayName(
@@ -174,34 +162,33 @@ public final class JMSEventAdaptorType extends AbstractInputEventAdaptor impleme
         topicProperty.setHint(resourceBundle.getString(JMSEventAdaptorConstants.ADAPTOR_JMS_DESTINATION_HINT));
         propertyList.add(topicProperty);
 
-        return propertyList;
 
+        return propertyList;
     }
 
-
-    public String subscribe(InputEventAdaptorMessageConfiguration inputEventMessageConfiguration,
-                            InputEventAdaptorListener inputEventAdaptorListener,
-                            InputEventAdaptorConfiguration inputEventAdaptorConfiguration,
-                            AxisConfiguration axisConfiguration) {
+    public String subscribe(
+            InputEventAdaptorListener inputEventAdaptorListener,
+            InputEventAdaptorConfiguration inputEventAdaptorConfiguration,
+            AxisConfiguration axisConfiguration) {
 
 
         String subscriptionId = UUID.randomUUID().toString();
         int tenantId = PrivilegedCarbonContext.getThreadLocalCarbonContext().getTenantId();
         if (!readyToPoll) {
-            lateStartAdaptorConfigList.add(new LateStartAdaptorConfig(inputEventMessageConfiguration, inputEventAdaptorListener, inputEventAdaptorConfiguration, axisConfiguration, subscriptionId, tenantId));
+            lateStartAdaptorConfigList.add(new LateStartAdaptorConfig(inputEventAdaptorListener, inputEventAdaptorConfiguration, axisConfiguration, subscriptionId, tenantId));
         } else {
-            createJMSAdaptorListener(inputEventMessageConfiguration, inputEventAdaptorListener, inputEventAdaptorConfiguration, axisConfiguration, subscriptionId, tenantId);
+            createJMSAdaptorListener(inputEventAdaptorListener, inputEventAdaptorConfiguration, axisConfiguration, subscriptionId, tenantId);
         }
 
         return subscriptionId;
     }
 
 
-    public void unsubscribe(InputEventAdaptorMessageConfiguration inputEventMessageConfiguration,
-                            InputEventAdaptorConfiguration inputEventAdaptorConfiguration,
-                            AxisConfiguration axisConfiguration, String subscriptionId) {
+    public void unsubscribe(
+            InputEventAdaptorConfiguration inputEventAdaptorConfiguration,
+            AxisConfiguration axisConfiguration, String subscriptionId) {
 
-        String destination = inputEventMessageConfiguration.getInputMessageProperties().get(JMSEventAdaptorConstants.ADAPTOR_JMS_DESTINATION);
+        String destination = inputEventAdaptorConfiguration.getInternalInputEventAdaptorConfiguration().getProperties().get(JMSEventAdaptorConstants.ADAPTOR_JMS_DESTINATION);
 
         int tenantId = PrivilegedCarbonContext.getThreadLocalCarbonContext().getTenantId();
 
@@ -210,9 +197,9 @@ public final class JMSEventAdaptorType extends AbstractInputEventAdaptor impleme
             throw new InputEventAdaptorEventProcessingException("There is no subscription for " + destination + " for tenant " + PrivilegedCarbonContext.getThreadLocalCarbonContext().getTenantDomain(true));
         }
 
-        ConcurrentHashMap<String, ConcurrentHashMap<String, SubscriptionDetails>> destinationSubscriptionsMap = adaptorDestinationSubscriptionsMap.get(inputEventAdaptorConfiguration.getName());
+        ConcurrentHashMap<String, ConcurrentHashMap<String, SubscriptionDetails>> destinationSubscriptionsMap = adaptorDestinationSubscriptionsMap.get(inputEventAdaptorConfiguration.getInputEventAdaptorName());
         if (destinationSubscriptionsMap == null) {
-            throw new InputEventAdaptorEventProcessingException("There is no subscription for " + destination + " for event adaptor " + inputEventAdaptorConfiguration.getName());
+            throw new InputEventAdaptorEventProcessingException("There is no subscription for " + destination + " for event adaptor " + inputEventAdaptorConfiguration.getInputEventAdaptorName());
         }
 
         ConcurrentHashMap<String, SubscriptionDetails> subscriptionsMap = destinationSubscriptionsMap.get(destination);
@@ -223,13 +210,13 @@ public final class JMSEventAdaptorType extends AbstractInputEventAdaptor impleme
         SubscriptionDetails subscriptionDetails = subscriptionsMap.get(subscriptionId);
         if (subscriptionDetails == null) {
             throw new InputEventAdaptorEventProcessingException("There is no subscription for " + destination + " for the subscriptionId:" + subscriptionId);
-        }else{
+        } else {
 
             try {
                 subscriptionDetails.close();
                 subscriptionsMap.remove(subscriptionId);
             } catch (JMSException e) {
-                throw new InputEventAdaptorEventProcessingException("Can not unsubscribe from the destination " + destination + " with the event adaptor " + inputEventAdaptorConfiguration.getName(), e);
+                throw new InputEventAdaptorEventProcessingException("Can not unsubscribe from the destination " + destination + " with the event adaptor " + inputEventAdaptorConfiguration.getInputEventAdaptorName(), e);
             }
         }
 
@@ -240,12 +227,11 @@ public final class JMSEventAdaptorType extends AbstractInputEventAdaptor impleme
         log.info("JMS input event adaptor loading listeners ");
         readyToPoll = true;
         for (LateStartAdaptorConfig lateStartAdaptorConfig : lateStartAdaptorConfigList) {
-            this.createJMSAdaptorListener(lateStartAdaptorConfig.getInputEventAdaptorMessageConfiguration(), lateStartAdaptorConfig.getInputEventAdaptorListener(), lateStartAdaptorConfig.getInputEventAdaptorConfiguration(), lateStartAdaptorConfig.getAxisConfiguration(), lateStartAdaptorConfig.getSubscriptionId(), lateStartAdaptorConfig.getTenantId());
+            this.createJMSAdaptorListener(lateStartAdaptorConfig.getInputEventAdaptorListener(), lateStartAdaptorConfig.getInputEventAdaptorConfiguration(), lateStartAdaptorConfig.getAxisConfiguration(), lateStartAdaptorConfig.getSubscriptionId(), lateStartAdaptorConfig.getTenantId());
         }
     }
 
     private void createJMSAdaptorListener(
-            InputEventAdaptorMessageConfiguration inputEventAdaptorMessageConfiguration,
             InputEventAdaptorListener inputEventAdaptorListener,
             InputEventAdaptorConfiguration inputEventAdaptorConfiguration,
             AxisConfiguration axisConfiguration, String subscriptionId, int tenantId) {
@@ -259,15 +245,15 @@ public final class JMSEventAdaptorType extends AbstractInputEventAdaptor impleme
             }
         }
 
-        ConcurrentHashMap<String, ConcurrentHashMap<String, SubscriptionDetails>> destinationSubscriptionsMap = adaptorDestinationSubscriptionsMap.get(inputEventAdaptorConfiguration.getName());
+        ConcurrentHashMap<String, ConcurrentHashMap<String, SubscriptionDetails>> destinationSubscriptionsMap = adaptorDestinationSubscriptionsMap.get(inputEventAdaptorConfiguration.getInputEventAdaptorName());
         if (destinationSubscriptionsMap == null) {
             destinationSubscriptionsMap = new ConcurrentHashMap<String, ConcurrentHashMap<String, SubscriptionDetails>>();
-            if (null != adaptorDestinationSubscriptionsMap.putIfAbsent(inputEventAdaptorConfiguration.getName(), destinationSubscriptionsMap)) {
-                destinationSubscriptionsMap = adaptorDestinationSubscriptionsMap.get(inputEventAdaptorConfiguration.getName());
+            if (null != adaptorDestinationSubscriptionsMap.putIfAbsent(inputEventAdaptorConfiguration.getInputEventAdaptorName(), destinationSubscriptionsMap)) {
+                destinationSubscriptionsMap = adaptorDestinationSubscriptionsMap.get(inputEventAdaptorConfiguration.getInputEventAdaptorName());
             }
         }
 
-        String destination = inputEventAdaptorMessageConfiguration.getInputMessageProperties().get(JMSEventAdaptorConstants.ADAPTOR_JMS_DESTINATION);
+        String destination = inputEventAdaptorConfiguration.getInternalInputEventAdaptorConfiguration().getProperties().get(JMSEventAdaptorConstants.ADAPTOR_JMS_DESTINATION);
 
         ConcurrentHashMap<String, SubscriptionDetails> subscriptionsMap = destinationSubscriptionsMap.get(destination);
         if (subscriptionsMap == null) {
@@ -279,26 +265,25 @@ public final class JMSEventAdaptorType extends AbstractInputEventAdaptor impleme
 
 
         Map<String, String> adaptorProperties = new HashMap<String, String>();
-        if(inputEventAdaptorConfiguration.getInputProperties().get(JMSEventAdaptorConstants.ADAPTOR_JMS_DURABLE_SUBSCRIBER_NAME) != null){
-            InternalInputEventAdaptorConfiguration internalInputEventAdaptorConfiguration = inputEventAdaptorConfiguration.getInputConfiguration();
-            internalInputEventAdaptorConfiguration.addEventAdaptorProperty(JMSEventAdaptorConstants.ADAPTOR_JMS_SUBSCRIPTION_DURABLE,"true");
-            inputEventAdaptorConfiguration.setInputConfiguration(internalInputEventAdaptorConfiguration);
-        }else {
-            InternalInputEventAdaptorConfiguration internalInputEventAdaptorConfiguration = inputEventAdaptorConfiguration.getInputConfiguration();
-            internalInputEventAdaptorConfiguration.addEventAdaptorProperty(JMSEventAdaptorConstants.ADAPTOR_JMS_SUBSCRIPTION_DURABLE,"false");
-            inputEventAdaptorConfiguration.setInputConfiguration(internalInputEventAdaptorConfiguration);
+        InternalInputEventAdaptorConfiguration internalInputEventAdaptorConfiguration = inputEventAdaptorConfiguration.getInternalInputEventAdaptorConfiguration();
+        if (internalInputEventAdaptorConfiguration.getProperties().get(JMSEventAdaptorConstants.ADAPTOR_JMS_DURABLE_SUBSCRIBER_NAME) != null) {
+            internalInputEventAdaptorConfiguration.addEventAdaptorProperty(JMSEventAdaptorConstants.ADAPTOR_JMS_SUBSCRIPTION_DURABLE, "true");
+            inputEventAdaptorConfiguration.setInternalInputEventAdaptorConfiguration(internalInputEventAdaptorConfiguration);
+        } else {
+            internalInputEventAdaptorConfiguration.addEventAdaptorProperty(JMSEventAdaptorConstants.ADAPTOR_JMS_SUBSCRIPTION_DURABLE, "false");
+            inputEventAdaptorConfiguration.setInternalInputEventAdaptorConfiguration(internalInputEventAdaptorConfiguration);
         }
 
-        adaptorProperties.putAll(inputEventAdaptorConfiguration.getInputProperties());
+        adaptorProperties.putAll(internalInputEventAdaptorConfiguration.getProperties());
 
-        JMSConnectionFactory jmsConnectionFactory = new JMSConnectionFactory(new Hashtable<String, String>(adaptorProperties), inputEventAdaptorConfiguration.getName());
+        JMSConnectionFactory jmsConnectionFactory = new JMSConnectionFactory(new Hashtable<String, String>(adaptorProperties), inputEventAdaptorConfiguration.getInputEventAdaptorName());
 
         Map<String, String> messageConfig = new HashMap<String, String>();
         messageConfig.put(JMSConstants.PARAM_DESTINATION, destination);
-        JMSTaskManager jmsTaskManager = JMSTaskManagerFactory.createTaskManagerForService(jmsConnectionFactory, inputEventAdaptorConfiguration.getName(), new NativeWorkerPool(4, 100, 1000, 1000, "JMS Threads", "JMSThreads" + UUID.randomUUID().toString()), messageConfig);
+        JMSTaskManager jmsTaskManager = JMSTaskManagerFactory.createTaskManagerForService(jmsConnectionFactory, inputEventAdaptorConfiguration.getInputEventAdaptorName(), new NativeWorkerPool(4, 100, 1000, 1000, "JMS Threads", "JMSThreads" + UUID.randomUUID().toString()), messageConfig);
         jmsTaskManager.setJmsMessageListener(new JMSMessageListener(inputEventAdaptorListener, axisConfiguration));
 
-        JMSListener jmsListener = new JMSListener(inputEventAdaptorConfiguration.getName() + "#" + destination, jmsTaskManager);
+        JMSListener jmsListener = new JMSListener(inputEventAdaptorConfiguration.getInputEventAdaptorName() + "#" + destination, jmsTaskManager);
         jmsListener.startListener();
         SubscriptionDetails subscriptionDetails = new SubscriptionDetails(jmsConnectionFactory, jmsListener);
         subscriptionsMap.put(subscriptionId, subscriptionDetails);
@@ -331,7 +316,6 @@ public final class JMSEventAdaptorType extends AbstractInputEventAdaptor impleme
     }
 
     class LateStartAdaptorConfig {
-        InputEventAdaptorMessageConfiguration inputEventAdaptorMessageConfiguration;
         InputEventAdaptorListener inputEventAdaptorListener;
         InputEventAdaptorConfiguration inputEventAdaptorConfiguration;
         AxisConfiguration axisConfiguration;
@@ -340,25 +324,15 @@ public final class JMSEventAdaptorType extends AbstractInputEventAdaptor impleme
 
 
         public LateStartAdaptorConfig(
-                InputEventAdaptorMessageConfiguration inputEventAdaptorMessageConfiguration,
+
                 InputEventAdaptorListener inputEventAdaptorListener,
                 InputEventAdaptorConfiguration inputEventAdaptorConfiguration,
                 AxisConfiguration axisConfiguration, String subscriptionId, int tenantId) {
-            this.inputEventAdaptorMessageConfiguration = inputEventAdaptorMessageConfiguration;
             this.inputEventAdaptorListener = inputEventAdaptorListener;
             this.inputEventAdaptorConfiguration = inputEventAdaptorConfiguration;
             this.axisConfiguration = axisConfiguration;
             this.subscriptionId = subscriptionId;
             this.tenantId = tenantId;
-        }
-
-        public InputEventAdaptorMessageConfiguration getInputEventAdaptorMessageConfiguration() {
-            return inputEventAdaptorMessageConfiguration;
-        }
-
-        public void setInputEventAdaptorMessageConfiguration(
-                InputEventAdaptorMessageConfiguration inputEventAdaptorMessageConfiguration) {
-            this.inputEventAdaptorMessageConfiguration = inputEventAdaptorMessageConfiguration;
         }
 
         public InputEventAdaptorListener getInputEventAdaptorListener() {

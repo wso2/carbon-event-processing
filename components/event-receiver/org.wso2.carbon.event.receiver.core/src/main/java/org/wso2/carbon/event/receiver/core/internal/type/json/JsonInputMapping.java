@@ -25,7 +25,7 @@ public class JsonInputMapping extends AbstractInputMapping {
 
     @Override
     public String getMappingType() {
-        return EventReceiverConstants.EB_JSON_MAPPING_TYPE;
+        return EventReceiverConstants.ER_JSON_MAPPING_TYPE;
     }
 
 }

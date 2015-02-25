@@ -46,7 +46,7 @@ public class EventReceiverRuntimeValidator {
                         Attribute prependedAttribute = new Attribute(EventReceiverConstants.META_DATA_PREFIX + attribute.getName(), attribute.getType());
                         if (!outputAttributes.contains(prependedAttribute)) {
                             throw new EventReceiverStreamValidationException("The meta data attribute '" + attribute.getName()
-                                    + "' in stream : '" + streamId + "' cannot be found under attributes exported by this event builder mapping", streamId);
+                                    + "' in stream : '" + streamId + "' cannot be found under attributes exported by this event receiver mapping", streamId);
                         } else {
                             outputAttributes.remove(prependedAttribute);
                         }
@@ -58,7 +58,7 @@ public class EventReceiverRuntimeValidator {
                         Attribute prependedAttribute = new Attribute(EventReceiverConstants.CORRELATION_DATA_PREFIX + attribute.getName(), attribute.getType());
                         if (!outputAttributes.contains(prependedAttribute)) {
                             throw new EventReceiverStreamValidationException("The correlation data attribute '" + attribute.getName()
-                                    + "' in stream : '" + streamId + "' cannot be found under attributes exported by this event builder mapping", streamId);
+                                    + "' in stream : '" + streamId + "' cannot be found under attributes exported by this event receiver mapping", streamId);
                         } else {
                             outputAttributes.remove(prependedAttribute);
                         }
@@ -69,7 +69,7 @@ public class EventReceiverRuntimeValidator {
                     for (Attribute attribute : payloadAttributeList) {
                         if (!outputAttributes.contains(attribute)) {
                             throw new EventReceiverStreamValidationException("The payload data attribute '" + attribute.getName()
-                                    + "' in stream : '" + streamId + "' cannot be found under attributes exported by this event builder mapping", streamId);
+                                    + "' in stream : '" + streamId + "' cannot be found under attributes exported by this event receiver mapping", streamId);
                         } else {
                             outputAttributes.remove(attribute);
                         }
@@ -77,7 +77,7 @@ public class EventReceiverRuntimeValidator {
                 }
                 if (outputAttributes.size() > 0) {
                     throw new EventReceiverStreamValidationException("The attribute '" + outputAttributes.get(0).getName()
-                            + "' exported by this event builder mapping cannot be found not in : '" + streamId + "'", streamId);
+                            + "' exported by this event receiver mapping cannot be found not in : '" + streamId + "'", streamId);
 
                 }
             }

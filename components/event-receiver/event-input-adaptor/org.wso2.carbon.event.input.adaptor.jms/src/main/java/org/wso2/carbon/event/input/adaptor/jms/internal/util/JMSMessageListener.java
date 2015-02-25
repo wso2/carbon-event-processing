@@ -21,8 +21,8 @@ import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.wso2.carbon.context.PrivilegedCarbonContext;
-import org.wso2.carbon.event.input.adaptor.core.InputEventAdaptorListener;
-import org.wso2.carbon.event.input.adaptor.core.exception.InputEventAdaptorEventProcessingException;
+import org.wso2.carbon.event.receiver.core.InputEventAdaptorListener;
+import org.wso2.carbon.event.receiver.core.exception.InputEventAdaptorEventProcessingException;
 
 import javax.jms.*;
 import java.io.UnsupportedEncodingException;

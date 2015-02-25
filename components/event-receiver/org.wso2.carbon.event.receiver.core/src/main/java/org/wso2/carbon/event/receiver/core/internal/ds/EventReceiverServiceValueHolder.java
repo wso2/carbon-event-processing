@@ -68,14 +68,14 @@ public class EventReceiverServiceValueHolder {
         return carbonEventReceiverService;
     }
 
-    public static void registerEventBuilderService(EventReceiverService eventReceiverService) {
+    public static void registerEventReceiverService(EventReceiverService eventReceiverService) {
         EventReceiverServiceValueHolder.eventReceiverService = eventReceiverService;
         if (eventReceiverService instanceof CarbonEventReceiverService) {
             EventReceiverServiceValueHolder.carbonEventReceiverService = (CarbonEventReceiverService) eventReceiverService;
         }
     }
 
-    public static EventReceiverService getEventBuilderService() {
+    public static EventReceiverService getEventReceiverService() {
         return EventReceiverServiceValueHolder.eventReceiverService;
     }
 

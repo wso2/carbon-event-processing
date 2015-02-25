@@ -20,7 +20,7 @@ package org.wso2.carbon.event.input.adaptor.jms.internal.util;
 import org.apache.axis2.description.Parameter;
 import org.apache.axis2.transport.base.BaseConstants;
 import org.apache.axis2.transport.base.threads.WorkerPool;
-import org.wso2.carbon.event.input.adaptor.core.exception.InputEventAdaptorEventProcessingException;
+import org.wso2.carbon.event.receiver.core.exception.InputEventAdaptorEventProcessingException;
 
 import javax.jms.Session;
 import java.util.HashMap;

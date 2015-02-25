@@ -69,7 +69,7 @@ public class CarbonEventReceiverService implements EventReceiverService {
         if (fileName != null) {
             EventReceiverConfigurationFileSystemInvoker.delete(fileName, axisConfiguration);
         } else {
-            throw new EventReceiverConfigurationException("Couldn't undeploy the Event Builder configuration : " + eventReceiverName);
+            throw new EventReceiverConfigurationException("Couldn't undeploy the Event Receiver configuration : " + eventReceiverName);
         }
 
     }
@@ -103,7 +103,7 @@ public class CarbonEventReceiverService implements EventReceiverService {
                 }
             }
             if (removedCount == 0) {
-                throw new EventReceiverConfigurationException("Could not find the specified event builder '"
+                throw new EventReceiverConfigurationException("Could not find the specified event receiver '"
                         + eventReceiverConfiguration.getEventReceiverName() + "' for removal for the given axis configuration");
             }
         }
@@ -114,7 +114,7 @@ public class CarbonEventReceiverService implements EventReceiverService {
             throws EventReceiverConfigurationException {
         int tenantId = PrivilegedCarbonContext.getThreadLocalCarbonContext().getTenantId();
 
-        // Start: Checking preconditions to add the event builder
+        // Start: Checking preconditions to add the event receiver
         StreamDefinition exportedStreamDefinition = null;
         try {
             exportedStreamDefinition = EventReceiverServiceValueHolder.getEventStreamService().getStreamDefinition(
@@ -140,7 +140,7 @@ public class CarbonEventReceiverService implements EventReceiverService {
             eventReceiverList = new ArrayList<EventReceiver>();
             eventReceiverListMap.put(exportedStreamDefinition.getStreamId(), eventReceiverList);
         }
-        // End; Checking preconditions to add the event builder
+        // End; Checking preconditions to add the event receiver
         EventReceiver eventReceiver = new EventReceiver(eventReceiverConfiguration, exportedStreamDefinition, axisConfiguration);
         eventReceiver.subscribeToEventAdaptor();
         try {
@@ -283,7 +283,7 @@ public class CarbonEventReceiverService implements EventReceiverService {
             validateToRemoveInactiveEventReceiverConfiguration(eventReceiverConfiguration.getEventReceiverName(), axisConfiguration);
             EventReceiverConfigurationFileSystemInvoker.save(omElement, new File(filePath).getName(), axisConfiguration);
         } else {
-            throw new EventReceiverConfigurationException("Mapping type of the Event Builder " + eventReceiverConfiguration.getEventReceiverName() + " cannot be null");
+            throw new EventReceiverConfigurationException("Mapping type of the Event Receiver " + eventReceiverConfiguration.getEventReceiverName() + " cannot be null");
         }
 
     }
@@ -295,7 +295,7 @@ public class CarbonEventReceiverService implements EventReceiverService {
         try {
             omElement = AXIOMUtil.stringToOM(eventReceiverConfigXml);
         } catch (XMLStreamException e) {
-            throw new EventReceiverConfigurationException("Error parsing XML for event builder configuration.");
+            throw new EventReceiverConfigurationException("Error parsing XML for event receiver configuration.");
         }
         ConfigurationValidator.validateEventReceiverConfiguration(omElement);
         String eventReceiverName = EventReceiverConfigHelper.getEventReceiverName(omElement);
@@ -305,7 +305,7 @@ public class CarbonEventReceiverService implements EventReceiverService {
             validateToRemoveInactiveEventReceiverConfiguration(eventReceiverName, axisConfiguration);
             EventReceiverConfigurationFileSystemInvoker.save(omElement, new File(filePath).getName(), axisConfiguration);
         } else {
-            throw new EventReceiverConfigurationException("Mapping type of the Event Builder " + eventReceiverName + " cannot be null");
+            throw new EventReceiverConfigurationException("Mapping type of the Event Receiver " + eventReceiverName + " cannot be null");
         }
 
     }
@@ -332,7 +332,7 @@ public class CarbonEventReceiverService implements EventReceiverService {
             EventReceiverConfigurationFileSystemInvoker.saveAndDeploy(omElement.toString(),
                     new File(filePath).getName(), axisConfiguration);
         } else {
-            throw new EventReceiverConfigurationException("Mapping type of the Event Builder " + eventReceiverConfiguration.getEventReceiverName() + " cannot be null");
+            throw new EventReceiverConfigurationException("Mapping type of the Event Receiver " + eventReceiverConfiguration.getEventReceiverName() + " cannot be null");
         }
 
     }
@@ -389,14 +389,14 @@ public class CarbonEventReceiverService implements EventReceiverService {
 //            String transportAdaptorName = inputEventAdaptorManagerService.getDefaultWso2EventAdaptor(axisConfiguration);
 //            EventReceiverConfiguration defaultEventReceiverConfiguration =
 //                    EventReceiverUtil.createDefaultEventReceiver(streamId, transportAdaptorName);
-//            String filename = defaultEventReceiverConfiguration.getEventReceiverName() + EventReceiverConstants.EB_CONFIG_FILE_EXTENSION_WITH_DOT;
+//            String filename = defaultEventReceiverConfiguration.getEventReceiverName() + EventReceiverConstants.ER_CONFIG_FILE_EXTENSION_WITH_DOT;
 //            if (!EventReceiverConfigurationFileSystemInvoker.isFileExists(filename)) {
 //                deployEventReceiverConfiguration(defaultEventReceiverConfiguration, axisConfiguration);
 //            }
 //        } catch (InputEventAdaptorManagerConfigurationException e) {
 //            throw new EventReceiverConfigurationException("Error retrieving default WSO2 event adaptor :" + e.getMessage(), e);
 //        } catch (EventReceiverConfigurationException e) {
-//            throw new EventReceiverConfigurationException("Error deploying default event builder for stream :" + streamId, e);
+//            throw new EventReceiverConfigurationException("Error deploying default event receiver for stream :" + streamId, e);
 //        }
     }
 
@@ -409,7 +409,7 @@ public class CarbonEventReceiverService implements EventReceiverService {
 //                EventReceiverConfiguration defaultEventReceiverConfiguration =
 //                        EventReceiverUtil.createDefaultEventReceiver(streamId, defaultWso2EventAdaptorName);
 //
-//                String filename = defaultEventReceiverConfiguration.getEventReceiverName() + EventReceiverConstants.EB_CONFIG_FILE_EXTENSION_WITH_DOT;
+//                String filename = defaultEventReceiverConfiguration.getEventReceiverName() + EventReceiverConstants.ER_CONFIG_FILE_EXTENSION_WITH_DOT;
 //
 //                if (!EventReceiverConfigurationFileSystemInvoker.isFileExists(filename)) {
 //                    for (EventReceiverConfiguration eventReceiverConfiguration : getAllActiveEventReceiverConfigurations(tenantId)) {
@@ -485,7 +485,7 @@ public class CarbonEventReceiverService implements EventReceiverService {
         int tenantId = PrivilegedCarbonContext.getThreadLocalCarbonContext().getTenantId();
         String fileName = getFileName(tenantId, eventReceiverName);
         if (fileName == null) {
-            fileName = eventReceiverName + EventReceiverConstants.EB_CONFIG_FILE_EXTENSION_WITH_DOT;
+            fileName = eventReceiverName + EventReceiverConstants.ER_CONFIG_FILE_EXTENSION_WITH_DOT;
         }
         editEventReceiverConfiguration(fileName, axisConfiguration, eventReceiverConfiguration, eventReceiverName);
 
@@ -510,14 +510,14 @@ public class CarbonEventReceiverService implements EventReceiverService {
                         EventReceiverConfigurationFileSystemInvoker.delete(filename, axisConfiguration);
                         EventReceiverConfigurationFileSystemInvoker.save(omElement, filename, axisConfiguration);
                     } else {
-                        throw new EventReceiverConfigurationException("There is already an Event Builder " + eventReceiverConfigurationObject.getEventReceiverName() + " with the same name");
+                        throw new EventReceiverConfigurationException("There is already an Event Receiver " + eventReceiverConfigurationObject.getEventReceiverName() + " with the same name");
                     }
                 } else {
                     EventReceiverConfigurationFileSystemInvoker.delete(filename, axisConfiguration);
                     EventReceiverConfigurationFileSystemInvoker.save(omElement, filename, axisConfiguration);
                 }
             } else {
-                throw new EventReceiverConfigurationException("Mapping type of the Event Builder " + originalEventReceiverName + " cannot be null");
+                throw new EventReceiverConfigurationException("Mapping type of the Event Receiver " + originalEventReceiverName + " cannot be null");
             }
         } catch (XMLStreamException e) {
             String errMsg = "Error while creating the XML object";
@@ -564,11 +564,11 @@ public class CarbonEventReceiverService implements EventReceiverService {
             }
         }
 
-        for (EventReceiverConfigurationFile builderConfigurationFile : fileList) {
+        for (EventReceiverConfigurationFile eventReceiverConfigurationFile : fileList) {
             try {
-                EventReceiverConfigurationFileSystemInvoker.reload(builderConfigurationFile.getFilePath(), builderConfigurationFile.getAxisConfiguration());
+                EventReceiverConfigurationFileSystemInvoker.reload(eventReceiverConfigurationFile.getFilePath(), eventReceiverConfigurationFile.getAxisConfiguration());
             } catch (Exception e) {
-                log.error("Exception occurred while trying to deploy the Event Builder configuration file : " + builderConfigurationFile.getFileName(), e);
+                log.error("Exception occurred while trying to deploy the Event Receiver configuration file : " + eventReceiverConfigurationFile.getFileName(), e);
             }
         }
     }
@@ -589,11 +589,11 @@ public class CarbonEventReceiverService implements EventReceiverService {
                 }
             }
         }
-        for (EventReceiverConfigurationFile builderConfigurationFile : fileList) {
+        for (EventReceiverConfigurationFile eventReceiverConfigurationFile : fileList) {
             try {
-                EventReceiverConfigurationFileSystemInvoker.reload(builderConfigurationFile.getFilePath(), builderConfigurationFile.getAxisConfiguration());
+                EventReceiverConfigurationFileSystemInvoker.reload(eventReceiverConfigurationFile.getFilePath(), eventReceiverConfigurationFile.getAxisConfiguration());
             } catch (Exception e) {
-                log.error("Exception occurred while trying to deploy the Event Builder configuration file : " + builderConfigurationFile.getFileName(), e);
+                log.error("Exception occurred while trying to deploy the Event Receiver configuration file : " + eventReceiverConfigurationFile.getFileName(), e);
             }
         }
     }
@@ -647,19 +647,19 @@ public class CarbonEventReceiverService implements EventReceiverService {
                         EventReceiverConfiguration eventReceiverConfiguration = eventReceiver.getEventReceiverConfiguration();
                         String stream = EventReceiverUtil.getExportedStreamIdFrom(eventReceiverConfiguration);
                         if (streamNameWithVersion.equals(stream)) {
-                            EventReceiverConfigurationFile builderConfigurationFile =
+                            EventReceiverConfigurationFile eventReceiverConfigurationFile =
                                     getEventReceiverConfigurationFile(eventReceiver.getEventReceiverConfiguration().getEventReceiverName(), tenantId);
-                            if (builderConfigurationFile != null) {
-                                fileList.add(builderConfigurationFile);
+                            if (eventReceiverConfigurationFile != null) {
+                                fileList.add(eventReceiverConfigurationFile);
                             }
                         }
                     }
                 }
             }
         }
-        for (EventReceiverConfigurationFile builderConfigurationFile : fileList) {
-            EventReceiverConfigurationFileSystemInvoker.reload(builderConfigurationFile.getFilePath(), builderConfigurationFile.getAxisConfiguration());
-            log.info("Event builder : " + builderConfigurationFile.getEventReceiverName() + " in inactive state because event stream dependency  could not be found : " + streamNameWithVersion);
+        for (EventReceiverConfigurationFile eventReceiverConfigurationFile : fileList) {
+            EventReceiverConfigurationFileSystemInvoker.reload(eventReceiverConfigurationFile.getFilePath(), eventReceiverConfigurationFile.getAxisConfiguration());
+            log.info("Event receiver : " + eventReceiverConfigurationFile.getEventReceiverName() + " in inactive state because event stream dependency  could not be found : " + streamNameWithVersion);
         }
     }
 
@@ -714,7 +714,7 @@ public class CarbonEventReceiverService implements EventReceiverService {
             throws EventReceiverConfigurationException {
         int tenantId = PrivilegedCarbonContext.getThreadLocalCarbonContext().getTenantId();
 
-        String fileName = eventReceiverName + EventReceiverConstants.EB_CONFIG_FILE_EXTENSION_WITH_DOT;
+        String fileName = eventReceiverName + EventReceiverConstants.ER_CONFIG_FILE_EXTENSION_WITH_DOT;
         List<EventReceiverConfigurationFile> eventReceiverConfigurationFiles = tenantSpecificEventReceiverConfigFileMap.get(tenantId);
         if (eventReceiverConfigurationFiles != null) {
             for (EventReceiverConfigurationFile eventReceiverConfigurationFile : eventReceiverConfigurationFiles) {

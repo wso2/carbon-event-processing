@@ -53,18 +53,18 @@ public class EventReceiverConfigHelper {
     }
 
     public static String getInputMappingType(OMElement eventReceiverOMElement) {
-        OMElement mappingElement = eventReceiverOMElement.getFirstChildWithName(new QName(EventReceiverConstants.EB_CONF_NS, EventReceiverConstants.EB_ELEMENT_MAPPING));
-        return mappingElement.getAttributeValue(new QName(EventReceiverConstants.EB_ATTR_TYPE));
+        OMElement mappingElement = eventReceiverOMElement.getFirstChildWithName(new QName(EventReceiverConstants.ER_CONF_NS, EventReceiverConstants.ER_ELEMENT_MAPPING));
+        return mappingElement.getAttributeValue(new QName(EventReceiverConstants.ER_ATTR_TYPE));
     }
 
     public static String getEventReceiverName(OMElement eventReceiverOMElement) {
-        return eventReceiverOMElement.getAttributeValue(new QName(EventReceiverConstants.EB_ATTR_NAME));
+        return eventReceiverOMElement.getAttributeValue(new QName(EventReceiverConstants.ER_ATTR_NAME));
     }
 
     public static EventReceiverDeployer getEventReceiverDeployer(
             AxisConfiguration axisConfiguration) {
         DeploymentEngine deploymentEngine = (DeploymentEngine) axisConfiguration.getConfigurator();
-        return (EventReceiverDeployer) deploymentEngine.getDeployer(EventReceiverConstants.EB_CONFIG_DIRECTORY, EventReceiverConstants.EB_CONFIG_FILE_EXTENSION);
+        return (EventReceiverDeployer) deploymentEngine.getDeployer(EventReceiverConstants.ER_CONFIG_DIRECTORY, EventReceiverConstants.ER_CONFIG_FILE_EXTENSION);
     }
 
     public static Attribute[] getAttributes(List<InputMappingAttribute> inputMappingAttributes) {

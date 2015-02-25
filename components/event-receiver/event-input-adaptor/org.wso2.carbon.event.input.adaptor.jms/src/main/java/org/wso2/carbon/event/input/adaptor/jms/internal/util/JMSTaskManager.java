@@ -21,7 +21,7 @@ import org.apache.axis2.transport.base.BaseConstants;
 import org.apache.axis2.transport.base.threads.WorkerPool;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.wso2.carbon.event.input.adaptor.core.exception.InputEventAdaptorEventProcessingException;
+import org.wso2.carbon.event.receiver.core.exception.InputEventAdaptorEventProcessingException;
 
 import javax.jms.*;
 import javax.jms.IllegalStateException;

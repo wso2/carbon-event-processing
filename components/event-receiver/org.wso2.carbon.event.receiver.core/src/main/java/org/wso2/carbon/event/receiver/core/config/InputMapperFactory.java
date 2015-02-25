@@ -47,7 +47,7 @@ public interface InputMapperFactory {
      * Constructs an returns an appropriate InputMapper depending on the Factory Implementation
      *
      * @param eventReceiverConfiguration the {@link EventReceiverConfiguration} to be used
-     * @param exportedStreamDefinition  the {@link org.wso2.carbon.databridge.commons.StreamDefinition} exported from the event builder
+     * @param exportedStreamDefinition  the {@link org.wso2.carbon.databridge.commons.StreamDefinition} exported from the event receiver
      * @return the {@link InputMapper} instance based on the supplied configuration
      */
     InputMapper constructInputMapper(EventReceiverConfiguration eventReceiverConfiguration,

@@ -36,9 +36,9 @@
     <url>http://wso2.org</url>
 
     <modules>
-        <module>org.wso2.carbon.event.formatter.core</module>
-        <module>org.wso2.carbon.event.formatter.admin</module>
-        <module>org.wso2.carbon.event.formatter.ui</module>
+        <!--<module>org.wso2.carbon.event.formatter.core</module>-->
+        <!--<module>org.wso2.carbon.event.formatter.admin</module>-->
+        <!--<module>org.wso2.carbon.event.formatter.ui</module>-->
         <!--<module>org.wso2.carbon.event.formatter.test/1.0.1</module>-->
     </modules>
     

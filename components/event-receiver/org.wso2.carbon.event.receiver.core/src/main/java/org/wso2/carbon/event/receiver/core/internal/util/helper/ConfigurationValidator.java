@@ -70,21 +70,21 @@ public class ConfigurationValidator {
 
     public static void validateEventReceiverConfiguration(OMElement ebConfigOmElement)
             throws EventReceiverConfigurationException {
-        if (!ebConfigOmElement.getLocalName().equals(EventReceiverConstants.EB_ELEMENT_ROOT_ELEMENT)) {
+        if (!ebConfigOmElement.getLocalName().equals(EventReceiverConstants.ER_ELEMENT_ROOT_ELEMENT)) {
             throw new EventReceiverConfigurationException("Invalid event builder configuration.");
         }
 
-        String eventReceiverName = ebConfigOmElement.getAttributeValue(new QName(EventReceiverConstants.EB_ATTR_NAME));
-        OMElement fromElement = ebConfigOmElement.getFirstChildWithName(new QName(EventReceiverConstants.EB_CONF_NS, EventReceiverConstants.EB_ELEMENT_FROM));
-        OMElement mappingElement = ebConfigOmElement.getFirstChildWithName(new QName(EventReceiverConstants.EB_CONF_NS, EventReceiverConstants.EB_ELEMENT_MAPPING));
-        OMElement toElement = ebConfigOmElement.getFirstChildWithName(new QName(EventReceiverConstants.EB_CONF_NS, EventReceiverConstants.EB_ELEMENT_TO));
+        String eventReceiverName = ebConfigOmElement.getAttributeValue(new QName(EventReceiverConstants.ER_ATTR_NAME));
+        OMElement fromElement = ebConfigOmElement.getFirstChildWithName(new QName(EventReceiverConstants.ER_CONF_NS, EventReceiverConstants.ER_ELEMENT_FROM));
+        OMElement mappingElement = ebConfigOmElement.getFirstChildWithName(new QName(EventReceiverConstants.ER_CONF_NS, EventReceiverConstants.ER_ELEMENT_MAPPING));
+        OMElement toElement = ebConfigOmElement.getFirstChildWithName(new QName(EventReceiverConstants.ER_CONF_NS, EventReceiverConstants.ER_ELEMENT_TO));
 
         if (eventReceiverName == null || eventReceiverName.isEmpty() || fromElement == null || mappingElement == null || toElement == null) {
             throw new EventReceiverConfigurationException("Invalid event builder configuration for event builder: " + eventReceiverName);
         }
 
-        String fromInputEventAdaptorName = fromElement.getAttributeValue(new QName(EventReceiverConstants.EB_ATTR_TA_NAME));
-        String fromInputEventAdaptorType = fromElement.getAttributeValue(new QName(EventReceiverConstants.EB_ATTR_TA_TYPE));
+        String fromInputEventAdaptorName = fromElement.getAttributeValue(new QName(EventReceiverConstants.ER_ATTR_TA_NAME));
+        String fromInputEventAdaptorType = fromElement.getAttributeValue(new QName(EventReceiverConstants.ER_ATTR_TA_TYPE));
 
         if (fromInputEventAdaptorName == null || fromInputEventAdaptorName.isEmpty() ||
                 fromInputEventAdaptorType == null || fromInputEventAdaptorType.isEmpty()) {
@@ -94,11 +94,11 @@ public class ConfigurationValidator {
         InputEventAdaptorConfiguration inputEventAdaptorConfiguration = EventReceiverConfigHelper.getInputEventAdaptorConfiguration(fromInputEventAdaptorType);
 
         Iterator fromElementPropertyIterator = fromElement.getChildrenWithName(
-                new QName(EventReceiverConstants.EB_CONF_NS, EventReceiverConstants.EB_ELEMENT_PROPERTY));
+                new QName(EventReceiverConstants.ER_CONF_NS, EventReceiverConstants.ER_ELEMENT_PROPERTY));
         Map<String, String> fromPropertyMap = new HashMap<String, String>();
         while (fromElementPropertyIterator.hasNext()) {
             OMElement fromElementProperty = (OMElement) fromElementPropertyIterator.next();
-            String propertyName = fromElementProperty.getAttributeValue(new QName(EventReceiverConstants.EB_ATTR_NAME));
+            String propertyName = fromElementProperty.getAttributeValue(new QName(EventReceiverConstants.ER_ATTR_NAME));
             String propertyValue = fromElementProperty.getText();
             fromPropertyMap.put(propertyName, propertyValue);
         }
@@ -108,15 +108,15 @@ public class ConfigurationValidator {
             }
         }
 
-        String mappingType = mappingElement.getAttributeValue(new QName(EventReceiverConstants.EB_ATTR_TYPE));
+        String mappingType = mappingElement.getAttributeValue(new QName(EventReceiverConstants.ER_ATTR_TYPE));
         if (mappingType != null && !mappingType.isEmpty()) {
             validateMappingProperties(mappingElement, mappingType);
         } else {
             throw new EventReceiverConfigurationException("Mapping type not specified for : " + eventReceiverName);
         }
 
-        String toStreamName = toElement.getAttributeValue(new QName(EventReceiverConstants.EB_ATTR_STREAM_NAME));
-        String toStreamVersion = toElement.getAttributeValue(new QName(EventReceiverConstants.EB_ATTR_VERSION));
+        String toStreamName = toElement.getAttributeValue(new QName(EventReceiverConstants.ER_ATTR_STREAM_NAME));
+        String toStreamVersion = toElement.getAttributeValue(new QName(EventReceiverConstants.ER_ATTR_VERSION));
 
         if (toStreamName == null || toStreamName.isEmpty() || toStreamVersion == null || toStreamVersion.isEmpty()) {
             throw new EventReceiverConfigurationException("Invalid event builder configuration for event builder: " + eventReceiverName);
@@ -157,15 +157,15 @@ public class ConfigurationValidator {
     @SuppressWarnings("unchecked")
     public static void validateMappingProperties(OMElement mappingElement, String mappingType)
             throws EventReceiverConfigurationException {
-        if (mappingType.equalsIgnoreCase(EventReceiverConstants.EB_WSO2EVENT_MAPPING_TYPE)) {
+        if (mappingType.equalsIgnoreCase(EventReceiverConstants.ER_WSO2EVENT_MAPPING_TYPE)) {
             Wso2EventInputMappingConfigBuilder.validateWso2EventMapping(mappingElement);
-        } else if (mappingType.equalsIgnoreCase(EventReceiverConstants.EB_TEXT_MAPPING_TYPE)) {
+        } else if (mappingType.equalsIgnoreCase(EventReceiverConstants.ER_TEXT_MAPPING_TYPE)) {
             TextInputMappingConfigBuilder.validateTextMapping(mappingElement);
-        } else if (mappingType.equalsIgnoreCase(EventReceiverConstants.EB_MAP_MAPPING_TYPE)) {
+        } else if (mappingType.equalsIgnoreCase(EventReceiverConstants.ER_MAP_MAPPING_TYPE)) {
             MapInputMappingConfigBuilder.validateMapEventMapping(mappingElement);
-        } else if (mappingType.equalsIgnoreCase(EventReceiverConstants.EB_XML_MAPPING_TYPE)) {
+        } else if (mappingType.equalsIgnoreCase(EventReceiverConstants.ER_XML_MAPPING_TYPE)) {
             XMLInputMappingConfigBuilder.validateXMLEventMapping(mappingElement);
-        } else if (mappingType.equalsIgnoreCase(EventReceiverConstants.EB_JSON_MAPPING_TYPE)) {
+        } else if (mappingType.equalsIgnoreCase(EventReceiverConstants.ER_JSON_MAPPING_TYPE)) {
             JsonInputMappingConfigBuilder.validateJsonEventMapping(mappingElement);
         } else {
             log.info("No validations available for input mapping type :" + mappingType);

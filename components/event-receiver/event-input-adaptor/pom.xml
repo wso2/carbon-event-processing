@@ -37,6 +37,7 @@
 
     <modules>
         <module>org.wso2.carbon.event.input.adaptor.wso2event</module>
+        <module>org.wso2.carbon.event.input.adaptor.jms</module>
     </modules>
 </project>
 

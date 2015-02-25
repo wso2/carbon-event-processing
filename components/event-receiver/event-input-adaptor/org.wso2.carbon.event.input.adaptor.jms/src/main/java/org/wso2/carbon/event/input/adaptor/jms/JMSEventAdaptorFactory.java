@@ -18,8 +18,8 @@
 package org.wso2.carbon.event.input.adaptor.jms;
 
 
-import org.wso2.carbon.event.input.adaptor.core.AbstractInputEventAdaptor;
-import org.wso2.carbon.event.input.adaptor.core.InputEventAdaptorFactory;
+import org.wso2.carbon.event.receiver.core.AbstractInputEventAdaptor;
+import org.wso2.carbon.event.receiver.core.InputEventAdaptorFactory;
 
 public class JMSEventAdaptorFactory implements InputEventAdaptorFactory {
 

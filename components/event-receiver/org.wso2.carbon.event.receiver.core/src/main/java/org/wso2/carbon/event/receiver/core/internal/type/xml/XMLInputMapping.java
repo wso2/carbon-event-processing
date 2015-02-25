@@ -52,7 +52,7 @@ public class XMLInputMapping extends AbstractInputMapping {
 
     @Override
     public String getMappingType() {
-        return EventReceiverConstants.EB_XML_MAPPING_TYPE;
+        return EventReceiverConstants.ER_XML_MAPPING_TYPE;
     }
 
     @Override

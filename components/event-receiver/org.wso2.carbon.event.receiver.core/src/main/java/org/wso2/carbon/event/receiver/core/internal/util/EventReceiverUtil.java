@@ -139,18 +139,18 @@ public class EventReceiverUtil {
                 }
             }
         }
-        String path = repoDir.getAbsolutePath() + File.separator + EventReceiverConstants.EB_CONFIG_DIRECTORY;
+        String path = repoDir.getAbsolutePath() + File.separator + EventReceiverConstants.ER_CONFIG_DIRECTORY;
         File subDir = new File(path);
         if (!subDir.exists()) {
             synchronized (path.intern()) {
                 if (!subDir.exists()) {
                     if (!subDir.mkdir()) {
-                        throw new EventReceiverConfigurationException("Cannot create directory " + EventReceiverConstants.EB_CONFIG_DIRECTORY + " to add tenant specific event builder :" + eventReceiverName);
+                        throw new EventReceiverConfigurationException("Cannot create directory " + EventReceiverConstants.ER_CONFIG_DIRECTORY + " to add tenant specific event builder :" + eventReceiverName);
                     }
                 }
             }
         }
-        return subDir.getAbsolutePath() + File.separator + eventReceiverName + EventReceiverConstants.EB_CONFIG_FILE_EXTENSION_WITH_DOT;
+        return subDir.getAbsolutePath() + File.separator + eventReceiverName + EventReceiverConstants.ER_CONFIG_FILE_EXTENSION_WITH_DOT;
     }
 
     /**
@@ -207,7 +207,7 @@ public class EventReceiverUtil {
 //        EventReceiverConfiguration eventReceiverConfiguration =
 //                new EventReceiverConfiguration();
 //
-//        eventReceiverConfiguration.setEventReceiverName(streamId.replaceAll(":", "_") + EventReceiverConstants.DEFAULT_EVENT_BUILDER_POSTFIX);
+//        eventReceiverConfiguration.setEventReceiverName(streamId.replaceAll(":", "_") + EventReceiverConstants.DEFAULT_EVENT_RECEIVER_POSTFIX);
 //
 //        Wso2EventInputMapping wso2EventInputMapping = new Wso2EventInputMapping();
 //        wso2EventInputMapping.setCustomMappingEnabled(false);

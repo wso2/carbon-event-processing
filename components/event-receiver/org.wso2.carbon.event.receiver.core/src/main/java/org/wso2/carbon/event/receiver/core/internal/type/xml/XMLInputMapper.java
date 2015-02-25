@@ -83,7 +83,7 @@ public class XMLInputMapper implements InputMapper {
                         int position = EventReceiverUtil.getAttributePosition(inputMappingAttribute.getToElementKey(), exportedStreamDefinition);
                         if (position < 0 || position > xpathDataArray.length) {
                             throw new EventReceiverStreamValidationException("Could not determine the stream position for attribute : "
-                                    + inputMappingAttribute.getToElementKey() + " in stream exported by event builder "
+                                    + inputMappingAttribute.getToElementKey() + " in stream exported by event receiver "
                                     + exportedStreamDefinition.getStreamId(),exportedStreamDefinition.getStreamId());
                         }
                         xpathDataArray[position] = new XPathData(xpath, type, inputMappingAttribute.getDefaultValue());

@@ -66,7 +66,7 @@ public class EventReceiverServiceDS {
     protected void activate(ComponentContext context) {
         try {
             CarbonEventReceiverService carbonEventReceiverService = new CarbonEventReceiverService();
-            EventReceiverServiceValueHolder.registerEventBuilderService(carbonEventReceiverService);
+            EventReceiverServiceValueHolder.registerEventReceiverService(carbonEventReceiverService);
             context.getBundleContext().registerService(EventReceiverService.class.getName(), carbonEventReceiverService, null);
 
             InputEventAdaptorService inputEventAdaptorService = new CarbonInputEventAdaptorService();
@@ -147,7 +147,7 @@ public class EventReceiverServiceDS {
             try {
                 EventReceiverServiceValueHolder.getCarbonEventReceiverService().activateInactiveEventReceiverConfigurationsForAdaptor(adaptorType);
             } catch (EventReceiverConfigurationException e) {
-                log.error("Error while activating inactive event builder for event adaptor Type " + adaptorType, e);
+                log.error("Error while activating inactive event receiver for event adaptor Type " + adaptorType, e);
             } catch (Throwable t) {
                 log.error("Error while deploying input event adaptor Type " + adaptorType, t);
             }

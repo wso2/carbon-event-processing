@@ -47,30 +47,30 @@ public class EventReceiverConfigBuilder {
             EventReceiverConfiguration eventReceiverConfiguration) {
 
         OMFactory factory = OMAbstractFactory.getOMFactory();
-        OMElement eventReceiverConfigElement = factory.createOMElement(new QName(EventReceiverConstants.EB_ELEMENT_ROOT_ELEMENT));
-        eventReceiverConfigElement.declareDefaultNamespace(EventReceiverConstants.EB_CONF_NS);
+        OMElement eventReceiverConfigElement = factory.createOMElement(new QName(EventReceiverConstants.ER_ELEMENT_ROOT_ELEMENT));
+        eventReceiverConfigElement.declareDefaultNamespace(EventReceiverConstants.ER_CONF_NS);
 
-        eventReceiverConfigElement.addAttribute(EventReceiverConstants.EB_ATTR_NAME, eventReceiverConfiguration.getEventReceiverName(), null);
+        eventReceiverConfigElement.addAttribute(EventReceiverConstants.ER_ATTR_NAME, eventReceiverConfiguration.getEventReceiverName(), null);
         if (eventReceiverConfiguration.isTraceEnabled()) {
-            eventReceiverConfigElement.addAttribute(EventReceiverConstants.EB_ATTR_TRACE_ENABLED, EventReceiverConstants.ENABLE_CONST, null);
+            eventReceiverConfigElement.addAttribute(EventReceiverConstants.ER_ATTR_TRACE_ENABLED, EventReceiverConstants.ENABLE_CONST, null);
         } else {
-            eventReceiverConfigElement.addAttribute(EventReceiverConstants.EB_ATTR_TRACE_ENABLED, EventReceiverConstants.DISABLE_CONST, null);
+            eventReceiverConfigElement.addAttribute(EventReceiverConstants.ER_ATTR_TRACE_ENABLED, EventReceiverConstants.DISABLE_CONST, null);
         }
         if (eventReceiverConfiguration.isStatisticsEnabled()) {
-            eventReceiverConfigElement.addAttribute(EventReceiverConstants.EB_ATTR_STATISTICS_ENABLED, EventReceiverConstants.ENABLE_CONST, null);
+            eventReceiverConfigElement.addAttribute(EventReceiverConstants.ER_ATTR_STATISTICS_ENABLED, EventReceiverConstants.ENABLE_CONST, null);
         } else {
-            eventReceiverConfigElement.addAttribute(EventReceiverConstants.EB_ATTR_STATISTICS_ENABLED, EventReceiverConstants.DISABLE_CONST, null);
+            eventReceiverConfigElement.addAttribute(EventReceiverConstants.ER_ATTR_STATISTICS_ENABLED, EventReceiverConstants.DISABLE_CONST, null);
         }
 
         //From properties - Stream Name and version
         InputEventAdaptorConfiguration inputEventAdaptorConfiguration = eventReceiverConfiguration.getInputEventAdaptorConfiguration();
-        OMElement fromOMElement = factory.createOMElement(EventReceiverConstants.EB_ELEMENT_FROM, eventReceiverConfigElement.getDefaultNamespace());
-        fromOMElement.addAttribute(EventReceiverConstants.EB_ATTR_TA_TYPE, inputEventAdaptorConfiguration.getInputEventAdaptorType(), null);
+        OMElement fromOMElement = factory.createOMElement(EventReceiverConstants.ER_ELEMENT_FROM, eventReceiverConfigElement.getDefaultNamespace());
+        fromOMElement.addAttribute(EventReceiverConstants.ER_ATTR_TA_TYPE, inputEventAdaptorConfiguration.getInputEventAdaptorType(), null);
 
         Map<String, String> wso2EventInputPropertyMap = inputEventAdaptorConfiguration.getInternalInputEventAdaptorConfiguration().getProperties();
         for (Map.Entry<String, String> propertyEntry : wso2EventInputPropertyMap.entrySet()) {
-            OMElement propertyElement = factory.createOMElement(EventReceiverConstants.EB_ELEMENT_PROPERTY, fromOMElement.getDefaultNamespace());
-            propertyElement.addAttribute(EventReceiverConstants.EB_ATTR_NAME, propertyEntry.getKey(), null);
+            OMElement propertyElement = factory.createOMElement(EventReceiverConstants.ER_ELEMENT_PROPERTY, fromOMElement.getDefaultNamespace());
+            propertyElement.addAttribute(EventReceiverConstants.ER_ATTR_NAME, propertyEntry.getKey(), null);
             propertyElement.setText(propertyEntry.getValue());
             fromOMElement.addChild(propertyElement);
         }
@@ -83,9 +83,9 @@ public class EventReceiverConfigBuilder {
         mappingOMElement.setNamespace(eventReceiverConfigElement.getDefaultNamespace());
         eventReceiverConfigElement.addChild(mappingOMElement);
 
-        OMElement toOMElement = factory.createOMElement(EventReceiverConstants.EB_ELEMENT_TO, eventReceiverConfigElement.getDefaultNamespace());
-        toOMElement.addAttribute(EventReceiverConstants.EB_ATTR_STREAM_NAME, eventReceiverConfiguration.getToStreamName(), null);
-        toOMElement.addAttribute(EventReceiverConstants.EB_ATTR_VERSION, eventReceiverConfiguration.getToStreamVersion(), null);
+        OMElement toOMElement = factory.createOMElement(EventReceiverConstants.ER_ELEMENT_TO, eventReceiverConfigElement.getDefaultNamespace());
+        toOMElement.addAttribute(EventReceiverConstants.ER_ATTR_STREAM_NAME, eventReceiverConfiguration.getToStreamName(), null);
+        toOMElement.addAttribute(EventReceiverConstants.ER_ATTR_VERSION, eventReceiverConfiguration.getToStreamVersion(), null);
 
         eventReceiverConfigElement.addChild(toOMElement);
         try {
@@ -102,27 +102,27 @@ public class EventReceiverConfigBuilder {
             OMElement eventReceiverConfigOMElement, String mappingType, int tenantId)
             throws EventReceiverConfigurationException {
 
-        if (!eventReceiverConfigOMElement.getLocalName().equals(EventReceiverConstants.EB_ELEMENT_ROOT_ELEMENT)) {
+        if (!eventReceiverConfigOMElement.getLocalName().equals(EventReceiverConstants.ER_ELEMENT_ROOT_ELEMENT)) {
             throw new EventReceiverConfigurationException("Root element is not an event builder.");
         }
 
-        String eventReceiverName = eventReceiverConfigOMElement.getAttributeValue(new QName(EventReceiverConstants.EB_ATTR_NAME));
+        String eventReceiverName = eventReceiverConfigOMElement.getAttributeValue(new QName(EventReceiverConstants.ER_ATTR_NAME));
         boolean traceEnabled = false;
         boolean statisticsEnabled = false;
-        String traceEnabledAttribute = eventReceiverConfigOMElement.getAttributeValue(new QName(EventReceiverConstants.EB_ATTR_TRACE_ENABLED));
+        String traceEnabledAttribute = eventReceiverConfigOMElement.getAttributeValue(new QName(EventReceiverConstants.ER_ATTR_TRACE_ENABLED));
         if (traceEnabledAttribute != null && traceEnabledAttribute.equalsIgnoreCase(EventReceiverConstants.ENABLE_CONST)) {
             traceEnabled = true;
         }
-        String statisticsEnabledAttribute = eventReceiverConfigOMElement.getAttributeValue(new QName(EventReceiverConstants.EB_ATTR_STATISTICS_ENABLED));
+        String statisticsEnabledAttribute = eventReceiverConfigOMElement.getAttributeValue(new QName(EventReceiverConstants.ER_ATTR_STATISTICS_ENABLED));
         if (statisticsEnabledAttribute != null && statisticsEnabledAttribute.equalsIgnoreCase(EventReceiverConstants.ENABLE_CONST)) {
             statisticsEnabled = true;
         }
 
-        OMElement fromElement = eventReceiverConfigOMElement.getFirstChildWithName(new QName(EventReceiverConstants.EB_CONF_NS, EventReceiverConstants.EB_ELEMENT_FROM));
-        OMElement mappingElement = eventReceiverConfigOMElement.getFirstChildWithName(new QName(EventReceiverConstants.EB_CONF_NS, EventReceiverConstants.EB_ELEMENT_MAPPING));
-        OMElement toElement = eventReceiverConfigOMElement.getFirstChildWithName(new QName(EventReceiverConstants.EB_CONF_NS, EventReceiverConstants.EB_ELEMENT_TO));
+        OMElement fromElement = eventReceiverConfigOMElement.getFirstChildWithName(new QName(EventReceiverConstants.ER_CONF_NS, EventReceiverConstants.ER_ELEMENT_FROM));
+        OMElement mappingElement = eventReceiverConfigOMElement.getFirstChildWithName(new QName(EventReceiverConstants.ER_CONF_NS, EventReceiverConstants.ER_ELEMENT_MAPPING));
+        OMElement toElement = eventReceiverConfigOMElement.getFirstChildWithName(new QName(EventReceiverConstants.ER_CONF_NS, EventReceiverConstants.ER_ELEMENT_TO));
 
-        String fromEventAdaptorType = fromElement.getAttributeValue(new QName(EventReceiverConstants.EB_ATTR_TA_TYPE));
+        String fromEventAdaptorType = fromElement.getAttributeValue(new QName(EventReceiverConstants.ER_ATTR_TA_TYPE));
 
         ConfigurationValidator.validateInputEventAdaptor(fromEventAdaptorType);
 
@@ -131,44 +131,44 @@ public class EventReceiverConfigBuilder {
         inputEventAdaptorConfiguration.setInputEventAdaptorType(fromEventAdaptorType);
 
         Iterator fromElementPropertyIterator = fromElement.getChildrenWithName(
-                new QName(EventReceiverConstants.EB_CONF_NS, EventReceiverConstants.EB_ELEMENT_PROPERTY));
+                new QName(EventReceiverConstants.ER_CONF_NS, EventReceiverConstants.ER_ELEMENT_PROPERTY));
         while (fromElementPropertyIterator.hasNext()) {
             OMElement fromElementProperty = (OMElement) fromElementPropertyIterator.next();
-            String propertyName = fromElementProperty.getAttributeValue(new QName(EventReceiverConstants.EB_ATTR_NAME));
+            String propertyName = fromElementProperty.getAttributeValue(new QName(EventReceiverConstants.ER_ATTR_NAME));
             String propertyValue = fromElementProperty.getText();
             if (inputEventAdaptorConfiguration.getInternalInputEventAdaptorConfiguration().getProperties().containsKey(propertyName)) {
                 inputEventAdaptorConfiguration.getInternalInputEventAdaptorConfiguration().addEventAdaptorProperty(propertyName, propertyValue);
             }
         }
 
-        String toStreamName = toElement.getAttributeValue(new QName(EventReceiverConstants.EB_ATTR_STREAM_NAME));
-        String toStreamVersion = toElement.getAttributeValue(new QName(EventReceiverConstants.EB_ATTR_VERSION));
+        String toStreamName = toElement.getAttributeValue(new QName(EventReceiverConstants.ER_ATTR_STREAM_NAME));
+        String toStreamVersion = toElement.getAttributeValue(new QName(EventReceiverConstants.ER_ATTR_VERSION));
 
         ConfigurationValidator.validateToStream(toStreamName, toStreamVersion, tenantId);
 
         EventReceiverConfiguration eventReceiverConfiguration;
 
-        if (mappingType.equalsIgnoreCase(EventReceiverConstants.EB_WSO2EVENT_MAPPING_TYPE)) {
+        if (mappingType.equalsIgnoreCase(EventReceiverConstants.ER_WSO2EVENT_MAPPING_TYPE)) {
             if (!ConfigurationValidator.validateSupportedMapping(fromEventAdaptorType, MessageType.WSO2EVENT)) {
                 throw new EventReceiverConfigurationException("Wso2 Event Mapping is not supported by event adaptor type " + fromEventAdaptorType);
             }
             eventReceiverConfiguration = new EventReceiverConfiguration();
-        } else if (mappingType.equalsIgnoreCase(EventReceiverConstants.EB_TEXT_MAPPING_TYPE)) {
+        } else if (mappingType.equalsIgnoreCase(EventReceiverConstants.ER_TEXT_MAPPING_TYPE)) {
             if (!ConfigurationValidator.validateSupportedMapping(fromEventAdaptorType, MessageType.TEXT)) {
                 throw new EventReceiverConfigurationException("Text Mapping is not supported by event adaptor type " + fromEventAdaptorType);
             }
             eventReceiverConfiguration = new EventReceiverConfiguration();
-        } else if (mappingType.equalsIgnoreCase(EventReceiverConstants.EB_MAP_MAPPING_TYPE)) {
+        } else if (mappingType.equalsIgnoreCase(EventReceiverConstants.ER_MAP_MAPPING_TYPE)) {
             if (!ConfigurationValidator.validateSupportedMapping(fromEventAdaptorType, MessageType.MAP)) {
                 throw new EventReceiverConfigurationException("Mapping for Map input is not supported by event adaptor type " + fromEventAdaptorType);
             }
             eventReceiverConfiguration = new EventReceiverConfiguration();
-        } else if (mappingType.equalsIgnoreCase(EventReceiverConstants.EB_XML_MAPPING_TYPE)) {
+        } else if (mappingType.equalsIgnoreCase(EventReceiverConstants.ER_XML_MAPPING_TYPE)) {
             if (!ConfigurationValidator.validateSupportedMapping(fromEventAdaptorType, MessageType.XML)) {
                 throw new EventReceiverConfigurationException("XML Mapping is not supported by event adaptor type " + fromEventAdaptorType);
             }
             eventReceiverConfiguration = new EventReceiverConfiguration();
-        } else if (mappingType.equalsIgnoreCase(EventReceiverConstants.EB_JSON_MAPPING_TYPE)) {
+        } else if (mappingType.equalsIgnoreCase(EventReceiverConstants.ER_JSON_MAPPING_TYPE)) {
             if (!ConfigurationValidator.validateSupportedMapping(fromEventAdaptorType, MessageType.JSON)) {
                 throw new EventReceiverConfigurationException("JSON Mapping is not supported by event adaptor type " + fromEventAdaptorType);
             }
@@ -206,7 +206,7 @@ public class EventReceiverConfigBuilder {
     }
 
     public static String getMappingTypeFactoryClass(OMElement omElement) {
-        return omElement.getAttributeValue(new QName(EventReceiverConstants.EB_ATTR_FACTORY_CLASS));
+        return omElement.getAttributeValue(new QName(EventReceiverConstants.ER_ATTR_FACTORY_CLASS));
     }
 
     public static String getAttributeType(AttributeType attributeType) {

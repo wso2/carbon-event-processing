@@ -64,9 +64,9 @@ public class EventReceiverDeployer extends AbstractDeployer implements EventProc
     }
 
     /**
-     * Process the event builder configuration file, create it and deploy it
+     * Process the event receiver configuration file, create it and deploy it
      *
-     * @param deploymentFileData information about the event builder
+     * @param deploymentFileData information about the event receiver
      * @throws org.apache.axis2.deployment.DeploymentException for any errors
      */
     @Override
@@ -77,7 +77,7 @@ public class EventReceiverDeployer extends AbstractDeployer implements EventProc
             try {
                 processDeployment(deploymentFileData);
             } catch (Throwable e) {
-                String errorMsg = "Event builder not deployed and in inactive state :'" + deploymentFileData.getFile().getName();
+                String errorMsg = "Event receiver not deployed and in inactive state :'" + deploymentFileData.getFile().getName();
                 log.error(errorMsg, e);
                 throw new DeploymentException(errorMsg, e);
             }
@@ -139,7 +139,7 @@ public class EventReceiverDeployer extends AbstractDeployer implements EventProc
             try {
                 processUndeployment(filePath);
             } catch (Throwable e) {
-                String errorMsg = "Event builder file is not deployed : " + new File(filePath).getName();
+                String errorMsg = "Event receiver file is not deployed : " + new File(filePath).getName();
                 log.error(errorMsg + ":" + e.getMessage(), e);
                 throw new DeploymentException(errorMsg, e);
             }
@@ -167,14 +167,14 @@ public class EventReceiverDeployer extends AbstractDeployer implements EventProc
         if(!carbonEventReceiverService.isEventReceiverFileAlreadyExist(ebConfigXmlFile.getName(),tenantId)) {
             try {
                 ebConfigOMElement = getEbConfigOMElement(ebConfigXmlFile);
-                if (!ebConfigOMElement.getLocalName().equals(EventReceiverConstants.EB_ELEMENT_ROOT_ELEMENT)) {
-                    throw new EventReceiverConfigurationException("Wrong event builder configuration file, Invalid root element " + ebConfigOMElement.getQName() + " in " + ebConfigXmlFile.getName());
+                if (!ebConfigOMElement.getLocalName().equals(EventReceiverConstants.ER_ELEMENT_ROOT_ELEMENT)) {
+                    throw new EventReceiverConfigurationException("Wrong event receiver configuration file, Invalid root element " + ebConfigOMElement.getQName() + " in " + ebConfigXmlFile.getName());
                 }
-                eventReceiverName = ebConfigOMElement.getAttributeValue(new QName(EventReceiverConstants.EB_ATTR_NAME));
+                eventReceiverName = ebConfigOMElement.getAttributeValue(new QName(EventReceiverConstants.ER_ATTR_NAME));
                 String inputMappingType = EventReceiverConfigHelper.getInputMappingType(ebConfigOMElement);
 
                 if (eventReceiverName == null || eventReceiverName.trim().isEmpty()) {
-                    throw new EventReceiverConfigurationException(ebConfigXmlFile.getName() + " is not a valid event builder configuration file, does not contain a valid event-builder name");
+                    throw new EventReceiverConfigurationException(ebConfigXmlFile.getName() + " is not a valid event receiver configuration file, does not contain a valid event-receiver name");
                 }
 
                 EventReceiverConfiguration eventReceiverConfiguration = EventReceiverConfigBuilder.getEventReceiverConfiguration(ebConfigOMElement, inputMappingType, tenantId);
@@ -183,36 +183,36 @@ public class EventReceiverDeployer extends AbstractDeployer implements EventProc
                     carbonEventReceiverService.addEventReceiver(eventReceiverConfiguration, configurationContext.getAxisConfiguration());
                     carbonEventReceiverService.addEventReceiverConfigurationFile(eventReceiverName, deploymentFileData.getFile(), EventReceiverConfigurationFile.DeploymentStatus.DEPLOYED,
                             eventReceiverName + " successfully deployed.", null, streamNameWithVersion, ebConfigOMElement, currentAxisConfiguration);
-                    log.info("Event Builder deployed successfully and in active state : " + eventReceiverName);
+                    log.info("Event Receiver deployed successfully and in active state : " + eventReceiverName);
                 } else {
-                    throw new EventReceiverConfigurationException("Event Builder not deployed and in inactive state, since there is a event builder registered with the same name in this tenant :" + eventReceiverName);
+                    throw new EventReceiverConfigurationException("Event Receiver not deployed and in inactive state, since there is a event receiver registered with the same name in this tenant :" + eventReceiverName);
                 }
             } catch (EventReceiverValidationException e) {
                 carbonEventReceiverService.addEventReceiverConfigurationFile(eventReceiverName, deploymentFileData.getFile(), EventReceiverConfigurationFile.DeploymentStatus.WAITING_FOR_DEPENDENCY,
                         e.getMessage(), e.getDependency(), streamNameWithVersion, ebConfigOMElement, currentAxisConfiguration);
-                log.info("Event builder deployment held back and in inactive state :" + eventReceiverName + ", Waiting for Input Event Adaptor dependency :" + e.getDependency());
+                log.info("Event receiver deployment held back and in inactive state :" + eventReceiverName + ", Waiting for Input Event Adaptor dependency :" + e.getDependency());
             } catch (EventReceiverStreamValidationException e) {
                 carbonEventReceiverService.addEventReceiverConfigurationFile(eventReceiverName, deploymentFileData.getFile(), EventReceiverConfigurationFile.DeploymentStatus.WAITING_FOR_STREAM_DEPENDENCY,
                         e.getMessage(), e.getDependency(), streamNameWithVersion, ebConfigOMElement, currentAxisConfiguration);
-                log.info("Event builder deployment held back and in inactive state :" + eventReceiverName + ", Stream validation exception : " + e.getMessage());
+                log.info("Event receiver deployment held back and in inactive state :" + eventReceiverName + ", Stream validation exception : " + e.getMessage());
             } catch (EventReceiverConfigurationException e) {
                 carbonEventReceiverService.addEventReceiverConfigurationFile(eventReceiverName, deploymentFileData.getFile(), EventReceiverConfigurationFile.DeploymentStatus.ERROR,
-                        "Exception when deploying event builder configuration file:\n" + e.getMessage(), null, streamNameWithVersion, ebConfigOMElement, currentAxisConfiguration);
+                        "Exception when deploying event receiver configuration file:\n" + e.getMessage(), null, streamNameWithVersion, ebConfigOMElement, currentAxisConfiguration);
                 throw new EventReceiverConfigurationException(e.getMessage(), e);
             } catch (Throwable e) {
-                log.error("Invalid configuration in event builder configuration file :" + ebConfigXmlFile.getName(), e);
+                log.error("Invalid configuration in event receiver configuration file :" + ebConfigXmlFile.getName(), e);
                 carbonEventReceiverService.addEventReceiverConfigurationFile(eventReceiverName, deploymentFileData.getFile(), EventReceiverConfigurationFile.DeploymentStatus.ERROR,
                         "Deployment exception: " + e.getMessage(), null, streamNameWithVersion, ebConfigOMElement, currentAxisConfiguration);
                 throw new DeploymentException(e);
             }
         } else {
-            log.info("Event builder " + eventReceiverName + " is already registered with this tenant (" + tenantId + "), hence ignoring redeployment");
+            log.info("Event receiver " + eventReceiverName + " is already registered with this tenant (" + tenantId + "), hence ignoring redeployment");
         }
     }
 
     public void processUndeployment(String filePath) throws EventReceiverConfigurationException {
         String fileName = new File(filePath).getName();
-        log.info("Event Builder undeployed successfully : " + fileName);
+        log.info("Event Receiver undeployed successfully : " + fileName);
         int tenantID = PrivilegedCarbonContext.getThreadLocalCarbonContext().getTenantId();
         CarbonEventReceiverService carbonEventReceiverService = EventReceiverServiceValueHolder.getCarbonEventReceiverService();
         carbonEventReceiverService.removeEventReceiverConfigurationFile(fileName, tenantID);

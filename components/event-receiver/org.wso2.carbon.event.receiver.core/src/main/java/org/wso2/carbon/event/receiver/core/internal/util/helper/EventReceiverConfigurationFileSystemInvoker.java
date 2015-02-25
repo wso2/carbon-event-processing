@@ -53,12 +53,12 @@ public class EventReceiverConfigurationFileSystemInvoker {
             eventReceiverDeployer.getDeployedEventReceiverFilePaths().add(filePath);
             out.write(xmlContent);
             out.close();
-            log.info("Event builder configuration saved to the filesystem :" + fileName);
+            log.info("Event receiver configuration saved to the filesystem :" + fileName);
             DeploymentFileData deploymentFileData = new DeploymentFileData(new File(filePath));
             eventReceiverDeployer.executeManualDeployment(deploymentFileData);
         } catch (IOException e) {
             eventReceiverDeployer.getDeployedEventReceiverFilePaths().remove(filePath);
-            log.error("Error while saving event builder configuration: " + fileName, e);
+            log.error("Error while saving event receiver configuration: " + fileName, e);
         }
     }
 
@@ -77,12 +77,12 @@ public class EventReceiverConfigurationFileSystemInvoker {
                     log.error("Could not delete " + filename);
                     eventReceiverDeployer.getUndeployedEventReceiverFilePaths().remove(filePath);
                 } else {
-                    log.info("Event builder configuration deleted from the file system :" + filename);
+                    log.info("Event receiver configuration deleted from the file system :" + filename);
                     eventReceiverDeployer.executeManualUndeployment(filePath);
                 }
             }
         } catch (Exception e) {
-            throw new EventReceiverConfigurationException("Error while deleting the event builder :" + e.getMessage(), e);
+            throw new EventReceiverConfigurationException("Error while deleting the event receiver :" + e.getMessage(), e);
         }
     }
 
@@ -103,9 +103,9 @@ public class EventReceiverConfigurationFileSystemInvoker {
                 stringBuilder.append(line).append("\n");
             }
         } catch (FileNotFoundException e) {
-            throw new EventReceiverConfigurationException("Event builder file not found : " + e.getMessage(), e);
+            throw new EventReceiverConfigurationException("Event receiver file not found : " + e.getMessage(), e);
         } catch (IOException e) {
-            throw new EventReceiverConfigurationException("Cannot read the event builder file : " + e.getMessage(), e);
+            throw new EventReceiverConfigurationException("Cannot read the event receiver file : " + e.getMessage(), e);
         } finally {
             try {
                 if (bufferedReader != null) {
@@ -131,7 +131,7 @@ public class EventReceiverConfigurationFileSystemInvoker {
 
     private static String getFilePathFromFilename(String filename,
                                                   AxisConfiguration axisConfiguration) {
-        return new File(axisConfiguration.getRepository().getPath()).getAbsolutePath() + File.separator + EventReceiverConstants.EB_CONFIG_DIRECTORY + File.separator + filename;
+        return new File(axisConfiguration.getRepository().getPath()).getAbsolutePath() + File.separator + EventReceiverConstants.ER_CONFIG_DIRECTORY + File.separator + filename;
     }
 
     /**
@@ -144,6 +144,6 @@ public class EventReceiverConfigurationFileSystemInvoker {
     private static String getFilePathFromFilename(String filename) {
         int tenantId = PrivilegedCarbonContext.getThreadLocalCarbonContext().getTenantId();
         String repositoryPath = MultitenantUtils.getAxis2RepositoryPath(tenantId);
-        return new File(repositoryPath).getAbsolutePath() + File.separator + EventReceiverConstants.EB_CONFIG_DIRECTORY + File.separator + filename;
+        return new File(repositoryPath).getAbsolutePath() + File.separator + EventReceiverConstants.ER_CONFIG_DIRECTORY + File.separator + filename;
     }
 }

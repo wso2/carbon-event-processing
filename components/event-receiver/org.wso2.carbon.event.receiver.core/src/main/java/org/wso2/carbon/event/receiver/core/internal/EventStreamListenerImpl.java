@@ -36,7 +36,7 @@ public class EventStreamListenerImpl implements EventStreamListener {
         try {
             carbonEventReceiverService.deactivateActiveEventReceiverConfigurationsForStream(streamNameWithVersion, tenantId);
         } catch (EventReceiverConfigurationException e) {
-            log.error("Exception occurred while un-deploying the Event builder configuration files");
+            log.error("Exception occurred while un-deploying the Event receiver configuration files");
         }
 
     }
@@ -49,7 +49,7 @@ public class EventStreamListenerImpl implements EventStreamListener {
         try {
             carbonEventReceiverService.activateInactiveEventReceiverConfigurationsForStream(streamNameWithVersion, tenantId);
         } catch (EventReceiverConfigurationException e) {
-            log.error("Exception occurred while re-deploying the Event builder configuration files");
+            log.error("Exception occurred while re-deploying the Event receiver configuration files");
         }
 
     }

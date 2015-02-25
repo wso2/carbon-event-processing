@@ -85,18 +85,18 @@ public class EventReceiver implements EventProducer {
                 this.exportedStreamDefinition = exportedStreamDefinition;
             } else {
                 throw new EventReceiverConfigurationException("Could not create input mapper for mapping type "
-                        + mappingType + " for event builder :" + eventReceiverConfiguration.getEventReceiverName());
+                        + mappingType + " for event receiver :" + eventReceiverConfiguration.getEventReceiverName());
             }
 
             // Initialize tracer and statistics.
             if (statisticsEnabled) {
                 this.statisticsMonitor = EventReceiverServiceValueHolder.getEventStatisticsService().getEventStatisticMonitor(
-                        tenantId, EventReceiverConstants.EVENT_BUILDER, eventReceiverConfiguration.getEventReceiverName(), null);
+                        tenantId, EventReceiverConstants.EVENT_RECEIVER, eventReceiverConfiguration.getEventReceiverName(), null);
             }
             if (traceEnabled) {
-                this.beforeTracerPrefix = "TenantId=" + tenantId + " : " + EventReceiverConstants.EVENT_BUILDER + " : "
+                this.beforeTracerPrefix = "TenantId=" + tenantId + " : " + EventReceiverConstants.EVENT_RECEIVER + " : "
                         + eventReceiverConfiguration.getEventReceiverName() + ", before processing " + System.getProperty("line.separator");
-                this.afterTracerPrefix = "TenantId=" + tenantId + " : " + EventReceiverConstants.EVENT_BUILDER + " : "
+                this.afterTracerPrefix = "TenantId=" + tenantId + " : " + EventReceiverConstants.EVENT_RECEIVER + " : "
                         + eventReceiverConfiguration.getEventReceiverName() + " : " + EventReceiverConstants.EVENT_STREAM + " : "
                         + EventReceiverUtil.getExportedStreamIdFrom(eventReceiverConfiguration) + " , after processing " + System.getProperty("line.separator");
             }
@@ -108,19 +108,19 @@ public class EventReceiver implements EventProducer {
     }
 
     /**
-     * Returns the stream definition that is exported by this event builder.
-     * This stream definition will available to any object that consumes the event builder service
+     * Returns the stream definition that is exported by this event receiver.
+     * This stream definition will available to any object that consumes the event receiver service
      * (e.g. EventProcessors)
      *
      * @return the {@link org.wso2.carbon.databridge.commons.StreamDefinition} of the stream that will be
-     *         sending out events from this event builder
+     *         sending out events from this event receiver
      */
     public StreamDefinition getExportedStreamDefinition() {
         return exportedStreamDefinition;
     }
 
     /**
-     * Returns the event builder configuration associated with this event builder
+     * Returns the event receiver configuration associated with this event receiver
      *
      * @return the {@link EventReceiverConfiguration} instance
      */
@@ -129,11 +129,11 @@ public class EventReceiver implements EventProducer {
     }
 
     /**
-     * Subscribes to a event adaptor according to the current event builder configuration
+     * Subscribes to a event adaptor according to the current event receiver configuration
      */
     public void subscribeToEventAdaptor() throws EventReceiverConfigurationException {
         if (this.eventReceiverConfiguration == null || this.inputMapper == null) {
-            throw new EventReceiverConfigurationException("Cannot subscribe to input event adaptor. Event builder has not been initialized properly.");
+            throw new EventReceiverConfigurationException("Cannot subscribe to input event adaptor. Event receiver has not been initialized properly.");
         }
         if (this.subscriptionId == null) {
             int tenantId = PrivilegedCarbonContext.getThreadLocalCarbonContext().getTenantId();
