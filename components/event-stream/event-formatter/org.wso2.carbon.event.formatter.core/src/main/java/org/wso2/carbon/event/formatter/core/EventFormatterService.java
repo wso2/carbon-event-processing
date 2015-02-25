@@ -19,9 +19,9 @@ package org.wso2.carbon.event.formatter.core;
 
 import org.apache.axis2.engine.AxisConfiguration;
 import org.wso2.carbon.databridge.commons.StreamDefinition;
-import org.wso2.carbon.event.notifier.core.config.EventFormatterConfiguration;
-import org.wso2.carbon.event.notifier.core.exception.EventFormatterConfigurationException;
-import org.wso2.carbon.event.notifier.core.internal.util.EventFormatterConfigurationFile;
+import org.wso2.carbon.event.publisher.core.config.EventFormatterConfiguration;
+import org.wso2.carbon.event.publisher.core.exception.EventFormatterConfigurationException;
+import org.wso2.carbon.event.publisher.core.internal.util.EventFormatterConfigurationFile;
 
 import java.util.List;
 

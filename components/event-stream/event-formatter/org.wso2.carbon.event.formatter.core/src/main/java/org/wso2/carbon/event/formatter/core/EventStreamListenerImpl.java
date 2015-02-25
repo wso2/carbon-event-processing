@@ -19,9 +19,9 @@ package org.wso2.carbon.event.formatter.core;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.wso2.carbon.event.notifier.core.exception.EventFormatterConfigurationException;
-import org.wso2.carbon.event.notifier.core.internal.CarbonEventFormatterService;
-import org.wso2.carbon.event.notifier.core.internal.ds.EventFormatterServiceValueHolder;
+import org.wso2.carbon.event.publisher.core.exception.EventFormatterConfigurationException;
+import org.wso2.carbon.event.publisher.core.internal.CarbonEventFormatterService;
+import org.wso2.carbon.event.publisher.core.internal.ds.EventFormatterServiceValueHolder;
 import org.wso2.carbon.event.stream.manager.core.EventStreamListener;
 
 public class EventStreamListenerImpl implements EventStreamListener {
