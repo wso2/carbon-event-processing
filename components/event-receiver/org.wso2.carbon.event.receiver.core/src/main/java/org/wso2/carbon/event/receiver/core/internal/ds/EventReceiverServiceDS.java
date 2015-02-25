@@ -67,7 +67,9 @@ public class EventReceiverServiceDS {
         try {
             CarbonEventReceiverService carbonEventReceiverService = new CarbonEventReceiverService();
             EventReceiverServiceValueHolder.registerEventReceiverService(carbonEventReceiverService);
-            context.getBundleContext().registerService(EventReceiverService.class.getName(), carbonEventReceiverService, null);
+
+            EventReceiverService eventReceiverService = new CarbonEventReceiverService();
+            context.getBundleContext().registerService(EventReceiverService.class.getName(), eventReceiverService, null);
 
             InputEventAdaptorService inputEventAdaptorService = new CarbonInputEventAdaptorService();
             context.getBundleContext().registerService(InputEventAdaptorService.class.getName(), inputEventAdaptorService, null);

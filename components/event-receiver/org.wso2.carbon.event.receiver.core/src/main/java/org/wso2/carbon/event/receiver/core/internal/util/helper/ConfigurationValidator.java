@@ -83,11 +83,9 @@ public class ConfigurationValidator {
             throw new EventReceiverConfigurationException("Invalid event builder configuration for event builder: " + eventReceiverName);
         }
 
-        String fromInputEventAdaptorName = fromElement.getAttributeValue(new QName(EventReceiverConstants.ER_ATTR_TA_NAME));
         String fromInputEventAdaptorType = fromElement.getAttributeValue(new QName(EventReceiverConstants.ER_ATTR_TA_TYPE));
 
-        if (fromInputEventAdaptorName == null || fromInputEventAdaptorName.isEmpty() ||
-                fromInputEventAdaptorType == null || fromInputEventAdaptorType.isEmpty()) {
+        if (fromInputEventAdaptorType == null || fromInputEventAdaptorType.isEmpty()) {
             throw new EventReceiverConfigurationException("Invalid event builder configuration for event builder: " + eventReceiverName);
         }
 

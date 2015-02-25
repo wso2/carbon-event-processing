@@ -44,7 +44,6 @@ public final class EventReceiverConstants {
     public static final String ER_ATTR_NAMESPACE = "namespace";
     public static final String ER_ATTR_DATA_TYPE = "dataType";
     public static final String ER_ATTR_REGEX = "regex";
-    public static final String ER_ATTR_TA_NAME = "eventAdaptorName";
     public static final String ER_ATTR_TA_TYPE = "eventAdaptorType";
     public static final String ER_ATTR_STREAM_NAME = "streamName";
     public static final String ER_ATTR_VERSION = "version";

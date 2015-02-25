@@ -18,8 +18,8 @@
 
 package org.wso2.carbon.event.receiver.core.config;
 
+import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
 
 /**
@@ -38,7 +38,7 @@ public class InternalInputEventAdaptorConfiguration {
     }
 
     public InternalInputEventAdaptorConfiguration() {
-        this.properties = new ConcurrentHashMap<String, String>();
+        this.properties = new HashMap<String, String>();
     }
 
     public void addEventAdaptorProperty(String name, String value) {

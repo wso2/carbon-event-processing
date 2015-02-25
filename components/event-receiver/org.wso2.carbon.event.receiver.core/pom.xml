@@ -104,9 +104,9 @@
                             *;resolution:=optional
                         </Import-Package>
                         <DynamicImport-Package>*</DynamicImport-Package>
-                        <Axis2Deployer>org.wso2.carbon.event.receiver.core.EventNotifierDeployer</Axis2Deployer>
+                        <Axis2Deployer>org.wso2.carbon.event.receiver.core.EventReceiverDeployer</Axis2Deployer>
                         <Axis2RequiredServices>
-                            org.wso2.carbon.event.receiver.core.EventNotifierService
+                            org.wso2.carbon.event.receiver.core.EventReceiverService
                         </Axis2RequiredServices>
                     </instructions>
                 </configuration>
