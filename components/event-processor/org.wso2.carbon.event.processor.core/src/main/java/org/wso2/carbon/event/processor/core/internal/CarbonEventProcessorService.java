@@ -302,7 +302,7 @@ public class CarbonEventProcessorService implements EventProcessorService {
 
         if (distributed) {
             String queryExpression = EventProcessorUtil.constructQueryExpression(importDefinitions,
-                    exportDefinitions,"");
+                    exportDefinitions, "");
             executionPlanRuntime = siddhiManager.createExecutionPlanRuntime(queryExpression);//todo move inside??
             if (stormDeploymentConfig != null && stormDeploymentConfig.isManagerNode() && EventProcessorValueHolder
                     .getStormManagerServer().isStormManager()) {
@@ -324,7 +324,7 @@ public class CarbonEventProcessorService implements EventProcessorService {
             }
         }
 
-        for(StreamConfiguration configuration:executionPlanConfiguration.getImportedStreams()) {
+        for (StreamConfiguration configuration : executionPlanConfiguration.getImportedStreams()) {
             inputHandlerMap.put(configuration.getStreamId(), executionPlanRuntime.getInputHandler
                     (configuration.getSiddhiStreamName()));
         }
@@ -420,7 +420,7 @@ public class CarbonEventProcessorService implements EventProcessorService {
             }
         }
 
-        if(executionPlanRuntime != null){
+        if (executionPlanRuntime != null) {
             executionPlanRuntime.start();
         }
 
@@ -479,70 +479,6 @@ public class CarbonEventProcessorService implements EventProcessorService {
         return executionPlanRuntime;
 
     }
-
-    /*private SiddhiManager getSiddhiManagerFor(ExecutionPlanConfiguration executionPlanConfiguration,
-                                              SiddhiContext siddhiContext,
-                                              Map<String, InputHandler> inputHandlerMap)
-            throws ExecutionPlanConfigurationException {
-        SiddhiManager siddhiManager = new SiddhiManager(siddhiContext);
-        try {
-            int tenantId = PrivilegedCarbonContext.getThreadLocalCarbonContext().getTenantId();
-            if (tenantId > -1) {
-                DataSourceManager.getInstance().initTenant(tenantId);
-            }
-            List<CarbonDataSource> dataSources = EventProcessorValueHolder.getDataSourceService().getAllDataSources();
-            for (CarbonDataSource cds : dataSources) {
-                try {
-                    if (cds.getDSObject() instanceof DataSource) {
-                        //siddhiManager.getSiddhiContext().addDataSource(cds.getDSMInfo().getName(), (DataSource) cds.getDSObject());
-                    }
-                } catch (Exception e) {
-                    log.error("Unable to add the datasource" + cds.getDSMInfo().getName(), e);
-                }
-            }
-        } catch (DataSourceException e) {
-            log.error("Unable to populate the data sources in Siddhi engine.", e);
-        }
-
-        int persistenceTimeInterval = 0;
-        try {
-            persistenceTimeInterval = Integer.parseInt(executionPlanConfiguration.getSiddhiConfigurationProperties().get(EventProcessorConstants.SIDDHI_SNAPSHOT_INTERVAL));
-        } catch (NumberFormatException e) {
-            log.error("Unable to parse snapshot time interval.", e);
-        }
-
-        if (persistenceTimeInterval > 0) {
-            if (null == EventProcessorValueHolder.getPersistenceStore()) {
-//                if (EventProcessorValueHolder.getClusterInformation() == null) {
-//                    try {
-//                        String adminPassword = EventProcessorValueHolder.getUserRealm().
-//                                getRealmConfiguration().getAdminPassword();
-//                        String adminUserName = EventProcessorValueHolder.getUserRealm().
-//                                getRealmConfiguration().getAdminUserName();
-//
-//                        ClusterInformation clusterInformation = new ClusterInformation(adminUserName,
-//                                adminPassword);
-//                        clusterInformation.setClusterName(CassandraPersistenceStore.CLUSTER_NAME);
-//                        EventProcessorValueHolder.setClusterInformation(clusterInformation);
-//                    } catch (UserStoreException e) {
-//                        log.error("Unable to get realm configuration.", e);
-//                    }
-//                }
-//                if (CassandraConnectionValidator.getInstance().checkCassandraConnection(EventProcessorValueHolder.getClusterInformation().getUsername(), EventProcessorValueHolder.getClusterInformation().getPassword())) {
-//                    Cluster cluster = EventProcessorValueHolder.getDataAccessService().getCluster(EventProcessorValueHolder.getClusterInformation());
-//                    CassandraPersistenceStore casandraPersistenceStore = new CassandraPersistenceStore(cluster);
-//                    EventProcessorValueHolder.setPersistenceStore(casandraPersistenceStore);
-//                } else {
-//                    throw new ExecutionPlanConfigurationException("Cannot connect to Cassandra. To run with embedded Cassandra enabled, start the server with command: ./wso2server.sh -Ddisable.cassandra.server.startup=false");
-//                }
-
-
-            }
-            siddhiManager.setPersistStore(EventProcessorValueHolder.getPersistenceStore());
-        }
-        return siddhiManager;
-    }*/
-
 
     public void notifyServiceAvailability(String serviceId) {
         for (Integer tenantId : tenantSpecificExecutionPlanFiles.keySet()) {

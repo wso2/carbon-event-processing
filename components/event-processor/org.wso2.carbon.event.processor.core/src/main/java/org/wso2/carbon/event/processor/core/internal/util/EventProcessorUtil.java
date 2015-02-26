@@ -235,6 +235,7 @@ public class EventProcessorUtil {
 
     /**
      * Construct Stream Definition query string for a given Siddhi Stream Definition
+     *
      * @param siddhiStreamDefinition
      * @return
      */
@@ -254,20 +255,21 @@ public class EventProcessorUtil {
 
     /**
      * Constructs full query expression as String
+     *
      * @param importDefinitions List of imported definitions
      * @param exportDefinitions List of exported definitions
-     * @param queryExpressions query expression given in the ExecutionPlanConfiguration
+     * @param queryExpressions  query expression given in the ExecutionPlanConfiguration
      * @return
      */
     public static String constructQueryExpression(List<String> importDefinitions, List<String> exportDefinitions,
-                                       String queryExpressions) {
+                                                  String queryExpressions) {
         StringBuilder builder = new StringBuilder();
 
-        for(String definition : importDefinitions){
+        for (String definition : importDefinitions) {
             builder.append(definition);
         }
 
-        for(String definition : exportDefinitions){
+        for (String definition : exportDefinitions) {
             builder.append(definition);
         }
         builder.append(queryExpressions);
