@@ -82,9 +82,9 @@ public class EventProcessorUtil {
     }
 
     public static org.wso2.siddhi.query.api.definition.StreamDefinition convertToSiddhiStreamDefinition(
-            StreamDefinition streamDefinition, StreamConfiguration streamConfiguration) {
+            StreamDefinition streamDefinition, String siddhiStreamName) {
         org.wso2.siddhi.query.api.definition.StreamDefinition siddhiStreamDefinition = new org.wso2.siddhi.query.api.definition.StreamDefinition();
-        siddhiStreamDefinition.setId(streamConfiguration.getName());
+        siddhiStreamDefinition.setId(siddhiStreamName);
         if (streamDefinition.getMetaData() != null) {
             for (org.wso2.carbon.databridge.commons.Attribute attribute : streamDefinition.getMetaData()) {
                 siddhiStreamDefinition.attribute(attribute.getName(), convertToSiddhiAttribute(attribute, EventProcessorConstants.META + EventProcessorConstants.ATTRIBUTE_SEPARATOR).getType());
@@ -201,10 +201,10 @@ public class EventProcessorUtil {
         return streamId.split(EventProcessorConstants.STREAM_SEPARATOR)[0];
     }
 
-    public static String getDefinitionString(StreamDefinition streamDefinition) {   //todo testcase
+    public static String getDefinitionString(StreamDefinition streamDefinition, String siddhiStreamName) {
         StringBuilder builder = new StringBuilder();
         builder.append(EventProcessorConstants.DEFINE_STREAM);
-        builder.append(streamDefinition.getStreamId());
+        builder.append(siddhiStreamName);
         builder.append(EventProcessorConstants.OPENING_BRACKETS);
         if (streamDefinition.getMetaData() != null) {
             for (org.wso2.carbon.databridge.commons.Attribute attribute : streamDefinition.getMetaData()) {
@@ -227,10 +227,6 @@ public class EventProcessorUtil {
                 builder.append(attribute.getName() + EventProcessorConstants.SPACE + attribute.getType().toString()
                         .toLowerCase() + EventProcessorConstants.COMMA);
             }
-        }
-        for (org.wso2.carbon.databridge.commons.Attribute attribute : streamDefinition.getMetaData()) {
-            builder.append(attribute.getName() + EventProcessorConstants.SPACE + attribute.getType().toString().toLowerCase() +
-                    EventProcessorConstants.COMMA);
         }
         builder.deleteCharAt(builder.length() - 2);         //remove last comma
         builder.append(EventProcessorConstants.CLOSING_BRACKETS);
@@ -274,9 +270,7 @@ public class EventProcessorUtil {
         for(String definition : exportDefinitions){
             builder.append(definition);
         }
-
         builder.append(queryExpressions);
-
         return builder.toString();
     }
 }

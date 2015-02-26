@@ -72,7 +72,7 @@ public class TopologyManager {
                 stormConfig = Utils.readStormConfig();
             }
         } catch (FileNotFoundException e) {
-            log.warn("Error occurred while reading storm configurations. Using default configurations", e);
+            log.warn("Error occurred while reading storm configurations using default configurations", e);
         }
 
         client = NimbusClient.getConfiguredClient(stormConfig).getClient();
@@ -128,13 +128,12 @@ public class TopologyManager {
          } catch (InterruptedException e) {}
     }
 
-//todo change to map
     public static void submitTopology(ExecutionPlanConfiguration configuration, List<String> importStreams,
                                       List<String> exportStreams, int tenantId, int resubmitRetryInterval) throws
             StormDeploymentException, ExecutionPlanConfigurationException {
         Document document = StormQueryPlanBuilder.constructStormQueryPlanXML(configuration, importStreams, exportStreams);
         String executionPlanName = configuration.getName();
-        TopologyBuilder builder = null;
+        TopologyBuilder builder;
         try {
             String stormQueryPlan = getStringQueryPlan(document);
             builder = StormTopologyConstructor.constructTopologyBuilder(stormQueryPlan, executionPlanName, tenantId, EventProcessorValueHolder.getStormDeploymentConfig());

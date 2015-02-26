@@ -101,7 +101,6 @@ public class StormQueryPlanBuilder {
         List<String> stringQueryList = Arrays.asList(queryExpressions.split(";"));
         String fullQueryExpression = EventProcessorUtil.constructQueryExpression(importedStreams, exportedStreams,
                 queryExpressions);
-        //todo validation?? following will throw siddhi parser exception
         ExecutionPlanRuntime executionPlanRuntime = EventProcessorValueHolder.getSiddhiManager()
                 .createExecutionPlanRuntime(fullQueryExpression);
         ExecutionPlan executionPlan = SiddhiCompiler.parse(queryExpressions);

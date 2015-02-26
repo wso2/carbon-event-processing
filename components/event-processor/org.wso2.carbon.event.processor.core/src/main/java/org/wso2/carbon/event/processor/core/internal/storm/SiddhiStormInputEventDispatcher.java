@@ -47,23 +47,20 @@ public class SiddhiStormInputEventDispatcher extends AbstractSiddhiInputEventDis
     private ExecutorService executorService = Executors.newSingleThreadExecutor();
     private AsyncEventPublisher asyncEventPublisher;
 
-    public SiddhiStormInputEventDispatcher(StreamDefinition streamDefinition,
-                                           String siddhiStreamId, String siddhiStreamName,
-                                           ExecutionPlanConfiguration executionPlanConfiguration,
-                                           int tenantId, StormDeploymentConfig stormDeploymentConfig) {
+    public SiddhiStormInputEventDispatcher(StreamDefinition streamDefinition, String siddhiStreamId,
+                                           ExecutionPlanConfiguration executionPlanConfiguration, int tenantId,
+                                           StormDeploymentConfig stormDeploymentConfig) {
         super(streamDefinition.getStreamId(), siddhiStreamId, executionPlanConfiguration, tenantId);
         this.executionPlanConfiguration = executionPlanConfiguration;
         this.stormDeploymentConfig = stormDeploymentConfig;
-        init(streamDefinition, siddhiStreamName, executionPlanConfiguration);
+        init(streamDefinition, siddhiStreamId, executionPlanConfiguration);
     }
 
     private void init(StreamDefinition streamDefinition, String siddhiStreamName, ExecutionPlanConfiguration executionPlanConfiguration) {
         logPrefix = "[CEP Receiver|ExecPlan:" + executionPlanConfiguration.getName() + ", Tenant:" + tenantId + ", Stream:" + siddhiStreamName + "]";
 
         try {
-            // Creating a Siddhi stream handled by this input event dispatcher by using a data bridge stream which has name as the Siddhi stream name,
-            // and all fields as payload fields just like in Siddhi streams.
-            this.siddhiStreamDefinition = EventProcessorUtil.convertToSiddhiStreamDefinition(streamDefinition, new StreamConfiguration(siddhiStreamName, streamDefinition.getVersion()));
+            this.siddhiStreamDefinition = EventProcessorUtil.convertToSiddhiStreamDefinition(streamDefinition, siddhiStreamName);
 
             Set<org.wso2.siddhi.query.api.definition.StreamDefinition> streamDefinitions = new HashSet<org.wso2.siddhi.query.api.definition.StreamDefinition>();
             streamDefinitions.add(siddhiStreamDefinition);

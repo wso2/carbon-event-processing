@@ -21,7 +21,7 @@ import com.hazelcast.core.*;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.wso2.carbon.event.processor.core.internal.ha.thrift.HAServiceClientThriftImpl;
-import org.wso2.siddhi.core.SiddhiManager;
+import org.wso2.siddhi.core.ExecutionPlanRuntime;
 
 import java.util.*;
 import java.util.concurrent.*;
@@ -32,7 +32,7 @@ public class HAManager {
     private final HazelcastInstance hazelcastInstance;
     private final String executionPlanName;
     private final int tenantId;
-    private final SiddhiManager siddhiManager;
+    private final ExecutionPlanRuntime executionPlanRuntime;
     private final int inputProcessors;
     private final CEPMembership currentCepMembershipInfo;
     private boolean activeLockAcquired;
@@ -52,11 +52,11 @@ public class HAManager {
     private static String passiveId;
 
 
-    public HAManager(HazelcastInstance hazelcastInstance, String executionPlanName, int tenantId, SiddhiManager siddhiManager, int inputProcessors, CEPMembership currentCepMembershipInfo) {
+    public HAManager(HazelcastInstance hazelcastInstance, String executionPlanName, int tenantId, ExecutionPlanRuntime executionPlanRuntime, int inputProcessors, CEPMembership currentCepMembershipInfo) {
         this.hazelcastInstance = hazelcastInstance;
         this.executionPlanName = executionPlanName;
         this.tenantId = tenantId;
-        this.siddhiManager = siddhiManager;
+        this.executionPlanRuntime = executionPlanRuntime;
         this.inputProcessors = inputProcessors;
         this.currentCepMembershipInfo = currentCepMembershipInfo;
         activeId = "Active:" + tenantId + ":" + executionPlanName;
@@ -163,7 +163,7 @@ public class HAManager {
         }
 
         try {
-            siddhiManager.restore(snapshotData.getStates());
+            executionPlanRuntime.restore(snapshotData.getStates());
             byte[] eventData = snapshotData.getNextEventData();
             HashMap<String, Object[]> eventMap = (HashMap<String, Object[]>) ByteSerializer.BToO(eventData);
             for (Map.Entry<String, Object[]> entry : eventMap.entrySet()) {
@@ -268,7 +268,7 @@ public class HAManager {
         }
 
         snapshotData.setNextEventData(ByteSerializer.OToB(eventMap));
-        snapshotData.setStates(siddhiManager.snapshot());
+        snapshotData.setStates(executionPlanRuntime.snapshot());
 
         threadBarrier.open();
         return snapshotData;

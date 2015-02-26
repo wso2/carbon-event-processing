@@ -39,24 +39,30 @@ public class StormQueryPlanBuilderTestCase {
 
     @Test
     public void testSingleQuery() throws Exception {
+        List<String> importedDefinition = new ArrayList<String>(1);
+        List<String> exportedDefinition = new ArrayList<String>(1);
         ExecutionPlanConfiguration configuration = new ExecutionPlanConfiguration();
         configuration.addImportedStream(new StreamConfiguration("test1", "1.0.0", "analyticsStats"));
         configuration.addExportedStream(new StreamConfiguration("test2", "1.0.0", "filteredStatStream"));
         configuration.setQueryExpressions("from analyticsStats[meta_ipAdd != '192.168.1.1']#window.time(5 min) " +
                 "select meta_ipAdd, meta_index, meta_timestamp, meta_nanoTime, userID " +
                 "insert into filteredStatStream;");
-        StreamDefinition analyticsStats = new StreamDefinition().name("analyticsStats").attribute("meta_ipAdd",
+        StreamDefinition analyticsStats = new StreamDefinition().id("analyticsStats").attribute("meta_ipAdd",
                 Attribute.Type.STRING).attribute("meta_index", Attribute.Type.LONG).attribute("meta_timestamp",
                 Attribute.Type.LONG).attribute("meta_nanoTime", Attribute.Type.LONG).attribute("userID",
                 Attribute.Type.STRING).attribute("searchTerms", Attribute.Type.STRING);
-        StreamDefinition filteredStatStream = new StreamDefinition().name("filteredStatStream").attribute("meta_ipAdd",
+        StreamDefinition filteredStatStream = new StreamDefinition().id("filteredStatStream").attribute("meta_ipAdd",
                 Attribute.Type.STRING).attribute("meta_index", Attribute.Type.LONG).attribute("meta_timestamp",
                 Attribute.Type.LONG).attribute("meta_nanoTime", Attribute.Type.LONG).attribute("userID",
                 Attribute.Type.STRING);
-        List<StreamDefinition> definitions = new ArrayList<StreamDefinition>(2);
+        /*List<StreamDefinition> definitions = new ArrayList<StreamDefinition>(2);
         definitions.add(analyticsStats);
-        definitions.add(filteredStatStream);
-        Document document = StormQueryPlanBuilder.constructStormQueryPlanXML(configuration, definitions);
+        definitions.add(filteredStatStream);*/
+        String analyticStats = "define stream filteredStatStream ( meta_ipAdd string,meta_index long, meta_timestamp long, meta_nanoTime long, userID string );";
+        String filteredAnalyticStats = "define stream filteredStatStream ( meta_ipAdd string,meta_index long, meta_timestamp long, meta_nanoTime long, userID string );";
+        importedDefinition.add(analyticStats);
+        exportedDefinition.add(filteredAnalyticStats);
+        Document document = StormQueryPlanBuilder.constructStormQueryPlanXML(configuration, importedDefinition, exportedDefinition);
         OMElement queryElement = XMLUtils.toOM(document.getDocumentElement());
 
         Iterator<OMElement> iterator = queryElement.getChildrenWithName(new QName("event-receiver"));
@@ -91,6 +97,8 @@ public class StormQueryPlanBuilderTestCase {
 
     @Test
     public void testMultipleQuery() throws Exception {
+        List<String> importedDefinition = new ArrayList<String>(2);
+        List<String> exportedDefinition = new ArrayList<String>(1);
         ExecutionPlanConfiguration configuration = new ExecutionPlanConfiguration();
         configuration.addImportedStream(new StreamConfiguration("test1", "1.0.0", "analyticsStats"));
         configuration.addImportedStream(new StreamConfiguration("test2", "1.0.0", "stockQuote"));
@@ -116,19 +124,26 @@ public class StormQueryPlanBuilderTestCase {
                 "select price, symbol, count\n" +
                 "insert into fortuneCompanyStream;\n";
         configuration.setQueryExpressions(queryExpression);
-        StreamDefinition analyticsStats = new StreamDefinition().name("analyticsStats").attribute("meta_ipAdd",
+        StreamDefinition analyticsStats = new StreamDefinition().id("analyticsStats").attribute("meta_ipAdd",
                 Attribute.Type.STRING).attribute("meta_index", Attribute.Type.LONG).attribute("meta_timestamp",
                 Attribute.Type.LONG).attribute("meta_nanoTime", Attribute.Type.LONG).attribute("userID",
                 Attribute.Type.STRING).attribute("searchTerms", Attribute.Type.STRING);
-        StreamDefinition stockStream = new StreamDefinition().name("stockQuote").attribute("price",
+        StreamDefinition stockStream = new StreamDefinition().id("stockQuote").attribute("price",
                 Attribute.Type.INT).attribute("symbol", Attribute.Type.STRING);
-        StreamDefinition fortuneCompanyStream = new StreamDefinition().name("fortuneCompanyStream").attribute("price",
+        StreamDefinition fortuneCompanyStream = new StreamDefinition().id("fortuneCompanyStream").attribute("price",
                 Attribute.Type.INT).attribute("symbol", Attribute.Type.STRING).attribute("count", Attribute.Type.LONG);
-        List<StreamDefinition> definitions = new ArrayList<StreamDefinition>(3);
+        /*List<StreamDefinition> definitions = new ArrayList<StreamDefinition>(3);
         definitions.add(analyticsStats);
         definitions.add(stockStream);
-        definitions.add(fortuneCompanyStream);
-        Document document = StormQueryPlanBuilder.constructStormQueryPlanXML(configuration, definitions);
+        definitions.add(fortuneCompanyStream);*/
+
+        String analyticStats = "define stream filteredStatStream ( meta_ipAdd string,meta_index long, meta_timestamp long, meta_nanoTime long, userID string );";
+        String stockQuotes = "define stream stockQuote ( price int, symbol string );";
+        String filteredAnalyticStats = "define stream filteredStatStream ( meta_ipAdd string,meta_index long, meta_timestamp long, meta_nanoTime long, userID string );";
+        importedDefinition.add(analyticStats);
+        importedDefinition.add(stockQuotes);
+        exportedDefinition.add(filteredAnalyticStats);
+        Document document = StormQueryPlanBuilder.constructStormQueryPlanXML(configuration, importedDefinition, exportedDefinition);
         OMElement queryElement = XMLUtils.toOM(document.getDocumentElement());
 
         //Assert receiver element

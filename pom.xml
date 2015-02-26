@@ -540,7 +540,7 @@
             <!--siddhi dependencies start-->
             <dependency>
                 <groupId>org.wso2.siddhi</groupId>
-                <artifactId>siddhi-api</artifactId>
+                <artifactId>siddhi-query-api</artifactId>
                 <version>${siddhi.version}</version>
             </dependency>
             <dependency>
@@ -550,7 +550,7 @@
             </dependency>
             <dependency>
                 <groupId>org.wso2.siddhi</groupId>
-                <artifactId>siddhi-query</artifactId>
+                <artifactId>siddhi-query-compiler</artifactId>
                 <version>${siddhi.version}</version>
             </dependency>
             <!--siddhi dependencies stop-->
@@ -1076,7 +1076,7 @@
         <!--<carbon.commons.imp.pkg.version>[4.3.0, 4.4.0)</carbon.commons.imp.pkg.version>-->
 
         <!--CEP versions-->
-        <siddhi.version>2.2.0</siddhi.version>
+        <siddhi.version>3.0.0-SNAPSHOT</siddhi.version>
         <carbon.event.processing.version>2.0.4-SNAPSHOT</carbon.event.processing.version>
         <storm.version>0.9.2-incubating.wso2v1</storm.version>
 

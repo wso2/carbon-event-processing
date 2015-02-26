@@ -19,10 +19,9 @@ package org.wso2.carbon.event.processor.core.internal.storm.util;
 
 import org.wso2.siddhi.query.api.ExecutionPlan;
 import org.wso2.siddhi.query.api.definition.StreamDefinition;
+import org.wso2.siddhi.query.compiler.SiddhiCompiler;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 public class ComponentInfoHolder {
@@ -36,25 +35,26 @@ public class ComponentInfoHolder {
     private Object declarer;
     private Map<String, StreamDefinition> inputStreams = new HashMap<String, StreamDefinition>();
     private Map<String, String> inputStreamPartitoningFields = new HashMap<String, String>();
-    private List<ExecutionPlan> siddhiQueries = new ArrayList<ExecutionPlan>();
     private Map<String, StreamDefinition> outputStreams = new HashMap<String, StreamDefinition>();
     private int parallelism = 1;
+    private String query;
 
     public ComponentInfoHolder(String componentName, ComponentType componentType) {
         this.componentName = componentName;
         this.componentType = componentType;
     }
 
-    public void addSiddhiQueries(List<ExecutionPlan> siddhiQueries) {
-        this.siddhiQueries.addAll(siddhiQueries);
+    public void addSiddhiQuery(String query){
+        this.query = query;
     }
 
     public void setParallelism(int parallelism) {
         this.parallelism = parallelism;
     }
 
-    public void addInputStream(String streamId, StreamDefinition streamDefinition) {
-        inputStreams.put(streamId, streamDefinition);
+    public void addInputStream(String streamDefinition) {
+        StreamDefinition siddhiStreamDefinition = SiddhiCompiler.parseStreamDefinition(streamDefinition);
+        inputStreams.put(siddhiStreamDefinition.getId(), siddhiStreamDefinition);
     }
 
     public void addStreamPartitioningField(String streamId, String partitioningField){
@@ -63,8 +63,9 @@ public class ComponentInfoHolder {
         }
     }
 
-    public void addOutputStream(String streamId, StreamDefinition streamDefinition) {
-        outputStreams.put(streamId, streamDefinition);
+    public void addOutputStream(String streamDefinition) {
+        StreamDefinition siddhiStreamDefinition = SiddhiCompiler.parseStreamDefinition(streamDefinition);
+        outputStreams.put(siddhiStreamDefinition.getId(), siddhiStreamDefinition);
     }
 
     public String[] getInputStreamIds() {
@@ -85,10 +86,6 @@ public class ComponentInfoHolder {
 
     public String getComponentName() {
         return componentName;
-    }
-
-    public List<ExecutionPlan> getSiddhiQueries() {
-        return siddhiQueries;
     }
 
     public ComponentType getComponentType() {

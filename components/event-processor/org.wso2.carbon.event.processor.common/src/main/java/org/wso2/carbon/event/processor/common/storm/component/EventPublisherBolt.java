@@ -25,50 +25,56 @@ import backtype.storm.tuple.Tuple;
 import org.apache.log4j.Logger;
 import org.wso2.carbon.event.processor.common.storm.config.StormDeploymentConfig;
 import org.wso2.carbon.event.processor.common.util.AsyncEventPublisher;
+import org.wso2.carbon.event.processor.common.util.Utils;
+import org.wso2.siddhi.core.ExecutionPlanRuntime;
 import org.wso2.siddhi.core.SiddhiManager;
-import org.wso2.siddhi.core.config.SiddhiConfiguration;
+import org.wso2.siddhi.core.event.Event;
+import org.wso2.siddhi.core.stream.output.StreamCallback;
 import org.wso2.siddhi.query.api.ExecutionPlan;
 import org.wso2.siddhi.query.api.definition.StreamDefinition;
-import org.wso2.siddhi.query.api.definition.TableDefinition;
-import org.wso2.siddhi.query.api.definition.partition.PartitionDefinition;
-import org.wso2.siddhi.query.api.query.Query;
+import org.wso2.siddhi.query.compiler.SiddhiCompiler;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Publish events processed by Siddhi engine to CEP publisher
  */
 public class EventPublisherBolt extends BaseBasicBolt{
     private transient Logger log = Logger.getLogger(EventPublisherBolt.class);
-    private final List<ExecutionPlan> queries;
     /**
      * All stream definitions processed
      */
-    private List<StreamDefinition> inputStreamDefinitions;
-    private List<StreamDefinition> outputStreamDefinitions;
+    private List<String> inputStreamDefinitions;
+    private List<String> outputStreamDefinitions;
+    private String query;
     /**
      * Keep track of relevant data bridge stream id for a given Siddhi stream id
      */
-    private Map<String, StreamDefinition> streamIdToDefinitionMap = new HashMap<String, StreamDefinition>();
+    private transient Map<String, StreamDefinition> streamIdToDefinitionMap;
 
     private transient AsyncEventPublisher asyncEventPublisher;
+    private BasicOutputCollector collector;
 
     private String executionPlanName;
 
     private String logPrefix;
 
     private int tenantId = -1234;
-    private SiddhiManager siddhiManager;
     private StormDeploymentConfig stormDeploymentConfig;
+    private Boolean initialized = false;
 
-    public EventPublisherBolt(StormDeploymentConfig stormDeploymentConfig, List<StreamDefinition> inputStreamDefinitions, List<ExecutionPlan> queries, List<StreamDefinition> outputStreamDefinitions, String executionPlanName, int tenantId) {
+    private transient SiddhiManager siddhiManager;
+    private transient ExecutionPlanRuntime executionPlanRuntime;
+
+    private int eventCount;
+    private long batchStartTime;
+
+    public EventPublisherBolt(StormDeploymentConfig stormDeploymentConfig, List<String> inputStreamDefinitions,
+                              List<String> outputStreamDefinitions, String query, String executionPlanName, int tenantId) {
         this.stormDeploymentConfig = stormDeploymentConfig;
         this.inputStreamDefinitions = inputStreamDefinitions;
-        this.queries = queries;
         this.outputStreamDefinitions = outputStreamDefinitions;
+        this.query = query;
         this.executionPlanName = executionPlanName;
         this.tenantId = tenantId;
         this.logPrefix = "[" + executionPlanName + ":" + tenantId + "] - ";
@@ -77,10 +83,10 @@ public class EventPublisherBolt extends BaseBasicBolt{
 
     @Override
     public void execute(Tuple tuple, BasicOutputCollector basicOutputCollector) {
-        if (siddhiManager == null) {
+        this.collector = basicOutputCollector;
+        if (!initialized) {
             init();
          }
-
         StreamDefinition streamDefinition =  streamIdToDefinitionMap.get(tuple.getSourceStreamId());
         if (streamDefinition != null) {
             asyncEventPublisher.sendEvent(tuple.getValues().toArray(), tuple.getSourceStreamId());
@@ -103,44 +109,60 @@ public class EventPublisherBolt extends BaseBasicBolt{
     private void init() {
         try {
             log = Logger.getLogger(EventPublisherBolt.class);
-            siddhiManager = new SiddhiManager(new SiddhiConfiguration());
+            initialized = true;
+            //Adding functionality to support query execution at publisher level for future use cases.
+            if (query != null) {
+                siddhiManager = new SiddhiManager();
+                eventCount = 0;
+                batchStartTime = System.currentTimeMillis();
+                log = Logger.getLogger(SiddhiBolt.class);
 
-            if (inputStreamDefinitions != null) {
-                for (StreamDefinition definition : inputStreamDefinitions) {
-                    siddhiManager.defineStream(definition);
+                String fullQueryExpression = Utils.constructQueryExpression(inputStreamDefinitions, outputStreamDefinitions,
+                        query);
+                executionPlanRuntime = siddhiManager.createExecutionPlanRuntime(fullQueryExpression);
+
+                for (String outputStreamDefinition : outputStreamDefinitions) {
+                    final StreamDefinition outputSiddhiDefinition = SiddhiCompiler.parseStreamDefinition
+                            (outputStreamDefinition);
+                    log.info("Siddhi Bolt adding callback for stream: " + outputSiddhiDefinition.getId());
+                    executionPlanRuntime.addCallback(outputSiddhiDefinition.getId(), new StreamCallback() {
+
+                        @Override
+                        public void receive(Event[] events) {
+                            for (Event event : events) {
+                                if(log.isDebugEnabled()) {
+                                    if (++eventCount % 10000 == 0) {
+                                        double timeSpentInSecs = (System.currentTimeMillis() - batchStartTime) / 1000.0D;
+                                        double throughput = 10000 / timeSpentInSecs;
+                                        log.debug("Processed 10000 events in " + timeSpentInSecs + " seconds, " +
+                                                "throughput : " + throughput + " events/sec");
+                                        eventCount = 0;
+                                        batchStartTime = System.currentTimeMillis();
+                                    }
+                                }
+                                collector.emit(outputSiddhiDefinition.getId(), Arrays.asList(event.getData()));
+                            }
+                        }
+                    });
+                    executionPlanRuntime.start();
                 }
             }
-
-            if (queries != null) {
-                for (ExecutionPlan executionPlan : queries) {
-                    if (executionPlan instanceof Query) {
-                        siddhiManager.addQuery((Query) executionPlan);
-                    } else if (executionPlan instanceof StreamDefinition) {
-                        siddhiManager.defineStream((StreamDefinition) executionPlan);
-                    } else if (executionPlan instanceof PartitionDefinition) {
-                        siddhiManager.definePartition((PartitionDefinition) executionPlan);
-                    } else if (executionPlan instanceof TableDefinition) {
-                        siddhiManager.defineTable((TableDefinition) executionPlan);
-                    }
-                }
-            }
-
-            for (StreamDefinition outputStreamDefinition : outputStreamDefinitions) {
-                streamIdToDefinitionMap.put(outputStreamDefinition.getStreamId(), outputStreamDefinition);
+            streamIdToDefinitionMap = new HashMap<String, StreamDefinition>();
+            StreamDefinition siddhiDefinition;
+            for (String outputStreamDefinition : outputStreamDefinitions) {
+                siddhiDefinition = SiddhiCompiler.parseStreamDefinition(outputStreamDefinition);
+                streamIdToDefinitionMap.put(siddhiDefinition.getId(), siddhiDefinition);
             }
 
             asyncEventPublisher = new AsyncEventPublisher(AsyncEventPublisher.DestinationType.CEP_PUBLISHER,
-                                                          new HashSet<StreamDefinition>(outputStreamDefinitions),
-                                                          stormDeploymentConfig.getManagers().get(0).getHostName(),
-                                                          stormDeploymentConfig.getManagers().get(0).getPort(),
-                                                          executionPlanName,
-                                                          tenantId,
-                                                          stormDeploymentConfig);
+                    new HashSet<StreamDefinition>(streamIdToDefinitionMap.values()),
+                    stormDeploymentConfig.getManagers().get(0).getHostName(),
+                    stormDeploymentConfig.getManagers().get(0).getPort(),
+                    executionPlanName, tenantId, stormDeploymentConfig);
 
             asyncEventPublisher.initializeConnection(false);
         } catch (Throwable e) {
             log.error(logPrefix + "Error starting event publisher bolt: " + e.getMessage(), e);
-
         }
     }
 }

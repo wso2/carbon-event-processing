@@ -45,7 +45,8 @@ public class EventJunctionTestCase {
         streamDef.setMetaData(meta);
         streamDef.setPayloadData(payload);
 
-        org.wso2.siddhi.query.api.definition.StreamDefinition siddhiDefinition = EventProcessorUtil.convertToSiddhiStreamDefinition(streamDef, new StreamConfiguration("stockStream", "1.1.0"));
+        org.wso2.siddhi.query.api.definition.StreamDefinition siddhiDefinition = EventProcessorUtil
+                .convertToSiddhiStreamDefinition(streamDef, "stockStream");
         Assert.assertEquals(siddhiDefinition.getAttributeList().size(), 2);
         log.info(siddhiDefinition);
 

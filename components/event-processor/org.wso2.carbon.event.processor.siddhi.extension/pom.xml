@@ -50,7 +50,7 @@
         </dependency>
         <dependency>
             <groupId>org.wso2.siddhi</groupId>
-            <artifactId>siddhi-api</artifactId>
+            <artifactId>siddhi-query-api</artifactId>
         </dependency>
         <dependency>
             <groupId>org.wso2.siddhi</groupId>
@@ -58,7 +58,7 @@
         </dependency>
         <dependency>
             <groupId>org.wso2.siddhi</groupId>
-            <artifactId>siddhi-query</artifactId>
+            <artifactId>siddhi-query-compiler</artifactId>
         </dependency>
     </dependencies>
 

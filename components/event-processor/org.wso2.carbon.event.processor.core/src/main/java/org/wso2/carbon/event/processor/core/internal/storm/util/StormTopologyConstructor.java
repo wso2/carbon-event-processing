@@ -60,11 +60,12 @@ public class StormTopologyConstructor {
             String parallel = eventReceiverElement.getAttributeValue(new QName("parallel"));
             ComponentInfoHolder componentInfoHolder = new ComponentInfoHolder(name, ComponentInfoHolder.ComponentType.EVENT_RECEIVER_SPOUT);
 
-            List<StreamDefinition> streamDefinitions = getStreamDefinitions(eventReceiverElement.getFirstChildWithName(new QName("streams")));
-            for (StreamDefinition streamDefinition : streamDefinitions) {
+            List<String> streamDefinitions = getStreamDefinitions(eventReceiverElement.getFirstChildWithName(new QName
+                    ("streams")));
+            for (String streamDefinition : streamDefinitions) {
                 //Receiver only passes through incoming events. Therefore, input all input streams are output streams
-                componentInfoHolder.addInputStream(streamDefinition.getStreamId(), streamDefinition);
-                componentInfoHolder.addOutputStream(streamDefinition.getStreamId(), streamDefinition);
+                componentInfoHolder.addInputStream(streamDefinition);
+                componentInfoHolder.addOutputStream(streamDefinition);
             }
 
             componentInfoHolder.setDeclarer(builder.setSpout(name, new EventReceiverSpout(stormDeploymentConfig, streamDefinitions, executionPlanName, tenantId, stormDeploymentConfig.getHeartbeatInterval()), Integer.parseInt(parallel)));
@@ -80,23 +81,24 @@ public class StormTopologyConstructor {
             ComponentInfoHolder componentInfoHolder = new ComponentInfoHolder(name, ComponentInfoHolder.ComponentType.SIDDHI_BOLT);
 
             OMElement inputStreamsElement = eventProcessorElement.getFirstChildWithName(new QName("input-streams"));
-            List<StreamDefinition> inputStreamDefinitions = getStreamDefinitions(inputStreamsElement);
-            for (StreamDefinition streamDefinition : inputStreamDefinitions) {
-                componentInfoHolder.addInputStream(streamDefinition.getStreamId(), streamDefinition);
+            List<String> inputStreamDefinitions = getStreamDefinitions(inputStreamsElement);
+            for (String streamDefinition : inputStreamDefinitions) {
+                componentInfoHolder.addInputStream(streamDefinition);
             }
             // Adding partitioning fields of input streams
             addPartitionFields(inputStreamsElement, componentInfoHolder);
 
-            List<ExecutionPlan> executionPlans = new ArrayList<ExecutionPlan>();
+            //ExecutionPlan executionPlan;
             OMElement queryElement = eventProcessorElement.getFirstChildWithName(new QName("queries"));
-            executionPlans.addAll(SiddhiCompiler.parse(queryElement.getText()));
-            componentInfoHolder.addSiddhiQueries(executionPlans);
+            //executionPlan =SiddhiCompiler.parse(queryElement.getText());
+            componentInfoHolder.addSiddhiQuery(queryElement.getText());
 
-            List<StreamDefinition> outputStreamDefinitions = getStreamDefinitions(eventProcessorElement.getFirstChildWithName(new QName("output-streams")));
-            for (StreamDefinition streamDefinition : outputStreamDefinitions) {
-                componentInfoHolder.addOutputStream(streamDefinition.getStreamId(), streamDefinition);
+            List<String> outputStreamDefinitions = getStreamDefinitions(eventProcessorElement.getFirstChildWithName(new
+                    QName("output-streams")));
+            for (String streamDefinition : outputStreamDefinitions) {
+                componentInfoHolder.addOutputStream(streamDefinition);
             }
-            componentInfoHolder.setDeclarer(builder.setBolt(name, new SiddhiBolt(inputStreamDefinitions, executionPlans, outputStreamDefinitions), Integer.parseInt(parallel)));
+            componentInfoHolder.setDeclarer(builder.setBolt(name, new SiddhiBolt(inputStreamDefinitions, queryElement.getText(), outputStreamDefinitions), Integer.parseInt(parallel)));
             topologyInfoHolder.addComponent(componentInfoHolder);
         }
 
@@ -110,25 +112,28 @@ public class StormTopologyConstructor {
             ComponentInfoHolder componentInfoHolder = new ComponentInfoHolder(name, ComponentInfoHolder.ComponentType.SIDDHI_BOLT);
 
             OMElement inputStreamsElement = eventProcessorElement.getFirstChildWithName(new QName("input-streams"));
-            List<StreamDefinition> inputStreamDefinitions = getStreamDefinitions(inputStreamsElement);
-            for (StreamDefinition streamDefinition : inputStreamDefinitions) {
-                componentInfoHolder.addInputStream(streamDefinition.getStreamId(), streamDefinition);
+            List<String> inputStreamDefinitions = getStreamDefinitions(inputStreamsElement);
+            for (String streamDefinition : inputStreamDefinitions) {
+                componentInfoHolder.addInputStream(streamDefinition);
             }
             // Publisher might also partition the output. Adding partitioning fields of input streams.
             addPartitionFields(inputStreamsElement, componentInfoHolder);
 
-            List<ExecutionPlan> executionPlans = new ArrayList<ExecutionPlan>();
             OMElement queryElement = eventProcessorElement.getFirstChildWithName(new QName("queries"));
+            String query = null;
             if (queryElement != null) {
-                executionPlans.addAll(SiddhiCompiler.parse(queryElement.getText()));
-                componentInfoHolder.addSiddhiQueries(executionPlans);
+                query = queryElement.getText();
+                componentInfoHolder.addSiddhiQuery(query);
             }
 
-            List<StreamDefinition> outputStreamDefinitions = getStreamDefinitions(eventProcessorElement.getFirstChildWithName(new QName("output-streams")));
-            for (StreamDefinition streamDefinition : outputStreamDefinitions) {
-                componentInfoHolder.addOutputStream(streamDefinition.getStreamId(), streamDefinition);
+            List<String> outputStreamDefinitions = getStreamDefinitions(eventProcessorElement.getFirstChildWithName(new
+                    QName("output-streams")));
+            for (String streamDefinition : outputStreamDefinitions) {
+                componentInfoHolder.addOutputStream(streamDefinition);
             }
-            componentInfoHolder.setDeclarer(builder.setBolt(name, new EventPublisherBolt(stormDeploymentConfig, inputStreamDefinitions, executionPlans, outputStreamDefinitions, executionPlanName, tenantId), Integer.parseInt(parallel)));
+            componentInfoHolder.setDeclarer(builder.setBolt(name, new EventPublisherBolt(stormDeploymentConfig,
+                    inputStreamDefinitions, outputStreamDefinitions, query, executionPlanName, tenantId),
+                    Integer.parseInt(parallel)));
             topologyInfoHolder.addComponent(componentInfoHolder);
         }
 
@@ -175,12 +180,12 @@ public class StormTopologyConstructor {
         return builder;
     }
 
-    private static List<StreamDefinition> getStreamDefinitions(OMElement streamsElement) {
-        List<StreamDefinition> streamDefinitions = new ArrayList<StreamDefinition>();
+    private static List<String> getStreamDefinitions(OMElement streamsElement) {
+        List<String> streamDefinitions = new ArrayList<String>();
         Iterator<OMElement> streamIterator = streamsElement.getChildrenWithName(new QName("stream"));
         while (streamIterator.hasNext()) {
             OMElement streamElement = streamIterator.next();
-            StreamDefinition streamDefinition = SiddhiCompiler.parseStreamDefinition(streamElement.getText());
+            String streamDefinition = streamElement.getText();
             streamDefinitions.add(streamDefinition);
         }
         return streamDefinitions;
@@ -197,7 +202,7 @@ public class StormTopologyConstructor {
 
             if (partitionAttribute != null){
                 StreamDefinition streamDefinition = SiddhiCompiler.parseStreamDefinition(streamElement.getText());
-                componentInfoHolder.addStreamPartitioningField(streamDefinition.getStreamId(), partitionAttribute.getAttributeValue());
+                componentInfoHolder.addStreamPartitioningField(streamDefinition.getId(), partitionAttribute.getAttributeValue());
             }
         }
     }

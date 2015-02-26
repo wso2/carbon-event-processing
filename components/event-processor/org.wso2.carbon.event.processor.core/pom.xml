@@ -41,7 +41,7 @@
         </dependency>
         <dependency>
             <groupId>org.wso2.siddhi</groupId>
-            <artifactId>siddhi-api</artifactId>
+            <artifactId>siddhi-query-api</artifactId>
         </dependency>
         <dependency>
             <groupId>org.wso2.siddhi</groupId>
@@ -49,7 +49,7 @@
         </dependency>
         <dependency>
             <groupId>org.wso2.siddhi</groupId>
-            <artifactId>siddhi-query</artifactId>
+            <artifactId>siddhi-query-compiler</artifactId>
         </dependency>
         <dependency>
             <groupId>org.wso2.carbon.event-processing</groupId>
@@ -95,7 +95,6 @@
             <groupId>org.wso2.carbon.event-processing</groupId>
             <artifactId>org.wso2.carbon.event.processing.application.deployer</artifactId>
         </dependency>
-
     </dependencies>
 
     <build>

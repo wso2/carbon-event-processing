@@ -28,14 +28,14 @@ import org.apache.thrift.protocol.TProtocol;
 import org.apache.thrift.transport.TSocket;
 import org.apache.thrift.transport.TTransport;
 import org.wso2.carbon.event.processor.common.storm.config.StormDeploymentConfig;
+import org.wso2.carbon.event.processor.common.storm.event.Event;
 import org.wso2.carbon.event.processor.common.storm.manager.service.StormManagerService;
 import org.wso2.carbon.event.processor.common.transport.server.StreamCallback;
 import org.wso2.carbon.event.processor.common.transport.server.TCPEventServer;
 import org.wso2.carbon.event.processor.common.transport.server.TCPEventServerConfig;
 import org.wso2.carbon.event.processor.common.util.Utils;
-import org.wso2.siddhi.core.event.Event;
-import org.wso2.siddhi.core.event.in.InEvent;
 import org.wso2.siddhi.query.api.definition.StreamDefinition;
+import org.wso2.siddhi.query.compiler.SiddhiCompiler;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -92,12 +92,16 @@ public class EventReceiverSpout extends BaseRichSpout implements StreamCallback 
      * @param executionPlanName
      * @param tenantId
      */
-    public EventReceiverSpout(StormDeploymentConfig stormDeploymentConfig, List<StreamDefinition> incomingStreamDefinitions, String executionPlanName, int tenantId, int heartbeatInterval) {
+    public EventReceiverSpout(StormDeploymentConfig stormDeploymentConfig, List<String> incomingStreamDefinitions,
+                              String executionPlanName, int tenantId, int heartbeatInterval) {
+        this.incomingStreamDefinitions = new ArrayList<StreamDefinition>(incomingStreamDefinitions.size());
         this.stormDeploymentConfig = stormDeploymentConfig;
-        this.incomingStreamDefinitions = incomingStreamDefinitions;
         this.executionPlanName = executionPlanName;
         this.tenantId = tenantId;
         this.heartbeatInterval = heartbeatInterval;
+        for (String definition:incomingStreamDefinitions){
+            this.incomingStreamDefinitions.add(SiddhiCompiler.parseStreamDefinition(definition));
+        }
         this.logPrefix = "{" + executionPlanName + ":" + tenantId + "} - ";
     }
 
@@ -106,9 +110,9 @@ public class EventReceiverSpout extends BaseRichSpout implements StreamCallback 
         // Declaring all incoming streams as output streams because this spouts role is to pass through all the incoming events as tuples.
         for (StreamDefinition siddhiStreamDefinition : incomingStreamDefinitions) {
             Fields fields = new Fields(siddhiStreamDefinition.getAttributeNameArray());
-            outputFieldsDeclarer.declareStream(siddhiStreamDefinition.getStreamId(), fields);
-            incomingStreamIDs.add(siddhiStreamDefinition.getStreamId());
-            log.info(logPrefix + "Declaring output fields for stream - " + siddhiStreamDefinition.getStreamId());
+            outputFieldsDeclarer.declareStream(siddhiStreamDefinition.getId(), fields);
+            incomingStreamIDs.add(siddhiStreamDefinition.getId());
+            log.info(logPrefix + "Declaring output fields for stream - " + siddhiStreamDefinition.getId());
         }
     }
 
@@ -139,7 +143,7 @@ public class EventReceiverSpout extends BaseRichSpout implements StreamCallback 
     public void nextTuple() {
         Event event = storedEvents.poll();
         if (event != null) {
-            final String siddhiStreamName = event.getStreamId();
+            final String siddhiStreamName = event.getStreamId();        //use custom event obj?
 
             if (incomingStreamIDs.contains(siddhiStreamName)) {
                 if (log.isDebugEnabled()) {
@@ -178,7 +182,7 @@ public class EventReceiverSpout extends BaseRichSpout implements StreamCallback 
         if (log.isDebugEnabled()) {
             log.debug(logPrefix + "Received event for stream '" + streamId + "': " + Arrays.deepToString(eventData));
         }
-        storedEvents.add(new InEvent(streamId, System.currentTimeMillis(), eventData));
+        storedEvents.add(new Event(System.currentTimeMillis(), eventData, streamId));
     }
 
 

@@ -101,7 +101,6 @@ public class AsyncEventPublisher implements EventHandler<AsynchronousEventBuffer
      */
     @Override
     public void onEvent(AsynchronousEventBuffer.DataHolder dataHolder, long sequence, boolean endOfBatch){
-        // TODO : make wait time configurable
         while (tcpEventPublisher == null){
             log.info(logPrefix + "Can't send event.TCP event publisher not initialized. Waiting " + stormDeploymentConfig.getTransportReconnectInterval() + "s");
             try {

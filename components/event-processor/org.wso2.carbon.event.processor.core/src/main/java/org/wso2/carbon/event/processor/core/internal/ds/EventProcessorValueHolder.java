@@ -22,14 +22,14 @@ import org.wso2.carbon.base.api.ServerConfigurationService;
 import org.wso2.carbon.databridge.core.definitionstore.AbstractStreamDefinitionStore;
 import org.wso2.carbon.event.processor.common.storm.config.StormDeploymentConfig;
 import org.wso2.carbon.event.processor.core.internal.CarbonEventProcessorService;
-import org.wso2.carbon.event.processor.core.internal.persistence.CassandraPersistenceStore;
 import org.wso2.carbon.event.processor.core.internal.storm.manager.StormManagerServer;
 import org.wso2.carbon.event.statistics.EventStatisticsService;
 import org.wso2.carbon.event.stream.manager.core.EventStreamService;
 import org.wso2.carbon.ndatasource.core.DataSourceService;
 import org.wso2.carbon.user.core.UserRealm;
 import org.wso2.carbon.utils.ConfigurationContextService;
-import org.wso2.siddhi.core.persistence.PersistenceStore;
+import org.wso2.siddhi.core.util.persistence.PersistenceStore;
+import org.wso2.siddhi.core.SiddhiManager;
 
 public class EventProcessorValueHolder {
     private static CarbonEventProcessorService eventProcessorService;
@@ -44,6 +44,16 @@ public class EventProcessorValueHolder {
     private static AbstractStreamDefinitionStore streamDefinitionStore;
     private static StormManagerServer stormManagerServer;
     private static StormDeploymentConfig stormDeploymentConfig;
+
+    public static SiddhiManager getSiddhiManager() {
+        return siddhiManager;
+    }
+
+    public static void registerSiddhiManager(SiddhiManager siddhiManager) {
+        EventProcessorValueHolder.siddhiManager = siddhiManager;
+    }
+
+    private static SiddhiManager siddhiManager;
 
     public static AbstractStreamDefinitionStore getStreamDefinitionStore() {
         return streamDefinitionStore;
@@ -81,7 +91,7 @@ public class EventProcessorValueHolder {
         return persistenceStore;
     }
 
-    public static void setPersistenceStore(CassandraPersistenceStore persistenceStore) {
+    public static void setPersistenceStore(PersistenceStore persistenceStore) {
         EventProcessorValueHolder.persistenceStore = persistenceStore;
     }
 //

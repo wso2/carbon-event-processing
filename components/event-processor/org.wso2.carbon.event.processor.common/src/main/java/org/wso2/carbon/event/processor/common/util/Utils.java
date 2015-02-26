@@ -20,6 +20,7 @@ package org.wso2.carbon.event.processor.common.util;
 import java.io.IOException;
 import java.net.*;
 import java.util.Enumeration;
+import java.util.List;
 
 public class Utils {
     public static String findAddress(String hostname) throws SocketException {
@@ -61,5 +62,20 @@ public class Utils {
             }
         }
         return isPortUsed;
+    }
+
+    public static String constructQueryExpression(List<String> importDefinitions, List<String> exportDefinitions,
+                                                  String queryExpressions) {
+        StringBuilder builder = new StringBuilder();
+
+        for(String definition : importDefinitions){
+            builder.append(definition);
+        }
+
+        for(String definition : exportDefinitions){
+            builder.append(definition);
+        }
+        builder.append(queryExpressions);
+        return builder.toString();
     }
 }

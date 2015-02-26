@@ -55,11 +55,11 @@
         </dependency>
         <dependency>
             <groupId>org.wso2.siddhi</groupId>
-            <artifactId>siddhi-api</artifactId>
+            <artifactId>siddhi-query-api</artifactId>
         </dependency>
         <dependency>
             <groupId>org.wso2.siddhi</groupId>
-            <artifactId>siddhi-query</artifactId>
+            <artifactId>siddhi-query-compiler</artifactId>
         </dependency>
         <dependency>
             <groupId>org.apache.storm.wso2</groupId>
@@ -159,10 +159,10 @@
                                     org.wso2.siddhi:siddhi-core:${siddhi.version}
                                 </bundleDef>
                                 <bundleDef>
-                                    org.wso2.siddhi:siddhi-api:${siddhi.version}
+                                    org.wso2.siddhi:siddhi-query-api:${siddhi.version}
                                 </bundleDef>
                                 <bundleDef>
-                                    org.wso2.siddhi:siddhi-query:${siddhi.version}
+                                    org.wso2.siddhi:siddhi-query-compiler:${siddhi.version}
                                 </bundleDef>
                                 <bundleDef>
                                     org.apache.storm.wso2:storm:${storm.version}

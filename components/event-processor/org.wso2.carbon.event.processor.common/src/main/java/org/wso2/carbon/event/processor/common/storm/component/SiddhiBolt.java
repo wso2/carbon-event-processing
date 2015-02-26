@@ -24,17 +24,15 @@ import backtype.storm.topology.base.BaseBasicBolt;
 import backtype.storm.tuple.Fields;
 import backtype.storm.tuple.Tuple;
 import org.apache.log4j.Logger;
+import org.wso2.carbon.event.processor.common.util.Utils;
+import org.wso2.siddhi.core.ExecutionPlanRuntime;
 import org.wso2.siddhi.core.SiddhiManager;
-import org.wso2.siddhi.core.config.SiddhiConfiguration;
 import org.wso2.siddhi.core.event.Event;
 import org.wso2.siddhi.core.stream.input.InputHandler;
 import org.wso2.siddhi.core.stream.output.StreamCallback;
-import org.wso2.siddhi.query.api.ExecutionPlan;
 import org.wso2.siddhi.query.api.definition.Attribute;
 import org.wso2.siddhi.query.api.definition.StreamDefinition;
-import org.wso2.siddhi.query.api.definition.TableDefinition;
-import org.wso2.siddhi.query.api.definition.partition.PartitionDefinition;
-import org.wso2.siddhi.query.api.query.Query;
+import org.wso2.siddhi.query.compiler.SiddhiCompiler;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -52,31 +50,32 @@ public class SiddhiBolt extends BaseBasicBolt {
     /**
      * Exported stream IDs. Must declare output filed for each exported stream
      */
-    private List<StreamDefinition> outputStreamDefinitions;
+    private List<String> outputStreamDefinitions;
     /**
      * All stream inputStreamDefinitions and partition inputStreamDefinitions(if any)
      */
-    private List<StreamDefinition> inputStreamDefinitions;
+    private List<String> inputStreamDefinitions;
     /**
      * Queries to be executed in Siddhi.
      */
-    private List<ExecutionPlan> queries;
+    private String query;
 
     private BasicOutputCollector collector;
     private int eventCount;
     private long batchStartTime;
 
+    private transient ExecutionPlanRuntime executionPlanRuntime;
 
     /**
      * Bolt which runs the Siddhi engine.
      *
      * @param inputStreamDefinitions  - All stream and partition inputStreamDefinitions
-     * @param queries                 - Siddhi queries
+     * @param query                 - Siddhi query
      * @param outputSiddhiDefinitions
      */
-    public SiddhiBolt(List<StreamDefinition> inputStreamDefinitions, List<ExecutionPlan> queries, List<StreamDefinition> outputSiddhiDefinitions) {
+    public SiddhiBolt(List<String> inputStreamDefinitions, String query, List<String> outputSiddhiDefinitions) {
         this.inputStreamDefinitions = inputStreamDefinitions;
-        this.queries = queries;
+        this.query = query;
         this.outputStreamDefinitions = outputSiddhiDefinitions;
         init();
     }
@@ -85,50 +84,39 @@ public class SiddhiBolt extends BaseBasicBolt {
      * Bolt get saved and reloaded, this to redo the configurations.
      */
     private void init() {
-        siddhiManager = new SiddhiManager(new SiddhiConfiguration());
+        siddhiManager = new SiddhiManager();
         eventCount = 0;
         batchStartTime = System.currentTimeMillis();
         log = Logger.getLogger(SiddhiBolt.class);
 
-        if (inputStreamDefinitions != null) {
-            for (StreamDefinition definition : inputStreamDefinitions) {
-                siddhiManager.defineStream(definition);
-            }
-        }
+        String fullQueryExpression = Utils.constructQueryExpression(inputStreamDefinitions, outputStreamDefinitions,
+                 query);
+        executionPlanRuntime = siddhiManager.createExecutionPlanRuntime(fullQueryExpression);
 
-        if (queries != null) {
-            for (ExecutionPlan executionPlan : queries) {
-                if (executionPlan instanceof Query) {
-                    siddhiManager.addQuery((Query) executionPlan);
-                } else if (executionPlan instanceof StreamDefinition) {
-                    siddhiManager.defineStream((StreamDefinition) executionPlan);
-                } else if (executionPlan instanceof PartitionDefinition) {
-                    siddhiManager.definePartition((PartitionDefinition) executionPlan);
-                } else if (executionPlan instanceof TableDefinition) {
-                    siddhiManager.defineTable((TableDefinition) executionPlan);
-                }
-            }
-        }
+        for (String outputStreamDefinition : outputStreamDefinitions) {
+            final StreamDefinition outputSiddhiDefinition = SiddhiCompiler.parseStreamDefinition
+                    (outputStreamDefinition);
+            log.info("Siddhi Bolt adding callback for stream: " + outputSiddhiDefinition.getId());
+            executionPlanRuntime.addCallback(outputSiddhiDefinition.getId(), new StreamCallback() {
 
-        for (final StreamDefinition outputStreamDefinition : outputStreamDefinitions) {
-            log.info("Siddhi Bolt adding callback for stream: " + outputStreamDefinition.getStreamId());
-            siddhiManager.addCallback(outputStreamDefinition.getStreamId(), new StreamCallback() {
                 @Override
                 public void receive(Event[] events) {
-
                     for (Event event : events) {
-                        if (++eventCount % 10000 == 0) {
-                            double timeSpentInSecs = (System.currentTimeMillis() - batchStartTime) / 1000.0D;
-                            double throughput = 10000 / timeSpentInSecs;
-                            log.info("Processed 10000 events in " + timeSpentInSecs + " seconds, throughput : " + throughput + " events/sec");
-                            eventCount = 0;
-                            batchStartTime = System.currentTimeMillis();
+                        if(log.isDebugEnabled()) {
+                            if (++eventCount % 10000 == 0) {
+                                double timeSpentInSecs = (System.currentTimeMillis() - batchStartTime) / 1000.0D;
+                                double throughput = 10000 / timeSpentInSecs;
+                                log.debug("Processed 10000 events in " + timeSpentInSecs + " seconds, " +
+                                        "throughput : " + throughput + " events/sec");
+                                eventCount = 0;
+                                batchStartTime = System.currentTimeMillis();
+                            }
                         }
-
-                        collector.emit(event.getStreamId(), Arrays.asList(event.getData()));
+                        collector.emit(outputSiddhiDefinition.getId(), Arrays.asList(event.getData()));
                     }
                 }
             });
+            executionPlanRuntime.start();
         }
     }
 
@@ -138,14 +126,14 @@ public class SiddhiBolt extends BaseBasicBolt {
     }
 
     @Override
-    public void execute(Tuple tuple, BasicOutputCollector collector) {
+    public void execute(Tuple tuple, BasicOutputCollector collector){
         if (siddhiManager == null) {
             init();
         }
 
         try {
             this.collector = collector;
-            InputHandler inputHandler = siddhiManager.getInputHandler(tuple.getSourceStreamId());
+            InputHandler inputHandler = executionPlanRuntime.getInputHandler(tuple.getSourceStreamId());
 
             if (inputHandler != null) {
                 inputHandler.send(tuple.getValues().toArray());
@@ -163,20 +151,20 @@ public class SiddhiBolt extends BaseBasicBolt {
             init();
         }
 
-        // Declaring output fileds for each exported stream ID
-        for (StreamDefinition outputStreamDefinition : outputStreamDefinitions) {
-
+        // Declaring output fields for each exported stream ID
+        for (String outputStreamDefinition : outputStreamDefinitions) {
+            StreamDefinition siddhiOutputDefinition = SiddhiCompiler.parseStreamDefinition(outputStreamDefinition);
             if (outputStreamDefinition == null) {
-                throw new RuntimeException("Cannot find exported stream - " + outputStreamDefinition.getStreamId());
+                throw new RuntimeException("Cannot find exported stream - " + siddhiOutputDefinition.getId());
             }
             List<String> list = new ArrayList<String>();
 
-            for (Attribute attribute : outputStreamDefinition.getAttributeList()) {
+            for (Attribute attribute : siddhiOutputDefinition.getAttributeList()) {
                 list.add(attribute.getName());
             }
             Fields fields = new Fields(list);
-            declarer.declareStream(outputStreamDefinition.getStreamId(), fields);
-            log.info("Declaring output field for stream -" + outputStreamDefinition.getStreamId());
+            declarer.declareStream(siddhiOutputDefinition.getId(), fields);
+            log.info("Declaring output field for stream -" + siddhiOutputDefinition.getId());
         }
     }
 }

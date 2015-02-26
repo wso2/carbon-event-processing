@@ -21,14 +21,14 @@ import org.wso2.carbon.event.processor.core.internal.ha.HAManager;
 import org.wso2.carbon.event.processor.core.internal.storm.SiddhiStormOutputEventListener;
 import org.wso2.carbon.event.stream.manager.core.EventProducer;
 import org.wso2.carbon.event.stream.manager.core.SiddhiEventConsumer;
-import org.wso2.siddhi.core.SiddhiManager;
+import org.wso2.siddhi.core.ExecutionPlanRuntime;
 
 import java.util.ArrayList;
 import java.util.List;
 
 // acts as a holder for the components of a query plan.
 public class ExecutionPlan {
-    private SiddhiManager siddhiManager;
+    private ExecutionPlanRuntime executionPlanRuntime;
     private ExecutionPlanConfiguration executionPlanConfiguration;
     private String name;
     private HAManager haManager;
@@ -37,9 +37,9 @@ public class ExecutionPlan {
     private SiddhiStormOutputEventListener stormOutputListener;
 
 
-    public ExecutionPlan(String name, SiddhiManager siddhiManager,
+    public ExecutionPlan(String name, ExecutionPlanRuntime executionPlanRuntime,
                          ExecutionPlanConfiguration executionPlanConfiguration, HAManager haManager) {
-        this.siddhiManager = siddhiManager;
+        this.executionPlanRuntime = executionPlanRuntime;
         this.executionPlanConfiguration = executionPlanConfiguration;
         this.name = name;
         this.haManager = haManager;
@@ -53,12 +53,12 @@ public class ExecutionPlan {
         this.name = name;
     }
 
-    public SiddhiManager getSiddhiManager() {
-        return siddhiManager;
+    public ExecutionPlanRuntime getExecutionPlanRuntime() {
+        return executionPlanRuntime;
     }
 
-    public void setSiddhiManager(SiddhiManager siddhiManager) {
-        this.siddhiManager = siddhiManager;
+    public void setExecutionPlanRuntime(ExecutionPlanRuntime executionPlanRuntime) {
+        this.executionPlanRuntime = executionPlanRuntime;
     }
 
     public ExecutionPlanConfiguration getExecutionPlanConfiguration() {
@@ -88,7 +88,7 @@ public class ExecutionPlan {
         for(SiddhiEventConsumer siddhiEventConsumer:siddhiEventConsumers){
             siddhiEventConsumer.shutdown();
         }
-        siddhiManager.shutdown();
+        executionPlanRuntime.shutdown();
     }
 
     public void addProducer(EventProducer producer) {
