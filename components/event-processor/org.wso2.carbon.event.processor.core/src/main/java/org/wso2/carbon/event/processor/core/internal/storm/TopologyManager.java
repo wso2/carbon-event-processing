@@ -64,11 +64,11 @@ public class TopologyManager {
         try {
             InputStream stormConf = new FileInputStream(new File(stormConfigDirPath + File.separator + "storm.yaml"));
             Yaml yaml = new Yaml();
-            Map data = (Map)yaml.load(stormConf);
-            if(data != null) {                          //Can be null for a commented out config
+            Map data = (Map) yaml.load(stormConf);
+            if (data != null) {                          //Can be null for a commented out config
                 stormConfig = Utils.readDefaultConfig();
                 stormConfig.putAll(data);
-            }else{
+            } else {
                 stormConfig = Utils.readStormConfig();
             }
         } catch (FileNotFoundException e) {
@@ -91,34 +91,35 @@ public class TopologyManager {
         log.info("Waiting topology '" + topologyName + "' to be removed from Storm cluster");
         boolean isExisting = false;
         try {
-            while (true){
+            while (true) {
                 List<TopologySummary> topologies = client.getClusterInfo().get_topologies();
-                for (TopologySummary topologySummary : topologies){
-                    if (topologySummary.get_name().equals(topologyName)){
+                for (TopologySummary topologySummary : topologies) {
+                    if (topologySummary.get_name().equals(topologyName)) {
                         isExisting = true;
                         Thread.sleep(5000);
                     }
                 }
 
-                if (!isExisting || topologies.isEmpty()){
+                if (!isExisting || topologies.isEmpty()) {
                     log.info("Topology '" + topologyName + "' removed from Storm cluster");
                     return;
                 }
                 Thread.sleep(2000);
             }
-        } catch (InterruptedException e) {}
+        } catch (InterruptedException e) {
+        }
     }
 
     private static void waitForTopologyToBeActive(String topologyName) throws TException {
-        log.info("Waiting topology '" + topologyName + "' to be " + "ACTIVE" );
+        log.info("Waiting topology '" + topologyName + "' to be " + "ACTIVE");
         try {
-            while (true){
+            while (true) {
                 List<TopologySummary> topologies = client.getClusterInfo().get_topologies();
-                for (TopologySummary topologySummary : topologies){
-                    if (topologySummary.get_name().equals(topologyName)){
-                        if(topologySummary.get_status().equals("ACTIVE")){
+                for (TopologySummary topologySummary : topologies) {
+                    if (topologySummary.get_name().equals(topologyName)) {
+                        if (topologySummary.get_status().equals("ACTIVE")) {
                             Thread.sleep(5000);
-                            log.info("Topology '" + topologyName + "' is ACTIVE" );
+                            log.info("Topology '" + topologyName + "' is ACTIVE");
                             return;
                         }
                         Thread.sleep(2000);
@@ -166,7 +167,7 @@ public class TopologyManager {
         }
     }
 
-    public static void killTopology(String executionPlanName, int tenantId) throws StormDeploymentException{
+    public static void killTopology(String executionPlanName, int tenantId) throws StormDeploymentException {
         try {
             log.info("Killing storm topology '" + executionPlanName + "'");
             client.killTopologyWithOpts(getTopologyName(executionPlanName, tenantId), new KillOptions()); //provide topology name
@@ -188,18 +189,20 @@ public class TopologyManager {
         return xmlString;
     }
 
-    public static String getTopologyName(String executionPlanName, int tenantId){
+    public static String getTopologyName(String executionPlanName, int tenantId) {
         return (executionPlanName + "[" + tenantId + "]");
     }
 
-    static class TopologySubmitter implements Runnable{
+    static class TopologySubmitter implements Runnable {
         String executionPlanName;
         String uploadedJarLocation;
         StormTopology topology;
         int tenantId;
         boolean isTopologyAlive;
         int retryInterval;
-        public TopologySubmitter(String executionPlanName, String uploadedJarLocation, StormTopology topology, int tenantId, boolean isTopologyAlive, int resubmitRetryInterval){
+
+        public TopologySubmitter(String executionPlanName, String uploadedJarLocation, StormTopology topology,
+                                 int tenantId, boolean isTopologyAlive, int resubmitRetryInterval) {
             this.executionPlanName = executionPlanName;
             this.uploadedJarLocation = uploadedJarLocation;
             this.topology = topology;
@@ -208,10 +211,10 @@ public class TopologyManager {
             this.retryInterval = resubmitRetryInterval;
         }
 
-        private boolean submitTopology(){
+        private boolean submitTopology() {
             String jsonConf = JSONValue.toJSONString(stormConfig);
             try {
-                if (isTopologyAlive){
+                if (isTopologyAlive) {
                     log.info("Killing already existing storm topology '" + getTopologyName(executionPlanName, tenantId) + "' to re-submit");
                     KillOptions options = new KillOptions();
                     options.set_wait_secs(10);
@@ -229,11 +232,11 @@ public class TopologyManager {
             } catch (TException e) {
                 log.error("Error connecting to storm when trying to submit topology '" + getTopologyName(executionPlanName, tenantId) + "'", e);
                 return false;
-            }  catch (NotAliveException e) {
+            } catch (NotAliveException e) {
                 log.info("Topology '" + getTopologyName(executionPlanName, tenantId) + "' is not alive to kill");
                 isTopologyAlive = false;
                 return false;
-            }  catch (InvalidTopologyException e) {
+            } catch (InvalidTopologyException e) {
                 // Do nothing. Will not reach here since this exception will occur in the first attempt to submit by parent thread.
             }
 
@@ -244,7 +247,7 @@ public class TopologyManager {
         public void run() {
             //TODO : Make topology resubmission time configurable. Default =5s
             //TODO : Handle execution plan undeploy. Stop retrying.
-            do  {
+            do {
                 log.info("Retrying to submit topology '" + getTopologyName(executionPlanName, tenantId) + "' in " + retryInterval + "ms");
                 try {
                     Thread.sleep(retryInterval);

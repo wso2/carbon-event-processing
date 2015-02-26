@@ -68,7 +68,9 @@ public class StormTopologyConstructor {
                 componentInfoHolder.addOutputStream(streamDefinition);
             }
 
-            componentInfoHolder.setDeclarer(builder.setSpout(name, new EventReceiverSpout(stormDeploymentConfig, streamDefinitions, executionPlanName, tenantId, stormDeploymentConfig.getHeartbeatInterval()), Integer.parseInt(parallel)));
+            componentInfoHolder.setDeclarer(builder.setSpout(name, new EventReceiverSpout(stormDeploymentConfig,
+                            streamDefinitions, executionPlanName, tenantId, stormDeploymentConfig.getHeartbeatInterval()),
+                    Integer.parseInt(parallel)));
             topologyInfoHolder.addComponent(componentInfoHolder);
         }
 
@@ -88,9 +90,7 @@ public class StormTopologyConstructor {
             // Adding partitioning fields of input streams
             addPartitionFields(inputStreamsElement, componentInfoHolder);
 
-            //ExecutionPlan executionPlan;
             OMElement queryElement = eventProcessorElement.getFirstChildWithName(new QName("queries"));
-            //executionPlan =SiddhiCompiler.parse(queryElement.getText());
             componentInfoHolder.addSiddhiQuery(queryElement.getText());
 
             List<String> outputStreamDefinitions = getStreamDefinitions(eventProcessorElement.getFirstChildWithName(new
@@ -98,7 +98,8 @@ public class StormTopologyConstructor {
             for (String streamDefinition : outputStreamDefinitions) {
                 componentInfoHolder.addOutputStream(streamDefinition);
             }
-            componentInfoHolder.setDeclarer(builder.setBolt(name, new SiddhiBolt(inputStreamDefinitions, queryElement.getText(), outputStreamDefinitions), Integer.parseInt(parallel)));
+            componentInfoHolder.setDeclarer(builder.setBolt(name, new SiddhiBolt(inputStreamDefinitions,
+                    queryElement.getText(), outputStreamDefinitions), Integer.parseInt(parallel)));
             topologyInfoHolder.addComponent(componentInfoHolder);
         }
 
@@ -132,7 +133,7 @@ public class StormTopologyConstructor {
                 componentInfoHolder.addOutputStream(streamDefinition);
             }
             componentInfoHolder.setDeclarer(builder.setBolt(name, new EventPublisherBolt(stormDeploymentConfig,
-                    inputStreamDefinitions, outputStreamDefinitions, query, executionPlanName, tenantId),
+                            inputStreamDefinitions, outputStreamDefinitions, query, executionPlanName, tenantId),
                     Integer.parseInt(parallel)));
             topologyInfoHolder.addComponent(componentInfoHolder);
         }

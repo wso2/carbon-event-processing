@@ -17,7 +17,6 @@
  */
 package org.wso2.carbon.event.processor.core.internal.storm.util;
 
-import org.wso2.siddhi.query.api.ExecutionPlan;
 import org.wso2.siddhi.query.api.definition.StreamDefinition;
 import org.wso2.siddhi.query.compiler.SiddhiCompiler;
 

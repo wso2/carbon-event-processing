@@ -30,7 +30,6 @@ import org.wso2.siddhi.core.ExecutionPlanRuntime;
 import org.wso2.siddhi.core.SiddhiManager;
 import org.wso2.siddhi.core.event.Event;
 import org.wso2.siddhi.core.stream.output.StreamCallback;
-import org.wso2.siddhi.query.api.ExecutionPlan;
 import org.wso2.siddhi.query.api.definition.StreamDefinition;
 import org.wso2.siddhi.query.compiler.SiddhiCompiler;
 
@@ -39,7 +38,7 @@ import java.util.*;
 /**
  * Publish events processed by Siddhi engine to CEP publisher
  */
-public class EventPublisherBolt extends BaseBasicBolt{
+public class EventPublisherBolt extends BaseBasicBolt {
     private transient Logger log = Logger.getLogger(EventPublisherBolt.class);
     /**
      * All stream definitions processed
@@ -86,8 +85,8 @@ public class EventPublisherBolt extends BaseBasicBolt{
         this.collector = basicOutputCollector;
         if (!initialized) {
             init();
-         }
-        StreamDefinition streamDefinition =  streamIdToDefinitionMap.get(tuple.getSourceStreamId());
+        }
+        StreamDefinition streamDefinition = streamIdToDefinitionMap.get(tuple.getSourceStreamId());
         if (streamDefinition != null) {
             asyncEventPublisher.sendEvent(tuple.getValues().toArray(), tuple.getSourceStreamId());
         } else {
@@ -130,7 +129,7 @@ public class EventPublisherBolt extends BaseBasicBolt{
                         @Override
                         public void receive(Event[] events) {
                             for (Event event : events) {
-                                if(log.isDebugEnabled()) {
+                                if (log.isDebugEnabled()) {
                                     if (++eventCount % 10000 == 0) {
                                         double timeSpentInSecs = (System.currentTimeMillis() - batchStartTime) / 1000.0D;
                                         double throughput = 10000 / timeSpentInSecs;

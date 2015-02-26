@@ -61,7 +61,6 @@ public class SiddhiStormInputEventDispatcher extends AbstractSiddhiInputEventDis
 
         try {
             this.siddhiStreamDefinition = EventProcessorUtil.convertToSiddhiStreamDefinition(streamDefinition, siddhiStreamName);
-
             Set<org.wso2.siddhi.query.api.definition.StreamDefinition> streamDefinitions = new HashSet<org.wso2.siddhi.query.api.definition.StreamDefinition>();
             streamDefinitions.add(siddhiStreamDefinition);
 

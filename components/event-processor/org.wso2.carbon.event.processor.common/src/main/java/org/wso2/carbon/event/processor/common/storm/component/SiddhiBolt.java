@@ -70,7 +70,7 @@ public class SiddhiBolt extends BaseBasicBolt {
      * Bolt which runs the Siddhi engine.
      *
      * @param inputStreamDefinitions  - All stream and partition inputStreamDefinitions
-     * @param query                 - Siddhi query
+     * @param query                   - Siddhi query
      * @param outputSiddhiDefinitions
      */
     public SiddhiBolt(List<String> inputStreamDefinitions, String query, List<String> outputSiddhiDefinitions) {
@@ -90,7 +90,7 @@ public class SiddhiBolt extends BaseBasicBolt {
         log = Logger.getLogger(SiddhiBolt.class);
 
         String fullQueryExpression = Utils.constructQueryExpression(inputStreamDefinitions, outputStreamDefinitions,
-                 query);
+                query);
         executionPlanRuntime = siddhiManager.createExecutionPlanRuntime(fullQueryExpression);
 
         for (String outputStreamDefinition : outputStreamDefinitions) {
@@ -102,7 +102,7 @@ public class SiddhiBolt extends BaseBasicBolt {
                 @Override
                 public void receive(Event[] events) {
                     for (Event event : events) {
-                        if(log.isDebugEnabled()) {
+                        if (log.isDebugEnabled()) {
                             if (++eventCount % 10000 == 0) {
                                 double timeSpentInSecs = (System.currentTimeMillis() - batchStartTime) / 1000.0D;
                                 double throughput = 10000 / timeSpentInSecs;
@@ -126,7 +126,7 @@ public class SiddhiBolt extends BaseBasicBolt {
     }
 
     @Override
-    public void execute(Tuple tuple, BasicOutputCollector collector){
+    public void execute(Tuple tuple, BasicOutputCollector collector) {
         if (siddhiManager == null) {
             init();
         }

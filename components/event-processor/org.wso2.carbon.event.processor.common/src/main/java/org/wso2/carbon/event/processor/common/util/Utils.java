@@ -68,11 +68,11 @@ public class Utils {
                                                   String queryExpressions) {
         StringBuilder builder = new StringBuilder();
 
-        for(String definition : importDefinitions){
+        for (String definition : importDefinitions) {
             builder.append(definition);
         }
 
-        for(String definition : exportDefinitions){
+        for (String definition : exportDefinitions) {
             builder.append(definition);
         }
         builder.append(queryExpressions);

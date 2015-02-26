@@ -99,7 +99,7 @@ public class EventReceiverSpout extends BaseRichSpout implements StreamCallback 
         this.executionPlanName = executionPlanName;
         this.tenantId = tenantId;
         this.heartbeatInterval = heartbeatInterval;
-        for (String definition:incomingStreamDefinitions){
+        for (String definition : incomingStreamDefinitions) {
             this.incomingStreamDefinitions.add(SiddhiCompiler.parseStreamDefinition(definition));
         }
         this.logPrefix = "{" + executionPlanName + ":" + tenantId + "} - ";
@@ -190,7 +190,7 @@ public class EventReceiverSpout extends BaseRichSpout implements StreamCallback 
 
         @Override
         public void run() {
-            if (log.isDebugEnabled()){
+            if (log.isDebugEnabled()) {
                 log.debug(logPrefix + "Registering Storm receiver with " + thisHostIp + ":" + listeningPort);
             }
 
@@ -200,7 +200,7 @@ public class EventReceiverSpout extends BaseRichSpout implements StreamCallback 
                 try {
                     Thread.sleep(heartbeatInterval);
                 } catch (InterruptedException e1) {
-                   continue;
+                    continue;
                 }
             }
         }
