@@ -31,14 +31,14 @@ public class TCPEventTestClient {
     public static void main(String[] args) throws Exception {
 
         StreamDefinition streamDefinition = new StreamDefinition();
-        streamDefinition.name("TestStream");
+        streamDefinition.id("TestStream");
         streamDefinition.attribute("att1", Attribute.Type.INT);
         streamDefinition.attribute("att2", Attribute.Type.FLOAT);
         streamDefinition.attribute("att3", Attribute.Type.STRING);
         streamDefinition.attribute("att4", Attribute.Type.INT);
 
         StreamDefinition streamDefinition1 = new StreamDefinition();
-        streamDefinition1.name("TestStream1");
+        streamDefinition1.id("TestStream1");
         streamDefinition1.attribute("att1", Attribute.Type.LONG);
         streamDefinition1.attribute("att2", Attribute.Type.FLOAT);
         streamDefinition1.attribute("att3", Attribute.Type.STRING);
