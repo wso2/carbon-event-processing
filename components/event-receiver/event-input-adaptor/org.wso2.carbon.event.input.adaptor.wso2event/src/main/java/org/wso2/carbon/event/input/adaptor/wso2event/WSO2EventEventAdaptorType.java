@@ -116,6 +116,7 @@ public final class WSO2EventEventAdaptorType extends AbstractInputEventAdaptor {
         return propertyList;
     }
 
+
     public String subscribe(
             InputEventAdaptorListener inputEventAdaptorListener,
             InputEventAdaptorConfiguration inputEventAdaptorConfiguration,
@@ -131,7 +132,7 @@ public final class WSO2EventEventAdaptorType extends AbstractInputEventAdaptor {
         }
 
         if (!tenantSpecificAdaptorListenerMap.keySet().contains(inputEventAdaptorConfiguration)) {
-            ConcurrentHashMap<String, EventAdaptorConf> map = new ConcurrentHashMap<String, EventAdaptorConf>();
+            ConcurrentHashMap<String, EventAdaptorConf> map = new ConcurrentHashMap<String, WSO2EventEventAdaptorType.EventAdaptorConf>();
             map.put(subscriptionId, eventAdaptorConf);
             tenantSpecificAdaptorListenerMap.put(inputEventAdaptorConfiguration, map);
         } else {
@@ -248,10 +249,10 @@ public final class WSO2EventEventAdaptorType extends AbstractInputEventAdaptor {
                 StreamDefinition streamDefinition) {
 
             InputEventAdaptorConfiguration inputEventAdaptorConfiguration = new InputEventAdaptorConfiguration();
-            Map<String, String> inputMessageProperties = new HashMap<String, String>();
-            inputMessageProperties.put(WSO2EventAdaptorConstants.ADAPTOR_MESSAGE_STREAM_NAME, streamDefinition.getName());
-            inputMessageProperties.put(WSO2EventAdaptorConstants.ADAPTOR_MESSAGE_STREAM_VERSION, streamDefinition.getVersion());
-            inputEventAdaptorConfiguration.getInternalInputEventAdaptorConfiguration().setProperties(inputMessageProperties);
+            Map<String, String> inputEventAdaptorProperties = new HashMap<String, String>();
+            inputEventAdaptorProperties.put(WSO2EventAdaptorConstants.ADAPTOR_MESSAGE_STREAM_NAME, streamDefinition.getName());
+            inputEventAdaptorProperties.put(WSO2EventAdaptorConstants.ADAPTOR_MESSAGE_STREAM_VERSION, streamDefinition.getVersion());
+            inputEventAdaptorConfiguration.getInternalInputEventAdaptorConfiguration().setProperties(inputEventAdaptorProperties);
 
             return inputEventAdaptorConfiguration;
         }
@@ -283,8 +284,8 @@ public final class WSO2EventEventAdaptorType extends AbstractInputEventAdaptor {
                         }
                     }
 
-                    if (log.isDebugEnabled()) {
-                        log.debug("Event received in wso2Event Adaptor - " + event);
+                    if(log.isDebugEnabled()){
+                        log.debug("Event received in wso2Event Adaptor - "+event);
                     }
 
                     for (EventAdaptorConf eventAdaptorConf : eventAdaptorListeners.values()) {
@@ -305,7 +306,7 @@ public final class WSO2EventEventAdaptorType extends AbstractInputEventAdaptor {
 
     }
 
-    private class EventAdaptorConf {
+    class EventAdaptorConf {
 
         private final InputEventAdaptorListener inputEventAdaptorListener;
         private final int tenantId;

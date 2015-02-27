@@ -49,5 +49,27 @@ public class InputEventAdaptorConfiguration {
         this.inputEventAdaptorName = inputEventAdaptorName;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof InputEventAdaptorConfiguration)) {
+            return false;
+        }
+
+        InputEventAdaptorConfiguration that = (InputEventAdaptorConfiguration) o;
+
+        if (internalInputEventAdaptorConfiguration != null ? !internalInputEventAdaptorConfiguration.equals(that.internalInputEventAdaptorConfiguration) : that.getInternalInputEventAdaptorConfiguration() != null) {
+            return false;
+        }
+
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        return  (internalInputEventAdaptorConfiguration != null ? internalInputEventAdaptorConfiguration.hashCode() : 0);
+    }
 
 }

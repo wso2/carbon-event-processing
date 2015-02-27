@@ -27,17 +27,6 @@ import org.wso2.carbon.event.statistics.EventStatisticsMonitor;
 
 public abstract class InputEventAdaptorListener {
 
-
-    private static final String EVENT_TRACE_LOGGER = "EVENT_TRACE_LOGGER";
-    private Logger trace = Logger.getLogger(EVENT_TRACE_LOGGER);
-
-    private Boolean statisticsEnabled;
-    private Boolean traceEnabled;
-    private String eventAdaptorName;
-
-    private String tracerPrefix = "";
-    private EventStatisticsMonitor statisticsMonitor;
-
     /**
      * when an event definition is defined, event calls this method with the definition.
      *
@@ -66,9 +55,6 @@ public abstract class InputEventAdaptorListener {
      * @param object - received event definition
      */
     public void addEventDefinitionCall(Object object) {
-        if (traceEnabled) {
-            trace.info(tracerPrefix + " Add EventDefinition " + System.getProperty("line.separator") + object);
-        }
         addEventDefinition(object);
     }
 
@@ -78,9 +64,6 @@ public abstract class InputEventAdaptorListener {
      * @param object - received event definition
      */
     public void removeEventDefinitionCall(Object object) {
-        if (traceEnabled) {
-            trace.info(tracerPrefix + " Remove EventDefinition " + System.getProperty("line.separator") + object);
-        }
         removeEventDefinition(object);
     }
 
@@ -90,53 +73,7 @@ public abstract class InputEventAdaptorListener {
      * @param object - received event
      */
     public void onEventCall(Object object) {
-        if (traceEnabled) {
-            trace.info(tracerPrefix + object);
-        }
-        if (statisticsEnabled) {
-            statisticsMonitor.incrementRequest();
-        }
         onEvent(object);
     }
 
-
-    public Boolean getStatisticsEnabled() {
-        return statisticsEnabled;
-    }
-
-    public void setStatisticsEnabled(Boolean statisticsEnabled) {
-        this.statisticsEnabled = statisticsEnabled;
-    }
-
-    public Boolean getTraceEnabled() {
-        return traceEnabled;
-    }
-
-    public void setTraceEnabled(Boolean traceEnabled) {
-        this.traceEnabled = traceEnabled;
-    }
-
-    public String getEventAdaptorName() {
-        return eventAdaptorName;
-    }
-
-    public void setEventAdaptorName(String eventAdaptorName) {
-        this.eventAdaptorName = eventAdaptorName;
-    }
-
-    public void setStatisticsMonitor(EventStatisticsMonitor statisticsMonitor) {
-        this.statisticsMonitor = statisticsMonitor;
-    }
-
-    public EventStatisticsMonitor getStatisticsMonitor() {
-        return statisticsMonitor;
-    }
-
-    public void setTracerPrefix(String tracerPrefix) {
-        this.tracerPrefix = tracerPrefix;
-    }
-
-    public String getTracerPrefix() {
-        return tracerPrefix;
-    }
 }
