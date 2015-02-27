@@ -17,7 +17,7 @@
 -->
 
 <serviceGroup>
-    <service name="EventBuilderAdminService" scope="transportsession">
+    <service name="EventReceiverAdminService" scope="transportsession">
         <transports>
             <transport>https</transport>
         </transports>
@@ -30,94 +30,94 @@
                              class="org.apache.axis2.rpc.receivers.RPCMessageReceiver"/>
         </messageReceivers>
         <parameter name="ServiceClass" locked="false">
-            EventBuilderAdminService
+            org.wso2.carbon.event.receiver.admin.internal.EventReceiverAdminService
         </parameter>
 
         <parameter name="AuthorizationAction" locked="false">
             /permission/admin/manage/event-streams
         </parameter>
 
-        <operation name="getAllActiveEventBuilderConfigurations">
+        <operation name="getAllActiveEventReceiverConfigurations">
             <parameter name="AuthorizationAction" locked="true">
                 /permission/admin/manage/event-streams
             </parameter>
         </operation>
-        <operation name="getEventBuilderMessageProperties">
+        <operation name="getEventReceiverAdaptorProperties">
             <parameter name="AuthorizationAction" locked="true">
                 /permission/admin/manage/event-streams
             </parameter>
         </operation>
-        <operation name="getAllActiveEventBuilderConfigurations">
+        <operation name="getAllActiveEventReceiverConfigurations">
             <parameter name="AuthorizationAction" locked="true">
                 /permission/admin/manage/event-streams
             </parameter>
         </operation>
-        <operation name="getActiveEventBuilderConfiguration">
+        <operation name="getActiveEventReceiverConfiguration">
             <parameter name="AuthorizationAction" locked="true">
                 /permission/admin/manage/event-streams
             </parameter>
         </operation>
-        <operation name="deployEventBuilderConfiguration">
+        <operation name="deployEventReceiverConfiguration">
             <parameter name="AuthorizationAction" locked="true">
                 /permission/admin/manage/event-streams
             </parameter>
         </operation>
-        <operation name="deployWso2EventBuilderConfiguration">
+        <operation name="deployWso2EventReceiverConfiguration">
             <parameter name="AuthorizationAction" locked="true">
                 /permission/admin/manage/event-streams
             </parameter>
         </operation>
-        <operation name="deployXmlEventBuilderConfiguration">
+        <operation name="deployXmlEventReceiverConfiguration">
             <parameter name="AuthorizationAction" locked="true">
                 /permission/admin/manage/event-streams
             </parameter>
         </operation>
-        <operation name="deployJsonEventBuilderConfiguration">
+        <operation name="deployJsonEventReceiverConfiguration">
             <parameter name="AuthorizationAction" locked="true">
                 /permission/admin/manage/event-streams
             </parameter>
         </operation>
-        <operation name="deployMapEventBuilderConfiguration">
+        <operation name="deployMapEventReceiverConfiguration">
             <parameter name="AuthorizationAction" locked="true">
                 /permission/admin/manage/event-streams
             </parameter>
         </operation>
-        <operation name="deployTextEventBuilderConfiguration">
+        <operation name="deployTextEventReceiverConfiguration">
             <parameter name="AuthorizationAction" locked="true">
                 /permission/admin/manage/event-streams
             </parameter>
         </operation>
-        <operation name="undeployActiveEventBuilderConfiguration">
+        <operation name="undeployActiveEventReceiverConfiguration">
             <parameter name="AuthorizationAction" locked="true">
                 /permission/admin/manage/event-streams
             </parameter>
         </operation>
-        <operation name="undeployInactiveEventBuilderConfiguration">
+        <operation name="undeployInactiveEventReceiverConfiguration">
             <parameter name="AuthorizationAction" locked="true">
                 /permission/admin/manage/event-streams
             </parameter>
         </operation>
-        <operation name="getActiveEventBuilderConfigurationContent">
+        <operation name="getActiveEventReceiverConfigurationContent">
             <parameter name="AuthorizationAction" locked="true">
                 /permission/admin/manage/event-streams
             </parameter>
         </operation>
-        <operation name="getInactiveEventBuilderConfigurationContent">
+        <operation name="getInactiveEventReceiverConfigurationContent">
             <parameter name="AuthorizationAction" locked="true">
                 /permission/admin/manage/event-streams
             </parameter>
         </operation>
-        <operation name="editInactiveEventBuilderConfiguration">
+        <operation name="editInactiveEventReceiverConfiguration">
             <parameter name="AuthorizationAction" locked="true">
                 /permission/admin/manage/event-streams
             </parameter>
         </operation>
-        <operation name="editActiveEventBuilderConfiguration">
+        <operation name="editActiveEventReceiverConfiguration">
             <parameter name="AuthorizationAction" locked="true">
                 /permission/admin/manage/event-streams
             </parameter>
         </operation>
-        <operation name="getAllInactiveEventBuilderConfigurations">
+        <operation name="getAllInactiveEventReceiverConfigurations">
             <parameter name="AuthorizationAction" locked="true">
                 /permission/admin/manage/event-streams
             </parameter>
@@ -132,7 +132,7 @@
                 /permission/admin/manage/event-streams
             </parameter>
         </operation>
-        <operation name="getAllStreamSpecificActiveEventBuilderConfiguration">
+        <operation name="getAllStreamSpecificActiveEventReceiverConfiguration">
             <parameter name="AuthorizationAction" locked="true">
                 /permission/admin/manage/event-streams
             </parameter>

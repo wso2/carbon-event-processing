@@ -36,7 +36,7 @@
         <!--<module>components/adaptors</module>-->
         <module>components/event-publisher</module>
         <!--<module>components/event-processor</module>-->
-        <!--<module>components/event-stream</module>-->
+        <!--<module>components/event-stream/event-builder</module>-->
         <!--<module>components/event-flow</module>-->
         <!--<module>components/event-monitor</module>-->
         <module>components/application-deployer</module>

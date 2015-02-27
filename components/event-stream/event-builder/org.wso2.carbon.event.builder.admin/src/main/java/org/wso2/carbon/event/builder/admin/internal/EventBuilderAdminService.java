@@ -27,7 +27,6 @@ import org.wso2.carbon.event.builder.admin.exception.EventBuilderAdminServiceExc
 import org.wso2.carbon.event.builder.admin.internal.ds.EventBuilderAdminServiceValueHolder;
 import org.wso2.carbon.event.builder.admin.internal.util.DtoConverter;
 import org.wso2.carbon.event.builder.admin.internal.util.DtoConverterFactory;
-import org.wso2.carbon.event.builder.admin.internal.util.dto.converter.*;
 import org.wso2.carbon.event.builder.core.EventBuilderService;
 import org.wso2.carbon.event.builder.core.config.EventBuilderConfiguration;
 import org.wso2.carbon.event.builder.core.exception.EventBuilderConfigurationException;

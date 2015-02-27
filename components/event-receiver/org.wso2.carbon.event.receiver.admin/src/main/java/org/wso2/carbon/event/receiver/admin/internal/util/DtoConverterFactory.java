@@ -15,9 +15,10 @@
 * specific language governing permissions and limitations
 * under the License.
 */
-package org.wso2.carbon.event.builder.admin.internal.util;
+package org.wso2.carbon.event.receiver.admin.internal.util;
 
-import org.wso2.carbon.event.builder.core.internal.util.EventBuilderConstants;
+import org.wso2.carbon.event.receiver.admin.internal.util.dto.converter.*;
+import org.wso2.carbon.event.receiver.core.internal.util.EventReceiverConstants;
 
 public class DtoConverterFactory {
     private Wso2EventDtoConverter wso2EventDtoConverter;
@@ -28,27 +29,27 @@ public class DtoConverterFactory {
     private GenericDtoConverter genericDtoConverter;
 
     public DtoConverter getDtoConverter(String inputMappingType) {
-        if (EventBuilderConstants.EB_WSO2EVENT_MAPPING_TYPE.equals(inputMappingType)) {
+        if (EventReceiverConstants.ER_WSO2EVENT_MAPPING_TYPE.equals(inputMappingType)) {
             if (this.wso2EventDtoConverter == null) {
                 this.wso2EventDtoConverter = new Wso2EventDtoConverter();
             }
             return wso2EventDtoConverter;
-        } else if (EventBuilderConstants.EB_XML_MAPPING_TYPE.equals(inputMappingType)) {
+        } else if (EventReceiverConstants.ER_XML_MAPPING_TYPE.equals(inputMappingType)) {
             if (this.xmlDtoConverter == null) {
                 this.xmlDtoConverter = new XmlDtoConverter();
             }
             return xmlDtoConverter;
-        } else if (EventBuilderConstants.EB_MAP_MAPPING_TYPE.equals(inputMappingType)) {
+        } else if (EventReceiverConstants.ER_MAP_MAPPING_TYPE.equals(inputMappingType)) {
             if (this.mapDtoConverter == null) {
                 this.mapDtoConverter = new MapDtoConverter();
             }
             return mapDtoConverter;
-        } else if (EventBuilderConstants.EB_JSON_MAPPING_TYPE.equals(inputMappingType)) {
+        } else if (EventReceiverConstants.ER_JSON_MAPPING_TYPE.equals(inputMappingType)) {
             if (this.jsonDtoConverter == null) {
                 this.jsonDtoConverter = new JsonDtoConverter();
             }
             return jsonDtoConverter;
-        } else if (EventBuilderConstants.EB_TEXT_MAPPING_TYPE.equals(inputMappingType)) {
+        } else if (EventReceiverConstants.ER_TEXT_MAPPING_TYPE.equals(inputMappingType)) {
             if (this.textDtoConverter == null) {
                 this.textDtoConverter = new TextDtoConverter();
             }
