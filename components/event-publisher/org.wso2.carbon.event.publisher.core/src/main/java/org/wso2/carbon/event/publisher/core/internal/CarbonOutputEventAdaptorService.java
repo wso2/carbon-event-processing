@@ -20,11 +20,11 @@ package org.wso2.carbon.event.publisher.core.internal;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.wso2.carbon.context.PrivilegedCarbonContext;
-import org.wso2.carbon.event.publisher.core.AbstractOutputEventAdaptor;
-import org.wso2.carbon.event.publisher.core.OutputEventAdaptorDto;
+import org.wso2.carbon.event.publisher.core.adapter.AbstractOutputEventAdapter;
+import org.wso2.carbon.event.publisher.core.adapter.OutputEventAdapterDto;
 import org.wso2.carbon.event.publisher.core.OutputEventAdaptorService;
 import org.wso2.carbon.event.publisher.core.config.EventPublisher;
-import org.wso2.carbon.event.publisher.core.config.EndpointAdaptorConfiguration;
+import org.wso2.carbon.event.publisher.core.config.OutputAdaptorConfiguration;
 import org.wso2.carbon.event.publisher.core.exception.EventPublisherProcessingException;
 import org.wso2.carbon.event.publisher.core.exception.TestConnectionUnavailableException;
 import org.wso2.carbon.event.publisher.core.internal.ds.EventPublisherServiceValueHolder;
@@ -41,32 +41,32 @@ import java.util.concurrent.ConcurrentHashMap;
 public class CarbonOutputEventAdaptorService implements OutputEventAdaptorService {
 
     private static Log log = LogFactory.getLog(CarbonOutputEventAdaptorService.class);
-    private Map<String, AbstractOutputEventAdaptor> eventAdaptorMap;
+    private Map<String, AbstractOutputEventAdapter> eventAdaptorMap;
 
     public CarbonOutputEventAdaptorService() {
         this.eventAdaptorMap = new ConcurrentHashMap();
     }
 
     public void registerEventAdaptor(
-            AbstractOutputEventAdaptor abstractOutputEventAdaptor) {
-        OutputEventAdaptorDto outputEventAdaptorDto = abstractOutputEventAdaptor.getOutputEventAdaptorDto();
-        this.eventAdaptorMap.put(outputEventAdaptorDto.getEventAdaptorTypeName(), abstractOutputEventAdaptor);
+            AbstractOutputEventAdapter abstractOutputEventAdapter) {
+        OutputEventAdapterDto outputEventAdapterDto = abstractOutputEventAdapter.getOutputEventAdapterDto();
+        this.eventAdaptorMap.put(outputEventAdapterDto.getEventAdaptorTypeName(), abstractOutputEventAdapter);
     }
 
     public void unRegisterEventAdaptor(
-            AbstractOutputEventAdaptor abstractOutputEventAdaptor) {
-        OutputEventAdaptorDto outputEventAdaptorDto = abstractOutputEventAdaptor.getOutputEventAdaptorDto();
-        this.eventAdaptorMap.remove(outputEventAdaptorDto.getEventAdaptorTypeName());
+            AbstractOutputEventAdapter abstractOutputEventAdapter) {
+        OutputEventAdapterDto outputEventAdapterDto = abstractOutputEventAdapter.getOutputEventAdapterDto();
+        this.eventAdaptorMap.remove(outputEventAdapterDto.getEventAdaptorTypeName());
     }
 
 
     @Override
-    public List<OutputEventAdaptorDto> getEventAdaptors() {
-        List<OutputEventAdaptorDto> outputEventAdaptorDtos = new ArrayList<OutputEventAdaptorDto>();
-        for (AbstractOutputEventAdaptor abstractEventAdaptor : this.eventAdaptorMap.values()) {
-            outputEventAdaptorDtos.add(abstractEventAdaptor.getOutputEventAdaptorDto());
+    public List<OutputEventAdapterDto> getEventAdaptors() {
+        List<OutputEventAdapterDto> outputEventAdapterDtos = new ArrayList<OutputEventAdapterDto>();
+        for (AbstractOutputEventAdapter abstractEventAdaptor : this.eventAdaptorMap.values()) {
+            outputEventAdapterDtos.add(abstractEventAdaptor.getOutputEventAdapterDto());
         }
-        return outputEventAdaptorDtos;
+        return outputEventAdapterDtos;
     }
 
 
@@ -81,9 +81,9 @@ public class CarbonOutputEventAdaptorService implements OutputEventAdaptorServic
             if (eventPublisherMap != null) {
                 Map<String, EventPublisher> tenantSpecificEventPublisherMap = eventPublisherMap.get(tenantId);
                 EventPublisher eventPublisher = tenantSpecificEventPublisherMap.get(eventPublisherName);
-                EndpointAdaptorConfiguration endpointAdaptorConfiguration = eventPublisher.getEventPublisherConfiguration().getEndpointAdaptorConfiguration();
-                AbstractOutputEventAdaptor outputEventAdaptor = this.eventAdaptorMap.get(endpointAdaptorConfiguration.getEndpointType());
-                outputEventAdaptor.publishCall(object, endpointAdaptorConfiguration, tenantId);
+                OutputAdaptorConfiguration outputAdaptorConfiguration = eventPublisher.getEventPublisherConfiguration().getOutputAdaptorConfiguration();
+                AbstractOutputEventAdapter outputEventAdaptor = this.eventAdaptorMap.get(outputAdaptorConfiguration.getEndpointType());
+                outputEventAdaptor.publishCall(object, outputAdaptorConfiguration, tenantId);
             }
         } catch (EventPublisherProcessingException e) {
             log.error(e.getMessage(), e);
@@ -92,20 +92,20 @@ public class CarbonOutputEventAdaptorService implements OutputEventAdaptorServic
     }
 
     @Override
-    public void publish(EndpointAdaptorConfiguration endpointAdaptorConfiguration, Object object, int tenantId) {
-        AbstractOutputEventAdaptor outputEventAdaptor = this.eventAdaptorMap.get(endpointAdaptorConfiguration.getEndpointType());
-        outputEventAdaptor.publishCall(object, endpointAdaptorConfiguration, tenantId);
+    public void publish(OutputAdaptorConfiguration outputAdaptorConfiguration, Object object, int tenantId) {
+        AbstractOutputEventAdapter outputEventAdaptor = this.eventAdaptorMap.get(outputAdaptorConfiguration.getEndpointType());
+        outputEventAdaptor.publishCall(object, outputAdaptorConfiguration, tenantId);
 
     }
 
 
     @Override
     public void testConnection(
-            EndpointAdaptorConfiguration endpointAdaptorConfiguration) {
-        AbstractOutputEventAdaptor outputEventAdaptor = this.eventAdaptorMap.get(endpointAdaptorConfiguration.getEndpointType());
+            OutputAdaptorConfiguration outputAdaptorConfiguration) {
+        AbstractOutputEventAdapter outputEventAdaptor = this.eventAdaptorMap.get(outputAdaptorConfiguration.getEndpointType());
         int tenantId = PrivilegedCarbonContext.getThreadLocalCarbonContext().getTenantId();
         try {
-            outputEventAdaptor.testConnection(endpointAdaptorConfiguration, tenantId);
+            outputEventAdaptor.testConnection(outputAdaptorConfiguration, tenantId);
         } catch (TestConnectionUnavailableException e) {
             throw new TestConnectionUnavailableException(e.getMessage(), e);
         } catch (EventPublisherProcessingException e) {
@@ -116,21 +116,21 @@ public class CarbonOutputEventAdaptorService implements OutputEventAdaptorServic
 
 
     @Override
-    public OutputEventAdaptorDto getEventAdaptorDto(String eventAdaptorType) {
+    public OutputEventAdapterDto getEventAdaptorDto(String eventAdaptorType) {
 
-        AbstractOutputEventAdaptor abstractOutputEventAdaptor = eventAdaptorMap.get(eventAdaptorType);
-        if (abstractOutputEventAdaptor != null) {
-            return abstractOutputEventAdaptor.getOutputEventAdaptorDto();
+        AbstractOutputEventAdapter abstractOutputEventAdapter = eventAdaptorMap.get(eventAdaptorType);
+        if (abstractOutputEventAdapter != null) {
+            return abstractOutputEventAdapter.getOutputEventAdapterDto();
         }
         return null;
     }
 
     @Override
     public void removeConnectionInfo(
-            EndpointAdaptorConfiguration endpointAdaptorConfiguration, int tenantId) {
-        AbstractOutputEventAdaptor outputEventAdaptor = this.eventAdaptorMap.get(endpointAdaptorConfiguration.getEndpointType());
+            OutputAdaptorConfiguration outputAdaptorConfiguration, int tenantId) {
+        AbstractOutputEventAdapter outputEventAdaptor = this.eventAdaptorMap.get(outputAdaptorConfiguration.getEndpointType());
         try {
-            outputEventAdaptor.removeConnectionInfo(endpointAdaptorConfiguration, tenantId);
+            outputEventAdaptor.removeConnectionInfo(outputAdaptorConfiguration, tenantId);
         } catch (EventPublisherProcessingException e) {
             log.error(e.getMessage(), e);
             throw new EventPublisherProcessingException(e.getMessage(), e);

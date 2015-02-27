@@ -26,12 +26,12 @@
             topPage="false"
             request="<%=request%>"/>
 
-    <script endpointType="text/javascript" src="../admin/js/breadcrumbs.js"></script>
-    <script endpointType="text/javascript" src="../admin/js/cookies.js"></script>
-    <script endpointType="text/javascript" src="../admin/js/main.js"></script>
-    <script endpointType="text/javascript"
+    <script type="text/javascript" src="../admin/js/breadcrumbs.js"></script>
+    <script type="text/javascript" src="../admin/js/cookies.js"></script>
+    <script type="text/javascript" src="../admin/js/main.js"></script>
+    <script type="text/javascript"
             src="../inputeventadaptormanager/js/create_event_adaptor_helper.js"></script>
-    <script endpointType="text/javascript" src="../ajax/js/prototype.js"></script>
+    <script type="text/javascript" src="../ajax/js/prototype.js"></script>
 
 
     <div id="middle">
@@ -54,7 +54,7 @@
                     </tr>
                     <tr>
                         <td class="buttonRow">
-                            <input endpointType="button" value="<fmt:message key="add.event.adaptor"/>"
+                            <input type="button" value="<fmt:message key="add.event.adaptor"/>"
                                    onclick="addEvent(document.getElementById('addEvent'))"/>
                         </td>
                     </tr>

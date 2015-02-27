@@ -28,11 +28,9 @@ import org.wso2.carbon.databridge.commons.StreamDefinition;
 import org.wso2.carbon.event.publisher.admin.internal.util.EventPublisherAdminServiceValueHolder;
 import org.wso2.carbon.event.publisher.admin.internal.util.PropertyAttributeTypeConstants;
 import org.wso2.carbon.event.publisher.core.EventPublisherService;
-import org.wso2.carbon.event.publisher.core.OutputEventAdaptorDto;
+import org.wso2.carbon.event.publisher.core.adapter.OutputEventAdapterDto;
 import org.wso2.carbon.event.publisher.core.OutputEventAdaptorService;
 import org.wso2.carbon.event.publisher.core.Property;
-import org.wso2.carbon.event.publisher.core.config.*;
-import org.wso2.carbon.event.publisher.core.config.mapping.*;
 import org.wso2.carbon.event.publisher.core.exception.EventPublisherConfigurationException;
 
 import java.util.ArrayList;
@@ -64,7 +62,7 @@ public class EventPublisherAdminService extends AbstractAdmin {
                     EventPublisherConfiguration eventPublisherConfiguration = eventPublisherConfigurationList.get(index);
                     String eventPublisherName = eventPublisherConfiguration.getEventPublisherName();
                     String mappingType = eventPublisherConfiguration.getOutputMapping().getMappingType();
-                    String outputEndpointType = eventPublisherConfiguration.getEndpointAdaptorConfiguration().getEndpointType();
+                    String outputEndpointType = eventPublisherConfiguration.getOutputAdaptorConfiguration().getEndpointType();
                     String streamNameWithVersion = eventPublisherConfiguration.getFromStreamName() + ":" + eventPublisherConfiguration.getFromStreamVersion();
 
 
@@ -97,7 +95,7 @@ public class EventPublisherAdminService extends AbstractAdmin {
 
             // get event publisher configurations
             List<EventPublisherConfiguration> eventPublisherConfigurationList;
-            eventPublisherConfigurationList = eventPublisherService.getAllActiveEventPublisherConfiguration(axisConfiguration, streamId);
+            eventPublisherConfigurationList = eventPublisherService.getAllActiveEventPublisherConfiguration(streamId, axisConfiguration);
 
             if (eventPublisherConfigurationList != null) {
                 // create event publisher configuration details array
@@ -107,7 +105,7 @@ public class EventPublisherAdminService extends AbstractAdmin {
                     EventPublisherConfiguration eventPublisherConfiguration = eventPublisherConfigurationList.get(index);
                     String eventPublisherName = eventPublisherConfiguration.getEventPublisherName();
                     String mappingType = eventPublisherConfiguration.getOutputMapping().getMappingType();
-                    String outputEndpointType = eventPublisherConfiguration.getEndpointAdaptorConfiguration().getEndpointType();
+                    String outputEndpointType = eventPublisherConfiguration.getOutputAdaptorConfiguration().getEndpointType();
 
                     eventPublisherConfigurationInfoDtoArray[index] = new EventPublisherConfigurationInfoDto();
                     eventPublisherConfigurationInfoDtoArray[index].setEventPublisherName(eventPublisherName);
@@ -171,13 +169,13 @@ public class EventPublisherAdminService extends AbstractAdmin {
                 eventPublisherConfigurationDto.setFromStreamNameWithVersion(streamNameWithVersion);
                 eventPublisherConfigurationDto.setStreamDefinition(getStreamAttributes(eventPublisherService.getStreamDefinition(streamNameWithVersion, axisConfiguration)));
 
-                EndpointAdaptorConfiguration endpointAdaptorConfiguration = eventPublisherConfiguration.getEndpointAdaptorConfiguration();
-                if (endpointAdaptorConfiguration != null) {
+                OutputAdaptorConfiguration outputAdaptorConfiguration = eventPublisherConfiguration.getOutputAdaptorConfiguration();
+                if (outputAdaptorConfiguration != null) {
                     EndpointPropertyConfigurationDto endpointPropertyConfigurationDto = new EndpointPropertyConfigurationDto();
-                    endpointPropertyConfigurationDto.setEventAdaptorType(endpointAdaptorConfiguration.getEndpointType());
-                    InternalOutputEventAdaptorConfiguration internalOutputEventAdaptorConfiguration = endpointAdaptorConfiguration.getOutputAdaptorConfiguration();
-                    if (internalOutputEventAdaptorConfiguration != null && internalOutputEventAdaptorConfiguration.getProperties().size() > 0) {
-                        EventPublisherPropertyDto[] eventPublisherPropertyDtos = getOutputEventPublisherMessageConfiguration(internalOutputEventAdaptorConfiguration.getProperties(), endpointAdaptorConfiguration.getEndpointType());
+                    endpointPropertyConfigurationDto.setEventAdaptorType(outputAdaptorConfiguration.getEndpointType());
+                    EndpointAdaptorPropertyConfiguration endpointAdaptorPropertyConfiguration = outputAdaptorConfiguration.getEndpointAdaptorPropertyConfiguration();
+                    if (endpointAdaptorPropertyConfiguration != null && endpointAdaptorPropertyConfiguration.getProperties().size() > 0) {
+                        EventPublisherPropertyDto[] eventPublisherPropertyDtos = getOutputEventPublisherMessageConfiguration(endpointAdaptorPropertyConfiguration.getProperties(), outputAdaptorConfiguration.getEndpointType());
                         endpointPropertyConfigurationDto.setOutputEventAdaptorConfiguration(eventPublisherPropertyDtos);
                     }
 
@@ -279,7 +277,7 @@ public class EventPublisherAdminService extends AbstractAdmin {
 
         int tenantId = PrivilegedCarbonContext.getThreadLocalCarbonContext().getTenantId();
         try {
-            OutputEventAdaptorDto eventAdaptorDto = eventAdaptorService.getEventAdaptorDto(endpointAdaptorType);
+            OutputEventAdapterDto eventAdaptorDto = eventAdaptorService.getEventAdaptorDto(endpointAdaptorType);
 
             List<Property> propertyList = eventAdaptorDto.getAdaptorPropertyList();
             if (propertyList != null) {
@@ -391,23 +389,23 @@ public class EventPublisherAdminService extends AbstractAdmin {
                 AxisConfiguration axisConfiguration = getAxisConfig();
                 StreamDefinition streamDefinition = eventPublisherService.getStreamDefinition(streamNameWithVersion, axisConfiguration);
 
-                EndpointAdaptorConfiguration endpointAdaptorConfiguration = new EndpointAdaptorConfiguration();
-                endpointAdaptorConfiguration.setEndpointAdaptorName(eventPublisherName);
-                endpointAdaptorConfiguration.setEndpointType(eventAdaptorType);
+                OutputAdaptorConfiguration outputAdaptorConfiguration = new OutputAdaptorConfiguration();
+                outputAdaptorConfiguration.setAdaptorName(eventPublisherName);
+                outputAdaptorConfiguration.setEndpointType(eventAdaptorType);
 
                 // add output message property configuration to the map
                 if (outputPropertyConfiguration != null && outputPropertyConfiguration.length != 0) {
-                    InternalOutputEventAdaptorConfiguration internalOutputEventAdaptorConfiguration = new InternalOutputEventAdaptorConfiguration();
+                    EndpointAdaptorPropertyConfiguration endpointAdaptorPropertyConfiguration = new EndpointAdaptorPropertyConfiguration();
 
                     for (PropertyDto eventPublisherProperty : outputPropertyConfiguration) {
                         if (!eventPublisherProperty.getValue().trim().equals("")) {
-                            internalOutputEventAdaptorConfiguration.addEventAdaptorProperty(eventPublisherProperty.getKey().trim(), eventPublisherProperty.getValue().trim());
+                            endpointAdaptorPropertyConfiguration.addEventAdaptorProperty(eventPublisherProperty.getKey().trim(), eventPublisherProperty.getValue().trim());
                         }
                     }
-                    endpointAdaptorConfiguration.setOutputAdaptorConfiguration(internalOutputEventAdaptorConfiguration);
+                    outputAdaptorConfiguration.setEndpointAdaptorPropertyConfiguration(endpointAdaptorPropertyConfiguration);
                 }
 
-                eventPublisherConfiguration.setEndpointAdaptorConfiguration(endpointAdaptorConfiguration);
+                eventPublisherConfiguration.setOutputAdaptorConfiguration(outputAdaptorConfiguration);
 
                 WSO2EventOutputMapping wso2EventOutputMapping = new WSO2EventOutputMapping();
                 wso2EventOutputMapping.setCustomMappingEnabled(mappingEnabled);
@@ -481,23 +479,23 @@ public class EventPublisherAdminService extends AbstractAdmin {
                 AxisConfiguration axisConfiguration = getAxisConfig();
                 int tenantId = PrivilegedCarbonContext.getThreadLocalCarbonContext().getTenantId();
 
-                EndpointAdaptorConfiguration endpointAdaptorConfiguration = new EndpointAdaptorConfiguration();
-                endpointAdaptorConfiguration.setEndpointAdaptorName(eventPublisherName);
-                endpointAdaptorConfiguration.setEndpointType(eventAdaptorType);
+                OutputAdaptorConfiguration outputAdaptorConfiguration = new OutputAdaptorConfiguration();
+                outputAdaptorConfiguration.setAdaptorName(eventPublisherName);
+                outputAdaptorConfiguration.setEndpointType(eventAdaptorType);
 
                 // add output message property configuration to the map
                 if (outputPropertyConfiguration != null && outputPropertyConfiguration.length != 0) {
-                    InternalOutputEventAdaptorConfiguration internalOutputEventAdaptorConfiguration = new InternalOutputEventAdaptorConfiguration();
+                    EndpointAdaptorPropertyConfiguration endpointAdaptorPropertyConfiguration = new EndpointAdaptorPropertyConfiguration();
 
                     for (PropertyDto eventPublisherProperty : outputPropertyConfiguration) {
                         if (!eventPublisherProperty.getValue().trim().equals("")) {
-                            internalOutputEventAdaptorConfiguration.addEventAdaptorProperty(eventPublisherProperty.getKey().trim(), eventPublisherProperty.getValue().trim());
+                            endpointAdaptorPropertyConfiguration.addEventAdaptorProperty(eventPublisherProperty.getKey().trim(), eventPublisherProperty.getValue().trim());
                         }
                     }
-                    endpointAdaptorConfiguration.setOutputAdaptorConfiguration(internalOutputEventAdaptorConfiguration);
+                    outputAdaptorConfiguration.setEndpointAdaptorPropertyConfiguration(endpointAdaptorPropertyConfiguration);
                 }
 
-                eventPublisherConfiguration.setEndpointAdaptorConfiguration(endpointAdaptorConfiguration);
+                eventPublisherConfiguration.setOutputAdaptorConfiguration(outputAdaptorConfiguration);
 
                 TextOutputMapping textOutputMapping = new TextOutputMapping();
                 textOutputMapping.setCustomMappingEnabled(mappingEnabled);
@@ -552,23 +550,23 @@ public class EventPublisherAdminService extends AbstractAdmin {
 
                 AxisConfiguration axisConfiguration = getAxisConfig();
 
-                EndpointAdaptorConfiguration endpointAdaptorConfiguration = new EndpointAdaptorConfiguration();
-                endpointAdaptorConfiguration.setEndpointAdaptorName(eventPublisherName);
-                endpointAdaptorConfiguration.setEndpointType(eventAdaptorType);
+                OutputAdaptorConfiguration outputAdaptorConfiguration = new OutputAdaptorConfiguration();
+                outputAdaptorConfiguration.setAdaptorName(eventPublisherName);
+                outputAdaptorConfiguration.setEndpointType(eventAdaptorType);
 
                 // add output message property configuration to the map
                 if (outputPropertyConfiguration != null && outputPropertyConfiguration.length != 0) {
-                    InternalOutputEventAdaptorConfiguration internalOutputEventAdaptorConfiguration = new InternalOutputEventAdaptorConfiguration();
+                    EndpointAdaptorPropertyConfiguration endpointAdaptorPropertyConfiguration = new EndpointAdaptorPropertyConfiguration();
 
                     for (PropertyDto eventPublisherProperty : outputPropertyConfiguration) {
                         if (!eventPublisherProperty.getValue().trim().equals("")) {
-                            internalOutputEventAdaptorConfiguration.addEventAdaptorProperty(eventPublisherProperty.getKey().trim(), eventPublisherProperty.getValue().trim());
+                            endpointAdaptorPropertyConfiguration.addEventAdaptorProperty(eventPublisherProperty.getKey().trim(), eventPublisherProperty.getValue().trim());
                         }
                     }
-                    endpointAdaptorConfiguration.setOutputAdaptorConfiguration(internalOutputEventAdaptorConfiguration);
+                    outputAdaptorConfiguration.setEndpointAdaptorPropertyConfiguration(endpointAdaptorPropertyConfiguration);
                 }
 
-                eventPublisherConfiguration.setEndpointAdaptorConfiguration(endpointAdaptorConfiguration);
+                eventPublisherConfiguration.setOutputAdaptorConfiguration(outputAdaptorConfiguration);
 
                 XMLOutputMapping xmlOutputMapping = new XMLOutputMapping();
                 xmlOutputMapping.setCustomMappingEnabled(mappingEnabled);
@@ -619,23 +617,23 @@ public class EventPublisherAdminService extends AbstractAdmin {
 
                 AxisConfiguration axisConfiguration = getAxisConfig();
 
-                EndpointAdaptorConfiguration endpointAdaptorConfiguration = new EndpointAdaptorConfiguration();
-                endpointAdaptorConfiguration.setEndpointAdaptorName(eventPublisherName);
-                endpointAdaptorConfiguration.setEndpointType(eventAdaptorType);
+                OutputAdaptorConfiguration outputAdaptorConfiguration = new OutputAdaptorConfiguration();
+                outputAdaptorConfiguration.setAdaptorName(eventPublisherName);
+                outputAdaptorConfiguration.setEndpointType(eventAdaptorType);
 
                 // add output message property configuration to the map
                 if (outputPropertyConfiguration != null && outputPropertyConfiguration.length != 0) {
-                    InternalOutputEventAdaptorConfiguration internalOutputEventAdaptorConfiguration = new InternalOutputEventAdaptorConfiguration();
+                    EndpointAdaptorPropertyConfiguration endpointAdaptorPropertyConfiguration = new EndpointAdaptorPropertyConfiguration();
 
                     for (PropertyDto eventPublisherProperty : outputPropertyConfiguration) {
                         if (!eventPublisherProperty.getValue().trim().equals("")) {
-                            internalOutputEventAdaptorConfiguration.addEventAdaptorProperty(eventPublisherProperty.getKey().trim(), eventPublisherProperty.getValue().trim());
+                            endpointAdaptorPropertyConfiguration.addEventAdaptorProperty(eventPublisherProperty.getKey().trim(), eventPublisherProperty.getValue().trim());
                         }
                     }
-                    endpointAdaptorConfiguration.setOutputAdaptorConfiguration(internalOutputEventAdaptorConfiguration);
+                    outputAdaptorConfiguration.setEndpointAdaptorPropertyConfiguration(endpointAdaptorPropertyConfiguration);
                 }
 
-                eventPublisherConfiguration.setEndpointAdaptorConfiguration(endpointAdaptorConfiguration);
+                eventPublisherConfiguration.setOutputAdaptorConfiguration(outputAdaptorConfiguration);
 
                 MapOutputMapping mapOutputMapping = new MapOutputMapping();
                 mapOutputMapping.setCustomMappingEnabled(mappingEnabled);
@@ -691,23 +689,23 @@ public class EventPublisherAdminService extends AbstractAdmin {
 
                 AxisConfiguration axisConfiguration = getAxisConfig();
 
-                EndpointAdaptorConfiguration endpointAdaptorConfiguration = new EndpointAdaptorConfiguration();
-                endpointAdaptorConfiguration.setEndpointAdaptorName(eventPublisherName);
-                endpointAdaptorConfiguration.setEndpointType(eventAdaptorType);
+                OutputAdaptorConfiguration outputAdaptorConfiguration = new OutputAdaptorConfiguration();
+                outputAdaptorConfiguration.setAdaptorName(eventPublisherName);
+                outputAdaptorConfiguration.setEndpointType(eventAdaptorType);
 
                 // add output message property configuration to the map
                 if (outputPropertyConfiguration != null && outputPropertyConfiguration.length != 0) {
-                    InternalOutputEventAdaptorConfiguration internalOutputEventAdaptorConfiguration = new InternalOutputEventAdaptorConfiguration();
+                    EndpointAdaptorPropertyConfiguration endpointAdaptorPropertyConfiguration = new EndpointAdaptorPropertyConfiguration();
 
                     for (PropertyDto eventPublisherProperty : outputPropertyConfiguration) {
                         if (!eventPublisherProperty.getValue().trim().equals("")) {
-                            internalOutputEventAdaptorConfiguration.addEventAdaptorProperty(eventPublisherProperty.getKey().trim(), eventPublisherProperty.getValue().trim());
+                            endpointAdaptorPropertyConfiguration.addEventAdaptorProperty(eventPublisherProperty.getKey().trim(), eventPublisherProperty.getValue().trim());
                         }
                     }
-                    endpointAdaptorConfiguration.setOutputAdaptorConfiguration(internalOutputEventAdaptorConfiguration);
+                    outputAdaptorConfiguration.setEndpointAdaptorPropertyConfiguration(endpointAdaptorPropertyConfiguration);
                 }
 
-                eventPublisherConfiguration.setEndpointAdaptorConfiguration(endpointAdaptorConfiguration);
+                eventPublisherConfiguration.setOutputAdaptorConfiguration(outputAdaptorConfiguration);
 
                 JSONOutputMapping jsonOutputMapping = new JSONOutputMapping();
 

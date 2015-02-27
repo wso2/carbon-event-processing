@@ -81,31 +81,33 @@ public interface EventPublisherService {
     /**
      * Method used to get edit the inactive event publisher configuration info
      *
-     * @param eventPublisherConfiguration
+     * @param eventPublisherConfigXml
      * @param fileName
      * @param axisConfiguration
      * @throws org.wso2.carbon.event.publisher.core.exception.EventPublisherConfigurationException
      *
      */
     public void editInactiveEventPublisherConfiguration(
-            String eventPublisherConfiguration,
+            String eventPublisherConfigXml,
             String fileName,
             AxisConfiguration axisConfiguration)
             throws EventPublisherConfigurationException;
 
+
     /**
      * Method used to edit the active event publisher configuration info
      *
-     * @param eventPublisherConfiguration
+     * @param eventPublisherConfigXml
      * @param eventPublisherName
      * @param axisConfiguration
      * @throws org.wso2.carbon.event.publisher.core.exception.EventPublisherConfigurationException
      *
      */
-    public void editActiveEventPublisherConfiguration(String eventPublisherConfiguration,
+    public void editActiveEventPublisherConfiguration(String eventPublisherConfigXml,
                                                      String eventPublisherName,
                                                      AxisConfiguration axisConfiguration)
             throws EventPublisherConfigurationException;
+
 
 
     /**
@@ -135,7 +137,7 @@ public interface EventPublisherService {
             throws EventPublisherConfigurationException;
 
     public List<EventPublisherConfiguration> getAllActiveEventPublisherConfiguration(
-            AxisConfiguration axisConfiguration, String streamId)
+            String streamId, AxisConfiguration axisConfiguration)
             throws EventPublisherConfigurationException;
 
 

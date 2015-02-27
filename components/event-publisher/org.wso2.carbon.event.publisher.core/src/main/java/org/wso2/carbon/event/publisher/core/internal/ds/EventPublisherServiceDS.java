@@ -21,6 +21,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.osgi.service.component.ComponentContext;
 import org.wso2.carbon.event.publisher.core.*;
+import org.wso2.carbon.event.publisher.core.adapter.AbstractOutputEventAdapter;
 import org.wso2.carbon.event.publisher.core.internal.CarbonEventPublisherService;
 import org.wso2.carbon.event.publisher.core.internal.CarbonOutputEventAdaptorService;
 import org.wso2.carbon.event.statistics.EventStatisticsService;
@@ -103,9 +104,9 @@ public class EventPublisherServiceDS {
 
         for (OutputEventAdaptorFactory outputEventAdaptorFactory : outputEventAdaptorFactories) {
             try {
-                AbstractOutputEventAdaptor abstractOutputEventAdaptor = outputEventAdaptorFactory.getEventAdaptor();
-                ((CarbonOutputEventAdaptorService) EventPublisherServiceValueHolder.getOutputEventAdaptorService()).registerEventAdaptor(abstractOutputEventAdaptor);
-                EventPublisherServiceValueHolder.getCarbonEventPublisherService().activateInactiveEventFormatterConfigurationForAdaptor(abstractOutputEventAdaptor.getOutputEventAdaptorDto().getEventAdaptorTypeName());
+                AbstractOutputEventAdapter abstractOutputEventAdapter = outputEventAdaptorFactory.getEventAdaptor();
+                ((CarbonOutputEventAdaptorService) EventPublisherServiceValueHolder.getOutputEventAdaptorService()).registerEventAdaptor(abstractOutputEventAdapter);
+                EventPublisherServiceValueHolder.getCarbonEventPublisherService().activateInactiveEventFormatterConfigurationForAdaptor(abstractOutputEventAdapter.getOutputEventAdapterDto().getEventAdaptorTypeName());
             } catch (Throwable t) {
                 log.error("Unexpected error at initializing output event adaptor instances "
                         + outputEventAdaptorFactory + ": " + t.getMessage(), t);

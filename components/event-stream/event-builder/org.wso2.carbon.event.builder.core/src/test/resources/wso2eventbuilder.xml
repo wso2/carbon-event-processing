@@ -19,22 +19,22 @@
 
 <eventBuilder name="wso2eventbuilder" xmlns="http://wso2.org/carbon/eventbuilder"
               traceEnabled="true" statisticsEnabled="false">
-    <from eventAdaptorType="wso2event" eventAdaptorName="localEventReceiver">
+    <from type="wso2event" eventAdaptorName="localEventReceiver">
         <property name="stream">analytics_Statistics</property>
         <property name="version">1.3.0</property>
     </from>
-    <mapping endpointType="wso2event">
+    <mapping type="wso2event">
         <property>
             <from name="ipAdd" dataType="meta"/>
-            <to name="meta_ipAddress" endpointType="string"/>
+            <to name="meta_ipAddress" type="string"/>
         </property>
         <property>
             <from name="userID" dataType="payload"/>
-            <to name="user" endpointType="string"/>
+            <to name="user" type="string"/>
         </property>
         <property>
             <from name="searchTerms" dataType="payload"/>
-            <to name="keywords" endpointType="string"/>
+            <to name="keywords" type="string"/>
         </property>
     </mapping>
     <to streamName="summarizedStatistics" version="1.0.0"/>

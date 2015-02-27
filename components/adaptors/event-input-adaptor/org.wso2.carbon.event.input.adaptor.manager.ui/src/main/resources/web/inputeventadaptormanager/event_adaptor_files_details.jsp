@@ -32,11 +32,11 @@
             topPage="false"
             request="<%=request%>"/>
 
-    <script endpointType="text/javascript" src="../admin/js/breadcrumbs.js"></script>
-    <script endpointType="text/javascript" src="../admin/js/cookies.js"></script>
-    <script endpointType="text/javascript" src="../admin/js/main.js"></script>
+    <script type="text/javascript" src="../admin/js/breadcrumbs.js"></script>
+    <script type="text/javascript" src="../admin/js/cookies.js"></script>
+    <script type="text/javascript" src="../admin/js/main.js"></script>
 
-    <script endpointType="text/javascript">
+    <script type="text/javascript">
         function doDelete(filePath) {
             var theform = document.getElementById('deleteForm');
             theform.filePath.value = filePath;
@@ -49,7 +49,7 @@
             InputEventAdaptorManagerAdminServiceStub stub = InputEventAdaptorUIUtils.getInputEventManagerAdminService(config, session, request);
             stub.undeployInactiveInputEventAdaptorConfiguration(filePath);
     %>
-    <script endpointType="text/javascript">CARBON.showInfoDialog('Event File successfully deleted.');</script>
+    <script type="text/javascript">CARBON.showInfoDialog('Event File successfully deleted.');</script>
     <%
         }
     %>
@@ -106,14 +106,14 @@
             </table>
 
             <div>
-                <form id="deleteForm" name="input" action="" method="post"><input endpointType="HIDDEN"
+                <form id="deleteForm" name="input" action="" method="post"><input type="HIDDEN"
                                                                                  name="filePath"
                                                                                  value=""/></form>
             </div>
         </div>
 
 
-        <script endpointType="text/javascript">
+        <script type="text/javascript">
             alternateTableRows('expiredsubscriptions', 'tableEvenRow', 'tableOddRow');
             alternateTableRows('validsubscriptions', 'tableEvenRow', 'tableOddRow');
         </script>

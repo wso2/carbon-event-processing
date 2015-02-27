@@ -20,7 +20,7 @@ package org.wso2.carbon.event.publisher.core.internal.ds;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.osgi.service.component.ComponentContext;
-import org.wso2.carbon.event.publisher.core.AbstractOutputEventAdaptor;
+import org.wso2.carbon.event.publisher.core.adapter.AbstractOutputEventAdapter;
 import org.wso2.carbon.event.publisher.core.OutputEventAdaptorFactory;
 import org.wso2.carbon.event.publisher.core.internal.CarbonOutputEventAdaptorService;
 
@@ -59,9 +59,9 @@ public class OutputEventAdaptorServiceTrackerDS {
             OutputEventAdaptorFactory outputEventAdaptorFactory) {
         try {
             if (EventPublisherServiceValueHolder.getOutputEventAdaptorService() != null) {
-                AbstractOutputEventAdaptor abstractOutputEventAdaptor = outputEventAdaptorFactory.getEventAdaptor();
-                ((CarbonOutputEventAdaptorService) EventPublisherServiceValueHolder.getOutputEventAdaptorService()).registerEventAdaptor(abstractOutputEventAdaptor);
-                EventPublisherServiceValueHolder.getCarbonEventPublisherService().activateInactiveEventFormatterConfigurationForAdaptor(abstractOutputEventAdaptor.getOutputEventAdaptorDto().getEventAdaptorTypeName());
+                AbstractOutputEventAdapter abstractOutputEventAdapter = outputEventAdaptorFactory.getEventAdaptor();
+                ((CarbonOutputEventAdaptorService) EventPublisherServiceValueHolder.getOutputEventAdaptorService()).registerEventAdaptor(abstractOutputEventAdapter);
+                EventPublisherServiceValueHolder.getCarbonEventPublisherService().activateInactiveEventFormatterConfigurationForAdaptor(abstractOutputEventAdapter.getOutputEventAdapterDto().getEventAdaptorTypeName());
             } else {
                 outputEventAdaptorFactories.add(outputEventAdaptorFactory);
             }

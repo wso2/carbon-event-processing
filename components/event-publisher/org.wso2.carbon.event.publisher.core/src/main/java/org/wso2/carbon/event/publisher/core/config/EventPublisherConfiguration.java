@@ -25,7 +25,7 @@ public class EventPublisherConfiguration {
 
     private String fromStreamVersion;
 
-    private EndpointAdaptorConfiguration endpointAdaptorConfiguration;
+    private OutputAdaptorConfiguration outputAdaptorConfiguration;
 
     private OutputMapping outputMapping;
 
@@ -57,12 +57,12 @@ public class EventPublisherConfiguration {
         this.fromStreamVersion = fromStreamVersion;
     }
 
-    public EndpointAdaptorConfiguration getEndpointAdaptorConfiguration() {
-        return endpointAdaptorConfiguration;
+    public OutputAdaptorConfiguration getOutputAdaptorConfiguration() {
+        return outputAdaptorConfiguration;
     }
 
-    public void setEndpointAdaptorConfiguration(EndpointAdaptorConfiguration endpointAdaptorConfiguration) {
-        this.endpointAdaptorConfiguration = endpointAdaptorConfiguration;
+    public void setOutputAdaptorConfiguration(OutputAdaptorConfiguration outputAdaptorConfiguration) {
+        this.outputAdaptorConfiguration = outputAdaptorConfiguration;
     }
 
     public OutputMapping getOutputMapping() {

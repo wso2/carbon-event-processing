@@ -25,7 +25,7 @@
 //import org.apache.commons.logging.LogFactory;
 //import org.wso2.carbon.core.util.CryptoException;
 //import org.wso2.carbon.core.util.CryptoUtil;
-//import org.wso2.carbon.event.output.adaptor.manager.core.OutputEventAdaptorDto;
+//import org.wso2.carbon.event.output.adaptor.manager.core.OutputEventAdapterDto;
 //import org.wso2.carbon.event.output.adaptor.manager.core.OutputEventAdaptorService;
 //import org.wso2.carbon.event.output.adaptor.manager.core.Property;
 //import org.wso2.carbon.event.output.adaptor.manager.core.config.InternalOutputEventAdaptorConfiguration;
@@ -174,7 +174,7 @@
 //            throws OutputEventAdaptorManagerConfigurationException {
 //
 //        OutputEventAdaptorService eventAdaptorService = OutputEventAdaptorHolder.getInstance().getOutputEventAdaptorService();
-//        OutputEventAdaptorDto eventAdaptorDto = eventAdaptorService.getEventAdaptorDto(eventAdaptorConfiguration.getType());
+//        OutputEventAdapterDto eventAdaptorDto = eventAdaptorService.getEventAdaptorDto(eventAdaptorConfiguration.getType());
 //
 //        if (eventAdaptorDto == null) {
 //            return false;

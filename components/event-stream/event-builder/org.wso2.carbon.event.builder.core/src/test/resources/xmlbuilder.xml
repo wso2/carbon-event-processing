@@ -18,18 +18,18 @@
 -->
 
 <eventBuilder name="xmlbuilder" xmlns="http://wso2.org/carbon/eventbuilder">
-    <from eventAdaptorType="ws-event-local" eventAdaptorName="localEventAdaptor">
+    <from type="ws-event-local" eventAdaptorName="localEventAdaptor">
         <property name="topic">AllStockQuotes</property>
     </from>
-    <mapping endpointType="xml" parentXpath="//quotedata:AllStockQuotes">
+    <mapping type="xml" parentXpath="//quotedata:AllStockQuotes">
         <xpathDefinition prefix="quotedata" namespace="http://ws.cdyne.com/"/>
         <property>
             <from xpath="//quotedata:StockQuoteEvent/quotedata:LastTradeAmount"/>
-            <to name="price" endpointType="double"/>
+            <to name="price" type="double"/>
         </property>
         <property>
             <from xpath="//quotedata:StockQuoteEvent/quotedata:StockSymbol"/>
-            <to name="symbol" endpointType="string"/>
+            <to name="symbol" type="string"/>
         </property>
     </mapping>
     <to streamName="stockQuotes" version="1.0.0"/>

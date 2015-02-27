@@ -32,21 +32,21 @@
     <url>http://wso2.org</url>
 
     <modules>
-        <module>service-stubs</module>
+        <!--<module>service-stubs</module>-->
         <!--<module>components/adaptors</module>-->
         <module>components/event-publisher</module>
         <!--<module>components/event-processor</module>-->
         <!--<module>components/event-stream/event-builder</module>-->
         <!--<module>components/event-flow</module>-->
         <!--<module>components/event-monitor</module>-->
-        <module>components/application-deployer</module>
-        <module>components/event-receiver</module>
+        <!--<module>components/application-deployer</module>-->
+        <!--<module>components/event-receiver</module>-->
         <!--<module>features/adaptors</module>-->
-        <module>features/event-processor</module>
-        <module>features/event-monitor</module>
-        <module>features/event-stream/event-stream-manager</module>
-        <module>features/event-flow</module>
-        <module>features/application-deployer</module>
+        <!--<module>features/event-processor</module>-->
+        <!--<module>features/event-monitor</module>-->
+        <!--<module>features/event-stream/event-stream-manager</module>-->
+        <!--<module>features/event-flow</module>-->
+        <!--<module>features/application-deployer</module>-->
     </modules>
 
     <dependencyManagement>

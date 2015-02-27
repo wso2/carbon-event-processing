@@ -22,4 +22,4 @@ DO NOT DELETE this file since this file is needed when event builder/event forma
 configurations are created using default values.
 -->
 <outputEventAdaptor name="DefaultLoggerOutputAdaptor"
-  statistics="disable" trace="disable" endpointType="logger" xmlns="http://wso2.org/carbon/eventadaptormanager"/>
+  statistics="disable" trace="disable" type="logger" xmlns="http://wso2.org/carbon/eventadaptormanager"/>

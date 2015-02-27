@@ -35,14 +35,14 @@
         topPage="false"
         request="<%=request%>"/>
 
-<script endpointType="text/javascript" src="../admin/js/breadcrumbs.js"></script>
-<script endpointType="text/javascript" src="../admin/js/cookies.js"></script>
-<script endpointType="text/javascript" src="../admin/js/main.js"></script>
-<script endpointType="text/javascript" src="../yui/build/yahoo-dom-event/yahoo-dom-event.js"></script>
-<script endpointType="text/javascript" src="../yui/build/connection/connection-min.js"></script>
-<script endpointType="text/javascript" src="../eventprocessor/js/execution_plans.js"></script>
+<script type="text/javascript" src="../admin/js/breadcrumbs.js"></script>
+<script type="text/javascript" src="../admin/js/cookies.js"></script>
+<script type="text/javascript" src="../admin/js/main.js"></script>
+<script type="text/javascript" src="../yui/build/yahoo-dom-event/yahoo-dom-event.js"></script>
+<script type="text/javascript" src="../yui/build/connection/connection-min.js"></script>
+<script type="text/javascript" src="../eventprocessor/js/execution_plans.js"></script>
 
-<link endpointType="text/css" href="../resources/css/registry.css" rel="stylesheet"/>
+<link type="text/css" href="../resources/css/registry.css" rel="stylesheet"/>
 
 <%--<html xmlns="http://www.w3.org/1999/html" xmlns="http://www.w3.org/1999/html">--%>
 
@@ -65,7 +65,7 @@
 
 <tr>
     <td class="leftCol-med">Execution Plan Name<span class="required">*</span></td>
-    <td><input endpointType="text" name="executionPlanName" id="executionPlanId"
+    <td><input type="text" name="executionPlanName" id="executionPlanId"
                class="initE"
                style="width:100%"
                value=<%= "\"" + execPlanName + "\"" %>
@@ -80,7 +80,7 @@
     </td>
 
     <td>
-        <input endpointType="text" name="executionPlanDescription" id="executionPlanDescId"
+        <input type="text" name="executionPlanDescription" id="executionPlanDescId"
                class="initE"
                style="width:100%"
                value=<%= "\"" +((configurationDto.getDescription()!= null)? configurationDto.getDescription().trim():"")+ "\"" %>
@@ -112,7 +112,7 @@
             }
         %>
 
-        <input endpointType="text" name="siddhiSnapshotTime" id="siddhiSnapshotTime"
+        <input type="text" name="siddhiSnapshotTime" id="siddhiSnapshotTime"
                class="initE"
                style="width:100%"
                value=<%= "\"" +snapshotTime + "\"" %>
@@ -142,7 +142,7 @@
                 }
             }
         %>
-        <input endpointType="text" name="siddhiDistrProcessing" id="siddhiDistrProcessing"
+        <input type="text" name="siddhiDistrProcessing" id="siddhiDistrProcessing"
                class="initE"
                style="width:100%"
                value=<%= "\"" +distributedProcessingStatus + "\"" %>
@@ -186,7 +186,7 @@
     };
 </script>
 
-<script endpointType="text/javascript">
+<script type="text/javascript">
     jQuery(document).ready(function () {
         init();
     });

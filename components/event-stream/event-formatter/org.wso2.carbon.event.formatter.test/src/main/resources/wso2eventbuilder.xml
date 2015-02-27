@@ -17,22 +17,22 @@
  ~ under the License.
 -->
 <builder:eventBuilder name="wso2eventbuilder" xmlns:builder="http://wso2.org/carbon/eventbuilder">
-    <builder:from eventAdaptorType="wso2eventadaptor" eventAdaptorName="wso2eventadaptor">
+    <builder:from type="wso2eventadaptor" eventAdaptorName="wso2eventadaptor">
         <builder:property name="stream">analytics_Statistics</builder:property>
         <builder:property name="version">1.3.0</builder:property>
     </builder:from>
-    <builder:mapping endpointType="wso2event">
+    <builder:mapping type="wso2event">
         <builder:property>
-            <builder:from name="ipAdd" endpointType="metadata"/>
-            <builder:to name="ipAddress" endpointType="string"/>
+            <builder:from name="ipAdd" type="metadata"/>
+            <builder:to name="ipAddress" type="string"/>
         </builder:property>
         <builder:property>
-            <builder:from name="userID" endpointType="payload"/>
-            <builder:to name="user" endpointType="string"/>
+            <builder:from name="userID" type="payload"/>
+            <builder:to name="user" type="string"/>
         </builder:property>
         <builder:property>
-            <builder:from name="searchTerms" endpointType="payload"/>
-            <builder:to name="keywords" endpointType="string"/>
+            <builder:from name="searchTerms" type="payload"/>
+            <builder:to name="keywords" type="string"/>
         </builder:property>
     </builder:mapping>
     <builder:to streamName="summarizedStatistics" version="1.0.0"/>

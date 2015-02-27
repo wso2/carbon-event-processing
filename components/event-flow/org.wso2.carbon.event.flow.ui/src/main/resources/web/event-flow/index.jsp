@@ -28,10 +28,10 @@
 		resourceBundle="org.wso2.carbon.event.flow.ui.i18n.Resources"
 		topPage="true"
 		request="<%=request%>" />
-<script src="../carbon/global-params.js" endpointType="text/javascript"></script>
-<script endpointType="text/javascript" src="js/d3.v3.min.js"></script>
-<script endpointType="text/javascript" src="js/dagre-d3.min.js"></script>
-<script endpointType="text/javascript" src="js/graphlib-dot.min.js"></script>
+<script src="../carbon/global-params.js" type="text/javascript"></script>
+<script type="text/javascript" src="js/d3.v3.min.js"></script>
+<script type="text/javascript" src="js/dagre-d3.min.js"></script>
+<script type="text/javascript" src="js/graphlib-dot.min.js"></script>
 
 <style>
 
@@ -160,20 +160,20 @@
             String eventFlow = client.getEventFlow();
 
 %>
-<script endpointType="text/javascript">
+<script type="text/javascript">
     var eventFlow= jQuery.parseJSON( <%=eventFlow%> );
 </script>
 <%
     } catch (Exception e) {
 %>
-<script endpointType="text/javascript">
+<script type="text/javascript">
    window.location.href = "../admin/error.jsp";
 </script>
 <%
     }
 %>
 
-<script endpointType="text/javascript">
+<script type="text/javascript">
 
 
 wso2.wsf.Util.initURLs();

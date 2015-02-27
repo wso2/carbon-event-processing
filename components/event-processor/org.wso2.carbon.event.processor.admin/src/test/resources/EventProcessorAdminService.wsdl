@@ -30,30 +30,30 @@
             <xs:element name="undeployInactiveExecutionPlanConfiguration">
                 <xs:complexType>
                     <xs:sequence>
-                        <xs:element minOccurs="0" name="fileName" nillable="true" endpointType="xs:string"></xs:element>
+                        <xs:element minOccurs="0" name="fileName" nillable="true" type="xs:string"></xs:element>
                     </xs:sequence>
                 </xs:complexType>
             </xs:element>
             <xs:element name="undeployActiveExecutionPlanConfiguration">
                 <xs:complexType>
                     <xs:sequence>
-                        <xs:element minOccurs="0" name="name" nillable="true" endpointType="xs:string"></xs:element>
+                        <xs:element minOccurs="0" name="name" nillable="true" type="xs:string"></xs:element>
                     </xs:sequence>
                 </xs:complexType>
             </xs:element>
             <xs:element name="setTracingEnabled">
                 <xs:complexType>
                     <xs:sequence>
-                        <xs:element minOccurs="0" name="executionPlanName" nillable="true" endpointType="xs:string"></xs:element>
-                        <xs:element minOccurs="0" name="isEnabled" endpointType="xs:boolean"></xs:element>
+                        <xs:element minOccurs="0" name="executionPlanName" nillable="true" type="xs:string"></xs:element>
+                        <xs:element minOccurs="0" name="isEnabled" type="xs:boolean"></xs:element>
                     </xs:sequence>
                 </xs:complexType>
             </xs:element>
             <xs:element name="setStatisticsEnabled">
                 <xs:complexType>
                     <xs:sequence>
-                        <xs:element minOccurs="0" name="executionPlanName" nillable="true" endpointType="xs:string"></xs:element>
-                        <xs:element minOccurs="0" name="isEnabled" endpointType="xs:boolean"></xs:element>
+                        <xs:element minOccurs="0" name="executionPlanName" nillable="true" type="xs:string"></xs:element>
+                        <xs:element minOccurs="0" name="isEnabled" type="xs:boolean"></xs:element>
                     </xs:sequence>
                 </xs:complexType>
             </xs:element>
@@ -65,35 +65,35 @@
             <xs:element name="getStreamNamesResponse">
                 <xs:complexType>
                     <xs:sequence>
-                        <xs:element maxOccurs="unbounded" minOccurs="0" name="return" nillable="true" endpointType="xs:string"></xs:element>
+                        <xs:element maxOccurs="unbounded" minOccurs="0" name="return" nillable="true" type="xs:string"></xs:element>
                     </xs:sequence>
                 </xs:complexType>
             </xs:element>
             <xs:element name="getStreamDefinitionAsString">
                 <xs:complexType>
                     <xs:sequence>
-                        <xs:element minOccurs="0" name="streamId" nillable="true" endpointType="xs:string"></xs:element>
+                        <xs:element minOccurs="0" name="streamId" nillable="true" type="xs:string"></xs:element>
                     </xs:sequence>
                 </xs:complexType>
             </xs:element>
             <xs:element name="getStreamDefinitionAsStringResponse">
                 <xs:complexType>
                     <xs:sequence>
-                        <xs:element minOccurs="0" name="return" nillable="true" endpointType="xs:string"></xs:element>
+                        <xs:element minOccurs="0" name="return" nillable="true" type="xs:string"></xs:element>
                     </xs:sequence>
                 </xs:complexType>
             </xs:element>
             <xs:element name="getInactiveExecutionPlanConfigurationContent">
                 <xs:complexType>
                     <xs:sequence>
-                        <xs:element minOccurs="0" name="path" nillable="true" endpointType="xs:string"></xs:element>
+                        <xs:element minOccurs="0" name="path" nillable="true" type="xs:string"></xs:element>
                     </xs:sequence>
                 </xs:complexType>
             </xs:element>
             <xs:element name="getInactiveExecutionPlanConfigurationContentResponse">
                 <xs:complexType>
                     <xs:sequence>
-                        <xs:element minOccurs="0" name="return" nillable="true" endpointType="xs:string"></xs:element>
+                        <xs:element minOccurs="0" name="return" nillable="true" type="xs:string"></xs:element>
                     </xs:sequence>
                 </xs:complexType>
             </xs:element>
@@ -105,7 +105,7 @@
             <xs:element name="getAllInactiveExecutionPlanConigurationsResponse">
                 <xs:complexType>
                     <xs:sequence>
-                        <xs:element maxOccurs="unbounded" minOccurs="0" name="return" nillable="true" endpointType="ax2107:ExecutionPlanConfigurationFileDto"></xs:element>
+                        <xs:element maxOccurs="unbounded" minOccurs="0" name="return" nillable="true" type="ax2107:ExecutionPlanConfigurationFileDto"></xs:element>
                     </xs:sequence>
                 </xs:complexType>
             </xs:element>
@@ -117,58 +117,58 @@
             <xs:element name="getAllActiveExecutionPlanConfigurationsResponse">
                 <xs:complexType>
                     <xs:sequence>
-                        <xs:element maxOccurs="unbounded" minOccurs="0" name="return" nillable="true" endpointType="ax2107:ExecutionPlanConfigurationDto"></xs:element>
+                        <xs:element maxOccurs="unbounded" minOccurs="0" name="return" nillable="true" type="ax2107:ExecutionPlanConfigurationDto"></xs:element>
                     </xs:sequence>
                 </xs:complexType>
             </xs:element>
             <xs:element name="getActiveExecutionPlanConfigurationContent">
                 <xs:complexType>
                     <xs:sequence>
-                        <xs:element minOccurs="0" name="planName" nillable="true" endpointType="xs:string"></xs:element>
+                        <xs:element minOccurs="0" name="planName" nillable="true" type="xs:string"></xs:element>
                     </xs:sequence>
                 </xs:complexType>
             </xs:element>
             <xs:element name="getActiveExecutionPlanConfigurationContentResponse">
                 <xs:complexType>
                     <xs:sequence>
-                        <xs:element minOccurs="0" name="return" nillable="true" endpointType="xs:string"></xs:element>
+                        <xs:element minOccurs="0" name="return" nillable="true" type="xs:string"></xs:element>
                     </xs:sequence>
                 </xs:complexType>
             </xs:element>
             <xs:element name="getActiveExecutionPlanConfiguration">
                 <xs:complexType>
                     <xs:sequence>
-                        <xs:element minOccurs="0" name="name" nillable="true" endpointType="xs:string"></xs:element>
+                        <xs:element minOccurs="0" name="name" nillable="true" type="xs:string"></xs:element>
                     </xs:sequence>
                 </xs:complexType>
             </xs:element>
             <xs:element name="getActiveExecutionPlanConfigurationResponse">
                 <xs:complexType>
                     <xs:sequence>
-                        <xs:element minOccurs="0" name="return" nillable="true" endpointType="ax2107:ExecutionPlanConfigurationDto"></xs:element>
+                        <xs:element minOccurs="0" name="return" nillable="true" type="ax2107:ExecutionPlanConfigurationDto"></xs:element>
                     </xs:sequence>
                 </xs:complexType>
             </xs:element>
             <xs:element name="editInactiveExecutionPlanConfiguration">
                 <xs:complexType>
                     <xs:sequence>
-                        <xs:element minOccurs="0" name="configuration" nillable="true" endpointType="xs:string"></xs:element>
-                        <xs:element minOccurs="0" name="path" nillable="true" endpointType="xs:string"></xs:element>
+                        <xs:element minOccurs="0" name="configuration" nillable="true" type="xs:string"></xs:element>
+                        <xs:element minOccurs="0" name="path" nillable="true" type="xs:string"></xs:element>
                     </xs:sequence>
                 </xs:complexType>
             </xs:element>
             <xs:element name="editActiveExecutionPlanConfiguration">
                 <xs:complexType>
                     <xs:sequence>
-                        <xs:element minOccurs="0" name="configuration" nillable="true" endpointType="xs:string"></xs:element>
-                        <xs:element minOccurs="0" name="name" nillable="true" endpointType="xs:string"></xs:element>
+                        <xs:element minOccurs="0" name="configuration" nillable="true" type="xs:string"></xs:element>
+                        <xs:element minOccurs="0" name="name" nillable="true" type="xs:string"></xs:element>
                     </xs:sequence>
                 </xs:complexType>
             </xs:element>
             <xs:element name="deployExecutionPlanConfiguration">
                 <xs:complexType>
                     <xs:sequence>
-                        <xs:element minOccurs="0" name="configurationDto" nillable="true" endpointType="ax2107:ExecutionPlanConfigurationDto"></xs:element>
+                        <xs:element minOccurs="0" name="configurationDto" nillable="true" type="ax2107:ExecutionPlanConfigurationDto"></xs:element>
                     </xs:sequence>
                 </xs:complexType>
             </xs:element>
@@ -176,34 +176,34 @@
         <xs:schema attributeFormDefault="qualified" elementFormDefault="qualified" targetNamespace="http://admin.processor.event.carbon.wso2.org/xsd">
             <xs:complexType name="ExecutionPlanConfigurationFileDto">
                 <xs:sequence>
-                    <xs:element minOccurs="0" name="deploymentStatusMessage" nillable="true" endpointType="xs:string"></xs:element>
-                    <xs:element minOccurs="0" name="name" nillable="true" endpointType="xs:string"></xs:element>
-                    <xs:element minOccurs="0" name="path" nillable="true" endpointType="xs:string"></xs:element>
-                    <xs:element minOccurs="0" name="status" nillable="true" endpointType="xs:string"></xs:element>
+                    <xs:element minOccurs="0" name="deploymentStatusMessage" nillable="true" type="xs:string"></xs:element>
+                    <xs:element minOccurs="0" name="name" nillable="true" type="xs:string"></xs:element>
+                    <xs:element minOccurs="0" name="path" nillable="true" type="xs:string"></xs:element>
+                    <xs:element minOccurs="0" name="status" nillable="true" type="xs:string"></xs:element>
                 </xs:sequence>
             </xs:complexType>
             <xs:complexType name="ExecutionPlanConfigurationDto">
                 <xs:sequence>
-                    <xs:element minOccurs="0" name="description" nillable="true" endpointType="xs:string"></xs:element>
-                    <xs:element maxOccurs="unbounded" minOccurs="0" name="exportedStreams" nillable="true" endpointType="ax2106:StreamConfigurationDto"></xs:element>
-                    <xs:element maxOccurs="unbounded" minOccurs="0" name="importedStreams" nillable="true" endpointType="ax2106:StreamConfigurationDto"></xs:element>
-                    <xs:element minOccurs="0" name="name" nillable="true" endpointType="xs:string"></xs:element>
-                    <xs:element minOccurs="0" name="queryExpressions" nillable="true" endpointType="xs:string"></xs:element>
-                    <xs:element maxOccurs="unbounded" minOccurs="0" name="siddhiConfigurations" nillable="true" endpointType="ax2106:SiddhiConfigurationDto"></xs:element>
-                    <xs:element minOccurs="0" name="statisticsEnabled" endpointType="xs:boolean"></xs:element>
-                    <xs:element minOccurs="0" name="tracingEnabled" endpointType="xs:boolean"></xs:element>
+                    <xs:element minOccurs="0" name="description" nillable="true" type="xs:string"></xs:element>
+                    <xs:element maxOccurs="unbounded" minOccurs="0" name="exportedStreams" nillable="true" type="ax2106:StreamConfigurationDto"></xs:element>
+                    <xs:element maxOccurs="unbounded" minOccurs="0" name="importedStreams" nillable="true" type="ax2106:StreamConfigurationDto"></xs:element>
+                    <xs:element minOccurs="0" name="name" nillable="true" type="xs:string"></xs:element>
+                    <xs:element minOccurs="0" name="queryExpressions" nillable="true" type="xs:string"></xs:element>
+                    <xs:element maxOccurs="unbounded" minOccurs="0" name="siddhiConfigurations" nillable="true" type="ax2106:SiddhiConfigurationDto"></xs:element>
+                    <xs:element minOccurs="0" name="statisticsEnabled" type="xs:boolean"></xs:element>
+                    <xs:element minOccurs="0" name="tracingEnabled" type="xs:boolean"></xs:element>
                 </xs:sequence>
             </xs:complexType>
             <xs:complexType name="StreamConfigurationDto">
                 <xs:sequence>
-                    <xs:element minOccurs="0" name="siddhiStreamName" nillable="true" endpointType="xs:string"></xs:element>
-                    <xs:element minOccurs="0" name="streamId" nillable="true" endpointType="xs:string"></xs:element>
+                    <xs:element minOccurs="0" name="siddhiStreamName" nillable="true" type="xs:string"></xs:element>
+                    <xs:element minOccurs="0" name="streamId" nillable="true" type="xs:string"></xs:element>
                 </xs:sequence>
             </xs:complexType>
             <xs:complexType name="SiddhiConfigurationDto">
                 <xs:sequence>
-                    <xs:element minOccurs="0" name="key" nillable="true" endpointType="xs:string"></xs:element>
-                    <xs:element minOccurs="0" name="value" nillable="true" endpointType="xs:string"></xs:element>
+                    <xs:element minOccurs="0" name="key" nillable="true" type="xs:string"></xs:element>
+                    <xs:element minOccurs="0" name="value" nillable="true" type="xs:string"></xs:element>
                 </xs:sequence>
             </xs:complexType>
         </xs:schema>
@@ -336,7 +336,7 @@
             <wsdl:output message="ns:getInactiveExecutionPlanConfigurationContentResponse" wsaw:Action="urn:getInactiveExecutionPlanConfigurationContentResponse"></wsdl:output>
         </wsdl:operation>
     </wsdl:portType>
-    <wsdl:binding name="EventProcessorAdminServiceSoap11Binding" endpointType="ns:EventProcessorAdminServicePortType">
+    <wsdl:binding name="EventProcessorAdminServiceSoap11Binding" type="ns:EventProcessorAdminServicePortType">
         <soap:binding transport="http://schemas.xmlsoap.org/soap/http" style="document"></soap:binding>
         <wsdl:operation name="getStreamDefinitionAsString">
             <soap:operation soapAction="urn:getStreamDefinitionAsString" style="document"></soap:operation>
@@ -465,7 +465,7 @@
             </wsdl:output>
         </wsdl:operation>
     </wsdl:binding>
-    <wsdl:binding name="EventProcessorAdminServiceSoap12Binding" endpointType="ns:EventProcessorAdminServicePortType">
+    <wsdl:binding name="EventProcessorAdminServiceSoap12Binding" type="ns:EventProcessorAdminServicePortType">
         <soap12:binding transport="http://schemas.xmlsoap.org/soap/http" style="document"></soap12:binding>
         <wsdl:operation name="getStreamDefinitionAsString">
             <soap12:operation soapAction="urn:getStreamDefinitionAsString" style="document"></soap12:operation>
@@ -594,132 +594,132 @@
             </wsdl:output>
         </wsdl:operation>
     </wsdl:binding>
-    <wsdl:binding name="EventProcessorAdminServiceHttpBinding" endpointType="ns:EventProcessorAdminServicePortType">
+    <wsdl:binding name="EventProcessorAdminServiceHttpBinding" type="ns:EventProcessorAdminServicePortType">
         <http:binding verb="POST"></http:binding>
         <wsdl:operation name="getStreamDefinitionAsString">
             <http:operation location="getStreamDefinitionAsString"></http:operation>
             <wsdl:input>
-                <mime:content endpointType="text/xml" part="parameters"></mime:content>
+                <mime:content type="text/xml" part="parameters"></mime:content>
             </wsdl:input>
             <wsdl:output>
-                <mime:content endpointType="text/xml" part="parameters"></mime:content>
+                <mime:content type="text/xml" part="parameters"></mime:content>
             </wsdl:output>
         </wsdl:operation>
         <wsdl:operation name="deployExecutionPlanConfiguration">
             <http:operation location="deployExecutionPlanConfiguration"></http:operation>
             <wsdl:input>
-                <mime:content endpointType="text/xml" part="parameters"></mime:content>
+                <mime:content type="text/xml" part="parameters"></mime:content>
             </wsdl:input>
             <wsdl:output>
-                <mime:content endpointType="text/xml" part="parameters"></mime:content>
+                <mime:content type="text/xml" part="parameters"></mime:content>
             </wsdl:output>
         </wsdl:operation>
         <wsdl:operation name="editActiveExecutionPlanConfiguration">
             <http:operation location="editActiveExecutionPlanConfiguration"></http:operation>
             <wsdl:input>
-                <mime:content endpointType="text/xml" part="parameters"></mime:content>
+                <mime:content type="text/xml" part="parameters"></mime:content>
             </wsdl:input>
             <wsdl:output>
-                <mime:content endpointType="text/xml" part="parameters"></mime:content>
+                <mime:content type="text/xml" part="parameters"></mime:content>
             </wsdl:output>
         </wsdl:operation>
         <wsdl:operation name="getActiveExecutionPlanConfigurationContent">
             <http:operation location="getActiveExecutionPlanConfigurationContent"></http:operation>
             <wsdl:input>
-                <mime:content endpointType="text/xml" part="parameters"></mime:content>
+                <mime:content type="text/xml" part="parameters"></mime:content>
             </wsdl:input>
             <wsdl:output>
-                <mime:content endpointType="text/xml" part="parameters"></mime:content>
+                <mime:content type="text/xml" part="parameters"></mime:content>
             </wsdl:output>
         </wsdl:operation>
         <wsdl:operation name="editInactiveExecutionPlanConfiguration">
             <http:operation location="editInactiveExecutionPlanConfiguration"></http:operation>
             <wsdl:input>
-                <mime:content endpointType="text/xml" part="parameters"></mime:content>
+                <mime:content type="text/xml" part="parameters"></mime:content>
             </wsdl:input>
             <wsdl:output>
-                <mime:content endpointType="text/xml" part="parameters"></mime:content>
+                <mime:content type="text/xml" part="parameters"></mime:content>
             </wsdl:output>
         </wsdl:operation>
         <wsdl:operation name="setStatisticsEnabled">
             <http:operation location="setStatisticsEnabled"></http:operation>
             <wsdl:input>
-                <mime:content endpointType="text/xml" part="parameters"></mime:content>
+                <mime:content type="text/xml" part="parameters"></mime:content>
             </wsdl:input>
             <wsdl:output>
-                <mime:content endpointType="text/xml" part="parameters"></mime:content>
+                <mime:content type="text/xml" part="parameters"></mime:content>
             </wsdl:output>
         </wsdl:operation>
         <wsdl:operation name="getActiveExecutionPlanConfiguration">
             <http:operation location="getActiveExecutionPlanConfiguration"></http:operation>
             <wsdl:input>
-                <mime:content endpointType="text/xml" part="parameters"></mime:content>
+                <mime:content type="text/xml" part="parameters"></mime:content>
             </wsdl:input>
             <wsdl:output>
-                <mime:content endpointType="text/xml" part="parameters"></mime:content>
+                <mime:content type="text/xml" part="parameters"></mime:content>
             </wsdl:output>
         </wsdl:operation>
         <wsdl:operation name="undeployActiveExecutionPlanConfiguration">
             <http:operation location="undeployActiveExecutionPlanConfiguration"></http:operation>
             <wsdl:input>
-                <mime:content endpointType="text/xml" part="parameters"></mime:content>
+                <mime:content type="text/xml" part="parameters"></mime:content>
             </wsdl:input>
             <wsdl:output>
-                <mime:content endpointType="text/xml" part="parameters"></mime:content>
+                <mime:content type="text/xml" part="parameters"></mime:content>
             </wsdl:output>
         </wsdl:operation>
         <wsdl:operation name="getAllActiveExecutionPlanConfigurations">
             <http:operation location="getAllActiveExecutionPlanConfigurations"></http:operation>
             <wsdl:input>
-                <mime:content endpointType="text/xml" part="parameters"></mime:content>
+                <mime:content type="text/xml" part="parameters"></mime:content>
             </wsdl:input>
             <wsdl:output>
-                <mime:content endpointType="text/xml" part="parameters"></mime:content>
+                <mime:content type="text/xml" part="parameters"></mime:content>
             </wsdl:output>
         </wsdl:operation>
         <wsdl:operation name="getAllInactiveExecutionPlanConigurations">
             <http:operation location="getAllInactiveExecutionPlanConigurations"></http:operation>
             <wsdl:input>
-                <mime:content endpointType="text/xml" part="parameters"></mime:content>
+                <mime:content type="text/xml" part="parameters"></mime:content>
             </wsdl:input>
             <wsdl:output>
-                <mime:content endpointType="text/xml" part="parameters"></mime:content>
+                <mime:content type="text/xml" part="parameters"></mime:content>
             </wsdl:output>
         </wsdl:operation>
         <wsdl:operation name="undeployInactiveExecutionPlanConfiguration">
             <http:operation location="undeployInactiveExecutionPlanConfiguration"></http:operation>
             <wsdl:input>
-                <mime:content endpointType="text/xml" part="parameters"></mime:content>
+                <mime:content type="text/xml" part="parameters"></mime:content>
             </wsdl:input>
             <wsdl:output>
-                <mime:content endpointType="text/xml" part="parameters"></mime:content>
+                <mime:content type="text/xml" part="parameters"></mime:content>
             </wsdl:output>
         </wsdl:operation>
         <wsdl:operation name="getStreamNames">
             <http:operation location="getStreamNames"></http:operation>
             <wsdl:input>
-                <mime:content endpointType="text/xml" part="parameters"></mime:content>
+                <mime:content type="text/xml" part="parameters"></mime:content>
             </wsdl:input>
             <wsdl:output>
-                <mime:content endpointType="text/xml" part="parameters"></mime:content>
+                <mime:content type="text/xml" part="parameters"></mime:content>
             </wsdl:output>
         </wsdl:operation>
         <wsdl:operation name="setTracingEnabled">
             <http:operation location="setTracingEnabled"></http:operation>
             <wsdl:input>
-                <mime:content endpointType="text/xml" part="parameters"></mime:content>
+                <mime:content type="text/xml" part="parameters"></mime:content>
             </wsdl:input>
             <wsdl:output>
-                <mime:content endpointType="text/xml" part="parameters"></mime:content>
+                <mime:content type="text/xml" part="parameters"></mime:content>
             </wsdl:output>
         </wsdl:operation>
         <wsdl:operation name="getInactiveExecutionPlanConfigurationContent">
             <http:operation location="getInactiveExecutionPlanConfigurationContent"></http:operation>
             <wsdl:input>
-                <mime:content endpointType="text/xml" part="parameters"></mime:content>
+                <mime:content type="text/xml" part="parameters"></mime:content>
             </wsdl:input>
             <wsdl:output>
-                <mime:content endpointType="text/xml" part="parameters"></mime:content>
+                <mime:content type="text/xml" part="parameters"></mime:content>
             </wsdl:output>
         </wsdl:operation>
     </wsdl:binding>

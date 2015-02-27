@@ -32,23 +32,23 @@
         topPage="false"
         request="<%=request%>"/>
 
-<script endpointType="text/javascript" src="../admin/js/breadcrumbs.js"></script>
-<script endpointType="text/javascript" src="../admin/js/cookies.js"></script>
-<script endpointType="text/javascript" src="../admin/js/main.js"></script>
+<script type="text/javascript" src="../admin/js/breadcrumbs.js"></script>
+<script type="text/javascript" src="../admin/js/cookies.js"></script>
+<script type="text/javascript" src="../admin/js/main.js"></script>
 
-<script endpointType="text/javascript" src="global-params.js"></script>
+<script type="text/javascript" src="global-params.js"></script>
 
-<script src="../editarea/edit_area_full.js" endpointType="text/javascript"></script>
+<script src="../editarea/edit_area_full.js" type="text/javascript"></script>
 
-<link endpointType="text/css" href="../dialog/js/jqueryui/tabs/ui.all.css" rel="stylesheet"/>
-<script endpointType="text/javascript" src="../dialog/js/jqueryui/tabs/jquery-1.2.6.min.js"></script>
-<script endpointType="text/javascript"
+<link type="text/css" href="../dialog/js/jqueryui/tabs/ui.all.css" rel="stylesheet"/>
+<script type="text/javascript" src="../dialog/js/jqueryui/tabs/jquery-1.2.6.min.js"></script>
+<script type="text/javascript"
         src="../dialog/js/jqueryui/tabs/jquery-ui-1.6.custom.min.js"></script>
-<script endpointType="text/javascript" src="../dialog/js/jqueryui/tabs/jquery.cookie.js"></script>
-<script endpointType="text/javascript" src="../ajax/js/prototype.js"></script>
+<script type="text/javascript" src="../dialog/js/jqueryui/tabs/jquery.cookie.js"></script>
+<script type="text/javascript" src="../ajax/js/prototype.js"></script>
 
 <%--Yahoo includes for dom event handling--%>
-<script src="../yui/build/yahoo-dom-event/yahoo-dom-event.js" endpointType="text/javascript"></script>
+<script src="../yui/build/yahoo-dom-event/yahoo-dom-event.js" type="text/javascript"></script>
 
 <%--end of newly added--%>
 
@@ -60,7 +60,7 @@
 
     if ("updated".equals(status)) {
 %>
-<script endpointType="text/javascript">
+<script type="text/javascript">
     jQuery(document).ready(function () {
         CARBON.showInfoDialog('<%=bundle.getString("activated.configuration")%>');
     });
@@ -92,7 +92,7 @@
 %>
 
 <% if (loadEditArea) { %>
-<script endpointType="text/javascript">
+<script type="text/javascript">
     editAreaLoader.init({
         id: "rawConfig"        // text area id
         , syntax: "xml"            // syntax to be uses for highlighting
@@ -101,7 +101,7 @@
 </script>
 <% } %>
 
-<script endpointType="text/javascript">
+<script type="text/javascript">
     function updateConfiguration(form, executionPlanName) {
         var newExecutionPlanConfig = "";
 

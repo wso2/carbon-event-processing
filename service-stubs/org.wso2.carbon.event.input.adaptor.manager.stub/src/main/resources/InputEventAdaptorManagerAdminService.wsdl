@@ -159,7 +159,7 @@
                 <xs:complexType>
                     <xs:sequence>
                         <xs:element minOccurs="0" name="eventAdaptorName" nillable="true" type="xs:string"></xs:element>
-                        <xs:element minOccurs="0" name="eventAdaptorType" nillable="true" type="xs:string"></xs:element>
+                        <xs:element minOccurs="0" name="type" nillable="true" type="xs:string"></xs:element>
                         <xs:element maxOccurs="unbounded" minOccurs="0" name="inputAdaptorPropertyDtoInputs" nillable="true" type="ax296:InputEventAdaptorPropertyDto"></xs:element>
                     </xs:sequence>
                 </xs:complexType>
@@ -195,7 +195,7 @@
                     <xs:element minOccurs="0" name="enableStats" type="xs:boolean"></xs:element>
                     <xs:element minOccurs="0" name="enableTracing" type="xs:boolean"></xs:element>
                     <xs:element minOccurs="0" name="eventAdaptorName" nillable="true" type="xs:string"></xs:element>
-                    <xs:element minOccurs="0" name="eventAdaptorType" nillable="true" type="xs:string"></xs:element>
+                    <xs:element minOccurs="0" name="type" nillable="true" type="xs:string"></xs:element>
                 </xs:sequence>
             </xs:complexType>
         </xs:schema>

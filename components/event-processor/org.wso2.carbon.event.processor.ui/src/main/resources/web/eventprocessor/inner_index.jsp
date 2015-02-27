@@ -32,10 +32,10 @@
         topPage="false"
         request="<%=request%>"/>
 
-<script endpointType="text/javascript" src="../admin/js/breadcrumbs.js"></script>
-<script endpointType="text/javascript" src="../admin/js/cookies.js"></script>
-<script endpointType="text/javascript" src="../admin/js/main.js"></script>
-<script endpointType="text/javascript" src="../eventprocessor/js/execution_plans.js"></script>
+<script type="text/javascript" src="../admin/js/breadcrumbs.js"></script>
+<script type="text/javascript" src="../admin/js/cookies.js"></script>
+<script type="text/javascript" src="../admin/js/main.js"></script>
+<script type="text/javascript" src="../eventprocessor/js/execution_plans.js"></script>
 
 
 <%
@@ -58,7 +58,7 @@
     if (executionPlanName != null) {
         stub.undeployActiveExecutionPlanConfiguration(executionPlanName);
 %>
-<script endpointType="text/javascript">CARBON.showInfoDialog('Execution Plan successfully deleted.');</script>
+<script type="text/javascript">CARBON.showInfoDialog('Execution Plan successfully deleted.');</script>
 <%
     }
 
@@ -232,14 +232,14 @@
 <div>
     <br/>
 
-    <form id="deleteForm" name="input" action="" method="post"><input endpointType="HIDDEN"
+    <form id="deleteForm" name="input" action="" method="post"><input type="HIDDEN"
                                                                      name="executionPlan"
                                                                      value=""/></form>
 </div>
 </div>
 </div>
 
-<script endpointType="text/javascript">
+<script type="text/javascript">
     alternateTableRows('expiredsubscriptions', 'tableEvenRow', 'tableOddRow');
     alternateTableRows('validsubscriptions', 'tableEvenRow', 'tableOddRow');
 </script>

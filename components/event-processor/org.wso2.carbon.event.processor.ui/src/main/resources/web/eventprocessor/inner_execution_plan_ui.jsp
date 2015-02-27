@@ -22,10 +22,10 @@
 
 <fmt:bundle basename="org.wso2.carbon.event.processor.ui.i18n.Resources">
 
-<script endpointType="text/javascript" src="../eventprocessor/js/execution_plans.js"></script>
-<script endpointType="text/javascript"
+<script type="text/javascript" src="../eventprocessor/js/execution_plans.js"></script>
+<script type="text/javascript"
         src="../eventprocessor/js/create_execution_plan_helper.js"></script>
-<script endpointType="text/javascript" src="../ajax/js/prototype.js"></script>
+<script type="text/javascript" src="../ajax/js/prototype.js"></script>
 
 <%--code mirror code--%>
 
@@ -62,7 +62,7 @@
     };
 </script>
 
-<script endpointType="text/javascript">
+<script type="text/javascript">
     jQuery(document).ready(function () {
         init();
     });
@@ -81,7 +81,7 @@
 <tr>
 
     <td class="leftCol-med">Execution Plan Name<span class="required">*</span></td>
-    <td><input endpointType="text" name="executionPlanName" id="executionPlanId"
+    <td><input type="text" name="executionPlanName" id="executionPlanId"
                class="initE"
                style="width:75%"/>
 
@@ -117,7 +117,7 @@
     </td>
 
     <td>
-        <input endpointType="text" name="siddhiSnapshotTime" id="siddhiSnapshotTime"
+        <input type="text" name="siddhiSnapshotTime" id="siddhiSnapshotTime"
                class="initE" value="0"
                style="width:75%"/>
 
@@ -176,10 +176,10 @@
             <td class="col-small"><fmt:message key="property.as"/> :
             </td>
             <td>
-                <input endpointType="text" id="importedStreamAs"/>
+                <input type="text" id="importedStreamAs"/>
             </td>
 
-            <td><input endpointType="button" class="button"
+            <td><input type="button" class="button"
                        value="<fmt:message key="import"/>"
                        onclick="addImportedStreamDefinition()"/>
             </td>
@@ -218,7 +218,7 @@
 
             <tr>
                 <td>
-                    <input endpointType="button" class="button"
+                    <input type="button" class="button"
                            value="<fmt:message key="validate.queries"/>"
                            onclick="validateQueries()"/>
                 </td>
@@ -240,7 +240,7 @@
                 <td class="col-small"><fmt:message key="property.value.of"/> :
                 </td>
                 <td>
-                    <input endpointType="text" id="exportedStreamValueOf"/>
+                    <input type="text" id="exportedStreamValueOf"/>
                 </td>
                 <td class="col-small"><fmt:message key="property.stream.id"/> :
                 </td>
@@ -262,7 +262,7 @@
 
                 <td>
 
-                <td><input endpointType="button" class="button"
+                <td><input type="button" class="button"
                            value="<fmt:message key="add"/>"
                            onclick="addExportedStreamDefinition()"/>
                 </td>

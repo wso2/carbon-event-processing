@@ -34,7 +34,7 @@
             eventBuilderConfigurationInfoDtoArray = stub.getAllActiveEventBuilderConfigurations();
         } catch (Exception e) {
 %>
-<script endpointType="text/javascript">
+<script type="text/javascript">
     location.href = 'index.jsp?ordinal=1';</script>
 <%
             return;

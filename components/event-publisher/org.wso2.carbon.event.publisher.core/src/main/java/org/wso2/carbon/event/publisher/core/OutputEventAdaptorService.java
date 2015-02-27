@@ -18,7 +18,8 @@
 package org.wso2.carbon.event.publisher.core;
 
 
-import org.wso2.carbon.event.publisher.core.config.EndpointAdaptorConfiguration;
+import org.wso2.carbon.event.publisher.core.adapter.OutputEventAdapterDto;
+import org.wso2.carbon.event.publisher.core.config.OutputAdaptorConfiguration;
 
 import java.util.List;
 
@@ -36,7 +37,7 @@ public interface OutputEventAdaptorService {
      *
      * @return list of available types
      */
-    List<OutputEventAdaptorDto> getEventAdaptors();
+    List<OutputEventAdapterDto> getEventAdaptors();
 
     /**
      * publishes the message using the given event adaptor to the given topic.
@@ -49,15 +50,15 @@ public interface OutputEventAdaptorService {
                  Object object, int tenantId);
 
 
-    void publish(EndpointAdaptorConfiguration endpointAdaptorConfiguration,
+    void publish(OutputAdaptorConfiguration outputAdaptorConfiguration,
                  Object object, int tenantId);
 
     /**
      * publish testConnection message using the given event adaptor.
      *
-     * @param endpointAdaptorConfiguration - Configuration Details of the event adaptor
+     * @param outputAdaptorConfiguration - Configuration Details of the event adaptor
      */
-    void testConnection(EndpointAdaptorConfiguration endpointAdaptorConfiguration);
+    void testConnection(OutputAdaptorConfiguration outputAdaptorConfiguration);
 
 
     /**
@@ -66,11 +67,11 @@ public interface OutputEventAdaptorService {
      * @param eventAdaptorType
      * @return
      */
-    OutputEventAdaptorDto getEventAdaptorDto(String eventAdaptorType);
+    OutputEventAdapterDto getEventAdaptorDto(String eventAdaptorType);
 
 
     void removeConnectionInfo(
-            EndpointAdaptorConfiguration endpointAdaptorConfiguration, int tenantId);
+            OutputAdaptorConfiguration outputAdaptorConfiguration, int tenantId);
 
 
 }

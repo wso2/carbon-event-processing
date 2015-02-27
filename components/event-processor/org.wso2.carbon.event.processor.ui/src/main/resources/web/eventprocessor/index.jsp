@@ -27,10 +27,10 @@
             topPage="false"
             request="<%=request%>"/>
 
-    <script endpointType="text/javascript" src="../admin/js/breadcrumbs.js"></script>
-    <script endpointType="text/javascript" src="../admin/js/cookies.js"></script>
-    <script endpointType="text/javascript" src="../admin/js/main.js"></script>
-    <script endpointType="text/javascript" src="../eventprocessor/js/execution_plans.js"></script>
+    <script type="text/javascript" src="../admin/js/breadcrumbs.js"></script>
+    <script type="text/javascript" src="../admin/js/cookies.js"></script>
+    <script type="text/javascript" src="../admin/js/main.js"></script>
+    <script type="text/javascript" src="../eventprocessor/js/execution_plans.js"></script>
 
 
     <div id="middle">

@@ -18,11 +18,11 @@
 package org.wso2.carbon.event.publisher.core.internal.util.helper;
 
 import org.apache.axiom.om.OMElement;
-import org.wso2.carbon.event.publisher.core.OutputEventAdaptorDto;
+import org.wso2.carbon.event.publisher.core.adapter.OutputEventAdapterDto;
 import org.wso2.carbon.event.publisher.core.OutputEventAdaptorService;
 import org.wso2.carbon.event.publisher.core.Property;
 import org.wso2.carbon.event.publisher.core.config.EventPublisherConstants;
-import org.wso2.carbon.event.publisher.core.config.InternalOutputEventAdaptorConfiguration;
+import org.wso2.carbon.event.publisher.core.config.EndpointAdaptorPropertyConfiguration;
 import org.wso2.carbon.event.publisher.core.exception.EventPublisherConfigurationException;
 import org.wso2.carbon.event.publisher.core.exception.EventPublisherValidationException;
 import org.wso2.carbon.event.publisher.core.internal.ds.EventPublisherServiceValueHolder;
@@ -129,13 +129,13 @@ public class EventPublisherConfigurationHelper {
         );
 
         OutputEventAdaptorService eventAdaptorService = EventPublisherServiceValueHolder.getOutputEventAdaptorService();
-        OutputEventAdaptorDto outputEventAdaptorDto = eventAdaptorService.getEventAdaptorDto(eventAdaptorType);
+        OutputEventAdapterDto outputEventAdapterDto = eventAdaptorService.getEventAdaptorDto(eventAdaptorType);
 
-        if (outputEventAdaptorDto == null) {
+        if (outputEventAdapterDto == null) {
             throw new EventPublisherValidationException("Event Adaptor with type: " + eventAdaptorType + " does not exist", eventAdaptorType);
         }
 
-        List<Property> adaptorPropertyList = outputEventAdaptorDto.getAdaptorPropertyList();
+        List<Property> adaptorPropertyList = outputEventAdapterDto.getAdaptorPropertyList();
         if (adaptorPropertyList != null) {
 
             for (Property property : adaptorPropertyList) {
@@ -159,18 +159,18 @@ public class EventPublisherConfigurationHelper {
     }
 
 
-    public static InternalOutputEventAdaptorConfiguration getOutputEventAdaptorConfiguration(
+    public static EndpointAdaptorPropertyConfiguration getOutputEventAdaptorConfiguration(
             String eventAdaptorTypeName) {
-        OutputEventAdaptorDto outputEventAdaptorDto = EventPublisherServiceValueHolder.getOutputEventAdaptorService().getEventAdaptorDto(eventAdaptorTypeName);
-        InternalOutputEventAdaptorConfiguration internalOutputEventAdaptorConfiguration = null;
-        if (outputEventAdaptorDto != null && outputEventAdaptorDto.getAdaptorPropertyList() != null) {
-            internalOutputEventAdaptorConfiguration = new InternalOutputEventAdaptorConfiguration();
-            for (Property property : outputEventAdaptorDto.getAdaptorPropertyList()) {
-                internalOutputEventAdaptorConfiguration.addEventAdaptorProperty(property.getPropertyName(), property.getDefaultValue());
+        OutputEventAdapterDto outputEventAdapterDto = EventPublisherServiceValueHolder.getOutputEventAdaptorService().getEventAdaptorDto(eventAdaptorTypeName);
+        EndpointAdaptorPropertyConfiguration endpointAdaptorPropertyConfiguration = null;
+        if (outputEventAdapterDto != null && outputEventAdapterDto.getAdaptorPropertyList() != null) {
+            endpointAdaptorPropertyConfiguration = new EndpointAdaptorPropertyConfiguration();
+            for (Property property : outputEventAdapterDto.getAdaptorPropertyList()) {
+                endpointAdaptorPropertyConfiguration.addEventAdaptorProperty(property.getPropertyName(), property.getDefaultValue());
             }
         }
 
-        return internalOutputEventAdaptorConfiguration;
+        return endpointAdaptorPropertyConfiguration;
     }
 
     public static String getOutputMappingType(OMElement eventPublisherOMElement) {

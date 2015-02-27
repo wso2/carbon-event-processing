@@ -30,11 +30,11 @@
             topPage="false"
             request="<%=request%>"/>
 
-    <script endpointType="text/javascript" src="../admin/js/breadcrumbs.js"></script>
-    <script endpointType="text/javascript" src="../admin/js/cookies.js"></script>
-    <script endpointType="text/javascript" src="../admin/js/main.js"></script>
+    <script type="text/javascript" src="../admin/js/breadcrumbs.js"></script>
+    <script type="text/javascript" src="../admin/js/cookies.js"></script>
+    <script type="text/javascript" src="../admin/js/main.js"></script>
 
-    <script endpointType="text/javascript">
+    <script type="text/javascript">
         function doDelete(ebFilename) {
             var theform = document.getElementById('deleteForm');
             theform.filename.value = ebFilename;
@@ -48,7 +48,7 @@
             EventBuilderAdminServiceStub stub = EventBuilderUIUtils.getEventBuilderAdminService(config, session, request);
             stub.undeployInactiveEventBuilderConfiguration(filename);
     %>
-    <script endpointType="text/javascript">CARBON.showInfoDialog('Event Builder file successfully deleted.');</script>
+    <script type="text/javascript">CARBON.showInfoDialog('Event Builder file successfully deleted.');</script>
     <%
         }
     %>
@@ -101,14 +101,14 @@
                 </tbody>
             </table>
             <div>
-                <form id="deleteForm" name="input" action="" method="post"><input endpointType="HIDDEN"
+                <form id="deleteForm" name="input" action="" method="post"><input type="HIDDEN"
                                                                                  name="filename"
                                                                                  value=""/></form>
             </div>
         </div>
 
 
-        <script endpointType="text/javascript">
+        <script type="text/javascript">
             alternateTableRows('expiredsubscriptions', 'tableEvenRow', 'tableOddRow');
             alternateTableRows('validsubscriptions', 'tableEvenRow', 'tableOddRow');
         </script>

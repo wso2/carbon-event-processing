@@ -106,10 +106,10 @@
                             <adviceFile>
                                 <properties>
                                     <propertyDef>
-                                        org.wso2.carbon.p2.category.endpointType:server
+                                        org.wso2.carbon.p2.category.type:server
                                     </propertyDef>
                                     <propertyDef>
-                                        org.eclipse.equinox.p2.endpointType.group:false
+                                        org.eclipse.equinox.p2.type.group:false
                                     </propertyDef>
                                 </properties>
                             </adviceFile>

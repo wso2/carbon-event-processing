@@ -29,7 +29,7 @@
 <fmt:bundle basename="org.wso2.carbon.event.input.adaptor.manager.ui.i18n.Resources">
 
 
-    <script endpointType="text/javascript"
+    <script type="text/javascript"
             src="../inputeventadaptormanager/js/create_event_adaptor_helper.js"></script>
 
     <table id="eventInputTable" class="normal-nopadding"
@@ -40,7 +40,7 @@
             <td class="leftCol-med"><fmt:message key="event.adaptor.name"/><span
                     class="required">*</span>
             </td>
-            <td><input endpointType="text" name="eventName" id="eventNameId"
+            <td><input type="text" name="eventName" id="eventNameId"
                        class="initE"
                        onclick="clearTextIn(this)" onblur="fillTextIn(this)"
                        value=""
@@ -53,7 +53,7 @@
             </td>
         </tr>
         <tr>
-            <td><fmt:message key="event.adaptor.endpointType"/><span class="required">*</span></td>
+            <td><fmt:message key="event.adaptor.type"/><span class="required">*</span></td>
             <td><select name="eventTypeFilter"
                         onchange="showEventProperties('<fmt:message key="input.event.all.properties"/>')"
                         id="eventTypeFilter">
@@ -68,7 +68,7 @@
                         eventAdaptorPropertiesDto = stub.getInputEventAdaptorProperties(firstEventName);
                         for (String endpointType : eventNames) {
                 %>
-                <option><%=endpointType%>
+                <option><%=type%>
                 </option>
                 <%
                         }
@@ -77,7 +77,7 @@
             </select>
 
                 <div class="sectionHelp">
-                    <fmt:message key="event.adaptor.endpointType.help"/>
+                    <fmt:message key="event.adaptor.type.help"/>
                 </div>
             </td>
 
@@ -125,9 +125,9 @@
                 %>
             </td>
             <%
-                String endpointType = "text";
+                String type = "text";
                 if (inputEventProperties[index].getSecured()) {
-                    endpointType = "password";
+                    type = "password";
                 }
             %>
 
@@ -156,7 +156,7 @@
                     </select>
 
                     <% } else { %>
-                    <input endpointType="<%=endpointType%>"
+                    <input type="<%=type%>"
                            name="<%=inputEventProperties[index].getKey()%>"
                            id="<%=propertyId%><%=index%>" class="initE"
                            style="width:75%"

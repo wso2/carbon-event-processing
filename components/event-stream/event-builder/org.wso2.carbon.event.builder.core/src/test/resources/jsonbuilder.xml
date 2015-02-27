@@ -19,17 +19,17 @@
 
 <eventBuilder name="jsonbuilder" statistics="disable" trace="enable"
               xmlns="http://wso2.org/carbon/eventbuilder">
-    <from eventAdaptorName="jmsActiveMqAdaptor" eventAdaptorType="jms">
+    <from eventAdaptorName="jmsActiveMqAdaptor" type="jms">
         <property name="event.jms.Destination">AllStockQuotes</property>
     </from>
-    <mapping endpointType="json">
+    <mapping type="json">
         <property>
             <from jsonPath="$.StockQuoteEvent.LastTradeAmount"/>
-            <to name="price" endpointType="double"/>
+            <to name="price" type="double"/>
         </property>
         <property>
             <from jsonPath="$.StockQuoteEvent.StockSymbol"/>
-            <to name="symbol" endpointType="string"/>
+            <to name="symbol" type="string"/>
         </property>
     </mapping>
     <to streamName="stockQuotes" version="1.2.0"/>

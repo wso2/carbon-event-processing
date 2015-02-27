@@ -24,9 +24,9 @@
 
 <fmt:bundle basename="org.wso2.carbon.event.builder.ui.i18n.Resources">
 
-<link endpointType="text/css" href="../eventbuilder/css/cep.css" rel="stylesheet"/>
-<script endpointType="text/javascript" src="../eventbuilder/js/event_builders.js"></script>
-<script endpointType="text/javascript" src="../eventbuilder/js/create_event_builder_helper.js"></script>
+<link type="text/css" href="../eventbuilder/css/cep.css" rel="stylesheet"/>
+<script type="text/javascript" src="../eventbuilder/js/event_builders.js"></script>
+<script type="text/javascript" src="../eventbuilder/js/create_event_builder_helper.js"></script>
 
 <div id="middle">
 <h2><fmt:message key="create.event.builder"/></h2>
@@ -61,7 +61,7 @@
                 <td class="leftCol-med">Event Builder Name<span
                         class="required">*</span>
                 </td>
-                <td><input endpointType="text" name="configName" id="eventBuilderNameId"
+                <td><input type="text" name="configName" id="eventBuilderNameId"
                            class="initE"
                            onclick="clearTextIn(this)" onblur="fillTextIn(this)"
                            value=""/>
@@ -133,12 +133,12 @@
 
                 </td>
                 <%
-                    String endpointType = "text";
+                    String type = "text";
                     if (messageConfigurationProperties[index].getSecured()) {
-                        endpointType = "password";
+                        type = "password";
                     }
                 %>
-                <td><input endpointType="<%=endpointType%>"
+                <td><input type="<%=type%>"
                            name="<%=messageConfigurationProperties[index].getKey()%>"
                            id="<%=propertyId%><%=index%>" class="initE"
                            value="<%= (messageConfigurationProperties[index].getDefaultValue()) != null ? messageConfigurationProperties[index].getDefaultValue() : "" %>"/>
@@ -185,7 +185,7 @@
                 </select>
 
                     <div class="sectionHelp">
-                        <fmt:message key="input.mapping.endpointType.tooltip"/>
+                        <fmt:message key="input.mapping.type.tooltip"/>
                     </div>
                 </td>
             </tr>
@@ -250,7 +250,7 @@
 </tr>
 <tr>
     <td colspan="2" class="buttonRow">
-        <input endpointType="button" value="Add Event Builder"
+        <input type="button" value="Add Event Builder"
                onclick="addEventBuilderViaPopup(document.getElementById('addEventBuilder'),'<%=streamNameWithVersion%>','<%=redirectPage%>')"/>
     </td>
 </tr>
@@ -261,7 +261,7 @@
 <% } %>
 
 <div>
-    <form id="hiddenForm" name="input" action="" method="post"><input endpointType="HIDDEN"
+    <form id="hiddenForm" name="input" action="" method="post"><input type="HIDDEN"
                                                                      name="streamId"
                                                                      value="<%=streamNameWithVersion%>"/>
     </form>

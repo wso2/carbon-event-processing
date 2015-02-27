@@ -35,19 +35,19 @@
 		topPage="false" request="<%=request%>" />
 
 
-	<link endpointType="text/css" href="css/eventStream.css" rel="stylesheet" />
-	<script endpointType="text/javascript" src="../admin/js/breadcrumbs.js"></script>
-	<script endpointType="text/javascript" src="../admin/js/cookies.js"></script>
-	<script endpointType="text/javascript" src="../admin/js/main.js"></script>
-	<script endpointType="text/javascript"
+	<link type="text/css" href="css/eventStream.css" rel="stylesheet" />
+	<script type="text/javascript" src="../admin/js/breadcrumbs.js"></script>
+	<script type="text/javascript" src="../admin/js/cookies.js"></script>
+	<script type="text/javascript" src="../admin/js/main.js"></script>
+	<script type="text/javascript"
 		src="../yui/build/yahoo-dom-event/yahoo-dom-event.js"></script>
-	<script endpointType="text/javascript"
+	<script type="text/javascript"
 		src="../yui/build/connection/connection-min.js"></script>
-	<script endpointType="text/javascript" src="../eventstream/js/event_stream.js"></script>
-	<script endpointType="text/javascript"
+	<script type="text/javascript" src="../eventstream/js/event_stream.js"></script>
+	<script type="text/javascript"
 		src="../eventstream/js/create_eventStream_helper.js"></script>
-	<script endpointType="text/javascript" src="../ajax/js/prototype.js"></script>
-	<script endpointType="text/javascript"
+	<script type="text/javascript" src="../ajax/js/prototype.js"></script>
+	<script type="text/javascript"
 		src="../eventstream/js/vkbeautify.0.99.00.beta.js"></script>
 
 	<%
@@ -58,7 +58,7 @@
 	    				.getStreamDefinitionDto(eventStreamWithVersion);
 	%>
 
-	<script endpointType="text/javascript">
+	<script type="text/javascript">
 		jQuery(document).ready(function() {
 			formatSampleEvent();
 		});
@@ -81,7 +81,7 @@
 			}
 		}
 	</script>
-	<script endpointType="text/javascript">
+	<script type="text/javascript">
 		jQuery(document).ready(function() {
 			changeView('graphics');
 		});
@@ -151,7 +151,7 @@
 																		<fmt:message key="event.stream.name" />
 																	</h6>
 																</td>
-																<td style="padding-top: 10px"><input endpointType="text"
+																<td style="padding-top: 10px"><input type="text"
 																	name="eventStreamName" id="eventStreamNameId"
 																	class="initE"
 																	value="<%=streamDefinitionDto.getName()%>"
@@ -167,7 +167,7 @@
 																		<fmt:message key="event.stream.version" />
 																	</h6>
 																</td>
-																<td style="padding-top: 10px"><input endpointType="text"
+																<td style="padding-top: 10px"><input type="text"
 																	name="eventStreamVersion" id="eventStreamVersionId"
 																	class="initE"
 																	value="<%=streamDefinitionDto.getVersion()%>"
@@ -184,7 +184,7 @@
 																		<fmt:message key="event.stream.description" />
 																	</h6>
 																</td>
-																<td style="padding-top: 10px"><input endpointType="text"
+																<td style="padding-top: 10px"><input type="text"
 																	name="eventStreamDescription"
 																	id="eventStreamDescription" class="initE"
 																	value="<%=streamDefinitionDto.getDescription() != null
@@ -202,7 +202,7 @@
 																		<fmt:message key="event.stream.nickname" />
 																	</h6>
 																</td>
-																<td style="padding-top: 10px"><input endpointType="text"
+																<td style="padding-top: 10px"><input type="text"
 																	name="eventStreamNickName" id="eventStreamNickName"
 																	class="initE"
 																	value="<%=streamDefinitionDto.getNickName() != null
@@ -224,7 +224,7 @@
 															<tr name="streamAttributes">
 																<td colspan="2">
 																	<h6>
-																		<fmt:message key="attribute.data.endpointType.meta" />
+																		<fmt:message key="attribute.data.type.meta" />
 																	</h6> <%
  	if (streamDefinitionDto.getMetaData() != null &&
  			    streamDefinitionDto.getMetaData().length > 0) {
@@ -235,7 +235,7 @@
 																			<th class="leftCol-med"><fmt:message
 																					key="attribute.name" /></th>
 																			<th class="leftCol-med"><fmt:message
-																					key="attribute.endpointType" /></th>
+																					key="attribute.type" /></th>
 
 																		</thead>
 																		<%
@@ -259,7 +259,7 @@
 																			<th class="leftCol-med"><fmt:message
 																					key="attribute.name" /></th>
 																			<th class="leftCol-med"><fmt:message
-																					key="attribute.endpointType" /></th>
+																					key="attribute.type" /></th>
 																		</thead>
 																	</table>
 																	<div class="noDataDiv-plain" id="noOutputMetaData">
@@ -272,7 +272,7 @@
 															<tr name="streamAttributes">
 																<td colspan="2">
 																	<h6>
-																		<fmt:message key="attribute.data.endpointType.correlation" />
+																		<fmt:message key="attribute.data.type.correlation" />
 																	</h6> <%
  	if (streamDefinitionDto.getCorrelationData() != null &&
  			    streamDefinitionDto.getCorrelationData().length > 0) {
@@ -283,7 +283,7 @@
 																			<th class="leftCol-med"><fmt:message
 																					key="attribute.name" /></th>
 																			<th class="leftCol-med"><fmt:message
-																					key="attribute.endpointType" /></th>
+																					key="attribute.type" /></th>
 																		</thead>
 																		<%
 																			for (EventStreamAttributeDto correlationData : streamDefinitionDto.getCorrelationData()) {
@@ -306,7 +306,7 @@
 																			<th class="leftCol-med"><fmt:message
 																					key="attribute.name" /></th>
 																			<th class="leftCol-med"><fmt:message
-																					key="attribute.endpointType" /></th>
+																					key="attribute.type" /></th>
 																			<th><fmt:message key="actions" /></th>
 																		</thead>
 																	</table>
@@ -321,7 +321,7 @@
 															<tr name="streamAttributes">
 																<td colspan="2">
 																	<h6>
-																		<fmt:message key="attribute.data.endpointType.payload" />
+																		<fmt:message key="attribute.data.type.payload" />
 																	</h6> <%
  	if (streamDefinitionDto.getPayloadData() != null &&
  			    streamDefinitionDto.getPayloadData().length > 0) {
@@ -332,7 +332,7 @@
 																			<th class="leftCol-med"><fmt:message
 																					key="attribute.name" /></th>
 																			<th class="leftCol-med"><fmt:message
-																					key="attribute.endpointType" /></th>
+																					key="attribute.type" /></th>
 																		</thead>
 																		<%
 																			for (EventStreamAttributeDto payloadData : streamDefinitionDto.getPayloadData()) {
@@ -396,7 +396,7 @@
 																		<option>xml</option>
 																		<option>json</option>
 																		<option>text</option>
-																</select> <input endpointType="button"
+																</select> <input type="button"
 																	value="<fmt:message key="generate.event"/>"
 																	onclick="generateEvent('<%=eventStreamWithVersion%>')" />
 																</td>

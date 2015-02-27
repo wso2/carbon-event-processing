@@ -22,8 +22,8 @@
 <%@ page import="java.util.List" %>
 
 <fmt:bundle basename="org.wso2.carbon.event.builder.ui.i18n.Resources">
-    <link endpointType="text/css" href="../eventbuilder/css/cep.css" rel="stylesheet"/>
-    <script endpointType="text/javascript" src="../eventbuilder/js/event_builders.js"></script>
+    <link type="text/css" href="../eventbuilder/css/cep.css" rel="stylesheet"/>
+    <script type="text/javascript" src="../eventbuilder/js/event_builders.js"></script>
 
     <%
         String streamId = request.getParameter("streamNameWithVersion");
@@ -65,15 +65,15 @@
                         <td class="col-small"><fmt:message key="event.builder.xpath.prefix"/> :
                         </td>
                         <td>
-                            <input endpointType="text" id="inputPrefixName"/>
+                            <input type="text" id="inputPrefixName"/>
                         </td>
                         <td class="col-small"><fmt:message
                                 key="event.builder.xpath.ns"/> :
                         </td>
                         <td>
-                            <input endpointType="text" id="inputXpathNs"/>
+                            <input type="text" id="inputXpathNs"/>
                         </td>
-                        <td><input endpointType="button" class="button"
+                        <td><input type="button" class="button"
                                    value="<fmt:message key="add"/>"
                                    onclick="addInputXpathDef()"/>
                         </td>
@@ -90,7 +90,7 @@
                     <tbody>
                     <tr>
                         <td><fmt:message key="event.builder.parentselector.xpath"/>:</td>
-                        <td><input endpointType="text" id="parentSelectorXpath"></td>
+                        <td><input type="text" id="parentSelectorXpath"></td>
                     </tr>
                     </tbody>
                 </table>
@@ -116,23 +116,23 @@
                                 key="event.builder.property.xpath"/>:
                         </td>
                         <td>
-                            <input endpointType="text" id="inputPropertyValue_<%=counter%>"/>
+                            <input type="text" id="inputPropertyValue_<%=counter%>"/>
                         </td>
                         <td class="col-small"><fmt:message key="event.builder.property.mappedto"/>:
                         </td>
                         <td>
-                            <input endpointType="text" id="inputPropertyName_<%=counter%>"
+                            <input type="text" id="inputPropertyName_<%=counter%>"
                                    value="<%=attributeValues[0]%>" readonly="true"/>
                         </td>
-                        <td><fmt:message key="event.builder.property.endpointType"/>:</td>
+                        <td><fmt:message key="event.builder.property.type"/>:</td>
                         <td>
-                            <input endpointType="text" id="inputPropertyType_<%=counter%>"
+                            <input type="text" id="inputPropertyType_<%=counter%>"
                                    value="<%=attributeValues[1]%>" readonly="true"/>
                         </td>
                         <td class="col-small"><fmt:message
                                 key="event.builder.property.default"/>:
                         </td>
-                        <td><input endpointType="text" id="inputPropertyDefault_<%=counter%>"/></td>
+                        <td><input type="text" id="inputPropertyDefault_<%=counter%>"/></td>
                     </tr>
                     <% counter++;
                     } %>

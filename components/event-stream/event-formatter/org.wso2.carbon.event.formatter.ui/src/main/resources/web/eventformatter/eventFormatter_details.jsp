@@ -36,19 +36,19 @@
         topPage="false"
         request="<%=request%>"/>
 
-<link endpointType="text/css" href="css/eventNotifier.css" rel="stylesheet"/>
-<script endpointType="text/javascript" src="../admin/js/breadcrumbs.js"></script>
-<script endpointType="text/javascript" src="../admin/js/cookies.js"></script>
-<script endpointType="text/javascript" src="../admin/js/main.js"></script>
-<script endpointType="text/javascript" src="../yui/build/yahoo-dom-event/yahoo-dom-event.js"></script>
-<script endpointType="text/javascript" src="../yui/build/connection/connection-min.js"></script>
-<script endpointType="text/javascript" src="../eventformatter/js/event_formatter.js"></script>
-<script endpointType="text/javascript" src="../eventformatter/js/registry-browser.js"></script>
+<link type="text/css" href="css/eventNotifier.css" rel="stylesheet"/>
+<script type="text/javascript" src="../admin/js/breadcrumbs.js"></script>
+<script type="text/javascript" src="../admin/js/cookies.js"></script>
+<script type="text/javascript" src="../admin/js/main.js"></script>
+<script type="text/javascript" src="../yui/build/yahoo-dom-event/yahoo-dom-event.js"></script>
+<script type="text/javascript" src="../yui/build/connection/connection-min.js"></script>
+<script type="text/javascript" src="../eventformatter/js/event_formatter.js"></script>
+<script type="text/javascript" src="../eventformatter/js/registry-browser.js"></script>
 
-<script endpointType="text/javascript" src="../resources/js/resource_util.js"></script>
+<script type="text/javascript" src="../resources/js/resource_util.js"></script>
 <jsp:include page="../resources/resources-i18n-ajaxprocessor.jsp"/>
-<script endpointType="text/javascript" src="../ajax/js/prototype.js"></script>
-<link rel="stylesheet" endpointType="text/css" href="../resources/css/registry.css"/>
+<script type="text/javascript" src="../ajax/js/prototype.js"></script>
+<link rel="stylesheet" type="text/css" href="../resources/css/registry.css"/>
 
 
 <%
@@ -102,7 +102,7 @@
 <tr>
     <td class="leftCol-med"><fmt:message key="event.formatter.name"/><span class="required">*</span>
     </td>
-    <td><input endpointType="text" name="eventNotifierName" id="eventFormatterId"
+    <td><input type="text" name="eventNotifierName" id="eventFormatterId"
                class="initE"
 
                value="<%= eventNotifierConfigurationDto.getEventFormatterName()%>"
@@ -151,7 +151,7 @@
 </tr>
 
 <tr>
-    <td><fmt:message key="mapping.endpointType"/><span class="required">*</span></td>
+    <td><fmt:message key="mapping.type"/><span class="required">*</span></td>
     <td><select name="mappingTypeFilter"
                 id="mappingTypeFilter" disabled="disabled">
         <option><%=eventNotifierConfigurationDto.getMappingType()%>
@@ -179,13 +179,13 @@
         <tr name="outputWSO2EventMapping">
             <td colspan="2">
 
-                <h6><fmt:message key="property.data.endpointType.meta"/></h6>
+                <h6><fmt:message key="property.data.type.meta"/></h6>
                 <% if (eventNotifierConfigurationDto.getWso2EventOutputMappingDto().getMetaWSO2EventOutputPropertyConfigurationDto() != null && eventNotifierConfigurationDto.getWso2EventOutputMappingDto().getMetaWSO2EventOutputPropertyConfigurationDto()[0] != null) { %>
                 <table class="styledLeft noBorders spacer-bot" id="outputMetaDataTable">
                     <thead>
                     <th class="leftCol-med"><fmt:message key="property.name"/></th>
                     <th class="leftCol-med"><fmt:message key="property.value.of"/></th>
-                    <th class="leftCol-med"><fmt:message key="property.endpointType"/></th>
+                    <th class="leftCol-med"><fmt:message key="property.type"/></th>
                     </thead>
                     <% EventOutputPropertyDto[] eventOutputPropertyDtos = eventNotifierConfigurationDto.getWso2EventOutputMappingDto().getMetaWSO2EventOutputPropertyConfigurationDto();
                         for (EventOutputPropertyDto eventOutputPropertyDto : eventOutputPropertyDtos) { %>
@@ -212,14 +212,14 @@
         <tr name="outputWSO2EventMapping">
             <td colspan="2">
 
-                <h6><fmt:message key="property.data.endpointType.correlation"/></h6>
+                <h6><fmt:message key="property.data.type.correlation"/></h6>
                 <% if (eventNotifierConfigurationDto.getWso2EventOutputMappingDto().getCorrelationWSO2EventOutputPropertyConfigurationDto() != null && eventNotifierConfigurationDto.getWso2EventOutputMappingDto().getCorrelationWSO2EventOutputPropertyConfigurationDto()[0] != null) { %>
                 <table class="styledLeft noBorders spacer-bot"
                        id="outputCorrelationDataTable">
                     <thead>
                     <th class="leftCol-med"><fmt:message key="property.name"/></th>
                     <th class="leftCol-med"><fmt:message key="property.value.of"/></th>
-                    <th class="leftCol-med"><fmt:message key="property.endpointType"/></th>
+                    <th class="leftCol-med"><fmt:message key="property.type"/></th>
                     </thead>
                     <% EventOutputPropertyDto[] eventOutputPropertyDtos = eventNotifierConfigurationDto.getWso2EventOutputMappingDto().getCorrelationWSO2EventOutputPropertyConfigurationDto();
                         for (EventOutputPropertyDto eventOutputPropertyDto : eventOutputPropertyDtos) { %>
@@ -243,14 +243,14 @@
 
         <tr name="outputWSO2EventMapping">
             <td colspan="2">
-                <h6><fmt:message key="property.data.endpointType.payload"/></h6>
+                <h6><fmt:message key="property.data.type.payload"/></h6>
                 <% if (eventNotifierConfigurationDto.getWso2EventOutputMappingDto().getPayloadWSO2EventOutputPropertyConfigurationDto() != null && eventNotifierConfigurationDto.getWso2EventOutputMappingDto().getPayloadWSO2EventOutputPropertyConfigurationDto()[0] != null) { %>
                 <table class="styledLeft noBorders spacer-bot"
                        id="outputPayloadDataTable">
                     <thead>
                     <th class="leftCol-med"><fmt:message key="property.name"/></th>
                     <th class="leftCol-med"><fmt:message key="property.value.of"/></th>
-                    <th class="leftCol-med"><fmt:message key="property.endpointType"/></th>
+                    <th class="leftCol-med"><fmt:message key="property.type"/></th>
                     </thead>
                     <% EventOutputPropertyDto[] eventOutputPropertyDtos = eventNotifierConfigurationDto.getWso2EventOutputMappingDto().getPayloadWSO2EventOutputPropertyConfigurationDto();
                         for (EventOutputPropertyDto eventOutputPropertyDto : eventOutputPropertyDtos) { %>
@@ -294,10 +294,10 @@
             <td class="leftCol-med" colspan="1"><fmt:message key="output.mapping.content"/><span
                     class="required">*</span></td>
             <td colspan="2">
-                <input id="inline_text" endpointType="radio" checked="checked" value="content"
+                <input id="inline_text" type="radio" checked="checked" value="content"
                        name="inline_text" disabled="disabled">
                 <label for="inline_text"><fmt:message key="inline.input"/></label>
-                <input id="registry_text" endpointType="radio" value="reg" name="registry_text"
+                <input id="registry_text" type="radio" value="reg" name="registry_text"
                        disabled="disabled">
                 <label for="registry_text"><fmt:message key="registry.input"/></label>
             </td>
@@ -320,10 +320,10 @@
             <td colspan="1" class="leftCol-med"><fmt:message key="output.mapping.content"/><span
                     class="required">*</span></td>
             <td colspan="2">
-                <input id="inline_text_reg" endpointType="radio" value="content"
+                <input id="inline_text_reg" type="radio" value="content"
                        name="inline_text" disabled="disabled">
                 <label for="inline_text_reg"><fmt:message key="inline.input"/></label>
-                <input id="registry_text_reg" endpointType="radio" value="reg" name="registry_text"
+                <input id="registry_text_reg" type="radio" value="reg" name="registry_text"
                        disabled="disabled" checked="checked">
                 <label for="registry_text_reg"><fmt:message key="registry.input"/></label>
             </td>
@@ -332,7 +332,7 @@
             <td class="leftCol-med" colspan="1"><fmt:message key="resource.path"/><span
                     class="required">*</span></td>
             <td colspan="1">
-                <input endpointType="text" id="textSourceRegistry" disabled="disabled" class="initE"
+                <input type="text" id="textSourceRegistry" disabled="disabled" class="initE"
                        value="<%=eventNotifierConfigurationDto.getTextOutputMappingDto().getMappingText() !=null ? eventNotifierConfigurationDto.getTextOutputMappingDto().getMappingText() : ""%>"
                        style="width:100%"/>
             </td>
@@ -370,10 +370,10 @@
             <td colspan="1" class="leftCol-med"><fmt:message key="output.mapping.content"/><span
                     class="required">*</span></td>
             <td colspan="2">
-                <input id="inline_xml" endpointType="radio" checked="checked" value="content"
+                <input id="inline_xml" type="radio" checked="checked" value="content"
                        name="inline_xml" disabled="disabled">
                 <label for="inline_xml"><fmt:message key="inline.input"/></label>
-                <input id="registry_xml" endpointType="radio" value="reg" name="registry_xml"
+                <input id="registry_xml" type="radio" value="reg" name="registry_xml"
                        disabled="disabled">
                 <label for="registry_xml"><fmt:message key="registry.input"/></label>
             </td>
@@ -396,10 +396,10 @@
             <td colspan="1" class="leftCol-med"><fmt:message key="output.mapping.content"/><span
                     class="required">*</span></td>
             <td colspan="2">
-                <input id="inline_xml_reg" endpointType="radio" value="content"
+                <input id="inline_xml_reg" type="radio" value="content"
                        name="inline_xml" disabled="disabled">
                 <label for="inline_xml_reg"><fmt:message key="inline.input"/></label>
-                <input id="registry_xml_reg" endpointType="radio" value="reg" name="registry_xml"
+                <input id="registry_xml_reg" type="radio" value="reg" name="registry_xml"
                        disabled="disabled" checked="checked">
                 <label for="registry_xml_reg"><fmt:message key="registry.input"/></label>
             </td>
@@ -408,7 +408,7 @@
             <td class="leftCol-med" colspan="1"><fmt:message key="resource.path"/><span
                     class="required">*</span></td>
             <td colspan="1">
-                <input endpointType="text" id="xmlSourceRegistry" disabled="disabled" class="initE" value=""
+                <input type="text" id="xmlSourceRegistry" disabled="disabled" class="initE" value=""
                        style="width:100%"/>
             </td>
             <td class="nopadding" style="border:none" colspan="1">
@@ -486,10 +486,10 @@
             <td colspan="1" class="leftCol-med"><fmt:message key="output.mapping.content"/><span
                     class="required">*</span></td>
             <td colspan="2">
-                <input id="inline_json" endpointType="radio" checked="checked" value="content"
+                <input id="inline_json" type="radio" checked="checked" value="content"
                        name="inline_json" disabled="disabled">
                 <label for="inline_json"><fmt:message key="inline.input"/></label>
-                <input id="registry_json" endpointType="radio" value="reg" name="registry_json"
+                <input id="registry_json" type="radio" value="reg" name="registry_json"
                        disabled="disabled">
                 <label for="registry_json"><fmt:message key="registry.input"/></label>
             </td>
@@ -512,10 +512,10 @@
             <td colspan="1" class="leftCol-med"><fmt:message key="output.mapping.content"/><span
                     class="required">*</span></td>
             <td colspan="2">
-                <input id="inline_json_text" endpointType="radio" value="content"
+                <input id="inline_json_text" type="radio" value="content"
                        name="inline_json_text" disabled="disabled">
                 <label for="inline_json_text"><fmt:message key="inline.input"/></label>
-                <input id="registry_json_reg" endpointType="radio" value="reg" name="registry_json"
+                <input id="registry_json_reg" type="radio" value="reg" name="registry_json"
                        disabled="disabled" checked="checked">
                 <label for="registry_json_reg"><fmt:message key="registry.input"/></label>
             </td>
@@ -524,7 +524,7 @@
             <td class="leftCol-med" colspan="1"><fmt:message key="resource.path"/><span
                     class="required">*</span></td>
             <td colspan="1">
-                <input endpointType="text" id="jsonSourceRegistry" disabled="disabled" class="initE"
+                <input type="text" id="jsonSourceRegistry" disabled="disabled" class="initE"
                        value="<%=eventNotifierConfigurationDto.getJsonOutputMappingDto().getMappingText() != null ? eventNotifierConfigurationDto.getJsonOutputMappingDto().getMappingText() : ""%>"
                        style="width:100%"/>
             </td>
@@ -574,9 +574,9 @@
         %>
     </td>
     <%
-        String endpointType = "text";
+        String type = "text";
         if (eventFormatterPropertyDto[index].getSecured()) {
-            endpointType = "password";
+            type = "password";
         }
     %>
 
@@ -603,7 +603,7 @@
             </select>
 
             <% } else { %>
-            <input endpointType="<%=endpointType%>"
+            <input type="<%=type%>"
                    name="<%=eventFormatterPropertyDto[index].getKey()%>"
                    id="<%=propertyId%><%=index%>" class="initE"
                    style="width:75%"

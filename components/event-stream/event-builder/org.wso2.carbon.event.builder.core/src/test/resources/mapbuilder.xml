@@ -18,21 +18,21 @@
 -->
 
 <eventBuilder name="mapbuilder" xmlns="http://wso2.org/carbon/eventbuilder">
-    <from eventAdaptorType="jms" eventAdaptorName="jmsActiveMqAdaptor">
+    <from type="jms" eventAdaptorName="jmsActiveMqAdaptor">
         <property name="event.jms.Destination">stockQuotes</property>
     </from>
-    <mapping endpointType="map">
+    <mapping type="map">
         <property>
             <from name="meta_ipAdd"/>
-            <to name="meta_ipAddress" endpointType="string"/>
+            <to name="meta_ipAddress" type="string"/>
         </property>
         <property>
             <from name="userID"/>
-            <to name="user" endpointType="string"/>
+            <to name="user" type="string"/>
         </property>
         <property>
             <from name="searchTerms"/>
-            <to name="keywords" endpointType="string"/>
+            <to name="keywords" type="string"/>
         </property>
     </mapping>
     <to streamName="summarizedStatistics" version="1.2.0"/>

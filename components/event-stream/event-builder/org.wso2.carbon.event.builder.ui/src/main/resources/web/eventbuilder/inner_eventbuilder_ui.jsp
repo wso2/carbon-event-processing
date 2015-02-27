@@ -38,7 +38,7 @@
             <td class="leftCol-med">Event Builder Name<span
                     class="required">*</span>
             </td>
-            <td><input endpointType="text" name="configName" id="eventBuilderNameId"
+            <td><input type="text" name="configName" id="eventBuilderNameId"
                        class="initE"
                        onclick="clearTextIn(this)" onblur="fillTextIn(this)"
                        value=""/>
@@ -109,12 +109,12 @@
 
             </td>
             <%
-                String endpointType = "text";
+                String type = "text";
                 if (messageConfigurationProperties[index].getSecured()) {
-                    endpointType = "password";
+                    type = "password";
                 }
             %>
-            <td><input endpointType="<%=endpointType%>"
+            <td><input type="<%=type%>"
                        name="<%=messageConfigurationProperties[index].getKey()%>"
                        id="<%=propertyId%><%=index%>" class="initE"
                        value="<%= (messageConfigurationProperties[index].getDefaultValue()) != null ? messageConfigurationProperties[index].getDefaultValue() : "" %>"/>
@@ -159,7 +159,7 @@
             </select>
 
                 <div class="sectionHelp">
-                    <fmt:message key="input.mapping.endpointType.tooltip"/>
+                    <fmt:message key="input.mapping.type.tooltip"/>
                 </div>
             </td>
         </tr>

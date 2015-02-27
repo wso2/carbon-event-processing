@@ -33,10 +33,10 @@
         topPage="false"
         request="<%=request%>"/>
 
-<script endpointType="text/javascript" src="../admin/js/breadcrumbs.js"></script>
-<script endpointType="text/javascript" src="../admin/js/cookies.js"></script>
-<script endpointType="text/javascript" src="../admin/js/main.js"></script>
-<script endpointType="text/javascript" src="../eventformatter/js/event_formatter.js"></script>
+<script type="text/javascript" src="../admin/js/breadcrumbs.js"></script>
+<script type="text/javascript" src="../admin/js/cookies.js"></script>
+<script type="text/javascript" src="../admin/js/main.js"></script>
+<script type="text/javascript" src="../eventformatter/js/event_formatter.js"></script>
 
 <%
     EventFormatterAdminServiceStub stub = EventFormatterUIUtils.getEventFormatterAdminService(config, session, request);
@@ -46,7 +46,7 @@
     if (eventNotifierName != null) {
         stub.undeployActiveEventFormatterConfiguration(eventNotifierName);
 %>
-<script endpointType="text/javascript">CARBON.showInfoDialog('Event Formatter successfully deleted.');</script>
+<script type="text/javascript">CARBON.showInfoDialog('Event Formatter successfully deleted.');</script>
 <%
     }
 
@@ -79,7 +79,7 @@
         <thead>
         <tr>
             <th><fmt:message key="event.formatter.name"/></th>
-            <th><fmt:message key="mapping.endpointType"/></th>
+            <th><fmt:message key="mapping.type"/></th>
             <th><fmt:message key="event.adaptor.name"/></th>
             <th><fmt:message key="input.stream.id"/></th>
             <th width="420px"><fmt:message key="actions"/></th>
@@ -225,13 +225,13 @@
     <div>
         <br/>
 
-        <form id="deleteForm" name="input" action="" method="post"><input endpointType="HIDDEN"
+        <form id="deleteForm" name="input" action="" method="post"><input type="HIDDEN"
                                                                          name="eventNotifier"
                                                                          value=""/></form>
     </div>
 </div>
 
-<script endpointType="text/javascript">
+<script type="text/javascript">
     alternateTableRows('expiredsubscriptions', 'tableEvenRow', 'tableOddRow');
     alternateTableRows('validsubscriptions', 'tableEvenRow', 'tableOddRow');
 </script>

@@ -217,7 +217,7 @@
                         <xs:element minOccurs="0" name="eventBuilderName" nillable="true" type="xs:string"></xs:element>
                         <xs:element minOccurs="0" name="streamNameWithVersion" nillable="true" type="xs:string"></xs:element>
                         <xs:element minOccurs="0" name="eventAdaptorName" nillable="true" type="xs:string"></xs:element>
-                        <xs:element minOccurs="0" name="eventAdaptorType" nillable="true" type="xs:string"></xs:element>
+                        <xs:element minOccurs="0" name="type" nillable="true" type="xs:string"></xs:element>
                         <xs:element maxOccurs="unbounded" minOccurs="0" name="xpathExpressions" nillable="true" type="ax292:EventInputPropertyConfigurationDto"></xs:element>
                         <xs:element maxOccurs="unbounded" minOccurs="0" name="inputPropertyConfiguration" nillable="true" type="ax292:PropertyDto"></xs:element>
                         <xs:element maxOccurs="unbounded" minOccurs="0" name="xpathDefinitions" nillable="true" type="ax292:PropertyDto"></xs:element>
@@ -232,7 +232,7 @@
                         <xs:element minOccurs="0" name="eventBuilderName" nillable="true" type="xs:string"></xs:element>
                         <xs:element minOccurs="0" name="streamNameWithVersion" nillable="true" type="xs:string"></xs:element>
                         <xs:element minOccurs="0" name="eventAdaptorName" nillable="true" type="xs:string"></xs:element>
-                        <xs:element minOccurs="0" name="eventAdaptorType" nillable="true" type="xs:string"></xs:element>
+                        <xs:element minOccurs="0" name="type" nillable="true" type="xs:string"></xs:element>
                         <xs:element maxOccurs="unbounded" minOccurs="0" name="metaData" nillable="true" type="ax292:EventInputPropertyConfigurationDto"></xs:element>
                         <xs:element maxOccurs="unbounded" minOccurs="0" name="correlationData" nillable="true" type="ax292:EventInputPropertyConfigurationDto"></xs:element>
                         <xs:element maxOccurs="unbounded" minOccurs="0" name="payloadData" nillable="true" type="ax292:EventInputPropertyConfigurationDto"></xs:element>
@@ -247,7 +247,7 @@
                         <xs:element minOccurs="0" name="eventBuilderName" nillable="true" type="xs:string"></xs:element>
                         <xs:element minOccurs="0" name="streamNameWithVersion" nillable="true" type="xs:string"></xs:element>
                         <xs:element minOccurs="0" name="eventAdaptorName" nillable="true" type="xs:string"></xs:element>
-                        <xs:element minOccurs="0" name="eventAdaptorType" nillable="true" type="xs:string"></xs:element>
+                        <xs:element minOccurs="0" name="type" nillable="true" type="xs:string"></xs:element>
                         <xs:element maxOccurs="unbounded" minOccurs="0" name="textMappingAttributes" nillable="true" type="ax292:EventInputPropertyConfigurationDto"></xs:element>
                         <xs:element maxOccurs="unbounded" minOccurs="0" name="inputPropertyConfiguration" nillable="true" type="ax292:PropertyDto"></xs:element>
                         <xs:element minOccurs="0" name="mappingEnabled" type="xs:boolean"></xs:element>
@@ -260,7 +260,7 @@
                         <xs:element minOccurs="0" name="eventBuilderName" nillable="true" type="xs:string"></xs:element>
                         <xs:element minOccurs="0" name="streamNameWithVersion" nillable="true" type="xs:string"></xs:element>
                         <xs:element minOccurs="0" name="eventAdaptorName" nillable="true" type="xs:string"></xs:element>
-                        <xs:element minOccurs="0" name="eventAdaptorType" nillable="true" type="xs:string"></xs:element>
+                        <xs:element minOccurs="0" name="type" nillable="true" type="xs:string"></xs:element>
                         <xs:element maxOccurs="unbounded" minOccurs="0" name="mappingProperties" nillable="true" type="ax292:EventInputPropertyConfigurationDto"></xs:element>
                         <xs:element maxOccurs="unbounded" minOccurs="0" name="inputPropertyConfiguration" nillable="true" type="ax292:PropertyDto"></xs:element>
                         <xs:element minOccurs="0" name="mappingEnabled" type="xs:boolean"></xs:element>
@@ -273,7 +273,7 @@
                         <xs:element minOccurs="0" name="eventBuilderName" nillable="true" type="xs:string"></xs:element>
                         <xs:element minOccurs="0" name="streamNameWithVersion" nillable="true" type="xs:string"></xs:element>
                         <xs:element minOccurs="0" name="eventAdaptorName" nillable="true" type="xs:string"></xs:element>
-                        <xs:element minOccurs="0" name="eventAdaptorType" nillable="true" type="xs:string"></xs:element>
+                        <xs:element minOccurs="0" name="type" nillable="true" type="xs:string"></xs:element>
                         <xs:element maxOccurs="unbounded" minOccurs="0" name="jsonPathExpressions" nillable="true" type="ax292:EventInputPropertyConfigurationDto"></xs:element>
                         <xs:element maxOccurs="unbounded" minOccurs="0" name="inputPropertyConfiguration" nillable="true" type="ax292:PropertyDto"></xs:element>
                         <xs:element minOccurs="0" name="mappingEnabled" type="xs:boolean"></xs:element>

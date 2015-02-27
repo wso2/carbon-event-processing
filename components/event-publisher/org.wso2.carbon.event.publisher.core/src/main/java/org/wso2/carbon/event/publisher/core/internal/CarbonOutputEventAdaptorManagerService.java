@@ -23,7 +23,7 @@
 //import org.apache.commons.logging.Log;
 //import org.apache.commons.logging.LogFactory;
 //import org.wso2.carbon.context.PrivilegedCarbonContext;
-//import org.wso2.carbon.event.publisher.core.OutputEventAdaptorDto;
+//import org.wso2.carbon.event.publisher.core.adapter.OutputEventAdapterDto;
 //import org.wso2.carbon.event.publisher.core.Property;
 //import org.wso2.carbon.event.publisher.core.config.EndpointAdaptorConfiguration;
 //import org.wso2.carbon.event.publisher.core.config.InternalOutputEventAdaptorConfiguration;
@@ -317,7 +317,7 @@
 //        endpointAdaptorConfiguration.setName(OutputEventAdaptorManagerConstants.DEFAULT_LOGGER_OUTPUT_ADAPTOR);
 //        endpointAdaptorConfiguration.setEndpointType(OutputEventAdaptorManagerConstants.ADAPTOR_TYPE_LOGGER);
 //        InternalOutputEventAdaptorConfiguration internalOutputEventAdaptorConfiguration = new InternalOutputEventAdaptorConfiguration();
-//        endpointAdaptorConfiguration.setOutputAdaptorConfiguration(internalOutputEventAdaptorConfiguration);
+//        endpointAdaptorConfiguration.setEndpointAdaptorPropertyConfiguration(internalOutputEventAdaptorConfiguration);
 //        deployOutputEventAdaptorConfiguration(endpointAdaptorConfiguration, axisConfiguration);
 //
 //        return endpointAdaptorConfiguration.getName();
@@ -498,7 +498,7 @@
 //            throws OutputEventAdaptorManagerConfigurationException {
 //
 //
-//        if (eventAdaptorConfiguration.getOutputAdaptorConfiguration() != null) {
+//        if (eventAdaptorConfiguration.getEndpointAdaptorPropertyConfiguration() != null) {
 //            OutputEventAdaptorInfo outputEventAdaptorInfo = new OutputEventAdaptorInfo();
 //            outputEventAdaptorInfo.setEventAdaptorName(eventAdaptorConfiguration.getName());
 //            outputEventAdaptorInfo.setEventAdaptorType(eventAdaptorConfiguration.getEndpointType());
@@ -608,7 +608,7 @@
 //
 //    public List<String> getEncryptedProperties(String eventAdaptorType) {
 //        List<String> encryptedProperties = new ArrayList<String>(1);
-//        OutputEventAdaptorDto dto = OutputEventAdaptorHolder.getInstance().getOutputEventAdaptorService().getEventAdaptorDto(eventAdaptorType);
+//        OutputEventAdapterDto dto = OutputEventAdaptorHolder.getInstance().getOutputEventAdaptorService().getEventAdaptorDto(eventAdaptorType);
 //        if (dto != null) {
 //            List<Property> properties = dto.getAdaptorPropertyList();
 //            if (properties != null) {

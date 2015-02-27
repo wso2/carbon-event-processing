@@ -19,7 +19,7 @@
 <html>
 <head><title>Event Builder - User Guide</title>
 
-    <link href="../../admin/css/documentation.css" rel="stylesheet" endpointType="text/css" media="all"/>
+    <link href="../../admin/css/documentation.css" rel="stylesheet" type="text/css" media="all"/>
 </head>
 <body>
 <h1>Event Builder</h1>
@@ -55,7 +55,7 @@
             <br/>
             <li>Input Event Adaptor properties (marked as <strong>2</strong> in the screenshot) :
                 Properties required by the input event adaptor depending on the input event adaptor
-                endpointType selected before. For example, if you select WSO2Event, then the required
+                type selected before. For example, if you select WSO2Event, then the required
                 properties are: <br/>
                 <ul>
                     <li>Stream Definition - Stream name of the incoming WSO2Event stream
@@ -66,7 +66,7 @@
             </li>
             <br/>
             <li>Input Mapping Type (marked as <strong>3</strong> in the screenshot): Select <code>WSO2Event</code>
-                mapping endpointType. This property changes based on the event adaptor selected. It lists
+                mapping type. This property changes based on the event adaptor selected. It lists
                 only the mapping types supported by a particular event adaptor.
                 <br/>
             </li>
@@ -83,7 +83,7 @@
                                                                                     To</strong>
                     </li>
                     <br/>
-                    <li>Select the data endpointType of the attribute from the <strong>To Stream Data
+                    <li>Select the data type of the attribute from the <strong>To Stream Data
                                                                                Type</strong>
                         drop-down
                     </li>
@@ -93,7 +93,7 @@
                            event builder</p>
 
                         <p>For the correct properties to show, you must selected a input event
-                           adaptor that supports WSO2Event mapping endpointType.</p>
+                           adaptor that supports WSO2Event mapping type.</p>
 
                     </li>
                     <br/>
@@ -124,22 +124,22 @@
             </code>as in the example below.</p>
         <br/>
         <pre>&lt;eventBuilder name="SearchStatBuilder" xmlns="http://wso2.org/carbon/eventbuilder"&gt;
-                &lt;from eventAdaptorName="localEventReceiver" eventAdaptorType="wso2event"&gt;
+                &lt;from eventAdaptorName="localEventReceiver" type="wso2event"&gt;
                     &lt;property name="stream"&gt;access_Analytics&lt;/property&gt;
                     &lt;property name="version"&gt;1.0.0&lt;/property&gt;
                     &lt;/from&gt;
-                &lt;mapping endpointType="wso2event"&gt;
+                &lt;mapping type="wso2event"&gt;
                     &lt;property&gt;
                         &lt;from dataType="meta" name="ipAdd"/&gt;
-                        &lt;to name="ipAddress" endpointType="string"/&gt;
+                        &lt;to name="ipAddress" type="string"/&gt;
                     &lt;/property&gt;
                     &lt;property&gt;
                         &lt;from dataType="payload" name="username"/&gt;
-                        &lt;to name="username" endpointType="string"/&gt;
+                        &lt;to name="username" type="string"/&gt;
                     &lt;/property&gt;
                     &lt;property&gt;
                         &lt;from dataType="payload" name="keywords"/&gt;
-                        &lt;to name="searchTerms" endpointType="string"/&gt;
+                        &lt;to name="searchTerms" type="string"/&gt;
                     &lt;/property&gt;
                 &lt;/mapping&gt;
                 &lt;to streamName="searchStatistics" version="1.0.0"&gt;

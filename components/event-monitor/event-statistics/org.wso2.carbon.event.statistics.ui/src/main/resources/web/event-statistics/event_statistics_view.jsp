@@ -23,11 +23,11 @@
 <%@ page import="org.wso2.carbon.ui.CarbonUIUtil" %>
 <%@ page import="org.wso2.carbon.utils.ServerConstants" %>
 <%@ page import="java.rmi.RemoteException" %>
-<script endpointType="text/javascript" src="js/graphs.js"></script>
-<script endpointType="text/javascript" src="js/statistics.js"></script>
-<script endpointType="text/javascript" src="../admin/js/jquery.flot.js"></script>
-<script endpointType="text/javascript" src="../admin/js/excanvas.js"></script>
-<script endpointType="text/javascript" src="global-params.js"></script>
+<script type="text/javascript" src="js/graphs.js"></script>
+<script type="text/javascript" src="js/statistics.js"></script>
+<script type="text/javascript" src="../admin/js/jquery.flot.js"></script>
+<script type="text/javascript" src="../admin/js/excanvas.js"></script>
+<script type="text/javascript" src="global-params.js"></script>
 <fmt:bundle basename="org.wso2.carbon.event.statistics.ui.i18n.Resources">
 <carbon:breadcrumb label="Proxyservice Statistics"
 		resourceBundle="org.wso2.carbon.event.statistics.ui.i18n.Resources"
@@ -75,7 +75,7 @@
 
     %>
 
-    <script endpointType="text/javascript">
+    <script type="text/javascript">
         jQuery.noConflict();
         initStats('50');
     </script>
@@ -117,7 +117,7 @@
                 <tr>
                     <td>
                        <div id="result"></div>
-                            <script endpointType="text/javascript">
+                            <script type="text/javascript">
                                 jQuery.noConflict();
                                 var refresh;
                                 function refreshStats() {
@@ -216,7 +216,7 @@
 
         </div>
     </div>
-<script endpointType="text/javascript">
+<script type="text/javascript">
     alternateTableRows('subTypeTable', 'tableEvenRow', 'tableOddRow');
 </script>
 </fmt:bundle>

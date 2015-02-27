@@ -17,11 +17,14 @@
 */
 package org.wso2.carbon.event.publisher.core;
 
+import org.wso2.carbon.event.publisher.core.adapter.AbstractOutputEventAdapter;
+
 public interface OutputEventAdaptorFactory {
 
     /**
      * @return event adaptor object
      */
-    AbstractOutputEventAdaptor getEventAdaptor();
+    //todo make this create
+    AbstractOutputEventAdapter getEventAdaptor();
 
 }

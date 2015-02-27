@@ -162,16 +162,16 @@ public class CarbonEventPublisherService implements EventPublisherService {
 
     @Override
     public void editInactiveEventPublisherConfiguration(
-            String eventPublisherConfiguration,
+            String eventPublisherConfigXml,
             String filename,
             AxisConfiguration axisConfiguration)
             throws EventPublisherConfigurationException {
 
-        editEventPublisherConfiguration(filename, axisConfiguration, eventPublisherConfiguration, null);
+        editEventPublisherConfiguration(filename, axisConfiguration, eventPublisherConfigXml, null);
     }
 
     @Override
-    public void editActiveEventPublisherConfiguration(String eventPublisherConfiguration,
+    public void editActiveEventPublisherConfiguration(String eventPublisherConfigXml,
                                                       String eventPublisherName,
                                                       AxisConfiguration axisConfiguration)
             throws EventPublisherConfigurationException {
@@ -180,7 +180,7 @@ public class CarbonEventPublisherService implements EventPublisherService {
         if (fileName == null) {
             fileName = eventPublisherName + EventPublisherConstants.EF_CONFIG_FILE_EXTENSION_WITH_DOT;
         }
-        editEventPublisherConfiguration(fileName, axisConfiguration, eventPublisherConfiguration, eventPublisherName);
+        editEventPublisherConfiguration(fileName, axisConfiguration, eventPublisherConfigXml, eventPublisherName);
 
     }
 
@@ -214,7 +214,7 @@ public class CarbonEventPublisherService implements EventPublisherService {
 
     @Override
     public List<EventPublisherConfiguration> getAllActiveEventPublisherConfiguration(
-            AxisConfiguration axisConfiguration, String streamId)
+            String streamId, AxisConfiguration axisConfiguration)
             throws EventPublisherConfigurationException {
         List<EventPublisherConfiguration> eventPublisherConfigurations = new ArrayList<EventPublisherConfiguration>();
         int tenantId = PrivilegedCarbonContext.getThreadLocalCarbonContext().getTenantId();
@@ -531,12 +531,12 @@ public class CarbonEventPublisherService implements EventPublisherService {
             Map<String, EventPublisher> eventFormatterMap = tenantSpecificEventPublisherConfigurationMap.get(tenantId);
             if (eventFormatterMap != null) {
                 for (EventPublisher eventPublisher : eventFormatterMap.values()) {
-                    String eventAdaptorType = eventPublisher.getEventPublisherConfiguration().getEndpointAdaptorConfiguration().getEndpointType();
+                    String eventAdaptorType = eventPublisher.getEventPublisherConfiguration().getOutputAdaptorConfiguration().getEndpointType();
                     if (eventAdaptorType.equals(dependency)) {
                         EventPublisherConfigurationFile eventPublisherConfigurationFile = getEventPublisherConfigurationFile(eventPublisher.getEventPublisherConfiguration().getEventPublisherName(), tenantId);
                         if (eventPublisherConfigurationFile != null) {
                             fileList.add(eventPublisherConfigurationFile);
-                            eventAdaptorService.removeConnectionInfo(eventPublisher.getEventPublisherConfiguration().getEndpointAdaptorConfiguration(), tenantId);
+                            eventAdaptorService.removeConnectionInfo(eventPublisher.getEventPublisherConfiguration().getOutputAdaptorConfiguration(), tenantId);
                         }
                     }
                 }
@@ -562,7 +562,7 @@ public class CarbonEventPublisherService implements EventPublisherService {
                         EventPublisherConfigurationFile eventPublisherConfigurationFile = getEventPublisherConfigurationFile(eventPublisher.getEventPublisherConfiguration().getEventPublisherName(), tenantId);
                         if (eventPublisherConfigurationFile != null) {
                             fileList.add(eventPublisherConfigurationFile);
-                            eventAdaptorService.removeConnectionInfo(eventPublisher.getEventPublisherConfiguration().getEndpointAdaptorConfiguration(), tenantId);
+                            eventAdaptorService.removeConnectionInfo(eventPublisher.getEventPublisherConfiguration().getOutputAdaptorConfiguration(), tenantId);
                         }
                     }
                 }

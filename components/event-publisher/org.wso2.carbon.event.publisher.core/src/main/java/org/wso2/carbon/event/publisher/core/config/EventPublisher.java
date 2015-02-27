@@ -41,6 +41,7 @@ public class EventPublisher implements RawEventConsumer {
     private static final String EVENT_TRACE_LOGGER = "EVENT_TRACE_LOGGER";
     private final boolean traceEnabled;
     private final boolean statisticsEnabled;
+
     List<String> dynamicMessagePropertyList = new ArrayList<String>();
     private Logger trace = Logger.getLogger(EVENT_TRACE_LOGGER);
     private EventPublisherConfiguration eventPublisherConfiguration = null;
@@ -81,7 +82,7 @@ public class EventPublisher implements RawEventConsumer {
         createPropertyPositionMap(inputStreamDefinition);
         outputMapper = EventPublisherServiceValueHolder.getMappingFactoryMap().get(eventPublisherConfiguration.getOutputMapping().getMappingType()).constructOutputMapper(eventPublisherConfiguration, propertyPositionMap, tenantId, inputStreamDefinition);
 
-        Map<String, String> outputAdaptorProperties = eventPublisherConfiguration.getEndpointAdaptorConfiguration().getOutputAdaptorProperties();
+        Map<String, String> outputAdaptorProperties = eventPublisherConfiguration.getOutputAdaptorConfiguration().getEndpointAdaptorProperties();
         for (Map.Entry<String, String> entry : outputAdaptorProperties.entrySet()) {
             Map.Entry pairs = (Map.Entry) entry;
             getDynamicOutputMessageProperties(pairs.getValue() != null ? pairs.getValue().toString() : "");
@@ -114,11 +115,11 @@ public class EventPublisher implements RawEventConsumer {
 
     public void sendEventData(Object[] eventData) {
 
-        EndpointAdaptorConfiguration endpointAdaptorConfiguration = eventPublisherConfiguration.getEndpointAdaptorConfiguration();
-        Map<String, String> outputEventAdaptorPropertyMap = new HashMap<String, String>(endpointAdaptorConfiguration.getOutputAdaptorProperties());
-        String endpointType = endpointAdaptorConfiguration.getEndpointType();
-        InternalOutputEventAdaptorConfiguration internalOutputEventAdaptorConfiguration = new InternalOutputEventAdaptorConfiguration();
-        internalOutputEventAdaptorConfiguration.setProperties(outputEventAdaptorPropertyMap);
+        OutputAdaptorConfiguration outputAdaptorConfiguration = eventPublisherConfiguration.getOutputAdaptorConfiguration();
+        Map<String, String> outputEventAdaptorPropertyMap = new HashMap<String, String>(outputAdaptorConfiguration.getEndpointAdaptorProperties());
+        String endpointType = outputAdaptorConfiguration.getEndpointType();
+        EndpointAdaptorPropertyConfiguration endpointAdaptorPropertyConfiguration = new EndpointAdaptorPropertyConfiguration();
+        endpointAdaptorPropertyConfiguration.setProperties(outputEventAdaptorPropertyMap);
 
         Object outObject;
         if (traceEnabled) {
@@ -147,11 +148,11 @@ public class EventPublisher implements RawEventConsumer {
         }
 
         if (dynamicMessagePropertyEnabled) {
-            changeDynamicEventAdaptorMessageProperties(eventData, internalOutputEventAdaptorConfiguration);
+            changeDynamicEventAdaptorMessageProperties(eventData, endpointAdaptorPropertyConfiguration);
         }
 
         OutputEventAdaptorService eventAdaptorService = EventPublisherServiceValueHolder.getOutputEventAdaptorService();
-        eventAdaptorService.publish(new EndpointAdaptorConfiguration(eventPublisherConfiguration.getEventPublisherName(),endpointType, internalOutputEventAdaptorConfiguration), outObject, tenantId);
+        eventAdaptorService.publish(new OutputAdaptorConfiguration(eventPublisherConfiguration.getEventPublisherName(),endpointType, endpointAdaptorPropertyConfiguration), outObject, tenantId);
 
     }
 
@@ -203,18 +204,18 @@ public class EventPublisher implements RawEventConsumer {
         return dynamicMessagePropertyList;
     }
 
-    private void changeDynamicEventAdaptorMessageProperties(Object[] eventData, InternalOutputEventAdaptorConfiguration internalOutputEventAdaptorConfiguration) {
+    private void changeDynamicEventAdaptorMessageProperties(Object[] eventData, EndpointAdaptorPropertyConfiguration endpointAdaptorPropertyConfiguration) {
 
         for (String dynamicMessageProperty : dynamicMessagePropertyList) {
             if (eventData.length != 0 && dynamicMessageProperty != null) {
                 int position = propertyPositionMap.get(dynamicMessageProperty);
-                changePropertyValue(position, dynamicMessageProperty, eventData, internalOutputEventAdaptorConfiguration);
+                changePropertyValue(position, dynamicMessageProperty, eventData, endpointAdaptorPropertyConfiguration);
             }
         }
     }
 
-    private void changePropertyValue(int position, String messageProperty, Object[] eventData, InternalOutputEventAdaptorConfiguration internalOutputEventAdaptorConfiguration) {
-        Map<String, String> outputMessageProperties = internalOutputEventAdaptorConfiguration.getProperties();
+    private void changePropertyValue(int position, String messageProperty, Object[] eventData, EndpointAdaptorPropertyConfiguration endpointAdaptorPropertyConfiguration) {
+        Map<String, String> outputMessageProperties = endpointAdaptorPropertyConfiguration.getProperties();
 
         for (Map.Entry<String, String> entry : outputMessageProperties.entrySet()) {
             String mapValue = "{{" + messageProperty + "}}";

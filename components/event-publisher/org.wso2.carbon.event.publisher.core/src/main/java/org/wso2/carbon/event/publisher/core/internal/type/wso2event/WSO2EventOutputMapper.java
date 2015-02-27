@@ -51,8 +51,8 @@ public class WSO2EventOutputMapper implements OutputMapper {
         this.tenantId = tenantId;
         this.inputStreamDefinition = inputStreamDefinition;
 
-        String outputStreamName = eventPublisherConfiguration.getEndpointAdaptorConfiguration().getOutputAdaptorProperties().get(EventPublisherConstants.EF_ELE_PROPERTY_STREAM_NAME);
-        String outputStreamVersion = eventPublisherConfiguration.getEndpointAdaptorConfiguration().getOutputAdaptorProperties().get(EventPublisherConstants.EF_ATTR_VERSION);
+        String outputStreamName = eventPublisherConfiguration.getOutputAdaptorConfiguration().getEndpointAdaptorProperties().get(EventPublisherConstants.EF_ELE_PROPERTY_STREAM_NAME);
+        String outputStreamVersion = eventPublisherConfiguration.getOutputAdaptorConfiguration().getEndpointAdaptorProperties().get(EventPublisherConstants.EF_ATTR_VERSION);
 
         try {
             wso2EventOutputMapping = (WSO2EventOutputMapping) eventPublisherConfiguration.getOutputMapping();

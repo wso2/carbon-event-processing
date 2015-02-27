@@ -23,8 +23,8 @@
 <%@ page import="org.wso2.carbon.ui.CarbonUIUtil" %>
 <%@ page import="org.wso2.carbon.utils.ServerConstants" %>
 <%@ page import="java.rmi.RemoteException" %>
-<script endpointType="text/javascript" src="js/graphs.js"></script>
-<script endpointType="text/javascript" src="js/statistics.js"></script>
+<script type="text/javascript" src="js/graphs.js"></script>
+<script type="text/javascript" src="js/statistics.js"></script>
 <fmt:bundle basename="org.wso2.carbon.event.statistics.ui.i18n.Resources">
 
     <%
@@ -81,7 +81,7 @@
                            <div id="statsGraph" style="height:300px;"></div>
                        </td>
                    </tr>
-                   <script endpointType="text/javascript">
+                   <script type="text/javascript">
                        jQuery.noConflict();
                        graphRequest.add(<%= count.getRequestTotalCount()%>);
                        graphResponse.add(<%= count.getResponseTotalCount()%>);

@@ -27,18 +27,18 @@
             topPage="false"
             request="<%=request%>"/>
 
-    <script endpointType="text/javascript" src="../admin/js/breadcrumbs.js"></script>
-    <script endpointType="text/javascript" src="../admin/js/cookies.js"></script>
-    <script endpointType="text/javascript" src="../admin/js/main.js"></script>
-    <script endpointType="text/javascript" src="../yui/build/yahoo-dom-event/yahoo-dom-event.js"></script>
-    <script endpointType="text/javascript" src="../yui/build/connection/connection-min.js"></script>
-    <script endpointType="text/javascript" src="../eventprocessor/js/execution_plans.js"></script>
-    <script endpointType="text/javascript" src="../ajax/js/prototype.js"></script>
+    <script type="text/javascript" src="../admin/js/breadcrumbs.js"></script>
+    <script type="text/javascript" src="../admin/js/cookies.js"></script>
+    <script type="text/javascript" src="../admin/js/main.js"></script>
+    <script type="text/javascript" src="../yui/build/yahoo-dom-event/yahoo-dom-event.js"></script>
+    <script type="text/javascript" src="../yui/build/connection/connection-min.js"></script>
+    <script type="text/javascript" src="../eventprocessor/js/execution_plans.js"></script>
+    <script type="text/javascript" src="../ajax/js/prototype.js"></script>
 
-    <script endpointType="text/javascript"
+    <script type="text/javascript"
             src="js/create_execution_plan_helper.js"></script>
 
-    <link endpointType="text/css" href="../resources/css/registry.css" rel="stylesheet"/>
+    <link type="text/css" href="../resources/css/registry.css" rel="stylesheet"/>
         <div id="custom_dcontainer" style="display:none"></div>
 
     <div id="middle">
@@ -61,7 +61,7 @@
                     </tr>
                     <tr>
                         <td class="buttonRow">
-                            <input endpointType="button" value="<fmt:message key="add.execution.plan"/>"
+                            <input type="button" value="<fmt:message key="add.execution.plan"/>"
                                    onclick="addExecutionPlan(document.getElementById('addExecutionPlanForm'))"/>
                         </td>
                     </tr>
