@@ -15,7 +15,7 @@
 * specific language governing permissions and limitations
 * under the License.
 */
-package org.wso2.carbon.event.receiver.core.internal.type.xml.config;
+package org.wso2.carbon.event.receiver.core.config.mapping;
 
 public class XPathDefinition {
     private String prefix;

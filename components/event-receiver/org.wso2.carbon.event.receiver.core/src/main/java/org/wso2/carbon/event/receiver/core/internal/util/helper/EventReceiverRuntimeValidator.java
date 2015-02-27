@@ -22,7 +22,7 @@ import org.wso2.carbon.databridge.commons.StreamDefinition;
 import org.wso2.carbon.event.receiver.core.config.EventReceiverConfiguration;
 import org.wso2.carbon.event.receiver.core.config.InputMapper;
 import org.wso2.carbon.event.receiver.core.exception.EventReceiverStreamValidationException;
-import org.wso2.carbon.event.receiver.core.internal.util.EventReceiverConstants;
+import org.wso2.carbon.event.receiver.core.config.EventReceiverConstants;
 
 import java.util.ArrayList;
 import java.util.Arrays;

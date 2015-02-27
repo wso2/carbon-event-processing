@@ -33,7 +33,7 @@ import org.wso2.carbon.event.receiver.core.internal.type.map.MapInputMappingConf
 import org.wso2.carbon.event.receiver.core.internal.type.text.TextInputMappingConfigBuilder;
 import org.wso2.carbon.event.receiver.core.internal.type.wso2event.Wso2EventInputMappingConfigBuilder;
 import org.wso2.carbon.event.receiver.core.internal.type.xml.XMLInputMappingConfigBuilder;
-import org.wso2.carbon.event.receiver.core.internal.util.EventReceiverConstants;
+import org.wso2.carbon.event.receiver.core.config.EventReceiverConstants;
 import org.wso2.carbon.event.stream.manager.core.EventStreamService;
 import org.wso2.carbon.event.stream.manager.core.exception.EventStreamConfigurationException;
 

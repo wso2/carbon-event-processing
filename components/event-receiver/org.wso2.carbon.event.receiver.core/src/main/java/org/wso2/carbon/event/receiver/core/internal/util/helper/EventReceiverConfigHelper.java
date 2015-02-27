@@ -28,7 +28,7 @@ import org.wso2.carbon.event.receiver.core.config.InputEventAdaptorConfiguration
 import org.wso2.carbon.event.receiver.core.config.InputMappingAttribute;
 import org.wso2.carbon.event.receiver.core.config.InternalInputEventAdaptorConfiguration;
 import org.wso2.carbon.event.receiver.core.internal.ds.EventReceiverServiceValueHolder;
-import org.wso2.carbon.event.receiver.core.internal.util.EventReceiverConstants;
+import org.wso2.carbon.event.receiver.core.config.EventReceiverConstants;
 
 import javax.xml.namespace.QName;
 import java.util.ArrayList;

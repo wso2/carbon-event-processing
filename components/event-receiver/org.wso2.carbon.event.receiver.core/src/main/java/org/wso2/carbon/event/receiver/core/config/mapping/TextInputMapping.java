@@ -15,17 +15,16 @@
 * specific language governing permissions and limitations
 * under the License.
 */
-package org.wso2.carbon.event.receiver.core.internal.type.wso2event;
+package org.wso2.carbon.event.receiver.core.config.mapping;
 
 
-import org.wso2.carbon.event.receiver.core.internal.type.AbstractInputMapping;
-import org.wso2.carbon.event.receiver.core.internal.util.EventReceiverConstants;
+import org.wso2.carbon.event.receiver.core.config.AbstractInputMapping;
+import org.wso2.carbon.event.receiver.core.config.EventReceiverConstants;
 
-public class Wso2EventInputMapping extends AbstractInputMapping {
+public class TextInputMapping extends AbstractInputMapping {
 
     @Override
     public String getMappingType() {
-        return EventReceiverConstants.ER_WSO2EVENT_MAPPING_TYPE;
+        return EventReceiverConstants.ER_TEXT_MAPPING_TYPE;
     }
-
 }

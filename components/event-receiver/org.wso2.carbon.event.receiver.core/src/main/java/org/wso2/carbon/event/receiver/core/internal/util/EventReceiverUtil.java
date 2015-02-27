@@ -23,9 +23,10 @@ import org.wso2.carbon.databridge.commons.Attribute;
 import org.wso2.carbon.databridge.commons.AttributeType;
 import org.wso2.carbon.databridge.commons.StreamDefinition;
 import org.wso2.carbon.event.receiver.core.config.EventReceiverConfiguration;
+import org.wso2.carbon.event.receiver.core.config.EventReceiverConstants;
 import org.wso2.carbon.event.receiver.core.config.InputMappingAttribute;
 import org.wso2.carbon.event.receiver.core.exception.EventReceiverConfigurationException;
-import org.wso2.carbon.event.receiver.core.internal.type.AbstractInputMapping;
+import org.wso2.carbon.event.receiver.core.config.AbstractInputMapping;
 import org.wso2.carbon.utils.multitenancy.MultitenantUtils;
 
 import java.io.File;

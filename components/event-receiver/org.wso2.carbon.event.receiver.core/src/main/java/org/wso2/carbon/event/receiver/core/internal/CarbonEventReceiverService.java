@@ -33,7 +33,7 @@ import org.wso2.carbon.event.receiver.core.exception.EventReceiverConfigurationE
 import org.wso2.carbon.event.receiver.core.exception.EventReceiverStreamValidationException;
 import org.wso2.carbon.event.receiver.core.internal.ds.EventReceiverServiceValueHolder;
 import org.wso2.carbon.event.receiver.core.internal.util.EventReceiverConfigBuilder;
-import org.wso2.carbon.event.receiver.core.internal.util.EventReceiverConstants;
+import org.wso2.carbon.event.receiver.core.config.EventReceiverConstants;
 import org.wso2.carbon.event.receiver.core.internal.util.EventReceiverUtil;
 import org.wso2.carbon.event.receiver.core.internal.util.helper.ConfigurationValidator;
 import org.wso2.carbon.event.receiver.core.internal.util.helper.EventReceiverConfigHelper;

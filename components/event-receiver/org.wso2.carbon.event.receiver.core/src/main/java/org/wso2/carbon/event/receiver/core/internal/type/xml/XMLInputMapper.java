@@ -31,13 +31,14 @@ import org.wso2.carbon.databridge.commons.StreamDefinition;
 import org.wso2.carbon.event.receiver.core.config.EventReceiverConfiguration;
 import org.wso2.carbon.event.receiver.core.config.InputMapper;
 import org.wso2.carbon.event.receiver.core.config.InputMappingAttribute;
+import org.wso2.carbon.event.receiver.core.config.mapping.XMLInputMapping;
 import org.wso2.carbon.event.receiver.core.exception.EventReceiverConfigurationException;
 import org.wso2.carbon.event.receiver.core.exception.EventReceiverProcessingException;
 import org.wso2.carbon.event.receiver.core.exception.EventReceiverStreamValidationException;
 import org.wso2.carbon.event.receiver.core.internal.type.xml.config.ReflectionBasedObjectSupplier;
 import org.wso2.carbon.event.receiver.core.internal.type.xml.config.XPathData;
-import org.wso2.carbon.event.receiver.core.internal.type.xml.config.XPathDefinition;
-import org.wso2.carbon.event.receiver.core.internal.util.EventReceiverConstants;
+import org.wso2.carbon.event.receiver.core.config.mapping.XPathDefinition;
+import org.wso2.carbon.event.receiver.core.config.EventReceiverConstants;
 import org.wso2.carbon.event.receiver.core.internal.util.EventReceiverUtil;
 import org.wso2.carbon.event.receiver.core.internal.util.helper.EventReceiverConfigHelper;
 

@@ -22,10 +22,11 @@ import org.apache.axiom.om.OMFactory;
 import org.wso2.carbon.databridge.commons.AttributeType;
 import org.wso2.carbon.event.receiver.core.config.InputMapping;
 import org.wso2.carbon.event.receiver.core.config.InputMappingAttribute;
+import org.wso2.carbon.event.receiver.core.config.mapping.TextInputMapping;
 import org.wso2.carbon.event.receiver.core.exception.EventReceiverConfigurationException;
 import org.wso2.carbon.event.receiver.core.exception.EventReceiverValidationException;
 import org.wso2.carbon.event.receiver.core.internal.util.EventReceiverConfigBuilder;
-import org.wso2.carbon.event.receiver.core.internal.util.EventReceiverConstants;
+import org.wso2.carbon.event.receiver.core.config.EventReceiverConstants;
 
 import javax.xml.namespace.QName;
 import java.util.ArrayList;

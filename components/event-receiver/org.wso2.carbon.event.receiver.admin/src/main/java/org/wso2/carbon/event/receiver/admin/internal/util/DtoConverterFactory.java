@@ -18,7 +18,7 @@
 package org.wso2.carbon.event.receiver.admin.internal.util;
 
 import org.wso2.carbon.event.receiver.admin.internal.util.dto.converter.*;
-import org.wso2.carbon.event.receiver.core.internal.util.EventReceiverConstants;
+import org.wso2.carbon.event.receiver.core.config.EventReceiverConstants;
 
 public class DtoConverterFactory {
     private Wso2EventDtoConverter wso2EventDtoConverter;

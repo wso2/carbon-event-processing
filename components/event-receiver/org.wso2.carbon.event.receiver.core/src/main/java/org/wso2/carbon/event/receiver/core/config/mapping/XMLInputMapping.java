@@ -15,12 +15,11 @@
 * specific language governing permissions and limitations
 * under the License.
 */
-package org.wso2.carbon.event.receiver.core.internal.type.xml;
+package org.wso2.carbon.event.receiver.core.config.mapping;
 
 
-import org.wso2.carbon.event.receiver.core.internal.type.AbstractInputMapping;
-import org.wso2.carbon.event.receiver.core.internal.type.xml.config.XPathDefinition;
-import org.wso2.carbon.event.receiver.core.internal.util.EventReceiverConstants;
+import org.wso2.carbon.event.receiver.core.config.AbstractInputMapping;
+import org.wso2.carbon.event.receiver.core.config.EventReceiverConstants;
 
 import java.util.ArrayList;
 import java.util.List;

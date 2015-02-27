@@ -26,6 +26,7 @@ import org.apache.commons.logging.LogFactory;
 import org.wso2.carbon.databridge.commons.AttributeType;
 import org.wso2.carbon.event.receiver.core.MessageType;
 import org.wso2.carbon.event.receiver.core.config.EventReceiverConfiguration;
+import org.wso2.carbon.event.receiver.core.config.EventReceiverConstants;
 import org.wso2.carbon.event.receiver.core.config.InputEventAdaptorConfiguration;
 import org.wso2.carbon.event.receiver.core.config.InputMapperFactory;
 import org.wso2.carbon.event.receiver.core.exception.EventReceiverConfigurationException;

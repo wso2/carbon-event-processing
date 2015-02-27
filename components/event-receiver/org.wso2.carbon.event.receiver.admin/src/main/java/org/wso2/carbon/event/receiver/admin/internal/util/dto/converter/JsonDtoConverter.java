@@ -29,8 +29,8 @@ import org.wso2.carbon.event.receiver.core.config.EventReceiverConfiguration;
 import org.wso2.carbon.event.receiver.core.config.InputEventAdaptorConfiguration;
 import org.wso2.carbon.event.receiver.core.config.InputMapping;
 import org.wso2.carbon.event.receiver.core.config.InputMappingAttribute;
-import org.wso2.carbon.event.receiver.core.internal.type.json.JsonInputMapping;
-import org.wso2.carbon.event.receiver.core.internal.util.EventReceiverConstants;
+import org.wso2.carbon.event.receiver.core.config.mapping.JsonInputMapping;
+import org.wso2.carbon.event.receiver.core.config.EventReceiverConstants;
 
 import java.util.ArrayList;
 import java.util.List;

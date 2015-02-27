@@ -34,7 +34,7 @@ import org.wso2.carbon.event.receiver.core.exception.EventReceiverProcessingExce
 import org.wso2.carbon.event.receiver.core.exception.EventReceiverValidationException;
 import org.wso2.carbon.event.receiver.core.exception.InputEventAdaptorEventProcessingException;
 import org.wso2.carbon.event.receiver.core.internal.ds.EventReceiverServiceValueHolder;
-import org.wso2.carbon.event.receiver.core.internal.util.EventReceiverConstants;
+import org.wso2.carbon.event.receiver.core.config.EventReceiverConstants;
 import org.wso2.carbon.event.receiver.core.internal.util.EventReceiverUtil;
 import org.wso2.carbon.event.receiver.core.internal.util.helper.EventReceiverRuntimeValidator;
 import org.wso2.carbon.event.statistics.EventStatisticsMonitor;

@@ -36,7 +36,7 @@ import org.wso2.carbon.event.receiver.core.exception.EventReceiverValidationExce
 import org.wso2.carbon.event.receiver.core.internal.CarbonEventReceiverService;
 import org.wso2.carbon.event.receiver.core.internal.ds.EventReceiverServiceValueHolder;
 import org.wso2.carbon.event.receiver.core.internal.util.EventReceiverConfigBuilder;
-import org.wso2.carbon.event.receiver.core.internal.util.EventReceiverConstants;
+import org.wso2.carbon.event.receiver.core.config.EventReceiverConstants;
 import org.wso2.carbon.event.receiver.core.internal.util.helper.EventReceiverConfigHelper;
 
 import javax.xml.namespace.QName;

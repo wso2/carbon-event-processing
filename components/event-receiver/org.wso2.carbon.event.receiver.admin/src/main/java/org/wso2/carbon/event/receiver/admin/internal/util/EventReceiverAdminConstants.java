@@ -18,7 +18,7 @@
 package org.wso2.carbon.event.receiver.admin.internal.util;
 
 import org.wso2.carbon.databridge.commons.AttributeType;
-import org.wso2.carbon.event.receiver.core.internal.util.EventReceiverConstants;
+import org.wso2.carbon.event.receiver.core.config.EventReceiverConstants;
 
 import java.util.Collections;
 import java.util.HashMap;
