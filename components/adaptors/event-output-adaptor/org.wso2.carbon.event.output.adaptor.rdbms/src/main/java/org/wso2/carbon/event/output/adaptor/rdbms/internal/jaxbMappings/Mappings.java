@@ -25,18 +25,17 @@ import java.util.List;
 /**
  * Contains List of mapping objects
  */
-@XmlRootElement(name="adaptorConfiguration")
+@XmlRootElement(name = "adaptorConfiguration")
 public class Mappings {
 
     private List<Mapping> mapping;
-
 
     public List<Mapping> getMapping() {
         return mapping;
     }
 
-    @XmlElementWrapper(name="mappings")
-    @XmlElement(name="mapping")
+    @XmlElementWrapper(name = "mappings")
+    @XmlElement(name = "mapping")
     public void setMapping(List<Mapping> mapping) {
         this.mapping = mapping;
     }

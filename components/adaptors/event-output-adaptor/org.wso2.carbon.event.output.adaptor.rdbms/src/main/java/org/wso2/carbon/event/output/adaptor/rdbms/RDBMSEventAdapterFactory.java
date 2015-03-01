@@ -16,11 +16,8 @@ package org.wso2.carbon.event.output.adaptor.rdbms;/*
 * under the License.
 */
 
-
-
 import org.wso2.carbon.event.output.adaptor.core.AbstractOutputEventAdaptor;
 import org.wso2.carbon.event.output.adaptor.core.OutputEventAdaptorFactory;
-
 
 public class RDBMSEventAdapterFactory implements OutputEventAdaptorFactory {
 

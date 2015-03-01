@@ -17,7 +17,6 @@
 */
 package org.wso2.carbon.event.output.adaptor.rdbms.internal.jaxbMappings;
 
-
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 

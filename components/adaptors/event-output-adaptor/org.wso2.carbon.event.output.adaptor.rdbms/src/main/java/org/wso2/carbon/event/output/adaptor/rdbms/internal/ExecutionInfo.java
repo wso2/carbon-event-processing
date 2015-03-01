@@ -18,7 +18,6 @@
 
 package org.wso2.carbon.event.output.adaptor.rdbms.internal;
 
-
 import org.wso2.carbon.databridge.commons.Attribute;
 import org.wso2.carbon.event.output.adaptor.rdbms.internal.util.DecayTimer;
 
@@ -41,7 +40,6 @@ public class ExecutionInfo {
     private Boolean isConnectionLive = false;
     private long nextConnectionTime;
     private DecayTimer decayTimer;
-
 
     private boolean updateMode;
 

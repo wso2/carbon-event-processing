@@ -17,7 +17,6 @@
 */
 package org.wso2.carbon.event.output.adaptor.rdbms.internal.jaxbMappings;
 
-
 import javax.xml.bind.annotation.XmlElement;
 import java.util.List;
 
@@ -37,10 +36,10 @@ public class Elements {
         this.elementList = elementList;
     }
 
-    public Element getType(String javaType){
-        Element matchedElement =null;
-        for(Element element : elementList){
-            if(element.getKey().equals(javaType)){
+    public Element getType(String javaType) {
+        Element matchedElement = null;
+        for (Element element : elementList) {
+            if (element.getKey().equals(javaType)) {
                 matchedElement = element;
                 break;
             }
