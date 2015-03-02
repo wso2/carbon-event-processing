@@ -23,9 +23,18 @@ import java.util.Map;
 
 public class OutputEventAdapterConfiguration {
 
+    private String name;
     private String type;
     private String messageFormat;
     private Map<String, String> staticProperties;
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
 
     public String getType() {
         return type;
@@ -60,6 +69,7 @@ public class OutputEventAdapterConfiguration {
 
         if (messageFormat != null ? !messageFormat.equals(that.messageFormat) : that.messageFormat != null)
             return false;
+        if (name != null ? !name.equals(that.name) : that.name != null) return false;
         if (staticProperties != null ? !staticProperties.equals(that.staticProperties) : that.staticProperties != null)
             return false;
         if (type != null ? !type.equals(that.type) : that.type != null) return false;
@@ -69,7 +79,8 @@ public class OutputEventAdapterConfiguration {
 
     @Override
     public int hashCode() {
-        int result = type != null ? type.hashCode() : 0;
+        int result = name != null ? name.hashCode() : 0;
+        result = 31 * result + (type != null ? type.hashCode() : 0);
         result = 31 * result + (messageFormat != null ? messageFormat.hashCode() : 0);
         result = 31 * result + (staticProperties != null ? staticProperties.hashCode() : 0);
         return result;

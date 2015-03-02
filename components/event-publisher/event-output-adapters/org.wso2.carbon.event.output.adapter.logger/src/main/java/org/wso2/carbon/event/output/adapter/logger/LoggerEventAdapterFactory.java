@@ -21,10 +21,7 @@ package org.wso2.carbon.event.output.adapter.logger;
 import org.wso2.carbon.event.output.adapter.core.*;
 import org.wso2.carbon.event.output.adapter.logger.internal.util.LoggerEventAdapterConstants;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Locale;
-import java.util.ResourceBundle;
+import java.util.*;
 
 public class LoggerEventAdapterFactory extends OutputEventAdapterFactory {
     private ResourceBundle resourceBundle = ResourceBundle.getBundle("org.wso2.carbon.event.output.adapter.logger.i18n.Resources", Locale.getDefault());
@@ -65,8 +62,8 @@ public class LoggerEventAdapterFactory extends OutputEventAdapterFactory {
     }
 
     @Override
-    public OutputEventAdapter createEventAdapter(OutputEventAdapterConfiguration eventAdapterConfiguration) {
-        return new LoggerEventAdapter(eventAdapterConfiguration);
+    public OutputEventAdapter createEventAdapter(OutputEventAdapterConfiguration eventAdapterConfiguration, Map<String, String> globalProperties) {
+        return new LoggerEventAdapter(eventAdapterConfiguration,globalProperties);
     }
 
 }

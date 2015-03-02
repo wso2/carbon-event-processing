@@ -47,11 +47,11 @@ public class OutputAdapterRuntime {
             } catch (ConnectionUnavailableException e) {
                 connected = false;
                 outputEventAdapter.disconnect();
-                log.error("Error initializing connecting on " + name + ", reconnection will be tried on next event arrival.", e);
+                log.error("Error initializing connecting on " + this.name + ", reconnection will be tried on next event arrival.", e);
             } catch (OutputEventAdapterRuntimeException e) {
                 connected = false;
                 outputEventAdapter.disconnect();
-                log.error("Error initializing connecting on " + name + ", reconnection will be tried on next event arrival.", e);
+                log.error("Error initializing connecting on " + this.name + ", reconnection will be tried on next event arrival.", e);
             }
         }
     }

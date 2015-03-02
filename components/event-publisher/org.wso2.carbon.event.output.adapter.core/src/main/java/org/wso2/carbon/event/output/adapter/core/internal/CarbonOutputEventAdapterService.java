@@ -17,10 +17,11 @@ package org.wso2.carbon.event.output.adapter.core.internal;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.log4j.Logger;
+import org.wso2.carbon.event.output.adapter.core.*;
 import org.wso2.carbon.event.output.adapter.core.exception.OutputEventAdapterException;
 import org.wso2.carbon.event.output.adapter.core.exception.OutputEventAdapterRuntimeException;
 import org.wso2.carbon.event.output.adapter.core.exception.TestConnectionNotSupportedException;
-import org.wso2.carbon.event.output.adapter.core.*;
+import org.wso2.carbon.event.output.adapter.core.internal.ds.OutputEventAdapterServiceValueHolder;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -77,7 +78,7 @@ public class CarbonOutputEventAdapterService implements OutputEventAdapterServic
     }
 
     @Override
-    public void create(String name, OutputEventAdapterConfiguration outputEventAdapterConfiguration, int tenantId) throws OutputEventAdapterException {
+    public void create(OutputEventAdapterConfiguration outputEventAdapterConfiguration, int tenantId) throws OutputEventAdapterException {
         ConcurrentHashMap<String, OutputAdapterRuntime> eventAdapters = tenantSpecificEventAdapters.get(tenantId);
         if (eventAdapters == null) {
             tenantSpecificEventAdapters.putIfAbsent(tenantId, new ConcurrentHashMap<String, OutputAdapterRuntime>());
@@ -85,12 +86,21 @@ public class CarbonOutputEventAdapterService implements OutputEventAdapterServic
         }
         OutputEventAdapterFactory adapterFactory = eventAdapterFactoryMap.get(outputEventAdapterConfiguration.getType());
         if (adapterFactory == null) {
-            throw new OutputEventAdapterException("Output Event Adapter not created as no adapter factory is registered with type " + outputEventAdapterConfiguration.getType());
+            throw new OutputEventAdapterException("Output Event Adapter not created as no adapter factory is registered " +
+                    "with type " + outputEventAdapterConfiguration.getType());
         }
-        if (eventAdapters.get(name) != null) {
-            throw new OutputEventAdapterException("Output Event Adapter not created as another adapter with same name '" + name + "' already exist for tenant " + tenantId);
+        if (outputEventAdapterConfiguration.getName() == null) {
+            throw new OutputEventAdapterException("Output Event Adapter name cannot by null, for the adapter type " +
+                    outputEventAdapterConfiguration.getType());
         }
-        eventAdapters.put(name, new OutputAdapterRuntime(adapterFactory.createEventAdapter(outputEventAdapterConfiguration), name));
+        if (eventAdapters.get(outputEventAdapterConfiguration.getName()) != null) {
+            throw new OutputEventAdapterException("Output Event Adapter not created as another adapter with same name '"
+                    + outputEventAdapterConfiguration.getName() + "' already exist for tenant " + tenantId);
+        }
+        Map<String, String> globalProperties = OutputEventAdapterServiceValueHolder.getGlobalAdapterConfigs().
+                getAdapterConfig(outputEventAdapterConfiguration.getType()).getGlobalPropertiesAsMap();
+        eventAdapters.put(outputEventAdapterConfiguration.getName(), new OutputAdapterRuntime(adapterFactory.
+                createEventAdapter(outputEventAdapterConfiguration, globalProperties), outputEventAdapterConfiguration.getName()));
     }
 
     /**
@@ -105,11 +115,13 @@ public class CarbonOutputEventAdapterService implements OutputEventAdapterServic
     public void publish(String name, Map<String, String> dynamicProperties, Object message, int tenantId) {
         ConcurrentHashMap<String, OutputAdapterRuntime> eventAdapters = tenantSpecificEventAdapters.get(tenantId);
         if (eventAdapters == null) {
-            throw new OutputEventAdapterRuntimeException("Event not published as no Output Event Adapter found with for tenant id " + tenantId);
+            throw new OutputEventAdapterRuntimeException("Event not published as no Output Event Adapter found with for" +
+                    " tenant id " + tenantId);
         }
         OutputAdapterRuntime outputAdapterRuntime = eventAdapters.get(name);
         if (outputAdapterRuntime == null) {
-            throw new OutputEventAdapterRuntimeException("Event not published as no Output Event Adapter found with name '" + name + "' for tenant id " + tenantId);
+            throw new OutputEventAdapterRuntimeException("Event not published as no Output Event Adapter found with name" +
+                    " '" + name + "' for tenant id " + tenantId);
         }
         outputAdapterRuntime.publish(message, dynamicProperties);
     }
@@ -120,11 +132,23 @@ public class CarbonOutputEventAdapterService implements OutputEventAdapterServic
      * @param outputEventAdapterConfiguration - Configuration Details of the event adapter
      */
     @Override
-    public void testConnection(OutputEventAdapterConfiguration outputEventAdapterConfiguration) throws OutputEventAdapterException, TestConnectionNotSupportedException {
+    public void testConnection(OutputEventAdapterConfiguration outputEventAdapterConfiguration)
+            throws OutputEventAdapterException, TestConnectionNotSupportedException {
         OutputEventAdapter outputEventAdapter = null;
         try {
             OutputEventAdapterFactory outputEventAdapterFactory = this.eventAdapterFactoryMap.get(outputEventAdapterConfiguration.getType());
-            outputEventAdapter = outputEventAdapterFactory.createEventAdapter(outputEventAdapterConfiguration);
+            OutputEventAdapterFactory adapterFactory = eventAdapterFactoryMap.get(outputEventAdapterConfiguration.getType());
+            if (adapterFactory == null) {
+                throw new OutputEventAdapterException("Output Event Adapter not created as no adapter factory is " +
+                        "registered with type " + outputEventAdapterConfiguration.getType());
+            }
+            if (outputEventAdapterConfiguration.getName() == null) {
+                throw new OutputEventAdapterException("Output Event Adapter name cannot by null, for the adapter type "
+                        + outputEventAdapterConfiguration.getType());
+            }
+            Map<String, String> globalProperties = OutputEventAdapterServiceValueHolder.getGlobalAdapterConfigs().
+                    getAdapterConfig(outputEventAdapterConfiguration.getType()).getGlobalPropertiesAsMap();
+            outputEventAdapter = outputEventAdapterFactory.createEventAdapter(outputEventAdapterConfiguration, globalProperties);
             outputEventAdapter.init();
             outputEventAdapter.testConnect();
             outputEventAdapter.disconnect();

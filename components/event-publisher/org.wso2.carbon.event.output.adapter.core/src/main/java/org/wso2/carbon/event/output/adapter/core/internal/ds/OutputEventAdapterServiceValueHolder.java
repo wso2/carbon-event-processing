@@ -14,6 +14,7 @@
  */
 package org.wso2.carbon.event.output.adapter.core.internal.ds;
 
+import org.wso2.carbon.event.output.adapter.core.internal.config.AdapterConfigs;
 import org.wso2.carbon.event.statistics.EventStatisticsService;
 import org.wso2.carbon.event.output.adapter.core.internal.CarbonOutputEventAdapterService;
 import org.wso2.carbon.registry.core.service.RegistryService;
@@ -23,6 +24,7 @@ public class OutputEventAdapterServiceValueHolder {
     private static CarbonOutputEventAdapterService carbonOutputEventAdapterService;
     private static RegistryService registryService;
     private static EventStatisticsService eventStatisticsService;
+    private static AdapterConfigs globalAdapterConfigs;
 
     private OutputEventAdapterServiceValueHolder() {
 
@@ -50,5 +52,13 @@ public class OutputEventAdapterServiceValueHolder {
 
     public static void setEventStatisticsService(EventStatisticsService eventStatisticsService) {
         OutputEventAdapterServiceValueHolder.eventStatisticsService = eventStatisticsService;
+    }
+
+    public static void setGlobalAdapterConfigs(AdapterConfigs globalAdapterConfigs) {
+        OutputEventAdapterServiceValueHolder.globalAdapterConfigs = globalAdapterConfigs;
+    }
+
+    public static AdapterConfigs getGlobalAdapterConfigs() {
+        return globalAdapterConfigs;
     }
 }

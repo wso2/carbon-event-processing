@@ -46,7 +46,7 @@ public interface OutputEventAdapterService {
     OutputEventAdapterSchema getEventAdapterSchema(String eventAdapterType);
 
 
-    void create(String name, OutputEventAdapterConfiguration outputEventAdapterConfiguration, int tenantId) throws OutputEventAdapterException;
+    void create(OutputEventAdapterConfiguration outputEventAdapterConfiguration, int tenantId) throws OutputEventAdapterException;
 
     /**
      * publishes the message using the given event adapter to the given topic.

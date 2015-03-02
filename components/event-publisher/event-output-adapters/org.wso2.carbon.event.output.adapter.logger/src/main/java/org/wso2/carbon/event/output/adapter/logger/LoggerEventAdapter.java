@@ -32,9 +32,11 @@ public final class LoggerEventAdapter implements OutputEventAdapter {
 
     private static final Log log = LogFactory.getLog(LoggerEventAdapter.class);
     private OutputEventAdapterConfiguration eventAdapterConfiguration;
+    private Map<String, String> globalProperties;
 
-    public LoggerEventAdapter(OutputEventAdapterConfiguration eventAdapterConfiguration) {
+    public LoggerEventAdapter(OutputEventAdapterConfiguration eventAdapterConfiguration, Map<String, String> globalProperties) {
         this.eventAdapterConfiguration = eventAdapterConfiguration;
+        this.globalProperties = globalProperties;
     }
 
 

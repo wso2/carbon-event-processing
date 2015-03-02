@@ -20,7 +20,14 @@ import org.osgi.service.component.ComponentContext;
 import org.wso2.carbon.event.output.adapter.core.OutputEventAdapterFactory;
 import org.wso2.carbon.event.output.adapter.core.OutputEventAdapterService;
 import org.wso2.carbon.event.output.adapter.core.internal.CarbonOutputEventAdapterService;
+import org.wso2.carbon.event.output.adapter.core.internal.EventAdapterConstants;
+import org.wso2.carbon.event.output.adapter.core.internal.config.AdapterConfigs;
+import org.wso2.carbon.utils.CarbonUtils;
 
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBException;
+import javax.xml.bind.Unmarshaller;
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -41,6 +48,9 @@ public class OutputEventAdapterServiceDS {
      * @param context the component context that will be passed in from the OSGi environment at activation
      */
     protected void activate(ComponentContext context) {
+
+
+        OutputEventAdapterServiceValueHolder.setGlobalAdapterConfigs(loadGlobalConfigs());
 
         CarbonOutputEventAdapterService outputEventAdapterService = new CarbonOutputEventAdapterService();
         OutputEventAdapterServiceValueHolder.setCarbonOutputEventAdapterService(outputEventAdapterService);
@@ -87,6 +97,24 @@ public class OutputEventAdapterServiceDS {
 
     protected void unSetEventAdapterType(OutputEventAdapterFactory outputEventAdapterFactory) {
         OutputEventAdapterServiceValueHolder.getCarbonOutputEventAdapterService().unRegisterEventAdapter(outputEventAdapterFactory);
+    }
+
+    private AdapterConfigs loadGlobalConfigs() {
+
+        String path = CarbonUtils.getCarbonConfigDirPath() + File.separator + EventAdapterConstants.GLOBAL_CONFIG_FILE_NAME;
+        try {
+            JAXBContext jaxbContext = JAXBContext.newInstance(AdapterConfigs.class);
+            Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
+
+            File configFile = new File(path);
+            if (!configFile.exists()) {
+                log.warn(EventAdapterConstants.GLOBAL_CONFIG_FILE_NAME + " can not found in " + path + ", hence Output Event Adapters will be running with default global configs.");
+            }
+            return (AdapterConfigs) unmarshaller.unmarshal(configFile);
+        } catch (JAXBException e) {
+            log.error("Error in loading " + EventAdapterConstants.GLOBAL_CONFIG_FILE_NAME + " from " + path + ", hence Output Event Adapters will be running with default global configs.");
+        }
+        return new AdapterConfigs();
     }
 }
 

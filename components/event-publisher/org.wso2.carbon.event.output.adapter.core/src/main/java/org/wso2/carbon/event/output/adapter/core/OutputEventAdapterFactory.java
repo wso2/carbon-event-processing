@@ -15,6 +15,7 @@
 package org.wso2.carbon.event.output.adapter.core;
 
 import java.util.List;
+import java.util.Map;
 
 public abstract class OutputEventAdapterFactory {
 
@@ -28,7 +29,7 @@ public abstract class OutputEventAdapterFactory {
 
     public abstract List<Property> getDynamicPropertyList();
 
-    public abstract OutputEventAdapter createEventAdapter(OutputEventAdapterConfiguration eventAdapterConfiguration);
+    public abstract OutputEventAdapter createEventAdapter(OutputEventAdapterConfiguration eventAdapterConfiguration, Map<String, String> globalProperties);
 
     public OutputEventAdapterSchema getOutputEventAdapterSchema() {
         if (outputEventAdapterSchema == null) {
