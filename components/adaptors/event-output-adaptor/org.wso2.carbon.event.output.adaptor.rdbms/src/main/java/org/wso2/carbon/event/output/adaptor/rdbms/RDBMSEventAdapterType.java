@@ -17,6 +17,8 @@
 */
 package org.wso2.carbon.event.output.adaptor.rdbms;
 
+import java.sql.*;
+import java.util.*;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.wso2.carbon.databridge.commons.Attribute;
@@ -45,8 +47,7 @@ import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
 import java.io.File;
-import java.sql.*;
-import java.util.*;
+
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -218,7 +219,7 @@ public final class RDBMSEventAdapterType extends AbstractOutputEventAdaptor {
                     log.error("Error while initializing connection for datasource " + outputEventAdaptorConfiguration
                             .getOutputProperties().get(RDBMSEventAdaptorConstants.ADAPTOR_GENERIC_RDBMS_DATASOURCE_NAME)
                             + "Reconnection will try from " + (executionInfo.getNextConnectionTime() - System
-                            .currentTimeMillis()) + " milliseconds.", e);
+                            .currentTimeMillis()) + " milliseconds.", e1);
                     executionInfo.getDecayTimer().incrementPosition();
                 } catch (RDBMSEventProcessingException e2) {
                     log.error(e2.getMessage() + " Hence Event is dropped.");
@@ -242,8 +243,10 @@ public final class RDBMSEventAdapterType extends AbstractOutputEventAdaptor {
                 executionInfo.setIsConnectionLive(true);
             } else {
                 if (log.isDebugEnabled()) {
-                    log.debug("End point suspended hence dropping event. End point will be active after " + (
-                            executionInfo.getNextConnectionTime() - currentTime) + " milliseconds.");
+                    long timeLeftForNextActivation =
+                            executionInfo.getNextConnectionTime() - currentTime;
+                    log.debug("End point suspended hence dropping event. End point will be active after "
+                            + timeLeftForNextActivation + " milliseconds.");
                 }
             }
         } else {
@@ -289,6 +292,7 @@ public final class RDBMSEventAdapterType extends AbstractOutputEventAdaptor {
                     populateStatement(map, stmt, executionInfo.getInsertQueryColumnOrder());
                     stmt.executeUpdate();
                 }
+
             }
         } catch (SQLException e) {
             throw new RDBMSEventProcessingException(
@@ -394,7 +398,8 @@ public final class RDBMSEventAdapterType extends AbstractOutputEventAdaptor {
                 }
             }
         } catch (JAXBException e) {
-            throw new OutputEventAdaptorEventProcessingException("Syntax Error.Cannot unmarshal provided File "+RDBMSEventAdaptorConstants.ADAPTOR_GENERIC_RDBMS_FILE_NAME + e.getMessage(), e);
+            throw new OutputEventAdaptorEventProcessingException("Syntax Error.Cannot unmarshal provided File "
+                    + RDBMSEventAdaptorConstants.ADAPTOR_GENERIC_RDBMS_FILE_NAME + e.getMessage(), e);
         }
     }
 

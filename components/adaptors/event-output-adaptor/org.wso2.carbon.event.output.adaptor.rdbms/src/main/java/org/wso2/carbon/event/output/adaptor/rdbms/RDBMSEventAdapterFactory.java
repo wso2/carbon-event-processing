@@ -1,4 +1,4 @@
-package org.wso2.carbon.event.output.adaptor.rdbms;/*
+/*
 *  Copyright (c) 2005-2014, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
 *
 *  WSO2 Inc. licenses this file to you under the Apache License,
@@ -15,6 +15,7 @@ package org.wso2.carbon.event.output.adaptor.rdbms;/*
 * specific language governing permissions and limitations
 * under the License.
 */
+package org.wso2.carbon.event.output.adaptor.rdbms;
 
 import org.wso2.carbon.event.output.adaptor.core.AbstractOutputEventAdaptor;
 import org.wso2.carbon.event.output.adaptor.core.OutputEventAdaptorFactory;
