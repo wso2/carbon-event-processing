@@ -69,7 +69,7 @@ public class CarbonOutputEventAdapterService implements OutputEventAdapterServic
      * @return
      */
     @Override
-    public OutputEventAdapterSchema getEventAdapterSchema(String eventAdapterType) {
+    public OutputEventAdapterSchema getOutputEventAdapterSchema(String eventAdapterType) {
         OutputEventAdapterFactory outputEventAdapterFactory = eventAdapterFactoryMap.get(eventAdapterType);
         if (outputEventAdapterFactory != null) {
             return outputEventAdapterFactory.getOutputEventAdapterSchema();

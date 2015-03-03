@@ -25,7 +25,7 @@ import org.wso2.carbon.context.PrivilegedCarbonContext;
 import org.wso2.carbon.core.AbstractAdmin;
 import org.wso2.carbon.event.builder.core.config.EventBuilderConfiguration;
 import org.wso2.carbon.event.flow.internal.EventFlowServiceValueHolder;
-import org.wso2.carbon.event.formatter.core.config.EventFormatterConfiguration;
+import org.wso2.carbon.event.publisher.core.config.EventFormatterConfiguration;
 import org.wso2.carbon.event.input.adaptor.core.config.InputEventAdaptorConfiguration;
 import org.wso2.carbon.event.output.adaptor.core.config.OutputEventAdaptorConfiguration;
 import org.wso2.carbon.event.processor.core.ExecutionPlanConfiguration;

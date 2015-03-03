@@ -108,7 +108,7 @@
                         <DynamicImport-Package>*</DynamicImport-Package>
                         <Axis2Deployer>EventFormatterDeployer</Axis2Deployer>
                         <Axis2RequiredServices>
-                            org.wso2.carbon.event.formatter.core.EventFormatterService
+                            org.wso2.carbon.event.publisher.core.EventFormatterService
                         </Axis2RequiredServices>
                     </instructions>
                 </configuration>

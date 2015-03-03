@@ -17,7 +17,7 @@
 */
 package org.wso2.carbon.event.formatter.admin.internal.util;
 
-import org.wso2.carbon.event.formatter.core.EventFormatterService;
+import org.wso2.carbon.event.publisher.core.EventFormatterService;
 import org.wso2.carbon.event.output.adaptor.core.OutputEventAdaptorService;
 import org.wso2.carbon.event.output.adaptor.manager.core.OutputEventAdaptorManagerService;
 

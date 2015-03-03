@@ -43,7 +43,7 @@ public interface OutputEventAdapterService {
      * @param eventAdapterType
      * @return
      */
-    OutputEventAdapterSchema getEventAdapterSchema(String eventAdapterType);
+    OutputEventAdapterSchema getOutputEventAdapterSchema(String eventAdapterType);
 
 
     void create(OutputEventAdapterConfiguration outputEventAdapterConfiguration, int tenantId) throws OutputEventAdapterException;
