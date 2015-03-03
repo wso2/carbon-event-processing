@@ -18,7 +18,7 @@
 package org.wso2.carbon.event.flow.internal;
 
 import org.wso2.carbon.event.builder.core.EventBuilderService;
-import org.wso2.carbon.event.publisher.core.EventFormatterService;
+import org.wso2.carbon.event.formatter.core.EventFormatterService;
 import org.wso2.carbon.event.input.adaptor.manager.core.InputEventAdaptorManagerService;
 import org.wso2.carbon.event.output.adaptor.manager.core.OutputEventAdaptorManagerService;
 import org.wso2.carbon.event.processor.core.EventProcessorService;
