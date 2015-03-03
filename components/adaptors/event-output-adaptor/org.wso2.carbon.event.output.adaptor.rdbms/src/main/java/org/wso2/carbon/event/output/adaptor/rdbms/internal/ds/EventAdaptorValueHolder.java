@@ -21,6 +21,7 @@ package org.wso2.carbon.event.output.adaptor.rdbms.internal.ds;
 import org.wso2.carbon.ndatasource.core.DataSourceService;
 
 public class EventAdaptorValueHolder {
+
     private static DataSourceService dataSourceService;
 
     public static void setDataSourceService(DataSourceService dataSourceService) {
@@ -30,6 +31,5 @@ public class EventAdaptorValueHolder {
     public static DataSourceService getDataSourceService() {
         return dataSourceService;
     }
-
 
 }

@@ -22,23 +22,20 @@ package org.wso2.carbon.event.output.adaptor.rdbms.internal.util;
  */
 public class DecayTimer {
 
-    private final long waitTimeSequenceSeconds[] = new long[]{0, 0, 1, 5, 15, 30, 60, 300, 900, 1800, 3600};
+    private final long waitTimeSequenceSeconds[] = new long[] { 0, 0, 1, 5, 15, 30, 60, 300, 900, 1800, 3600 };
     private int position = 0;
-
 
     public void reset() {
         position = 0;
     }
 
-    public void incrementPosition(){
-
-        if (position != (waitTimeSequenceSeconds.length-1)) {
+    public void incrementPosition() {
+        if (position != (waitTimeSequenceSeconds.length - 1)) {
             position++;
         }
     }
 
     public long returnTimeToWait() {
-
         return waitTimeSequenceSeconds[position] * 1000; //milliseconds
     }
 
