@@ -24,16 +24,16 @@ import org.apache.axis2.deployment.repository.util.DeploymentFileData;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.wso2.carbon.event.processing.application.deployer.EventProcessingDeployer;
 import org.wso2.carbon.context.PrivilegedCarbonContext;
+import org.wso2.carbon.event.processing.application.deployer.EventProcessingDeployer;
 import org.wso2.carbon.event.publisher.core.config.EventPublisherConfiguration;
+import org.wso2.carbon.event.publisher.core.config.EventPublisherConfigurationFile;
 import org.wso2.carbon.event.publisher.core.config.EventPublisherConstants;
 import org.wso2.carbon.event.publisher.core.exception.EventPublisherConfigurationException;
 import org.wso2.carbon.event.publisher.core.exception.EventPublisherStreamValidationException;
 import org.wso2.carbon.event.publisher.core.exception.EventPublisherValidationException;
 import org.wso2.carbon.event.publisher.core.internal.CarbonEventPublisherService;
 import org.wso2.carbon.event.publisher.core.internal.ds.EventPublisherServiceValueHolder;
-import org.wso2.carbon.event.publisher.core.internal.util.EventPublisherConfigurationFile;
 import org.wso2.carbon.event.publisher.core.internal.util.PublisherConfigurationBuilder;
 import org.wso2.carbon.event.publisher.core.internal.util.helper.EventPublisherConfigurationHelper;
 

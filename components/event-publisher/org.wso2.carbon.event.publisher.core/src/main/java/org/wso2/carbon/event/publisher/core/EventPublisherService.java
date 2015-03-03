@@ -17,8 +17,8 @@ package org.wso2.carbon.event.publisher.core;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.wso2.carbon.databridge.commons.StreamDefinition;
 import org.wso2.carbon.event.publisher.core.config.EventPublisherConfiguration;
+import org.wso2.carbon.event.publisher.core.config.EventPublisherConfigurationFile;
 import org.wso2.carbon.event.publisher.core.exception.EventPublisherConfigurationException;
-import org.wso2.carbon.event.publisher.core.internal.util.EventPublisherConfigurationFile;
 
 import java.util.List;
 
