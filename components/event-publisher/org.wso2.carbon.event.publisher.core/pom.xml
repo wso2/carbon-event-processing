@@ -87,17 +87,17 @@
                         <Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
                         <Bundle-Name>${project.artifactId}</Bundle-Name>
                         <Private-Package>
+                            org.wso2.carbon.event.publisher.core.internal,
                             org.wso2.carbon.event.publisher.core.internal.*
                         </Private-Package>
                         <Export-Package>
                             !org.wso2.carbon.event.publisher.core.internal,
-                            org.wso2.carbon.event.publisher.*
+                            !org.wso2.carbon.event.publisher.core.internal.*,
+                            org.wso2.carbon.event.publisher.core.*
                         </Export-Package>
-
                         <Import-Package>
                             !javax.xml.namespace,
                             javax.xml.namespace; version=0.0.0,
-                            org.wso2.carbon.event.output.adaptor.core.*,
                             *;resolution:=optional
                         </Import-Package>
                         <DynamicImport-Package>*</DynamicImport-Package>

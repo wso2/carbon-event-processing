@@ -19,7 +19,6 @@ import org.apache.commons.logging.LogFactory;
 import org.osgi.service.component.ComponentContext;
 import org.wso2.carbon.event.output.adapter.core.OutputEventAdapterFactory;
 import org.wso2.carbon.event.output.adapter.core.OutputEventAdapterService;
-import org.wso2.carbon.event.output.adapter.core.internal.ds.OutputEventAdapterServiceValueHolder;
 import org.wso2.carbon.event.publisher.core.EventPublisherService;
 import org.wso2.carbon.event.publisher.core.EventStreamListenerImpl;
 import org.wso2.carbon.event.publisher.core.exception.EventPublisherConfigurationException;
@@ -143,7 +142,6 @@ public class EventPublisherServiceDS {
                 log.error(e.getMessage(), e);
             }
         }
-        OutputEventAdapterServiceValueHolder.getCarbonOutputEventAdapterService().unRegisterEventAdapter(outputEventAdapterFactory);
 
     }
 

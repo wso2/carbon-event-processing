@@ -79,8 +79,8 @@ public class EventPublisher implements RawEventConsumer {
         createPropertyPositionMap(inputStreamDefinition);
         outputMapper = EventPublisherServiceValueHolder.getMappingFactoryMap().get(eventPublisherConfiguration.getOutputMapping().getMappingType()).constructOutputMapper(eventPublisherConfiguration, propertyPositionMap, tenantId, inputStreamDefinition);
 
-        Map<String, String> dynamicOutputAdaptorProperties = eventPublisherConfiguration.getToAdapterDynamicProperties();
-        for (Map.Entry<String, String> entry : dynamicOutputAdaptorProperties.entrySet()) {
+        Map<String, String> dynamicOutputAdapterProperties = eventPublisherConfiguration.getToAdapterDynamicProperties();
+        for (Map.Entry<String, String> entry : dynamicOutputAdapterProperties.entrySet()) {
             Map.Entry pairs = (Map.Entry) entry;
             getDynamicOutputMessageProperties(pairs.getValue() != null ? pairs.getValue().toString() : "");
         }
@@ -141,11 +141,11 @@ public class EventPublisher implements RawEventConsumer {
         }
 
         if (dynamicMessagePropertyEnabled) {
-            changeDynamicEventAdaptorMessageProperties(eventData, dynamicProperties);
+            changeDynamicEventAdapterMessageProperties(eventData, dynamicProperties);
         }
 
-        OutputEventAdapterService eventAdaptorService = EventPublisherServiceValueHolder.getOutputEventAdapterService();
-        eventAdaptorService.publish(eventPublisherConfiguration.getEventPublisherName(),eventPublisherConfiguration.getToAdapterDynamicProperties(), outObject, tenantId);
+        OutputEventAdapterService eventAdapterService = EventPublisherServiceValueHolder.getOutputEventAdapterService();
+        eventAdapterService.publish(eventPublisherConfiguration.getEventPublisherName(),eventPublisherConfiguration.getToAdapterDynamicProperties(), outObject, tenantId);
 
     }
 
@@ -197,7 +197,7 @@ public class EventPublisher implements RawEventConsumer {
         return dynamicMessagePropertyList;
     }
 
-    private void changeDynamicEventAdaptorMessageProperties(Object[] eventData, Map<String, String> dynamicProperties) {
+    private void changeDynamicEventAdapterMessageProperties(Object[] eventData, Map<String, String> dynamicProperties) {
 
         for (String dynamicMessageProperty : dynamicMessagePropertyList) {
             if (eventData.length != 0 && dynamicMessageProperty != null) {

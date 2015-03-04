@@ -21,7 +21,7 @@ public class EventPublisherConfigurationDto {
 
     private String fromStreamNameWithVersion;
 
-    private ToAdapterConfigurationDto toAdapterConfigurationDto;
+    private OutputAdapterConfigurationDto toAdapterConfigurationDto;
 
     private String messageFormat;
 
@@ -53,12 +53,12 @@ public class EventPublisherConfigurationDto {
         this.fromStreamNameWithVersion = fromStreamNameWithVersion;
     }
 
-    public ToAdapterConfigurationDto getToAdapterConfigurationDto() {
+    public OutputAdapterConfigurationDto getToAdapterConfigurationDto() {
         return toAdapterConfigurationDto;
     }
 
     public void setToAdapterConfigurationDto(
-            ToAdapterConfigurationDto toAdapterConfigurationDto) {
+            OutputAdapterConfigurationDto toAdapterConfigurationDto) {
         this.toAdapterConfigurationDto = toAdapterConfigurationDto;
     }
 

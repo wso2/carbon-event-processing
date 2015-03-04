@@ -36,6 +36,7 @@
     <modules>
         <module>org.wso2.carbon.event.builder.stub</module>
         <module>org.wso2.carbon.event.formatter.stub</module>
+        <module>org.wso2.carbon.event.publisher.stub</module>
         <module>org.wso2.carbon.event.flow.stub</module>
         <module>org.wso2.carbon.event.processor.stub</module>
         <module>org.wso2.carbon.event.simulator.stub</module>
