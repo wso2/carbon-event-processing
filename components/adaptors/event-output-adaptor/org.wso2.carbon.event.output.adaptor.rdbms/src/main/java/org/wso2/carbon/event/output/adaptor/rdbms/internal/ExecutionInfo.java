@@ -22,16 +22,16 @@ import org.wso2.carbon.databridge.commons.Attribute;
 import org.wso2.carbon.event.output.adaptor.rdbms.internal.util.DecayTimer;
 
 import javax.sql.DataSource;
-import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Contain all the configuration details to execute db actions
  */
 public class ExecutionInfo {
 
-    private ArrayList<Attribute> insertQueryColumnOrder;
-    private ArrayList<Attribute> updateQueryColumnOrder;
-    private ArrayList<Attribute> existenceCheckQueryColumnOrder;
+    private List<Attribute> insertQueryColumnOrder;
+    private List<Attribute> updateQueryColumnOrder;
+    private List<Attribute> existenceCheckQueryColumnOrder;
     private String preparedInsertStatement;
     private String preparedUpdateStatement;
     private String preparedCreateTableStatement;
@@ -43,11 +43,11 @@ public class ExecutionInfo {
 
     private boolean updateMode;
 
-    public ArrayList<Attribute> getInsertQueryColumnOrder() {
+    public List<Attribute> getInsertQueryColumnOrder() {
         return insertQueryColumnOrder;
     }
 
-    public void setInsertQueryColumnOrder(ArrayList<Attribute> insertQueryColumnOrder) {
+    public void setInsertQueryColumnOrder(List<Attribute> insertQueryColumnOrder) {
         this.insertQueryColumnOrder = insertQueryColumnOrder;
     }
 
@@ -83,19 +83,19 @@ public class ExecutionInfo {
         this.preparedCreateTableStatement = preparedCreateTableStatement;
     }
 
-    public ArrayList<Attribute> getUpdateQueryColumnOrder() {
+    public List<Attribute> getUpdateQueryColumnOrder() {
         return updateQueryColumnOrder;
     }
 
-    public void setUpdateQueryColumnOrder(ArrayList<Attribute> updateQueryColumnOrder) {
+    public void setUpdateQueryColumnOrder(List<Attribute> updateQueryColumnOrder) {
         this.updateQueryColumnOrder = updateQueryColumnOrder;
     }
 
-    public ArrayList<Attribute> getExistenceCheckQueryColumnOrder() {
+    public List<Attribute> getExistenceCheckQueryColumnOrder() {
         return existenceCheckQueryColumnOrder;
     }
 
-    public void setExistenceCheckQueryColumnOrder(ArrayList<Attribute> existenceCheckQueryColumnOrder) {
+    public void setExistenceCheckQueryColumnOrder(List<Attribute> existenceCheckQueryColumnOrder) {
         this.existenceCheckQueryColumnOrder = existenceCheckQueryColumnOrder;
     }
 
