@@ -17,6 +17,7 @@ package org.wso2.carbon.event.output.adapter.core.internal.config;
 
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -25,7 +26,7 @@ import java.util.List;
 @XmlRootElement(name="outputEventAdaptersConfig")
 public class AdapterConfigs {
 
-    private List<AdapterConfig> adapterConfigs;
+    private List<AdapterConfig> adapterConfigs = new ArrayList<AdapterConfig>();
 
     public List<AdapterConfig> getAdapterConfigs() {
         return adapterConfigs;
@@ -37,7 +38,7 @@ public class AdapterConfigs {
     }
 
     public AdapterConfig getAdapterConfig(String type){
-        AdapterConfig matchedAdapterConfig =null;
+        AdapterConfig matchedAdapterConfig = new AdapterConfig();
         for(AdapterConfig adapterConfig : adapterConfigs){
             if(adapterConfig.getType().equals(type)){
                 matchedAdapterConfig = adapterConfig;
