@@ -17,6 +17,7 @@ package org.wso2.carbon.event.output.adapter.core.internal.config;
 
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -27,7 +28,7 @@ import java.util.Map;
 public class AdapterConfig {
 
     private String type;
-    private List<Property> globalProperties;
+    private List<Property> globalProperties = new ArrayList<Property>();
 
     public String getType() {
         return type;
