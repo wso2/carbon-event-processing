@@ -38,5 +38,21 @@ public final class RDBMSEventAdaptorConstants {
     public static final String ADAPTOR_GENERIC_RDBMS_ATTRIBUTE_VALUES = "$VALUES";
     public static final String ADAPTOR_GENERIC_RDBMS_ATTRIBUTE_COLUMN_VALUES = "$COLUMN_VALUES";
     public static final String ADAPTOR_GENERIC_RDBMS_ATTRIBUTE_CONDITION = "$CONDITION";
+    public static final String ADAPTOR_GENERIC_RDBMS_COMMA = "comma";
+    public static final String ADAPTOR_GENERIC_RDBMS_INTEGER = "integer";
+    public static final String ADAPTOR_GENERIC_RDBMS_LONG = "long";
+    public static final String ADAPTOR_GENERIC_RDBMS_FLOAT = "float";
+    public static final String ADAPTOR_GENERIC_RDBMS_DOUBLE = "double";
+    public static final String ADAPTOR_GENERIC_RDBMS_STRING = "string";
+    public static final String ADAPTOR_GENERIC_RDBMS_BOOLEAN = "boolean";
+    public static final String ADAPTOR_GENERIC_RDBMS_QUESTION_MARK = "questionMark";
+    public static final String ADAPTOR_GENERIC_RDBMS_CREATE_TABLE = "createTable";
+    public static final String ADAPTOR_GENERIC_RDBMS_INSERT_DATA = "insertDataToTable";
+    public static final String ADAPTOR_GENERIC_RDBMS_TABLE_EXIST = "isTableExist";
+    public static final String ADAPTOR_GENERIC_RDBMS_EQUAL = "equal";
+    public static final String ADAPTOR_GENERIC_RDBMS_AND = "and";
+    public static final String ADAPTOR_GENERIC_RDBMS_UPDATE_TABLE = "updateTableRow";
+
+
 
 }
