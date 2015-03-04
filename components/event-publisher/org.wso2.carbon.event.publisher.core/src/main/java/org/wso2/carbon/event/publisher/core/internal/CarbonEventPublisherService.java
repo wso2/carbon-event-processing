@@ -431,6 +431,7 @@ public class CarbonEventPublisherService implements EventPublisherService {
                         if (tenantSpecificEventPublisherConfigurationMap.get(tenantId) != null) {
                             EventPublisher eventPublisher = tenantSpecificEventPublisherConfigurationMap.get(tenantId).get(eventPublisherName);
                             EventPublisherServiceValueHolder.getEventStreamService().unsubscribe(eventPublisher, tenantId);
+                            eventPublisher.destroy();
                             tenantSpecificEventPublisherConfigurationMap.get(tenantId).remove(eventPublisherName);
                         }
                     }

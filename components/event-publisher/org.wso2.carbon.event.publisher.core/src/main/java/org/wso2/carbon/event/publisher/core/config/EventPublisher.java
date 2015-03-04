@@ -21,6 +21,7 @@ import org.wso2.carbon.context.PrivilegedCarbonContext;
 import org.wso2.carbon.databridge.commons.Attribute;
 import org.wso2.carbon.databridge.commons.StreamDefinition;
 import org.wso2.carbon.event.output.adapter.core.OutputEventAdapterService;
+import org.wso2.carbon.event.output.adapter.core.exception.OutputEventAdapterException;
 import org.wso2.carbon.event.publisher.core.exception.EventPublisherConfigurationException;
 import org.wso2.carbon.event.publisher.core.exception.EventPublisherStreamValidationException;
 import org.wso2.carbon.event.publisher.core.internal.OutputMapper;
@@ -104,6 +105,14 @@ public class EventPublisher implements RawEventConsumer {
             this.beforeTracerPrefix = "TenantId=" + tenantId + " : " + EventPublisherConstants.EVENT_PUBLISHER + " : " + eventPublisherConfiguration.getFromStreamName() + ", before processing " + System.getProperty("line.separator");
             this.afterTracerPrefix = "TenantId=" + tenantId + " : " + EventPublisherConstants.EVENT_PUBLISHER + " : " + eventPublisherConfiguration.getFromStreamName() + ", after processing " + System.getProperty("line.separator");
         }
+
+        OutputEventAdapterService eventAdapterService = EventPublisherServiceValueHolder.getOutputEventAdapterService();
+        try {
+            eventAdapterService.create(eventPublisherConfiguration.getToAdapterConfiguration(), tenantId);
+        } catch (OutputEventAdapterException e) {
+            throw new EventPublisherConfigurationException("Error in creating the output Adapter for Event Publisher :" + eventPublisherConfiguration.getEventPublisherName() + ", " + e.getMessage(), e);
+        }
+
     }
 
     public EventPublisherConfiguration getEventPublisherConfiguration() {
@@ -145,7 +154,7 @@ public class EventPublisher implements RawEventConsumer {
         }
 
         OutputEventAdapterService eventAdapterService = EventPublisherServiceValueHolder.getOutputEventAdapterService();
-        eventAdapterService.publish(eventPublisherConfiguration.getEventPublisherName(),eventPublisherConfiguration.getToAdapterDynamicProperties(), outObject, tenantId);
+        eventAdapterService.publish(eventPublisherConfiguration.getEventPublisherName(), eventPublisherConfiguration.getToAdapterDynamicProperties(), outObject, tenantId);
 
     }
 
@@ -224,4 +233,9 @@ public class EventPublisher implements RawEventConsumer {
 
     }
 
+    public void destroy() {
+        OutputEventAdapterService eventAdapterService = EventPublisherServiceValueHolder.getOutputEventAdapterService();
+        eventAdapterService.destroy(eventPublisherConfiguration.getEventPublisherName(), tenantId);
+
+    }
 }
