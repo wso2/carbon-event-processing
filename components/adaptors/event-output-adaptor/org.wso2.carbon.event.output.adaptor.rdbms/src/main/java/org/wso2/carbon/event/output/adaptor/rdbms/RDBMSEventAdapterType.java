@@ -1,5 +1,5 @@
 /*
-*  Copyright (c) 2005-2014, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
+*  Copyright (c) 2014-2015, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
 *
 *  WSO2 Inc. licenses this file to you under the Apache License,
 *  Version 2.0 (the "License"); you may not use this file except
@@ -215,27 +215,30 @@ public final class RDBMSEventAdapterType extends AbstractOutputEventAdaptor {
             }
         } catch (RDBMSConnectionException e) {
             executionInfo.setIsConnectionLive(false);
-            log.error("Error while initializing connection for datasource " + outputEventAdaptorConfiguration
-                    .getOutputProperties().get(RDBMSEventAdaptorConstants.ADAPTOR_GENERIC_RDBMS_DATASOURCE_NAME)
-                    + "Reconnection will try from " + (executionInfo.getNextConnectionTime() - System
-                    .currentTimeMillis()) + " milliseconds.", e);
+            String dataSourceName = outputEventAdaptorConfiguration
+                    .getOutputProperties().get(RDBMSEventAdaptorConstants.ADAPTOR_GENERIC_RDBMS_DATASOURCE_NAME);
+            long timeLeftForNextActivation =
+                    executionInfo.getNextConnectionTime() - System
+                            .currentTimeMillis();
+            log.error("Error while initializing connection for datasource " + dataSourceName
+                    + "Reconnection will try from " + timeLeftForNextActivation + " milliseconds.", e);
             executionInfo.getDecayTimer().incrementPosition();
 
             if (executionInfo.getNextConnectionTime() == 0) {
                 try {
                     executeProcessActions(message, executionInfo, tableName);
                 } catch (RDBMSConnectionException e1) {
-                    log.error("Error while initializing connection for datasource " + outputEventAdaptorConfiguration
-                            .getOutputProperties().get(RDBMSEventAdaptorConstants.ADAPTOR_GENERIC_RDBMS_DATASOURCE_NAME)
-                            + "Reconnection will try from " + (executionInfo.getNextConnectionTime() - System
-                            .currentTimeMillis()) + " milliseconds.", e1);
+                    timeLeftForNextActivation = executionInfo.getNextConnectionTime() - System
+                            .currentTimeMillis();
+                    log.error("Error while initializing connection for datasource " + dataSourceName
+                            + "Reconnection will try from " + timeLeftForNextActivation + " milliseconds.", e1);
                     executionInfo.getDecayTimer().incrementPosition();
                 } catch (RDBMSEventProcessingException e2) {
-                    log.error(e2.getMessage() + " Hence Event is dropped.");
+                    log.error(e2.getMessage() + " Hence Event is dropped.", e2);
                 }
             }
         } catch (RDBMSEventProcessingException e) {
-            log.error(e.getMessage() + " Hence Event is dropped.");
+            log.error(e.getMessage() + " Hence Event is dropped.", e);
         }
     }
 
