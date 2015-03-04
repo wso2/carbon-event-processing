@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<eventNotifier name="SampleEventPublisher.xml" statistics="disable" trace="disable"
+<eventPublisher name="SampleEventPublisher" statistics="disable" trace="disable"
                xmlns="http://wso2.org/carbon/eventpublisher">
     <from streamName="delayedFlightStream" version="1.0.0"/>
     <mapping type="text" customMapping="enable">
@@ -12,7 +12,7 @@
             Track No : {{trackNo}}
         </inline>
     </mapping>
-    <to eventAdaptorType="logger">
+    <to eventAdapterType="logger">
         <property name="uniqueId">WarnMessage</property>
     </to>
-</eventNotifier>
+</eventPublisher>

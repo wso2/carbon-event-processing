@@ -26,8 +26,8 @@ import org.wso2.carbon.event.output.adapter.core.OutputEventAdapterConfiguration
 import org.wso2.carbon.event.output.adapter.core.OutputEventAdapterSchema;
 import org.wso2.carbon.event.output.adapter.core.OutputEventAdapterService;
 import org.wso2.carbon.event.output.adapter.core.Property;
+import org.wso2.carbon.event.publisher.admin.internal.PropertyAttributeTypeConstants;
 import org.wso2.carbon.event.publisher.admin.internal.ds.EventPublisherAdminServiceValueHolder;
-import org.wso2.carbon.event.publisher.admin.internal.util.PropertyAttributeTypeConstants;
 import org.wso2.carbon.event.publisher.core.EventPublisherService;
 import org.wso2.carbon.event.publisher.core.config.EventOutputProperty;
 import org.wso2.carbon.event.publisher.core.config.EventPublisherConfiguration;
@@ -73,6 +73,7 @@ public class EventPublisherAdminService extends AbstractAdmin {
                     eventPublisherConfigurationInfoDtoArray[index].setInputStreamId(streamNameWithVersion);
                     eventPublisherConfigurationInfoDtoArray[index].setEnableStats(eventPublisherConfiguration.isEnableStatistics());
                     eventPublisherConfigurationInfoDtoArray[index].setEnableTracing(eventPublisherConfiguration.isEnableTracing());
+                    eventPublisherConfigurationInfoDtoArray[index].setEditable(eventPublisherConfiguration.isEditable());
                 }
                 return eventPublisherConfigurationInfoDtoArray;
             } else {
@@ -173,15 +174,22 @@ public class EventPublisherAdminService extends AbstractAdmin {
                 OutputEventAdapterConfiguration toAdapterConfiguration = eventPublisherConfiguration.getToAdapterConfiguration();
 
                 if (toAdapterConfiguration != null) {
-                    ToAdapterConfigurationDto toAdapterConfigurationDto = new ToAdapterConfigurationDto();
-                    toAdapterConfigurationDto.setEventAdaptorType(toAdapterConfiguration.getType());
+                    OutputEventAdapterService outputEventAdapterService = EventPublisherAdminServiceValueHolder.getOutputEventAdapterService();
+                    OutputEventAdapterSchema outputEventAdapterSchema = outputEventAdapterService.getOutputEventAdapterSchema(toAdapterConfiguration.getType());
+
+                    OutputAdapterConfigurationDto toAdapterConfigurationDto = new OutputAdapterConfigurationDto();
+                    toAdapterConfigurationDto.setEventAdapterType(toAdapterConfiguration.getType());
+                    toAdapterConfigurationDto.setSupportedMessageFormats(
+                            outputEventAdapterSchema.getSupportedMessageFormats().
+                                    toArray(new String[outputEventAdapterSchema.getSupportedMessageFormats().size()]));
+
                     Map<String, String> outputAdapterProperties = new HashMap<String, String>();
                     outputAdapterProperties.putAll(toAdapterConfiguration.getStaticProperties());
                     outputAdapterProperties.putAll(eventPublisherConfiguration.getToAdapterDynamicProperties());
 
                     if (outputAdapterProperties.size() > 0) {
-                        DetailOutputAdapterPropertyDto[] detailOutputAdapterPropertyDtos = getPropertyConfigurations(outputAdapterProperties, toAdapterConfiguration.getType());
-                        toAdapterConfigurationDto.setOutputEventAdaptorProperties(detailOutputAdapterPropertyDtos);
+                        DetailOutputAdapterPropertyDto[] detailOutputAdapterPropertyDtos = getPropertyConfigurations(outputAdapterProperties, outputEventAdapterSchema);
+                        toAdapterConfigurationDto.setOutputEventAdapterProperties(detailOutputAdapterPropertyDtos);
                     }
 
                     eventPublisherConfigurationDto.setToAdapterConfigurationDto(toAdapterConfigurationDto);
@@ -554,7 +562,6 @@ public class EventPublisherAdminService extends AbstractAdmin {
 
     public void deployMapEventPublisherConfiguration(String eventPublisherName,
                                                      String streamNameWithVersion,
-                                                     String eventAdapterName,
                                                      String eventAdapterType,
                                                      EventMappingPropertyDto[] mapData,
                                                      BasicOutputAdapterPropertyDto[] outputPropertyConfiguration,
@@ -688,6 +695,19 @@ public class EventPublisherAdminService extends AbstractAdmin {
 
     }
 
+    public OutputAdapterConfigurationDto getOutputAdapterConfigurationSchema(String adopterType) {
+        OutputEventAdapterService outputEventAdapterService = EventPublisherAdminServiceValueHolder.getOutputEventAdapterService();
+        OutputEventAdapterSchema outputEventAdapterSchema = outputEventAdapterService.getOutputEventAdapterSchema(adopterType);
+
+        OutputAdapterConfigurationDto outputAdapterConfigurationDto = new OutputAdapterConfigurationDto();
+        outputAdapterConfigurationDto.setOutputEventAdapterProperties(getPropertyConfigurations(null, outputEventAdapterSchema));
+        outputAdapterConfigurationDto.setEventAdapterType(adopterType);
+        outputAdapterConfigurationDto.setSupportedMessageFormats(
+                outputEventAdapterSchema.getSupportedMessageFormats().
+                        toArray(new String[outputEventAdapterSchema.getSupportedMessageFormats().size()]));
+        return outputAdapterConfigurationDto;
+    }
+
     private EventMappingPropertyDto[] getEventPropertyDtoArray(
             List<EventOutputProperty> eventOutputPropertyList) {
 
@@ -706,10 +726,8 @@ public class EventPublisherAdminService extends AbstractAdmin {
         return null;
     }
 
-    private DetailOutputAdapterPropertyDto[] getPropertyConfigurations(Map<String, String> messageProperties, String eventAdapterType) {
+    private DetailOutputAdapterPropertyDto[] getPropertyConfigurations(Map<String, String> messageProperties, OutputEventAdapterSchema outputEventAdapterSchema) {
 
-        OutputEventAdapterService outputEventAdapterService = EventPublisherAdminServiceValueHolder.getOutputEventAdapterService();
-        OutputEventAdapterSchema outputEventAdapterSchema = outputEventAdapterService.getOutputEventAdapterSchema(eventAdapterType);
         List<Property> propertyList = new ArrayList<Property>();
         if (outputEventAdapterSchema.getStaticPropertyList() != null) {
             propertyList.addAll(outputEventAdapterSchema.getStaticPropertyList());
@@ -722,8 +740,12 @@ public class EventPublisherAdminService extends AbstractAdmin {
             int index = 0;
             for (Property property : propertyList) {
                 // create output event property
+                String value = null;
+                if (messageProperties != null) {
+                    value = messageProperties.get(property.getPropertyName());
+                }
                 detailOutputAdapterPropertyDtoArray[index] = new DetailOutputAdapterPropertyDto(property.getPropertyName(),
-                        messageProperties.get(property.getPropertyName()));
+                        value);
                 // set output event property parameters
                 detailOutputAdapterPropertyDtoArray[index].setSecured(property.isSecured());
                 detailOutputAdapterPropertyDtoArray[index].setRequired(property.isRequired());

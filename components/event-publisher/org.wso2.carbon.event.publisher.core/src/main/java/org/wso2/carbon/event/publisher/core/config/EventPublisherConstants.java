@@ -38,7 +38,7 @@ public final class EventPublisherConstants {
     public static final String EF_ELE_TO_PAYLOAD_PROPERTY = "payloadData";
     public static final String EF_ELE_TO_PROPERTY = "to";
     public static final String EF_ELE_MAPPING_PROPERTY = "mapping";
-    public static final String EF_ATTR_TA_TYPE = "eventAdaptorType";
+    public static final String EF_ATTR_TA_TYPE = "eventAdapterType";
     public static final String EF_ATTR_TYPE = "type";
     public static final String EF_ATTR_FACTORY_CLASS = "factoryClass";
     public static final String EF_WSO2EVENT_MAPPING_TYPE = "wso2event";
@@ -78,9 +78,9 @@ public final class EventPublisherConstants {
     public static final String EF_ATTR_CUSTOM_MAPPING = "customMapping";
     public static final String DEFAULT_EVENT_PUBLISHER_POSTFIX = "_publisher";
 
-    public static final String ADAPTOR_MESSAGE_UNIQUE_ID = "uniqueId";
-    public static final String ADAPTOR_MESSAGE_UNIQUE_ID_VALUE = "event";
-    public static final String ADAPTOR_TYPE_LOGGER = "logger";
+    public static final String ADAPTER_MESSAGE_UNIQUE_ID = "uniqueId";
+    public static final String ADAPTER_MESSAGE_UNIQUE_ID_VALUE = "event";
+    public static final String ADAPTER_TYPE_LOGGER = "logger";
 
     public static final String NO_DEPENDENCY_INFO_MSG = "No dependency information available for this event publisher";
 

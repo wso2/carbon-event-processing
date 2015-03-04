@@ -65,8 +65,8 @@ public class EventPublisherServiceValueHolder {
     }
 
     public static void registerEventAdapterService(
-            OutputEventAdapterService eventAdaptorService) {
-        EventPublisherServiceValueHolder.outputEventAdapterService = eventAdaptorService;
+            OutputEventAdapterService eventAdapterService) {
+        EventPublisherServiceValueHolder.outputEventAdapterService = eventAdapterService;
     }
 
     public static OutputEventAdapterService getOutputEventAdapterService() {

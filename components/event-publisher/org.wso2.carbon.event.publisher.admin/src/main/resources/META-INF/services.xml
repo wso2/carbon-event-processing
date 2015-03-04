@@ -13,7 +13,7 @@
   ~ specific language governing permissions and limitations under the License.
   -->
 <serviceGroup>
-    <service name="EventFormatterAdminService" scope="transportsession">
+    <service name="EventPublisherAdminService" scope="transportsession">
         <transports>
             <transport>https</transport>
         </transports>
@@ -30,112 +30,111 @@
         </parameter>
 
         <parameter name="AuthorizationAction" locked="false">
-            /permission/admin/manage/event-streams
+            /permission/admin/manage/event-publish
         </parameter>
 
-        <operation name="getAllActiveEventFormatterConfiguration">
+        <operation name="getAllActiveEventPublisherConfiguration">
             <parameter name="AuthorizationAction" locked="true">
-                /permission/admin/manage/event-streams
+                /permission/admin/manage/event-publish
             </parameter>
         </operation>
-        <operation name="getAllStreamSpecificActiveEventFormatterConfiguration">
+        <operation name="getAllStreamSpecificActiveEventPublisherConfiguration">
             <parameter name="AuthorizationAction" locked="true">
-                /permission/admin/manage/event-streams
+                /permission/admin/manage/event-publish
             </parameter>
         </operation>
 
-        <operation name="undeployActiveEventFormatterConfiguration">
+        <operation name="undeployActiveEventPublisherConfiguration">
             <parameter name="AuthorizationAction" locked="true">
-                /permission/admin/manage/event-streams
+                /permission/admin/manage/event-publish
             </parameter>
         </operation>
-        <operation name="getAllInactiveEventFormatterConfiguration">
+        <operation name="getAllInactiveEventPublisherConfiguration">
             <parameter name="AuthorizationAction" locked="true">
-                /permission/admin/manage/event-streams
+                /permission/admin/manage/event-publish
             </parameter>
         </operation>
-        <operation name="undeployInactiveEventFormatterConfiguration">
+        <operation name="undeployInactiveEventPublisherConfiguration">
             <parameter name="AuthorizationAction" locked="true">
-                /permission/admin/manage/event-streams
+                /permission/admin/manage/event-publish
             </parameter>
         </operation>
-        <operation name="getInactiveEventFormatterConfigurationContent">
+        <operation name="getInactiveEventPublisherConfigurationContent">
             <parameter name="AuthorizationAction" locked="true">
-                /permission/admin/manage/event-streams
+                /permission/admin/manage/event-publish
             </parameter>
         </operation>
-        <operation name="editInactiveEventFormatterConfiguration">
+        <operation name="editInactiveEventPublisherConfiguration">
             <parameter name="AuthorizationAction" locked="true">
-                /permission/admin/manage/event-streams
+                /permission/admin/manage/event-publish
             </parameter>
         </operation>
-        <operation name="getActiveEventFormatterConfigurationContent">
+        <operation name="getActiveEventPublisherConfigurationContent">
             <parameter name="AuthorizationAction" locked="true">
-                /permission/admin/manage/event-streams
+                /permission/admin/manage/event-publish
             </parameter>
         </operation>
-        <operation name="editActiveEventFormatterConfiguration">
+        <operation name="editActiveEventPublisherConfiguration">
             <parameter name="AuthorizationAction" locked="true">
-                /permission/admin/manage/event-streams
+                /permission/admin/manage/event-publish
             </parameter>
         </operation>
-        <operation name="getEventFormatterMessageProperties">
+        <operation name="deployEventPublisherConfiguration">
             <parameter name="AuthorizationAction" locked="true">
-                /permission/admin/manage/event-streams
+                /permission/admin/manage/event-publish
             </parameter>
         </operation>
-        <operation name="deployEventFormatterConfiguration">
+        <operation name="deployWSO2EventPublisherConfiguration">
             <parameter name="AuthorizationAction" locked="true">
-                /permission/admin/manage/event-streams
+                /permission/admin/manage/event-publish
             </parameter>
         </operation>
-        <operation name="deployWSO2EventFormatterConfiguration">
+        <operation name="deployTextEventPublisherConfiguration">
             <parameter name="AuthorizationAction" locked="true">
-                /permission/admin/manage/event-streams
+                /permission/admin/manage/event-publish
             </parameter>
         </operation>
-        <operation name="deployTextEventFormatterConfiguration">
+        <operation name="deployXmlEventPublisherConfiguration">
             <parameter name="AuthorizationAction" locked="true">
-                /permission/admin/manage/event-streams
+                /permission/admin/manage/event-publish
             </parameter>
         </operation>
-        <operation name="deployXmlEventFormatterConfiguration">
+        <operation name="deployMapEventPublisherConfiguration">
             <parameter name="AuthorizationAction" locked="true">
-                /permission/admin/manage/event-streams
+                /permission/admin/manage/event-publish
             </parameter>
         </operation>
-        <operation name="deployMapEventFormatterConfiguration">
+        <operation name="deployJsonEventPublisherConfiguration">
             <parameter name="AuthorizationAction" locked="true">
-                /permission/admin/manage/event-streams
+                /permission/admin/manage/event-publish
             </parameter>
         </operation>
-        <operation name="deployJsonEventFormatterConfiguration">
+        <operation name="getActiveEventPublisherConfiguration">
             <parameter name="AuthorizationAction" locked="true">
-                /permission/admin/manage/event-streams
-            </parameter>
-        </operation>
-        <operation name="getActiveEventFormatterConfiguration">
-            <parameter name="AuthorizationAction" locked="true">
-                /permission/admin/manage/event-streams
+                /permission/admin/manage/event-publish
             </parameter>
         </operation>
         <operation name="setStatisticsEnabled">
             <parameter name="AuthorizationAction" locked="true">
-                /permission/admin/manage/event-streams
+                /permission/admin/manage/event-publish
             </parameter>
         </operation>
         <operation name="setTracingEnabled">
             <parameter name="AuthorizationAction" locked="true">
-                /permission/admin/manage/event-streams
-            </parameter>
-        </operation>
-        <operation name="deployDefaultEventSender">
-            <parameter name="AuthorizationAction" locked="true">
-                /permission/admin/manage/event-streams
+                /permission/admin/manage/event-publish
             </parameter>
         </operation>
 
+        <operation name="getActiveEventPublisherConfiguration">
+            <parameter name="AuthorizationAction" locked="true">
+                /permission/admin/manage/event-publish
+            </parameter>
+        </operation>
+
+
     </service>
-    <parameter name="adminService" locked="true">true</parameter>
-    <parameter name="hiddenService" locked="true">true</parameter>
+    <!--<parameter name="adminService" locked="true">true</parameter>-->
+    <parameter name="adminService" locked="true">false</parameter>
+    <!--<parameter name="hiddenService" locked="true">true</parameter>-->
+    <parameter name="hiddenService" locked="true">false</parameter>
 </serviceGroup>

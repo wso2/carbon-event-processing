@@ -20,7 +20,7 @@ package org.wso2.carbon.event.publisher.core.config;
 import org.apache.axis2.engine.AxisConfiguration;
 
 /**
- * To create objects of event adaptor file details
+ * To create objects of event adapter file details
  */
 public class EventPublisherConfigurationFile {
 

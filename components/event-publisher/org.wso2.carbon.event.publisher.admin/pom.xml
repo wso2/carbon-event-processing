@@ -77,8 +77,8 @@
                             org.wso2.carbon.event.publisher.admin.*,
                         </Export-Package>
                         <Private-Package>
-                            org.wso2.carbon.event.publisher.admin.internal.*,
-                            org.wso2.carbon.event.publisher.admin.internal
+                            org.wso2.carbon.event.publisher.admin.internal,
+                            org.wso2.carbon.event.publisher.admin.internal.*
                         </Private-Package>
                         <Import-Package>
                             org.wso2.carbon.event.publisher.core.*,

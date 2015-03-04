@@ -15,17 +15,17 @@
 package org.wso2.carbon.event.publisher.admin;
 
 /**
- * to store Not deployed event formatter configuration file details (filepath & event formatter name)
+ * to store Not deployed event publisher configuration file details (filepath & event publisher name)
  */
 public class EventPublisherConfigurationFileDto {
 
     private String fileName;
-    private String eventFormatterName;
+    private String eventPublisherName;
     private String deploymentStatusMsg;
 
-    public EventPublisherConfigurationFileDto(String fileName, String eventFormatterName, String deploymentStatusMsg) {
+    public EventPublisherConfigurationFileDto(String fileName, String eventPublisherName, String deploymentStatusMsg) {
         this.fileName = fileName;
-        this.eventFormatterName = eventFormatterName;
+        this.eventPublisherName = eventPublisherName;
         this.deploymentStatusMsg = deploymentStatusMsg;
     }
 
@@ -45,11 +45,11 @@ public class EventPublisherConfigurationFileDto {
         this.fileName = fileName;
     }
 
-    public String getEventFormatterName() {
-        return eventFormatterName;
+    public String getEventPublisherName() {
+        return eventPublisherName;
     }
 
-    public void setEventFormatterName(String eventFormatterName) {
-        this.eventFormatterName = eventFormatterName;
+    public void setEventPublisherName(String eventPublisherName) {
+        this.eventPublisherName = eventPublisherName;
     }
 }

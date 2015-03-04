@@ -61,19 +61,19 @@ public class PublisherConfigurationBuilder {
 
     }
 
-    private static boolean validateEventAdaptor(String eventAdaptorType) {
+    private static boolean validateEventAdapter(String eventAdapterType) {
 
-        OutputEventAdapterService eventAdaptorService = EventPublisherServiceValueHolder.getOutputEventAdapterService();
-        List<String> eventAdaptorTypes = eventAdaptorService.getOutputEventAdapterTypes();
+        OutputEventAdapterService eventAdapterService = EventPublisherServiceValueHolder.getOutputEventAdapterService();
+        List<String> eventAdapterTypes = eventAdapterService.getOutputEventAdapterTypes();
 
-        if (eventAdaptorTypes == null || eventAdaptorTypes.size() == 0) {
-            throw new EventPublisherValidationException("Event adaptor with type: " + eventAdaptorType + " does not exist", eventAdaptorType);
+        if (eventAdapterTypes == null || eventAdapterTypes.size() == 0) {
+            throw new EventPublisherValidationException("Event adapter with type: " + eventAdapterType + " does not exist", eventAdapterType);
         }
 
-        Iterator<String> eventAdaIteratorTypeIterator = eventAdaptorTypes.iterator();
+        Iterator<String> eventAdaIteratorTypeIterator = eventAdapterTypes.iterator();
         for (; eventAdaIteratorTypeIterator.hasNext(); ) {
-            String adaptorType = eventAdaIteratorTypeIterator.next();
-            if (adaptorType.equals(eventAdaptorType)) {
+            String adapterType = eventAdaIteratorTypeIterator.next();
+            if (adapterType.equals(eventAdapterType)) {
                 return true;
             }
         }
@@ -81,16 +81,16 @@ public class PublisherConfigurationBuilder {
         return false;
     }
 
-    private static boolean validateSupportedMapping(String eventAdaptorType,
+    private static boolean validateSupportedMapping(String eventAdapterType,
                                                     String messageType) {
 
-        OutputEventAdapterService eventAdaptorService = EventPublisherServiceValueHolder.getOutputEventAdapterService();
-        OutputEventAdapterSchema eventAdaptorSchema = eventAdaptorService.getOutputEventAdapterSchema(eventAdaptorType);
+        OutputEventAdapterService eventAdapterService = EventPublisherServiceValueHolder.getOutputEventAdapterService();
+        OutputEventAdapterSchema eventAdapterSchema = eventAdapterService.getOutputEventAdapterSchema(eventAdapterType);
 
-        if (eventAdaptorSchema == null) {
-            throw new EventPublisherValidationException("Event Adaptor with type: " + eventAdaptorType + " does not exist", eventAdaptorType);
+        if (eventAdapterSchema == null) {
+            throw new EventPublisherValidationException("Event Adapter with type: " + eventAdapterType + " does not exist", eventAdapterType);
         }
-        List<String> supportedOutputMessageFormats = eventAdaptorSchema.getSupportedMessageFormats();
+        List<String> supportedOutputMessageFormats = eventAdapterSchema.getSupportedMessageFormats();
         return supportedOutputMessageFormats.contains(messageType);
 
     }
@@ -109,10 +109,10 @@ public class PublisherConfigurationBuilder {
         String fromStreamName = fromElement.getAttributeValue(new QName(EventPublisherConstants.EF_ATTR_STREAM_NAME));
         String fromStreamVersion = fromElement.getAttributeValue(new QName(EventPublisherConstants.EF_ATTR_VERSION));
 
-        String toEventAdaptorType = toElement.getAttributeValue(new QName(EventPublisherConstants.EF_ATTR_TA_TYPE));
+        String toEventAdapterType = toElement.getAttributeValue(new QName(EventPublisherConstants.EF_ATTR_TA_TYPE));
 
-        if (!validateEventAdaptor(toEventAdaptorType)) {
-            throw new EventPublisherValidationException("Event Adaptor with type: " + toEventAdaptorType + " does not exist", toEventAdaptorType);
+        if (!validateEventAdapter(toEventAdapterType)) {
+            throw new EventPublisherValidationException("Event Adapter with type: " + toEventAdapterType + " does not exist", toEventAdapterType);
         }
 
         if (!validateStreamDetails(fromStreamName, fromStreamVersion, tenantId)) {
@@ -120,24 +120,24 @@ public class PublisherConfigurationBuilder {
         }
 
         if (mappingType.equalsIgnoreCase(EventPublisherConstants.EF_WSO2EVENT_MAPPING_TYPE)) {
-            if (!validateSupportedMapping(toEventAdaptorType, MessageType.WSO2EVENT)) {
-                throw new EventPublisherConfigurationException("WSO2Event Mapping is not supported by event adaptor type " + toEventAdaptorType);
+            if (!validateSupportedMapping(toEventAdapterType, MessageType.WSO2EVENT)) {
+                throw new EventPublisherConfigurationException("WSO2Event Mapping is not supported by event adapter type " + toEventAdapterType);
             }
         } else if (mappingType.equalsIgnoreCase(EventPublisherConstants.EF_TEXT_MAPPING_TYPE)) {
-            if (!validateSupportedMapping(toEventAdaptorType, MessageType.TEXT)) {
-                throw new EventPublisherConfigurationException("Text Mapping is not supported by event adaptor type " + toEventAdaptorType);
+            if (!validateSupportedMapping(toEventAdapterType, MessageType.TEXT)) {
+                throw new EventPublisherConfigurationException("Text Mapping is not supported by event adapter type " + toEventAdapterType);
             }
         } else if (mappingType.equalsIgnoreCase(EventPublisherConstants.EF_MAP_MAPPING_TYPE)) {
-            if (!validateSupportedMapping(toEventAdaptorType, MessageType.MAP)) {
-                throw new EventPublisherConfigurationException("Map Mapping is not supported by event adaptor type " + toEventAdaptorType);
+            if (!validateSupportedMapping(toEventAdapterType, MessageType.MAP)) {
+                throw new EventPublisherConfigurationException("Map Mapping is not supported by event adapter type " + toEventAdapterType);
             }
         } else if (mappingType.equalsIgnoreCase(EventPublisherConstants.EF_XML_MAPPING_TYPE)) {
-            if (!validateSupportedMapping(toEventAdaptorType, MessageType.XML)) {
-                throw new EventPublisherConfigurationException("XML Mapping is not supported by event adaptor type " + toEventAdaptorType);
+            if (!validateSupportedMapping(toEventAdapterType, MessageType.XML)) {
+                throw new EventPublisherConfigurationException("XML Mapping is not supported by event adapter type " + toEventAdapterType);
             }
         } else if (mappingType.equalsIgnoreCase(EventPublisherConstants.EF_JSON_MAPPING_TYPE)) {
-            if (!validateSupportedMapping(toEventAdaptorType, MessageType.JSON)) {
-                throw new EventPublisherConfigurationException("JSON Mapping is not supported by event adaptor type " + toEventAdaptorType);
+            if (!validateSupportedMapping(toEventAdapterType, MessageType.JSON)) {
+                throw new EventPublisherConfigurationException("JSON Mapping is not supported by event adapter type " + toEventAdapterType);
             }
         } else {
             String factoryClassName = getMappingTypeFactoryClass(mappingElement);
@@ -163,8 +163,8 @@ public class PublisherConfigurationBuilder {
 
         eventPublisherConfiguration.setEventPublisherName(publisherName);
 
-        OutputEventAdapterConfiguration outputEventAdapterConfiguration = EventPublisherConfigurationHelper.getOutputEventAdapterConfiguration(toEventAdaptorType, publisherName, mappingType);
-        Map<String, String> dynamicProperties = EventPublisherConfigurationHelper.getDynamicProperties(toEventAdaptorType);
+        OutputEventAdapterConfiguration outputEventAdapterConfiguration = EventPublisherConfigurationHelper.getOutputEventAdapterConfiguration(toEventAdapterType, publisherName, mappingType);
+        Map<String, String> dynamicProperties = EventPublisherConfigurationHelper.getDynamicProperties(toEventAdapterType);
 
         Iterator toElementPropertyIterator = toElement.getChildrenWithName(
                 new QName(EventPublisherConstants.EF_CONF_NS, EventPublisherConstants.EF_ELE_PROPERTY)
@@ -179,7 +179,7 @@ public class PublisherConfigurationBuilder {
             } else if (dynamicProperties.containsKey(propertyName)) {
                 dynamicProperties.put(propertyName, propertyValue);
             } else {
-                log.warn("To property " + propertyName + " with value " + propertyValue + " as its irrelevant of output adapter type:" + toEventAdaptorType);
+                log.warn("To property " + propertyName + " with value " + propertyValue + " as its irrelevant of output adapter type:" + toEventAdapterType);
             }
         }
 

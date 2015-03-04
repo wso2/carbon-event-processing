@@ -100,20 +100,20 @@ public class EventPublisherConfigurationHelper {
         if (count != 1) {
             throw new EventPublisherConfigurationException("There can be only one 'To' element in Event Publisher configuration file.");
         }
-        String toEventAdaptorType = toPropertyOMElement.getAttributeValue(new QName(EventPublisherConstants.EF_ATTR_TA_TYPE));
+        String toEventAdapterType = toPropertyOMElement.getAttributeValue(new QName(EventPublisherConstants.EF_ATTR_TA_TYPE));
 
-        if (toEventAdaptorType == null) {
-            throw new EventPublisherConfigurationException("There should be a event adaptor type in Publisher configuration file.");
+        if (toEventAdapterType == null) {
+            throw new EventPublisherConfigurationException("There should be a event adapter type in Publisher configuration file.");
         }
 
-        if (!validateToPropertyConfiguration(toPropertyOMElement, toEventAdaptorType)) {
-            throw new EventPublisherConfigurationException("To property does not contains all the required values for event adaptor type " + toEventAdaptorType);
+        if (!validateToPropertyConfiguration(toPropertyOMElement, toEventAdapterType)) {
+            throw new EventPublisherConfigurationException("To property does not contains all the required values for event adapter type " + toEventAdapterType);
         }
     }
 
 
     private static boolean validateToPropertyConfiguration(OMElement toElement,
-                                                           String eventAdaptorType)
+                                                           String eventAdapterType)
             throws EventPublisherConfigurationException {
 
         List<String> requiredProperties = new ArrayList<String>();
@@ -123,11 +123,11 @@ public class EventPublisherConfigurationHelper {
                 new QName(EventPublisherConstants.EF_CONF_NS, EventPublisherConstants.EF_ELE_PROPERTY)
         );
 
-        OutputEventAdapterService eventAdaptorService = EventPublisherServiceValueHolder.getOutputEventAdapterService();
-        OutputEventAdapterSchema adapterSchema = eventAdaptorService.getOutputEventAdapterSchema(eventAdaptorType);
+        OutputEventAdapterService eventAdapterService = EventPublisherServiceValueHolder.getOutputEventAdapterService();
+        OutputEventAdapterSchema adapterSchema = eventAdapterService.getOutputEventAdapterSchema(eventAdapterType);
 
         if (adapterSchema == null) {
-            throw new EventPublisherValidationException("Event Adaptor with type: " + eventAdaptorType + " does not exist", eventAdaptorType);
+            throw new EventPublisherValidationException("Event Adapter with type: " + eventAdapterType + " does not exist", eventAdapterType);
         }
 
         List<Property> propertyList = adapterSchema.getStaticPropertyList();
@@ -161,12 +161,12 @@ public class EventPublisherConfigurationHelper {
 
 
     public static OutputEventAdapterConfiguration getOutputEventAdapterConfiguration(
-            String eventAdaptorType, String publisherName, String messageFormat) {
-        OutputEventAdapterSchema schema = EventPublisherServiceValueHolder.getOutputEventAdapterService().getOutputEventAdapterSchema(eventAdaptorType);
+            String eventAdapterType, String publisherName, String messageFormat) {
+        OutputEventAdapterSchema schema = EventPublisherServiceValueHolder.getOutputEventAdapterService().getOutputEventAdapterSchema(eventAdapterType);
         OutputEventAdapterConfiguration outputEventAdapterConfiguration = new OutputEventAdapterConfiguration();
         outputEventAdapterConfiguration.setName(publisherName);
         outputEventAdapterConfiguration.setMessageFormat(messageFormat);
-        outputEventAdapterConfiguration.setType(eventAdaptorType);
+        outputEventAdapterConfiguration.setType(eventAdapterType);
         Map<String, String> staticProperties = new HashMap<String, String>();
         if (schema != null && schema.getStaticPropertyList() != null) {
             for (Property property : schema.getStaticPropertyList()) {
@@ -177,9 +177,9 @@ public class EventPublisherConfigurationHelper {
         return outputEventAdapterConfiguration;
     }
 
-    public static Map<String, String> getDynamicProperties(String eventAdaptorType) {
+    public static Map<String, String> getDynamicProperties(String eventAdapterType) {
         Map<String, String> dynamicProperties = new HashMap<String, String>();
-        OutputEventAdapterSchema schema = EventPublisherServiceValueHolder.getOutputEventAdapterService().getOutputEventAdapterSchema(eventAdaptorType);
+        OutputEventAdapterSchema schema = EventPublisherServiceValueHolder.getOutputEventAdapterService().getOutputEventAdapterSchema(eventAdapterType);
         if (schema != null && schema.getDynamicPropertyList() != null) {
             for (Property property : schema.getDynamicPropertyList()) {
                 dynamicProperties.put(property.getPropertyName(), property.getDefaultValue());

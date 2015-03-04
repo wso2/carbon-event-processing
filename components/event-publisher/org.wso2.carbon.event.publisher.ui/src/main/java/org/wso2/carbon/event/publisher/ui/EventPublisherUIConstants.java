@@ -12,21 +12,16 @@
  * CONDITIONS OF ANY KIND, either express or implied.  See the License for the
  * specific language governing permissions and limitations under the License.
  */
-package org.wso2.carbon.event.publisher.admin.internal.exception;
+package org.wso2.carbon.event.publisher.ui;
 
-public class EventPublisherAdminServiceException extends Exception {
-    public EventPublisherAdminServiceException() {
+public final class EventPublisherUIConstants {
+
+    private EventPublisherUIConstants() {
     }
 
-    public EventPublisherAdminServiceException(String message) {
-        super(message);
-    }
+    public static final String STRING_LITERAL_ENABLE = "enable";
 
-    public EventPublisherAdminServiceException(String message, Throwable cause) {
-        super(message, cause);
-    }
+    public static final String PROPERTY_META_PREFIX = "meta_";
+    public static final String PROPERTY_CORRELATION_PREFIX = "correlation_";
 
-    public EventPublisherAdminServiceException(Throwable cause) {
-        super(cause);
-    }
 }

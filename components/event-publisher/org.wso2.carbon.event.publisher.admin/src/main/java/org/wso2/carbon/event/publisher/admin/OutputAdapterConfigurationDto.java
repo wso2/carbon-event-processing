@@ -15,26 +15,36 @@
 package org.wso2.carbon.event.publisher.admin;
 
 
-public class ToAdapterConfigurationDto {
+public class OutputAdapterConfigurationDto {
 
-    private String eventAdaptorType;
+    private String eventAdapterType;
+
+    private String[] supportedMessageFormats;
 
     private DetailOutputAdapterPropertyDto[] outputEventAdapterProperties;
 
-    public String getEventAdaptorType() {
-        return eventAdaptorType;
+    public String getEventAdapterType() {
+        return eventAdapterType;
     }
 
-    public void setEventAdaptorType(String eventAdaptorType) {
-        this.eventAdaptorType = eventAdaptorType;
+    public void setEventAdapterType(String eventAdapterType) {
+        this.eventAdapterType = eventAdapterType;
     }
 
     public DetailOutputAdapterPropertyDto[] getOutputEventAdapterProperties() {
         return outputEventAdapterProperties;
     }
 
-    public void setOutputEventAdaptorProperties(
-            DetailOutputAdapterPropertyDto[] outputEventAdaptorMessageConfiguration) {
-        this.outputEventAdapterProperties = outputEventAdaptorMessageConfiguration;
+    public void setOutputEventAdapterProperties(
+            DetailOutputAdapterPropertyDto[] outputEventAdapterMessageConfiguration) {
+        this.outputEventAdapterProperties = outputEventAdapterMessageConfiguration;
+    }
+
+    public String[] getSupportedMessageFormats() {
+        return supportedMessageFormats;
+    }
+
+    public void setSupportedMessageFormats(String[] supportedMessageFormats) {
+        this.supportedMessageFormats = supportedMessageFormats;
     }
 }
