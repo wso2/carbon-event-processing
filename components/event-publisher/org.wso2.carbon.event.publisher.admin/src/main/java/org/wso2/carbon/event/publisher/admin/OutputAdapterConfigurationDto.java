@@ -21,7 +21,9 @@ public class OutputAdapterConfigurationDto {
 
     private String[] supportedMessageFormats;
 
-    private DetailOutputAdapterPropertyDto[] outputEventAdapterProperties;
+    private DetailOutputAdapterPropertyDto[] outputEventAdapterStaticProperties;
+
+    private DetailOutputAdapterPropertyDto[] outputEventAdapterDynamicProperties;
 
     public String getEventAdapterType() {
         return eventAdapterType;
@@ -31,13 +33,13 @@ public class OutputAdapterConfigurationDto {
         this.eventAdapterType = eventAdapterType;
     }
 
-    public DetailOutputAdapterPropertyDto[] getOutputEventAdapterProperties() {
-        return outputEventAdapterProperties;
+    public DetailOutputAdapterPropertyDto[] getOutputEventAdapterStaticProperties() {
+        return outputEventAdapterStaticProperties;
     }
 
-    public void setOutputEventAdapterProperties(
+    public void setOutputEventAdapterStaticProperties(
             DetailOutputAdapterPropertyDto[] outputEventAdapterMessageConfiguration) {
-        this.outputEventAdapterProperties = outputEventAdapterMessageConfiguration;
+        this.outputEventAdapterStaticProperties = outputEventAdapterMessageConfiguration;
     }
 
     public String[] getSupportedMessageFormats() {
@@ -46,5 +48,13 @@ public class OutputAdapterConfigurationDto {
 
     public void setSupportedMessageFormats(String[] supportedMessageFormats) {
         this.supportedMessageFormats = supportedMessageFormats;
+    }
+
+    public DetailOutputAdapterPropertyDto[] getOutputEventAdapterDynamicProperties() {
+        return outputEventAdapterDynamicProperties;
+    }
+
+    public void setOutputEventAdapterDynamicProperties(DetailOutputAdapterPropertyDto[] outputEventAdapterDynamicProperties) {
+        this.outputEventAdapterDynamicProperties = outputEventAdapterDynamicProperties;
     }
 }

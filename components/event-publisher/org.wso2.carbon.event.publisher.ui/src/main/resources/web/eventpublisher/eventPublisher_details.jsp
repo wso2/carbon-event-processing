@@ -106,6 +106,11 @@
     </td>
 </tr>
 
+<tr>
+    <td colspan="2">
+        <b><fmt:message key="from.heading"/></b>
+    </td>
+</tr>
 
 <tr>
     <td><fmt:message key="event.stream.name"/><span class="required">*</span></td>
@@ -137,12 +142,182 @@
 </tr>
 
 <tr>
+    <td>
+        <b><fmt:message key="to.heading"/></b>
+    </td>
+</tr>
+
+<tr>
     <td><fmt:message key="event.adapter.type"/><span class="required">*</span></td>
     <td><select name="eventAdapterTypeFilter"
                 id="eventAdapterTypeFilter" disabled="disabled">
         <option><%=eventPublisherConfigurationDto.getToAdapterConfigurationDto().getEventAdapterType()%>
         </option>
     </select>
+    </td>
+</tr>
+
+
+<%
+    OutputAdapterConfigurationDto toPropertyConfigurationDto = eventPublisherConfigurationDto.getToAdapterConfigurationDto();
+    if (toPropertyConfigurationDto != null) {
+%>
+<%
+    if (toPropertyConfigurationDto.getOutputEventAdapterStaticProperties()!=null && toPropertyConfigurationDto.getOutputEventAdapterStaticProperties().length > 0) {
+%>
+<tr>
+    <td>
+        <b><i><span style="color: #666666; "><fmt:message key="static.properties.heading"/></span></i></b>
+    </td>
+</tr>
+<%
+    DetailOutputAdapterPropertyDto[] eventPublisherPropertyDto = toPropertyConfigurationDto.getOutputEventAdapterStaticProperties();
+    for (int index = 0; index < eventPublisherPropertyDto.length; index++) {
+%>
+<tr>
+
+
+    <td class="leftCol-med"><%=eventPublisherPropertyDto[index].getDisplayName()%>
+        <%
+            String propertyId = "property_";
+            if (eventPublisherPropertyDto[index].getRequired()) {
+                propertyId = "property_Required_";
+
+        %>
+        <span class="required">*</span>
+        <%
+            }
+        %>
+    </td>
+    <%
+        String type = "text";
+        if (eventPublisherPropertyDto[index].getSecured()) {
+            type = "password";
+        }
+    %>
+
+    <td>
+        <div class=outputFields>
+            <%
+                if (eventPublisherPropertyDto[index].getOptions()[0] != null) {
+            %>
+
+            <select name="<%=eventPublisherPropertyDto[index].getKey()%>"
+                    id="<%=propertyId%><%=index%>" disabled="disabled">
+
+                <%
+                    for (String property : eventPublisherPropertyDto[index].getOptions()) {
+                        if (property.equals(eventPublisherPropertyDto[index].getValue())) {
+                %>
+                <option selected="selected"><%=property%>
+                </option>
+                <% } else { %>
+                <option><%=property%>
+                </option>
+                <% }
+                } %>
+            </select>
+
+            <% } else { %>
+            <input type="<%=type%>"
+                   name="<%=eventPublisherPropertyDto[index].getKey()%>"
+                   id="<%=propertyId%><%=index%>" class="initE"
+                   style="width:75%"
+                   value="<%= eventPublisherPropertyDto[index].getValue() != null ? eventPublisherPropertyDto[index].getValue() : "" %>" disabled="disabled"/>
+
+            <% } %>
+
+
+        </div>
+    </td>
+
+</tr>
+<%
+        }
+    }
+%>
+<%
+    if (toPropertyConfigurationDto.getOutputEventAdapterDynamicProperties()!=null && toPropertyConfigurationDto.getOutputEventAdapterDynamicProperties().length > 0) {
+%>
+<tr>
+    <td>
+        <b><i><span style="color: #666666; "><fmt:message key="dynamic.properties.heading"/></span></i></b>
+    </td>
+</tr>
+<%
+    DetailOutputAdapterPropertyDto[] eventPublisherPropertyDto = toPropertyConfigurationDto.getOutputEventAdapterDynamicProperties();
+    for (int index = 0; index < eventPublisherPropertyDto.length; index++) {
+%>
+<tr>
+
+
+    <td class="leftCol-med"><%=eventPublisherPropertyDto[index].getDisplayName()%>
+        <%
+            String propertyId = "property_";
+            if (eventPublisherPropertyDto[index].getRequired()) {
+                propertyId = "property_Required_";
+
+        %>
+        <span class="required">*</span>
+        <%
+            }
+        %>
+    </td>
+    <%
+        String type = "text";
+        if (eventPublisherPropertyDto[index].getSecured()) {
+            type = "password";
+        }
+    %>
+
+    <td>
+        <div class=outputFields>
+            <%
+                if (eventPublisherPropertyDto[index].getOptions()[0] != null) {
+            %>
+
+            <select name="<%=eventPublisherPropertyDto[index].getKey()%>"
+                    id="<%=propertyId%><%=index%>" disabled="disabled">
+
+                <%
+                    for (String property : eventPublisherPropertyDto[index].getOptions()) {
+                        if (property.equals(eventPublisherPropertyDto[index].getValue())) {
+                %>
+                <option selected="selected"><%=property%>
+                </option>
+                <% } else { %>
+                <option><%=property%>
+                </option>
+                <% }
+                } %>
+            </select>
+
+            <% } else { %>
+            <input type="<%=type%>"
+                   name="<%=eventPublisherPropertyDto[index].getKey()%>"
+                   id="<%=propertyId%><%=index%>" class="initE"
+                   style="width:75%"
+                   value="<%= eventPublisherPropertyDto[index].getValue() != null ? eventPublisherPropertyDto[index].getValue() : "" %>" disabled="disabled"/>
+
+            <% } %>
+
+
+        </div>
+    </td>
+
+</tr>
+<%
+        }
+    }
+%>
+<%
+    }
+%>
+
+
+<tr>
+    <td colspan="2">
+        <b><fmt:message key="mapping.heading"/></b>
     </td>
 </tr>
 
@@ -546,80 +721,6 @@
 </div>
 </td>
 </tr>
-
-<%
-    OutputAdapterConfigurationDto toPropertyConfigurationDto = eventPublisherConfigurationDto.getToAdapterConfigurationDto();
-    if (toPropertyConfigurationDto != null && toPropertyConfigurationDto.getOutputEventAdapterProperties()[0] != null) {
-
-        for (int index = 0; index < toPropertyConfigurationDto.getOutputEventAdapterProperties().length; index++) {
-            DetailOutputAdapterPropertyDto[] eventPublisherPropertyDto = toPropertyConfigurationDto.getOutputEventAdapterProperties();
-%>
-<tr>
-
-
-    <td class="leftCol-med"><%=eventPublisherPropertyDto[index].getDisplayName()%>
-        <%
-            String propertyId = "property_";
-            if (eventPublisherPropertyDto[index].getRequired()) {
-                propertyId = "property_Required_";
-
-        %>
-        <span class="required">*</span>
-        <%
-            }
-        %>
-    </td>
-    <%
-        String type = "text";
-        if (eventPublisherPropertyDto[index].getSecured()) {
-            type = "password";
-        }
-    %>
-
-    <td>
-        <div class=outputFields>
-            <%
-                if (eventPublisherPropertyDto[index].getOptions()[0] != null) {
-            %>
-
-            <select name="<%=eventPublisherPropertyDto[index].getKey()%>"
-                    id="<%=propertyId%><%=index%>" disabled="disabled">
-
-                <%
-                    for (String property : eventPublisherPropertyDto[index].getOptions()) {
-                        if (property.equals(eventPublisherPropertyDto[index].getValue())) {
-                %>
-                <option selected="selected"><%=property%>
-                </option>
-                <% } else { %>
-                <option><%=property%>
-                </option>
-                <% }
-                } %>
-            </select>
-
-            <% } else { %>
-            <input type="<%=type%>"
-                   name="<%=eventPublisherPropertyDto[index].getKey()%>"
-                   id="<%=propertyId%><%=index%>" class="initE"
-                   style="width:75%"
-                   value="<%= eventPublisherPropertyDto[index].getValue() != null ? eventPublisherPropertyDto[index].getValue() : "" %>" disabled="disabled"/>
-
-            <% } %>
-
-
-        </div>
-    </td>
-
-</tr>
-<%
-        }
-    }
-
-
-%>
-
-
 </tbody>
 </table>
 </td>

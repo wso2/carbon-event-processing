@@ -165,7 +165,11 @@
     </td>
 
 </tr>
-
+<tr>
+    <td>
+        <b><fmt:message key="to.heading"/></b>
+    </td>
+</tr>
 <tr>
     <td><fmt:message key="event.adapter.type"/><span class="required">*</span></td>
     <td>
@@ -197,26 +201,94 @@
             <td width="40%" id="addOutputEventAdapterTD" class="custom-noPadding"></td>
         </table>
     </td>
-
 </tr>
-
 <%
     OutputAdapterConfigurationDto outputAdapterConfigurationDto = eventPublisherAdminServiceStub.getOutputAdapterConfigurationSchema(firstEventAdapterType);
     if (outputAdapterConfigurationDto != null) {
-      DetailOutputAdapterPropertyDto[]  eventAdapterProperties=  outputAdapterConfigurationDto.getOutputEventAdapterProperties();
-        if(eventAdapterProperties!=null){
+%>
+<%
+    DetailOutputAdapterPropertyDto[] eventAdapterProperties = outputAdapterConfigurationDto.getOutputEventAdapterStaticProperties();
+    if (eventAdapterProperties != null && eventAdapterProperties.length > 0) {
 %>
 <tr>
     <td>
-        <b><fmt:message key="to.heading"/></b>
+        <b><i><span style="color: #666666; "><fmt:message key="static.properties.heading"/></span></i></b>
     </td>
 </tr>
 <%
     for (int index = 0; index < eventAdapterProperties.length; index++) {
 %>
 <tr>
+    <td class="leftCol-med"><%=eventAdapterProperties[index].getDisplayName()%>
+        <%
+            String propertyId = "property_";
+            if (eventAdapterProperties[index].getRequired()) {
+                propertyId = "property_Required_";
+        %>
+        <span class="required">*</span>
+        <%
+            }
+        %>
+    </td>
+    <%
+        String type = "text";
+        if (eventAdapterProperties[index].getSecured()) {
+            type = "password";
+        }
+    %>
+    <td>
+        <div class=outputFields>
+            <%
+                if (eventAdapterProperties[index].getOptions()[0] != null) {
+            %>
+            <select name="<%=eventAdapterProperties[index].getKey()%>"
+                    id="<%=propertyId%><%=index%>">
+                <%
+                    for (String property : eventAdapterProperties[index].getOptions()) {
+                        if (property.equals(eventAdapterProperties[index].getDefaultValue())) {
+                %>
+                <option selected="selected"><%=property%>
+                </option>
+                <% } else { %>
+                <option><%=property%>
+                </option>
+                <% }
+                } %>
+            </select>
 
+            <% } else { %>
+            <input type="<%=type%>"
+                   name="<%=eventAdapterProperties[index].getKey()%>"
+                   id="<%=propertyId%><%=index%>" class="initE"
+                   style="width:75%"
+                   value="<%= (eventAdapterProperties[index].getDefaultValue()) != null ? eventAdapterProperties[index].getDefaultValue() : "" %>"
+                    />
 
+            <% }
+
+                if (eventAdapterProperties[index].getHint() != null) { %>
+            <div class="sectionHelp">
+                <%=eventAdapterProperties[index].getHint()%>
+            </div>
+            <% } %>
+        </div>
+    </td>
+</tr>
+<%
+        }
+    }
+    eventAdapterProperties = outputAdapterConfigurationDto.getOutputEventAdapterDynamicProperties();
+    if (eventAdapterProperties != null && eventAdapterProperties.length > 0) {
+%>
+<tr>
+    <td>
+        <b><i><span style="color: #666666; "><fmt:message key="dynamic.properties.heading"/></span></i></b>
+    </td>
+</tr>
+<%
+    for (int index = 0; index < eventAdapterProperties.length; index++) {
+%>
+<tr>
     <td class="leftCol-med"><%=eventAdapterProperties[index].getDisplayName()%>
         <%
             String propertyId = "property_";
@@ -278,9 +350,8 @@
 
 </tr>
 <%
-            }
         }
-
+    }
 %>
 
 <tr>

@@ -187,10 +187,10 @@ public class EventPublisherAdminService extends AbstractAdmin {
                     outputAdapterProperties.putAll(toAdapterConfiguration.getStaticProperties());
                     outputAdapterProperties.putAll(eventPublisherConfiguration.getToAdapterDynamicProperties());
 
-                    if (outputAdapterProperties.size() > 0) {
-                        DetailOutputAdapterPropertyDto[] detailOutputAdapterPropertyDtos = getPropertyConfigurations(outputAdapterProperties, outputEventAdapterSchema);
-                        toAdapterConfigurationDto.setOutputEventAdapterProperties(detailOutputAdapterPropertyDtos);
-                    }
+                    DetailOutputAdapterPropertyDto[] detailOutputAdapterStaticPropertyDtos = getPropertyConfigurations(outputAdapterProperties, outputEventAdapterSchema.getStaticPropertyList());
+                    DetailOutputAdapterPropertyDto[] detailOutputAdapterDynamicPropertyDtos = getPropertyConfigurations(outputAdapterProperties, outputEventAdapterSchema.getDynamicPropertyList());
+                    toAdapterConfigurationDto.setOutputEventAdapterStaticProperties(detailOutputAdapterStaticPropertyDtos);
+                    toAdapterConfigurationDto.setOutputEventAdapterDynamicProperties(detailOutputAdapterDynamicPropertyDtos);
 
                     eventPublisherConfigurationDto.setToAdapterConfigurationDto(toAdapterConfigurationDto);
                 }
@@ -700,7 +700,8 @@ public class EventPublisherAdminService extends AbstractAdmin {
         OutputEventAdapterSchema outputEventAdapterSchema = outputEventAdapterService.getOutputEventAdapterSchema(adopterType);
 
         OutputAdapterConfigurationDto outputAdapterConfigurationDto = new OutputAdapterConfigurationDto();
-        outputAdapterConfigurationDto.setOutputEventAdapterProperties(getPropertyConfigurations(null, outputEventAdapterSchema));
+        outputAdapterConfigurationDto.setOutputEventAdapterStaticProperties(getPropertyConfigurations(null, outputEventAdapterSchema.getStaticPropertyList()));
+        outputAdapterConfigurationDto.setOutputEventAdapterDynamicProperties(getPropertyConfigurations(null, outputEventAdapterSchema.getDynamicPropertyList()));
         outputAdapterConfigurationDto.setEventAdapterType(adopterType);
         outputAdapterConfigurationDto.setSupportedMessageFormats(
                 outputEventAdapterSchema.getSupportedMessageFormats().
@@ -726,16 +727,8 @@ public class EventPublisherAdminService extends AbstractAdmin {
         return null;
     }
 
-    private DetailOutputAdapterPropertyDto[] getPropertyConfigurations(Map<String, String> messageProperties, OutputEventAdapterSchema outputEventAdapterSchema) {
-
-        List<Property> propertyList = new ArrayList<Property>();
-        if (outputEventAdapterSchema.getStaticPropertyList() != null) {
-            propertyList.addAll(outputEventAdapterSchema.getStaticPropertyList());
-        }
-        if (outputEventAdapterSchema.getDynamicPropertyList() != null) {
-            propertyList.addAll(outputEventAdapterSchema.getDynamicPropertyList());
-        }
-        if (propertyList.size() > 0) {
+    private DetailOutputAdapterPropertyDto[] getPropertyConfigurations(Map<String, String> messageProperties, List<Property> propertyList) {
+        if (propertyList != null && propertyList.size() > 0) {
             DetailOutputAdapterPropertyDto[] detailOutputAdapterPropertyDtoArray = new DetailOutputAdapterPropertyDto[propertyList.size()];
             int index = 0;
             for (Property property : propertyList) {
@@ -753,7 +746,6 @@ public class EventPublisherAdminService extends AbstractAdmin {
                 detailOutputAdapterPropertyDtoArray[index].setDefaultValue(property.getDefaultValue());
                 detailOutputAdapterPropertyDtoArray[index].setHint(property.getHint());
                 detailOutputAdapterPropertyDtoArray[index].setOptions(property.getOptions());
-
                 index++;
             }
             return detailOutputAdapterPropertyDtoArray;
