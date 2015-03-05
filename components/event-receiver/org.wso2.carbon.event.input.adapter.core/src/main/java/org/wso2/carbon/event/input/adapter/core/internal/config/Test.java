@@ -13,7 +13,7 @@
  * specific language governing permissions and limitations under the License.
  */
 
-package org.wso2.carbon.event.output.adapter.core.internal.config;
+package org.wso2.carbon.event.input.adapter.core.internal.config;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
@@ -53,7 +53,7 @@ public class Test {
                adapterConfigs.setAdapterConfigs(adapterConfigList);
 
 //            String path = CarbonUtils.getCarbonConfigDirPath() + File.separator + RDBMSEventAdaptorConstants.ADAPTOR_GENERIC_RDBMS_FILE_SPECIFIC_PATH + RDBMSEventAdaptorConstants.ADAPTOR_GENERIC_RDBMS_FILE_NAME;
-            String path = "/Users/suho/wso2/src/wso2/carbon-event-processing/components/event-publisher/org.wso2.carbon.event.output.adapter.core/target/foo.xml";
+            String path = "/Users/suho/wso2/src/wso2/carbon-event-processing/components/event-publisher/org.wso2.carbon.event.input.adapter.core/target/foo.xml";
             File configFile = new File(path);
             unmarshaller.marshal(adapterConfigs,configFile);
 //            if (!configFile.exists()) {
