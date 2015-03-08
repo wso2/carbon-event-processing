@@ -39,16 +39,16 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-public class XMLOutputOutputMapper implements OutputMapper {
+public class XMLOutputMapper implements OutputMapper {
 
-    private static final Log log = LogFactory.getLog(XMLOutputOutputMapper.class);
+    private static final Log log = LogFactory.getLog(XMLOutputMapper.class);
     EventPublisherConfiguration eventPublisherConfiguration = null;
     Map<String, Integer> propertyPositionMap = null;
     private String outputXMLText = "";
 
-    public XMLOutputOutputMapper(EventPublisherConfiguration eventPublisherConfiguration,
-                                 Map<String, Integer> propertyPositionMap,
-                                 int tenantId, StreamDefinition streamDefinition) throws
+    public XMLOutputMapper(EventPublisherConfiguration eventPublisherConfiguration,
+                           Map<String, Integer> propertyPositionMap,
+                           int tenantId, StreamDefinition streamDefinition) throws
                                                                                   EventPublisherConfigurationException {
         this.eventPublisherConfiguration = eventPublisherConfiguration;
         this.propertyPositionMap = propertyPositionMap;

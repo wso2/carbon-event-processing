@@ -76,6 +76,18 @@
                     </xs:sequence>
                 </xs:complexType>
             </xs:element>
+            <xs:element name="getAllOutputAdapterTypes">
+                <xs:complexType>
+                    <xs:sequence></xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="getAllOutputAdapterTypesResponse">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element maxOccurs="unbounded" minOccurs="0" name="return" nillable="true" type="xs:string"></xs:element>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
             <xs:element name="getAllInactiveEventPublisherConfiguration">
                 <xs:complexType>
                     <xs:sequence></xs:sequence>
@@ -394,6 +406,12 @@
         <wsdl:part name="parameters" element="ns:deployTextEventPublisherConfiguration"></wsdl:part>
     </wsdl:message>
     <wsdl:message name="deployTextEventPublisherConfigurationResponse"></wsdl:message>
+    <wsdl:message name="getAllOutputAdapterTypesRequest">
+        <wsdl:part name="parameters" element="ns:getAllOutputAdapterTypes"></wsdl:part>
+    </wsdl:message>
+    <wsdl:message name="getAllOutputAdapterTypesResponse">
+        <wsdl:part name="parameters" element="ns:getAllOutputAdapterTypesResponse"></wsdl:part>
+    </wsdl:message>
     <wsdl:message name="getActiveEventPublisherConfigurationRequest">
         <wsdl:part name="parameters" element="ns:getActiveEventPublisherConfiguration"></wsdl:part>
     </wsdl:message>
@@ -474,6 +492,10 @@
         <wsdl:operation name="deployTextEventPublisherConfiguration">
             <wsdl:input message="ns:deployTextEventPublisherConfigurationRequest" wsaw:Action="urn:deployTextEventPublisherConfiguration"></wsdl:input>
             <wsdl:output message="ns:deployTextEventPublisherConfigurationResponse" wsaw:Action="urn:deployTextEventPublisherConfigurationResponse"></wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="getAllOutputAdapterTypes">
+            <wsdl:input message="ns:getAllOutputAdapterTypesRequest" wsaw:Action="urn:getAllOutputAdapterTypes"></wsdl:input>
+            <wsdl:output message="ns:getAllOutputAdapterTypesResponse" wsaw:Action="urn:getAllOutputAdapterTypesResponse"></wsdl:output>
         </wsdl:operation>
         <wsdl:operation name="getActiveEventPublisherConfiguration">
             <wsdl:input message="ns:getActiveEventPublisherConfigurationRequest" wsaw:Action="urn:getActiveEventPublisherConfiguration"></wsdl:input>
@@ -632,6 +654,15 @@
         </wsdl:operation>
         <wsdl:operation name="deployTextEventPublisherConfiguration">
             <soap:operation soapAction="urn:deployTextEventPublisherConfiguration" style="document"></soap:operation>
+            <wsdl:input>
+                <soap:body use="literal"></soap:body>
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal"></soap:body>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="getAllOutputAdapterTypes">
+            <soap:operation soapAction="urn:getAllOutputAdapterTypes" style="document"></soap:operation>
             <wsdl:input>
                 <soap:body use="literal"></soap:body>
             </wsdl:input>
@@ -813,6 +844,15 @@
                 <soap12:body use="literal"></soap12:body>
             </wsdl:output>
         </wsdl:operation>
+        <wsdl:operation name="getAllOutputAdapterTypes">
+            <soap12:operation soapAction="urn:getAllOutputAdapterTypes" style="document"></soap12:operation>
+            <wsdl:input>
+                <soap12:body use="literal"></soap12:body>
+            </wsdl:input>
+            <wsdl:output>
+                <soap12:body use="literal"></soap12:body>
+            </wsdl:output>
+        </wsdl:operation>
         <wsdl:operation name="getActiveEventPublisherConfiguration">
             <soap12:operation soapAction="urn:getActiveEventPublisherConfiguration" style="document"></soap12:operation>
             <wsdl:input>
@@ -987,6 +1027,15 @@
                 <mime:content type="text/xml" part="parameters"></mime:content>
             </wsdl:output>
         </wsdl:operation>
+        <wsdl:operation name="getAllOutputAdapterTypes">
+            <http:operation location="getAllOutputAdapterTypes"></http:operation>
+            <wsdl:input>
+                <mime:content type="text/xml" part="parameters"></mime:content>
+            </wsdl:input>
+            <wsdl:output>
+                <mime:content type="text/xml" part="parameters"></mime:content>
+            </wsdl:output>
+        </wsdl:operation>
         <wsdl:operation name="getActiveEventPublisherConfiguration">
             <http:operation location="getActiveEventPublisherConfiguration"></http:operation>
             <wsdl:input>
@@ -1008,13 +1057,13 @@
     </wsdl:binding>
     <wsdl:service name="EventPublisherAdminService">
         <wsdl:port name="EventPublisherAdminServiceHttpsSoap11Endpoint" binding="ns:EventPublisherAdminServiceSoap11Binding">
-            <soap:address location="https://192.168.1.3:9443/services/EventPublisherAdminService.EventPublisherAdminServiceHttpsSoap11Endpoint/"></soap:address>
+            <soap:address location="https://192.168.1.7:9443/services/EventPublisherAdminService.EventPublisherAdminServiceHttpsSoap11Endpoint/"></soap:address>
         </wsdl:port>
         <wsdl:port name="EventPublisherAdminServiceHttpsSoap12Endpoint" binding="ns:EventPublisherAdminServiceSoap12Binding">
-            <soap12:address location="https://192.168.1.3:9443/services/EventPublisherAdminService.EventPublisherAdminServiceHttpsSoap12Endpoint/"></soap12:address>
+            <soap12:address location="https://192.168.1.7:9443/services/EventPublisherAdminService.EventPublisherAdminServiceHttpsSoap12Endpoint/"></soap12:address>
         </wsdl:port>
         <wsdl:port name="EventPublisherAdminServiceHttpsEndpoint" binding="ns:EventPublisherAdminServiceHttpBinding">
-            <http:address location="https://192.168.1.3:9443/services/EventPublisherAdminService.EventPublisherAdminServiceHttpsEndpoint/"></http:address>
+            <http:address location="https://192.168.1.7:9443/services/EventPublisherAdminService.EventPublisherAdminServiceHttpsEndpoint/"></http:address>
         </wsdl:port>
     </wsdl:service>
 </wsdl:definitions>

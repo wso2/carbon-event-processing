@@ -12,7 +12,7 @@
  * CONDITIONS OF ANY KIND, either express or implied.  See the License for the
  * specific language governing permissions and limitations under the License.
  */
-package org.wso2.carbon.event.publisher.core.config;
+package org.wso2.carbon.event.publisher.core.internal;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -22,9 +22,10 @@ import org.wso2.carbon.databridge.commons.Attribute;
 import org.wso2.carbon.databridge.commons.StreamDefinition;
 import org.wso2.carbon.event.output.adapter.core.OutputEventAdapterService;
 import org.wso2.carbon.event.output.adapter.core.exception.OutputEventAdapterException;
+import org.wso2.carbon.event.publisher.core.config.EventPublisherConfiguration;
+import org.wso2.carbon.event.publisher.core.config.EventPublisherConstants;
 import org.wso2.carbon.event.publisher.core.exception.EventPublisherConfigurationException;
 import org.wso2.carbon.event.publisher.core.exception.EventPublisherStreamValidationException;
-import org.wso2.carbon.event.publisher.core.internal.OutputMapper;
 import org.wso2.carbon.event.publisher.core.internal.ds.EventPublisherServiceValueHolder;
 import org.wso2.carbon.event.statistics.EventStatisticsMonitor;
 import org.wso2.carbon.event.stream.manager.core.RawEventConsumer;

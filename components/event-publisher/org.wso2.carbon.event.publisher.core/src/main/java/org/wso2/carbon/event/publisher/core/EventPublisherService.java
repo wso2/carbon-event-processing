@@ -115,16 +115,16 @@ public interface EventPublisherService {
     /**
      * This method used to get all the active event publisher configuration objects
      *
-     * @param axisConfiguration
+     * @param tenantId
      * @return
      * @throws EventPublisherConfigurationException
      */
-    public List<EventPublisherConfiguration> getAllActiveEventPublisherConfiguration(
-            AxisConfiguration axisConfiguration)
+    public List<EventPublisherConfiguration> getAllActiveEventPublisherConfigurations(
+            int tenantId)
             throws EventPublisherConfigurationException;
 
-    public List<EventPublisherConfiguration> getAllActiveEventPublisherConfiguration(
-            AxisConfiguration axisConfiguration, String streamId)
+    public List<EventPublisherConfiguration> getAllActiveEventPublisherConfigurations(
+            String streamId, int tenantId)
             throws EventPublisherConfigurationException;
 
 
@@ -134,7 +134,7 @@ public interface EventPublisherService {
      * @param axisConfiguration
      * @return
      */
-    public List<EventPublisherConfigurationFile> getAllInactiveEventPublisherConfiguration(
+    public List<EventPublisherConfigurationFile> getAllInactiveEventPublisherConfigurations(
             AxisConfiguration axisConfiguration);
 
 
@@ -203,23 +203,19 @@ public interface EventPublisherService {
      *
      * @param eventPublisherName the event publisher name to which statistics collecting state should be changed
      * @param axisConfiguration  the axis configuration for the calling context
-     * @param flag               {@literal true} or {@literal false} specifying whether to enable statistics collection or disable
      * @throws EventPublisherConfigurationException
      */
-    public void setStatisticsEnabled(String eventPublisherName, AxisConfiguration axisConfiguration,
-                                     boolean flag)
+    public void setStatisticsEnabled(String eventPublisherName, boolean statisticsEnabled, AxisConfiguration axisConfiguration)
             throws EventPublisherConfigurationException;
 
     /**
      * Method used to enable/disable the tracing for an event publisher
      *
      * @param eventPublisherName the event publisher name to which tracing state should be changed
-     * @param axisConfiguration  the axis configuration for the calling context
-     * @param flag               {@literal true} or {@literal false} specifying whether to enable tracing or disable
-     * @throws EventPublisherConfigurationException
+     * @param traceEnabled
+     *@param axisConfiguration  the axis configuration for the calling context  @throws EventPublisherConfigurationException
      */
-    public void setTraceEnabled(String eventPublisherName, AxisConfiguration axisConfiguration,
-                                boolean flag)
+    public void setTraceEnabled(String eventPublisherName, boolean traceEnabled, AxisConfiguration axisConfiguration)
             throws EventPublisherConfigurationException;
 
     /**

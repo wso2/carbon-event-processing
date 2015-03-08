@@ -21,19 +21,12 @@ import java.util.Map;
 public class EventPublisherConfiguration {
 
     private String eventPublisherName;
-
     private String fromStreamName;
-
     private String fromStreamVersion;
-
     private OutputEventAdapterConfiguration toAdapterConfiguration;
-
     private Map<String, String> toAdapterDynamicProperties;
-
     private OutputMapping outputMapping;
-
     private boolean enableTracing;
-
     private boolean enableStatistics;
     private boolean editable;
 
@@ -82,7 +75,7 @@ public class EventPublisherConfiguration {
         return enableTracing;
     }
 
-    public void setEnableTracing(boolean enableTracing) {
+    public void setTraceEnabled(boolean enableTracing) {
         this.enableTracing = enableTracing;
     }
 
@@ -90,7 +83,7 @@ public class EventPublisherConfiguration {
         return enableStatistics;
     }
 
-    public void setEnableStatistics(boolean enableStatistics) {
+    public void setStatisticsEnabled(boolean enableStatistics) {
         this.enableStatistics = enableStatistics;
     }
 

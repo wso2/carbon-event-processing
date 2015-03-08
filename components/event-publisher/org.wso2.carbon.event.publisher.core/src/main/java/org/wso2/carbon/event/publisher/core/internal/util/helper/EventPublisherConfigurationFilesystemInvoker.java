@@ -46,7 +46,7 @@ public class EventPublisherConfigurationFilesystemInvoker {
     public static void save(String eventPublisher,
                             String fileName, AxisConfiguration axisConfiguration)
             throws EventPublisherConfigurationException {
-        EventPublisherDeployer eventPublisherDeployer = (EventPublisherDeployer) getDeployer(axisConfiguration, EventPublisherConstants.TM_ELE_DIRECTORY);
+        EventPublisherDeployer eventPublisherDeployer = (EventPublisherDeployer) getDeployer(axisConfiguration, EventPublisherConstants.EF_CONFIG_DIRECTORY);
         String filePath = getFilePathFromFilename(fileName, axisConfiguration);
         try {
             /* save contents to .xml file */
@@ -71,7 +71,7 @@ public class EventPublisherConfigurationFilesystemInvoker {
             String filePath = getFilePathFromFilename(fileName, axisConfiguration);
             File file = new File(filePath);
             if (file.exists()) {
-                EventPublisherDeployer deployer = (EventPublisherDeployer) getDeployer(axisConfiguration, EventPublisherConstants.TM_ELE_DIRECTORY);
+                EventPublisherDeployer deployer = (EventPublisherDeployer) getDeployer(axisConfiguration, EventPublisherConstants.EF_CONFIG_DIRECTORY);
                 deployer.getUndeployedEventPublisherFilePaths().add(filePath);
                 boolean fileDeleted = file.delete();
                 if (!fileDeleted) {
@@ -96,10 +96,10 @@ public class EventPublisherConfigurationFilesystemInvoker {
 
     public static void reload(String filePath, AxisConfiguration axisConfiguration)
             throws EventPublisherConfigurationException {
-        EventPublisherDeployer deployer = (EventPublisherDeployer) getDeployer(axisConfiguration, EventPublisherConstants.TM_ELE_DIRECTORY);
+        EventPublisherDeployer deployer = (EventPublisherDeployer) getDeployer(axisConfiguration, EventPublisherConstants.EF_CONFIG_DIRECTORY);
         try {
-            deployer.processUndeploy(filePath);
-            deployer.processDeploy(new DeploymentFileData(new File(filePath)));
+            deployer.processUndeployment(filePath);
+            deployer.processDeployment(new DeploymentFileData(new File(filePath)));
         } catch (DeploymentException e) {
             throw new EventPublisherConfigurationException(e);
         }
@@ -142,7 +142,7 @@ public class EventPublisherConfigurationFilesystemInvoker {
 
     private static String getFilePathFromFilename(String filename,
                                                   AxisConfiguration axisConfiguration) {
-        return new File(axisConfiguration.getRepository().getPath()).getAbsolutePath() + File.separator + EventPublisherConstants.TM_ELE_DIRECTORY + File.separator + filename;
+        return new File(axisConfiguration.getRepository().getPath()).getAbsolutePath() + File.separator + EventPublisherConstants.EF_CONFIG_DIRECTORY + File.separator + filename;
     }
 
 }

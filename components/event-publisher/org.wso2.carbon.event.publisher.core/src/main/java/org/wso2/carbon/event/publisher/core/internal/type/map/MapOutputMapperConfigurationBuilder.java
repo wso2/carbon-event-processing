@@ -31,9 +31,9 @@ import java.util.List;
 /**
  * This class is used to read the values of the event builder configuration defined in XML configuration files
  */
-public class MapMapperConfigurationBuilder {
+public class MapOutputMapperConfigurationBuilder {
 
-    private MapMapperConfigurationBuilder() {
+    private MapOutputMapperConfigurationBuilder() {
 
     }
 
@@ -44,7 +44,7 @@ public class MapMapperConfigurationBuilder {
         MapOutputMapping mapOutputMapping = new MapOutputMapping();
 
         String customMappingEnabled = mappingElement.getAttributeValue(new QName(EventPublisherConstants.EF_ATTR_CUSTOM_MAPPING));
-        if (customMappingEnabled == null || (customMappingEnabled.equals(EventPublisherConstants.TM_VALUE_ENABLE))) {
+        if (customMappingEnabled == null || (customMappingEnabled.equals(EventPublisherConstants.ENABLE_CONST))) {
             mapOutputMapping.setCustomMappingEnabled(true);
             if (!validateMapEventMapping(mappingElement)) {
                 throw new EventPublisherConfigurationException("Map Mapping is not valid, check the output mapping");
@@ -67,8 +67,8 @@ public class MapMapperConfigurationBuilder {
 
     private static EventOutputProperty getOutputPropertyFromOM(OMElement omElement) {
 
-        OMElement propertyFromElement = omElement.getFirstChildWithName(new QName(EventPublisherConstants.EF_CONF_NS, EventPublisherConstants.EF_ELE_FROM_PROPERTY));
-        OMElement propertyToElement = omElement.getFirstChildWithName(new QName(EventPublisherConstants.EF_CONF_NS, EventPublisherConstants.EF_ELE_TO_PROPERTY));
+        OMElement propertyFromElement = omElement.getFirstChildWithName(new QName(EventPublisherConstants.EF_CONF_NS, EventPublisherConstants.EF_ELEMENT_FROM));
+        OMElement propertyToElement = omElement.getFirstChildWithName(new QName(EventPublisherConstants.EF_CONF_NS, EventPublisherConstants.EF_ELEMENT_TO));
 
         String name = propertyToElement.getAttributeValue(new QName(EventPublisherConstants.EF_ATTR_NAME));
         String valueOf = propertyFromElement.getAttributeValue(new QName(EventPublisherConstants.EF_ATTR_NAME));
@@ -78,7 +78,7 @@ public class MapMapperConfigurationBuilder {
     }
 
 
-    private static boolean validateMapEventMapping(OMElement omElement) {
+    public static boolean validateMapEventMapping(OMElement omElement) {
 
 
         int count = 0;
@@ -105,13 +105,13 @@ public class MapMapperConfigurationBuilder {
         List<EventOutputProperty> outputPropertyConfiguration = mapOutputMapping.getOutputPropertyConfiguration();
 
         OMElement mappingOMElement = factory.createOMElement(new QName(
-                EventPublisherConstants.EF_ELE_MAPPING_PROPERTY));
+                EventPublisherConstants.EF_ELEMENT_MAPPING));
         mappingOMElement.declareDefaultNamespace(EventPublisherConstants.EF_CONF_NS);
 
         mappingOMElement.addAttribute(EventPublisherConstants.EF_ATTR_TYPE, EventPublisherConstants.EF_MAP_MAPPING_TYPE, null);
 
         if (mapOutputMapping.isCustomMappingEnabled()) {
-            mappingOMElement.addAttribute(EventPublisherConstants.EF_ATTR_CUSTOM_MAPPING, EventPublisherConstants.TM_VALUE_ENABLE, null);
+            mappingOMElement.addAttribute(EventPublisherConstants.EF_ATTR_CUSTOM_MAPPING, EventPublisherConstants.ENABLE_CONST, null);
 
 
             if (outputPropertyConfiguration.size() > 0) {
@@ -131,11 +131,11 @@ public class MapMapperConfigurationBuilder {
         OMElement propertyOMElement = factory.createOMElement(new QName(EventPublisherConstants.EF_ELE_PROPERTY));
         propertyOMElement.declareDefaultNamespace(EventPublisherConstants.EF_CONF_NS);
 
-        OMElement fromElement = factory.createOMElement(new QName(EventPublisherConstants.EF_ELE_FROM_PROPERTY));
+        OMElement fromElement = factory.createOMElement(new QName(EventPublisherConstants.EF_ELEMENT_FROM));
         fromElement.declareDefaultNamespace(EventPublisherConstants.EF_CONF_NS);
         fromElement.addAttribute(EventPublisherConstants.EF_ATTR_NAME, eventOutputProperty.getValueOf(), null);
 
-        OMElement toElement = factory.createOMElement(new QName(EventPublisherConstants.EF_ELE_TO_PROPERTY));
+        OMElement toElement = factory.createOMElement(new QName(EventPublisherConstants.EF_ELEMENT_TO));
         toElement.declareDefaultNamespace(EventPublisherConstants.EF_CONF_NS);
         toElement.addAttribute(EventPublisherConstants.EF_ATTR_NAME, eventOutputProperty.getName(), null);
 

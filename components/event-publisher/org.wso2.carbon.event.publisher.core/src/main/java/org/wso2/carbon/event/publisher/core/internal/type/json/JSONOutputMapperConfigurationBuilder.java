@@ -29,9 +29,9 @@ import java.util.Iterator;
  * This class is used to read the values of the event builder configuration defined in XML configuration files
  */
 
-public class JSONMapperConfigurationBuilder {
+public class JSONOutputMapperConfigurationBuilder {
 
-    private JSONMapperConfigurationBuilder() {
+    private JSONOutputMapperConfigurationBuilder() {
 
     }
 
@@ -43,9 +43,9 @@ public class JSONMapperConfigurationBuilder {
         JSONOutputMapping jsonOutputMapping = new JSONOutputMapping();
 
         String customMappingEnabled = mappingElement.getAttributeValue(new QName(EventPublisherConstants.EF_ATTR_CUSTOM_MAPPING));
-        if (customMappingEnabled == null || (customMappingEnabled.equals(EventPublisherConstants.TM_VALUE_ENABLE))) {
+        if (customMappingEnabled == null || (customMappingEnabled.equals(EventPublisherConstants.ENABLE_CONST))) {
             jsonOutputMapping.setCustomMappingEnabled(true);
-            if (!validateJSONMapping(mappingElement)) {
+            if (!validateJsonEventMapping(mappingElement)) {
                 throw new EventPublisherConfigurationException("JSON Mapping is not valid, check the output mapping");
             }
 
@@ -78,7 +78,7 @@ public class JSONMapperConfigurationBuilder {
     }
 
 
-    private static boolean validateJSONMapping(OMElement omElement) {
+    public static boolean validateJsonEventMapping(OMElement omElement) {
 
         int count = 0;
         Iterator<OMElement> mappingIterator = omElement.getChildElements();
@@ -98,13 +98,13 @@ public class JSONMapperConfigurationBuilder {
         JSONOutputMapping jsonOutputMapping = (JSONOutputMapping) outputMapping;
 
         OMElement mappingOMElement = factory.createOMElement(new QName(
-                EventPublisherConstants.EF_ELE_MAPPING_PROPERTY));
+                EventPublisherConstants.EF_ELEMENT_MAPPING));
         mappingOMElement.declareDefaultNamespace(EventPublisherConstants.EF_CONF_NS);
 
         mappingOMElement.addAttribute(EventPublisherConstants.EF_ATTR_TYPE, EventPublisherConstants.EF_JSON_MAPPING_TYPE, null);
 
         if (jsonOutputMapping.isCustomMappingEnabled()) {
-            mappingOMElement.addAttribute(EventPublisherConstants.EF_ATTR_CUSTOM_MAPPING, EventPublisherConstants.TM_VALUE_ENABLE, null);
+            mappingOMElement.addAttribute(EventPublisherConstants.EF_ATTR_CUSTOM_MAPPING, EventPublisherConstants.ENABLE_CONST, null);
 
 
             OMElement innerMappingElement;

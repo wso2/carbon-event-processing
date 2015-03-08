@@ -124,14 +124,17 @@
                 /permission/admin/manage/event-publish
             </parameter>
         </operation>
-
         <operation name="getActiveEventPublisherConfiguration">
             <parameter name="AuthorizationAction" locked="true">
                 /permission/admin/manage/event-publish
             </parameter>
         </operation>
-
         <operation name="getOutputAdapterConfigurationSchema">
+            <parameter name="AuthorizationAction" locked="true">
+                /permission/admin/manage/event-publish
+            </parameter>
+        </operation>
+        <operation name="getAllOutputAdapterTypes">
             <parameter name="AuthorizationAction" locked="true">
                 /permission/admin/manage/event-publish
             </parameter>

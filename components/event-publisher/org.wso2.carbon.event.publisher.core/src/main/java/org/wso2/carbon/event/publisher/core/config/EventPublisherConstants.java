@@ -25,19 +25,19 @@ public final class EventPublisherConstants {
 
     public static final String NORMALIZATION_STRING = "_";
     public static final String EF_CONF_NS = "http://wso2.org/carbon/eventpublisher";
-    public static final String EF_ELE_ROOT_ELEMENT = "eventPublisher";
-    public static final String TM_ELE_DIRECTORY = "eventpublishers";
+    public static final String EF_ELEMENT_ROOT_ELEMENT = "eventPublisher";
+    public static final String EF_CONFIG_DIRECTORY = "eventpublishers";
     public static final String EF_ELE_PROPERTY = "property";
     public static final String EF_ATTR_NAME = "name";
     public static final String EF_ATTR_VERSION = "version";
     public static final String EF_ATTR_STREAM_NAME = "streamName";
     public static final String EF_ELE_PROPERTY_STREAM_NAME = "stream";
-    public static final String EF_ELE_FROM_PROPERTY = "from";
+    public static final String EF_ELEMENT_FROM = "from";
     public static final String EF_ELE_TO_METADATA_PROPERTY = "metaData";
     public static final String EF_ELE_TO_CORRELATION_PROPERTY = "correlationData";
     public static final String EF_ELE_TO_PAYLOAD_PROPERTY = "payloadData";
-    public static final String EF_ELE_TO_PROPERTY = "to";
-    public static final String EF_ELE_MAPPING_PROPERTY = "mapping";
+    public static final String EF_ELEMENT_TO = "to";
+    public static final String EF_ELEMENT_MAPPING = "mapping";
     public static final String EF_ATTR_TA_TYPE = "eventAdapterType";
     public static final String EF_ATTR_TYPE = "type";
     public static final String EF_ATTR_FACTORY_CLASS = "factoryClass";
@@ -68,9 +68,9 @@ public final class EventPublisherConstants {
 
     public static final String REGISTRY_CONF_PREFIX = "conf:/";
     public static final String REGISTRY_GOVERNANCE_PREFIX = "gov:/";
-    public static final String TM_ATTR_TRACING = "trace";
-    public static final String TM_ATTR_STATISTICS = "statistics";
-    public static final String TM_VALUE_ENABLE = "enable";
+    public static final String EF_ATTR_TRACE_ENABLED = "trace";
+    public static final String EF_ATTR_STATISTICS_ENABLED = "statistics";
+    public static final String ENABLE_CONST = "enable";
     public static final String TM_VALUE_DISABLE = "disable";
     public static final String EVENT_PUBLISHER = "Event Publisher";
     public static final String STREAM_ID_SEPERATOR = ":";
@@ -94,6 +94,7 @@ public final class EventPublisherConstants {
     public static final String TEMPLATE_EVENT_ATTRIBUTE_POSTFIX = "}}";
     public static final String EVENT_ATTRIBUTE_VALUE_SEPARATOR = ":";
     public static final String EVENT_ATTRIBUTE_SEPARATOR = ",";
+    public static final String DEFAULT_STREAM_VERSION = "1.0.0";
 
 
     private EventPublisherConstants() {

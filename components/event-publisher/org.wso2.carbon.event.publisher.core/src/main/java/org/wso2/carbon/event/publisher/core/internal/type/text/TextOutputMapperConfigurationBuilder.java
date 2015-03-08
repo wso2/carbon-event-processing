@@ -29,10 +29,10 @@ import java.util.Iterator;
 /**
  * This class is used to read the values of the event builder configuration defined in XML configuration files
  */
-public class TextMapperConfigurationBuilder {
+public class TextOutputMapperConfigurationBuilder {
 
 
-    private TextMapperConfigurationBuilder() {
+    private TextOutputMapperConfigurationBuilder() {
 
     }
 
@@ -44,7 +44,7 @@ public class TextMapperConfigurationBuilder {
         TextOutputMapping textOutputMapping = new TextOutputMapping();
 
         String customMappingEnabled = mappingElement.getAttributeValue(new QName(EventPublisherConstants.EF_ATTR_CUSTOM_MAPPING));
-        if (customMappingEnabled == null || (customMappingEnabled.equals(EventPublisherConstants.TM_VALUE_ENABLE))) {
+        if (customMappingEnabled == null || (customMappingEnabled.equals(EventPublisherConstants.ENABLE_CONST))) {
             textOutputMapping.setCustomMappingEnabled(true);
             if (!validateTextMapping(mappingElement)) {
                 throw new EventPublisherConfigurationException("Text Mapping is not valid, check the output mapping");
@@ -79,7 +79,7 @@ public class TextMapperConfigurationBuilder {
     }
 
 
-    private static boolean validateTextMapping(OMElement omElement) {
+    public static boolean validateTextMapping(OMElement omElement) {
 
 
         int count = 0;
@@ -100,13 +100,13 @@ public class TextMapperConfigurationBuilder {
         TextOutputMapping textOutputMapping = (TextOutputMapping) outputMapping;
 
         OMElement mappingOMElement = factory.createOMElement(new QName(
-                EventPublisherConstants.EF_ELE_MAPPING_PROPERTY));
+                EventPublisherConstants.EF_ELEMENT_MAPPING));
         mappingOMElement.declareDefaultNamespace(EventPublisherConstants.EF_CONF_NS);
 
         mappingOMElement.addAttribute(EventPublisherConstants.EF_ATTR_TYPE, EventPublisherConstants.EF_TEXT_MAPPING_TYPE, null);
 
         if (textOutputMapping.isCustomMappingEnabled()) {
-            mappingOMElement.addAttribute(EventPublisherConstants.EF_ATTR_CUSTOM_MAPPING, EventPublisherConstants.TM_VALUE_ENABLE, null);
+            mappingOMElement.addAttribute(EventPublisherConstants.EF_ATTR_CUSTOM_MAPPING, EventPublisherConstants.ENABLE_CONST, null);
 
 
             OMElement innerMappingElement;

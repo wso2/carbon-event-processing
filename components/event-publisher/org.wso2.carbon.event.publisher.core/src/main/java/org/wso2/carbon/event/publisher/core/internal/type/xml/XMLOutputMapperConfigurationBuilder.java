@@ -31,9 +31,9 @@ import java.util.Iterator;
 /**
  * This class is used to read the values of the event builder configuration defined in XML configuration files
  */
-public class XMLMapperConfigurationBuilder {
+public class XMLOutputMapperConfigurationBuilder {
 
-    private XMLMapperConfigurationBuilder() {
+    private XMLOutputMapperConfigurationBuilder() {
 
     }
 
@@ -44,7 +44,7 @@ public class XMLMapperConfigurationBuilder {
         XMLOutputMapping xmlOutputMapping = new XMLOutputMapping();
 
         String customMappingEnabled = mappingElement.getAttributeValue(new QName(EventPublisherConstants.EF_ATTR_CUSTOM_MAPPING));
-        if (customMappingEnabled == null || (customMappingEnabled.equals(EventPublisherConstants.TM_VALUE_ENABLE))) {
+        if (customMappingEnabled == null || (customMappingEnabled.equals(EventPublisherConstants.ENABLE_CONST))) {
             xmlOutputMapping.setCustomMappingEnabled(true);
             if (!validateXMLEventMapping(mappingElement)) {
                 throw new EventPublisherConfigurationException("XML Mapping is not valid, check the output mapping");
@@ -88,7 +88,7 @@ public class XMLMapperConfigurationBuilder {
         return xmlOutputMapping;
     }
 
-    private static boolean validateXMLEventMapping(OMElement omElement) {
+    public static boolean validateXMLEventMapping(OMElement omElement) {
 
 
         int count = 0;
@@ -111,12 +111,12 @@ public class XMLMapperConfigurationBuilder {
         String xmlText = xmlOutputMapping.getMappingXMLText();
 
         OMElement mappingOMElement = factory.createOMElement(new QName(
-                EventPublisherConstants.EF_ELE_MAPPING_PROPERTY));
+                EventPublisherConstants.EF_ELEMENT_MAPPING));
         mappingOMElement.declareDefaultNamespace(EventPublisherConstants.EF_CONF_NS);
 
         mappingOMElement.addAttribute(EventPublisherConstants.EF_ATTR_TYPE, EventPublisherConstants.EF_XML_MAPPING_TYPE, null);
         if (xmlOutputMapping.isCustomMappingEnabled()) {
-            mappingOMElement.addAttribute(EventPublisherConstants.EF_ATTR_CUSTOM_MAPPING, EventPublisherConstants.TM_VALUE_ENABLE, null);
+            mappingOMElement.addAttribute(EventPublisherConstants.EF_ATTR_CUSTOM_MAPPING, EventPublisherConstants.ENABLE_CONST, null);
 
             OMElement innerMappingElement;
             if (xmlOutputMapping.isRegistryResource()) {
