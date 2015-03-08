@@ -35,13 +35,13 @@ import org.wso2.carbon.event.stream.manager.core.exception.EventStreamConfigurat
 
 import java.util.*;
 
-public class Wso2EventInputMapper implements InputMapper {
+public class WSO2EventInputMapper implements InputMapper {
     private EventReceiverConfiguration eventReceiverConfiguration = null;
     private StreamDefinition exportedStreamDefinition = null;
     private StreamDefinition importedStreamDefinition = null;
     private Map<InputDataType, int[]> inputDataTypeSpecificPositionMap = null;
 
-    public Wso2EventInputMapper(EventReceiverConfiguration eventReceiverConfiguration,
+    public WSO2EventInputMapper(EventReceiverConfiguration eventReceiverConfiguration,
                                 StreamDefinition exportedStreamDefinition)
             throws EventReceiverConfigurationException {
         int tenantId = PrivilegedCarbonContext.getThreadLocalCarbonContext().getTenantId();

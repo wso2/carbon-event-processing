@@ -36,9 +36,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-public class JsonInputMapper implements InputMapper {
+public class JSONInputMapper implements InputMapper {
 
-    private static final Log log = LogFactory.getLog(JsonInputMapper.class);
+    private static final Log log = LogFactory.getLog(JSONInputMapper.class);
     private EventReceiverConfiguration eventReceiverConfiguration = null;
     private List<JsonPathData> attributeJsonPathDataList = new ArrayList<JsonPathData>();
     private int noMetaData;
@@ -46,7 +46,7 @@ public class JsonInputMapper implements InputMapper {
     private int noPayloadData;
     private StreamDefinition streamDefinition;
 
-    public JsonInputMapper(EventReceiverConfiguration eventReceiverConfiguration,
+    public JSONInputMapper(EventReceiverConfiguration eventReceiverConfiguration,
                            StreamDefinition streamDefinition)
             throws EventReceiverConfigurationException {
         this.eventReceiverConfiguration = eventReceiverConfiguration;

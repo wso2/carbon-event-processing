@@ -12,7 +12,7 @@
  * CONDITIONS OF ANY KIND, either express or implied.  See the License for the
  * specific language governing permissions and limitations under the License.
  */
-package org.wso2.carbon.event.receiver.core.internal.util;
+package org.wso2.carbon.event.receiver.core.internal.util.helper;
 
 import org.apache.axiom.om.OMElement;
 import org.apache.axis2.deployment.DeploymentException;
@@ -22,15 +22,15 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.wso2.carbon.context.PrivilegedCarbonContext;
 import org.wso2.carbon.event.receiver.core.EventReceiverDeployer;
-import org.wso2.carbon.event.receiver.core.exception.EventReceiverConfigurationException;
 import org.wso2.carbon.event.receiver.core.config.EventReceiverConstants;
-import org.wso2.carbon.event.receiver.core.internal.util.helper.EventReceiverConfigurationHelper;
+import org.wso2.carbon.event.receiver.core.exception.EventReceiverConfigurationException;
+import org.wso2.carbon.event.receiver.core.internal.util.XmlFormatter;
 import org.wso2.carbon.utils.multitenancy.MultitenantUtils;
 
 import java.io.*;
 
-public class EventReceiverConfigurationFilesyStemInvoker {
-    private static final Log log = LogFactory.getLog(EventReceiverConfigurationFilesyStemInvoker.class);
+public class EventReceiverConfigurationFileSystemInvoker {
+    private static final Log log = LogFactory.getLog(EventReceiverConfigurationFileSystemInvoker.class);
 
     public static void save(
             OMElement eventReceiverConfigOMElement,

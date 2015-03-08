@@ -23,7 +23,7 @@ import org.wso2.carbon.event.receiver.core.config.InputMapperFactory;
 import org.wso2.carbon.event.receiver.core.config.InputMapping;
 import org.wso2.carbon.event.receiver.core.exception.EventReceiverConfigurationException;
 
-public class JsonInputMapperFactory implements InputMapperFactory {
+public class JSONInputMapperFactory implements InputMapperFactory {
 
     @Override
     public InputMapping constructInputMappingFromOM(OMElement omElement)
@@ -41,7 +41,7 @@ public class JsonInputMapperFactory implements InputMapperFactory {
     public InputMapper constructInputMapper(EventReceiverConfiguration eventReceiverConfiguration,
                                             StreamDefinition exportedStreamDefinition)
             throws EventReceiverConfigurationException {
-        return new JsonInputMapper(eventReceiverConfiguration, exportedStreamDefinition);
+        return new JSONInputMapper(eventReceiverConfiguration, exportedStreamDefinition);
     }
 
 }
