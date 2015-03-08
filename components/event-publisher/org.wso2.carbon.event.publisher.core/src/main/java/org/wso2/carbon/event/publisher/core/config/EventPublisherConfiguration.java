@@ -71,7 +71,7 @@ public class EventPublisherConfiguration {
         this.outputMapping = outputMapping;
     }
 
-    public boolean isEnableTracing() {
+    public boolean isTracingEnabled() {
         return enableTracing;
     }
 
@@ -79,7 +79,7 @@ public class EventPublisherConfiguration {
         this.enableTracing = enableTracing;
     }
 
-    public boolean isEnableStatistics() {
+    public boolean isStatisticsEnabled() {
         return enableStatistics;
     }
 

@@ -21,7 +21,7 @@
 <%
     // get Event Stream Definition
     EventPublisherAdminServiceStub stub = EventPublisherUIUtils.getEventPublisherAdminService(config, session, request);
-    EventPublisherConfigurationInfoDto[] eventPublishers = stub.getAllActiveEventPublisherConfiguration();
+    EventPublisherConfigurationInfoDto[] eventPublishers = stub.getAllActiveEventPublisherConfigurations();
     String[] eventPublisherNames = null;
     String responseText = "";
     if (eventPublishers != null && eventPublishers.length > 0) {

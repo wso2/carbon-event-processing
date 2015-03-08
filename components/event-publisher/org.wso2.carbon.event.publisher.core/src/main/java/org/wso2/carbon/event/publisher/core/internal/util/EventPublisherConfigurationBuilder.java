@@ -57,13 +57,13 @@ public class EventPublisherConfigurationBuilder {
 
         eventPublisherConfigElement.addAttribute(EventPublisherConstants.EF_ATTR_NAME, eventPublisherConfiguration.getEventPublisherName(), null);
 
-        if (eventPublisherConfiguration.isEnableStatistics()) {
+        if (eventPublisherConfiguration.isStatisticsEnabled()) {
             eventPublisherConfigElement.addAttribute(EventPublisherConstants.EF_ATTR_STATISTICS_ENABLED, EventPublisherConstants.ENABLE_CONST, null);
         } else {
             eventPublisherConfigElement.addAttribute(EventPublisherConstants.EF_ATTR_STATISTICS_ENABLED, EventPublisherConstants.TM_VALUE_DISABLE, null);
         }
 
-        if (eventPublisherConfiguration.isEnableTracing()) {
+        if (eventPublisherConfiguration.isTracingEnabled()) {
             eventPublisherConfigElement.addAttribute(EventPublisherConstants.EF_ATTR_TRACE_ENABLED, EventPublisherConstants.ENABLE_CONST, null);
         } else {
             eventPublisherConfigElement.addAttribute(EventPublisherConstants.EF_ATTR_TRACE_ENABLED, EventPublisherConstants.TM_VALUE_DISABLE, null);

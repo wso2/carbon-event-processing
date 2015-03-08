@@ -62,8 +62,7 @@ public class CarbonEventPublisherService implements EventPublisherService {
     @Override
     public void deployEventPublisherConfiguration(
             EventPublisherConfiguration eventPublisherConfiguration,
-            AxisConfiguration axisConfiguration)
-            throws EventPublisherConfigurationException {
+            AxisConfiguration axisConfiguration) throws EventPublisherConfigurationException {
 
         String eventPublisherName = eventPublisherConfiguration.getEventPublisherName();
 
@@ -170,8 +169,7 @@ public class CarbonEventPublisherService implements EventPublisherService {
     }
 
     @Override
-    public List<EventPublisherConfiguration> getAllActiveEventPublisherConfigurations(
-            int tenantId) throws EventPublisherConfigurationException {
+    public List<EventPublisherConfiguration> getAllActiveEventPublisherConfigurations(int tenantId) {
         List<EventPublisherConfiguration> eventPublisherConfigurations = new ArrayList<EventPublisherConfiguration>();
         Map<String, EventPublisher> tenantSpecificEventPublisherMap = this.tenantSpecificEventPublisherConfigurationMap.get(tenantId);
         if (tenantSpecificEventPublisherMap != null) {
@@ -183,9 +181,7 @@ public class CarbonEventPublisherService implements EventPublisherService {
     }
 
     @Override
-    public List<EventPublisherConfiguration> getAllActiveEventPublisherConfigurations(
-            String streamId, int tenantId)
-            throws EventPublisherConfigurationException {
+    public List<EventPublisherConfiguration> getAllActiveEventPublisherConfigurations(String streamId, int tenantId) {
         List<EventPublisherConfiguration> eventPublisherConfigurations = new ArrayList<EventPublisherConfiguration>();
         if (tenantSpecificEventPublisherConfigurationMap.get(tenantId) != null) {
             for (EventPublisher eventPublisher : tenantSpecificEventPublisherConfigurationMap.get(tenantId).values()) {
@@ -381,7 +377,7 @@ public class CarbonEventPublisherService implements EventPublisherService {
                 if ((eventPublisherConfigurationFile.getFileName().equals(fileName))) {
                     if (eventPublisherConfigurationFile.getStatus().equals(EventPublisherConfigurationFile.Status.DEPLOYED)) {
                         String eventPublisherName = eventPublisherConfigurationFile.getEventPublisherName();
-                        EventPublisher eventPublisher= tenantSpecificEventPublisherConfigurationMap.get(tenantId).remove(eventPublisherName);
+                        EventPublisher eventPublisher = tenantSpecificEventPublisherConfigurationMap.get(tenantId).remove(eventPublisherName);
                         if (eventPublisher != null) {
                             EventPublisherServiceValueHolder.getEventStreamService().unsubscribe(eventPublisher, tenantId);
                             eventPublisher.destroy();
@@ -481,8 +477,8 @@ public class CarbonEventPublisherService implements EventPublisherService {
             Map<String, EventPublisher> eventPublisherMap = tenantSpecificEventPublisherConfigurationMap.get(tenantId);
             if (eventPublisherMap != null) {
                 for (EventPublisher eventPublisher : eventPublisherMap.values()) {
-                   EventPublisherConfiguration eventPublisherConfiguration= eventPublisher.getEventPublisherConfiguration();
-                    String stream= EventPublisherUtil.getImportedStreamIdFrom(eventPublisherConfiguration);
+                    EventPublisherConfiguration eventPublisherConfiguration = eventPublisher.getEventPublisherConfiguration();
+                    String stream = EventPublisherUtil.getImportedStreamIdFrom(eventPublisherConfiguration);
                     if (streamId.equals(stream)) {
                         EventPublisherConfigurationFile eventPublisherConfigurationFile =
                                 getEventPublisherConfigurationFile(eventPublisherConfiguration.getEventPublisherName(), tenantId);
@@ -516,7 +512,7 @@ public class CarbonEventPublisherService implements EventPublisherService {
         }
         return false;
     }
-    
+
     public boolean isEventPublisherFileAlreadyExist(String eventPublisherFileName, int tenantId) {
         if (tenantSpecificEventPublisherConfigurationFileMap.size() > 0) {
             List<EventPublisherConfigurationFile> eventPublisherConfigurationFiles = tenantSpecificEventPublisherConfigurationFileMap.get(tenantId);

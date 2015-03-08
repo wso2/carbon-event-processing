@@ -60,7 +60,7 @@
 
                 <%
                     EventPublisherAdminServiceStub stub = EventPublisherUIUtils.getEventPublisherAdminService(config, session, request);
-                    EventPublisherConfigurationFileDto[] eventPublisherDetailsArray = stub.getAllInactiveEventPublisherConfiguration();
+                    EventPublisherConfigurationFileDto[] eventPublisherDetailsArray = stub.getAllInactiveEventPublisherConfigurations();
                     if (eventPublisherDetailsArray != null) {
                 %>
                 <thead>

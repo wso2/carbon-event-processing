@@ -97,8 +97,8 @@ public class EventPublisher implements RawEventConsumer {
             throw new EventPublisherStreamValidationException("Stream " + streamId + " does not exist", streamId);
         }
 
-        this.traceEnabled = eventPublisherConfiguration.isEnableTracing();
-        this.statisticsEnabled = eventPublisherConfiguration.isEnableStatistics();
+        this.traceEnabled = eventPublisherConfiguration.isTracingEnabled();
+        this.statisticsEnabled = eventPublisherConfiguration.isStatisticsEnabled();
         if (statisticsEnabled) {
             this.statisticsMonitor = EventPublisherServiceValueHolder.getEventStatisticsService().getEventStatisticMonitor(tenantId, EventPublisherConstants.EVENT_PUBLISHER, eventPublisherConfiguration.getEventPublisherName(), null);
         }

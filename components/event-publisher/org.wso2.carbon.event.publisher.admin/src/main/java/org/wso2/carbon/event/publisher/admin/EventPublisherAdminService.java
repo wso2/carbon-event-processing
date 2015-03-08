@@ -42,7 +42,7 @@ public class EventPublisherAdminService extends AbstractAdmin {
 
     private static Log log = LogFactory.getLog(EventPublisherAdminService.class);
 
-    public EventPublisherConfigurationInfoDto[] getAllActiveEventPublisherConfiguration()
+    public EventPublisherConfigurationInfoDto[] getAllActiveEventPublisherConfigurations()
             throws AxisFault {
 
         try {
@@ -70,8 +70,8 @@ public class EventPublisherAdminService extends AbstractAdmin {
                     eventPublisherConfigurationInfoDtoArray[index].setMessageFormat(mappingType);
                     eventPublisherConfigurationInfoDtoArray[index].setOutputAdapterType(outputEventAdapterType);
                     eventPublisherConfigurationInfoDtoArray[index].setInputStreamId(streamNameWithVersion);
-                    eventPublisherConfigurationInfoDtoArray[index].setEnableStats(eventPublisherConfiguration.isEnableStatistics());
-                    eventPublisherConfigurationInfoDtoArray[index].setEnableTracing(eventPublisherConfiguration.isEnableTracing());
+                    eventPublisherConfigurationInfoDtoArray[index].setEnableStats(eventPublisherConfiguration.isStatisticsEnabled());
+                    eventPublisherConfigurationInfoDtoArray[index].setEnableTracing(eventPublisherConfiguration.isTracingEnabled());
                     eventPublisherConfigurationInfoDtoArray[index].setEditable(eventPublisherConfiguration.isEditable());
                 }
                 return eventPublisherConfigurationInfoDtoArray;
@@ -84,7 +84,7 @@ public class EventPublisherAdminService extends AbstractAdmin {
         }
     }
 
-    public EventPublisherConfigurationInfoDto[] getAllStreamSpecificActiveEventPublisherConfiguration(
+    public EventPublisherConfigurationInfoDto[] getAllStreamSpecificActiveEventPublisherConfigurations(
             String streamId)
             throws AxisFault {
 
@@ -110,8 +110,8 @@ public class EventPublisherAdminService extends AbstractAdmin {
                     eventPublisherConfigurationInfoDtoArray[index].setEventPublisherName(eventPublisherName);
                     eventPublisherConfigurationInfoDtoArray[index].setMessageFormat(mappingType);
                     eventPublisherConfigurationInfoDtoArray[index].setOutputAdapterType(outputEventAdapterType);
-                    eventPublisherConfigurationInfoDtoArray[index].setEnableStats(eventPublisherConfiguration.isEnableStatistics());
-                    eventPublisherConfigurationInfoDtoArray[index].setEnableTracing(eventPublisherConfiguration.isEnableTracing());
+                    eventPublisherConfigurationInfoDtoArray[index].setEnableStats(eventPublisherConfiguration.isStatisticsEnabled());
+                    eventPublisherConfigurationInfoDtoArray[index].setEnableTracing(eventPublisherConfiguration.isTracingEnabled());
                     eventPublisherConfigurationInfoDtoArray[index].setEditable(eventPublisherConfiguration.isEditable());
                 }
                 return eventPublisherConfigurationInfoDtoArray;
@@ -124,7 +124,7 @@ public class EventPublisherAdminService extends AbstractAdmin {
         }
     }
 
-    public EventPublisherConfigurationFileDto[] getAllInactiveEventPublisherConfiguration()
+    public EventPublisherConfigurationFileDto[] getAllInactiveEventPublisherConfigurations()
             throws AxisFault {
 
         EventPublisherService eventPublisherService = EventPublisherAdminServiceValueHolder.getEventPublisherService();
@@ -421,34 +421,6 @@ public class EventPublisherAdminService extends AbstractAdmin {
 
     }
 
-    private void constructOutputAdapterRelatedConfigs(String eventPublisherName, String eventAdapterType,
-                                                      BasicOutputAdapterPropertyDto[] outputPropertyConfiguration,
-                                                      EventPublisherConfiguration eventPublisherConfiguration,
-                                                      String messageFormat) {
-        OutputEventAdapterConfiguration outputEventAdapterConfiguration = new OutputEventAdapterConfiguration();
-        outputEventAdapterConfiguration.setName(eventPublisherName);
-        outputEventAdapterConfiguration.setType(eventAdapterType);
-        outputEventAdapterConfiguration.setMessageFormat(messageFormat);
-        outputEventAdapterConfiguration.setStaticProperties(new HashMap<String, String>());
-        eventPublisherConfiguration.setToAdapterDynamicProperties(new HashMap<String, String>());
-
-        // add output message property configuration to the map
-        if (outputPropertyConfiguration != null && outputPropertyConfiguration.length != 0) {
-
-            for (BasicOutputAdapterPropertyDto eventPublisherProperty : outputPropertyConfiguration) {
-                if (!eventPublisherProperty.getValue().trim().equals("")) {
-                    if (eventPublisherProperty.isStatic()) {
-                        outputEventAdapterConfiguration.getStaticProperties().put(eventPublisherProperty.getKey().trim(), eventPublisherProperty.getValue().trim());
-                    } else {
-                        eventPublisherConfiguration.getToAdapterDynamicProperties().put(eventPublisherProperty.getKey().trim(), eventPublisherProperty.getValue().trim());
-                    }
-                }
-            }
-        }
-
-        eventPublisherConfiguration.setToAdapterConfiguration(outputEventAdapterConfiguration);
-    }
-
     public void deployTextEventPublisherConfiguration(String eventPublisherName,
                                                       String streamNameWithVersion,
                                                       String eventAdapterType,
@@ -716,6 +688,35 @@ public class EventPublisherAdminService extends AbstractAdmin {
             String[] types = new String[outputEventAdapters.size()];
             return outputEventAdapters.toArray(types);
         }
+    }
+
+    // Private Methods
+    private void constructOutputAdapterRelatedConfigs(String eventPublisherName, String eventAdapterType,
+                                                      BasicOutputAdapterPropertyDto[] outputPropertyConfiguration,
+                                                      EventPublisherConfiguration eventPublisherConfiguration,
+                                                      String messageFormat) {
+        OutputEventAdapterConfiguration outputEventAdapterConfiguration = new OutputEventAdapterConfiguration();
+        outputEventAdapterConfiguration.setName(eventPublisherName);
+        outputEventAdapterConfiguration.setType(eventAdapterType);
+        outputEventAdapterConfiguration.setMessageFormat(messageFormat);
+        outputEventAdapterConfiguration.setStaticProperties(new HashMap<String, String>());
+        eventPublisherConfiguration.setToAdapterDynamicProperties(new HashMap<String, String>());
+
+        // add output message property configuration to the map
+        if (outputPropertyConfiguration != null && outputPropertyConfiguration.length != 0) {
+
+            for (BasicOutputAdapterPropertyDto eventPublisherProperty : outputPropertyConfiguration) {
+                if (!eventPublisherProperty.getValue().trim().equals("")) {
+                    if (eventPublisherProperty.isStatic()) {
+                        outputEventAdapterConfiguration.getStaticProperties().put(eventPublisherProperty.getKey().trim(), eventPublisherProperty.getValue().trim());
+                    } else {
+                        eventPublisherConfiguration.getToAdapterDynamicProperties().put(eventPublisherProperty.getKey().trim(), eventPublisherProperty.getValue().trim());
+                    }
+                }
+            }
+        }
+
+        eventPublisherConfiguration.setToAdapterConfiguration(outputEventAdapterConfiguration);
     }
 
     private EventMappingPropertyDto[] getEventPropertyDtoArray(
