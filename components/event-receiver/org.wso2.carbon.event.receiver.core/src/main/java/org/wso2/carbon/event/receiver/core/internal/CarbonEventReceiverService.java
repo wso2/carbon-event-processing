@@ -31,7 +31,7 @@ import org.wso2.carbon.event.receiver.core.exception.EventReceiverStreamValidati
 import org.wso2.carbon.event.receiver.core.internal.ds.EventReceiverServiceValueHolder;
 import org.wso2.carbon.event.receiver.core.internal.util.EventReceiverConfigurationBuilder;
 import org.wso2.carbon.event.receiver.core.internal.util.EventReceiverUtil;
-import org.wso2.carbon.event.receiver.core.internal.util.helper.EventReceiverConfigurationFilesyStemInvoker;
+import org.wso2.carbon.event.receiver.core.internal.util.EventReceiverConfigurationFilesyStemInvoker;
 import org.wso2.carbon.event.receiver.core.internal.util.helper.EventReceiverConfigurationHelper;
 import org.wso2.carbon.event.stream.manager.core.EventStreamService;
 import org.wso2.carbon.event.stream.manager.core.exception.EventStreamConfigurationException;
