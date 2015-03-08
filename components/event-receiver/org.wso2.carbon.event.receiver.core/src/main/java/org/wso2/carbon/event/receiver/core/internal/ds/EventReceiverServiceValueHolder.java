@@ -18,10 +18,10 @@ import org.wso2.carbon.event.input.adapter.core.InputEventAdapterService;
 import org.wso2.carbon.event.input.adapter.core.MessageType;
 import org.wso2.carbon.event.receiver.core.config.InputMapperFactory;
 import org.wso2.carbon.event.receiver.core.internal.CarbonEventReceiverService;
-import org.wso2.carbon.event.receiver.core.internal.type.json.JSONInputMapperFactory;
+import org.wso2.carbon.event.receiver.core.internal.type.json.JsonInputMapperFactory;
 import org.wso2.carbon.event.receiver.core.internal.type.map.MapInputMapperFactory;
 import org.wso2.carbon.event.receiver.core.internal.type.text.TextInputMapperFactory;
-import org.wso2.carbon.event.receiver.core.internal.type.wso2event.WSO2EventInputMapperFactory;
+import org.wso2.carbon.event.receiver.core.internal.type.wso2event.Wso2EventInputMapperFactory;
 import org.wso2.carbon.event.receiver.core.internal.type.xml.XMLInputMapperFactory;
 import org.wso2.carbon.event.statistics.EventStatisticsService;
 import org.wso2.carbon.event.stream.manager.core.EventStreamService;
@@ -43,9 +43,9 @@ public class EventReceiverServiceValueHolder {
         mappingFactoryMap = new ConcurrentHashMap<String, InputMapperFactory>();
         mappingFactoryMap.put(MessageType.MAP, new MapInputMapperFactory());
         mappingFactoryMap.put(MessageType.TEXT, new TextInputMapperFactory());
-        mappingFactoryMap.put(MessageType.WSO2EVENT, new WSO2EventInputMapperFactory());
+        mappingFactoryMap.put(MessageType.WSO2EVENT, new Wso2EventInputMapperFactory());
         mappingFactoryMap.put(MessageType.XML, new XMLInputMapperFactory());
-        mappingFactoryMap.put(MessageType.JSON, new JSONInputMapperFactory());
+        mappingFactoryMap.put(MessageType.JSON, new JsonInputMapperFactory());
     }
 
     private static EventStatisticsService eventStatisticsService;
