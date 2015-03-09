@@ -135,6 +135,10 @@ public class TopologyManager {
         try {
             Document document = StormQueryPlanBuilder.constructStormQueryPlanXML(configuration, importStreams, exportStreams);
             String stormQueryPlan = getStringQueryPlan(document);
+            if (log.isDebugEnabled()) {
+                log.debug("Following is the generated Storm query plan for execution plan: " + configuration.getName() +
+                        "\n" + stormQueryPlan);
+            }
             builder = StormTopologyConstructor.constructTopologyBuilder(stormQueryPlan, executionPlanName, tenantId, EventProcessorValueHolder.getStormDeploymentConfig());
         } catch (XMLStreamException e) {
             throw new StormDeploymentException("Invalid Config for Execution Plan " + executionPlanName + " for tenant " + tenantId, e);
