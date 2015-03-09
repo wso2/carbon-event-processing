@@ -32,6 +32,7 @@ import org.wso2.carbon.event.publisher.core.internal.util.EventPublisherConfigur
 import org.wso2.carbon.event.publisher.core.internal.util.EventPublisherUtil;
 import org.wso2.carbon.event.publisher.core.internal.util.helper.EventPublisherConfigurationFilesystemInvoker;
 import org.wso2.carbon.event.publisher.core.internal.util.helper.EventPublisherConfigurationHelper;
+import org.wso2.carbon.event.stream.manager.core.EventStreamConfig;
 import org.wso2.carbon.event.stream.manager.core.EventStreamService;
 import org.wso2.carbon.event.stream.manager.core.exception.EventStreamConfigurationException;
 import org.wso2.carbon.registry.core.Resource;

@@ -52,6 +52,7 @@ public class EventProcessorConfigurationFilesystemInvoker {
             try {
                 /* save contents to .xml file */
                 File file = new File(filePath);
+
                 writer = new OutputStreamWriter(new FileOutputStream(file), "UTF-8");
 
                 // get the content in bytes
