@@ -303,13 +303,14 @@ public class CarbonEventProcessorService implements EventProcessorService {
         if (distributed) {
             String queryExpression = EventProcessorUtil.constructQueryExpression(importDefinitions,
                     exportDefinitions, "");
-            executionPlanRuntime = siddhiManager.createExecutionPlanRuntime(queryExpression);//todo move inside??
+            executionPlanRuntime = siddhiManager.createExecutionPlanRuntime(queryExpression);
             if (stormDeploymentConfig != null && stormDeploymentConfig.isManagerNode() && EventProcessorValueHolder
                     .getStormManagerServer().isStormManager()) {
                 try {
                     TopologyManager.submitTopology(executionPlanConfiguration, importDefinitions, exportDefinitions,
                             tenantId, stormDeploymentConfig.getTopologySubmitRetryInterval());
                 } catch (StormDeploymentException e) {
+                    log.error("Invalid distributed query/configuration specified, " + e.getMessage(), e);
                     throw new ExecutionPlanConfigurationException("Invalid distributed query specified, " + e.getMessage(), e);
                 }
             }
