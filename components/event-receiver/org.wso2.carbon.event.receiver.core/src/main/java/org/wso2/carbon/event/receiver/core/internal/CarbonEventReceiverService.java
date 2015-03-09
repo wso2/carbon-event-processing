@@ -33,6 +33,7 @@ import org.wso2.carbon.event.receiver.core.internal.util.EventReceiverConfigurat
 import org.wso2.carbon.event.receiver.core.internal.util.EventReceiverUtil;
 import org.wso2.carbon.event.receiver.core.internal.util.helper.EventReceiverConfigurationFileSystemInvoker;
 import org.wso2.carbon.event.receiver.core.internal.util.helper.EventReceiverConfigurationHelper;
+import org.wso2.carbon.event.stream.manager.core.EventStreamConfig;
 import org.wso2.carbon.event.stream.manager.core.EventStreamService;
 import org.wso2.carbon.event.stream.manager.core.exception.EventStreamConfigurationException;
 

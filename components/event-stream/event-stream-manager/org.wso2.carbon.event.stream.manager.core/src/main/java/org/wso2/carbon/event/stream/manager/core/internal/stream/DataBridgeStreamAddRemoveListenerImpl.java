@@ -19,7 +19,6 @@ package org.wso2.carbon.event.stream.manager.core.internal.stream;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.wso2.carbon.databridge.core.definitionstore.StreamAddRemoveListener;
 import org.wso2.carbon.event.stream.manager.core.exception.EventStreamConfigurationException;
 import org.wso2.carbon.event.stream.manager.core.internal.CarbonEventStreamService;
 

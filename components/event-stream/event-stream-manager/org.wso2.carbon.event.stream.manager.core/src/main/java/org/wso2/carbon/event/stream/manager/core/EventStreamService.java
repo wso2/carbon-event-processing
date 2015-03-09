@@ -41,6 +41,8 @@ public interface EventStreamService {
     public StreamDefinition getStreamDefinition(String streamId, int tenantId)
             throws EventStreamConfigurationException;
 
+    public EventStreamConfig getEventStreamConfig(String streamId, int tenantId);
+
     /**
      * @return
      * @throws EventStreamConfigurationException
@@ -48,6 +50,9 @@ public interface EventStreamService {
     public Collection<StreamDefinition> getAllStreamDefinitions(int tenantId)
             throws EventStreamConfigurationException;
 
+
+    public Collection<EventStreamConfig> getAllEventStreamConfigs(int tenantId)
+            throws EventStreamConfigurationException;
     /**
      * @param streamDefinition
      * @throws EventStreamConfigurationException

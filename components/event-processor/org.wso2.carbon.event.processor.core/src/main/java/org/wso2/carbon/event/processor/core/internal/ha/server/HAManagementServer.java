@@ -24,7 +24,6 @@ import org.apache.thrift.server.TServer;
 import org.apache.thrift.server.TThreadPoolServer;
 import org.apache.thrift.transport.TServerSocket;
 import org.apache.thrift.transport.TTransportException;
-import org.wso2.carbon.databridge.core.exception.DataBridgeException;
 import org.wso2.carbon.event.processor.core.internal.CarbonEventProcessorService;
 import org.wso2.carbon.event.processor.core.internal.ha.CEPMembership;
 import org.wso2.carbon.event.processor.core.internal.ha.server.utils.HAManagementServerBuilder;
@@ -55,8 +54,6 @@ public class HAManagementServer {
 
             start(haManagementServerConfiguration, carbonEventProcessorService);
 
-        } catch (DataBridgeException e) {
-            log.error("Can not create and start Agent Server ", e);
         } catch (RuntimeException e) {
             log.error("Error in starting Agent Server ", e);
         } catch (Throwable e) {

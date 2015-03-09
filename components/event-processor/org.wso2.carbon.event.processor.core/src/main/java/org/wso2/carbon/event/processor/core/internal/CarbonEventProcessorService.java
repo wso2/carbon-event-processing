@@ -230,11 +230,9 @@ public class CarbonEventProcessorService implements EventProcessorService {
         // This iteration exists only as a check. Actual usage of imported stream configs is further down
         for (StreamConfiguration streamConfiguration : executionPlanConfiguration.getImportedStreams()) {
             try {
-                StreamDefinition streamDefinition = EventProcessorValueHolder.getEventStreamService()
-                        .getStreamDefinition(streamConfiguration.getStreamId(), tenantId);
+                StreamDefinition streamDefinition = EventProcessorValueHolder.getEventStreamService().getStreamDefinition(streamConfiguration.getStreamId(), tenantId);
                 if (streamDefinition == null) {
-                    throw new ExecutionPlanDependencyValidationException(streamConfiguration.getStreamId(),
-                            "Imported Stream " + streamConfiguration.getStreamId() + " does not exist");
+                    throw new ExecutionPlanDependencyValidationException(streamConfiguration.getStreamId(), "Imported Stream " + streamConfiguration.getStreamId() + " does not exist");
                 }
             } catch (EventStreamConfigurationException e) {
                 throw new ExecutionPlanConfigurationException("Error in retrieving stream ID : " + streamConfiguration.getStreamId());
@@ -245,8 +243,7 @@ public class CarbonEventProcessorService implements EventProcessorService {
         // This iteration exists only as a check. Actual usage of exported stream configs is further down
         for (StreamConfiguration streamConfiguration : executionPlanConfiguration.getExportedStreams()) {
             try {
-                StreamDefinition streamDefinition = EventProcessorValueHolder.getEventStreamService()
-                        .getStreamDefinition(streamConfiguration.getStreamId(), tenantId);
+                StreamDefinition streamDefinition = EventProcessorValueHolder.getEventStreamService().getStreamDefinition(streamConfiguration.getStreamId(), tenantId);
                 if (streamDefinition == null) {
                     throw new ExecutionPlanDependencyValidationException(streamConfiguration.getStreamId(),
                             "Exported Stream " + streamConfiguration.getStreamId() + " does not exist");
@@ -278,6 +275,7 @@ public class CarbonEventProcessorService implements EventProcessorService {
         for (StreamConfiguration exportedStreamConfiguration : executionPlanConfiguration.getExportedStreams()) {
             StreamDefinition streamDefinition;
             try {
+
                 streamDefinition = EventProcessorValueHolder.getEventStreamService().getStreamDefinition(
                         exportedStreamConfiguration.getStreamId(), tenantId);
                 exportDefinitions.add(EventProcessorUtil.getDefinitionString(streamDefinition,
