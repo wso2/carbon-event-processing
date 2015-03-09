@@ -1,5 +1,5 @@
 /*
-*  Copyright (c) 2005-2014, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
+*  Copyright (c) 2015, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
 *
 *  WSO2 Inc. licenses this file to you under the Apache License,
 *  Version 2.0 (the "License"); you may not use this file except
@@ -23,17 +23,18 @@ public class EmailEventAdapterConstants {
     }
 
     public static final String ADAPTER_TYPE_EMAIL = "email";
-
     public static final String ADAPTER_MESSAGE_EMAIL_ADDRESS = "email.address";
     public static final String ADAPTER_MESSAGE_EMAIL_SUBJECT = "email.subject";
-
+    public static final String MIN_THREAD_NAME = "minThread";
+    public static final String MAX_THREAD_NAME = "maxThread";
+    public static final String DEFAULT_KEEP_ALIVE_TIME_NAME = "defaultKeepAliveTime";
+    public static final String EMAIL_SEPARATOR =  ",";
+    public static final String EMAIL_URI_SCHEME ="mailto:";
     public static final int MIN_THREAD = 8;
     public static final int MAX_THREAD = 100;
     public static final long DEFAULT_KEEP_ALIVE_TIME = 20;
 
 
-    public static final String MIN_THREAD_NAME = "minThread";
-    public static final String MAX_THREAD_NAME = "maxThread";
-    public static final String DEFAULT_KEEP_ALIVE_TIME_NAME = "defaultKeppAliveTime";
+
 
 }

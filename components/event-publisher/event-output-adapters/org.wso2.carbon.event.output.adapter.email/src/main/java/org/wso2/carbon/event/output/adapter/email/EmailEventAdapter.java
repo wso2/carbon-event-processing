@@ -1,5 +1,5 @@
 /*
-*  Copyright (c) 2005-2014, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
+*  Copyright (c) 2015, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
 *
 *  WSO2 Inc. licenses this file to you under the Apache License,
 *  Version 2.0 (the "License"); you may not use this file except
@@ -39,7 +39,6 @@ import org.wso2.carbon.event.output.adapter.email.internal.ds.EmailEventAdapterS
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.ResourceBundle;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
@@ -47,10 +46,7 @@ import java.util.concurrent.TimeUnit;
 public class EmailEventAdapter implements OutputEventAdapter {
 
     private static final Log log = LogFactory.getLog(EmailEventAdapter.class);
-
-
     private static ThreadPoolExecutor threadPoolExecutor;
-    private ResourceBundle resourceBundle;
     private OutputEventAdapterConfiguration eventAdapterConfiguration;
     private Map<String, String> globalProperties;
 
@@ -60,40 +56,38 @@ public class EmailEventAdapter implements OutputEventAdapter {
         this.globalProperties = globalProperties;
     }
 
-
     @Override
     public void init() throws OutputEventAdapterException {
 
-      if (threadPoolExecutor == null){
-          int minThread;
-          int maxThread;
-          long defaultKeepAliveTime;
+        //ThreadPoolExecutor will be assigned  if it is null
+        if (threadPoolExecutor == null) {
+            int minThread;
+            int maxThread;
+            long defaultKeepAliveTime;
 
-          if (globalProperties.get(EmailEventAdapterConstants.MIN_THREAD_NAME) != null){
-              minThread = Integer.parseInt(globalProperties.get(EmailEventAdapterConstants.MIN_THREAD_NAME));
-          }
-          else {
-              minThread = EmailEventAdapterConstants.MIN_THREAD;
-          }
+            //If global properties are available those will be assigned else constant values will be assigned
+            if (globalProperties.get(EmailEventAdapterConstants.MIN_THREAD_NAME) != null) {
+                minThread = Integer.parseInt(globalProperties.get(EmailEventAdapterConstants.MIN_THREAD_NAME));
+            } else {
+                minThread = EmailEventAdapterConstants.MIN_THREAD;
+            }
 
-          if (globalProperties.get(EmailEventAdapterConstants.MAX_THREAD_NAME) != null){
-              maxThread = Integer.parseInt(globalProperties.get(EmailEventAdapterConstants.MAX_THREAD_NAME));
-          }
-          else {
-              maxThread = EmailEventAdapterConstants.MAX_THREAD;
-          }
+            if (globalProperties.get(EmailEventAdapterConstants.MAX_THREAD_NAME) != null) {
+                maxThread = Integer.parseInt(globalProperties.get(EmailEventAdapterConstants.MAX_THREAD_NAME));
+            } else {
+                maxThread = EmailEventAdapterConstants.MAX_THREAD;
+            }
 
-          if (globalProperties.get(EmailEventAdapterConstants.DEFAULT_KEEP_ALIVE_TIME_NAME) != null){
-              defaultKeepAliveTime = Integer.parseInt(globalProperties.get(
-                                                        EmailEventAdapterConstants.DEFAULT_KEEP_ALIVE_TIME_NAME));
-          }
-          else {
-              defaultKeepAliveTime = EmailEventAdapterConstants.DEFAULT_KEEP_ALIVE_TIME;
-          }
+            if (globalProperties.get(EmailEventAdapterConstants.DEFAULT_KEEP_ALIVE_TIME_NAME) != null) {
+                defaultKeepAliveTime = Integer.parseInt(globalProperties.get(
+                        EmailEventAdapterConstants.DEFAULT_KEEP_ALIVE_TIME_NAME));
+            } else {
+                defaultKeepAliveTime = EmailEventAdapterConstants.DEFAULT_KEEP_ALIVE_TIME;
+            }
 
-          threadPoolExecutor = new ThreadPoolExecutor(minThread, maxThread, defaultKeepAliveTime,
-                  TimeUnit.SECONDS, new LinkedBlockingQueue<Runnable>(1000));
-      }
+            threadPoolExecutor = new ThreadPoolExecutor(minThread, maxThread, defaultKeepAliveTime,
+                    TimeUnit.SECONDS, new LinkedBlockingQueue<Runnable>(1000));
+        }
     }
 
     @Override
@@ -109,11 +103,12 @@ public class EmailEventAdapter implements OutputEventAdapter {
     @Override
     public void publish(Object message, Map<String, String> dynamicProperties) {
 
+        //Get subject and emailIds from dynamic properties
         String subject = dynamicProperties.get(EmailEventAdapterConstants.ADAPTER_MESSAGE_EMAIL_SUBJECT);
-
         String[] emailIds = dynamicProperties.get(EmailEventAdapterConstants.ADAPTER_MESSAGE_EMAIL_ADDRESS)
-                            .replaceAll(" ", "").split(",");
+                .replaceAll(" ", "").split(EmailEventAdapterConstants.EMAIL_SEPARATOR);
 
+        //Send email for each emailId
         if (emailIds != null) {
             for (String email : emailIds) {
                 threadPoolExecutor.submit(new EmailSender(email, subject, message.toString()));
@@ -154,7 +149,9 @@ public class EmailEventAdapter implements OutputEventAdapter {
             try {
                 ServiceClient serviceClient;
                 ConfigurationContext configContext = EmailEventAdapterServiceValueHolder
-                                                     .getConfigurationContextService().getClientConfigContext();
+                        .getConfigurationContextService().getClientConfigContext();
+
+                //Set configuration service client if available, else create new service client
                 if (configContext != null) {
                     serviceClient = new ServiceClient(configContext, null);
                 } else {
@@ -165,8 +162,7 @@ public class EmailEventAdapter implements OutputEventAdapter {
                 options.setProperty(MessageContext.TRANSPORT_HEADERS, headerMap);
                 options.setProperty(MailConstants.TRANSPORT_MAIL_FORMAT,
                         MailConstants.TRANSPORT_FORMAT_TEXT);
-                options.setTo(new EndpointReference("mailto:" + to));
-
+                options.setTo(new EndpointReference(EmailEventAdapterConstants.EMAIL_URI_SCHEME + to));
 
                 serviceClient.setOptions(options);
                 serviceClient.fireAndForget(payload);
