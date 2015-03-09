@@ -134,7 +134,7 @@
     <td>
         <select name="distributedProcessing" id="distributedProcessing">
             <option value="RedundantNode">Redundant Node</option>
-            <option value="DistributedCache">Distributed Cache</option>
+            <option value="Distributed">Distributed</option>
             <option value="false" selected="selected">Disabled</option>
         </select>
     </td>

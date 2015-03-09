@@ -131,8 +131,8 @@
             if (configurationDto.getSiddhiConfigurations() != null) {
                 for (SiddhiConfigurationDto siddhiConfig : configurationDto.getSiddhiConfigurations()) {
                     if (UIConstants.SIDDHI_DISTRIBUTED_PROCESSING.equalsIgnoreCase(siddhiConfig.getKey())) {
-                        if ("true".equals(siddhiConfig.getValue()) || "DistributedCache".equals(siddhiConfig.getValue())) {
-                            distributedProcessingStatus = "Distributed Cache";
+                        if ("true".equals(siddhiConfig.getValue()) || "Distributed".equals(siddhiConfig.getValue())) {
+                            distributedProcessingStatus = "Distributed";
                         } else if ("RedundantNode".equals(siddhiConfig.getValue())) {
                             distributedProcessingStatus = "Redundant Node";
                         } else {
