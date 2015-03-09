@@ -1,32 +1,16 @@
-<!--
- ~ Copyright (c) 2005-2014, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
- ~
- ~ WSO2 Inc. licenses this file to you under the Apache License,
- ~ Version 2.0 (the "License"); you may not use this file except
- ~ in compliance with the License.
- ~ You may obtain a copy of the License at
- ~
- ~    http://www.apache.org/licenses/LICENSE-2.0
- ~
- ~ Unless required by applicable law or agreed to in writing,
- ~ software distributed under the License is distributed on an
- ~ "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- ~ KIND, either express or implied.  See the License for the
- ~ specific language governing permissions and limitations
- ~ under the License.
--->
-<wsdl:definitions xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:ns1="http://org.apache.axis2/xsd" xmlns:ns="http://internal.admin.manager.stream.event.carbon.wso2.org" xmlns:wsaw="http://www.w3.org/2006/05/addressing/wsdl" xmlns:http="http://schemas.xmlsoap.org/wsdl/http/" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/" xmlns:ax2112="http://internal.admin.manager.stream.event.carbon.wso2.org/xsd" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" targetNamespace="http://internal.admin.manager.stream.event.carbon.wso2.org">
+<wsdl:definitions xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:ax2106="http://internal.admin.manager.stream.event.carbon.wso2.org/xsd" xmlns:ns1="http://org.apache.axis2/xsd" xmlns:ns="http://internal.admin.manager.stream.event.carbon.wso2.org" xmlns:wsaw="http://www.w3.org/2006/05/addressing/wsdl" xmlns:http="http://schemas.xmlsoap.org/wsdl/http/" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" targetNamespace="http://internal.admin.manager.stream.event.carbon.wso2.org">
     <wsdl:documentation>EventStreamAdminService</wsdl:documentation>
     <wsdl:types>
         <xs:schema attributeFormDefault="qualified" elementFormDefault="qualified" targetNamespace="http://internal.admin.manager.stream.event.carbon.wso2.org/xsd">
             <xs:complexType name="EventStreamDefinitionDto">
                 <xs:sequence>
-                    <xs:element maxOccurs="unbounded" minOccurs="0" name="correlationData" nillable="true" type="ax2112:EventStreamAttributeDto"></xs:element>
+                    <xs:element maxOccurs="unbounded" minOccurs="0" name="correlationData" nillable="true" type="ax2106:EventStreamAttributeDto"></xs:element>
                     <xs:element minOccurs="0" name="description" nillable="true" type="xs:string"></xs:element>
-                    <xs:element maxOccurs="unbounded" minOccurs="0" name="metaData" nillable="true" type="ax2112:EventStreamAttributeDto"></xs:element>
+                    <xs:element minOccurs="0" name="editable" type="xs:boolean"></xs:element>
+                    <xs:element maxOccurs="unbounded" minOccurs="0" name="metaData" nillable="true" type="ax2106:EventStreamAttributeDto"></xs:element>
                     <xs:element minOccurs="0" name="name" nillable="true" type="xs:string"></xs:element>
                     <xs:element minOccurs="0" name="nickName" nillable="true" type="xs:string"></xs:element>
-                    <xs:element maxOccurs="unbounded" minOccurs="0" name="payloadData" nillable="true" type="ax2112:EventStreamAttributeDto"></xs:element>
+                    <xs:element maxOccurs="unbounded" minOccurs="0" name="payloadData" nillable="true" type="ax2106:EventStreamAttributeDto"></xs:element>
                     <xs:element minOccurs="0" name="streamDefinitionString" nillable="true" type="xs:string"></xs:element>
                     <xs:element minOccurs="0" name="version" nillable="true" type="xs:string"></xs:element>
                 </xs:sequence>
@@ -39,6 +23,7 @@
             </xs:complexType>
             <xs:complexType name="EventStreamInfoDto">
                 <xs:sequence>
+                    <xs:element minOccurs="0" name="editable" type="xs:boolean"></xs:element>
                     <xs:element minOccurs="0" name="streamDefinition" nillable="true" type="xs:string"></xs:element>
                     <xs:element minOccurs="0" name="streamDescription" nillable="true" type="xs:string"></xs:element>
                     <xs:element minOccurs="0" name="streamName" nillable="true" type="xs:string"></xs:element>
@@ -46,13 +31,47 @@
                 </xs:sequence>
             </xs:complexType>
         </xs:schema>
-        <xs:schema xmlns:ax2113="http://internal.admin.manager.stream.event.carbon.wso2.org/xsd" attributeFormDefault="qualified" elementFormDefault="qualified" targetNamespace="http://internal.admin.manager.stream.event.carbon.wso2.org">
+        <xs:schema xmlns:ax2107="http://internal.admin.manager.stream.event.carbon.wso2.org/xsd" attributeFormDefault="qualified" elementFormDefault="qualified" targetNamespace="http://internal.admin.manager.stream.event.carbon.wso2.org">
             <xs:import namespace="http://internal.admin.manager.stream.event.carbon.wso2.org/xsd"></xs:import>
-            <xs:element name="removeEventStreamDefinition">
+            <xs:element name="addEventStreamDefinitionAsDto">
                 <xs:complexType>
                     <xs:sequence>
-                        <xs:element minOccurs="0" name="eventStreamName" nillable="true" type="xs:string"></xs:element>
-                        <xs:element minOccurs="0" name="eventStreamVersion" nillable="true" type="xs:string"></xs:element>
+                        <xs:element minOccurs="0" name="eventStreamDefinitionDto" nillable="true" type="ax2107:EventStreamDefinitionDto"></xs:element>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="addEventStreamDefinitionAsString">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element minOccurs="0" name="streamStringDefinition" nillable="true" type="xs:string"></xs:element>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="editEventStreamDefinitionAsString">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element minOccurs="0" name="streamStringDefinition" nillable="true" type="xs:string"></xs:element>
+                        <xs:element minOccurs="0" name="oldStreamId" nillable="true" type="xs:string"></xs:element>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="editEventStreamDefinitionAsDto">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element minOccurs="0" name="eventStreamDefinitionDto" nillable="true" type="ax2107:EventStreamDefinitionDto"></xs:element>
+                        <xs:element minOccurs="0" name="oldStreamId" nillable="true" type="xs:string"></xs:element>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="getAllEventStreamDefinitionDto">
+                <xs:complexType>
+                    <xs:sequence></xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="getAllEventStreamDefinitionDtoResponse">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element maxOccurs="unbounded" minOccurs="0" name="return" nillable="true" type="ax2107:EventStreamInfoDto"></xs:element>
                     </xs:sequence>
                 </xs:complexType>
             </xs:element>
@@ -82,20 +101,6 @@
                     </xs:sequence>
                 </xs:complexType>
             </xs:element>
-            <xs:element name="getStreamDefinitionDto">
-                <xs:complexType>
-                    <xs:sequence>
-                        <xs:element minOccurs="0" name="streamId" nillable="true" type="xs:string"></xs:element>
-                    </xs:sequence>
-                </xs:complexType>
-            </xs:element>
-            <xs:element name="getStreamDefinitionDtoResponse">
-                <xs:complexType>
-                    <xs:sequence>
-                        <xs:element minOccurs="0" name="return" nillable="true" type="ax2113:EventStreamDefinitionDto"></xs:element>
-                    </xs:sequence>
-                </xs:complexType>
-            </xs:element>
             <xs:element name="getStreamDefinitionAsString">
                 <xs:complexType>
                     <xs:sequence>
@@ -110,15 +115,45 @@
                     </xs:sequence>
                 </xs:complexType>
             </xs:element>
-            <xs:element name="getAllEventStreamDefinitionDto">
-                <xs:complexType>
-                    <xs:sequence></xs:sequence>
-                </xs:complexType>
-            </xs:element>
-            <xs:element name="getAllEventStreamDefinitionDtoResponse">
+            <xs:element name="getStreamDefinitionDto">
                 <xs:complexType>
                     <xs:sequence>
-                        <xs:element maxOccurs="unbounded" minOccurs="0" name="return" nillable="true" type="ax2113:EventStreamInfoDto"></xs:element>
+                        <xs:element minOccurs="0" name="streamId" nillable="true" type="xs:string"></xs:element>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="getStreamDefinitionDtoResponse">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element minOccurs="0" name="return" nillable="true" type="ax2107:EventStreamDefinitionDto"></xs:element>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="convertEventStreamDefinitionDtoToString">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element minOccurs="0" name="eventStreamDefinitionDto" nillable="true" type="ax2107:EventStreamDefinitionDto"></xs:element>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="convertEventStreamDefinitionDtoToStringResponse">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element minOccurs="0" name="return" nillable="true" type="xs:string"></xs:element>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="convertStringToEventStreamDefinitionDto">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element minOccurs="0" name="streamStringDefinition" nillable="true" type="xs:string"></xs:element>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="convertStringToEventStreamDefinitionDtoResponse">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element minOccurs="0" name="return" nillable="true" type="ax2107:EventStreamDefinitionDto"></xs:element>
                     </xs:sequence>
                 </xs:complexType>
             </xs:element>
@@ -137,61 +172,11 @@
                     </xs:sequence>
                 </xs:complexType>
             </xs:element>
-            <xs:element name="editEventStreamDefinitionAsString">
+            <xs:element name="removeEventStreamDefinition">
                 <xs:complexType>
                     <xs:sequence>
-                        <xs:element minOccurs="0" name="streamStringDefinition" nillable="true" type="xs:string"></xs:element>
-                        <xs:element minOccurs="0" name="oldStreamId" nillable="true" type="xs:string"></xs:element>
-                    </xs:sequence>
-                </xs:complexType>
-            </xs:element>
-            <xs:element name="editEventStreamDefinitionAsDto">
-                <xs:complexType>
-                    <xs:sequence>
-                        <xs:element minOccurs="0" name="eventStreamDefinitionDto" nillable="true" type="ax2113:EventStreamDefinitionDto"></xs:element>
-                        <xs:element minOccurs="0" name="oldStreamId" nillable="true" type="xs:string"></xs:element>
-                    </xs:sequence>
-                </xs:complexType>
-            </xs:element>
-            <xs:element name="convertStringToEventStreamDefinitionDto">
-                <xs:complexType>
-                    <xs:sequence>
-                        <xs:element minOccurs="0" name="streamStringDefinition" nillable="true" type="xs:string"></xs:element>
-                    </xs:sequence>
-                </xs:complexType>
-            </xs:element>
-            <xs:element name="convertStringToEventStreamDefinitionDtoResponse">
-                <xs:complexType>
-                    <xs:sequence>
-                        <xs:element minOccurs="0" name="return" nillable="true" type="ax2113:EventStreamDefinitionDto"></xs:element>
-                    </xs:sequence>
-                </xs:complexType>
-            </xs:element>
-            <xs:element name="convertEventStreamDefinitionDtoToString">
-                <xs:complexType>
-                    <xs:sequence>
-                        <xs:element minOccurs="0" name="eventStreamDefinitionDto" nillable="true" type="ax2113:EventStreamDefinitionDto"></xs:element>
-                    </xs:sequence>
-                </xs:complexType>
-            </xs:element>
-            <xs:element name="convertEventStreamDefinitionDtoToStringResponse">
-                <xs:complexType>
-                    <xs:sequence>
-                        <xs:element minOccurs="0" name="return" nillable="true" type="xs:string"></xs:element>
-                    </xs:sequence>
-                </xs:complexType>
-            </xs:element>
-            <xs:element name="addEventStreamDefinitionAsString">
-                <xs:complexType>
-                    <xs:sequence>
-                        <xs:element minOccurs="0" name="streamStringDefinition" nillable="true" type="xs:string"></xs:element>
-                    </xs:sequence>
-                </xs:complexType>
-            </xs:element>
-            <xs:element name="addEventStreamDefinitionAsDto">
-                <xs:complexType>
-                    <xs:sequence>
-                        <xs:element minOccurs="0" name="eventStreamDefinitionDto" nillable="true" type="ax2113:EventStreamDefinitionDto"></xs:element>
+                        <xs:element minOccurs="0" name="eventStreamName" nillable="true" type="xs:string"></xs:element>
+                        <xs:element minOccurs="0" name="eventStreamVersion" nillable="true" type="xs:string"></xs:element>
                     </xs:sequence>
                 </xs:complexType>
             </xs:element>
@@ -339,8 +324,8 @@
                 <soap:body use="literal"></soap:body>
             </wsdl:output>
         </wsdl:operation>
-        <wsdl:operation name="getStreamDefinitionDto">
-            <soap:operation soapAction="urn:getStreamDefinitionDto" style="document"></soap:operation>
+        <wsdl:operation name="convertEventStreamDefinitionDtoToString">
+            <soap:operation soapAction="urn:convertEventStreamDefinitionDtoToString" style="document"></soap:operation>
             <wsdl:input>
                 <soap:body use="literal"></soap:body>
             </wsdl:input>
@@ -348,8 +333,8 @@
                 <soap:body use="literal"></soap:body>
             </wsdl:output>
         </wsdl:operation>
-        <wsdl:operation name="convertEventStreamDefinitionDtoToString">
-            <soap:operation soapAction="urn:convertEventStreamDefinitionDtoToString" style="document"></soap:operation>
+        <wsdl:operation name="getStreamDefinitionDto">
+            <soap:operation soapAction="urn:getStreamDefinitionDto" style="document"></soap:operation>
             <wsdl:input>
                 <soap:body use="literal"></soap:body>
             </wsdl:input>
@@ -459,8 +444,8 @@
                 <soap12:body use="literal"></soap12:body>
             </wsdl:output>
         </wsdl:operation>
-        <wsdl:operation name="getStreamDefinitionDto">
-            <soap12:operation soapAction="urn:getStreamDefinitionDto" style="document"></soap12:operation>
+        <wsdl:operation name="convertEventStreamDefinitionDtoToString">
+            <soap12:operation soapAction="urn:convertEventStreamDefinitionDtoToString" style="document"></soap12:operation>
             <wsdl:input>
                 <soap12:body use="literal"></soap12:body>
             </wsdl:input>
@@ -468,8 +453,8 @@
                 <soap12:body use="literal"></soap12:body>
             </wsdl:output>
         </wsdl:operation>
-        <wsdl:operation name="convertEventStreamDefinitionDtoToString">
-            <soap12:operation soapAction="urn:convertEventStreamDefinitionDtoToString" style="document"></soap12:operation>
+        <wsdl:operation name="getStreamDefinitionDto">
+            <soap12:operation soapAction="urn:getStreamDefinitionDto" style="document"></soap12:operation>
             <wsdl:input>
                 <soap12:body use="literal"></soap12:body>
             </wsdl:input>
@@ -579,8 +564,8 @@
                 <mime:content type="text/xml" part="parameters"></mime:content>
             </wsdl:output>
         </wsdl:operation>
-        <wsdl:operation name="getStreamDefinitionDto">
-            <http:operation location="getStreamDefinitionDto"></http:operation>
+        <wsdl:operation name="convertEventStreamDefinitionDtoToString">
+            <http:operation location="convertEventStreamDefinitionDtoToString"></http:operation>
             <wsdl:input>
                 <mime:content type="text/xml" part="parameters"></mime:content>
             </wsdl:input>
@@ -588,8 +573,8 @@
                 <mime:content type="text/xml" part="parameters"></mime:content>
             </wsdl:output>
         </wsdl:operation>
-        <wsdl:operation name="convertEventStreamDefinitionDtoToString">
-            <http:operation location="convertEventStreamDefinitionDtoToString"></http:operation>
+        <wsdl:operation name="getStreamDefinitionDto">
+            <http:operation location="getStreamDefinitionDto"></http:operation>
             <wsdl:input>
                 <mime:content type="text/xml" part="parameters"></mime:content>
             </wsdl:input>
@@ -681,13 +666,13 @@
     </wsdl:binding>
     <wsdl:service name="EventStreamAdminService">
         <wsdl:port name="EventStreamAdminServiceHttpsSoap11Endpoint" binding="ns:EventStreamAdminServiceSoap11Binding">
-            <soap:address location="https://10.100.4.121:9443/services/EventStreamAdminService.EventStreamAdminServiceHttpsSoap11Endpoint/"></soap:address>
+            <soap:address location="https://192.168.1.11:9443/services/EventStreamAdminService.EventStreamAdminServiceHttpsSoap11Endpoint/"></soap:address>
         </wsdl:port>
         <wsdl:port name="EventStreamAdminServiceHttpsSoap12Endpoint" binding="ns:EventStreamAdminServiceSoap12Binding">
-            <soap12:address location="https://10.100.4.121:9443/services/EventStreamAdminService.EventStreamAdminServiceHttpsSoap12Endpoint/"></soap12:address>
+            <soap12:address location="https://192.168.1.11:9443/services/EventStreamAdminService.EventStreamAdminServiceHttpsSoap12Endpoint/"></soap12:address>
         </wsdl:port>
         <wsdl:port name="EventStreamAdminServiceHttpsEndpoint" binding="ns:EventStreamAdminServiceHttpBinding">
-            <http:address location="https://10.100.4.121:9443/services/EventStreamAdminService.EventStreamAdminServiceHttpsEndpoint/"></http:address>
+            <http:address location="https://192.168.1.11:9443/services/EventStreamAdminService.EventStreamAdminServiceHttpsEndpoint/"></http:address>
         </wsdl:port>
     </wsdl:service>
 </wsdl:definitions>

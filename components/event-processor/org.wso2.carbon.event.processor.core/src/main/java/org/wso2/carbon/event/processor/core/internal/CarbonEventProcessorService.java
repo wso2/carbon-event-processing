@@ -237,7 +237,7 @@ public class CarbonEventProcessorService implements EventProcessorService {
         // This iteration exists only as a check. Actual usage of imported stream configs is further down
         for (StreamConfiguration streamConfiguration : executionPlanConfiguration.getImportedStreams()) {
             try {
-                StreamDefinition streamDefinition = EventProcessorValueHolder.getEventStreamService().getStreamDefinition(streamConfiguration.getStreamId(), tenantId);
+                StreamDefinition streamDefinition = EventProcessorValueHolder.getEventStreamService().getStreamDefinition(streamConfiguration.getStreamId(), tenantId).getStreamDefinition();
                 if (streamDefinition == null) {
                     throw new ExecutionPlanDependencyValidationException(streamConfiguration.getStreamId(), "Imported Stream " + streamConfiguration.getStreamId() + " does not exist");
                 }
@@ -250,7 +250,7 @@ public class CarbonEventProcessorService implements EventProcessorService {
         // This iteration exists only as a check. Actual usage of exported stream configs is further down
         for (StreamConfiguration streamConfiguration : executionPlanConfiguration.getExportedStreams()) {
             try {
-                StreamDefinition streamDefinition = EventProcessorValueHolder.getEventStreamService().getStreamDefinition(streamConfiguration.getStreamId(), tenantId);
+                StreamDefinition streamDefinition = EventProcessorValueHolder.getEventStreamService().getStreamDefinition(streamConfiguration.getStreamId(), tenantId).getStreamDefinition();
                 if (streamDefinition == null) {
                     throw new ExecutionPlanDependencyValidationException(streamConfiguration.getStreamId(), "Exported Stream " + streamConfiguration.getStreamId() + " does not exist");
                 }
@@ -270,7 +270,7 @@ public class CarbonEventProcessorService implements EventProcessorService {
             siddhiStreamDefinition.name(importedStreamConfiguration.getSiddhiStreamName());
             StreamDefinition streamDefinition = null;
             try {
-                streamDefinition = EventProcessorValueHolder.getEventStreamService().getStreamDefinition(importedStreamConfiguration.getStreamId(), tenantId);
+                streamDefinition = EventProcessorValueHolder.getEventStreamService().getStreamDefinition(importedStreamConfiguration.getStreamId(), tenantId).getStreamDefinition();
 
                 populateAttributes(siddhiStreamDefinition, streamDefinition.getMetaData(), EventProcessorConstants.META + EventProcessorConstants.ATTRIBUTE_SEPARATOR);
                 populateAttributes(siddhiStreamDefinition, streamDefinition.getCorrelationData(), EventProcessorConstants.CORRELATION + EventProcessorConstants.ATTRIBUTE_SEPARATOR);
@@ -288,7 +288,7 @@ public class CarbonEventProcessorService implements EventProcessorService {
             siddhiStreamDefinition.name(exportedStreamConfiguration.getSiddhiStreamName());
             StreamDefinition streamDefinition = null;
             try {
-                streamDefinition = EventProcessorValueHolder.getEventStreamService().getStreamDefinition(exportedStreamConfiguration.getStreamId(), tenantId);
+                streamDefinition = EventProcessorValueHolder.getEventStreamService().getStreamDefinition(exportedStreamConfiguration.getStreamId(), tenantId).getStreamDefinition();
 
                 populateAttributes(siddhiStreamDefinition, streamDefinition.getMetaData(), EventProcessorConstants.META + EventProcessorConstants.ATTRIBUTE_SEPARATOR);
                 populateAttributes(siddhiStreamDefinition, streamDefinition.getCorrelationData(), EventProcessorConstants.CORRELATION + EventProcessorConstants.ATTRIBUTE_SEPARATOR);
@@ -373,7 +373,7 @@ public class CarbonEventProcessorService implements EventProcessorService {
             } else if (distributed && stormDeploymentConfig != null && stormDeploymentConfig.isReceiverNode()) {
                 StreamDefinition streamDefinition = null;
                 try {
-                    streamDefinition = EventProcessorValueHolder.getEventStreamService().getStreamDefinition(importedStreamConfiguration.getStreamId(), tenantId);
+                    streamDefinition = EventProcessorValueHolder.getEventStreamService().getStreamDefinition(importedStreamConfiguration.getStreamId(), tenantId).getStreamDefinition();
                 } catch (EventStreamConfigurationException e) {
                     // Ignore as this would never happen
                 }

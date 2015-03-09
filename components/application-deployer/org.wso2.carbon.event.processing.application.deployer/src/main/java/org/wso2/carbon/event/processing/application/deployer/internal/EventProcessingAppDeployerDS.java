@@ -13,7 +13,6 @@ import org.wso2.carbon.application.deployer.Feature;
 
 import org.wso2.carbon.event.processing.application.deployer.EventProcessingAppDeployer;
 import org.wso2.carbon.application.deployer.handler.AppDeploymentHandler;
-import org.wso2.carbon.databridge.core.definitionstore.AbstractStreamDefinitionStore;
 
 import java.io.InputStream;
 import java.net.URL;
@@ -23,10 +22,8 @@ import java.util.Map;
 
 /**
  * @scr.component name="event.processing.application.deployer" immediate="true"
- * @scr.reference name="stream.definitionStore.service"
- * interface="org.wso2.carbon.databridge.core.definitionstore.AbstractStreamDefinitionStore" cardinality="1..1"
- * policy="dynamic" bind="setEventStreamStoreService" unbind="unsetEventStreamStoreService"
  */
+
 public class EventProcessingAppDeployerDS {
 
     private static Log log = LogFactory.getLog(EventProcessingAppDeployerDS.class);
@@ -64,13 +61,5 @@ public class EventProcessingAppDeployerDS {
         if (appHandlerRegistration != null) {
             appHandlerRegistration.unregister();
         }
-    }
-
-    protected void setEventStreamStoreService(AbstractStreamDefinitionStore eventStreamStoreService) {
-        ServiceHolder.registerEventStreamStoreService(eventStreamStoreService);
-    }
-
-    protected void unsetEventStreamStoreService(AbstractStreamDefinitionStore eventStreamStoreService) {
-         ServiceHolder.registerEventStreamStoreService(null);
     }
 }

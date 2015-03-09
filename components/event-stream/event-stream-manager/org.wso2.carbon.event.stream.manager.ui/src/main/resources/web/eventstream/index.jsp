@@ -139,6 +139,9 @@
                            class="icon-link"
                            href="stream_out_flows.jsp?ordinal=1&eventStreamWithVersion=<%=eventStreamWithVersion%>"><font
                                 color="#4682b4">Out-Flows</font></a>
+                        <%
+                        if(eventStreamInfoDto.getEditable()) {
+                        %>
 
                         <a style="background-image: url(../admin/images/delete.gif);"
                            class="icon-link"
@@ -149,6 +152,9 @@
                            class="icon-link"
                            href="edit_event_stream.jsp?ordinal=1&eventStreamWithVersion=<%=eventStreamWithVersion%>"><font
                                 color="#4682b4">Edit</font></a>
+                        <%
+                            }
+                        %>
                     </td>
                 </tr>
                 </tbody>

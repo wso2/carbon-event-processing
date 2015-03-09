@@ -17,19 +17,23 @@
 */
 package org.wso2.carbon.event.stream.manager.core.internal.ds;
 
-import org.wso2.carbon.databridge.core.definitionstore.AbstractStreamDefinitionStore;
+import com.hazelcast.core.HazelcastInstance;
+import org.wso2.carbon.event.stream.manager.core.StreamDefinitionStore;
 import org.wso2.carbon.event.stream.manager.core.internal.CarbonEventStreamService;
 import org.wso2.carbon.registry.core.Registry;
 import org.wso2.carbon.registry.core.exceptions.RegistryException;
 import org.wso2.carbon.registry.core.service.RegistryService;
 import org.wso2.carbon.user.core.service.RealmService;
+import org.wso2.carbon.utils.ConfigurationContextService;
 
 public class EventStreamServiceValueHolder {
 
     private static RegistryService registryService;
     private static CarbonEventStreamService carbonEventStreamService;
-    private static AbstractStreamDefinitionStore abstractStreamDefinitionStore;
+    private static StreamDefinitionStore streamDefinitionStore;
     private static RealmService realmService;
+    private static HazelcastInstance hazelcastInstance;
+    private static ConfigurationContextService configurationContextService;
 
     private EventStreamServiceValueHolder() {
 
@@ -73,11 +77,27 @@ public class EventStreamServiceValueHolder {
     }
 
     public static void setStreamDefinitionStore(
-            AbstractStreamDefinitionStore abstractStreamDefinitionStore) {
-        EventStreamServiceValueHolder.abstractStreamDefinitionStore = abstractStreamDefinitionStore;
+            StreamDefinitionStore streamDefinitionStore) {
+        EventStreamServiceValueHolder.streamDefinitionStore = streamDefinitionStore;
     }
 
-    public static AbstractStreamDefinitionStore getStreamDefinitionStore() {
-        return EventStreamServiceValueHolder.abstractStreamDefinitionStore;
+    public static StreamDefinitionStore getStreamDefinitionStore() {
+        return EventStreamServiceValueHolder.streamDefinitionStore;
+    }
+
+    public static void registerHazelcastInstance(HazelcastInstance hazelcastInstance) {
+        EventStreamServiceValueHolder.hazelcastInstance = hazelcastInstance;
+    }
+
+    public static HazelcastInstance getHazelcastInstance() {
+        return hazelcastInstance;
+    }
+
+    public static void registerConfigurationContextService(ConfigurationContextService configurationContextService) {
+        EventStreamServiceValueHolder.configurationContextService = configurationContextService;
+    }
+
+    public static ConfigurationContextService getConfigurationContextService() {
+        return configurationContextService;
     }
 }

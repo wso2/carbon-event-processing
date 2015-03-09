@@ -17,6 +17,7 @@
 */
 package org.wso2.carbon.event.simulator.core.internal.ds;
 
+import org.apache.avro.generic.GenericData;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.commons.io.FileUtils;
@@ -28,6 +29,7 @@ import org.wso2.carbon.context.PrivilegedCarbonContext;
 import org.wso2.carbon.databridge.commons.Attribute;
 import org.wso2.carbon.databridge.commons.StreamDefinition;
 import org.wso2.carbon.event.simulator.core.*;
+import org.wso2.carbon.event.stream.manager.core.EventStreamConfig;
 import org.wso2.carbon.event.stream.manager.core.EventStreamService;
 import org.wso2.carbon.event.stream.manager.core.exception.EventStreamConfigurationException;
 import org.wso2.carbon.utils.CarbonUtils;
@@ -62,8 +64,11 @@ public class CarbonEventSimulator implements EventSimulator {
         try {
             EventStreamService eventStreamService = EventSimulatorValueHolder.getEventStreamService();
             int tenantId = PrivilegedCarbonContext.getThreadLocalCarbonContext().getTenantId();
-            return eventStreamService.getAllStreamDefinitions(tenantId);
-
+            Collection<StreamDefinition> collection = new ArrayList<StreamDefinition>();
+            for(EventStreamConfig eventStreamConfig: eventStreamService.getAllStreamDefinitions(tenantId)) {
+                collection.add(eventStreamConfig.getStreamDefinition());
+            }
+            return collection;
         } catch (Exception e) {
             log.error(e);
         }
@@ -416,12 +421,12 @@ public class CarbonEventSimulator implements EventSimulator {
         StreamDefinition streamDefinition = null;
 
         try {
-            Collection<StreamDefinition> streamDefinitions = eventStreamService.getAllStreamDefinitions(tenantId);
+            Collection<EventStreamConfig> eventStreamConfigs = eventStreamService.getAllStreamDefinitions(tenantId);
 
             int index = 0;
-            for (StreamDefinition streamDefinition1 : streamDefinitions) {
-                if (streamDefinition1.getStreamId().equals(streamId)) {
-                    streamDefinition = streamDefinition1;
+            for (EventStreamConfig eventStreamConfig : eventStreamConfigs) {
+                if (eventStreamConfig.getStreamDefinition().getStreamId().equals(streamId)) {
+                    streamDefinition = eventStreamConfig.getStreamDefinition();
                     break;
                 }
                 index++;

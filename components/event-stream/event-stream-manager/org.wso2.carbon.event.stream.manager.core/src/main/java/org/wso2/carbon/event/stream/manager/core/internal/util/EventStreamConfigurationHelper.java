@@ -24,6 +24,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.wso2.carbon.databridge.commons.StreamDefinition;
 import org.wso2.carbon.databridge.commons.exception.MalformedStreamDefinitionException;
+import org.wso2.carbon.event.stream.manager.core.EventStreamConfig;
 import org.wso2.carbon.event.stream.manager.core.exception.EventStreamConfigurationException;
 import org.wso2.carbon.event.stream.manager.core.internal.CarbonEventStreamService;
 import org.wso2.carbon.event.stream.manager.core.internal.ds.EventStreamServiceValueHolder;
@@ -114,7 +115,11 @@ public class EventStreamConfigurationHelper {
                         StreamDefinition existingDefinition;
                         existingDefinition = eventStreamService.getStreamDefinition(streamDefinition.getName(), streamDefinition.getVersion(), MultitenantConstants.SUPER_TENANT_ID);
                         if (existingDefinition == null) {
-                            eventStreamService.addEventStreamDefinition(streamDefinition,MultitenantConstants.SUPER_TENANT_ID);
+                            EventStreamConfig eventStreamConfig = new EventStreamConfig();
+                            eventStreamConfig.setEditable(true);
+                            eventStreamConfig.setStreamDefinition(streamDefinition);
+                            eventStreamConfig.setFileName(streamDefinition.getName()+"_"+streamDefinition.getVersion()+".json");
+                            eventStreamService.addEventStreamDefinition(eventStreamConfig,MultitenantConstants.SUPER_TENANT_ID);
                         }
                     }
                 }

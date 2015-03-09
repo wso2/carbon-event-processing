@@ -38,6 +38,7 @@ import org.wso2.carbon.event.formatter.core.internal.util.helper.EventFormatterC
 import org.wso2.carbon.event.output.adaptor.core.OutputEventAdaptorService;
 import org.wso2.carbon.event.output.adaptor.manager.core.OutputEventAdaptorManagerService;
 import org.wso2.carbon.event.output.adaptor.manager.core.exception.OutputEventAdaptorManagerConfigurationException;
+import org.wso2.carbon.event.stream.manager.core.EventStreamConfig;
 import org.wso2.carbon.event.stream.manager.core.EventStreamService;
 import org.wso2.carbon.event.stream.manager.core.exception.EventProducerException;
 import org.wso2.carbon.event.stream.manager.core.exception.EventStreamConfigurationException;
@@ -270,12 +271,12 @@ public class CarbonEventFormatterService
         List<String> streamList = new ArrayList<String>();
         int tenantId = PrivilegedCarbonContext.getThreadLocalCarbonContext().getTenantId();
         EventStreamService eventStreamService = EventFormatterServiceValueHolder.getEventStreamService();
-        Collection<StreamDefinition> eventStreamDefinitionList;
+        Collection<EventStreamConfig> eventStreamDefinitionList;
         try {
             eventStreamDefinitionList = eventStreamService.getAllStreamDefinitions(tenantId);
             if (eventStreamDefinitionList != null) {
-                for (StreamDefinition streamDefinition : eventStreamDefinitionList) {
-                    streamList.add(streamDefinition.getStreamId());
+                for (EventStreamConfig eventStreamConfig : eventStreamDefinitionList) {
+                    streamList.add(eventStreamConfig.getStreamDefinition().getStreamId());
                 }
             }
 
@@ -292,7 +293,7 @@ public class CarbonEventFormatterService
         int tenantId = PrivilegedCarbonContext.getThreadLocalCarbonContext().getTenantId();
         EventStreamService eventStreamService = EventFormatterServiceValueHolder.getEventStreamService();
         try {
-            return eventStreamService.getStreamDefinition(streamNameWithVersion, tenantId);
+            return eventStreamService.getStreamDefinition(streamNameWithVersion, tenantId).getStreamDefinition();
         } catch (EventStreamConfigurationException e) {
             throw new EventFormatterConfigurationException("Error while getting stream definition from store : " + e.getMessage(), e);
         }

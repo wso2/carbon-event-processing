@@ -16,6 +16,13 @@
  ~ under the License.
 -->
 <component xmlns="http://products.wso2.org/carbon">
+    <deployers>
+        <deployer>
+            <directory>eventstreams</directory>
+            <extension>json</extension>
+            <class>org.wso2.carbon.event.stream.manager.core.EventStreamDeployer</class>
+        </deployer>
+    </deployers>
     <ManagementPermissions>
         <ManagementPermission>
             <DisplayName>Event Streams</DisplayName>
