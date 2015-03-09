@@ -153,6 +153,15 @@ public class CarbonEventStreamService implements EventStreamService {
         }
         String filePath =  directoryPath + File.separator +
                 streamDefinition.getName() + "_"+ streamDefinition.getVersion() + ".json";
+        StreamDefinition streamDefinitionOld = getStreamDefinition(streamDefinition.getStreamId(), tenantId);
+        if(streamDefinitionOld != null) {
+            if(!(streamDefinitionOld.equals(streamDefinition))) {
+                throw new StreamDefinitionAlreadyDefinedException("Different stream definition with same stream id "
+                        + streamDefinition.getStreamId() +" already exist " + streamDefinitionOld.toString() +", cannot add stream definition " + streamDefinition.toString() );
+            } else {
+                return;
+            }
+        }
         saveStreamDefinitionToFileSystem(streamDefinition,filePath);
         EventStreamDeployer eventStreamDeployer = (EventStreamDeployer)((DeploymentEngine) axisConfig.getConfigurator()).getDeployer("eventstreams", "json");
         try {
@@ -171,7 +180,7 @@ public class CarbonEventStreamService implements EventStreamService {
             writer.write(streamDefinition.toString());
 
         } catch (Exception e) {
-            log.error("Writing the stream definition " + streamDefinition.getStreamId() + "is failed ", e);
+            log.error("Writing the stream definition " + streamDefinition.getStreamId() + " is failed ", e);
         } finally {
             if (writer != null) {
                 try {
