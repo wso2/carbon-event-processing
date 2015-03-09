@@ -69,8 +69,8 @@ public class EmailEventAdapterFactory extends OutputEventAdapterFactory {
     }
 
     @Override
-    public OutputEventAdapter createEventAdapter(OutputEventAdapterConfiguration eventAdapterConfiguration, Map<String,
-                                                  String> globalProperties) {
+    public OutputEventAdapter createEventAdapter(OutputEventAdapterConfiguration eventAdapterConfiguration, Map<String, String> globalProperties, int tenantId) {
         return new EmailEventAdapter(eventAdapterConfiguration,globalProperties);
     }
+
 }
