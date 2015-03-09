@@ -42,7 +42,7 @@ public class XmlFormatter {
     public XmlFormatter() {
     }
 
-    public String format(String unformattedXml) throws
+    public static String format(String unformattedXml) throws
                                                 EventPublisherConfigurationException {
         try {
             final Document document = parseXmlFile(unformattedXml);
@@ -61,7 +61,7 @@ public class XmlFormatter {
         }
     }
 
-    private Document parseXmlFile(String in) throws EventPublisherConfigurationException {
+    private static Document parseXmlFile(String in) throws EventPublisherConfigurationException {
         try {
             DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
             DocumentBuilder db = dbf.newDocumentBuilder();

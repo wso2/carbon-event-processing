@@ -35,6 +35,7 @@
         <module>service-stubs</module>
         <module>components/adaptors</module>
         <module>components/event-publisher</module>
+        <module>components/event-receiver</module>
         <module>components/event-processor</module>
         <module>components/event-stream</module>
         <module>components/event-flow</module>

@@ -62,38 +62,50 @@
                     </xs:sequence>
                 </xs:complexType>
             </xs:element>
-            <xs:element name="getAllStreamSpecificActiveEventPublisherConfiguration">
+            <xs:element name="getAllStreamSpecificActiveEventPublisherConfigurations">
                 <xs:complexType>
                     <xs:sequence>
                         <xs:element minOccurs="0" name="streamId" nillable="true" type="xs:string"></xs:element>
                     </xs:sequence>
                 </xs:complexType>
             </xs:element>
-            <xs:element name="getAllStreamSpecificActiveEventPublisherConfigurationResponse">
+            <xs:element name="getAllStreamSpecificActiveEventPublisherConfigurationsResponse">
                 <xs:complexType>
                     <xs:sequence>
                         <xs:element maxOccurs="unbounded" minOccurs="0" name="return" nillable="true" type="ax2103:EventPublisherConfigurationInfoDto"></xs:element>
                     </xs:sequence>
                 </xs:complexType>
             </xs:element>
-            <xs:element name="getAllInactiveEventPublisherConfiguration">
+            <xs:element name="getAllOutputAdapterTypes">
                 <xs:complexType>
                     <xs:sequence></xs:sequence>
                 </xs:complexType>
             </xs:element>
-            <xs:element name="getAllInactiveEventPublisherConfigurationResponse">
+            <xs:element name="getAllOutputAdapterTypesResponse">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element maxOccurs="unbounded" minOccurs="0" name="return" nillable="true" type="xs:string"></xs:element>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="getAllInactiveEventPublisherConfigurations">
+                <xs:complexType>
+                    <xs:sequence></xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="getAllInactiveEventPublisherConfigurationsResponse">
                 <xs:complexType>
                     <xs:sequence>
                         <xs:element maxOccurs="unbounded" minOccurs="0" name="return" nillable="true" type="ax2103:EventPublisherConfigurationFileDto"></xs:element>
                     </xs:sequence>
                 </xs:complexType>
             </xs:element>
-            <xs:element name="getAllActiveEventPublisherConfiguration">
+            <xs:element name="getAllActiveEventPublisherConfigurations">
                 <xs:complexType>
                     <xs:sequence></xs:sequence>
                 </xs:complexType>
             </xs:element>
-            <xs:element name="getAllActiveEventPublisherConfigurationResponse">
+            <xs:element name="getAllActiveEventPublisherConfigurationsResponse">
                 <xs:complexType>
                     <xs:sequence>
                         <xs:element maxOccurs="unbounded" minOccurs="0" name="return" nillable="true" type="ax2103:EventPublisherConfigurationInfoDto"></xs:element>
@@ -334,22 +346,16 @@
         <wsdl:part name="parameters" element="ns:editInactiveEventPublisherConfiguration"></wsdl:part>
     </wsdl:message>
     <wsdl:message name="editInactiveEventPublisherConfigurationResponse"></wsdl:message>
-    <wsdl:message name="getAllActiveEventPublisherConfigurationRequest">
-        <wsdl:part name="parameters" element="ns:getAllActiveEventPublisherConfiguration"></wsdl:part>
+    <wsdl:message name="getAllInactiveEventPublisherConfigurationsRequest">
+        <wsdl:part name="parameters" element="ns:getAllInactiveEventPublisherConfigurations"></wsdl:part>
     </wsdl:message>
-    <wsdl:message name="getAllActiveEventPublisherConfigurationResponse">
-        <wsdl:part name="parameters" element="ns:getAllActiveEventPublisherConfigurationResponse"></wsdl:part>
+    <wsdl:message name="getAllInactiveEventPublisherConfigurationsResponse">
+        <wsdl:part name="parameters" element="ns:getAllInactiveEventPublisherConfigurationsResponse"></wsdl:part>
     </wsdl:message>
     <wsdl:message name="deployEventPublisherConfigurationRequest">
         <wsdl:part name="parameters" element="ns:deployEventPublisherConfiguration"></wsdl:part>
     </wsdl:message>
     <wsdl:message name="deployEventPublisherConfigurationResponse"></wsdl:message>
-    <wsdl:message name="getAllInactiveEventPublisherConfigurationRequest">
-        <wsdl:part name="parameters" element="ns:getAllInactiveEventPublisherConfiguration"></wsdl:part>
-    </wsdl:message>
-    <wsdl:message name="getAllInactiveEventPublisherConfigurationResponse">
-        <wsdl:part name="parameters" element="ns:getAllInactiveEventPublisherConfigurationResponse"></wsdl:part>
-    </wsdl:message>
     <wsdl:message name="getActiveEventPublisherConfigurationContentRequest">
         <wsdl:part name="parameters" element="ns:getActiveEventPublisherConfigurationContent"></wsdl:part>
     </wsdl:message>
@@ -382,10 +388,22 @@
     <wsdl:message name="getOutputAdapterConfigurationSchemaResponse">
         <wsdl:part name="parameters" element="ns:getOutputAdapterConfigurationSchemaResponse"></wsdl:part>
     </wsdl:message>
+    <wsdl:message name="getAllStreamSpecificActiveEventPublisherConfigurationsRequest">
+        <wsdl:part name="parameters" element="ns:getAllStreamSpecificActiveEventPublisherConfigurations"></wsdl:part>
+    </wsdl:message>
+    <wsdl:message name="getAllStreamSpecificActiveEventPublisherConfigurationsResponse">
+        <wsdl:part name="parameters" element="ns:getAllStreamSpecificActiveEventPublisherConfigurationsResponse"></wsdl:part>
+    </wsdl:message>
     <wsdl:message name="editActiveEventPublisherConfigurationRequest">
         <wsdl:part name="parameters" element="ns:editActiveEventPublisherConfiguration"></wsdl:part>
     </wsdl:message>
     <wsdl:message name="editActiveEventPublisherConfigurationResponse"></wsdl:message>
+    <wsdl:message name="getAllActiveEventPublisherConfigurationsRequest">
+        <wsdl:part name="parameters" element="ns:getAllActiveEventPublisherConfigurations"></wsdl:part>
+    </wsdl:message>
+    <wsdl:message name="getAllActiveEventPublisherConfigurationsResponse">
+        <wsdl:part name="parameters" element="ns:getAllActiveEventPublisherConfigurationsResponse"></wsdl:part>
+    </wsdl:message>
     <wsdl:message name="setTracingEnabledRequest">
         <wsdl:part name="parameters" element="ns:setTracingEnabled"></wsdl:part>
     </wsdl:message>
@@ -394,17 +412,17 @@
         <wsdl:part name="parameters" element="ns:deployTextEventPublisherConfiguration"></wsdl:part>
     </wsdl:message>
     <wsdl:message name="deployTextEventPublisherConfigurationResponse"></wsdl:message>
+    <wsdl:message name="getAllOutputAdapterTypesRequest">
+        <wsdl:part name="parameters" element="ns:getAllOutputAdapterTypes"></wsdl:part>
+    </wsdl:message>
+    <wsdl:message name="getAllOutputAdapterTypesResponse">
+        <wsdl:part name="parameters" element="ns:getAllOutputAdapterTypesResponse"></wsdl:part>
+    </wsdl:message>
     <wsdl:message name="getActiveEventPublisherConfigurationRequest">
         <wsdl:part name="parameters" element="ns:getActiveEventPublisherConfiguration"></wsdl:part>
     </wsdl:message>
     <wsdl:message name="getActiveEventPublisherConfigurationResponse">
         <wsdl:part name="parameters" element="ns:getActiveEventPublisherConfigurationResponse"></wsdl:part>
-    </wsdl:message>
-    <wsdl:message name="getAllStreamSpecificActiveEventPublisherConfigurationRequest">
-        <wsdl:part name="parameters" element="ns:getAllStreamSpecificActiveEventPublisherConfiguration"></wsdl:part>
-    </wsdl:message>
-    <wsdl:message name="getAllStreamSpecificActiveEventPublisherConfigurationResponse">
-        <wsdl:part name="parameters" element="ns:getAllStreamSpecificActiveEventPublisherConfigurationResponse"></wsdl:part>
     </wsdl:message>
     <wsdl:portType name="EventPublisherAdminServicePortType">
         <wsdl:operation name="getInactiveEventPublisherConfigurationContent">
@@ -423,17 +441,13 @@
             <wsdl:input message="ns:editInactiveEventPublisherConfigurationRequest" wsaw:Action="urn:editInactiveEventPublisherConfiguration"></wsdl:input>
             <wsdl:output message="ns:editInactiveEventPublisherConfigurationResponse" wsaw:Action="urn:editInactiveEventPublisherConfigurationResponse"></wsdl:output>
         </wsdl:operation>
-        <wsdl:operation name="getAllActiveEventPublisherConfiguration">
-            <wsdl:input message="ns:getAllActiveEventPublisherConfigurationRequest" wsaw:Action="urn:getAllActiveEventPublisherConfiguration"></wsdl:input>
-            <wsdl:output message="ns:getAllActiveEventPublisherConfigurationResponse" wsaw:Action="urn:getAllActiveEventPublisherConfigurationResponse"></wsdl:output>
+        <wsdl:operation name="getAllInactiveEventPublisherConfigurations">
+            <wsdl:input message="ns:getAllInactiveEventPublisherConfigurationsRequest" wsaw:Action="urn:getAllInactiveEventPublisherConfigurations"></wsdl:input>
+            <wsdl:output message="ns:getAllInactiveEventPublisherConfigurationsResponse" wsaw:Action="urn:getAllInactiveEventPublisherConfigurationsResponse"></wsdl:output>
         </wsdl:operation>
         <wsdl:operation name="deployEventPublisherConfiguration">
             <wsdl:input message="ns:deployEventPublisherConfigurationRequest" wsaw:Action="urn:deployEventPublisherConfiguration"></wsdl:input>
             <wsdl:output message="ns:deployEventPublisherConfigurationResponse" wsaw:Action="urn:deployEventPublisherConfigurationResponse"></wsdl:output>
-        </wsdl:operation>
-        <wsdl:operation name="getAllInactiveEventPublisherConfiguration">
-            <wsdl:input message="ns:getAllInactiveEventPublisherConfigurationRequest" wsaw:Action="urn:getAllInactiveEventPublisherConfiguration"></wsdl:input>
-            <wsdl:output message="ns:getAllInactiveEventPublisherConfigurationResponse" wsaw:Action="urn:getAllInactiveEventPublisherConfigurationResponse"></wsdl:output>
         </wsdl:operation>
         <wsdl:operation name="getActiveEventPublisherConfigurationContent">
             <wsdl:input message="ns:getActiveEventPublisherConfigurationContentRequest" wsaw:Action="urn:getActiveEventPublisherConfigurationContent"></wsdl:input>
@@ -463,9 +477,17 @@
             <wsdl:input message="ns:getOutputAdapterConfigurationSchemaRequest" wsaw:Action="urn:getOutputAdapterConfigurationSchema"></wsdl:input>
             <wsdl:output message="ns:getOutputAdapterConfigurationSchemaResponse" wsaw:Action="urn:getOutputAdapterConfigurationSchemaResponse"></wsdl:output>
         </wsdl:operation>
+        <wsdl:operation name="getAllStreamSpecificActiveEventPublisherConfigurations">
+            <wsdl:input message="ns:getAllStreamSpecificActiveEventPublisherConfigurationsRequest" wsaw:Action="urn:getAllStreamSpecificActiveEventPublisherConfigurations"></wsdl:input>
+            <wsdl:output message="ns:getAllStreamSpecificActiveEventPublisherConfigurationsResponse" wsaw:Action="urn:getAllStreamSpecificActiveEventPublisherConfigurationsResponse"></wsdl:output>
+        </wsdl:operation>
         <wsdl:operation name="editActiveEventPublisherConfiguration">
             <wsdl:input message="ns:editActiveEventPublisherConfigurationRequest" wsaw:Action="urn:editActiveEventPublisherConfiguration"></wsdl:input>
             <wsdl:output message="ns:editActiveEventPublisherConfigurationResponse" wsaw:Action="urn:editActiveEventPublisherConfigurationResponse"></wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="getAllActiveEventPublisherConfigurations">
+            <wsdl:input message="ns:getAllActiveEventPublisherConfigurationsRequest" wsaw:Action="urn:getAllActiveEventPublisherConfigurations"></wsdl:input>
+            <wsdl:output message="ns:getAllActiveEventPublisherConfigurationsResponse" wsaw:Action="urn:getAllActiveEventPublisherConfigurationsResponse"></wsdl:output>
         </wsdl:operation>
         <wsdl:operation name="setTracingEnabled">
             <wsdl:input message="ns:setTracingEnabledRequest" wsaw:Action="urn:setTracingEnabled"></wsdl:input>
@@ -475,13 +497,13 @@
             <wsdl:input message="ns:deployTextEventPublisherConfigurationRequest" wsaw:Action="urn:deployTextEventPublisherConfiguration"></wsdl:input>
             <wsdl:output message="ns:deployTextEventPublisherConfigurationResponse" wsaw:Action="urn:deployTextEventPublisherConfigurationResponse"></wsdl:output>
         </wsdl:operation>
+        <wsdl:operation name="getAllOutputAdapterTypes">
+            <wsdl:input message="ns:getAllOutputAdapterTypesRequest" wsaw:Action="urn:getAllOutputAdapterTypes"></wsdl:input>
+            <wsdl:output message="ns:getAllOutputAdapterTypesResponse" wsaw:Action="urn:getAllOutputAdapterTypesResponse"></wsdl:output>
+        </wsdl:operation>
         <wsdl:operation name="getActiveEventPublisherConfiguration">
             <wsdl:input message="ns:getActiveEventPublisherConfigurationRequest" wsaw:Action="urn:getActiveEventPublisherConfiguration"></wsdl:input>
             <wsdl:output message="ns:getActiveEventPublisherConfigurationResponse" wsaw:Action="urn:getActiveEventPublisherConfigurationResponse"></wsdl:output>
-        </wsdl:operation>
-        <wsdl:operation name="getAllStreamSpecificActiveEventPublisherConfiguration">
-            <wsdl:input message="ns:getAllStreamSpecificActiveEventPublisherConfigurationRequest" wsaw:Action="urn:getAllStreamSpecificActiveEventPublisherConfiguration"></wsdl:input>
-            <wsdl:output message="ns:getAllStreamSpecificActiveEventPublisherConfigurationResponse" wsaw:Action="urn:getAllStreamSpecificActiveEventPublisherConfigurationResponse"></wsdl:output>
         </wsdl:operation>
     </wsdl:portType>
     <wsdl:binding name="EventPublisherAdminServiceSoap11Binding" type="ns:EventPublisherAdminServicePortType">
@@ -513,6 +535,15 @@
                 <soap:body use="literal"></soap:body>
             </wsdl:output>
         </wsdl:operation>
+        <wsdl:operation name="getAllInactiveEventPublisherConfigurations">
+            <soap:operation soapAction="urn:getAllInactiveEventPublisherConfigurations" style="document"></soap:operation>
+            <wsdl:input>
+                <soap:body use="literal"></soap:body>
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal"></soap:body>
+            </wsdl:output>
+        </wsdl:operation>
         <wsdl:operation name="editInactiveEventPublisherConfiguration">
             <soap:operation soapAction="urn:editInactiveEventPublisherConfiguration" style="document"></soap:operation>
             <wsdl:input>
@@ -531,26 +562,8 @@
                 <soap:body use="literal"></soap:body>
             </wsdl:output>
         </wsdl:operation>
-        <wsdl:operation name="getAllActiveEventPublisherConfiguration">
-            <soap:operation soapAction="urn:getAllActiveEventPublisherConfiguration" style="document"></soap:operation>
-            <wsdl:input>
-                <soap:body use="literal"></soap:body>
-            </wsdl:input>
-            <wsdl:output>
-                <soap:body use="literal"></soap:body>
-            </wsdl:output>
-        </wsdl:operation>
         <wsdl:operation name="getActiveEventPublisherConfigurationContent">
             <soap:operation soapAction="urn:getActiveEventPublisherConfigurationContent" style="document"></soap:operation>
-            <wsdl:input>
-                <soap:body use="literal"></soap:body>
-            </wsdl:input>
-            <wsdl:output>
-                <soap:body use="literal"></soap:body>
-            </wsdl:output>
-        </wsdl:operation>
-        <wsdl:operation name="getAllInactiveEventPublisherConfiguration">
-            <soap:operation soapAction="urn:getAllInactiveEventPublisherConfiguration" style="document"></soap:operation>
             <wsdl:input>
                 <soap:body use="literal"></soap:body>
             </wsdl:input>
@@ -612,6 +625,24 @@
                 <soap:body use="literal"></soap:body>
             </wsdl:output>
         </wsdl:operation>
+        <wsdl:operation name="getAllStreamSpecificActiveEventPublisherConfigurations">
+            <soap:operation soapAction="urn:getAllStreamSpecificActiveEventPublisherConfigurations" style="document"></soap:operation>
+            <wsdl:input>
+                <soap:body use="literal"></soap:body>
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal"></soap:body>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="getAllActiveEventPublisherConfigurations">
+            <soap:operation soapAction="urn:getAllActiveEventPublisherConfigurations" style="document"></soap:operation>
+            <wsdl:input>
+                <soap:body use="literal"></soap:body>
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal"></soap:body>
+            </wsdl:output>
+        </wsdl:operation>
         <wsdl:operation name="editActiveEventPublisherConfiguration">
             <soap:operation soapAction="urn:editActiveEventPublisherConfiguration" style="document"></soap:operation>
             <wsdl:input>
@@ -639,8 +670,8 @@
                 <soap:body use="literal"></soap:body>
             </wsdl:output>
         </wsdl:operation>
-        <wsdl:operation name="getActiveEventPublisherConfiguration">
-            <soap:operation soapAction="urn:getActiveEventPublisherConfiguration" style="document"></soap:operation>
+        <wsdl:operation name="getAllOutputAdapterTypes">
+            <soap:operation soapAction="urn:getAllOutputAdapterTypes" style="document"></soap:operation>
             <wsdl:input>
                 <soap:body use="literal"></soap:body>
             </wsdl:input>
@@ -648,8 +679,8 @@
                 <soap:body use="literal"></soap:body>
             </wsdl:output>
         </wsdl:operation>
-        <wsdl:operation name="getAllStreamSpecificActiveEventPublisherConfiguration">
-            <soap:operation soapAction="urn:getAllStreamSpecificActiveEventPublisherConfiguration" style="document"></soap:operation>
+        <wsdl:operation name="getActiveEventPublisherConfiguration">
+            <soap:operation soapAction="urn:getActiveEventPublisherConfiguration" style="document"></soap:operation>
             <wsdl:input>
                 <soap:body use="literal"></soap:body>
             </wsdl:input>
@@ -687,6 +718,15 @@
                 <soap12:body use="literal"></soap12:body>
             </wsdl:output>
         </wsdl:operation>
+        <wsdl:operation name="getAllInactiveEventPublisherConfigurations">
+            <soap12:operation soapAction="urn:getAllInactiveEventPublisherConfigurations" style="document"></soap12:operation>
+            <wsdl:input>
+                <soap12:body use="literal"></soap12:body>
+            </wsdl:input>
+            <wsdl:output>
+                <soap12:body use="literal"></soap12:body>
+            </wsdl:output>
+        </wsdl:operation>
         <wsdl:operation name="editInactiveEventPublisherConfiguration">
             <soap12:operation soapAction="urn:editInactiveEventPublisherConfiguration" style="document"></soap12:operation>
             <wsdl:input>
@@ -705,26 +745,8 @@
                 <soap12:body use="literal"></soap12:body>
             </wsdl:output>
         </wsdl:operation>
-        <wsdl:operation name="getAllActiveEventPublisherConfiguration">
-            <soap12:operation soapAction="urn:getAllActiveEventPublisherConfiguration" style="document"></soap12:operation>
-            <wsdl:input>
-                <soap12:body use="literal"></soap12:body>
-            </wsdl:input>
-            <wsdl:output>
-                <soap12:body use="literal"></soap12:body>
-            </wsdl:output>
-        </wsdl:operation>
         <wsdl:operation name="getActiveEventPublisherConfigurationContent">
             <soap12:operation soapAction="urn:getActiveEventPublisherConfigurationContent" style="document"></soap12:operation>
-            <wsdl:input>
-                <soap12:body use="literal"></soap12:body>
-            </wsdl:input>
-            <wsdl:output>
-                <soap12:body use="literal"></soap12:body>
-            </wsdl:output>
-        </wsdl:operation>
-        <wsdl:operation name="getAllInactiveEventPublisherConfiguration">
-            <soap12:operation soapAction="urn:getAllInactiveEventPublisherConfiguration" style="document"></soap12:operation>
             <wsdl:input>
                 <soap12:body use="literal"></soap12:body>
             </wsdl:input>
@@ -786,6 +808,24 @@
                 <soap12:body use="literal"></soap12:body>
             </wsdl:output>
         </wsdl:operation>
+        <wsdl:operation name="getAllStreamSpecificActiveEventPublisherConfigurations">
+            <soap12:operation soapAction="urn:getAllStreamSpecificActiveEventPublisherConfigurations" style="document"></soap12:operation>
+            <wsdl:input>
+                <soap12:body use="literal"></soap12:body>
+            </wsdl:input>
+            <wsdl:output>
+                <soap12:body use="literal"></soap12:body>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="getAllActiveEventPublisherConfigurations">
+            <soap12:operation soapAction="urn:getAllActiveEventPublisherConfigurations" style="document"></soap12:operation>
+            <wsdl:input>
+                <soap12:body use="literal"></soap12:body>
+            </wsdl:input>
+            <wsdl:output>
+                <soap12:body use="literal"></soap12:body>
+            </wsdl:output>
+        </wsdl:operation>
         <wsdl:operation name="editActiveEventPublisherConfiguration">
             <soap12:operation soapAction="urn:editActiveEventPublisherConfiguration" style="document"></soap12:operation>
             <wsdl:input>
@@ -813,8 +853,8 @@
                 <soap12:body use="literal"></soap12:body>
             </wsdl:output>
         </wsdl:operation>
-        <wsdl:operation name="getActiveEventPublisherConfiguration">
-            <soap12:operation soapAction="urn:getActiveEventPublisherConfiguration" style="document"></soap12:operation>
+        <wsdl:operation name="getAllOutputAdapterTypes">
+            <soap12:operation soapAction="urn:getAllOutputAdapterTypes" style="document"></soap12:operation>
             <wsdl:input>
                 <soap12:body use="literal"></soap12:body>
             </wsdl:input>
@@ -822,8 +862,8 @@
                 <soap12:body use="literal"></soap12:body>
             </wsdl:output>
         </wsdl:operation>
-        <wsdl:operation name="getAllStreamSpecificActiveEventPublisherConfiguration">
-            <soap12:operation soapAction="urn:getAllStreamSpecificActiveEventPublisherConfiguration" style="document"></soap12:operation>
+        <wsdl:operation name="getActiveEventPublisherConfiguration">
+            <soap12:operation soapAction="urn:getActiveEventPublisherConfiguration" style="document"></soap12:operation>
             <wsdl:input>
                 <soap12:body use="literal"></soap12:body>
             </wsdl:input>
@@ -861,6 +901,15 @@
                 <mime:content type="text/xml" part="parameters"></mime:content>
             </wsdl:output>
         </wsdl:operation>
+        <wsdl:operation name="getAllInactiveEventPublisherConfigurations">
+            <http:operation location="getAllInactiveEventPublisherConfigurations"></http:operation>
+            <wsdl:input>
+                <mime:content type="text/xml" part="parameters"></mime:content>
+            </wsdl:input>
+            <wsdl:output>
+                <mime:content type="text/xml" part="parameters"></mime:content>
+            </wsdl:output>
+        </wsdl:operation>
         <wsdl:operation name="editInactiveEventPublisherConfiguration">
             <http:operation location="editInactiveEventPublisherConfiguration"></http:operation>
             <wsdl:input>
@@ -879,26 +928,8 @@
                 <mime:content type="text/xml" part="parameters"></mime:content>
             </wsdl:output>
         </wsdl:operation>
-        <wsdl:operation name="getAllActiveEventPublisherConfiguration">
-            <http:operation location="getAllActiveEventPublisherConfiguration"></http:operation>
-            <wsdl:input>
-                <mime:content type="text/xml" part="parameters"></mime:content>
-            </wsdl:input>
-            <wsdl:output>
-                <mime:content type="text/xml" part="parameters"></mime:content>
-            </wsdl:output>
-        </wsdl:operation>
         <wsdl:operation name="getActiveEventPublisherConfigurationContent">
             <http:operation location="getActiveEventPublisherConfigurationContent"></http:operation>
-            <wsdl:input>
-                <mime:content type="text/xml" part="parameters"></mime:content>
-            </wsdl:input>
-            <wsdl:output>
-                <mime:content type="text/xml" part="parameters"></mime:content>
-            </wsdl:output>
-        </wsdl:operation>
-        <wsdl:operation name="getAllInactiveEventPublisherConfiguration">
-            <http:operation location="getAllInactiveEventPublisherConfiguration"></http:operation>
             <wsdl:input>
                 <mime:content type="text/xml" part="parameters"></mime:content>
             </wsdl:input>
@@ -960,6 +991,24 @@
                 <mime:content type="text/xml" part="parameters"></mime:content>
             </wsdl:output>
         </wsdl:operation>
+        <wsdl:operation name="getAllStreamSpecificActiveEventPublisherConfigurations">
+            <http:operation location="getAllStreamSpecificActiveEventPublisherConfigurations"></http:operation>
+            <wsdl:input>
+                <mime:content type="text/xml" part="parameters"></mime:content>
+            </wsdl:input>
+            <wsdl:output>
+                <mime:content type="text/xml" part="parameters"></mime:content>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="getAllActiveEventPublisherConfigurations">
+            <http:operation location="getAllActiveEventPublisherConfigurations"></http:operation>
+            <wsdl:input>
+                <mime:content type="text/xml" part="parameters"></mime:content>
+            </wsdl:input>
+            <wsdl:output>
+                <mime:content type="text/xml" part="parameters"></mime:content>
+            </wsdl:output>
+        </wsdl:operation>
         <wsdl:operation name="editActiveEventPublisherConfiguration">
             <http:operation location="editActiveEventPublisherConfiguration"></http:operation>
             <wsdl:input>
@@ -987,8 +1036,8 @@
                 <mime:content type="text/xml" part="parameters"></mime:content>
             </wsdl:output>
         </wsdl:operation>
-        <wsdl:operation name="getActiveEventPublisherConfiguration">
-            <http:operation location="getActiveEventPublisherConfiguration"></http:operation>
+        <wsdl:operation name="getAllOutputAdapterTypes">
+            <http:operation location="getAllOutputAdapterTypes"></http:operation>
             <wsdl:input>
                 <mime:content type="text/xml" part="parameters"></mime:content>
             </wsdl:input>
@@ -996,8 +1045,8 @@
                 <mime:content type="text/xml" part="parameters"></mime:content>
             </wsdl:output>
         </wsdl:operation>
-        <wsdl:operation name="getAllStreamSpecificActiveEventPublisherConfiguration">
-            <http:operation location="getAllStreamSpecificActiveEventPublisherConfiguration"></http:operation>
+        <wsdl:operation name="getActiveEventPublisherConfiguration">
+            <http:operation location="getActiveEventPublisherConfiguration"></http:operation>
             <wsdl:input>
                 <mime:content type="text/xml" part="parameters"></mime:content>
             </wsdl:input>
@@ -1008,13 +1057,13 @@
     </wsdl:binding>
     <wsdl:service name="EventPublisherAdminService">
         <wsdl:port name="EventPublisherAdminServiceHttpsSoap11Endpoint" binding="ns:EventPublisherAdminServiceSoap11Binding">
-            <soap:address location="https://192.168.1.3:9443/services/EventPublisherAdminService.EventPublisherAdminServiceHttpsSoap11Endpoint/"></soap:address>
+            <soap:address location="https://192.168.1.7:9443/services/EventPublisherAdminService.EventPublisherAdminServiceHttpsSoap11Endpoint/"></soap:address>
         </wsdl:port>
         <wsdl:port name="EventPublisherAdminServiceHttpsSoap12Endpoint" binding="ns:EventPublisherAdminServiceSoap12Binding">
-            <soap12:address location="https://192.168.1.3:9443/services/EventPublisherAdminService.EventPublisherAdminServiceHttpsSoap12Endpoint/"></soap12:address>
+            <soap12:address location="https://192.168.1.7:9443/services/EventPublisherAdminService.EventPublisherAdminServiceHttpsSoap12Endpoint/"></soap12:address>
         </wsdl:port>
         <wsdl:port name="EventPublisherAdminServiceHttpsEndpoint" binding="ns:EventPublisherAdminServiceHttpBinding">
-            <http:address location="https://192.168.1.3:9443/services/EventPublisherAdminService.EventPublisherAdminServiceHttpsEndpoint/"></http:address>
+            <http:address location="https://192.168.1.7:9443/services/EventPublisherAdminService.EventPublisherAdminServiceHttpsEndpoint/"></http:address>
         </wsdl:port>
     </wsdl:service>
 </wsdl:definitions>

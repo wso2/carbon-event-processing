@@ -31,7 +31,7 @@ public class EventStreamListenerImpl implements EventStreamListener {
         CarbonEventPublisherService carbonEventPublisherService = EventPublisherServiceValueHolder.getCarbonEventPublisherService();
         String streamNameWithVersion = streamName + ":" + streamVersion;
         try {
-            carbonEventPublisherService.deactivateActiveEventPublisherConfigurationForStream(tenantId, streamNameWithVersion);
+            carbonEventPublisherService.deactivateActiveEventPublisherConfigurationsForStream(streamNameWithVersion, tenantId);
         } catch (EventPublisherConfigurationException e) {
             log.error("Exception occurred while un-deploying the Event publisher configuration files");
         }
@@ -44,7 +44,7 @@ public class EventStreamListenerImpl implements EventStreamListener {
         CarbonEventPublisherService carbonEventPublisherService = EventPublisherServiceValueHolder.getCarbonEventPublisherService();
         String streamNameWithVersion = streamName + ":" + streamVersion;
         try {
-            carbonEventPublisherService.activateInactiveEventPublisherConfigurationForStream(tenantId, streamNameWithVersion);
+            carbonEventPublisherService.activateInactiveEventPublisherConfigurationsForStream(streamNameWithVersion, tenantId);
         } catch (EventPublisherConfigurationException e) {
             log.error("Exception occurred while un-deploying the Event publisher configuration files");
         }

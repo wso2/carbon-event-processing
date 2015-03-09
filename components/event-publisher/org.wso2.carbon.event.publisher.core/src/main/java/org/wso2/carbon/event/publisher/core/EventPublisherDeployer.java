@@ -34,7 +34,7 @@ import org.wso2.carbon.event.publisher.core.exception.EventPublisherStreamValida
 import org.wso2.carbon.event.publisher.core.exception.EventPublisherValidationException;
 import org.wso2.carbon.event.publisher.core.internal.CarbonEventPublisherService;
 import org.wso2.carbon.event.publisher.core.internal.ds.EventPublisherServiceValueHolder;
-import org.wso2.carbon.event.publisher.core.internal.util.PublisherConfigurationBuilder;
+import org.wso2.carbon.event.publisher.core.internal.util.EventPublisherConfigurationBuilder;
 import org.wso2.carbon.event.publisher.core.internal.util.helper.EventPublisherConfigurationHelper;
 
 import javax.xml.stream.XMLInputFactory;
@@ -70,8 +70,8 @@ public class EventPublisherDeployer extends AbstractDeployer implements EventPro
         String path = deploymentFileData.getAbsolutePath();
         if (!deployedEventPublisherFilePaths.contains(path)) {
             try {
-                processDeploy(deploymentFileData);
-            } catch (EventPublisherConfigurationException e) {
+                processDeployment(deploymentFileData);
+            } catch (Throwable e) {
                 throw new DeploymentException("Event publisher file " + deploymentFileData.getName() + " is not deployed ", e);
             }
         } else {
@@ -131,39 +131,45 @@ public class EventPublisherDeployer extends AbstractDeployer implements EventPro
 
 
         if (!undeployedEventPublisherFilePaths.contains(filePath)) {
-            processUndeploy(filePath);
+            try {
+                processUndeployment(filePath);
+            } catch (Throwable e) {
+                throw new DeploymentException("Event publisher file " + new File(filePath).getName() + " is not undeployed properly", e);
+            }
         } else {
             undeployedEventPublisherFilePaths.remove(filePath);
         }
 
     }
 
-    public void processDeploy(DeploymentFileData deploymentFileData)
+    public void processDeployment(DeploymentFileData deploymentFileData)
             throws DeploymentException, EventPublisherConfigurationException {
 
         File eventPublisherFile = deploymentFileData.getFile();
-        boolean isEditable = !eventPublisherFile.getAbsolutePath().contains(File.separator+ "carbonapps" + File.separator);
+        boolean isEditable = !eventPublisherFile.getAbsolutePath().contains(File.separator + "carbonapps" + File.separator);
         AxisConfiguration axisConfiguration = configurationContext.getAxisConfiguration();
         CarbonEventPublisherService carbonEventPublisherService = EventPublisherServiceValueHolder.getCarbonEventPublisherService();
         int tenantId = PrivilegedCarbonContext.getThreadLocalCarbonContext().getTenantId();
         String eventPublisherName = "";
-        if(!carbonEventPublisherService.isEventPublisherFileAlreadyExist(eventPublisherFile.getName(), tenantId)) {
+
+        if (!carbonEventPublisherService.isEventPublisherFileAlreadyExist(eventPublisherFile.getName(), tenantId)) {
             try {
                 OMElement eventPublisherOMElement = getEventPublisherOMElement(eventPublisherFile);
-                if (!(eventPublisherOMElement.getQName().getLocalPart()).equals(EventPublisherConstants.EF_ELE_ROOT_ELEMENT)) {
-                    throw new DeploymentException("Wrong event publisher configuration file, Invalid root element " + eventPublisherOMElement.getQName() + " in " + eventPublisherFile.getName());
+                if (!(eventPublisherOMElement.getQName().getLocalPart()).equals(EventPublisherConstants.EF_ELEMENT_ROOT_ELEMENT)) {
+                    throw new EventPublisherConfigurationException("Wrong event publisher configuration file, Invalid root element " + eventPublisherOMElement.getQName() + " in " + eventPublisherFile.getName());
                 }
 
                 EventPublisherConfigurationHelper.validateEventPublisherConfiguration(eventPublisherOMElement);
                 String mappingType = EventPublisherConfigurationHelper.getOutputMappingType(eventPublisherOMElement);
                 if (mappingType != null) {
                     mappingType = mappingType.toLowerCase();
-                    EventPublisherConfiguration eventPublisherConfiguration = PublisherConfigurationBuilder.getEventPublisherConfiguration(eventPublisherOMElement, isEditable, tenantId, mappingType);
+                    EventPublisherConfiguration eventPublisherConfiguration = EventPublisherConfigurationBuilder.getEventPublisherConfiguration(eventPublisherOMElement, mappingType, isEditable, tenantId);
                     eventPublisherName = eventPublisherConfiguration.getEventPublisherName();
-                    if (carbonEventPublisherService.checkEventPublisherValidity(tenantId, eventPublisherName)) {
+
+                    if (!carbonEventPublisherService.isEventPublisherAlreadyExists(tenantId, eventPublisherName)) {
                         carbonEventPublisherService.addEventPublisherConfiguration(eventPublisherConfiguration);
-                        carbonEventPublisherService.addEventPublisherConfigurationFile(tenantId, createEventPublisherConfigurationFile(eventPublisherName,
-                                deploymentFileData.getFile(), EventPublisherConfigurationFile.Status.DEPLOYED, axisConfiguration, null, null));
+                        carbonEventPublisherService.addEventPublisherConfigurationFile(createEventPublisherConfigurationFile(eventPublisherName,
+                                deploymentFileData.getFile(), EventPublisherConfigurationFile.Status.DEPLOYED, axisConfiguration, null, null), tenantId);
                         log.info("Event Publisher configuration successfully deployed and in active state : " + eventPublisherName);
                     } else {
                         throw new EventPublisherConfigurationException("Event Publisher not deployed and in inactive state," +
@@ -174,40 +180,36 @@ public class EventPublisherDeployer extends AbstractDeployer implements EventPro
                             "since it does not contain a proper mapping type : " + eventPublisherFile.getName());
                 }
             } catch (EventPublisherConfigurationException ex) {
-                log.error("Event Publisher not deployed and in inactive state, " + ex.getMessage(), ex);
-                carbonEventPublisherService.addEventPublisherConfigurationFile(tenantId,
-                        createEventPublisherConfigurationFile(eventPublisherName, deploymentFileData.getFile(), EventPublisherConfigurationFile.Status.ERROR, null, null, null));
+                log.error("Error, Event Publisher not deployed and in inactive state, " + ex.getMessage(), ex);
+                carbonEventPublisherService.addEventPublisherConfigurationFile(createEventPublisherConfigurationFile(eventPublisherName, deploymentFileData.getFile(),
+                        EventPublisherConfigurationFile.Status.ERROR, null, "Exception when deploying event publisher configuration file:\n" + ex.getMessage(), null), tenantId);
                 throw new EventPublisherConfigurationException(ex.getMessage(), ex);
             } catch (EventPublisherValidationException ex) {
-                carbonEventPublisherService.addEventPublisherConfigurationFile(tenantId,
-                        createEventPublisherConfigurationFile(eventPublisherName, deploymentFileData.getFile(),
-                                EventPublisherConfigurationFile.Status.WAITING_FOR_DEPENDENCY, axisConfiguration, ex.getMessage(), ex.getDependency())
-                );
-                log.info("Event Publisher deployment held back and in inactive state : " + eventPublisherFile.getName() + ", waiting for dependency : " + ex.getDependency());
+                carbonEventPublisherService.addEventPublisherConfigurationFile(createEventPublisherConfigurationFile(eventPublisherName, deploymentFileData.getFile(),
+                        EventPublisherConfigurationFile.Status.WAITING_FOR_DEPENDENCY, axisConfiguration, ex.getMessage(), ex.getDependency()), tenantId);
+                log.info("Event Publisher deployment held back and in inactive state : " + eventPublisherFile.getName() + ", waiting for Output Event Adapter dependency : " + ex.getDependency());
             } catch (EventPublisherStreamValidationException e) {
-                carbonEventPublisherService.addEventPublisherConfigurationFile(tenantId,
-                        createEventPublisherConfigurationFile(eventPublisherName, deploymentFileData.getFile(),
-                                EventPublisherConfigurationFile.Status.WAITING_FOR_STREAM_DEPENDENCY, axisConfiguration, e.getMessage(), e.getDependency())
-                );
+                carbonEventPublisherService.addEventPublisherConfigurationFile(createEventPublisherConfigurationFile(eventPublisherName, deploymentFileData.getFile(),
+                        EventPublisherConfigurationFile.Status.WAITING_FOR_STREAM_DEPENDENCY, axisConfiguration, e.getMessage(), e.getDependency()), tenantId);
                 log.info("Event Publisher deployment held back and in inactive state :" + eventPublisherFile.getName() + ", Stream validation exception : " + e.getMessage());
-            } catch (DeploymentException e) {
-                log.error("Event Publisher not deployed and in inactive state : " + eventPublisherFile.getName() + " , " + e.getMessage(), e);
-                carbonEventPublisherService.addEventPublisherConfigurationFile(tenantId, createEventPublisherConfigurationFile(eventPublisherName,
-                        deploymentFileData.getFile(), EventPublisherConfigurationFile.Status.ERROR, null, "Deployment exception occurred", null));
-                throw new EventPublisherConfigurationException(e.getMessage(), e);
+            } catch (Throwable e) {
+                log.error("Event Publisher not deployed, invalid configuration found at " + eventPublisherFile.getName() + ", and in inactive state, " + e.getMessage(), e);
+                carbonEventPublisherService.addEventPublisherConfigurationFile(createEventPublisherConfigurationFile(eventPublisherName,
+                        deploymentFileData.getFile(), EventPublisherConfigurationFile.Status.ERROR, null, "Deployment exception: " + e.getMessage(), null), tenantId);
+                throw new EventPublisherConfigurationException(e);
             }
         } else {
-            log.info("Event Publisher " + eventPublisherName + " is already registered with this tenant ("+tenantId+"), hence ignoring redeployment");
+            log.info("Event Publisher " + eventPublisherName + " is already registered with this tenant (" + tenantId + "), hence ignoring redeployment");
         }
     }
 
-    public void processUndeploy(String filePath) {
+    public void processUndeployment(String filePath) {
 
         String fileName = new File(filePath).getName();
         log.info("Event Publisher undeployed successfully : " + fileName);
         int tenantId = PrivilegedCarbonContext.getThreadLocalCarbonContext().getTenantId();
         CarbonEventPublisherService carbonEventPublisherService = EventPublisherServiceValueHolder.getCarbonEventPublisherService();
-        carbonEventPublisherService.removeEventPublisherConfigurationFromMap(fileName, tenantId);
+        carbonEventPublisherService.removeEventPublisherConfigurationFile(fileName, tenantId);
     }
 
     public void setDirectory(String directory) {
@@ -216,11 +218,11 @@ public class EventPublisherDeployer extends AbstractDeployer implements EventPro
 
     public void executeManualDeployment(String filePath)
             throws DeploymentException, EventPublisherConfigurationException {
-        processDeploy(new DeploymentFileData(new File(filePath)));
+        processDeployment(new DeploymentFileData(new File(filePath)));
     }
 
     public void executeManualUndeployment(String filePath) {
-        processUndeploy(filePath);
+        processUndeployment(filePath);
     }
 
     private EventPublisherConfigurationFile createEventPublisherConfigurationFile(
@@ -250,15 +252,6 @@ public class EventPublisherDeployer extends AbstractDeployer implements EventPro
         return undeployedEventPublisherFilePaths;
     }
 
-    @Override
-    public void processDeployment(DeploymentFileData deploymentFileData) throws Exception {
-        processDeploy(deploymentFileData);
-    }
-
-    @Override
-    public void processUndeployment(String filePath) throws Exception {
-          processUndeploy(filePath);
-    }
 }
 
 

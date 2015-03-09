@@ -31,7 +31,7 @@ public interface OutputMapperFactory {
     OutputMapping constructOutputMapping(OMElement omElement)
             throws EventPublisherConfigurationException;
 
-    OMElement constructOutputMappingOM(OutputMapping outputMapping, OMFactory factory)
+    OMElement constructOMFromOutputMapping(OutputMapping outputMapping, OMFactory factory)
             throws EventPublisherConfigurationException;
 
     OutputMapper constructOutputMapper(EventPublisherConfiguration eventPublisherConfiguration,

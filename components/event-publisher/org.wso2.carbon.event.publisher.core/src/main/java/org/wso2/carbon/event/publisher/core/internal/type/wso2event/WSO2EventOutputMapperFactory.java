@@ -32,13 +32,13 @@ public class WSO2EventOutputMapperFactory implements OutputMapperFactory {
     @Override
     public OutputMapping constructOutputMapping(OMElement omElement)
             throws EventPublisherConfigurationException {
-        return WSO2EventMapperConfigurationBuilder.fromOM(omElement);
+        return WSO2EventOutputMapperConfigurationBuilder.fromOM(omElement);
     }
 
     @Override
-    public OMElement constructOutputMappingOM(
+    public OMElement constructOMFromOutputMapping(
             OutputMapping outputMapping, OMFactory factory) {
-        return WSO2EventMapperConfigurationBuilder.outputMappingToOM(outputMapping, factory);
+        return WSO2EventOutputMapperConfigurationBuilder.outputMappingToOM(outputMapping, factory);
     }
 
     @Override

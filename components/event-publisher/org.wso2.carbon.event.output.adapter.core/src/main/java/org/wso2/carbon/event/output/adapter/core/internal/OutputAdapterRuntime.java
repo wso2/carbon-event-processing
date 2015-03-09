@@ -116,6 +116,12 @@ public class OutputAdapterRuntime {
     }
 
     public void destroy() {
-
+        if (outputEventAdapter != null) {
+            try {
+                outputEventAdapter.disconnect();
+            } finally {
+                outputEventAdapter.destroy();
+            }
+        }
     }
 }

@@ -32,13 +32,13 @@ public class TextOutputMapperFactory implements OutputMapperFactory {
     @Override
     public OutputMapping constructOutputMapping(OMElement omElement)
             throws EventPublisherConfigurationException {
-        return TextMapperConfigurationBuilder.fromOM(omElement);
+        return TextOutputMapperConfigurationBuilder.fromOM(omElement);
     }
 
     @Override
-    public OMElement constructOutputMappingOM(
+    public OMElement constructOMFromOutputMapping(
             OutputMapping outputMapping, OMFactory factory) {
-        return TextMapperConfigurationBuilder.outputMappingToOM(outputMapping, factory);
+        return TextOutputMapperConfigurationBuilder.outputMappingToOM(outputMapping, factory);
     }
 
     @Override

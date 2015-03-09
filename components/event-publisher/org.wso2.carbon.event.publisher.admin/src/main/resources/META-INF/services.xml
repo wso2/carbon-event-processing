@@ -33,12 +33,12 @@
             /permission/admin/manage/event-publish
         </parameter>
 
-        <operation name="getAllActiveEventPublisherConfiguration">
+        <operation name="getAllActiveEventPublisherConfigurations">
             <parameter name="AuthorizationAction" locked="true">
                 /permission/admin/manage/event-publish
             </parameter>
         </operation>
-        <operation name="getAllStreamSpecificActiveEventPublisherConfiguration">
+        <operation name="getAllStreamSpecificActiveEventPublisherConfigurations">
             <parameter name="AuthorizationAction" locked="true">
                 /permission/admin/manage/event-publish
             </parameter>
@@ -49,7 +49,7 @@
                 /permission/admin/manage/event-publish
             </parameter>
         </operation>
-        <operation name="getAllInactiveEventPublisherConfiguration">
+        <operation name="getAllInactiveEventPublisherConfigurations">
             <parameter name="AuthorizationAction" locked="true">
                 /permission/admin/manage/event-publish
             </parameter>
@@ -124,14 +124,17 @@
                 /permission/admin/manage/event-publish
             </parameter>
         </operation>
-
         <operation name="getActiveEventPublisherConfiguration">
             <parameter name="AuthorizationAction" locked="true">
                 /permission/admin/manage/event-publish
             </parameter>
         </operation>
-
         <operation name="getOutputAdapterConfigurationSchema">
+            <parameter name="AuthorizationAction" locked="true">
+                /permission/admin/manage/event-publish
+            </parameter>
+        </operation>
+        <operation name="getAllOutputAdapterTypes">
             <parameter name="AuthorizationAction" locked="true">
                 /permission/admin/manage/event-publish
             </parameter>

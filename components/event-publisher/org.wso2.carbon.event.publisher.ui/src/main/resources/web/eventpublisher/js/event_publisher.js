@@ -349,7 +349,7 @@ function showCustomEventPublisherPopupDialog(message, title, windowHight, okButt
 }
 
 
-function addEventPublisherViaPopup(form, streamNameWithVersion, redirectPage) {
+function addEventPublisherViaPopup(form, streamNameWithVersion) {
 
     var isFieldEmpty = false;
     var inline = "inline";
@@ -386,8 +386,7 @@ function addEventPublisherViaPopup(form, streamNameWithVersion, redirectPage) {
                 isFieldEmpty = true;
                 outputPropertyParameterString = "";
                 break;
-            }
-            else {
+            } else {
                 // values are stored in parameter string to send to backend
                 var propertyValue = document.getElementById("property_Required_" + propertyCount).value.trim();
                 var propertyName = document.getElementById("property_Required_" + propertyCount).name;
@@ -411,9 +410,7 @@ function addEventPublisherViaPopup(form, streamNameWithVersion, redirectPage) {
         // empty fields are encountered.
         CARBON.showErrorDialog("Empty inputs fields are not allowed.");
         return;
-    }
-
-    else if (document.getElementById("mappingTypeFilter")[document.getElementById("mappingTypeFilter").selectedIndex].text == 'wso2event') {
+    } else if (document.getElementById("mappingTypeFilter")[document.getElementById("mappingTypeFilter").selectedIndex].text == 'wso2event') {
 
 
         var metaData = "";
@@ -450,9 +447,7 @@ function addEventPublisherViaPopup(form, streamNameWithVersion, redirectPage) {
                 onSuccess:function (response) {
                     if ("true" == response.responseText.trim()) {
                         CARBON.showInfoDialog("Event publisher added successfully!!", function () {
-                            if (redirectPage != "none") {
-                                window.location.href = "../eventstream/stream_out_flows.jsp?ordinal=1&eventStreamWithVersion=" + streamNameWithVersion;
-                            }
+                            window.location.href = "../eventpublisher/index.jsp?ordinal=1";
                         }, null);
                         customCarbonWindowClose();
                     } else {
@@ -460,12 +455,9 @@ function addEventPublisherViaPopup(form, streamNameWithVersion, redirectPage) {
                     }
                 }
             })
-
         }
 
-    }
-
-    else if (document.getElementById("mappingTypeFilter")[document.getElementById("mappingTypeFilter").selectedIndex].text == 'text') {
+    } else if (document.getElementById("mappingTypeFilter")[document.getElementById("mappingTypeFilter").selectedIndex].text == 'text') {
 
         var textData = "";
         var customMappingEnabled = "disable";
@@ -474,8 +466,7 @@ function addEventPublisherViaPopup(form, streamNameWithVersion, redirectPage) {
             if ((document.getElementById("inline_text")).checked) {
                 textData = document.getElementById("textSourceText").value;
                 dataFrom = inline;
-            }
-            else if ((document.getElementById("registry_text")).checked) {
+            } else if ((document.getElementById("registry_text")).checked) {
                 textData = document.getElementById("textSourceRegistry").value;
                 dataFrom = registry;
             }
@@ -495,9 +486,7 @@ function addEventPublisherViaPopup(form, streamNameWithVersion, redirectPage) {
                 onSuccess:function (response) {
                     if ("true" == response.responseText.trim()) {
                         CARBON.showInfoDialog("Event publisher added successfully!!", function () {
-                            if (redirectPage != "none") {
-                                window.location.href = "../eventstream/stream_out_flows.jsp?ordinal=1&eventStreamWithVersion=" + streamNameWithVersion;
-                            }
+                            window.location.href = "../eventpublisher/index.jsp?ordinal=1";
                         }, null);
                         customCarbonWindowClose();
                     } else {
@@ -508,9 +497,7 @@ function addEventPublisherViaPopup(form, streamNameWithVersion, redirectPage) {
 
         }
 
-    }
-
-    else if (document.getElementById("mappingTypeFilter")[document.getElementById("mappingTypeFilter").selectedIndex].text == 'xml') {
+    } else if (document.getElementById("mappingTypeFilter")[document.getElementById("mappingTypeFilter").selectedIndex].text == 'xml') {
 
         var textData = "";
         var customMappingEnabled = "disable";
@@ -519,8 +506,7 @@ function addEventPublisherViaPopup(form, streamNameWithVersion, redirectPage) {
             if ((document.getElementById("inline_xml")).checked) {
                 textData = document.getElementById("xmlSourceText").value;
                 dataFrom = inline;
-            }
-            else if ((document.getElementById("registry_xml")).checked) {
+            } else if ((document.getElementById("registry_xml")).checked) {
                 textData = document.getElementById("xmlSourceRegistry").value;
                 dataFrom = registry;
             }
@@ -541,9 +527,7 @@ function addEventPublisherViaPopup(form, streamNameWithVersion, redirectPage) {
                 onSuccess:function (response) {
                     if ("true" == response.responseText.trim()) {
                         CARBON.showInfoDialog("Event publisher added successfully!!", function () {
-                            if (redirectPage != "none") {
-                                window.location.href = "../eventstream/stream_out_flows.jsp?ordinal=1&eventStreamWithVersion=" + streamNameWithVersion;
-                            }
+                            window.location.href = "../eventpublisher/index.jsp?ordinal=1";
                         }, null);
                         customCarbonWindowClose();
                     } else {
@@ -554,9 +538,7 @@ function addEventPublisherViaPopup(form, streamNameWithVersion, redirectPage) {
 
         }
 
-    }
-
-    else if (document.getElementById("mappingTypeFilter")[document.getElementById("mappingTypeFilter").selectedIndex].text == 'map') {
+    } else if (document.getElementById("mappingTypeFilter")[document.getElementById("mappingTypeFilter").selectedIndex].text == 'map') {
 
         var mapData = "";
         var customMappingEnabled = "disable";
@@ -570,21 +552,17 @@ function addEventPublisherViaPopup(form, streamNameWithVersion, redirectPage) {
         if (mapData == "" && ((advancedMappingCounter % 2) != 0)) {
             CARBON.showErrorDialog("Mapping parameters cannot be empty.");
             return;
-        }
-
-        else {
+        } else {
             new Ajax.Request('../eventpublisher/add_event_publisher_ajaxprocessor.jsp', {
                 method:'POST',
                 asynchronous:false,
                 parameters:{eventPublisher:eventPublisherName, streamNameWithVersion:streamNameWithVersion,
                     eventAdapterInfo:eventAdapterInfo, mappingType:"map", outputParameters:outputPropertyParameterString,
                     mapData:mapData, customMappingValue:customMappingEnabled},
-                onSuccess:function (response) {
+                    onSuccess:function (response) {
                     if ("true" == response.responseText.trim()) {
                         CARBON.showInfoDialog("Event publisher added successfully!!", function () {
-                            if (redirectPage != "none") {
-                                window.location.href = "../eventstream/stream_out_flows.jsp?ordinal=1&eventStreamWithVersion=" + streamNameWithVersion;
-                            }
+                            window.location.href = "../eventpublisher/index.jsp?ordinal=1";
                         }, null);
                         customCarbonWindowClose();
                     } else {
@@ -594,9 +572,7 @@ function addEventPublisherViaPopup(form, streamNameWithVersion, redirectPage) {
             })
         }
 
-    }
-
-    else if (document.getElementById("mappingTypeFilter")[document.getElementById("mappingTypeFilter").selectedIndex].text == 'json') {
+    } else if (document.getElementById("mappingTypeFilter")[document.getElementById("mappingTypeFilter").selectedIndex].text == 'json') {
 
         var jsonData = ""
         var customMappingEnabled = "disable";
@@ -605,8 +581,7 @@ function addEventPublisherViaPopup(form, streamNameWithVersion, redirectPage) {
             if ((document.getElementById("inline_json")).checked) {
                 jsonData = document.getElementById("jsonSourceText").value;
                 dataFrom = inline;
-            }
-            else if ((document.getElementById("registry_json")).checked) {
+            } else if ((document.getElementById("registry_json")).checked) {
                 jsonData = document.getElementById("jsonSourceRegistry").value;
                 parameters = parameters + "&jsonData=" + jsonData;
                 dataFrom = registry;
@@ -624,12 +599,10 @@ function addEventPublisherViaPopup(form, streamNameWithVersion, redirectPage) {
                 parameters:{eventPublisher:eventPublisherName, streamNameWithVersion:streamNameWithVersion,
                     eventAdapterInfo:eventAdapterInfo, mappingType:"json", outputParameters:outputPropertyParameterString,
                     dataFrom:dataFrom, jsonData:jsonData, customMappingValue:customMappingEnabled},
-                onSuccess:function (response) {
+                    onSuccess:function (response) {
                     if ("true" == response.responseText.trim()) {
                         CARBON.showInfoDialog("Event publisher added successfully!!", function () {
-                            if (redirectPage != "none") {
-                                window.location.href = "../eventstream/stream_out_flows.jsp?ordinal=1&eventStreamWithVersion=" + streamNameWithVersion;
-                            }
+                            window.location.href = "../eventpublisher/index.jsp?ordinal=1";
                         }, null);
                         customCarbonWindowClose();
                     } else {

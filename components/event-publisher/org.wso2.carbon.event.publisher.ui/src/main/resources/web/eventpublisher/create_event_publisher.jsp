@@ -19,7 +19,6 @@
 <%@ page import="org.wso2.carbon.event.stream.manager.stub.types.EventStreamAttributeDto" %>
 <%@ page import="org.wso2.carbon.event.stream.manager.stub.types.EventStreamDefinitionDto" %>
 <%@ page import="java.util.List" %>
-<%@ page import="org.wso2.carbon.event.publisher.stub.types.EventPublisherConfigurationInfoDto" %>
 <%@ page import="org.wso2.carbon.event.publisher.stub.types.DetailOutputAdapterPropertyDto" %>
 <%@ page import="org.wso2.carbon.event.publisher.stub.types.OutputAdapterConfigurationDto" %>
 <%@ taglib uri="http://wso2.org/projects/carbon/taglibs/carbontags.jar" prefix="carbon" %>
@@ -52,7 +51,7 @@
 <table style="width:100%" id="eventPublisherAdd" class="styledLeft">
 <%
     EventPublisherAdminServiceStub eventPublisherAdminServiceStub = EventPublisherUIUtils.getEventPublisherAdminService(config, session, request);
-    EventPublisherConfigurationInfoDto[] eventPublisherInfoArray = eventPublisherAdminServiceStub.getAllActiveEventPublisherConfiguration();
+    String[] outputAdapterTypes = eventPublisherAdminServiceStub.getAllOutputAdapterTypes();
     String streamId = request.getParameter("streamId");
     String redirectPage = request.getParameter("redirectPage");
 
@@ -181,11 +180,11 @@
                 <%
                     String firstEventAdapterType = null;
 
-                    if (eventPublisherInfoArray != null) {
-                        firstEventAdapterType = eventPublisherInfoArray[0].getOutputAdapterType();
-                        for (EventPublisherConfigurationInfoDto eventPublisherInfoDto : eventPublisherInfoArray) {
+                    if (outputAdapterTypes != null) {
+                        firstEventAdapterType = outputAdapterTypes[0];
+                        for (String outputAdapterType : outputAdapterTypes) {
                 %>
-                <option value="<%=eventPublisherInfoDto.getOutputAdapterType()%>"><%=eventPublisherInfoDto.getOutputAdapterType()%>
+                <option value="<%=outputAdapterType%>"><%=outputAdapterType%>
                 </option>
                 <%
                         }
@@ -780,7 +779,7 @@
 <tr>
     <td class="buttonRow">
         <input type="button" value="<fmt:message key="add.event.publisher"/>"
-               onclick="addEventPublisherViaPopup(document.getElementById('addEventPublisher') ,'<%=streamId%>','<%=redirectPage%>')"/>
+               onclick="addEventPublisherViaPopup(document.getElementById('addEventPublisher') ,'<%=streamId%>')"/>
     </td>
 </tr>
 </tbody>

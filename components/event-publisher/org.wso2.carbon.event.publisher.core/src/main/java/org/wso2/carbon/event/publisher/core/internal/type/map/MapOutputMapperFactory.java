@@ -31,12 +31,12 @@ public class MapOutputMapperFactory implements OutputMapperFactory {
     @Override
     public OutputMapping constructOutputMapping(OMElement omElement)
             throws EventPublisherConfigurationException {
-        return MapMapperConfigurationBuilder.fromOM(omElement);
+        return MapOutputMapperConfigurationBuilder.fromOM(omElement);
     }
 
     @Override
-    public OMElement constructOutputMappingOM(OutputMapping outputMapping, OMFactory factory) {
-        return MapMapperConfigurationBuilder.outputMappingToOM(outputMapping, factory);
+    public OMElement constructOMFromOutputMapping(OutputMapping outputMapping, OMFactory factory) {
+        return MapOutputMapperConfigurationBuilder.outputMappingToOM(outputMapping, factory);
     }
 
     @Override

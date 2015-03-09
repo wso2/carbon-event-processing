@@ -31,14 +31,14 @@ public class XMLOutputMapperFactory implements OutputMapperFactory {
     @Override
     public OutputMapping constructOutputMapping(OMElement omElement)
             throws EventPublisherConfigurationException {
-        return XMLMapperConfigurationBuilder.fromOM(omElement);
+        return XMLOutputMapperConfigurationBuilder.fromOM(omElement);
     }
 
     @Override
-    public OMElement constructOutputMappingOM(
+    public OMElement constructOMFromOutputMapping(
             OutputMapping outputMapping, OMFactory factory)
             throws EventPublisherConfigurationException {
-        return XMLMapperConfigurationBuilder.outputMappingToOM(outputMapping, factory);
+        return XMLOutputMapperConfigurationBuilder.outputMappingToOM(outputMapping, factory);
     }
 
     @Override
@@ -46,6 +46,6 @@ public class XMLOutputMapperFactory implements OutputMapperFactory {
             EventPublisherConfiguration eventPublisherConfiguration,
             Map<String, Integer> propertyPositionMap, int tenantId,
             StreamDefinition streamDefinition) throws EventPublisherConfigurationException {
-        return new XMLOutputOutputMapper(eventPublisherConfiguration, propertyPositionMap, tenantId, streamDefinition);
+        return new XMLOutputMapper(eventPublisherConfiguration, propertyPositionMap, tenantId, streamDefinition);
     }
 }

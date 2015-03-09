@@ -77,7 +77,7 @@ public class EventPublisherServiceDS {
         outputEventAdapterTypes.addAll(EventPublisherServiceValueHolder.getOutputEventAdapterService().getOutputEventAdapterTypes());
         for (String type : outputEventAdapterTypes) {
             try {
-                carbonEventPublisherService.activateInactiveEventPublisherConfigurationForAdapter(type);
+                carbonEventPublisherService.activateInactiveEventPublisherConfigurationsForAdapter(type);
             } catch (EventPublisherConfigurationException e) {
                 log.error(e.getMessage(), e);
             }
@@ -123,7 +123,7 @@ public class EventPublisherServiceDS {
 
         if (EventPublisherServiceValueHolder.getCarbonEventPublisherService() != null) {
             try {
-                EventPublisherServiceValueHolder.getCarbonEventPublisherService().activateInactiveEventPublisherConfigurationForAdapter(outputEventAdapterFactory.getType());
+                EventPublisherServiceValueHolder.getCarbonEventPublisherService().activateInactiveEventPublisherConfigurationsForAdapter(outputEventAdapterFactory.getType());
             } catch (EventPublisherConfigurationException e) {
                 log.error(e.getMessage(), e);
             }
@@ -137,7 +137,7 @@ public class EventPublisherServiceDS {
 
         if (EventPublisherServiceValueHolder.getCarbonEventPublisherService() != null) {
             try {
-                EventPublisherServiceValueHolder.getCarbonEventPublisherService().deactivateActiveEventPublisherConfigurationForAdapter(outputEventAdapterFactory.getType());
+                EventPublisherServiceValueHolder.getCarbonEventPublisherService().deactivateActiveEventPublisherConfigurationsForAdapter(outputEventAdapterFactory.getType());
             } catch (EventPublisherConfigurationException e) {
                 log.error(e.getMessage(), e);
             }

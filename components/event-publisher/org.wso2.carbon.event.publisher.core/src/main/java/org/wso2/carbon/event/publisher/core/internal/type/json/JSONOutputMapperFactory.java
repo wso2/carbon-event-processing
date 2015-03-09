@@ -31,12 +31,12 @@ public class JSONOutputMapperFactory implements OutputMapperFactory {
     @Override
     public OutputMapping constructOutputMapping(OMElement omElement)
             throws EventPublisherConfigurationException {
-        return JSONMapperConfigurationBuilder.fromOM(omElement);
+        return JSONOutputMapperConfigurationBuilder.fromOM(omElement);
     }
 
     @Override
-    public OMElement constructOutputMappingOM(OutputMapping outputMapping, OMFactory factory) {
-        return JSONMapperConfigurationBuilder.outputMappingToOM(outputMapping, factory);
+    public OMElement constructOMFromOutputMapping(OutputMapping outputMapping, OMFactory factory) {
+        return JSONOutputMapperConfigurationBuilder.outputMappingToOM(outputMapping, factory);
     }
 
     @Override

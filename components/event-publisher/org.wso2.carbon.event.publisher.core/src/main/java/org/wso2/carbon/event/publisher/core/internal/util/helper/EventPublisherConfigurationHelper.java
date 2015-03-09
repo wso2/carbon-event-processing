@@ -15,6 +15,8 @@
 package org.wso2.carbon.event.publisher.core.internal.util.helper;
 
 import org.apache.axiom.om.OMElement;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.wso2.carbon.event.output.adapter.core.OutputEventAdapterConfiguration;
 import org.wso2.carbon.event.output.adapter.core.OutputEventAdapterSchema;
 import org.wso2.carbon.event.output.adapter.core.OutputEventAdapterService;
@@ -23,19 +25,32 @@ import org.wso2.carbon.event.publisher.core.config.EventPublisherConstants;
 import org.wso2.carbon.event.publisher.core.exception.EventPublisherConfigurationException;
 import org.wso2.carbon.event.publisher.core.exception.EventPublisherValidationException;
 import org.wso2.carbon.event.publisher.core.internal.ds.EventPublisherServiceValueHolder;
+import org.wso2.carbon.event.publisher.core.internal.type.json.JSONOutputMapperConfigurationBuilder;
+import org.wso2.carbon.event.publisher.core.internal.type.map.MapOutputMapperConfigurationBuilder;
+import org.wso2.carbon.event.publisher.core.internal.type.text.TextOutputMapperConfigurationBuilder;
+import org.wso2.carbon.event.publisher.core.internal.type.wso2event.WSO2EventOutputMapperConfigurationBuilder;
+import org.wso2.carbon.event.publisher.core.internal.type.xml.XMLOutputMapperConfigurationBuilder;
 
 import javax.xml.namespace.QName;
 import java.util.*;
 
 public class EventPublisherConfigurationHelper {
 
+    private static final Log log = LogFactory.getLog(EventPublisherConfigurationHelper.class);
+
     public static void validateEventPublisherConfiguration(OMElement eventPublisherOMElement) throws
             EventPublisherConfigurationException,
             EventPublisherValidationException {
 
+        if (!eventPublisherOMElement.getLocalName().equals(EventPublisherConstants.EF_ELEMENT_ROOT_ELEMENT)) {
+            throw new EventPublisherConfigurationException("Invalid event publisher configuration.");
+        }
+
         if (eventPublisherOMElement.getAttributeValue(new QName(EventPublisherConstants.EF_ATTR_NAME)) == null || eventPublisherOMElement.getAttributeValue(new QName(EventPublisherConstants.EF_ATTR_NAME)).trim().isEmpty()) {
             throw new EventPublisherConfigurationException("Need to have an eventPublisher name");
         }
+
+        String eventPublisherName = eventPublisherOMElement.getAttributeValue(new QName(EventPublisherConstants.EF_ATTR_NAME));
 
         Iterator childElements = eventPublisherOMElement.getChildElements();
         int count = 0;
@@ -46,12 +61,20 @@ public class EventPublisherConfigurationHelper {
         }
 
         if (count != 3) {
-            throw new EventPublisherConfigurationException("Not a valid configuration, Event Publisher Configuration can only contains 3 child tags (From,Mapping & To)");
+            throw new EventPublisherConfigurationException("Not a valid configuration, Event Publisher Configuration can only contains 3 child tags (From,Mapping & To), for " + eventPublisherName);
+        }
+
+        OMElement fromElement = eventPublisherOMElement.getFirstChildWithName(new QName(EventPublisherConstants.EF_CONF_NS, EventPublisherConstants.EF_ELEMENT_FROM));
+        OMElement mappingElement = eventPublisherOMElement.getFirstChildWithName(new QName(EventPublisherConstants.EF_CONF_NS, EventPublisherConstants.EF_ELEMENT_MAPPING));
+        OMElement toElement = eventPublisherOMElement.getFirstChildWithName(new QName(EventPublisherConstants.EF_CONF_NS, EventPublisherConstants.EF_ELEMENT_TO));
+
+        if (fromElement == null || mappingElement == null || toElement == null) {
+            throw new EventPublisherConfigurationException("Invalid event publisher configuration for event publisher: " + eventPublisherName);
         }
 
         //From property of the event publisher configuration file
         Iterator fromPropertyIter = eventPublisherOMElement.getChildrenWithName(
-                new QName(EventPublisherConstants.EF_CONF_NS, EventPublisherConstants.EF_ELE_FROM_PROPERTY));
+                new QName(EventPublisherConstants.EF_CONF_NS, EventPublisherConstants.EF_ELEMENT_FROM));
         OMElement fromPropertyOMElement = null;
         count = 0;
         while (fromPropertyIter.hasNext()) {
@@ -59,18 +82,18 @@ public class EventPublisherConfigurationHelper {
             count++;
         }
         if (count != 1) {
-            throw new EventPublisherConfigurationException("There can be only one 'From' element in Event Publisher configuration file.");
+            throw new EventPublisherConfigurationException("There can be only one 'From' element in Event Publisher configuration " + eventPublisherName);
         }
         String fromStreamName = fromPropertyOMElement.getAttributeValue(new QName(EventPublisherConstants.EF_ATTR_STREAM_NAME));
         String fromStreamVersion = fromPropertyOMElement.getAttributeValue(new QName(EventPublisherConstants.EF_ATTR_VERSION));
 
-        if (fromStreamName == null || fromStreamVersion == null) {
-            throw new EventPublisherConfigurationException("There should be stream name and version in the 'From' element");
+        if (fromStreamName == null || fromStreamName.isEmpty() || fromStreamVersion == null || fromStreamName.isEmpty()) {
+            throw new EventPublisherConfigurationException("There should be stream name and version in the 'From' element, of " + eventPublisherName);
         }
 
         //Mapping property of the event publisher configuration file
         Iterator mappingPropertyIter = eventPublisherOMElement.getChildrenWithName(
-                new QName(EventPublisherConstants.EF_CONF_NS, EventPublisherConstants.EF_ELE_MAPPING_PROPERTY));
+                new QName(EventPublisherConstants.EF_CONF_NS, EventPublisherConstants.EF_ELEMENT_MAPPING));
         OMElement mappingPropertyOMElement = null;
         count = 0;
         while (mappingPropertyIter.hasNext()) {
@@ -78,19 +101,20 @@ public class EventPublisherConfigurationHelper {
             count++;
         }
         if (count != 1) {
-            throw new EventPublisherConfigurationException("There can be only one 'Mapping' element in Event Publisher configuration file.");
+            throw new EventPublisherConfigurationException("There can be only one 'Mapping' element in Event Publisher configuration " + eventPublisherName);
         }
 
         String mappingType = mappingPropertyOMElement.getAttributeValue(new QName(EventPublisherConstants.EF_ATTR_TYPE));
 
-        if (mappingType == null) {
-            throw new EventPublisherConfigurationException("There should be proper mapping type in Event Publisher configuration file.");
-
+        if (mappingType == null || mappingType.isEmpty()) {
+            throw new EventPublisherConfigurationException("There should be proper mapping type in Event Publisher configuration " + eventPublisherName);
         }
+
+        validateMappingProperties(mappingElement, mappingType);
 
         //To property of the event publisher configuration file
         Iterator toPropertyIter = eventPublisherOMElement.getChildrenWithName(
-                new QName(EventPublisherConstants.EF_CONF_NS, EventPublisherConstants.EF_ELE_TO_PROPERTY));
+                new QName(EventPublisherConstants.EF_CONF_NS, EventPublisherConstants.EF_ELEMENT_TO));
         OMElement toPropertyOMElement = null;
         count = 0;
         while (toPropertyIter.hasNext()) {
@@ -100,9 +124,10 @@ public class EventPublisherConfigurationHelper {
         if (count != 1) {
             throw new EventPublisherConfigurationException("There can be only one 'To' element in Event Publisher configuration file.");
         }
+
         String toEventAdapterType = toPropertyOMElement.getAttributeValue(new QName(EventPublisherConstants.EF_ATTR_TA_TYPE));
 
-        if (toEventAdapterType == null) {
+        if (toEventAdapterType == null || toEventAdapterType.isEmpty()) {
             throw new EventPublisherConfigurationException("There should be a event adapter type in Publisher configuration file.");
         }
 
@@ -111,6 +136,22 @@ public class EventPublisherConfigurationHelper {
         }
     }
 
+    public static void validateMappingProperties(OMElement mappingElement, String mappingType)
+            throws EventPublisherConfigurationException {
+        if (mappingType.equalsIgnoreCase(EventPublisherConstants.EF_WSO2EVENT_MAPPING_TYPE)) {
+            WSO2EventOutputMapperConfigurationBuilder.validateWso2EventMapping(mappingElement);
+        } else if (mappingType.equalsIgnoreCase(EventPublisherConstants.EF_TEXT_MAPPING_TYPE)) {
+            TextOutputMapperConfigurationBuilder.validateTextMapping(mappingElement);
+        } else if (mappingType.equalsIgnoreCase(EventPublisherConstants.EF_MAP_MAPPING_TYPE)) {
+            MapOutputMapperConfigurationBuilder.validateMapEventMapping(mappingElement);
+        } else if (mappingType.equalsIgnoreCase(EventPublisherConstants.EF_XML_MAPPING_TYPE)) {
+            XMLOutputMapperConfigurationBuilder.validateXMLEventMapping(mappingElement);
+        } else if (mappingType.equalsIgnoreCase(EventPublisherConstants.EF_JSON_MAPPING_TYPE)) {
+            JSONOutputMapperConfigurationBuilder.validateJsonEventMapping(mappingElement);
+        } else {
+            log.info("No validations available for output mapping type :" + mappingType);
+        }
+    }
 
     private static boolean validateToPropertyConfiguration(OMElement toElement,
                                                            String eventAdapterType)
@@ -189,7 +230,7 @@ public class EventPublisherConfigurationHelper {
     }
 
     public static String getOutputMappingType(OMElement eventPublisherOMElement) {
-        OMElement mappingPropertyOMElement = eventPublisherOMElement.getFirstChildWithName(new QName(EventPublisherConstants.EF_CONF_NS, EventPublisherConstants.EF_ELE_MAPPING_PROPERTY));
+        OMElement mappingPropertyOMElement = eventPublisherOMElement.getFirstChildWithName(new QName(EventPublisherConstants.EF_CONF_NS, EventPublisherConstants.EF_ELEMENT_MAPPING));
         return mappingPropertyOMElement.getAttributeValue(new QName(EventPublisherConstants.EF_ATTR_TYPE));
     }
 

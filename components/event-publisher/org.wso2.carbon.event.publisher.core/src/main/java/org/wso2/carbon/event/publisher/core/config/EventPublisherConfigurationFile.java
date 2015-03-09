@@ -24,10 +24,20 @@ import org.apache.axis2.engine.AxisConfiguration;
  */
 public class EventPublisherConfigurationFile {
 
-    private String fileName;
+    public enum Status {DEPLOYED, WAITING_FOR_DEPENDENCY, WAITING_FOR_STREAM_DEPENDENCY, ERROR}
 
+    private String fileName;
     private String eventPublisherName;
     private String filePath;
+
+    //Deployed, Waiting for Dependency, Error
+    private Status status;
+
+    private String dependency;
+
+    private String deploymentStatusMessage = "";
+
+    private AxisConfiguration axisConfiguration;
 
     public void setFilePath(String filePath) {
         this.filePath = filePath;
@@ -36,19 +46,6 @@ public class EventPublisherConfigurationFile {
     public String getFilePath() {
         return filePath;
     }
-
-    public enum Status {DEPLOYED, WAITING_FOR_DEPENDENCY, WAITING_FOR_STREAM_DEPENDENCY, ERROR}
-
-    //Deployed, Waiting for Dependency, Error
-    private Status status;
-
-    private String dependency;
-
-    //private boolean success;
-
-    private String deploymentStatusMessage = "";
-
-    private AxisConfiguration axisConfiguration;
 
     public Status getStatus() {
         return status;

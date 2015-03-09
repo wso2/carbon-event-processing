@@ -47,12 +47,12 @@
 <%
     }
 
-    EventPublisherConfigurationInfoDto[] eventPublisherDetailsArray = stub.getAllActiveEventPublisherConfiguration();
+    EventPublisherConfigurationInfoDto[] eventPublisherDetailsArray = stub.getAllActiveEventPublisherConfigurations();
     if (eventPublisherDetailsArray != null) {
         totalEventPublishers = eventPublisherDetailsArray.length;
     }
 
-    EventPublisherConfigurationFileDto[] notDeployedEventPublisherConfigurationFiles = stub.getAllInactiveEventPublisherConfiguration();
+    EventPublisherConfigurationFileDto[] notDeployedEventPublisherConfigurationFiles = stub.getAllInactiveEventPublisherConfigurations();
     if (notDeployedEventPublisherConfigurationFiles != null) {
         totalNotDeployedEventPublishers = notDeployedEventPublisherConfigurationFiles.length;
     }
