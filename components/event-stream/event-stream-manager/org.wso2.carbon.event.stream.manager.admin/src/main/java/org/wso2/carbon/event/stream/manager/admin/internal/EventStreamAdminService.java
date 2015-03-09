@@ -407,7 +407,6 @@ public class EventStreamAdminService extends AbstractAdmin {
 
     public EventStreamDefinitionDto convertStringToEventStreamDefinitionDto(String streamStringDefinition) throws AxisFault {
         StreamDefinition streamDefinition = null;
-        System.out.println("CONVERTING TO DTO");
         try {
             streamDefinition = EventDefinitionConverterUtils.convertFromJson(streamStringDefinition);
         } catch (MalformedStreamDefinitionException e) {
