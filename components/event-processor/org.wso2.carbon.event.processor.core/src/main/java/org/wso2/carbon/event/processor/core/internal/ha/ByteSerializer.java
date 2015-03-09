@@ -18,17 +18,11 @@
 package org.wso2.carbon.event.processor.core.internal.ha;
 
 import org.apache.log4j.Logger;
-import org.wso2.siddhi.core.persistence.InMemoryPersistenceStore;
-
 import java.io.*;
 
-//import sun.misc.BASE64Decoder;
-//import sun.misc.BASE64Encoder;
 
 public class ByteSerializer {
-    private static final Logger log = Logger.getLogger(InMemoryPersistenceStore.class);
-//    static private BASE64Encoder encode = new BASE64Encoder();
-//    static private BASE64Decoder decode = new BASE64Decoder();
+    private static final Logger log = Logger.getLogger(ByteSerializer.class);
 
     static public byte[] OToB(Object obj) {
         long start = System.currentTimeMillis();
@@ -39,7 +33,6 @@ public class ByteSerializer {
                 ObjectOutputStream oos = new ObjectOutputStream(baos);
                 oos.writeObject(obj);
                 out = baos.toByteArray();
-//                out = encode.encode(baos.toByteArray());
             } catch (IOException e) {
                 e.printStackTrace();
                 return null;
@@ -57,8 +50,6 @@ public class ByteSerializer {
         Object out = null;
         if (bytes != null) {
             try {
-
-//                ByteArrayInputStream bios = new ByteArrayInputStream(decode.decodeBuffer(str));
                 ByteArrayInputStream bios = new ByteArrayInputStream(bytes);
                 ObjectInputStream ois = new ObjectInputStream(bios);
                 out = ois.readObject();

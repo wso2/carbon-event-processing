@@ -21,6 +21,7 @@ package org.wso2.carbon.event.simulator.admin.internal.ds;
 import org.osgi.service.component.ComponentContext;
 import org.wso2.carbon.event.simulator.admin.internal.util.EventSimulatorAdminvalueHolder;
 import org.wso2.carbon.event.simulator.core.EventSimulator;
+import org.wso2.carbon.ndatasource.core.DataSourceService;
 
 /**
  * This class is used to get the Event Simulator service.
@@ -29,6 +30,8 @@ import org.wso2.carbon.event.simulator.core.EventSimulator;
  * @scr.reference name="eventSimulatorService.component"
  * interface="org.wso2.carbon.event.simulator.core.EventSimulator" cardinality="1..1"
  * policy="dynamic" bind="setEventSimulatorService" unbind="unsetEventSimulatorService"
+ * @scr.reference name="org.wso2.carbon.ndatasource" interface="org.wso2.carbon.ndatasource.core.DataSourceService"
+ * cardinality="1..1" policy="dynamic" bind="setDataSourceService" unbind="unsetDataSourceService"
  */
 
 public class EventSimulatorAdminDS {
@@ -44,5 +47,14 @@ public class EventSimulatorAdminDS {
 
     protected void unsetEventSimulatorService(EventSimulator eventSimulatorService) {
 
+    }
+
+
+    protected void setDataSourceService(DataSourceService dataSourceService) {
+        EventSimulatorAdminvalueHolder.setDataSourceService(dataSourceService);
+    }
+
+    protected void unsetDataSourceService(DataSourceService dataSourceService) {
+        EventSimulatorAdminvalueHolder.setDataSourceService(null);
     }
 }

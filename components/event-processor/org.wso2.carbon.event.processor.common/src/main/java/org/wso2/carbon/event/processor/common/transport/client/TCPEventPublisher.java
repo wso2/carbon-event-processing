@@ -84,8 +84,8 @@ public class TCPEventPublisher {
     }
 
     public void addStreamDefinition(StreamDefinition streamDefinition) {
-        streamRuntimeInfoMap.put(streamDefinition.getStreamId(), EventServerUtils.createStreamRuntimeInfo(streamDefinition));
-        log.info("Stream definition added for stream: " + streamDefinition.getStreamId());
+        streamRuntimeInfoMap.put(streamDefinition.getId(), EventServerUtils.createStreamRuntimeInfo(streamDefinition));
+        log.info("Stream definition added for stream: " + streamDefinition.getId());
     }
 
     /**
@@ -200,7 +200,6 @@ public class TCPEventPublisher {
     /**
      * Gracefully shutdown the TCPEventPublisher.
      * When this method is used already consumer threads of distruptor will try to publishToDisruptor the queued messages in the RingBuffer.
-     * @param flushOutputStream
      */
     public void shutdown() {
         try {

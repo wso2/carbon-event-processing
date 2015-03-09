@@ -1,5 +1,5 @@
 /*
-*  Copyright (c) 2005-2014, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
+*  Copyright (c) 2014-2015, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
 *
 *  WSO2 Inc. licenses this file to you under the Apache License,
 *  Version 2.0 (the "License"); you may not use this file except
@@ -21,6 +21,7 @@ package org.wso2.carbon.event.output.adaptor.rdbms.internal.ds;
 import org.wso2.carbon.ndatasource.core.DataSourceService;
 
 public class EventAdaptorValueHolder {
+
     private static DataSourceService dataSourceService;
 
     public static void setDataSourceService(DataSourceService dataSourceService) {
@@ -30,6 +31,5 @@ public class EventAdaptorValueHolder {
     public static DataSourceService getDataSourceService() {
         return dataSourceService;
     }
-
 
 }

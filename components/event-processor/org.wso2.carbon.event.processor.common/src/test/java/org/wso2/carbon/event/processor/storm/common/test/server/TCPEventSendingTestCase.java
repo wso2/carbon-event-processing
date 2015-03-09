@@ -53,7 +53,7 @@ public class TCPEventSendingTestCase {
     @Test
     public void testEventSendingToServer() {
 
-        StreamDefinition streamDefinition = new StreamDefinition().name("TestStream")
+        StreamDefinition streamDefinition = new StreamDefinition().id("TestStream")
                 .attribute("att1", Attribute.Type.INT)
                 .attribute("att2", Attribute.Type.FLOAT)
                 .attribute("att3", Attribute.Type.STRING)
@@ -78,7 +78,7 @@ public class TCPEventSendingTestCase {
     @Test
     public void testHighLoadEventSendingToServer() {
 
-        StreamDefinition streamDefinition = new StreamDefinition().name("analyticsStats")
+        StreamDefinition streamDefinition = new StreamDefinition().id("analyticsStats")
                 .attribute("meta_ipAdd", Attribute.Type.STRING)
                 .attribute("meta_index", Attribute.Type.LONG)
                 .attribute("meta_timestamp", Attribute.Type.LONG)
@@ -140,7 +140,7 @@ public class TCPEventSendingTestCase {
                 log.info("Starting event client to send events to localhost:7612");
 
                 for (int i = 0; i < eventsToSend; i++) {
-                    TCPEventPublisher.sendEvent(streamDefinition.getStreamId(), dataProvider.getEvent(),true);
+                    TCPEventPublisher.sendEvent(streamDefinition.getId(), dataProvider.getEvent(),true);
                 }
             } catch (IOException e) {
                 e.printStackTrace();

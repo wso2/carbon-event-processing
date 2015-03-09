@@ -119,7 +119,7 @@ public class EventStreamConfigurationHelper {
                             eventStreamConfig.setEditable(true);
                             eventStreamConfig.setStreamDefinition(streamDefinition);
                             eventStreamConfig.setFileName(streamDefinition.getName()+"_"+streamDefinition.getVersion()+".json");
-                            eventStreamService.addEventStreamDefinition(eventStreamConfig,MultitenantConstants.SUPER_TENANT_ID);
+                            eventStreamService.addEventStreamConfig(eventStreamConfig, MultitenantConstants.SUPER_TENANT_ID);
                         }
                     }
                 }

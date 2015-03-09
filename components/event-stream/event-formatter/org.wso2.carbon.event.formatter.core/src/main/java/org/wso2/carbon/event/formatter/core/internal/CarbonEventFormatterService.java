@@ -271,12 +271,12 @@ public class CarbonEventFormatterService
         List<String> streamList = new ArrayList<String>();
         int tenantId = PrivilegedCarbonContext.getThreadLocalCarbonContext().getTenantId();
         EventStreamService eventStreamService = EventFormatterServiceValueHolder.getEventStreamService();
-        Collection<EventStreamConfig> eventStreamDefinitionList;
+        Collection<StreamDefinition> eventStreamDefinitionList;
         try {
             eventStreamDefinitionList = eventStreamService.getAllStreamDefinitions(tenantId);
             if (eventStreamDefinitionList != null) {
-                for (EventStreamConfig eventStreamConfig : eventStreamDefinitionList) {
-                    streamList.add(eventStreamConfig.getStreamDefinition().getStreamId());
+                for (StreamDefinition streamDefinition : eventStreamDefinitionList) {
+                    streamList.add(streamDefinition.getStreamId());
                 }
             }
 
@@ -293,7 +293,7 @@ public class CarbonEventFormatterService
         int tenantId = PrivilegedCarbonContext.getThreadLocalCarbonContext().getTenantId();
         EventStreamService eventStreamService = EventFormatterServiceValueHolder.getEventStreamService();
         try {
-            return eventStreamService.getStreamDefinition(streamNameWithVersion, tenantId).getStreamDefinition();
+            return eventStreamService.getStreamDefinition(streamNameWithVersion, tenantId);
         } catch (EventStreamConfigurationException e) {
             throw new EventFormatterConfigurationException("Error while getting stream definition from store : " + e.getMessage(), e);
         }

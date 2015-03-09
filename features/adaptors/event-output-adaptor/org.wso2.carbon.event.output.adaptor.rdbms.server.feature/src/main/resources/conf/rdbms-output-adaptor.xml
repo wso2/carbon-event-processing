@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
- ~ Copyright (c) 2005-2014, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
+ ~ Copyright (c) 2014-2015, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
  ~
  ~ WSO2 Inc. licenses this file to you under the Apache License,
  ~ Version 2.0 (the "License"); you may not use this file except
@@ -37,49 +37,54 @@
 -->
 
 <adaptorConfiguration>
-<mappings>
-    <mapping>
-        <elements>
-            <element key="string">VARCHAR(255)</element>
-            <element key="double">DOUBLE</element>
-            <element key="integer">INT</element>
-            <element key="long">BIGINT</element>
-            <element key="float">FLOAT</element>
-            <element key="boolean">BOOL</element>
-            <element key="createTable">CREATE TABLE $TABLE_NAME ($COLUMN_TYPES)</element>
-            <element key="insertDataToTable">INSERT INTO $TABLE_NAME ($COLUMNS) VALUES ($VALUES)</element>
-            <element key="isTableExist">SELECT * FROM $TABLE_NAME WHERE limit 1</element>
-            <element key="updateTableRow">UPDATE $TABLE_NAME SET $COLUMN_VALUES WHERE $CONDITION</element>
-            <element key="comma">,</element>
-            <element key="questionMark">?</element>
-            <element key="equal">=</element>
-            <element key="and">AND</element>
-        </elements>
-    </mapping>
-    <mapping db='mysql'>
-        <elements>
+    <mappings>
+        <mapping>
+            <elements>
+                <element key="string">VARCHAR(255)</element>
+                <element key="double">DOUBLE</element>
+                <element key="integer">INT</element>
+                <element key="long">BIGINT</element>
+                <element key="float">FLOAT</element>
+                <element key="boolean">BOOL</element>
+                <element key="createTable">CREATE TABLE $TABLE_NAME ($COLUMN_TYPES)</element>
+                <element key="insertDataToTable">INSERT INTO $TABLE_NAME ($COLUMNS) VALUES ($VALUES)</element>
+                <element key="isTableExist">SELECT * FROM $TABLE_NAME limit 1</element>
+                <element key="updateTableRow">UPDATE $TABLE_NAME SET $COLUMN_VALUES WHERE $CONDITION</element>
+                <element key="comma">,</element>
+                <element key="questionMark">?</element>
+                <element key="equal">=</element>
+                <element key="and">AND</element>
+                <element key="selectAllColumnsDataTypeInTable">SELECT COLUMN_NAME, DATA_TYPE FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = '$TABLE_NAME'</element>
+                <element key="selectFromTable">SELECT $COLUMNS FROM $TABLE_NAME</element>
+            </elements>
+        </mapping>
+        <mapping db='mysql'>
+            <elements>
 
-        </elements>
-    </mapping>
-    <mapping db='oracle'>
-        <elements>
-            <element key="string">varchar2(255)</element>
-            <element key="long">CLOB</element>
-            <element key="double">BINARY_DOUBLE</element>
-            <element key="isTableExist">SELECT * FROM $TABLE_NAME WHERE ROWNUM = 1</element>
-        </elements>
-    </mapping>
-    <mapping db='mssql'>
-        <elements>
-            <element key="string">varchar2(255)</element>
-            <element key="isTableExist">SELECT TOP 1 * FROM $TABLE_NAME</element>
-        </elements>
-    </mapping>
-    <mapping db='h2'>
-        <elements>
-            <element key="integer">varchar2(255)</element>
-            <element key="long">REAL</element>
-        </elements>
-    </mapping>
-</mappings>
+            </elements>
+        </mapping>
+        <mapping db='oracle'>
+            <elements>
+                <element key="string">varchar2(255)</element>
+                <element key="long">CLOB</element>
+                <element key="double">BINARY_DOUBLE</element>
+                <element key="isTableExist">SELECT * FROM $TABLE_NAME WHERE ROWNUM = 1</element>
+                <element key="selectAllColumnsDataTypeInTable">SELECT COLUMN_NAME, DATA_TYPE FROM USER_TAB_COLS WHERE TABLE_NAME = '$TABLE_NAME'</element>
+            </elements>
+        </mapping>
+        <mapping db='mssql'>
+            <elements>
+                <element key="string">varchar2(255)</element>
+                <element key="isTableExist">SELECT TOP 1 * FROM $TABLE_NAME</element>
+                <element key="selectAllColumnsDataTypeInTable">SELECT COLUMN_NAME, DATA_TYPE FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = '$TABLE_NAME'</element>
+            </elements>
+        </mapping>
+        <mapping db='h2'>
+            <elements>
+                <element key="integer">varchar2(255)</element>
+                <element key="long">REAL</element>
+                <element key="selectAllColumnsDataTypeInTable">SHOW COLUMNS FROM $TABLE_NAME</element>
+            </elements>
+        </mapping>
+    </mappings>
 </adaptorConfiguration>

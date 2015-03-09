@@ -51,7 +51,7 @@ public class TCPEventServer {
     }
 
     public void subscribe(StreamDefinition streamDefinition) {
-        String streamId = streamDefinition.getStreamId();
+        String streamId = streamDefinition.getId();
         this.streamRuntimeInfoMap.put(streamId, EventServerUtils.createStreamRuntimeInfo(streamDefinition));
     }
 

@@ -38,21 +38,26 @@ public interface EventStreamService {
      * @param streamId
      * @return
      */
-    public EventStreamConfig getStreamDefinition(String streamId, int tenantId)
+    public StreamDefinition getStreamDefinition(String streamId, int tenantId)
             throws EventStreamConfigurationException;
+
+    public EventStreamConfig getEventStreamConfig(String streamId, int tenantId);
 
     /**
      * @return
      * @throws EventStreamConfigurationException
      */
-    public Collection<EventStreamConfig> getAllStreamDefinitions(int tenantId)
+    public Collection<StreamDefinition> getAllStreamDefinitions(int tenantId)
             throws EventStreamConfigurationException;
 
+
+    public Collection<EventStreamConfig> getAllEventStreamConfigs(int tenantId)
+            throws EventStreamConfigurationException;
     /**
      * @param streamDefinition
      * @throws EventStreamConfigurationException
      */
-    public void addEventStreamDefinition(EventStreamConfig streamDefinition, int tenantId) throws
+    public void addEventStreamDefinition(StreamDefinition streamDefinition, int tenantId) throws
             EventStreamConfigurationException;
 
     /**

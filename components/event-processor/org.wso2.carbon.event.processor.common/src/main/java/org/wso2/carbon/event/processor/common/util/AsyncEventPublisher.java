@@ -101,7 +101,6 @@ public class AsyncEventPublisher implements EventHandler<AsynchronousEventBuffer
      */
     @Override
     public void onEvent(AsynchronousEventBuffer.DataHolder dataHolder, long sequence, boolean endOfBatch){
-        // TODO : make wait time configurable
         while (tcpEventPublisher == null){
             log.info(logPrefix + "Can't send event.TCP event publisher not initialized. Waiting " + stormDeploymentConfig.getTransportReconnectInterval() + "s");
             try {
@@ -235,7 +234,7 @@ public class AsyncEventPublisher implements EventHandler<AsynchronousEventBuffer
 
                     for (StreamDefinition siddhiStreamDefinition : streams){
                         tcpEventPublisher.addStreamDefinition(siddhiStreamDefinition);
-                        streamsIDs.append(siddhiStreamDefinition.getStreamId() + ",");
+                        streamsIDs.append(siddhiStreamDefinition.getId() + ",");
                     }
 
                     log.info(logPrefix + "Connected to " + destinationTypeString + " at " + endpointHostPort + " for the Stream(s) " + streamsIDs.toString());

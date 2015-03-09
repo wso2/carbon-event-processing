@@ -1,5 +1,5 @@
 /*
-*  Copyright (c) 2005-2014, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
+*  Copyright (c) 2014-2015, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
 *
 *  WSO2 Inc. licenses this file to you under the Apache License,
 *  Version 2.0 (the "License"); you may not use this file except
@@ -22,23 +22,20 @@ package org.wso2.carbon.event.output.adaptor.rdbms.internal.util;
  */
 public class DecayTimer {
 
-    private final long waitTimeSequenceSeconds[] = new long[]{0, 0, 1, 5, 15, 30, 60, 300, 900, 1800, 3600};
+    private final long waitTimeSequenceSeconds[] = new long[] { 0, 0, 1, 5, 15, 30, 60, 300, 900, 1800, 3600 };
     private int position = 0;
-
 
     public void reset() {
         position = 0;
     }
 
-    public void incrementPosition(){
-
-        if (position != (waitTimeSequenceSeconds.length-1)) {
+    public void incrementPosition() {
+        if (position != (waitTimeSequenceSeconds.length - 1)) {
             position++;
         }
     }
 
     public long returnTimeToWait() {
-
         return waitTimeSequenceSeconds[position] * 1000; //milliseconds
     }
 

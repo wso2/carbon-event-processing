@@ -21,7 +21,6 @@ import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.deployment.AbstractDeployer;
 import org.apache.axis2.deployment.DeploymentException;
 import org.apache.axis2.deployment.repository.util.DeploymentFileData;
-import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.wso2.carbon.context.PrivilegedCarbonContext;
@@ -118,7 +117,7 @@ public class EventStreamDeployer extends AbstractDeployer implements EventProces
         eventStreamConfig.setStreamDefinition(streamDefinition);
         eventStreamConfig.setEditable(isEditable);
         eventStreamConfig.setFileName(eventStreamFile.getName());
-        carbonEventStreamService.addEventStreamDefinition(eventStreamConfig, tenantId);
+        carbonEventStreamService.addEventStreamConfig(eventStreamConfig, tenantId);
 
         log.info("Stream definition is deployed successfully  : " + streamDefinition.getStreamId());
 

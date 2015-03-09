@@ -57,11 +57,12 @@ public class SiddhiStormOutputEventListener implements StreamCallback {
     private ExecutorService executorService = Executors.newSingleThreadExecutor();
     private int heartBeatInterval;
 
-    public SiddhiStormOutputEventListener(ExecutionPlanConfiguration executionPlanConfiguration, int tenantId, StormDeploymentConfig stormDeploymentConfig, int heartBeatInterval) {
+    public SiddhiStormOutputEventListener(ExecutionPlanConfiguration executionPlanConfiguration, int tenantId,
+                                          StormDeploymentConfig stormDeploymentConfig) {
         this.executionPlanConfiguration = executionPlanConfiguration;
         this.tenantId = tenantId;
         this.stormDeploymentConfig = stormDeploymentConfig;
-        this.heartBeatInterval = heartBeatInterval;
+        this.heartBeatInterval = stormDeploymentConfig.getHeartbeatInterval();
         init();
     }
 
@@ -82,8 +83,8 @@ public class SiddhiStormOutputEventListener implements StreamCallback {
 
 
     public void registerOutputStreamListener(StreamDefinition siddhiStreamDefinition, SiddhiOutputStreamListener outputStreamListener) {
-        log.info(logPrefix + "Registering output stream listener for Siddhi stream : " + siddhiStreamDefinition.getStreamId());
-        streamNameToOutputStreamListenerMap.put(siddhiStreamDefinition.getStreamId(), outputStreamListener);
+        log.info(logPrefix + "Registering output stream listener for Siddhi stream : " + siddhiStreamDefinition.getId());
+        streamNameToOutputStreamListenerMap.put(siddhiStreamDefinition.getId(), outputStreamListener);
         tcpEventServer.subscribe(siddhiStreamDefinition);
     }
 

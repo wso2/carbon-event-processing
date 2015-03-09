@@ -1,5 +1,5 @@
 /*
-*  Copyright (c) 2005-2014, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
+*  Copyright (c) 2014-2015, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
 *
 *  WSO2 Inc. licenses this file to you under the Apache License,
 *  Version 2.0 (the "License"); you may not use this file except
@@ -25,18 +25,17 @@ import java.util.List;
 /**
  * Contains List of mapping objects
  */
-@XmlRootElement(name="adaptorConfiguration")
+@XmlRootElement(name = "adaptorConfiguration")
 public class Mappings {
 
     private List<Mapping> mapping;
-
 
     public List<Mapping> getMapping() {
         return mapping;
     }
 
-    @XmlElementWrapper(name="mappings")
-    @XmlElement(name="mapping")
+    @XmlElementWrapper(name = "mappings")
+    @XmlElement(name = "mapping")
     public void setMapping(List<Mapping> mapping) {
         this.mapping = mapping;
     }

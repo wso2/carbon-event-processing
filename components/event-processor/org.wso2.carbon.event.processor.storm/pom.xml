@@ -22,7 +22,7 @@
     <parent>
         <groupId>org.wso2.carbon.event-processing</groupId>
         <artifactId>event-processor</artifactId>
-        <version>2.0.2-SNAPSHOT</version>
+        <version>2.0.4-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
@@ -38,11 +38,11 @@
         </dependency>
         <dependency>
             <groupId>org.wso2.siddhi</groupId>
-            <artifactId>siddhi-api</artifactId>
+            <artifactId>siddhi-query-api</artifactId>
         </dependency>
         <dependency>
             <groupId>org.wso2.siddhi</groupId>
-            <artifactId>siddhi-query</artifactId>
+            <artifactId>siddhi-query-compiler</artifactId>
         </dependency>
         <dependency>
             <groupId>org.wso2.carbon.event-processing</groupId>
@@ -68,9 +68,12 @@
                     <instructions>
                         <Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
                         <Bundle-Name>${project.artifactId}</Bundle-Name>
-                        <Export-Package>*</Export-Package>
+                        <Export-Package>
+                            !org.slf4j.*,
+                            * ; -split-package:=merge-first
+                        </Export-Package>
                         <Embed-Dependency>
-                            siddhi-core|siddhi-api|siddhi-query|org.wso2.carbon.event.processor.common|libthrift|disruptor;scope=compile|runtime;inline=true
+                            siddhi-core|siddhi-query-api|siddhi-query-compiler|org.wso2.carbon.event.processor.common|libthrift|disruptor;scope=compile|runtime;inline=true
                         </Embed-Dependency>
                         <Embed-Transitive>true</Embed-Transitive>
                         <DynamicImport-Package>*</DynamicImport-Package>

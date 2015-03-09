@@ -72,6 +72,7 @@ public class CSVFileDeployer extends AbstractDeployer {
         CarbonEventSimulator eventSimulator = EventSimulatorValueHolder.getEventSimulator();
         CSVFileInfo csvFileInfo = new CSVFileInfo();
 
+
         csvFileInfo.setFileName(csvFile.getName());
         csvFileInfo.setFilePath(csvFile.getAbsolutePath());
 

@@ -25,9 +25,9 @@ public class EventServerUtils {
 
 
     public static StreamRuntimeInfo createStreamRuntimeInfo(StreamDefinition streamDefinition) {
-        StreamRuntimeInfo streamRuntimeInfo = new StreamRuntimeInfo(streamDefinition.getStreamId());
+        StreamRuntimeInfo streamRuntimeInfo = new StreamRuntimeInfo(streamDefinition.getId());
 
-        streamRuntimeInfo.setStreamIdSize((byte) streamDefinition.getStreamId().length());
+        streamRuntimeInfo.setStreamIdSize((byte) streamDefinition.getId().length());
 
         int messageSize = 0;
         int stringAttributes = 0;

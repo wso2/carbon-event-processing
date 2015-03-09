@@ -38,6 +38,7 @@ import org.wso2.carbon.ndatasource.core.DataSourceService;
 import org.wso2.carbon.user.core.UserRealm;
 import org.wso2.carbon.utils.CarbonUtils;
 import org.wso2.carbon.utils.ConfigurationContextService;
+import org.wso2.siddhi.core.SiddhiManager;
 
 import java.io.File;
 
@@ -91,6 +92,8 @@ public class EventProcessorServiceDS {
             context.getBundleContext().registerService(EventProcessorService.class.getName(), carbonEventProcessorService, null);
             EventProcessorValueHolder.getEventStreamService().registerEventStreamListener(new EventStreamListenerImpl());
 
+            SiddhiManager siddhiManager = new SiddhiManager();
+            EventProcessorValueHolder.registerSiddhiManager(siddhiManager);
             if (log.isDebugEnabled()) {
                 log.debug("Successfully deployed EventProcessorService");
             }
