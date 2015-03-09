@@ -17,6 +17,7 @@ package org.wso2.carbon.event.output.adapter.core.internal;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.log4j.Logger;
+import org.wso2.carbon.context.CarbonContext;
 import org.wso2.carbon.event.output.adapter.core.*;
 import org.wso2.carbon.event.output.adapter.core.exception.OutputEventAdapterException;
 import org.wso2.carbon.event.output.adapter.core.exception.OutputEventAdapterRuntimeException;
@@ -100,7 +101,7 @@ public class CarbonOutputEventAdapterService implements OutputEventAdapterServic
         Map<String, String> globalProperties = OutputEventAdapterServiceValueHolder.getGlobalAdapterConfigs().
                 getAdapterConfig(outputEventAdapterConfiguration.getType()).getGlobalPropertiesAsMap();
         eventAdapters.put(outputEventAdapterConfiguration.getName(), new OutputAdapterRuntime(adapterFactory.
-                createEventAdapter(outputEventAdapterConfiguration, globalProperties), outputEventAdapterConfiguration.getName()));
+                createEventAdapter(outputEventAdapterConfiguration, globalProperties,tenantId), outputEventAdapterConfiguration.getName()));
     }
 
     /**
@@ -148,7 +149,7 @@ public class CarbonOutputEventAdapterService implements OutputEventAdapterServic
             }
             Map<String, String> globalProperties = OutputEventAdapterServiceValueHolder.getGlobalAdapterConfigs().
                     getAdapterConfig(outputEventAdapterConfiguration.getType()).getGlobalPropertiesAsMap();
-            outputEventAdapter = outputEventAdapterFactory.createEventAdapter(outputEventAdapterConfiguration, globalProperties);
+            outputEventAdapter = outputEventAdapterFactory.createEventAdapter(outputEventAdapterConfiguration, globalProperties, CarbonContext.getThreadLocalCarbonContext().getTenantId());
             outputEventAdapter.init();
             outputEventAdapter.testConnect();
             outputEventAdapter.disconnect();
