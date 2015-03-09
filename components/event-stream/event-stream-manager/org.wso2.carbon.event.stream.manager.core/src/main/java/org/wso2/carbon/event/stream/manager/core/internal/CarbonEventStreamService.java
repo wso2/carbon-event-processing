@@ -187,7 +187,7 @@ public class CarbonEventStreamService implements EventStreamService {
 
     private void removeStreamDefinitionFromFileSystem(String filePath) {
         File file = new File(filePath);
-        if(file.exists() && file.delete()) {
+        if(!(file.exists() && file.delete())) {
             throw new RuntimeException("File deleting failed " + filePath);
         }
     }
