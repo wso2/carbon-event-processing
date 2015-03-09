@@ -147,8 +147,8 @@ public class CarbonEventStreamService implements EventStreamService {
                 .getAbsolutePath() + File.separator + "eventstreams";
         File directory = new File(directoryPath);
         if (!directory.exists()) {
-            if (directory.mkdir()) {
-                throw new EventStreamConfigurationException("Cannot create directory to add tenant specific Event Formatter : " + streamDefinition.getStreamId());
+            if (!directory.mkdir()) {
+                throw new EventStreamConfigurationException("Cannot create directory to add tenant specific Event Stream : " + streamDefinition.getStreamId());
             }
         }
         String filePath =  directoryPath + File.separator +
