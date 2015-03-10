@@ -20,7 +20,7 @@ import org.wso2.carbon.databridge.commons.AttributeType;
 import org.wso2.carbon.event.receiver.core.config.EventReceiverConstants;
 import org.wso2.carbon.event.receiver.core.config.InputMapping;
 import org.wso2.carbon.event.receiver.core.config.InputMappingAttribute;
-import org.wso2.carbon.event.receiver.core.config.WSO2EventInputMapping;
+import org.wso2.carbon.event.receiver.core.config.mapping.WSO2EventInputMapping;
 import org.wso2.carbon.event.receiver.core.exception.EventReceiverConfigurationException;
 import org.wso2.carbon.event.receiver.core.internal.util.EventReceiverConfigurationBuilder;
 import org.wso2.carbon.event.receiver.core.internal.util.EventReceiverUtil;

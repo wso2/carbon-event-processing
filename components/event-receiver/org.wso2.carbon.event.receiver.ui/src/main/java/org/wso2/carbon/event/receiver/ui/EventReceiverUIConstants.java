@@ -16,6 +16,8 @@ package org.wso2.carbon.event.receiver.ui;
 
 public final class EventReceiverUIConstants {
 
+    public static final String STREAM_VERSION_DELIMITER = ":";
+
     private EventReceiverUIConstants() {
     }
 

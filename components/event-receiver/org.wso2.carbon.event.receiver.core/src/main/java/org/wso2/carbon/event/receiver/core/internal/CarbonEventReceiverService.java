@@ -300,7 +300,7 @@ public class CarbonEventReceiverService implements EventReceiverService {
         tenantSpecificEventReceiverConfigurationFileMap.put(tenantId, eventReceiverConfigurationFiles);
     }
 
-    public void addEventReceiverConfiguration(EventReceiverConfiguration eventReceiverConfiguration)
+    public void addEventReceiverConfiguration(EventReceiverConfiguration eventReceiverConfiguration, AxisConfiguration axisConfiguration)
             throws EventReceiverConfigurationException {
 
         int tenantId = PrivilegedCarbonContext.getThreadLocalCarbonContext().getTenantId();
@@ -327,7 +327,7 @@ public class CarbonEventReceiverService implements EventReceiverService {
         }
 
         // End; Checking preconditions to add the event receiver
-        EventReceiver eventReceiver = new EventReceiver(eventReceiverConfiguration, exportedStreamDefinition);
+        EventReceiver eventReceiver = new EventReceiver(eventReceiverConfiguration, exportedStreamDefinition, axisConfiguration);
         try {
             EventReceiverServiceValueHolder.getEventStreamService().subscribe(eventReceiver, tenantId);
         } catch (EventStreamConfigurationException e) {
@@ -501,7 +501,7 @@ public class CarbonEventReceiverService implements EventReceiverService {
         }
         return false;
     }
-    
+
     //Private Methods are below
 
     private void editTracingStatistics(

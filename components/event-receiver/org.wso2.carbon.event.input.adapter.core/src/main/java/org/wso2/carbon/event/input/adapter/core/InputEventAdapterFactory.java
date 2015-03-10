@@ -14,6 +14,8 @@
  */
 package org.wso2.carbon.event.input.adapter.core;
 
+import org.apache.axis2.engine.AxisConfiguration;
+
 import java.util.List;
 import java.util.Map;
 
@@ -27,7 +29,7 @@ public abstract class InputEventAdapterFactory {
 
     public abstract List<Property> getPropertyList();
 
-    public abstract InputEventAdapter createEventAdapter(InputEventAdapterConfiguration eventAdapterConfiguration, Map<String, String> globalProperties);
+    public abstract InputEventAdapter createEventAdapter(InputEventAdapterConfiguration eventAdapterConfiguration, Map<String, String> globalProperties, int tenantId, AxisConfiguration axisConfiguration);
 
     public InputEventAdapterSchema getInputEventAdapterSchema() {
         if (inputEventAdapterSchema == null) {
