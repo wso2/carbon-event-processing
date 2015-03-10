@@ -23,7 +23,6 @@ import org.osgi.service.component.ComponentContext;
 import org.wso2.carbon.event.output.adapter.core.OutputEventAdapterFactory;
 import org.wso2.carbon.event.output.adapter.http.HTTPEventAdapterFactory;
 
-
 /**
  * @scr.component component.name="output.Http.AdapterService.component" immediate="true"
  */

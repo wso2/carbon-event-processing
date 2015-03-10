@@ -61,7 +61,7 @@ public class HTTPEventAdapterConstants {
 
     public static final String ADAPTER_EXECUTOR_JOB_QUEUE_SIZE_NAME = "jobQueueSize";
 
-    public static final String HEADER_SEPARATOR =  ",";
+    public static final String HEADER_SEPARATOR = ",";
 
-    public static final String ENTRY_SEPARATOR =  ":";
+    public static final String ENTRY_SEPARATOR = ":";
 }
