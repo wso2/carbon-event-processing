@@ -16,7 +16,6 @@ package org.wso2.carbon.event.publisher.core.internal;
 
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.util.AXIOMUtil;
-import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.wso2.carbon.context.PrivilegedCarbonContext;
@@ -61,18 +60,17 @@ public class CarbonEventPublisherService implements EventPublisherService {
 
     @Override
     public void deployEventPublisherConfiguration(
-            EventPublisherConfiguration eventPublisherConfiguration,
-            AxisConfiguration axisConfiguration) throws EventPublisherConfigurationException {
+            EventPublisherConfiguration eventPublisherConfiguration) throws EventPublisherConfigurationException {
 
         String eventPublisherName = eventPublisherConfiguration.getEventPublisherName();
 
         OMElement omElement = EventPublisherConfigurationBuilder.eventPublisherConfigurationToOM(eventPublisherConfiguration);
         EventPublisherConfigurationHelper.validateEventPublisherConfiguration(omElement);
         if (EventPublisherConfigurationHelper.getOutputMappingType(omElement) != null) {
-            String repoPath = axisConfiguration.getRepository().getPath();
+            String repoPath = EventPublisherUtil.getAxisConfiguration().getRepository().getPath();
             EventPublisherUtil.generateFilePath(eventPublisherName, repoPath);
-            validateToRemoveInactiveEventPublisherConfiguration(eventPublisherName, axisConfiguration);
-            EventPublisherConfigurationFilesystemInvoker.save(omElement, eventPublisherName + EventPublisherConstants.EF_CONFIG_FILE_EXTENSION_WITH_DOT, axisConfiguration);
+            validateToRemoveInactiveEventPublisherConfiguration(eventPublisherName);
+            EventPublisherConfigurationFilesystemInvoker.save(omElement, eventPublisherName + EventPublisherConstants.EF_CONFIG_FILE_EXTENSION_WITH_DOT);
         } else {
             throw new EventPublisherConfigurationException("Mapping type of the Event Publisher " + eventPublisherName + " cannot be null");
         }
@@ -81,8 +79,7 @@ public class CarbonEventPublisherService implements EventPublisherService {
 
     @Override
     public void deployEventPublisherConfiguration(
-            String eventPublisherConfigXml,
-            AxisConfiguration axisConfiguration)
+            String eventPublisherConfigXml)
             throws EventPublisherConfigurationException {
         OMElement omElement = null;
         try {
@@ -93,10 +90,10 @@ public class CarbonEventPublisherService implements EventPublisherService {
         EventPublisherConfigurationHelper.validateEventPublisherConfiguration(omElement);
         String eventPublisherName = EventPublisherConfigurationHelper.getEventPublisherName(omElement);
         if (EventPublisherConfigurationHelper.getOutputMappingType(omElement) != null) {
-            String repoPath = axisConfiguration.getRepository().getPath();
+            String repoPath = EventPublisherUtil.getAxisConfiguration().getRepository().getPath();
             EventPublisherUtil.generateFilePath(eventPublisherName, repoPath);
-            validateToRemoveInactiveEventPublisherConfiguration(eventPublisherName, axisConfiguration);
-            EventPublisherConfigurationFilesystemInvoker.save(omElement, eventPublisherName + ".xml", axisConfiguration);
+            validateToRemoveInactiveEventPublisherConfiguration(eventPublisherName);
+            EventPublisherConfigurationFilesystemInvoker.save(omElement, eventPublisherName + ".xml");
         } else {
             throw new EventPublisherConfigurationException("Mapping type of the Event Publisher " + eventPublisherName + " cannot be null");
         }
@@ -104,14 +101,13 @@ public class CarbonEventPublisherService implements EventPublisherService {
     }
 
     @Override
-    public void undeployActiveEventPublisherConfiguration(String eventPublisherName,
-                                                          AxisConfiguration axisConfiguration)
+    public void undeployActiveEventPublisherConfiguration(String eventPublisherName)
             throws EventPublisherConfigurationException {
 
         int tenantId = PrivilegedCarbonContext.getThreadLocalCarbonContext().getTenantId();
         String fileName = getFileName(tenantId, eventPublisherName);
         if (fileName != null) {
-            EventPublisherConfigurationFilesystemInvoker.delete(fileName, axisConfiguration);
+            EventPublisherConfigurationFilesystemInvoker.delete(fileName);
         } else {
             throw new EventPublisherConfigurationException("Couldn't undeploy the Event Publisher configuration : " + eventPublisherName);
         }
@@ -119,45 +115,41 @@ public class CarbonEventPublisherService implements EventPublisherService {
     }
 
     @Override
-    public void undeployInactiveEventPublisherConfiguration(String filename,
-                                                            AxisConfiguration axisConfiguration)
+    public void undeployInactiveEventPublisherConfiguration(String filename)
             throws EventPublisherConfigurationException {
 
-        EventPublisherConfigurationFilesystemInvoker.delete(filename, axisConfiguration);
+        EventPublisherConfigurationFilesystemInvoker.delete(filename);
     }
 
     @Override
     public void editInactiveEventPublisherConfiguration(
             String eventPublisherConfiguration,
-            String filename,
-            AxisConfiguration axisConfiguration)
+            String filename)
             throws EventPublisherConfigurationException {
 
-        editEventPublisherConfiguration(filename, axisConfiguration, eventPublisherConfiguration, null);
+        editEventPublisherConfiguration(filename, eventPublisherConfiguration, null);
     }
 
     @Override
     public void editActiveEventPublisherConfiguration(String eventPublisherConfiguration,
-                                                      String eventPublisherName,
-                                                      AxisConfiguration axisConfiguration)
+                                                      String eventPublisherName)
             throws EventPublisherConfigurationException {
         int tenantId = PrivilegedCarbonContext.getThreadLocalCarbonContext().getTenantId();
         String fileName = getFileName(tenantId, eventPublisherName);
         if (fileName == null) {
             fileName = eventPublisherName + EventPublisherConstants.EF_CONFIG_FILE_EXTENSION_WITH_DOT;
         }
-        editEventPublisherConfiguration(fileName, axisConfiguration, eventPublisherConfiguration, eventPublisherName);
+        editEventPublisherConfiguration(fileName, eventPublisherConfiguration, eventPublisherName);
 
     }
 
     @Override
     public EventPublisherConfiguration getActiveEventPublisherConfiguration(
-            String eventPublisherName,
-            int tenantId)
+            String eventPublisherName)
             throws EventPublisherConfigurationException {
 
         EventPublisherConfiguration eventPublisherConfiguration = null;
-
+        int tenantId = PrivilegedCarbonContext.getThreadLocalCarbonContext().getTenantId();
         Map<String, EventPublisher> tenantSpecificEventPublisherMap = tenantSpecificEventPublisherConfigurationMap.get(tenantId);
         if (tenantSpecificEventPublisherMap != null && tenantSpecificEventPublisherMap.size() > 0) {
             EventPublisher eventPublisher = tenantSpecificEventPublisherMap.get(eventPublisherName);
@@ -169,7 +161,8 @@ public class CarbonEventPublisherService implements EventPublisherService {
     }
 
     @Override
-    public List<EventPublisherConfiguration> getAllActiveEventPublisherConfigurations(int tenantId) {
+    public List<EventPublisherConfiguration> getAllActiveEventPublisherConfigurations() {
+        int tenantId = PrivilegedCarbonContext.getThreadLocalCarbonContext().getTenantId();
         List<EventPublisherConfiguration> eventPublisherConfigurations = new ArrayList<EventPublisherConfiguration>();
         Map<String, EventPublisher> tenantSpecificEventPublisherMap = this.tenantSpecificEventPublisherConfigurationMap.get(tenantId);
         if (tenantSpecificEventPublisherMap != null) {
@@ -181,7 +174,8 @@ public class CarbonEventPublisherService implements EventPublisherService {
     }
 
     @Override
-    public List<EventPublisherConfiguration> getAllActiveEventPublisherConfigurations(String streamId, int tenantId) {
+    public List<EventPublisherConfiguration> getAllActiveEventPublisherConfigurations(String streamId) {
+        int tenantId = PrivilegedCarbonContext.getThreadLocalCarbonContext().getTenantId();
         List<EventPublisherConfiguration> eventPublisherConfigurations = new ArrayList<EventPublisherConfiguration>();
         if (tenantSpecificEventPublisherConfigurationMap.get(tenantId) != null) {
             for (EventPublisher eventPublisher : tenantSpecificEventPublisherConfigurationMap.get(tenantId).values()) {
@@ -194,8 +188,7 @@ public class CarbonEventPublisherService implements EventPublisherService {
     }
 
     @Override
-    public List<EventPublisherConfigurationFile> getAllInactiveEventPublisherConfigurations(
-            AxisConfiguration axisConfiguration) {
+    public List<EventPublisherConfigurationFile> getAllInactiveEventPublisherConfigurations() {
         List<EventPublisherConfigurationFile> undeployedEventPublisherFileList = new ArrayList<EventPublisherConfigurationFile>();
         int tenantId = PrivilegedCarbonContext.getThreadLocalCarbonContext().getTenantId();
         List<EventPublisherConfigurationFile> eventPublisherConfigurationFiles = tenantSpecificEventPublisherConfigurationFileMap.get(tenantId);
@@ -210,22 +203,20 @@ public class CarbonEventPublisherService implements EventPublisherService {
     }
 
     @Override
-    public String getInactiveEventPublisherConfigurationContent(String filename,
-                                                                AxisConfiguration axisConfiguration)
+    public String getInactiveEventPublisherConfigurationContent(String filename)
             throws EventPublisherConfigurationException {
-        return EventPublisherConfigurationFilesystemInvoker.readEventPublisherConfigurationFile(filename, axisConfiguration);
+        return EventPublisherConfigurationFilesystemInvoker.readEventPublisherConfigurationFile(filename);
     }
 
     @Override
-    public String getActiveEventPublisherConfigurationContent(String eventPublisherName,
-                                                              AxisConfiguration axisConfiguration)
+    public String getActiveEventPublisherConfigurationContent(String eventPublisherName)
             throws EventPublisherConfigurationException {
         int tenantId = PrivilegedCarbonContext.getThreadLocalCarbonContext().getTenantId();
         String fileName = getFileName(tenantId, eventPublisherName);
-        return EventPublisherConfigurationFilesystemInvoker.readEventPublisherConfigurationFile(fileName, axisConfiguration);
+        return EventPublisherConfigurationFilesystemInvoker.readEventPublisherConfigurationFile(fileName);
     }
 
-    public List<String> getAllEventStreams(AxisConfiguration axisConfiguration)
+    public List<String> getAllEventStreams()
             throws EventPublisherConfigurationException {
 
         List<String> streamList = new ArrayList<String>();
@@ -247,8 +238,7 @@ public class CarbonEventPublisherService implements EventPublisherService {
         return streamList;
     }
 
-    public StreamDefinition getStreamDefinition(String streamNameWithVersion,
-                                                AxisConfiguration axisConfiguration)
+    public StreamDefinition getStreamDefinition(String streamNameWithVersion)
             throws EventPublisherConfigurationException {
         int tenantId = PrivilegedCarbonContext.getThreadLocalCarbonContext().getTenantId();
         EventStreamService eventStreamService = EventPublisherServiceValueHolder.getEventStreamService();
@@ -260,7 +250,7 @@ public class CarbonEventPublisherService implements EventPublisherService {
     }
 
     //todo check
-    public String getRegistryResourceContent(String resourcePath, int tenantId)
+    public String getRegistryResourceContent(String resourcePath)
             throws EventPublisherConfigurationException {
         RegistryService registryService = EventPublisherServiceValueHolder.getRegistryService();
 
@@ -297,22 +287,22 @@ public class CarbonEventPublisherService implements EventPublisherService {
     }
 
     @Override
-    public void setStatisticsEnabled(String eventPublisherName, boolean statisticsEnabled, AxisConfiguration axisConfiguration)
+    public void setStatisticsEnabled(String eventPublisherName, boolean statisticsEnabled)
             throws EventPublisherConfigurationException {
 
         int tenantId = PrivilegedCarbonContext.getThreadLocalCarbonContext().getTenantId();
-        EventPublisherConfiguration eventPublisherConfiguration = getActiveEventPublisherConfiguration(eventPublisherName, tenantId);
+        EventPublisherConfiguration eventPublisherConfiguration = getActiveEventPublisherConfiguration(eventPublisherName);
         eventPublisherConfiguration.setStatisticsEnabled(statisticsEnabled);
-        editTracingStatistics(eventPublisherConfiguration, eventPublisherName, tenantId, axisConfiguration);
+        editTracingStatistics(eventPublisherConfiguration, eventPublisherName, tenantId);
     }
 
     @Override
-    public void setTraceEnabled(String eventPublisherName, boolean traceEnabled, AxisConfiguration axisConfiguration)
+    public void setTraceEnabled(String eventPublisherName, boolean traceEnabled)
             throws EventPublisherConfigurationException {
         int tenantId = PrivilegedCarbonContext.getThreadLocalCarbonContext().getTenantId();
-        EventPublisherConfiguration eventPublisherConfiguration = getActiveEventPublisherConfiguration(eventPublisherName, tenantId);
+        EventPublisherConfiguration eventPublisherConfiguration = getActiveEventPublisherConfiguration(eventPublisherName);
         eventPublisherConfiguration.setTraceEnabled(traceEnabled);
-        editTracingStatistics(eventPublisherConfiguration, eventPublisherName, tenantId, axisConfiguration);
+        editTracingStatistics(eventPublisherConfiguration, eventPublisherName, tenantId);
     }
 
     @Override
@@ -390,7 +380,7 @@ public class CarbonEventPublisherService implements EventPublisherService {
         }
     }
 
-    public void activateInactiveEventPublisherConfigurationsForAdapter(String eventAdapterName)
+    public void activateInactiveEventPublisherConfigurationsForAdapter(String eventAdapterType)
             throws EventPublisherConfigurationException {
 
         List<EventPublisherConfigurationFile> fileList = new ArrayList<EventPublisherConfigurationFile>();
@@ -399,7 +389,7 @@ public class CarbonEventPublisherService implements EventPublisherService {
             for (List<EventPublisherConfigurationFile> eventPublisherConfigurationFileList : tenantSpecificEventPublisherConfigurationFileMap.values()) {
                 if (eventPublisherConfigurationFileList != null) {
                     for (EventPublisherConfigurationFile eventPublisherConfigurationFile : eventPublisherConfigurationFileList) {
-                        if ((eventPublisherConfigurationFile.getStatus().equals(EventPublisherConfigurationFile.Status.WAITING_FOR_DEPENDENCY)) && eventPublisherConfigurationFile.getDependency().equalsIgnoreCase(eventAdapterName)) {
+                        if ((eventPublisherConfigurationFile.getStatus().equals(EventPublisherConfigurationFile.Status.WAITING_FOR_DEPENDENCY)) && eventPublisherConfigurationFile.getDependency().equalsIgnoreCase(eventAdapterType)) {
                             fileList.add(eventPublisherConfigurationFile);
                         }
                     }
@@ -408,9 +398,15 @@ public class CarbonEventPublisherService implements EventPublisherService {
         }
         for (EventPublisherConfigurationFile eventPublisherConfigurationFile : fileList) {
             try {
-                EventPublisherConfigurationFilesystemInvoker.reload(eventPublisherConfigurationFile.getFilePath(), eventPublisherConfigurationFile.getAxisConfiguration());
+                PrivilegedCarbonContext.startTenantFlow();
+                PrivilegedCarbonContext carbonContext = PrivilegedCarbonContext.getThreadLocalCarbonContext();
+                carbonContext.setTenantId(eventPublisherConfigurationFile.getTenantId());
+                carbonContext.getTenantDomain(true);
+                EventPublisherConfigurationFilesystemInvoker.reload(eventPublisherConfigurationFile.getFilePath());
             } catch (Exception e) {
                 log.error("Exception occurred while trying to deploy the Event publisher configuration file : " + eventPublisherConfigurationFile.getFileName(), e);
+            } finally {
+                PrivilegedCarbonContext.endTenantFlow();
             }
         }
     }
@@ -434,9 +430,15 @@ public class CarbonEventPublisherService implements EventPublisherService {
         }
         for (EventPublisherConfigurationFile eventPublisherConfigurationFile : fileList) {
             try {
-                EventPublisherConfigurationFilesystemInvoker.reload(eventPublisherConfigurationFile.getFilePath(), eventPublisherConfigurationFile.getAxisConfiguration());
+                PrivilegedCarbonContext.startTenantFlow();
+                PrivilegedCarbonContext carbonContext = PrivilegedCarbonContext.getThreadLocalCarbonContext();
+                carbonContext.setTenantId(eventPublisherConfigurationFile.getTenantId());
+                carbonContext.getTenantDomain(true);
+                EventPublisherConfigurationFilesystemInvoker.reload(eventPublisherConfigurationFile.getFilePath());
             } catch (Exception e) {
                 log.error("Exception occurred while trying to deploy the Event publisher configuration file : " + new File(eventPublisherConfigurationFile.getFileName()).getName(), e);
+            }   finally {
+                PrivilegedCarbonContext.endTenantFlow();
             }
         }
     }
@@ -455,7 +457,7 @@ public class CarbonEventPublisherService implements EventPublisherService {
                             EventPublisherConfigurationFile eventPublisherConfigurationFile = getEventPublisherConfigurationFile(eventPublisher.getEventPublisherConfiguration().getEventPublisherName(), tenantId);
                             if (eventPublisherConfigurationFile != null) {
                                 fileList.add(eventPublisherConfigurationFile);
-                                eventAdapterService.destroy(eventPublisher.getEventPublisherConfiguration().getToAdapterConfiguration().getName(), tenantId);
+                                eventAdapterService.destroy(eventPublisher.getEventPublisherConfiguration().getToAdapterConfiguration().getName());
                             }
                         }
                     }
@@ -464,7 +466,7 @@ public class CarbonEventPublisherService implements EventPublisherService {
         }
 
         for (EventPublisherConfigurationFile eventPublisherConfigurationFile : fileList) {
-            EventPublisherConfigurationFilesystemInvoker.reload(eventPublisherConfigurationFile.getFilePath(), eventPublisherConfigurationFile.getAxisConfiguration());
+            EventPublisherConfigurationFilesystemInvoker.reload(eventPublisherConfigurationFile.getFilePath());
             log.info("Event publisher : " + eventPublisherConfigurationFile.getEventPublisherName() + "  is in inactive state because dependency could not be found : " + dependency);
         }
     }
@@ -484,7 +486,7 @@ public class CarbonEventPublisherService implements EventPublisherService {
                                 getEventPublisherConfigurationFile(eventPublisherConfiguration.getEventPublisherName(), tenantId);
                         if (eventPublisherConfigurationFile != null) {
                             fileList.add(eventPublisherConfigurationFile);
-                            eventAdapterService.destroy(eventPublisherConfiguration.getToAdapterConfiguration().getName(), tenantId);
+                            eventAdapterService.destroy(eventPublisherConfiguration.getToAdapterConfiguration().getName());
                         }
                     }
                 }
@@ -492,7 +494,7 @@ public class CarbonEventPublisherService implements EventPublisherService {
         }
 
         for (EventPublisherConfigurationFile eventPublisherConfigurationFile : fileList) {
-            EventPublisherConfigurationFilesystemInvoker.reload(eventPublisherConfigurationFile.getFilePath(), eventPublisherConfigurationFile.getAxisConfiguration());
+            EventPublisherConfigurationFilesystemInvoker.reload(eventPublisherConfigurationFile.getFilePath());
             log.info("Event publisher : " + eventPublisherConfigurationFile.getEventPublisherName() + "  is in inactive state because stream dependency could not be found : " + streamId);
         }
     }
@@ -532,14 +534,14 @@ public class CarbonEventPublisherService implements EventPublisherService {
 
     private void editTracingStatistics(
             EventPublisherConfiguration eventPublisherConfiguration,
-            String eventPublisherName, int tenantId, AxisConfiguration axisConfiguration)
+            String eventPublisherName, int tenantId)
             throws EventPublisherConfigurationException {
 
         String fileName = getFileName(tenantId, eventPublisherName);
-        undeployActiveEventPublisherConfiguration(eventPublisherName, axisConfiguration);
+        undeployActiveEventPublisherConfiguration(eventPublisherName);
         OMElement omElement = EventPublisherConfigurationBuilder.eventPublisherConfigurationToOM(eventPublisherConfiguration);
-        EventPublisherConfigurationFilesystemInvoker.delete(fileName, axisConfiguration);
-        EventPublisherConfigurationFilesystemInvoker.save(omElement, fileName, axisConfiguration);
+        EventPublisherConfigurationFilesystemInvoker.delete(fileName);
+        EventPublisherConfigurationFilesystemInvoker.save(omElement, fileName);
     }
 
     private String getFileName(int tenantId, String eventPublisherName) {
@@ -559,7 +561,6 @@ public class CarbonEventPublisherService implements EventPublisherService {
     }
 
     private void editEventPublisherConfiguration(String filename,
-                                                 AxisConfiguration axisConfiguration,
                                                  String eventPublisherConfigurationXml,
                                                  String originalEventPublisherName)
             throws EventPublisherConfigurationException {
@@ -573,14 +574,14 @@ public class CarbonEventPublisherService implements EventPublisherService {
                 EventPublisherConfiguration eventPublisherConfigurationObject = EventPublisherConfigurationBuilder.getEventPublisherConfiguration(omElement, mappingType, true, tenantId);
                 if (!(eventPublisherConfigurationObject.getEventPublisherName().equals(originalEventPublisherName))) {
                     if (!isEventPublisherAlreadyExists(tenantId, eventPublisherConfigurationObject.getEventPublisherName())) {
-                        EventPublisherConfigurationFilesystemInvoker.delete(filename, axisConfiguration);
-                        EventPublisherConfigurationFilesystemInvoker.save(omElement, filename, axisConfiguration);
+                        EventPublisherConfigurationFilesystemInvoker.delete(filename);
+                        EventPublisherConfigurationFilesystemInvoker.save(omElement, filename);
                     } else {
                         throw new EventPublisherConfigurationException("There is already a Event Publisher " + eventPublisherConfigurationObject.getEventPublisherName() + " with the same name");
                     }
                 } else {
-                    EventPublisherConfigurationFilesystemInvoker.delete(filename, axisConfiguration);
-                    EventPublisherConfigurationFilesystemInvoker.save(omElement, filename, axisConfiguration);
+                    EventPublisherConfigurationFilesystemInvoker.delete(filename);
+                    EventPublisherConfigurationFilesystemInvoker.save(omElement, filename);
                 }
             } else {
                 throw new EventPublisherConfigurationException("Mapping type of the Event Publisher " + originalEventPublisherName + " cannot be null");
@@ -605,8 +606,7 @@ public class CarbonEventPublisherService implements EventPublisherService {
 
     }
 
-    private void validateToRemoveInactiveEventPublisherConfiguration(String eventPublisherName,
-                                                                     AxisConfiguration axisConfiguration)
+    private void validateToRemoveInactiveEventPublisherConfiguration(String eventPublisherName)
             throws EventPublisherConfigurationException {
         int tenantId = PrivilegedCarbonContext.getThreadLocalCarbonContext().getTenantId();
 
@@ -616,7 +616,7 @@ public class CarbonEventPublisherService implements EventPublisherService {
             for (EventPublisherConfigurationFile eventPublisherConfigurationFile : eventPublisherConfigurationFiles) {
                 if ((eventPublisherConfigurationFile.getFileName().equals(fileName))) {
                     if (!(eventPublisherConfigurationFile.getStatus().equals(EventPublisherConfigurationFile.Status.DEPLOYED))) {
-                        EventPublisherConfigurationFilesystemInvoker.delete(fileName, axisConfiguration);
+                        EventPublisherConfigurationFilesystemInvoker.delete(fileName);
                         break;
                     }
                 }

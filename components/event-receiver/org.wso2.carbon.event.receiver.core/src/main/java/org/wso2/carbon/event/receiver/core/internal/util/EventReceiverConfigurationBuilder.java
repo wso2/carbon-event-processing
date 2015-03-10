@@ -22,10 +22,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.wso2.carbon.databridge.commons.AttributeType;
 import org.wso2.carbon.databridge.commons.StreamDefinition;
-import org.wso2.carbon.event.input.adapter.core.InputEventAdapterConfiguration;
-import org.wso2.carbon.event.input.adapter.core.InputEventAdapterSchema;
-import org.wso2.carbon.event.input.adapter.core.InputEventAdapterService;
-import org.wso2.carbon.event.input.adapter.core.MessageType;
+import org.wso2.carbon.event.input.adapter.core.*;
 import org.wso2.carbon.event.receiver.core.config.EventReceiverConfiguration;
 import org.wso2.carbon.event.receiver.core.config.EventReceiverConstants;
 import org.wso2.carbon.event.receiver.core.config.InputMapperFactory;
@@ -68,13 +65,16 @@ public class EventReceiverConfigurationBuilder {
         }
 
         //From properties
-        OMElement fromOMElement = factory.createOMElement(EventReceiverConstants.ER_ELEMENT_FROM, eventReceiverConfigElement.getDefaultNamespace());
+        OMElement fromOMElement = factory.createOMElement(new QName(
+                EventReceiverConstants.ER_ELEMENT_FROM));
+        fromOMElement.declareDefaultNamespace(EventReceiverConstants.ER_CONF_NS);
         InputEventAdapterConfiguration inputEventAdapterConfiguration = eventReceiverConfiguration.getFromAdapterConfiguration();
         fromOMElement.addAttribute(EventReceiverConstants.ER_ATTR_TA_TYPE, inputEventAdapterConfiguration.getType(), null);
         Map<String, String> inputPropertyMap = inputEventAdapterConfiguration.getProperties();
         if (inputPropertyMap != null) {
             for (Map.Entry<String, String> propertyEntry : inputPropertyMap.entrySet()) {
-                OMElement propertyElement = factory.createOMElement(EventReceiverConstants.ER_ELEMENT_PROPERTY, fromOMElement.getDefaultNamespace());
+                OMElement propertyElement = factory.createOMElement(new QName(EventReceiverConstants.ER_ELEMENT_PROPERTY));
+                propertyElement.declareDefaultNamespace(EventReceiverConstants.ER_CONF_NS);
                 propertyElement.addAttribute(EventReceiverConstants.ER_ATTR_NAME, propertyEntry.getKey(), null);
                 propertyElement.setText(propertyEntry.getValue());
                 fromOMElement.addChild(propertyElement);
@@ -83,10 +83,11 @@ public class EventReceiverConfigurationBuilder {
         eventReceiverConfigElement.addChild(fromOMElement);
 
         OMElement mappingOMElement = EventReceiverServiceValueHolder.getMappingFactoryMap().get(eventReceiverConfiguration.getInputMapping().getMappingType()).constructOMFromInputMapping(eventReceiverConfiguration.getInputMapping(), factory);
-        mappingOMElement.setNamespace(eventReceiverConfigElement.getDefaultNamespace());
+        mappingOMElement.declareDefaultNamespace(EventReceiverConstants.ER_CONF_NS);
         eventReceiverConfigElement.addChild(mappingOMElement);
 
-        OMElement toOMElement = factory.createOMElement(EventReceiverConstants.ER_ELEMENT_TO, eventReceiverConfigElement.getDefaultNamespace());
+        OMElement toOMElement = factory.createOMElement(new QName(EventReceiverConstants.ER_ELEMENT_TO));
+        toOMElement.declareDefaultNamespace(EventReceiverConstants.ER_CONF_NS);
         toOMElement.addAttribute(EventReceiverConstants.ER_ATTR_STREAM_NAME, eventReceiverConfiguration.getToStreamName(), null);
         toOMElement.addAttribute(EventReceiverConstants.ER_ATTR_VERSION, eventReceiverConfiguration.getToStreamVersion(), null);
 
@@ -133,15 +134,12 @@ public class EventReceiverConfigurationBuilder {
             throw new EventReceiverValidationException("Event Adapter with type: " + fromEventAdapterType + " does not exist", fromEventAdapterType);
         }
 
-        InputEventAdapterConfiguration inputEventAdapterConfiguration = new InputEventAdapterConfiguration();
-        inputEventAdapterConfiguration.setName(eventReceiverName);
-        inputEventAdapterConfiguration.setType(fromEventAdapterType);
-        inputEventAdapterConfiguration.setMessageFormat(mappingType);
-        inputEventAdapterConfiguration.setProperties(new HashMap<String, String>());
+        InputEventAdapterConfiguration inputEventAdapterConfiguration = getInputEventAdapterConfiguration(fromEventAdapterType,eventReceiverName,mappingType);
 
-        Iterator fromElementPropertyIterator = toElement.getChildrenWithName(
+        Iterator fromElementPropertyIterator = fromElement.getChildrenWithName(
                 new QName(EventReceiverConstants.ER_CONF_NS, EventReceiverConstants.ER_ELEMENT_PROPERTY)
         );
+        
 
         while (fromElementPropertyIterator.hasNext()) {
             OMElement toElementProperty = (OMElement) fromElementPropertyIterator.next();
@@ -213,6 +211,24 @@ public class EventReceiverConfigurationBuilder {
         eventReceiverConfiguration.setFromAdapterConfiguration(inputEventAdapterConfiguration);
         eventReceiverConfiguration.setEditable(isEditable);
         return eventReceiverConfiguration;
+    }
+
+
+    public static InputEventAdapterConfiguration getInputEventAdapterConfiguration(
+            String eventAdapterType, String receiverName, String messageFormat) {
+        InputEventAdapterSchema schema = EventReceiverServiceValueHolder.getInputEventAdapterService().getInputEventAdapterSchema(eventAdapterType);
+        InputEventAdapterConfiguration inputEventAdapterConfiguration = new InputEventAdapterConfiguration();
+        inputEventAdapterConfiguration.setName(receiverName);
+        inputEventAdapterConfiguration.setMessageFormat(messageFormat);
+        inputEventAdapterConfiguration.setType(eventAdapterType);
+        Map<String, String> staticProperties = new HashMap<String, String>();
+        if (schema != null && schema.getPropertyList() != null) {
+            for (Property property : schema.getPropertyList()) {
+                staticProperties.put(property.getPropertyName(), property.getDefaultValue());
+            }
+        }
+        inputEventAdapterConfiguration.setProperties(staticProperties);
+        return inputEventAdapterConfiguration;
     }
 
     public static String getMappingTypeFactoryClass(OMElement omElement) {

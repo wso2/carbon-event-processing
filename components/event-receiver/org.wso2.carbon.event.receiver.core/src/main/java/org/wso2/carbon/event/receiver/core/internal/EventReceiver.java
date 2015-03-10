@@ -15,6 +15,7 @@
 package org.wso2.carbon.event.receiver.core.internal;
 
 
+import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.log4j.Logger;
@@ -54,7 +55,7 @@ public class EventReceiver implements EventProducer {
     private EventProducerCallback callBack;
 
     public EventReceiver(EventReceiverConfiguration eventReceiverConfiguration,
-                         StreamDefinition exportedStreamDefinition)
+                         StreamDefinition exportedStreamDefinition, AxisConfiguration axisConfiguration)
             throws EventReceiverConfigurationException {
         this.eventReceiverConfiguration = eventReceiverConfiguration;
         int tenantId = PrivilegedCarbonContext.getThreadLocalCarbonContext().getTenantId();
@@ -95,10 +96,10 @@ public class EventReceiver implements EventProducer {
             try {
                 if (this.customMappingEnabled) {
                     EventReceiverServiceValueHolder.getInputEventAdapterService().create(
-                            eventReceiverConfiguration.getFromAdapterConfiguration(), new MappedEventSubscription(), tenantId);
+                            eventReceiverConfiguration.getFromAdapterConfiguration(), new MappedEventSubscription(), tenantId, axisConfiguration);
                 } else {
                     EventReceiverServiceValueHolder.getInputEventAdapterService().create(
-                            eventReceiverConfiguration.getFromAdapterConfiguration(), new TypedEventSubscription(), tenantId);
+                            eventReceiverConfiguration.getFromAdapterConfiguration(), new TypedEventSubscription(), tenantId, axisConfiguration);
                 }
             } catch (InputEventAdapterException e) {
                 throw new EventReceiverConfigurationException("Cannot subscribe to input event adapter :" + inputEventAdapterName + ", error in configuration.", e);

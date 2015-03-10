@@ -162,13 +162,15 @@
                         <xs:element minOccurs="0" name="eventReceiverName" nillable="true" type="xs:string"></xs:element>
                         <xs:element minOccurs="0" name="streamNameWithVersion" nillable="true" type="xs:string"></xs:element>
                         <xs:element minOccurs="0" name="eventAdapterType" nillable="true" type="xs:string"></xs:element>
+                        <xs:element minOccurs="0" name="parentXpath" nillable="true" type="xs:string"></xs:element>
+                        <xs:element maxOccurs="unbounded" minOccurs="0" name="namespaces" nillable="true" type="ax2105:EventMappingPropertyDto"></xs:element>
                         <xs:element maxOccurs="unbounded" minOccurs="0" name="inputMappings" nillable="true" type="ax2105:EventMappingPropertyDto"></xs:element>
                         <xs:element maxOccurs="unbounded" minOccurs="0" name="inputPropertyConfiguration" nillable="true" type="ax2105:BasicInputAdapterPropertyDto"></xs:element>
                         <xs:element minOccurs="0" name="mappingEnabled" type="xs:boolean"></xs:element>
                     </xs:sequence>
                 </xs:complexType>
             </xs:element>
-            <xs:element name="deployWSO2EventReceiverConfiguration">
+            <xs:element name="deployWso2EventReceiverConfiguration">
                 <xs:complexType>
                     <xs:sequence>
                         <xs:element minOccurs="0" name="eventReceiverName" nillable="true" type="xs:string"></xs:element>
@@ -289,10 +291,6 @@
             </xs:complexType>
         </xs:schema>
     </wsdl:types>
-    <wsdl:message name="deployWSO2EventReceiverConfigurationRequest">
-        <wsdl:part name="parameters" element="ns:deployWSO2EventReceiverConfiguration"></wsdl:part>
-    </wsdl:message>
-    <wsdl:message name="deployWSO2EventReceiverConfigurationResponse"></wsdl:message>
     <wsdl:message name="editInactiveEventReceiverConfigurationRequest">
         <wsdl:part name="parameters" element="ns:editInactiveEventReceiverConfiguration"></wsdl:part>
     </wsdl:message>
@@ -373,6 +371,10 @@
     <wsdl:message name="getAllActiveEventReceiverConfigurationsResponse">
         <wsdl:part name="parameters" element="ns:getAllActiveEventReceiverConfigurationsResponse"></wsdl:part>
     </wsdl:message>
+    <wsdl:message name="deployWso2EventReceiverConfigurationRequest">
+        <wsdl:part name="parameters" element="ns:deployWso2EventReceiverConfiguration"></wsdl:part>
+    </wsdl:message>
+    <wsdl:message name="deployWso2EventReceiverConfigurationResponse"></wsdl:message>
     <wsdl:message name="setTracingEnabledRequest">
         <wsdl:part name="parameters" element="ns:setTracingEnabled"></wsdl:part>
     </wsdl:message>
@@ -386,10 +388,6 @@
     </wsdl:message>
     <wsdl:message name="undeployInactiveEventReceiverConfigurationResponse"></wsdl:message>
     <wsdl:portType name="EventReceiverAdminServicePortType">
-        <wsdl:operation name="deployWSO2EventReceiverConfiguration">
-            <wsdl:input message="ns:deployWSO2EventReceiverConfigurationRequest" wsaw:Action="urn:deployWSO2EventReceiverConfiguration"></wsdl:input>
-            <wsdl:output message="ns:deployWSO2EventReceiverConfigurationResponse" wsaw:Action="urn:deployWSO2EventReceiverConfigurationResponse"></wsdl:output>
-        </wsdl:operation>
         <wsdl:operation name="editInactiveEventReceiverConfiguration">
             <wsdl:input message="ns:editInactiveEventReceiverConfigurationRequest" wsaw:Action="urn:editInactiveEventReceiverConfiguration"></wsdl:input>
             <wsdl:output message="ns:editInactiveEventReceiverConfigurationResponse" wsaw:Action="urn:editInactiveEventReceiverConfigurationResponse"></wsdl:output>
@@ -454,6 +452,10 @@
             <wsdl:input message="ns:getAllActiveEventReceiverConfigurationsRequest" wsaw:Action="urn:getAllActiveEventReceiverConfigurations"></wsdl:input>
             <wsdl:output message="ns:getAllActiveEventReceiverConfigurationsResponse" wsaw:Action="urn:getAllActiveEventReceiverConfigurationsResponse"></wsdl:output>
         </wsdl:operation>
+        <wsdl:operation name="deployWso2EventReceiverConfiguration">
+            <wsdl:input message="ns:deployWso2EventReceiverConfigurationRequest" wsaw:Action="urn:deployWso2EventReceiverConfiguration"></wsdl:input>
+            <wsdl:output message="ns:deployWso2EventReceiverConfigurationResponse" wsaw:Action="urn:deployWso2EventReceiverConfigurationResponse"></wsdl:output>
+        </wsdl:operation>
         <wsdl:operation name="setTracingEnabled">
             <wsdl:input message="ns:setTracingEnabledRequest" wsaw:Action="urn:setTracingEnabled"></wsdl:input>
             <wsdl:output message="ns:setTracingEnabledResponse" wsaw:Action="urn:setTracingEnabledResponse"></wsdl:output>
@@ -471,15 +473,6 @@
         <soap:binding transport="http://schemas.xmlsoap.org/soap/http" style="document"></soap:binding>
         <wsdl:operation name="editInactiveEventReceiverConfiguration">
             <soap:operation soapAction="urn:editInactiveEventReceiverConfiguration" style="document"></soap:operation>
-            <wsdl:input>
-                <soap:body use="literal"></soap:body>
-            </wsdl:input>
-            <wsdl:output>
-                <soap:body use="literal"></soap:body>
-            </wsdl:output>
-        </wsdl:operation>
-        <wsdl:operation name="deployWSO2EventReceiverConfiguration">
-            <soap:operation soapAction="urn:deployWSO2EventReceiverConfiguration" style="document"></soap:operation>
             <wsdl:input>
                 <soap:body use="literal"></soap:body>
             </wsdl:input>
@@ -613,6 +606,15 @@
                 <soap:body use="literal"></soap:body>
             </wsdl:output>
         </wsdl:operation>
+        <wsdl:operation name="deployWso2EventReceiverConfiguration">
+            <soap:operation soapAction="urn:deployWso2EventReceiverConfiguration" style="document"></soap:operation>
+            <wsdl:input>
+                <soap:body use="literal"></soap:body>
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal"></soap:body>
+            </wsdl:output>
+        </wsdl:operation>
         <wsdl:operation name="getAllActiveEventReceiverConfigurations">
             <soap:operation soapAction="urn:getAllActiveEventReceiverConfigurations" style="document"></soap:operation>
             <wsdl:input>
@@ -654,15 +656,6 @@
         <soap12:binding transport="http://schemas.xmlsoap.org/soap/http" style="document"></soap12:binding>
         <wsdl:operation name="editInactiveEventReceiverConfiguration">
             <soap12:operation soapAction="urn:editInactiveEventReceiverConfiguration" style="document"></soap12:operation>
-            <wsdl:input>
-                <soap12:body use="literal"></soap12:body>
-            </wsdl:input>
-            <wsdl:output>
-                <soap12:body use="literal"></soap12:body>
-            </wsdl:output>
-        </wsdl:operation>
-        <wsdl:operation name="deployWSO2EventReceiverConfiguration">
-            <soap12:operation soapAction="urn:deployWSO2EventReceiverConfiguration" style="document"></soap12:operation>
             <wsdl:input>
                 <soap12:body use="literal"></soap12:body>
             </wsdl:input>
@@ -796,6 +789,15 @@
                 <soap12:body use="literal"></soap12:body>
             </wsdl:output>
         </wsdl:operation>
+        <wsdl:operation name="deployWso2EventReceiverConfiguration">
+            <soap12:operation soapAction="urn:deployWso2EventReceiverConfiguration" style="document"></soap12:operation>
+            <wsdl:input>
+                <soap12:body use="literal"></soap12:body>
+            </wsdl:input>
+            <wsdl:output>
+                <soap12:body use="literal"></soap12:body>
+            </wsdl:output>
+        </wsdl:operation>
         <wsdl:operation name="getAllActiveEventReceiverConfigurations">
             <soap12:operation soapAction="urn:getAllActiveEventReceiverConfigurations" style="document"></soap12:operation>
             <wsdl:input>
@@ -837,15 +839,6 @@
         <http:binding verb="POST"></http:binding>
         <wsdl:operation name="editInactiveEventReceiverConfiguration">
             <http:operation location="editInactiveEventReceiverConfiguration"></http:operation>
-            <wsdl:input>
-                <mime:content type="text/xml" part="parameters"></mime:content>
-            </wsdl:input>
-            <wsdl:output>
-                <mime:content type="text/xml" part="parameters"></mime:content>
-            </wsdl:output>
-        </wsdl:operation>
-        <wsdl:operation name="deployWSO2EventReceiverConfiguration">
-            <http:operation location="deployWSO2EventReceiverConfiguration"></http:operation>
             <wsdl:input>
                 <mime:content type="text/xml" part="parameters"></mime:content>
             </wsdl:input>
@@ -979,6 +972,15 @@
                 <mime:content type="text/xml" part="parameters"></mime:content>
             </wsdl:output>
         </wsdl:operation>
+        <wsdl:operation name="deployWso2EventReceiverConfiguration">
+            <http:operation location="deployWso2EventReceiverConfiguration"></http:operation>
+            <wsdl:input>
+                <mime:content type="text/xml" part="parameters"></mime:content>
+            </wsdl:input>
+            <wsdl:output>
+                <mime:content type="text/xml" part="parameters"></mime:content>
+            </wsdl:output>
+        </wsdl:operation>
         <wsdl:operation name="getAllActiveEventReceiverConfigurations">
             <http:operation location="getAllActiveEventReceiverConfigurations"></http:operation>
             <wsdl:input>
@@ -1018,13 +1020,13 @@
     </wsdl:binding>
     <wsdl:service name="EventReceiverAdminService">
         <wsdl:port name="EventReceiverAdminServiceHttpsSoap11Endpoint" binding="ns:EventReceiverAdminServiceSoap11Binding">
-            <soap:address location="https://192.168.1.7:9443/services/EventReceiverAdminService.EventReceiverAdminServiceHttpsSoap11Endpoint/"></soap:address>
+            <soap:address location="https://10.100.1.144:9443/services/EventReceiverAdminService.EventReceiverAdminServiceHttpsSoap11Endpoint/"></soap:address>
         </wsdl:port>
         <wsdl:port name="EventReceiverAdminServiceHttpsSoap12Endpoint" binding="ns:EventReceiverAdminServiceSoap12Binding">
-            <soap12:address location="https://192.168.1.7:9443/services/EventReceiverAdminService.EventReceiverAdminServiceHttpsSoap12Endpoint/"></soap12:address>
+            <soap12:address location="https://10.100.1.144:9443/services/EventReceiverAdminService.EventReceiverAdminServiceHttpsSoap12Endpoint/"></soap12:address>
         </wsdl:port>
         <wsdl:port name="EventReceiverAdminServiceHttpsEndpoint" binding="ns:EventReceiverAdminServiceHttpBinding">
-            <http:address location="https://192.168.1.7:9443/services/EventReceiverAdminService.EventReceiverAdminServiceHttpsEndpoint/"></http:address>
+            <http:address location="https://10.100.1.144:9443/services/EventReceiverAdminService.EventReceiverAdminServiceHttpsEndpoint/"></http:address>
         </wsdl:port>
     </wsdl:service>
 </wsdl:definitions>

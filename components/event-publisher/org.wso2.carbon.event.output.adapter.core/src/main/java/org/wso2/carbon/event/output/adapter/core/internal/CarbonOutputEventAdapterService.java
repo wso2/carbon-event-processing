@@ -17,7 +17,7 @@ package org.wso2.carbon.event.output.adapter.core.internal;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.log4j.Logger;
-import org.wso2.carbon.context.CarbonContext;
+import org.wso2.carbon.context.PrivilegedCarbonContext;
 import org.wso2.carbon.event.output.adapter.core.*;
 import org.wso2.carbon.event.output.adapter.core.exception.OutputEventAdapterException;
 import org.wso2.carbon.event.output.adapter.core.exception.OutputEventAdapterRuntimeException;
@@ -79,7 +79,8 @@ public class CarbonOutputEventAdapterService implements OutputEventAdapterServic
     }
 
     @Override
-    public void create(OutputEventAdapterConfiguration outputEventAdapterConfiguration, int tenantId) throws OutputEventAdapterException {
+    public void create(OutputEventAdapterConfiguration outputEventAdapterConfiguration) throws OutputEventAdapterException {
+        int tenantId= PrivilegedCarbonContext.getThreadLocalCarbonContext().getTenantId();
         ConcurrentHashMap<String, OutputAdapterRuntime> eventAdapters = tenantSpecificEventAdapters.get(tenantId);
         if (eventAdapters == null) {
             tenantSpecificEventAdapters.putIfAbsent(tenantId, new ConcurrentHashMap<String, OutputAdapterRuntime>());
@@ -101,19 +102,18 @@ public class CarbonOutputEventAdapterService implements OutputEventAdapterServic
         Map<String, String> globalProperties = OutputEventAdapterServiceValueHolder.getGlobalAdapterConfigs().
                 getAdapterConfig(outputEventAdapterConfiguration.getType()).getGlobalPropertiesAsMap();
         eventAdapters.put(outputEventAdapterConfiguration.getName(), new OutputAdapterRuntime(adapterFactory.
-                createEventAdapter(outputEventAdapterConfiguration, globalProperties,tenantId), outputEventAdapterConfiguration.getName()));
+                createEventAdapter(outputEventAdapterConfiguration, globalProperties), outputEventAdapterConfiguration.getName()));
     }
 
     /**
      * publishes the message using the given event adapter to the given topic.
-     *
-     * @param name              - name of the event adapter
+     *  @param name              - name of the event adapter
      * @param dynamicProperties
      * @param message
-     * @param tenantId
      */
     @Override
-    public void publish(String name, Map<String, String> dynamicProperties, Object message, int tenantId) {
+    public void publish(String name, Map<String, String> dynamicProperties, Object message) {
+        int tenantId= PrivilegedCarbonContext.getThreadLocalCarbonContext().getTenantId();
         ConcurrentHashMap<String, OutputAdapterRuntime> eventAdapters = tenantSpecificEventAdapters.get(tenantId);
         if (eventAdapters == null) {
             throw new OutputEventAdapterRuntimeException("Event not published as no Output Event Adapter found with for" +
@@ -149,7 +149,7 @@ public class CarbonOutputEventAdapterService implements OutputEventAdapterServic
             }
             Map<String, String> globalProperties = OutputEventAdapterServiceValueHolder.getGlobalAdapterConfigs().
                     getAdapterConfig(outputEventAdapterConfiguration.getType()).getGlobalPropertiesAsMap();
-            outputEventAdapter = outputEventAdapterFactory.createEventAdapter(outputEventAdapterConfiguration, globalProperties, CarbonContext.getThreadLocalCarbonContext().getTenantId());
+            outputEventAdapter = outputEventAdapterFactory.createEventAdapter(outputEventAdapterConfiguration, globalProperties);
             outputEventAdapter.init();
             outputEventAdapter.testConnect();
             outputEventAdapter.disconnect();
@@ -162,7 +162,8 @@ public class CarbonOutputEventAdapterService implements OutputEventAdapterServic
     }
 
     @Override
-    public void destroy(String name, int tenantId) {
+    public void destroy(String name) {
+        int tenantId= PrivilegedCarbonContext.getThreadLocalCarbonContext().getTenantId();
         ConcurrentHashMap<String, OutputAdapterRuntime> eventAdapters = tenantSpecificEventAdapters.get(tenantId);
         if (eventAdapters == null) {
             return;

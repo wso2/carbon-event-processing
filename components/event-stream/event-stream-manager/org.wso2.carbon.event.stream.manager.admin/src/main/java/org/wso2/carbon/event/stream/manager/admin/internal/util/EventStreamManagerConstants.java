@@ -25,4 +25,6 @@ public class EventStreamManagerConstants {
     public static final String ATTRIBUTE_SEPARATOR = "_";
 
 
+    public static final String DEPLOYMENT_DIR = "eventstreams";
+    public static final String DEPLOYMENT_FILE_TYPE = "json";
 }

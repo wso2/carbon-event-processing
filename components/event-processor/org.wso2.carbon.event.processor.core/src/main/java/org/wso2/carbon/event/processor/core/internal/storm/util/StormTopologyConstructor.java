@@ -18,6 +18,7 @@
 package org.wso2.carbon.event.processor.core.internal.storm.util;
 
 import backtype.storm.topology.BoltDeclarer;
+import backtype.storm.topology.SpoutDeclarer;
 import backtype.storm.topology.TopologyBuilder;
 import backtype.storm.tuple.Fields;
 import org.apache.axiom.om.OMAttribute;
@@ -28,13 +29,18 @@ import org.wso2.carbon.event.processor.common.storm.component.EventPublisherBolt
 import org.wso2.carbon.event.processor.common.storm.component.EventReceiverSpout;
 import org.wso2.carbon.event.processor.common.storm.component.SiddhiBolt;
 import org.wso2.carbon.event.processor.common.storm.config.StormDeploymentConfig;
+import org.wso2.carbon.event.processor.core.exception.StormDeploymentException;
+import org.wso2.carbon.event.processor.core.exception.StormQueryConstructionException;
+import org.wso2.carbon.event.processor.core.internal.util.EventProcessorConstants;
 import org.wso2.siddhi.query.api.ExecutionPlan;
 import org.wso2.siddhi.query.api.definition.StreamDefinition;
 import org.wso2.siddhi.query.compiler.SiddhiCompiler;
+import org.wso2.siddhi.query.compiler.exception.SiddhiParserException;
 
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
@@ -45,14 +51,17 @@ public class StormTopologyConstructor {
 
     private static Logger log = Logger.getLogger(StormTopologyConstructor.class);
 
-    public static TopologyBuilder constructTopologyBuilder(String queryPlanString, String executionPlanName, int tenantId, StormDeploymentConfig stormDeploymentConfig) throws XMLStreamException {
+    public static TopologyBuilder constructTopologyBuilder(String queryPlanString, String executionPlanName,
+                                                           int tenantId, StormDeploymentConfig stormDeploymentConfig)
+            throws XMLStreamException, StormQueryConstructionException {
 
         OMElement queryPlanElement = AXIOMUtil.stringToOM(queryPlanString);
-
         TopologyInfoHolder topologyInfoHolder = new TopologyInfoHolder();
         TopologyBuilder builder = new TopologyBuilder();
 
-        //******** Receiver ************
+        /*
+        Receiver section
+         */
         Iterator<OMElement> iterator = queryPlanElement.getChildrenWithName(new QName("event-receiver"));
         while (iterator.hasNext()) {
             OMElement eventReceiverElement = iterator.next();
@@ -74,12 +83,16 @@ public class StormTopologyConstructor {
             topologyInfoHolder.addComponent(componentInfoHolder);
         }
 
-        //******** Processor ************
+        /*
+        Processor Section
+         */
         iterator = queryPlanElement.getChildrenWithName(new QName("event-processor"));
         while (iterator.hasNext()) {
             OMElement eventProcessorElement = iterator.next();
-            String name = eventProcessorElement.getAttributeValue(new QName("name"));
-            String parallel = eventProcessorElement.getAttributeValue(new QName("parallel"));
+            String name = eventProcessorElement.getAttributeValue(new QName(EventProcessorConstants.NAME));
+            String parallel = eventProcessorElement.getAttributeValue(new QName(EventProcessorConstants.PARALLEL));
+            String isEnforced = eventProcessorElement.getAttributeValue(new QName(EventProcessorConstants
+                    .ENFORCE_PARALLELISM));
             ComponentInfoHolder componentInfoHolder = new ComponentInfoHolder(name, ComponentInfoHolder.ComponentType.SIDDHI_BOLT);
 
             OMElement inputStreamsElement = eventProcessorElement.getFirstChildWithName(new QName("input-streams"));
@@ -98,13 +111,20 @@ public class StormTopologyConstructor {
             for (String streamDefinition : outputStreamDefinitions) {
                 componentInfoHolder.addOutputStream(streamDefinition);
             }
-            componentInfoHolder.setDeclarer(builder.setBolt(name, new SiddhiBolt(inputStreamDefinitions,
-                    queryElement.getText(), outputStreamDefinitions), Integer.parseInt(parallel)));
+            BoltDeclarer declarer = builder.setBolt(name, new SiddhiBolt(inputStreamDefinitions,
+                    queryElement.getText(), outputStreamDefinitions), Integer.parseInt(parallel));
+            //enforcing parallelism
+            if (isEnforced.equals("true")) {
+                declarer.setMaxTaskParallelism(Integer.parseInt(parallel));     //todo add enforce property
+            }
+            componentInfoHolder.setDeclarer(declarer);
             topologyInfoHolder.addComponent(componentInfoHolder);
         }
 
 
-        //******** Publisher ************
+        /*
+        Publisher Section
+         */
         iterator = queryPlanElement.getChildrenWithName(new QName("event-publisher"));
         while (iterator.hasNext()) {
             OMElement eventProcessorElement = iterator.next();
@@ -133,7 +153,7 @@ public class StormTopologyConstructor {
                 componentInfoHolder.addOutputStream(streamDefinition);
             }
             componentInfoHolder.setDeclarer(builder.setBolt(name, new EventPublisherBolt(stormDeploymentConfig,
-                            inputStreamDefinitions, outputStreamDefinitions, query, executionPlanName, tenantId),
+                    inputStreamDefinitions, outputStreamDefinitions, query, executionPlanName, tenantId),
                     Integer.parseInt(parallel)));
             topologyInfoHolder.addComponent(componentInfoHolder);
         }
@@ -158,7 +178,6 @@ public class StormTopologyConstructor {
                         if (!pubComponent.getComponentName().equals(componentInfoHolder.getComponentName())) {
                             String partitionedField = componentInfoHolder.getPartionenedField(inputStreamId);
                             String groupingType = "ShuffleGrouping";
-
                             if (partitionedField == null){
                                 boltDeclarer.shuffleGrouping(pubComponent.getComponentName(), inputStreamId);
                             }else{
@@ -170,7 +189,7 @@ public class StormTopologyConstructor {
                                 log.debug("Connecting storm components [Consumer:" + componentInfoHolder.getComponentName()
                                         + ", Stream:" + inputStreamId
                                         + ", Publisher:" + pubComponent.getComponentName()
-                                        + ", Grouping:" + groupingType + "]"); ;
+                                        + ", Grouping:" + groupingType + "]");
                             }
                         }
                     }
@@ -195,14 +214,19 @@ public class StormTopologyConstructor {
     /**
      * Adding stream partitioned fields
      */
-    private static void addPartitionFields(OMElement streamsElement, ComponentInfoHolder componentInfoHolder){
-        Iterator<OMElement> streamIterator = streamsElement.getChildrenWithName(new QName("stream"));
+    private static void addPartitionFields(OMElement streamsElement, ComponentInfoHolder componentInfoHolder) throws
+            StormQueryConstructionException {
+        Iterator<OMElement> streamIterator = streamsElement.getChildrenWithName(new QName(EventProcessorConstants.STREAM));
         while (streamIterator.hasNext()) {
             OMElement streamElement = streamIterator.next();
             OMAttribute partitionAttribute = streamElement.getAttribute(new QName("partition"));
-
-            if (partitionAttribute != null){
+            if (partitionAttribute != null) {
                 StreamDefinition streamDefinition = SiddhiCompiler.parseStreamDefinition(streamElement.getText());
+                if (!Arrays.asList(streamDefinition.getAttributeNameArray()).contains(partitionAttribute
+                        .getAttributeValue())) {
+                    throw new StormQueryConstructionException("All input streams of the partition should have the " +
+                            "partitioning attribute.");
+                }
                 componentInfoHolder.addStreamPartitioningField(streamDefinition.getId(), partitionAttribute.getAttributeValue());
             }
         }

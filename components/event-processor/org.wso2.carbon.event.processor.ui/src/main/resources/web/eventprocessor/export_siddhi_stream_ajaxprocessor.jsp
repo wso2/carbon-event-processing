@@ -28,7 +28,7 @@
 
     String resultString = "";
     if (strInputStreamDefinitions != null) {
-        String[] definitions = strInputStreamDefinitions.split(";");
+        String[] definitions = strInputStreamDefinitions.split("(?<=;)");
         try {
             StreamDefinitionDto[] siddhiStreams = eventProcessorAdminServiceStub.getSiddhiStreams(definitions, strQueryExpressions);
             StreamDefinitionDto targetDto = null;

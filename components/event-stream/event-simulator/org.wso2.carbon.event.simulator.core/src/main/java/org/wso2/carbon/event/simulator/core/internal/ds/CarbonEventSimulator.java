@@ -32,6 +32,7 @@ import org.wso2.carbon.databridge.commons.Attribute;
 import org.wso2.carbon.databridge.commons.AttributeType;
 import org.wso2.carbon.databridge.commons.StreamDefinition;
 import org.wso2.carbon.event.simulator.core.*;
+import org.wso2.carbon.event.stream.manager.core.EventStreamConfig;
 import org.wso2.carbon.event.stream.manager.core.EventStreamService;
 import org.wso2.carbon.event.stream.manager.core.exception.EventStreamConfigurationException;
 import org.wso2.carbon.ndatasource.common.DataSourceException;
@@ -75,8 +76,11 @@ public class CarbonEventSimulator implements EventSimulator {
         try {
             EventStreamService eventStreamService = EventSimulatorValueHolder.getEventStreamService();
             int tenantId = PrivilegedCarbonContext.getThreadLocalCarbonContext().getTenantId();
-            return eventStreamService.getAllStreamDefinitions(tenantId);
-
+            Collection<StreamDefinition> collection = new ArrayList<StreamDefinition>();
+            for(StreamDefinition streamDefinition: eventStreamService.getAllStreamDefinitions(tenantId)) {
+                collection.add(streamDefinition);
+            }
+            return collection;
         } catch (Exception e) {
             log.error(e);
         }

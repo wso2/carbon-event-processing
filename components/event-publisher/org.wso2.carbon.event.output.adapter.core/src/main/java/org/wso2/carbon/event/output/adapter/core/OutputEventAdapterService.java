@@ -46,16 +46,14 @@ public interface OutputEventAdapterService {
     OutputEventAdapterSchema getOutputEventAdapterSchema(String eventAdapterType);
 
 
-    void create(OutputEventAdapterConfiguration outputEventAdapterConfiguration, int tenantId) throws OutputEventAdapterException;
+    void create(OutputEventAdapterConfiguration outputEventAdapterConfiguration) throws OutputEventAdapterException;
 
     /**
      * publishes the message using the given event adapter to the given topic.
-     *
-     * @param name              - name of the event adapter
+     *  @param name              - name of the event adapter
      * @param dynamicProperties
-     * @param tenantId
      */
-    void publish(String name, Map<String, String> dynamicProperties, Object message, int tenantId);
+    void publish(String name, Map<String, String> dynamicProperties, Object message);
 
     /**
      * publish testConnect message using the given event adapter.
@@ -64,5 +62,5 @@ public interface OutputEventAdapterService {
      */
     void testConnection(OutputEventAdapterConfiguration outputEventAdapterConfiguration) throws OutputEventAdapterException, TestConnectionNotSupportedException;
 
-    void destroy(String name, int tenantId);
+    void destroy(String name);
 }

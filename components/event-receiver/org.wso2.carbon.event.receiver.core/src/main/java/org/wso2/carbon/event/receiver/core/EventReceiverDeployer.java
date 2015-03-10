@@ -172,7 +172,7 @@ public class EventReceiverDeployer extends AbstractDeployer implements EventProc
                     EventReceiverConfiguration eventReceiverConfiguration = EventReceiverConfigurationBuilder.getEventReceiverConfiguration(eventReceiverOMElement, mappingType, isEditable, tenantId);
                     eventReceiverName = eventReceiverConfiguration.getEventReceiverName();
                     if (!carbonEventReceiverService.isEventReceiverAlreadyExists(tenantId, eventReceiverName)) {
-                        carbonEventReceiverService.addEventReceiverConfiguration(eventReceiverConfiguration);
+                        carbonEventReceiverService.addEventReceiverConfiguration(eventReceiverConfiguration,axisConfiguration);
                         carbonEventReceiverService.addEventReceiverConfigurationFile(createEventReceiverConfigurationFile(eventReceiverName,
                                 deploymentFileData.getFile(), EventReceiverConfigurationFile.Status.DEPLOYED, axisConfiguration, null, null), tenantId);
                         log.info("Event Receiver configuration successfully deployed and in active state : " + eventReceiverName);

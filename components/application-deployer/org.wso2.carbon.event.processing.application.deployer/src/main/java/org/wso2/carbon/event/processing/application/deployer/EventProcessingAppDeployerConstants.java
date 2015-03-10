@@ -12,5 +12,7 @@ public class EventProcessingAppDeployerConstants {
     public static final String CEP_OUTPUT_EVENT_ADAPTOR_TYPE = "event-processing/outputeventadaptor";
     public static final String CEP_OUTPUT_EVENT_ADAPTOR_DIR  = "outputeventadaptors";
     public static final String CEP_EVENT_STREAM_TYPE = "event-processing/eventstream";
+    public static final String CEP_EVENT_STREAM_DIR = "eventstreams";
     public static final String FILE_TYPE_XML = "xml";
+    public static final String FILE_TYPE_JSON = "json";
 }

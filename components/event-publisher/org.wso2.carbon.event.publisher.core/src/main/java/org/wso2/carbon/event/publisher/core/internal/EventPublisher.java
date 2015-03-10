@@ -109,7 +109,7 @@ public class EventPublisher implements RawEventConsumer {
 
         OutputEventAdapterService eventAdapterService = EventPublisherServiceValueHolder.getOutputEventAdapterService();
         try {
-            eventAdapterService.create(eventPublisherConfiguration.getToAdapterConfiguration(), tenantId);
+            eventAdapterService.create(eventPublisherConfiguration.getToAdapterConfiguration());
         } catch (OutputEventAdapterException e) {
             throw new EventPublisherConfigurationException("Error in creating the output Adapter for Event Publisher :" + eventPublisherConfiguration.getEventPublisherName() + ", " + e.getMessage(), e);
         }
@@ -155,7 +155,7 @@ public class EventPublisher implements RawEventConsumer {
         }
 
         OutputEventAdapterService eventAdapterService = EventPublisherServiceValueHolder.getOutputEventAdapterService();
-        eventAdapterService.publish(eventPublisherConfiguration.getEventPublisherName(), eventPublisherConfiguration.getToAdapterDynamicProperties(), outObject, tenantId);
+        eventAdapterService.publish(eventPublisherConfiguration.getEventPublisherName(), eventPublisherConfiguration.getToAdapterDynamicProperties(), outObject);
 
     }
 
@@ -236,7 +236,7 @@ public class EventPublisher implements RawEventConsumer {
 
     public void destroy() {
         OutputEventAdapterService eventAdapterService = EventPublisherServiceValueHolder.getOutputEventAdapterService();
-        eventAdapterService.destroy(eventPublisherConfiguration.getEventPublisherName(), tenantId);
+        eventAdapterService.destroy(eventPublisherConfiguration.getEventPublisherName());
 
     }
 }

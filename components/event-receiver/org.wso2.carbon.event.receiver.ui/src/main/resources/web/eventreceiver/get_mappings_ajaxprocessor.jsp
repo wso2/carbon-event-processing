@@ -13,16 +13,15 @@
   ~ specific language governing permissions and limitations under the License.
   --%>
 <%@ page import="org.wso2.carbon.event.receiver.ui.EventReceiverUIUtils" %>
-<%@ page
-        import="org.wso2.carbon.event.output.adapter.manager.stub.OutputEventAdapterManagerAdminServiceStub" %>
+<%@ page import="org.wso2.carbon.event.receiver.stub.EventReceiverAdminServiceStub" %>
 <%
-    OutputEventAdapterManagerAdminServiceStub stub = EventReceiverUIUtils.getOutputEventManagerAdminService(config, session, request);
+    EventReceiverAdminServiceStub stub = EventReceiverUIUtils.getEventReceiverAdminService(config, session, request);
     String eventAdapterType = request.getParameter("eventAdapterType");
 %>
 <%
     if (eventAdapterType != null) {
         String supportedMappings = "";
-        String[] mappingTypes = stub.getSupportedMappingTypes(eventAdapterType);
+        String[] mappingTypes = stub.getInputAdapterConfigurationSchema(eventAdapterType).getSupportedMessageFormats();
         for (String mappingType : mappingTypes) {
             supportedMappings = supportedMappings + "|=" + mappingType;
         }

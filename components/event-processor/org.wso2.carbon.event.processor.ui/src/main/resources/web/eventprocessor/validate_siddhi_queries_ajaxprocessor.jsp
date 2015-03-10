@@ -26,7 +26,7 @@
 
       String resultString = "";
     if (strInputStreamDefinitions != null) {
-        String[] definitions = strInputStreamDefinitions.split(";");
+        String[] definitions = strInputStreamDefinitions.split("(?<=;)");
 
         try {
             boolean result = eventProcessorAdminServiceStub.validateSiddhiQueries(definitions, strQueryExpressions);

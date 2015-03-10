@@ -70,7 +70,7 @@ public class EmailEventAdapterFactory extends OutputEventAdapterFactory {
 
     @Override
     public OutputEventAdapter createEventAdapter(OutputEventAdapterConfiguration eventAdapterConfiguration, Map<String,
-                                                 String> globalProperties, int tenantId) {
+            String> globalProperties) {
         return new EmailEventAdapter(eventAdapterConfiguration, globalProperties);
     }
 

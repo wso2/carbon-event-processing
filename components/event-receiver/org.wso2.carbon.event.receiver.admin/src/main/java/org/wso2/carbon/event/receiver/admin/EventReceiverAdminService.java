@@ -283,7 +283,7 @@ public class EventReceiverAdminService extends AbstractAdmin {
         }
     }
 
-    public void deployWSO2EventReceiverConfiguration(String eventReceiverName,
+    public void deployWso2EventReceiverConfiguration(String eventReceiverName,
                                                      String streamNameWithVersion,
                                                      String eventAdapterType,
                                                      EventMappingPropertyDto[] metaData,
@@ -397,6 +397,8 @@ public class EventReceiverAdminService extends AbstractAdmin {
     public void deployXmlEventReceiverConfiguration(String eventReceiverName,
                                                     String streamNameWithVersion,
                                                     String eventAdapterType,
+                                                    String parentXpath,
+                                                    EventMappingPropertyDto[] namespaces,
                                                     EventMappingPropertyDto[] inputMappings,
                                                     BasicInputAdapterPropertyDto[] inputPropertyConfiguration,
                                                     boolean mappingEnabled)
@@ -420,10 +422,21 @@ public class EventReceiverAdminService extends AbstractAdmin {
 
                 XMLInputMapping xmlInputMapping = new XMLInputMapping();
                 xmlInputMapping.setCustomMappingEnabled(mappingEnabled);
+                xmlInputMapping.setParentSelectorXpath(parentXpath);
+                if (namespaces != null && namespaces.length != 0) {
+                    List<XPathDefinition> xPathDefinitions = new ArrayList<XPathDefinition>();
+                    for (EventMappingPropertyDto namespace : namespaces) {
+                        XPathDefinition xPathDefinition = new XPathDefinition(namespace.getName(), namespace.getValueOf());
+                        xPathDefinitions.add(xPathDefinition);
+                    }
+                    xmlInputMapping.setXPathDefinitions(xPathDefinitions);
+                }
+
                 if (mappingEnabled) {
                     if (inputMappings != null && inputMappings.length != 0) {
                         for (EventMappingPropertyDto mappingProperty : inputMappings) {
-                            InputMappingAttribute inputProperty = new InputMappingAttribute(mappingProperty.getName(), mappingProperty.getValueOf(), PropertyAttributeTypeConstants.STRING_ATTRIBUTE_TYPE_MAP.get(mappingProperty.getType()));
+                            InputMappingAttribute inputProperty = new InputMappingAttribute(mappingProperty.getName(),mappingProperty.getValueOf(), PropertyAttributeTypeConstants.STRING_ATTRIBUTE_TYPE_MAP.get(mappingProperty.getType()));
+                            inputProperty.setDefaultValue(mappingProperty.getDefaultValue());
                             xmlInputMapping.addInputMappingAttribute(inputProperty);
                         }
                     }

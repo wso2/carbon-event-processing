@@ -38,6 +38,7 @@ import org.wso2.carbon.event.formatter.core.internal.util.helper.EventFormatterC
 import org.wso2.carbon.event.output.adaptor.core.OutputEventAdaptorService;
 import org.wso2.carbon.event.output.adaptor.manager.core.OutputEventAdaptorManagerService;
 import org.wso2.carbon.event.output.adaptor.manager.core.exception.OutputEventAdaptorManagerConfigurationException;
+import org.wso2.carbon.event.stream.manager.core.EventStreamConfig;
 import org.wso2.carbon.event.stream.manager.core.EventStreamService;
 import org.wso2.carbon.event.stream.manager.core.exception.EventProducerException;
 import org.wso2.carbon.event.stream.manager.core.exception.EventStreamConfigurationException;

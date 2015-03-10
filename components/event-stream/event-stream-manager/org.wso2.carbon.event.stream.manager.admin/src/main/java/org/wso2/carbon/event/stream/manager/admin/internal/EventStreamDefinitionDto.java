@@ -29,6 +29,7 @@ public class EventStreamDefinitionDto {
     private EventStreamAttributeDto[] correlationAttributes;
     private EventStreamAttributeDto[] payloadAttributes;
     private String streamDefinitionString;
+    private boolean editable;
 
     public EventStreamAttributeDto[] getMetaData() {
         return metaAttributes;
@@ -124,5 +125,13 @@ public class EventStreamDefinitionDto {
         }
         return attributeString;
 
+    }
+
+    public void setEditable(boolean editable) {
+        this.editable = editable;
+    }
+
+    public boolean isEditable() {
+        return editable;
     }
 }

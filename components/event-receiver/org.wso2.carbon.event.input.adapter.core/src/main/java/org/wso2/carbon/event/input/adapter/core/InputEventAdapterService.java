@@ -15,6 +15,7 @@
 package org.wso2.carbon.event.input.adapter.core;
 
 
+import org.apache.axis2.engine.AxisConfiguration;
 import org.wso2.carbon.event.input.adapter.core.exception.InputEventAdapterException;
 import org.wso2.carbon.event.input.adapter.core.exception.TestConnectionNotSupportedException;
 
@@ -45,14 +46,14 @@ public interface InputEventAdapterService {
     InputEventAdapterSchema getInputEventAdapterSchema(String eventAdapterType);
 
 
-    void create(InputEventAdapterConfiguration inputEventAdapterConfiguration, InputEventAdapterSubscription inputEventAdapterSubscription, int tenantId) throws InputEventAdapterException;
+    void create(InputEventAdapterConfiguration inputEventAdapterConfiguration, InputEventAdapterSubscription inputEventAdapterSubscription, int tenantId, AxisConfiguration axisConfiguration) throws InputEventAdapterException;
 
     /**
      * publish testConnect message using the given event adapter.
-     *
-     * @param inputEventAdapterConfiguration - Configuration Details of the event adapter
+     *  @param inputEventAdapterConfiguration - Configuration Details of the event adapter
+     * @param axisConfiguration
      */
-    void testConnection(InputEventAdapterConfiguration inputEventAdapterConfiguration) throws InputEventAdapterException, TestConnectionNotSupportedException;
+    void testConnection(InputEventAdapterConfiguration inputEventAdapterConfiguration, AxisConfiguration axisConfiguration) throws InputEventAdapterException, TestConnectionNotSupportedException;
 
     void destroy(String name, int tenantId);
 }

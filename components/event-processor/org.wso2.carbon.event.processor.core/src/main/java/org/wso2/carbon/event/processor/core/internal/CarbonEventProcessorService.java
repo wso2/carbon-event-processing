@@ -62,7 +62,7 @@ import java.util.concurrent.ConcurrentHashMap;
 public class CarbonEventProcessorService implements EventProcessorService {
     private static final Log log = LogFactory.getLog(CarbonEventProcessorService.class);
     // deployed query plans
-    private Map<Integer, Map<String, ExecutionPlan>> tenantSpecificExecutionPlans;
+    private Map<Integer, TreeMap<String, ExecutionPlan>> tenantSpecificExecutionPlans;
     // not distinguishing between deployed vs failed here.
     private Map<Integer, List<ExecutionPlanConfigurationFile>> tenantSpecificExecutionPlanFiles;
     private CEPMembership currentCepMembershipInfo;
@@ -71,7 +71,7 @@ public class CarbonEventProcessorService implements EventProcessorService {
     private List<String> exportDefinitions;
 
     public CarbonEventProcessorService() {
-        tenantSpecificExecutionPlans = new ConcurrentHashMap<Integer, Map<String, ExecutionPlan>>();
+        tenantSpecificExecutionPlans = new ConcurrentHashMap<Integer, TreeMap<String, ExecutionPlan>>();
         tenantSpecificExecutionPlanFiles = new ConcurrentHashMap<Integer, List<ExecutionPlanConfigurationFile>>();
     }
 
@@ -216,11 +216,11 @@ public class CarbonEventProcessorService implements EventProcessorService {
             throws ExecutionPlanDependencyValidationException, ExecutionPlanConfigurationException,
             ServiceDependencyValidationException {
         int tenantId = PrivilegedCarbonContext.getThreadLocalCarbonContext().getTenantId();
-        Map<String, ExecutionPlan> tenantExecutionPlans = tenantSpecificExecutionPlans.get(tenantId);
+        TreeMap<String, ExecutionPlan> tenantExecutionPlans = tenantSpecificExecutionPlans.get(tenantId);
         SiddhiManager siddhiManager = EventProcessorValueHolder.getSiddhiManager();
         ExecutionPlanRuntime executionPlanRuntime = null;
         if (tenantExecutionPlans == null) {
-            tenantExecutionPlans = new ConcurrentHashMap<String, ExecutionPlan>();
+            tenantExecutionPlans = new TreeMap<String, ExecutionPlan>();
             tenantSpecificExecutionPlans.put(tenantId, tenantExecutionPlans);
         } else if (tenantExecutionPlans.get(executionPlanConfiguration.getName()) != null) {
             // if an execution plan with the same name already exists, we are not going to override it with this plan.
@@ -231,11 +231,9 @@ public class CarbonEventProcessorService implements EventProcessorService {
         // This iteration exists only as a check. Actual usage of imported stream configs is further down
         for (StreamConfiguration streamConfiguration : executionPlanConfiguration.getImportedStreams()) {
             try {
-                StreamDefinition streamDefinition = EventProcessorValueHolder.getEventStreamService()
-                        .getStreamDefinition(streamConfiguration.getStreamId(), tenantId);
+                StreamDefinition streamDefinition = EventProcessorValueHolder.getEventStreamService().getStreamDefinition(streamConfiguration.getStreamId(), tenantId);
                 if (streamDefinition == null) {
-                    throw new ExecutionPlanDependencyValidationException(streamConfiguration.getStreamId(),
-                            "Imported Stream " + streamConfiguration.getStreamId() + " does not exist");
+                    throw new ExecutionPlanDependencyValidationException(streamConfiguration.getStreamId(), "Imported Stream " + streamConfiguration.getStreamId() + " does not exist");
                 }
             } catch (EventStreamConfigurationException e) {
                 throw new ExecutionPlanConfigurationException("Error in retrieving stream ID : " + streamConfiguration.getStreamId());
@@ -246,8 +244,7 @@ public class CarbonEventProcessorService implements EventProcessorService {
         // This iteration exists only as a check. Actual usage of exported stream configs is further down
         for (StreamConfiguration streamConfiguration : executionPlanConfiguration.getExportedStreams()) {
             try {
-                StreamDefinition streamDefinition = EventProcessorValueHolder.getEventStreamService()
-                        .getStreamDefinition(streamConfiguration.getStreamId(), tenantId);
+                StreamDefinition streamDefinition = EventProcessorValueHolder.getEventStreamService().getStreamDefinition(streamConfiguration.getStreamId(), tenantId);
                 if (streamDefinition == null) {
                     throw new ExecutionPlanDependencyValidationException(streamConfiguration.getStreamId(),
                             "Exported Stream " + streamConfiguration.getStreamId() + " does not exist");
@@ -279,6 +276,7 @@ public class CarbonEventProcessorService implements EventProcessorService {
         for (StreamConfiguration exportedStreamConfiguration : executionPlanConfiguration.getExportedStreams()) {
             StreamDefinition streamDefinition;
             try {
+
                 streamDefinition = EventProcessorValueHolder.getEventStreamService().getStreamDefinition(
                         exportedStreamConfiguration.getStreamId(), tenantId);
                 exportDefinitions.add(EventProcessorUtil.getDefinitionString(streamDefinition,
@@ -304,13 +302,14 @@ public class CarbonEventProcessorService implements EventProcessorService {
         if (distributed) {
             String queryExpression = EventProcessorUtil.constructQueryExpression(executionPlanConfiguration.getName(),
                     importDefinitions, exportDefinitions, "");
-            executionPlanRuntime = siddhiManager.createExecutionPlanRuntime(queryExpression);//todo move inside??
+            executionPlanRuntime = siddhiManager.createExecutionPlanRuntime(queryExpression);
             if (stormDeploymentConfig != null && stormDeploymentConfig.isManagerNode() && EventProcessorValueHolder
                     .getStormManagerServer().isStormManager()) {
                 try {
                     TopologyManager.submitTopology(executionPlanConfiguration, importDefinitions, exportDefinitions,
                             tenantId, stormDeploymentConfig.getTopologySubmitRetryInterval());
                 } catch (StormDeploymentException e) {
+                    log.error("Invalid distributed query/configuration specified, " + e.getMessage(), e);
                     throw new ExecutionPlanConfigurationException("Invalid distributed query specified, " + e.getMessage(), e);
                 }
             }
