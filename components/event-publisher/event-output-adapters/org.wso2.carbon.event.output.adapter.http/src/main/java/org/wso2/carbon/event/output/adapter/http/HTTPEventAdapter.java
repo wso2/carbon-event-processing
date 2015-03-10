@@ -47,7 +47,7 @@ public class HTTPEventAdapter implements OutputEventAdapter {
     private HttpClient httpClient;
 
     public HTTPEventAdapter(OutputEventAdapterConfiguration eventAdapterConfiguration, Map<String,
-                            String> globalProperties) {
+            String> globalProperties) {
         this.eventAdapterConfiguration = eventAdapterConfiguration;
         this.globalProperties = globalProperties;
     }
@@ -66,14 +66,14 @@ public class HTTPEventAdapter implements OutputEventAdapter {
             //If global properties are available those will be assigned else constant values will be assigned
             if (globalProperties.get(HTTPEventAdapterConstants.ADAPTER_MIN_THREAD_POOL_SIZE_NAME) != null) {
                 minThread = Integer.parseInt(globalProperties.get(
-                                             HTTPEventAdapterConstants.ADAPTER_MIN_THREAD_POOL_SIZE_NAME));
+                        HTTPEventAdapterConstants.ADAPTER_MIN_THREAD_POOL_SIZE_NAME));
             } else {
                 minThread = HTTPEventAdapterConstants.ADAPTER_MIN_THREAD_POOL_SIZE;
             }
 
             if (globalProperties.get(HTTPEventAdapterConstants.ADAPTER_MAX_THREAD_POOL_SIZE_NAME) != null) {
                 maxThread = Integer.parseInt(globalProperties.get(
-                                             HTTPEventAdapterConstants.ADAPTER_MAX_THREAD_POOL_SIZE_NAME));
+                        HTTPEventAdapterConstants.ADAPTER_MAX_THREAD_POOL_SIZE_NAME));
             } else {
                 maxThread = HTTPEventAdapterConstants.ADAPTER_MAX_THREAD_POOL_SIZE;
             }
@@ -111,12 +111,13 @@ public class HTTPEventAdapter implements OutputEventAdapter {
     @Override
     public void publish(Object message, Map<String, String> dynamicProperties) {
 
+        //Load dynamic properties
         this.checkHTTPClientInit(dynamicProperties);
-        String url =  dynamicProperties.get(HTTPEventAdapterConstants.ADAPTER_MESSAGE_URL);
-        String username =  dynamicProperties.get(HTTPEventAdapterConstants.ADAPTER_USERNAME);
-        String password =  dynamicProperties.get(HTTPEventAdapterConstants.ADAPTER_PASSWORD);
+        String url = dynamicProperties.get(HTTPEventAdapterConstants.ADAPTER_MESSAGE_URL);
+        String username = dynamicProperties.get(HTTPEventAdapterConstants.ADAPTER_USERNAME);
+        String password = dynamicProperties.get(HTTPEventAdapterConstants.ADAPTER_PASSWORD);
         Map<String, String> headers = this.extractHeaders(dynamicProperties.get(
-                                                                           HTTPEventAdapterConstants.ADAPTER_HEADERS));
+                HTTPEventAdapterConstants.ADAPTER_HEADERS));
         String payload = message.toString();
 
         this.executorService.submit(new HTTPSender(url, payload, username, password, headers));
@@ -133,7 +134,7 @@ public class HTTPEventAdapter implements OutputEventAdapter {
     }
 
     private void checkHTTPClientInit(
-            Map<String, String>  dynamicProperties) {
+            Map<String, String> dynamicProperties) {
         if (this.httpClient != null) {
             return;
         }
@@ -225,7 +226,7 @@ public class HTTPEventAdapter implements OutputEventAdapter {
             if (this.getUsername() != null && this.getUsername().trim().length() > 0) {
                 method.setHeader("Authorization", "Basic " + Base64.encode(
                         (this.getUsername() + HTTPEventAdapterConstants.ENTRY_SEPARATOR
-                         + this.getPassword()).getBytes()));
+                                + this.getPassword()).getBytes()));
             }
         }
 
