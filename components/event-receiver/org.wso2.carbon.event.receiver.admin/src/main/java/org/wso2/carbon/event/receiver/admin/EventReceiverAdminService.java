@@ -50,7 +50,7 @@ public class EventReceiverAdminService extends AbstractAdmin {
 
         // get event receiver configurations
         List<EventReceiverConfiguration> eventReceiverConfigurationList;
-        eventReceiverConfigurationList = eventReceiverService.getAllActiveEventReceiverConfigurations(tenantId);
+        eventReceiverConfigurationList = eventReceiverService.getAllActiveEventReceiverConfigurations();
 
         if (eventReceiverConfigurationList != null) {
             // create event receiver configuration details array
@@ -88,7 +88,7 @@ public class EventReceiverAdminService extends AbstractAdmin {
 
         // get event receiver configurations
         List<EventReceiverConfiguration> eventReceiverConfigurationList;
-        eventReceiverConfigurationList = eventReceiverService.getAllActiveEventReceiverConfigurations(streamId, tenantId);
+        eventReceiverConfigurationList = eventReceiverService.getAllActiveEventReceiverConfigurations(streamId);
 
         if (eventReceiverConfigurationList != null) {
             // create event receiver configuration details array
@@ -119,7 +119,7 @@ public class EventReceiverAdminService extends AbstractAdmin {
 
         EventReceiverService eventReceiverService = EventReceiverAdminServiceValueHolder.getEventReceiverService();
         AxisConfiguration axisConfiguration = getAxisConfig();
-        List<EventReceiverConfigurationFile> eventReceiverConfigurationFileList = eventReceiverService.getAllInactiveEventReceiverConfigurations(axisConfiguration);
+        List<EventReceiverConfigurationFile> eventReceiverConfigurationFileList = eventReceiverService.getAllInactiveEventReceiverConfigurations();
         if (eventReceiverConfigurationFileList != null) {
 
             // create event receiver file details array
@@ -150,7 +150,7 @@ public class EventReceiverAdminService extends AbstractAdmin {
         int tenantId = PrivilegedCarbonContext.getThreadLocalCarbonContext().getTenantId();
         AxisConfiguration axisConfiguration = getAxisConfig();
 
-        EventReceiverConfiguration eventReceiverConfiguration = eventReceiverService.getActiveEventReceiverConfiguration(eventReceiverName, tenantId);
+        EventReceiverConfiguration eventReceiverConfiguration = eventReceiverService.getActiveEventReceiverConfiguration(eventReceiverName);
         if (eventReceiverConfiguration != null) {
             EventReceiverConfigurationDto eventReceiverConfigurationDto = new EventReceiverConfigurationDto();
             eventReceiverConfigurationDto.setEventReceiverName(eventReceiverConfiguration.getEventReceiverName());
@@ -201,7 +201,7 @@ public class EventReceiverAdminService extends AbstractAdmin {
         EventReceiverService eventReceiverService = EventReceiverAdminServiceValueHolder.getEventReceiverService();
         AxisConfiguration axisConfiguration = getAxisConfig();
         try {
-            return eventReceiverService.getActiveEventReceiverConfigurationContent(eventReceiverName, axisConfiguration);
+            return eventReceiverService.getActiveEventReceiverConfigurationContent(eventReceiverName);
         } catch (EventReceiverConfigurationException e) {
             log.error(e.getMessage(), e);
             throw new AxisFault(e.getMessage());
@@ -212,7 +212,7 @@ public class EventReceiverAdminService extends AbstractAdmin {
             throws AxisFault {
         EventReceiverService eventReceiverService = EventReceiverAdminServiceValueHolder.getEventReceiverService();
         try {
-            String eventReceiverConfigurationFile = eventReceiverService.getInactiveEventReceiverConfigurationContent(fileName, getAxisConfig());
+            String eventReceiverConfigurationFile = eventReceiverService.getInactiveEventReceiverConfigurationContent(fileName);
             return eventReceiverConfigurationFile.trim();
         } catch (EventReceiverConfigurationException e) {
             log.error(e.getMessage(), e);
@@ -225,7 +225,7 @@ public class EventReceiverAdminService extends AbstractAdmin {
         EventReceiverService eventReceiverService = EventReceiverAdminServiceValueHolder.getEventReceiverService();
         AxisConfiguration axisConfiguration = getAxisConfig();
         try {
-            eventReceiverService.undeployActiveEventReceiverConfiguration(eventReceiverName, axisConfiguration);
+            eventReceiverService.undeployActiveEventReceiverConfiguration(eventReceiverName);
         } catch (EventReceiverConfigurationException e) {
             log.error(e.getMessage(), e);
             throw new AxisFault(e.getMessage());
@@ -237,7 +237,7 @@ public class EventReceiverAdminService extends AbstractAdmin {
         EventReceiverService eventReceiverService = EventReceiverAdminServiceValueHolder.getEventReceiverService();
         try {
             AxisConfiguration axisConfiguration = getAxisConfig();
-            eventReceiverService.undeployInactiveEventReceiverConfiguration(fileName, axisConfiguration);
+            eventReceiverService.undeployInactiveEventReceiverConfiguration(fileName);
         } catch (EventReceiverConfigurationException e) {
             log.error(e.getMessage(), e);
             throw new AxisFault(e.getMessage());
@@ -250,7 +250,7 @@ public class EventReceiverAdminService extends AbstractAdmin {
         EventReceiverService eventReceiverService = EventReceiverAdminServiceValueHolder.getEventReceiverService();
         AxisConfiguration axisConfiguration = getAxisConfig();
         try {
-            eventReceiverService.editActiveEventReceiverConfiguration(eventReceiverConfiguration, eventReceiverName, axisConfiguration);
+            eventReceiverService.editActiveEventReceiverConfiguration(eventReceiverConfiguration, eventReceiverName);
         } catch (EventReceiverConfigurationException e) {
             log.error(e.getMessage(), e);
             throw new AxisFault(e.getMessage());
@@ -265,7 +265,7 @@ public class EventReceiverAdminService extends AbstractAdmin {
         EventReceiverService eventReceiverService = EventReceiverAdminServiceValueHolder.getEventReceiverService();
         AxisConfiguration axisConfiguration = getAxisConfig();
         try {
-            eventReceiverService.editInactiveEventReceiverConfiguration(eventReceiverConfiguration, fileName, axisConfiguration);
+            eventReceiverService.editInactiveEventReceiverConfiguration(eventReceiverConfiguration, fileName);
         } catch (EventReceiverConfigurationException e) {
             log.error(e.getMessage(), e);
             throw new AxisFault(e.getMessage());
@@ -276,7 +276,7 @@ public class EventReceiverAdminService extends AbstractAdmin {
             throws AxisFault {
         try {
             EventReceiverService eventReceiverService = EventReceiverAdminServiceValueHolder.getEventReceiverService();
-            eventReceiverService.deployEventReceiverConfiguration(eventReceiverConfigXml, getAxisConfig());
+            eventReceiverService.deployEventReceiverConfiguration(eventReceiverConfigXml);
         } catch (EventReceiverConfigurationException e) {
             log.error(e.getMessage(), e);
             throw new AxisFault(e.getMessage());
@@ -334,7 +334,7 @@ public class EventReceiverAdminService extends AbstractAdmin {
                     }
                 }
                 eventReceiverConfiguration.setInputMapping(wso2EventInputMapping);
-                eventReceiverService.deployEventReceiverConfiguration(eventReceiverConfiguration, axisConfiguration);
+                eventReceiverService.deployEventReceiverConfiguration(eventReceiverConfiguration);
             } catch (EventReceiverConfigurationException e) {
                 log.error(e.getMessage(), e);
                 throw new AxisFault(e.getMessage());
@@ -382,7 +382,7 @@ public class EventReceiverAdminService extends AbstractAdmin {
                 }
                 eventReceiverConfiguration.setInputMapping(textInputMapping);
 
-                eventReceiverService.deployEventReceiverConfiguration(eventReceiverConfiguration, axisConfiguration);
+                eventReceiverService.deployEventReceiverConfiguration(eventReceiverConfiguration);
 
             } catch (EventReceiverConfigurationException e) {
                 log.error(e.getMessage(), e);
@@ -443,7 +443,7 @@ public class EventReceiverAdminService extends AbstractAdmin {
                 }
                 eventReceiverConfiguration.setInputMapping(xmlInputMapping);
 
-                eventReceiverService.deployEventReceiverConfiguration(eventReceiverConfiguration, axisConfiguration);
+                eventReceiverService.deployEventReceiverConfiguration(eventReceiverConfiguration);
             } catch (EventReceiverConfigurationException e) {
                 log.error(e.getMessage(), e);
                 throw new AxisFault(e.getMessage());
@@ -492,7 +492,7 @@ public class EventReceiverAdminService extends AbstractAdmin {
                 }
                 eventReceiverConfiguration.setInputMapping(mapInputMapping);
 
-                eventReceiverService.deployEventReceiverConfiguration(eventReceiverConfiguration, axisConfiguration);
+                eventReceiverService.deployEventReceiverConfiguration(eventReceiverConfiguration);
 
             } catch (EventReceiverConfigurationException ex) {
                 log.error(ex.getMessage(), ex);
@@ -540,7 +540,7 @@ public class EventReceiverAdminService extends AbstractAdmin {
                 }
                 eventReceiverConfiguration.setInputMapping(jsonInputMapping);
 
-                eventReceiverService.deployEventReceiverConfiguration(eventReceiverConfiguration, axisConfiguration);
+                eventReceiverService.deployEventReceiverConfiguration(eventReceiverConfiguration);
 
             } catch (EventReceiverConfigurationException ex) {
                 log.error(ex.getMessage(), ex);
@@ -557,7 +557,7 @@ public class EventReceiverAdminService extends AbstractAdmin {
         EventReceiverService eventReceiverService = EventReceiverAdminServiceValueHolder.getEventReceiverService();
         AxisConfiguration axisConfiguration = getAxisConfig();
         try {
-            eventReceiverService.setStatisticsEnabled(eventReceiverName, flag, axisConfiguration);
+            eventReceiverService.setStatisticsEnabled(eventReceiverName, flag);
         } catch (EventReceiverConfigurationException e) {
             log.error(e.getMessage(), e);
             throw new AxisFault(e.getMessage());
@@ -568,7 +568,7 @@ public class EventReceiverAdminService extends AbstractAdmin {
         EventReceiverService eventReceiverService = EventReceiverAdminServiceValueHolder.getEventReceiverService();
         AxisConfiguration axisConfiguration = getAxisConfig();
         try {
-            eventReceiverService.setTraceEnabled(eventReceiverName, flag, axisConfiguration);
+            eventReceiverService.setTraceEnabled(eventReceiverName, flag);
         } catch (EventReceiverConfigurationException e) {
             log.error(e.getMessage(), e);
             throw new AxisFault(e.getMessage());
@@ -708,7 +708,7 @@ public class EventReceiverAdminService extends AbstractAdmin {
 
         List<EventReceiverConfiguration> eventReceiverConfigurationList = null;
 
-        eventReceiverConfigurationList = eventReceiverService.getAllActiveEventReceiverConfigurations(tenantId);
+        eventReceiverConfigurationList = eventReceiverService.getAllActiveEventReceiverConfigurations();
         Iterator eventReceiverConfigurationIterator = eventReceiverConfigurationList.iterator();
         while (eventReceiverConfigurationIterator.hasNext()) {
 

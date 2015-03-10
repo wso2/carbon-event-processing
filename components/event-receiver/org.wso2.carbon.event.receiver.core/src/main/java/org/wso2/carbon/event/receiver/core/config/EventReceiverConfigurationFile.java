@@ -14,7 +14,7 @@
  */
 package org.wso2.carbon.event.receiver.core.config;
 
-import org.apache.axis2.engine.AxisConfiguration;
+import org.wso2.carbon.utils.multitenancy.MultitenantConstants;
 
 public class EventReceiverConfigurationFile {
 
@@ -27,8 +27,8 @@ public class EventReceiverConfigurationFile {
     private Status status;
     private String dependency;
     private String deploymentStatusMessage = "";
-    private AxisConfiguration axisConfiguration;
     private String filePath;
+    private int tenantId= MultitenantConstants.INVALID_TENANT_ID;
 
     public EventReceiverConfigurationFile() {
         this.fileName = fileName;
@@ -58,14 +58,6 @@ public class EventReceiverConfigurationFile {
         this.deploymentStatusMessage = deploymentStatusMessage;
     }
 
-    public AxisConfiguration getAxisConfiguration() {
-        return axisConfiguration;
-    }
-
-    public void setAxisConfiguration(AxisConfiguration axisConfiguration) {
-        this.axisConfiguration = axisConfiguration;
-    }
-
     public String getFileName() {
         return fileName;
     }
@@ -88,5 +80,13 @@ public class EventReceiverConfigurationFile {
 
     public void setEventReceiverName(String eventReceiverName) {
         this.eventReceiverName = eventReceiverName;
+    }
+
+    public int getTenantId() {
+        return tenantId;
+    }
+
+    public void setTenantId(int tenantId) {
+        this.tenantId = tenantId;
     }
 }

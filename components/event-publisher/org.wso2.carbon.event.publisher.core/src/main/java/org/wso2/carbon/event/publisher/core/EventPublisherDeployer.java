@@ -21,7 +21,6 @@ import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.deployment.AbstractDeployer;
 import org.apache.axis2.deployment.DeploymentException;
 import org.apache.axis2.deployment.repository.util.DeploymentFileData;
-import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.wso2.carbon.context.PrivilegedCarbonContext;
@@ -147,7 +146,6 @@ public class EventPublisherDeployer extends AbstractDeployer implements EventPro
 
         File eventPublisherFile = deploymentFileData.getFile();
         boolean isEditable = !eventPublisherFile.getAbsolutePath().contains(File.separator + "carbonapps" + File.separator);
-        AxisConfiguration axisConfiguration = configurationContext.getAxisConfiguration();
         CarbonEventPublisherService carbonEventPublisherService = EventPublisherServiceValueHolder.getCarbonEventPublisherService();
         int tenantId = PrivilegedCarbonContext.getThreadLocalCarbonContext().getTenantId();
         String eventPublisherName = "";

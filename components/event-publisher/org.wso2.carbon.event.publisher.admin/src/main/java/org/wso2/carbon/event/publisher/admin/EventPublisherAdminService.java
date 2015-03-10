@@ -199,12 +199,14 @@ public class EventPublisherAdminService extends AbstractAdmin {
                     jsonOutputMappingDto.setMappingText(jsonOutputMapping.getMappingText());
                     jsonOutputMappingDto.setRegistryResource(jsonOutputMapping.isRegistryResource());
                     eventPublisherConfigurationDto.setJsonOutputMappingDto(jsonOutputMappingDto);
+                    eventPublisherConfigurationDto.setCustomMappingEnabled(jsonOutputMapping.isCustomMappingEnabled());
                     eventPublisherConfigurationDto.setMessageFormat(EventPublisherConstants.EF_JSON_MAPPING_TYPE);
                 } else if (eventPublisherConfiguration.getOutputMapping().getMappingType().equals(EventPublisherConstants.EF_XML_MAPPING_TYPE)) {
                     XMLOutputMapping xmlOutputMapping = (XMLOutputMapping) eventPublisherConfiguration.getOutputMapping();
                     XMLOutputMappingDto xmlOutputMappingDto = new XMLOutputMappingDto();
                     xmlOutputMappingDto.setMappingXMLText(xmlOutputMapping.getMappingXMLText());
                     xmlOutputMappingDto.setRegistryResource(xmlOutputMapping.isRegistryResource());
+                    eventPublisherConfigurationDto.setCustomMappingEnabled(xmlOutputMapping.isCustomMappingEnabled());
                     eventPublisherConfigurationDto.setXmlOutputMappingDto(xmlOutputMappingDto);
                     eventPublisherConfigurationDto.setMessageFormat(EventPublisherConstants.EF_XML_MAPPING_TYPE);
                 } else if (eventPublisherConfiguration.getOutputMapping().getMappingType().equals(EventPublisherConstants.EF_TEXT_MAPPING_TYPE)) {
@@ -213,6 +215,7 @@ public class EventPublisherAdminService extends AbstractAdmin {
                     textOutputMappingDto.setMappingText(textOutputMapping.getMappingText());
                     textOutputMappingDto.setRegistryResource(textOutputMapping.isRegistryResource());
                     eventPublisherConfigurationDto.setTextOutputMappingDto(textOutputMappingDto);
+                    eventPublisherConfigurationDto.setCustomMappingEnabled(textOutputMapping.isCustomMappingEnabled());
                     eventPublisherConfigurationDto.setMessageFormat(EventPublisherConstants.EF_TEXT_MAPPING_TYPE);
                 } else if (eventPublisherConfiguration.getOutputMapping().getMappingType().equals(EventPublisherConstants.EF_MAP_MAPPING_TYPE)) {
                     MapOutputMapping mapOutputMapping = (MapOutputMapping) eventPublisherConfiguration.getOutputMapping();
@@ -231,6 +234,7 @@ public class EventPublisherAdminService extends AbstractAdmin {
                     }
 
                     eventPublisherConfigurationDto.setMapOutputMappingDto(mapOutputMappingDto);
+                    eventPublisherConfigurationDto.setCustomMappingEnabled(mapOutputMapping.isCustomMappingEnabled());
                     eventPublisherConfigurationDto.setMessageFormat(EventPublisherConstants.EF_MAP_MAPPING_TYPE);
                 } else if (eventPublisherConfiguration.getOutputMapping().getMappingType().equals(EventPublisherConstants.EF_WSO2EVENT_MAPPING_TYPE)) {
                     WSO2EventOutputMapping wso2EventOutputMapping = (WSO2EventOutputMapping) eventPublisherConfiguration.getOutputMapping();
@@ -243,6 +247,7 @@ public class EventPublisherAdminService extends AbstractAdmin {
                     wso2EventOutputMappingDto.setCorrelationWSO2EventMappingProperties(getEventPropertyDtoArray(correlationOutputPropertyList));
                     wso2EventOutputMappingDto.setPayloadWSO2EventMappingProperties(getEventPropertyDtoArray(payloadOutputPropertyList));
 
+                    eventPublisherConfigurationDto.setCustomMappingEnabled(wso2EventOutputMapping.isCustomMappingEnabled());
                     eventPublisherConfigurationDto.setWso2EventOutputMappingDto(wso2EventOutputMappingDto);
                     eventPublisherConfigurationDto.setMessageFormat(EventPublisherConstants.EF_WSO2EVENT_MAPPING_TYPE);
                 }

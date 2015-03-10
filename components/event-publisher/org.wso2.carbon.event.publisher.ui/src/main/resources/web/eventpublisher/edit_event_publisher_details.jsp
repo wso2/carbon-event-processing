@@ -128,7 +128,7 @@
     }
 
     function updateNotDeployedConfiguration(form, eventPublisherPath) {
-        var newEventPublisherConfiguration = ""
+        var newEventPublisherConfiguration = "";
 
         if (document.getElementById("rawConfig") != null) {
             newEventPublisherConfiguration = editAreaLoader.getValue("rawConfig");

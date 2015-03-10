@@ -14,11 +14,11 @@
  */
 package org.wso2.carbon.event.input.adapter.core.internal;
 
-import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.log4j.Logger;
 import org.wso2.carbon.context.CarbonContext;
+import org.wso2.carbon.context.PrivilegedCarbonContext;
 import org.wso2.carbon.event.input.adapter.core.*;
 import org.wso2.carbon.event.input.adapter.core.exception.InputEventAdapterException;
 import org.wso2.carbon.event.input.adapter.core.exception.TestConnectionNotSupportedException;
@@ -79,7 +79,8 @@ public class CarbonInputEventAdapterService implements InputEventAdapterService 
     }
 
     @Override
-    public void create(InputEventAdapterConfiguration inputEventAdapterConfiguration, InputEventAdapterSubscription inputEventAdapterSubscription, int tenantId, AxisConfiguration axisConfiguration) throws InputEventAdapterException {
+    public void create(InputEventAdapterConfiguration inputEventAdapterConfiguration, InputEventAdapterSubscription inputEventAdapterSubscription) throws InputEventAdapterException {
+        int tenantId = PrivilegedCarbonContext.getThreadLocalCarbonContext().getTenantId();
         ConcurrentHashMap<String, InputAdapterRuntime> eventAdapters = tenantSpecificEventAdapters.get(tenantId);
         if (eventAdapters == null) {
             tenantSpecificEventAdapters.putIfAbsent(tenantId, new ConcurrentHashMap<String, InputAdapterRuntime>());
@@ -101,7 +102,7 @@ public class CarbonInputEventAdapterService implements InputEventAdapterService 
         Map<String, String> globalProperties = InputEventAdapterServiceValueHolder.getGlobalAdapterConfigs().
                 getAdapterConfig(inputEventAdapterConfiguration.getType()).getGlobalPropertiesAsMap();
         eventAdapters.put(inputEventAdapterConfiguration.getName(), new InputAdapterRuntime(adapterFactory.
-                createEventAdapter(inputEventAdapterConfiguration, globalProperties, tenantId, axisConfiguration), inputEventAdapterConfiguration.getName(),
+                createEventAdapter(inputEventAdapterConfiguration, globalProperties), inputEventAdapterConfiguration.getName(),
                 inputEventAdapterSubscription));
     }
 
@@ -109,10 +110,9 @@ public class CarbonInputEventAdapterService implements InputEventAdapterService 
      * publish testConnect message using the given event adapter.
      *
      * @param inputEventAdapterConfiguration - Configuration Details of the event adapter
-     * @param axisConfiguration
      */
     @Override
-    public void testConnection(InputEventAdapterConfiguration inputEventAdapterConfiguration, AxisConfiguration axisConfiguration)
+    public void testConnection(InputEventAdapterConfiguration inputEventAdapterConfiguration)
             throws InputEventAdapterException, TestConnectionNotSupportedException {
         InputEventAdapter inputEventAdapter = null;
         TestConnectionAdapterListener adaptorSubscription = null;
@@ -130,7 +130,7 @@ public class CarbonInputEventAdapterService implements InputEventAdapterService 
             Map<String, String> globalProperties = InputEventAdapterServiceValueHolder.getGlobalAdapterConfigs().
                     getAdapterConfig(inputEventAdapterConfiguration.getType()).getGlobalPropertiesAsMap();
             int tenantId = CarbonContext.getThreadLocalCarbonContext().getTenantId();
-            inputEventAdapter = inputEventAdapterFactory.createEventAdapter(inputEventAdapterConfiguration, globalProperties, tenantId, axisConfiguration);
+            inputEventAdapter = inputEventAdapterFactory.createEventAdapter(inputEventAdapterConfiguration, globalProperties);
             adaptorSubscription = new TestConnectionAdapterListener();
             inputEventAdapter.init(adaptorSubscription);
             inputEventAdapter.testConnect();
@@ -148,7 +148,8 @@ public class CarbonInputEventAdapterService implements InputEventAdapterService 
     }
 
     @Override
-    public void destroy(String name, int tenantId) {
+    public void destroy(String name) {
+        int tenantId = PrivilegedCarbonContext.getThreadLocalCarbonContext().getTenantId();
         ConcurrentHashMap<String, InputAdapterRuntime> eventAdapters = tenantSpecificEventAdapters.get(tenantId);
         if (eventAdapters == null) {
             return;

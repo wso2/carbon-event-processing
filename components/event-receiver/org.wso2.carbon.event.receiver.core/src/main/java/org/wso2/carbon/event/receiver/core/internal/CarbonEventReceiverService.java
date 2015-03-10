@@ -21,6 +21,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.wso2.carbon.context.PrivilegedCarbonContext;
 import org.wso2.carbon.databridge.commons.StreamDefinition;
+import org.wso2.carbon.event.input.adapter.core.EventAdapterUtil;
 import org.wso2.carbon.event.input.adapter.core.InputEventAdapterService;
 import org.wso2.carbon.event.receiver.core.EventReceiverService;
 import org.wso2.carbon.event.receiver.core.config.EventReceiverConfiguration;
@@ -33,7 +34,6 @@ import org.wso2.carbon.event.receiver.core.internal.util.EventReceiverConfigurat
 import org.wso2.carbon.event.receiver.core.internal.util.EventReceiverUtil;
 import org.wso2.carbon.event.receiver.core.internal.util.helper.EventReceiverConfigurationFileSystemInvoker;
 import org.wso2.carbon.event.receiver.core.internal.util.helper.EventReceiverConfigurationHelper;
-import org.wso2.carbon.event.stream.manager.core.EventStreamConfig;
 import org.wso2.carbon.event.stream.manager.core.EventStreamService;
 import org.wso2.carbon.event.stream.manager.core.exception.EventStreamConfigurationException;
 
@@ -57,8 +57,7 @@ public class CarbonEventReceiverService implements EventReceiverService {
     }
 
     @Override
-    public void deployEventReceiverConfiguration(EventReceiverConfiguration eventReceiverConfiguration,
-                                                 AxisConfiguration axisConfiguration)
+    public void deployEventReceiverConfiguration(EventReceiverConfiguration eventReceiverConfiguration)
             throws EventReceiverConfigurationException {
 
         String eventReceiverName = eventReceiverConfiguration.getEventReceiverName();
@@ -67,10 +66,10 @@ public class CarbonEventReceiverService implements EventReceiverService {
         EventReceiverConfigurationHelper.validateEventReceiverConfiguration(omElement);
         String mappingType = EventReceiverConfigurationHelper.getInputMappingType(omElement);
         if (mappingType != null) {
-            String repoPath = axisConfiguration.getRepository().getPath();
+            String repoPath = EventAdapterUtil.getAxisConfiguration().getRepository().getPath();
             EventReceiverUtil.generateFilePath(eventReceiverName, repoPath);
-            validateToRemoveInactiveEventReceiverConfiguration(eventReceiverConfiguration.getEventReceiverName(), axisConfiguration);
-            EventReceiverConfigurationFileSystemInvoker.save(omElement, eventReceiverName + EventReceiverConstants.ER_CONFIG_FILE_EXTENSION_WITH_DOT, axisConfiguration);
+            validateToRemoveInactiveEventReceiverConfiguration(eventReceiverConfiguration.getEventReceiverName());
+            EventReceiverConfigurationFileSystemInvoker.save(omElement, eventReceiverName + EventReceiverConstants.ER_CONFIG_FILE_EXTENSION_WITH_DOT);
         } else {
             throw new EventReceiverConfigurationException("Mapping type of the Event Receiver " + eventReceiverConfiguration.getEventReceiverName() + " cannot be null");
         }
@@ -78,7 +77,7 @@ public class CarbonEventReceiverService implements EventReceiverService {
     }
 
     @Override
-    public void deployEventReceiverConfiguration(String eventReceiverConfigXml, AxisConfiguration axisConfiguration)
+    public void deployEventReceiverConfiguration(String eventReceiverConfigXml)
             throws EventReceiverConfigurationException {
         OMElement omElement;
         try {
@@ -90,10 +89,10 @@ public class CarbonEventReceiverService implements EventReceiverService {
         String eventReceiverName = EventReceiverConfigurationHelper.getEventReceiverName(omElement);
         String mappingType = EventReceiverConfigurationHelper.getInputMappingType(omElement);
         if (mappingType != null) {
-            String repoPath = axisConfiguration.getRepository().getPath();
+            String repoPath = EventAdapterUtil.getAxisConfiguration().getRepository().getPath();
             EventReceiverUtil.generateFilePath(eventReceiverName, repoPath);
-            validateToRemoveInactiveEventReceiverConfiguration(eventReceiverName, axisConfiguration);
-            EventReceiverConfigurationFileSystemInvoker.save(omElement, eventReceiverName + EventReceiverConstants.ER_CONFIG_FILE_EXTENSION_WITH_DOT, axisConfiguration);
+            validateToRemoveInactiveEventReceiverConfiguration(eventReceiverName);
+            EventReceiverConfigurationFileSystemInvoker.save(omElement, eventReceiverName + EventReceiverConstants.ER_CONFIG_FILE_EXTENSION_WITH_DOT);
         } else {
             throw new EventReceiverConfigurationException("Mapping type of the Event Receiver " + eventReceiverName + " cannot be null");
         }
@@ -102,13 +101,12 @@ public class CarbonEventReceiverService implements EventReceiverService {
 
 
     @Override
-    public void undeployActiveEventReceiverConfiguration(String eventReceiverName,
-                                                         AxisConfiguration axisConfiguration)
+    public void undeployActiveEventReceiverConfiguration(String eventReceiverName)
             throws EventReceiverConfigurationException {
         int tenantId = PrivilegedCarbonContext.getThreadLocalCarbonContext().getTenantId();
-        String fileName = getFileName(tenantId, eventReceiverName);
+        String fileName = getFileName(eventReceiverName);
         if (fileName != null) {
-            EventReceiverConfigurationFileSystemInvoker.delete(fileName, axisConfiguration);
+            EventReceiverConfigurationFileSystemInvoker.delete(fileName);
         } else {
             throw new EventReceiverConfigurationException("Couldn't undeploy the Event Receiver configuration : " + eventReceiverName);
         }
@@ -116,40 +114,37 @@ public class CarbonEventReceiverService implements EventReceiverService {
     }
 
     @Override
-    public void undeployInactiveEventReceiverConfiguration(String filename,
-                                                           AxisConfiguration axisConfiguration)
+    public void undeployInactiveEventReceiverConfiguration(String filename)
             throws EventReceiverConfigurationException {
-        EventReceiverConfigurationFileSystemInvoker.delete(filename, axisConfiguration);
+        EventReceiverConfigurationFileSystemInvoker.delete(filename);
 
     }
 
     @Override
     public void editInactiveEventReceiverConfiguration(
             String eventReceiverConfiguration,
-            String filename,
-            AxisConfiguration axisConfiguration)
+            String filename)
             throws EventReceiverConfigurationException {
 
-        editEventReceiverConfiguration(filename, axisConfiguration, eventReceiverConfiguration, null);
+        editEventReceiverConfiguration(filename, eventReceiverConfiguration, null);
     }
 
     @Override
     public void editActiveEventReceiverConfiguration(String eventReceiverConfiguration,
-                                                     String eventReceiverName,
-                                                     AxisConfiguration axisConfiguration)
+                                                     String eventReceiverName)
             throws EventReceiverConfigurationException {
         int tenantId = PrivilegedCarbonContext.getThreadLocalCarbonContext().getTenantId();
-        String fileName = getFileName(tenantId, eventReceiverName);
+        String fileName = getFileName(eventReceiverName);
         if (fileName == null) {
             fileName = eventReceiverName + EventReceiverConstants.ER_CONFIG_FILE_EXTENSION_WITH_DOT;
         }
-        editEventReceiverConfiguration(fileName, axisConfiguration, eventReceiverConfiguration, eventReceiverName);
+        editEventReceiverConfiguration(fileName, eventReceiverConfiguration, eventReceiverName);
 
     }
 
     @Override
-    public EventReceiverConfiguration getActiveEventReceiverConfiguration(String eventReceiverName,
-                                                                          int tenantId) {
+    public EventReceiverConfiguration getActiveEventReceiverConfiguration(String eventReceiverName) {
+        int tenantId= PrivilegedCarbonContext.getThreadLocalCarbonContext().getTenantId();
         EventReceiverConfiguration eventReceiverConfiguration = null;
         Map<String, EventReceiver> tenantSpecificEventReceiverMap = this.tenantSpecificEventReceiverConfigurationMap.get(tenantId);
         if (tenantSpecificEventReceiverMap != null && tenantSpecificEventReceiverMap.size() > 0) {
@@ -162,7 +157,8 @@ public class CarbonEventReceiverService implements EventReceiverService {
     }
 
     @Override
-    public List<EventReceiverConfiguration> getAllActiveEventReceiverConfigurations(int tenantId) {
+    public List<EventReceiverConfiguration> getAllActiveEventReceiverConfigurations() {
+        int tenantId= PrivilegedCarbonContext.getThreadLocalCarbonContext().getTenantId();
         List<EventReceiverConfiguration> eventReceiverConfigurations = new ArrayList<EventReceiverConfiguration>();
         Map<String, EventReceiver> tenantSpecificEventReceiverMap = this.tenantSpecificEventReceiverConfigurationMap.get(tenantId);
         if (tenantSpecificEventReceiverMap != null) {
@@ -175,7 +171,8 @@ public class CarbonEventReceiverService implements EventReceiverService {
 
     @Override
     public List<EventReceiverConfiguration> getAllActiveEventReceiverConfigurations(
-            String streamId, int tenantId) {
+            String streamId) {
+        int tenantId= PrivilegedCarbonContext.getThreadLocalCarbonContext().getTenantId();
         List<EventReceiverConfiguration> eventReceiverConfigurations = new ArrayList<EventReceiverConfiguration>();
         Map<String, EventReceiver> tenantSpecificEventReceiverMap = this.tenantSpecificEventReceiverConfigurationMap.get(tenantId);
         if (tenantSpecificEventReceiverMap != null) {
@@ -190,8 +187,7 @@ public class CarbonEventReceiverService implements EventReceiverService {
     }
 
     @Override
-    public List<EventReceiverConfigurationFile> getAllInactiveEventReceiverConfigurations(
-            AxisConfiguration axisConfiguration) {
+    public List<EventReceiverConfigurationFile> getAllInactiveEventReceiverConfigurations() {
         List<EventReceiverConfigurationFile> undeployedEventReceiverConfigurationFileList = new ArrayList<EventReceiverConfigurationFile>();
         int tenantId = PrivilegedCarbonContext.getThreadLocalCarbonContext().getTenantId();
         List<EventReceiverConfigurationFile> eventReceiverConfigurationFiles = this.tenantSpecificEventReceiverConfigurationFileMap.get(tenantId);
@@ -206,19 +202,17 @@ public class CarbonEventReceiverService implements EventReceiverService {
     }
 
     @Override
-    public String getInactiveEventReceiverConfigurationContent(String fileName,
-                                                               AxisConfiguration axisConfiguration)
+    public String getInactiveEventReceiverConfigurationContent(String fileName)
             throws EventReceiverConfigurationException {
-        return EventReceiverConfigurationFileSystemInvoker.readEventReceiverConfigurationFile(fileName, axisConfiguration);
+        return EventReceiverConfigurationFileSystemInvoker.readEventReceiverConfigurationFile(fileName);
     }
 
     @Override
-    public String getActiveEventReceiverConfigurationContent(String eventReceiverName,
-                                                             AxisConfiguration axisConfiguration)
+    public String getActiveEventReceiverConfigurationContent(String eventReceiverName)
             throws EventReceiverConfigurationException {
         int tenantId = PrivilegedCarbonContext.getThreadLocalCarbonContext().getTenantId();
-        String fileName = getFileName(tenantId, eventReceiverName);
-        return EventReceiverConfigurationFileSystemInvoker.readEventReceiverConfigurationFile(fileName, axisConfiguration);
+        String fileName = getFileName(eventReceiverName);
+        return EventReceiverConfigurationFileSystemInvoker.readEventReceiverConfigurationFile(fileName);
 
     }
 
@@ -245,24 +239,19 @@ public class CarbonEventReceiverService implements EventReceiverService {
     }
 
     @Override
-    public void setStatisticsEnabled(String eventReceiverName, boolean statisticsEnabled,
-                                     AxisConfiguration axisConfiguration)
+    public void setStatisticsEnabled(String eventReceiverName, boolean statisticsEnabled)
             throws EventReceiverConfigurationException {
-
-        int tenantId = PrivilegedCarbonContext.getThreadLocalCarbonContext().getTenantId();
-        EventReceiverConfiguration eventReceiverConfiguration = getActiveEventReceiverConfiguration(eventReceiverName, tenantId);
+        EventReceiverConfiguration eventReceiverConfiguration = getActiveEventReceiverConfiguration(eventReceiverName);
         eventReceiverConfiguration.setStatisticsEnabled(statisticsEnabled);
-        editTracingStatistics(eventReceiverConfiguration, eventReceiverName, tenantId, axisConfiguration);
+        editTracingStatistics(eventReceiverConfiguration, eventReceiverName);
     }
 
     @Override
-    public void setTraceEnabled(String eventReceiverName, boolean traceEnabled,
-                                AxisConfiguration axisConfiguration)
+    public void setTraceEnabled(String eventReceiverName, boolean traceEnabled)
             throws EventReceiverConfigurationException {
-        int tenantId = PrivilegedCarbonContext.getThreadLocalCarbonContext().getTenantId();
-        EventReceiverConfiguration eventReceiverConfiguration = getActiveEventReceiverConfiguration(eventReceiverName, tenantId);
+        EventReceiverConfiguration eventReceiverConfiguration = getActiveEventReceiverConfiguration(eventReceiverName);
         eventReceiverConfiguration.setTraceEnabled(traceEnabled);
-        editTracingStatistics(eventReceiverConfiguration, eventReceiverName, tenantId, axisConfiguration);
+        editTracingStatistics(eventReceiverConfiguration, eventReceiverName);
     }
 
     @Override
@@ -300,7 +289,7 @@ public class CarbonEventReceiverService implements EventReceiverService {
         tenantSpecificEventReceiverConfigurationFileMap.put(tenantId, eventReceiverConfigurationFiles);
     }
 
-    public void addEventReceiverConfiguration(EventReceiverConfiguration eventReceiverConfiguration, AxisConfiguration axisConfiguration)
+    public void addEventReceiverConfiguration(EventReceiverConfiguration eventReceiverConfiguration)
             throws EventReceiverConfigurationException {
 
         int tenantId = PrivilegedCarbonContext.getThreadLocalCarbonContext().getTenantId();
@@ -327,7 +316,7 @@ public class CarbonEventReceiverService implements EventReceiverService {
         }
 
         // End; Checking preconditions to add the event receiver
-        EventReceiver eventReceiver = new EventReceiver(eventReceiverConfiguration, exportedStreamDefinition, axisConfiguration);
+        EventReceiver eventReceiver = new EventReceiver(eventReceiverConfiguration, exportedStreamDefinition);
         try {
             EventReceiverServiceValueHolder.getEventStreamService().subscribe(eventReceiver, tenantId);
         } catch (EventStreamConfigurationException e) {
@@ -338,9 +327,9 @@ public class CarbonEventReceiverService implements EventReceiverService {
         tenantSpecificEventReceiverConfigurationMap.put(tenantId, eventReceiverConfigurationMap);
     }
 
-    public void removeEventReceiverConfigurationFile(String fileName, int tenantId)
+    public void removeEventReceiverConfigurationFile(String fileName)
             throws EventReceiverConfigurationException {
-
+        int tenantId= PrivilegedCarbonContext.getThreadLocalCarbonContext().getTenantId();
         List<EventReceiverConfigurationFile> eventReceiverConfigurationFileList =
                 tenantSpecificEventReceiverConfigurationFileMap.get(tenantId);
         if (eventReceiverConfigurationFileList != null) {
@@ -380,7 +369,7 @@ public class CarbonEventReceiverService implements EventReceiverService {
         }
         for (EventReceiverConfigurationFile receiverConfigurationFile : fileList) {
             try {
-                EventReceiverConfigurationFileSystemInvoker.reload(receiverConfigurationFile.getFilePath(), receiverConfigurationFile.getAxisConfiguration());
+                EventReceiverConfigurationFileSystemInvoker.reload(receiverConfigurationFile);
             } catch (Exception e) {
                 log.error("Exception occurred while trying to deploy the Event Receiver configuration file : " + receiverConfigurationFile.getFileName(), e);
             }
@@ -405,7 +394,7 @@ public class CarbonEventReceiverService implements EventReceiverService {
         }
         for (EventReceiverConfigurationFile receiverConfigurationFile : fileList) {
             try {
-                EventReceiverConfigurationFileSystemInvoker.reload(receiverConfigurationFile.getFilePath(), receiverConfigurationFile.getAxisConfiguration());
+                EventReceiverConfigurationFileSystemInvoker.reload(receiverConfigurationFile);
             } catch (Exception e) {
                 log.error("Exception occurred while trying to deploy the Event Receiver configuration file : " + receiverConfigurationFile.getFileName(), e);
             }
@@ -429,7 +418,7 @@ public class CarbonEventReceiverService implements EventReceiverService {
                             EventReceiverConfigurationFile receiverConfigurationFile = getEventReceiverConfigurationFile(eventReceiver.getEventReceiverConfiguration().getEventReceiverName(), tenantId);
                             if (receiverConfigurationFile != null) {
                                 fileList.add(receiverConfigurationFile);
-                                eventAdapterService.destroy(eventReceiver.getEventReceiverConfiguration().getFromAdapterConfiguration().getName(), tenantId);
+                                eventAdapterService.destroy(eventReceiver.getEventReceiverConfiguration().getFromAdapterConfiguration().getName());
                             }
                         }
                     }
@@ -438,7 +427,7 @@ public class CarbonEventReceiverService implements EventReceiverService {
         }
 
         for (EventReceiverConfigurationFile receiverConfigurationFile : fileList) {
-            EventReceiverConfigurationFileSystemInvoker.reload(receiverConfigurationFile.getFilePath(), receiverConfigurationFile.getAxisConfiguration());
+            EventReceiverConfigurationFileSystemInvoker.reload(receiverConfigurationFile);
             log.info("Event receiver : " + receiverConfigurationFile.getEventReceiverName() + " in inactive state because dependency could not be found : " + dependency);
         }
     }
@@ -460,14 +449,14 @@ public class CarbonEventReceiverService implements EventReceiverService {
                                 getEventReceiverConfigurationFile(eventReceiverConfiguration.getEventReceiverName(), tenantId);
                         if (receiverConfigurationFile != null) {
                             fileList.add(receiverConfigurationFile);
-                            eventAdapterService.destroy(eventReceiverConfiguration.getFromAdapterConfiguration().getName(), tenantId);
+                            eventAdapterService.destroy(eventReceiverConfiguration.getFromAdapterConfiguration().getName());
                         }
                     }
                 }
             }
         }
         for (EventReceiverConfigurationFile receiverConfigurationFile : fileList) {
-            EventReceiverConfigurationFileSystemInvoker.reload(receiverConfigurationFile.getFilePath(), receiverConfigurationFile.getAxisConfiguration());
+            EventReceiverConfigurationFileSystemInvoker.reload(receiverConfigurationFile);
             log.info("Event receiver : " + receiverConfigurationFile.getEventReceiverName() + " in inactive state because event stream dependency  could not be found : " + streamId);
         }
     }
@@ -506,18 +495,18 @@ public class CarbonEventReceiverService implements EventReceiverService {
 
     private void editTracingStatistics(
             EventReceiverConfiguration eventReceiverConfiguration,
-            String eventReceiverName, int tenantId, AxisConfiguration axisConfiguration)
+            String eventReceiverName)
             throws EventReceiverConfigurationException {
 
-        String fileName = getFileName(tenantId, eventReceiverName);
-        undeployActiveEventReceiverConfiguration(eventReceiverName, axisConfiguration);
+        String fileName = getFileName(eventReceiverName);
+        undeployActiveEventReceiverConfiguration(eventReceiverName);
         OMElement omElement = EventReceiverConfigurationBuilder.eventReceiverConfigurationToOM(eventReceiverConfiguration);
-        EventReceiverConfigurationFileSystemInvoker.delete(fileName, axisConfiguration);
-        EventReceiverConfigurationFileSystemInvoker.save(omElement, fileName, axisConfiguration);
+        EventReceiverConfigurationFileSystemInvoker.delete(fileName);
+        EventReceiverConfigurationFileSystemInvoker.save(omElement, fileName);
     }
 
-    private String getFileName(int tenantId, String eventReceiverName) {
-
+    private String getFileName(String eventReceiverName) {
+        int tenantId= PrivilegedCarbonContext.getThreadLocalCarbonContext().getTenantId();
         if (tenantSpecificEventReceiverConfigurationFileMap.size() > 0) {
             List<EventReceiverConfigurationFile> eventReceiverConfigurationFiles = tenantSpecificEventReceiverConfigurationFileMap.get(tenantId);
             if (eventReceiverConfigurationFiles != null) {
@@ -533,7 +522,6 @@ public class CarbonEventReceiverService implements EventReceiverService {
     }
 
     private void editEventReceiverConfiguration(String filename,
-                                                AxisConfiguration axisConfiguration,
                                                 String eventReceiverConfigurationXml,
                                                 String originalEventReceiverName)
             throws EventReceiverConfigurationException {
@@ -547,14 +535,14 @@ public class CarbonEventReceiverService implements EventReceiverService {
                 EventReceiverConfiguration eventReceiverConfigurationObject = EventReceiverConfigurationBuilder.getEventReceiverConfiguration(omElement, mappingType, true, tenantId);
                 if (!(eventReceiverConfigurationObject.getEventReceiverName().equals(originalEventReceiverName))) {
                     if (!isEventReceiverAlreadyExists(tenantId, eventReceiverConfigurationObject.getEventReceiverName())) {
-                        EventReceiverConfigurationFileSystemInvoker.delete(filename, axisConfiguration);
-                        EventReceiverConfigurationFileSystemInvoker.save(omElement, filename, axisConfiguration);
+                        EventReceiverConfigurationFileSystemInvoker.delete(filename);
+                        EventReceiverConfigurationFileSystemInvoker.save(omElement, filename);
                     } else {
                         throw new EventReceiverConfigurationException("There is already a Event Receiver " + eventReceiverConfigurationObject.getEventReceiverName() + " with the same name");
                     }
                 } else {
-                    EventReceiverConfigurationFileSystemInvoker.delete(filename, axisConfiguration);
-                    EventReceiverConfigurationFileSystemInvoker.save(omElement, filename, axisConfiguration);
+                    EventReceiverConfigurationFileSystemInvoker.delete(filename);
+                    EventReceiverConfigurationFileSystemInvoker.save(omElement, filename);
                 }
             } else {
                 throw new EventReceiverConfigurationException("Mapping type of the Event Receiver " + originalEventReceiverName + " cannot be null");
@@ -578,8 +566,7 @@ public class CarbonEventReceiverService implements EventReceiverService {
 
     }
 
-    private void validateToRemoveInactiveEventReceiverConfiguration(String eventReceiverName,
-                                                                    AxisConfiguration axisConfiguration)
+    private void validateToRemoveInactiveEventReceiverConfiguration(String eventReceiverName)
             throws EventReceiverConfigurationException {
         int tenantId = PrivilegedCarbonContext.getThreadLocalCarbonContext().getTenantId();
 
@@ -589,7 +576,7 @@ public class CarbonEventReceiverService implements EventReceiverService {
             for (EventReceiverConfigurationFile eventReceiverConfigurationFile : eventReceiverConfigurationFiles) {
                 if ((eventReceiverConfigurationFile.getFileName().equals(fileName))) {
                     if (!(eventReceiverConfigurationFile.getStatus().equals(EventReceiverConfigurationFile.Status.DEPLOYED))) {
-                        EventReceiverConfigurationFileSystemInvoker.delete(fileName, axisConfiguration);
+                        EventReceiverConfigurationFileSystemInvoker.delete(fileName);
                         break;
                     }
                 }

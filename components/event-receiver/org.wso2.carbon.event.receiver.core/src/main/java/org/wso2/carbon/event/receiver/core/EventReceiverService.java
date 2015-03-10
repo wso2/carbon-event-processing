@@ -14,7 +14,6 @@
  */
 package org.wso2.carbon.event.receiver.core;
 
-import org.apache.axis2.engine.AxisConfiguration;
 import org.wso2.carbon.event.receiver.core.config.EventReceiverConfiguration;
 import org.wso2.carbon.event.receiver.core.config.EventReceiverConfigurationFile;
 import org.wso2.carbon.event.receiver.core.exception.EventReceiverConfigurationException;
@@ -27,68 +26,57 @@ public interface EventReceiverService {
      * Updates the event receiver with the given syntax
      *
      * @param eventReceiverConfigXml the XML configuration of the event receiver as a string
-     * @param axisConfiguration     the axis configuration of the particular tenant to which this event receiver belongs
      */
     public void editInactiveEventReceiverConfiguration(String eventReceiverConfigXml,
-                                                      String filename,
-                                                      AxisConfiguration axisConfiguration)
+                                                       String filename)
             throws EventReceiverConfigurationException;
 
     /**
      * Updates the event receiver according to the passed in {@link EventReceiverConfiguration}
      *
      * @param originalEventReceiverName the original name of the event receiver
-     * @param axisConfiguration        the axis configuration of the tenant which owns the event receiver
+     * @param originalEventReceiverName the original name of the event receiver
      */
     public void editActiveEventReceiverConfiguration(String eventReceiverConfigXml,
-                                                    String originalEventReceiverName,
-                                                    AxisConfiguration axisConfiguration)
+                                                     String originalEventReceiverName)
             throws EventReceiverConfigurationException;
 
     /**
      * Getting all the event receiver configuration instance details.
      *
-     * @param tenantId tenant id of caller
      * @return - list of available event configuration
      */
-    public List<EventReceiverConfiguration> getAllActiveEventReceiverConfigurations(int tenantId);
+    public List<EventReceiverConfiguration> getAllActiveEventReceiverConfigurations();
 
     /**
      * Getting all event receiver configurations specific for a stream
      *
      * @param streamId stream id for which event receiver configurations are needed
-     * @param tenantId tenant id of caller
      * @return  the event receiver configuration
      */
     public List<EventReceiverConfiguration> getAllActiveEventReceiverConfigurations(
-            String streamId, int tenantId);
+            String streamId);
 
     /**
      * Returns the {@link EventReceiverConfiguration} for the event receiver with given name
      *
      * @param eventReceiverName the event receiver name
-     * @param tenantId         the tenant id
      * @return {@link EventReceiverConfiguration} that is associated with the event receiver of the name passed in
      */
-    public EventReceiverConfiguration getActiveEventReceiverConfiguration(String eventReceiverName,
-                                                                        int tenantId);
+    public EventReceiverConfiguration getActiveEventReceiverConfiguration(String eventReceiverName);
 
     /**
-     * @param axisConfiguration - Axis2 Configuration Object
      * @return List of EventReceiverConfigurationFile
      */
-    public List<EventReceiverConfigurationFile> getAllInactiveEventReceiverConfigurations(
-            AxisConfiguration axisConfiguration);
+    public List<EventReceiverConfigurationFile> getAllInactiveEventReceiverConfigurations();
 
     /**
      * Returns the event receiver XML configuration for the given event receiver name and tenant id
      *
      * @param eventReceiverName  the name of the event receiver
-     * @param axisConfiguration the axis configuration of the caller
      * @return the XML configuration syntax as a string
      */
-    public String getActiveEventReceiverConfigurationContent(String eventReceiverName,
-                                                            AxisConfiguration axisConfiguration)
+    public String getActiveEventReceiverConfigurationContent(String eventReceiverName)
             throws EventReceiverConfigurationException;
 
     /**
@@ -96,8 +84,7 @@ public interface EventReceiverService {
      *
      * @return the XML configuration syntax as a string
      */
-    public String getInactiveEventReceiverConfigurationContent(String filename,
-                                                              AxisConfiguration axisConfiguration)
+    public String getInactiveEventReceiverConfigurationContent(String filename)
             throws EventReceiverConfigurationException;
 
     /**
@@ -105,41 +92,32 @@ public interface EventReceiverService {
      * and deletes it from the file system.
      *
      * @param eventReceiverName  the event receiver name
-     * @param axisConfiguration the axis configuration
      */
-    public void undeployActiveEventReceiverConfiguration(String eventReceiverName,
-                                                        AxisConfiguration axisConfiguration)
+    public void undeployActiveEventReceiverConfiguration(String eventReceiverName)
             throws EventReceiverConfigurationException;
 
     /**
      * Removes the event receiver configuration file from the file system and memory
      *
      * @param filename          the name of the event receiver configuration file
-     * @param axisConfiguration the tenant id of the tenant which owns this event receiver
      */
-    public void undeployInactiveEventReceiverConfiguration(String filename,
-                                                          AxisConfiguration axisConfiguration)
+    public void undeployInactiveEventReceiverConfiguration(String filename)
             throws EventReceiverConfigurationException;
 
     /**
      * Deploys an event receiver configuration and saves the associated configuration file to the filesystem.
      *
-     * @param eventReceiverConfiguration the {@link EventReceiverConfiguration} object
-     * @param axisConfiguration         the axis configuration
+     * @param eventReceiverConfiguration the {@link org.wso2.carbon.event.receiver.core.config.EventReceiverConfiguration} object
      */
     public void deployEventReceiverConfiguration(
-            EventReceiverConfiguration eventReceiverConfiguration,
-            AxisConfiguration axisConfiguration) throws EventReceiverConfigurationException;
+            EventReceiverConfiguration eventReceiverConfiguration) throws EventReceiverConfigurationException;
 
     /**
      * Enable or disable tracing for the event receiver of given name
-     *
-     * @param eventReceiverName  event receiver name
+     *  @param eventReceiverName  event receiver name
      * @param traceEnabled      {@code true} or {@code false} specifying whether trace is enabled or not
-     * @param axisConfiguration axis configuration
      */
-    public void setTraceEnabled(String eventReceiverName, boolean traceEnabled,
-                                AxisConfiguration axisConfiguration)
+    public void setTraceEnabled(String eventReceiverName, boolean traceEnabled)
             throws EventReceiverConfigurationException;
 
     /**
@@ -147,10 +125,8 @@ public interface EventReceiverService {
      *
      * @param eventReceiverName  event receiver name
      * @param statisticsEnabled {@code true} or {@code false} specifying whether statistics is enabled or not
-     * @param axisConfiguration axis configuration
      */
-    public void setStatisticsEnabled(String eventReceiverName, boolean statisticsEnabled,
-                                     AxisConfiguration axisConfiguration)
+    public void setStatisticsEnabled(String eventReceiverName, boolean statisticsEnabled)
             throws EventReceiverConfigurationException;
 
     /**
@@ -163,5 +139,5 @@ public interface EventReceiverService {
     @Deprecated
     public String getEventReceiverStatusAsString(String filename);
 
-    public void deployEventReceiverConfiguration(String eventReceiverConfigXml, AxisConfiguration axisConfiguration) throws EventReceiverConfigurationException;
+    public void deployEventReceiverConfiguration(String eventReceiverConfigXml) throws EventReceiverConfigurationException;
 }

@@ -140,16 +140,6 @@ public interface EventPublisherService {
     public String getActiveEventPublisherConfigurationContent(String eventPublisherName)
             throws EventPublisherConfigurationException;
 
-
-    /**
-     * Method used to get all the event streams
-     *
-     * @return
-     * @throws EventPublisherConfigurationException
-     */
-    public List<String> getAllEventStreams()
-            throws EventPublisherConfigurationException;
-
     /**
      * Method used to get the specific stream definition for a given streamId
      *
@@ -188,14 +178,5 @@ public interface EventPublisherService {
      */
     public void setTraceEnabled(String eventPublisherName, boolean traceEnabled)
             throws EventPublisherConfigurationException;
-
-    /**
-     * Returns the deployment status and dependency information as a formatted string for event publisher associated
-     * with the filename specified
-     *
-     * @param filename the filename of the event publisher
-     * @return a string description for the status of the event publisher specified
-     */
-    public String getEventPublisherStatusAsString(String filename);
 
 }

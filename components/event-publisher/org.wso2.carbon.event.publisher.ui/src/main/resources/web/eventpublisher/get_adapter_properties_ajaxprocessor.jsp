@@ -15,9 +15,8 @@
 <%@ page import="com.google.gson.Gson" %>
 <%@ page
         import="org.wso2.carbon.event.publisher.stub.EventPublisherAdminServiceStub" %>
-<%@ page
-        import="org.wso2.carbon.event.publisher.stub.types.EventPublisherConfigurationDto" %>
 <%@ page import="org.wso2.carbon.event.publisher.ui.EventPublisherUIUtils" %>
+<%@ page import="org.wso2.carbon.event.publisher.stub.types.OutputAdapterConfigurationDto" %>
 
 <%
     // get Event Adapter properties
@@ -25,14 +24,12 @@
     String eventAdapterType = request.getParameter("eventAdapterType");
 
     if (eventAdapterType != null) {
-        EventPublisherPropertyDto[] eventPublisherPropertiesDto = stub.getEventPublisherMessageProperties(eventAdapterType);
+        OutputAdapterConfigurationDto eventPublisherPropertiesDto = stub.getOutputAdapterConfigurationSchema(eventAdapterType);
         String propertiesString = "";
         propertiesString = new Gson().toJson(eventPublisherPropertiesDto);
 
 
 %>
-
-
 <%=propertiesString%>
 <%
     }

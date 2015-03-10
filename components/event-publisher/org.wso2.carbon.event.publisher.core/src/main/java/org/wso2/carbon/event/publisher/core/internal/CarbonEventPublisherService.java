@@ -41,7 +41,6 @@ import org.wso2.carbon.registry.core.utils.RegistryUtils;
 import javax.xml.stream.XMLStreamException;
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -216,28 +215,6 @@ public class CarbonEventPublisherService implements EventPublisherService {
         return EventPublisherConfigurationFilesystemInvoker.readEventPublisherConfigurationFile(fileName);
     }
 
-    public List<String> getAllEventStreams()
-            throws EventPublisherConfigurationException {
-
-        List<String> streamList = new ArrayList<String>();
-        int tenantId = PrivilegedCarbonContext.getThreadLocalCarbonContext().getTenantId();
-        EventStreamService eventStreamService = EventPublisherServiceValueHolder.getEventStreamService();
-        Collection<StreamDefinition> eventStreamDefinitionList;
-        try {
-            eventStreamDefinitionList = eventStreamService.getAllStreamDefinitions(tenantId);
-            if (eventStreamDefinitionList != null) {
-                for (StreamDefinition streamDefinition : eventStreamDefinitionList) {
-                    streamList.add(streamDefinition.getStreamId());
-                }
-            }
-
-        } catch (EventStreamConfigurationException e) {
-            throw new EventPublisherConfigurationException("Error while retrieving stream definition from store", e);
-        }
-
-        return streamList;
-    }
-
     public StreamDefinition getStreamDefinition(String streamNameWithVersion)
             throws EventPublisherConfigurationException {
         int tenantId = PrivilegedCarbonContext.getThreadLocalCarbonContext().getTenantId();
@@ -303,25 +280,6 @@ public class CarbonEventPublisherService implements EventPublisherService {
         EventPublisherConfiguration eventPublisherConfiguration = getActiveEventPublisherConfiguration(eventPublisherName);
         eventPublisherConfiguration.setTraceEnabled(traceEnabled);
         editTracingStatistics(eventPublisherConfiguration, eventPublisherName, tenantId);
-    }
-
-    @Override
-    public String getEventPublisherStatusAsString(String filename) {
-        int tenantId = PrivilegedCarbonContext.getThreadLocalCarbonContext().getTenantId();
-        List<EventPublisherConfigurationFile> eventPublisherConfigurationFileList = tenantSpecificEventPublisherConfigurationFileMap.get(tenantId);
-        if (eventPublisherConfigurationFileList != null) {
-            for (EventPublisherConfigurationFile eventPublisherConfigurationFile : eventPublisherConfigurationFileList) {
-                if (filename != null && filename.equals(eventPublisherConfigurationFile.getFileName())) {
-                    String statusMsg = eventPublisherConfigurationFile.getDeploymentStatusMessage();
-                    if (eventPublisherConfigurationFile.getDependency() != null) {
-                        statusMsg = statusMsg + " [Dependency: " + eventPublisherConfigurationFile.getDependency() + "]";
-                    }
-                    return statusMsg;
-                }
-            }
-        }
-
-        return EventPublisherConstants.NO_DEPENDENCY_INFO_MSG;
     }
 
     //Non-Interface public methods

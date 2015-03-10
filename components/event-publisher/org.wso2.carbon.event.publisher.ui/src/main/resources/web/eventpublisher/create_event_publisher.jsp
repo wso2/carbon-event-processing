@@ -779,8 +779,12 @@
 <tr>
     <td class="buttonRow">
         <input type="button" value="<fmt:message key="add.event.publisher"/>"
-               onclick="addEventPublisherViaPopup(document.getElementById('addEventPublisher') ,'<%=streamId%>')"/>
+               onclick="addEventPublisher(document.getElementById('addEventPublisher') ,'<%=streamId%>')"/>
     </td>
+</tr>
+<tr style="display: none">
+    <td id="dynamicHeader" name="<fmt:message key="dynamic.properties.heading"/>"></td>
+    <td id="staticHeader" name="<fmt:message key="static.properties.heading"/>"></td>
 </tr>
 </tbody>
 <% } else { %>

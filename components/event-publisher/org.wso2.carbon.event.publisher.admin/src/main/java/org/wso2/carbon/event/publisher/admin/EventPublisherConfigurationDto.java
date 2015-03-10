@@ -37,6 +37,8 @@ public class EventPublisherConfigurationDto {
 
     private String streamDefinition;
 
+    private boolean customMappingEnabled;
+
     public String getEventPublisherName() {
         return eventPublisherName;
     }
@@ -116,5 +118,13 @@ public class EventPublisherConfigurationDto {
 
     public void setTextOutputMappingDto(TextOutputMappingDto textOutputMappingDto) {
         this.textOutputMappingDto = textOutputMappingDto;
+    }
+
+    public boolean isCustomMappingEnabled() {
+        return customMappingEnabled;
+    }
+
+    public void setCustomMappingEnabled(boolean customMappingEnabled) {
+        this.customMappingEnabled = customMappingEnabled;
     }
 }

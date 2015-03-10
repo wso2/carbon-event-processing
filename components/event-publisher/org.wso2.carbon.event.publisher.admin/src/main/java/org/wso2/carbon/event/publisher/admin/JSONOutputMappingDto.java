@@ -19,7 +19,6 @@ public class JSONOutputMappingDto {
 
     private String mappingText;
 
-
     private boolean registryResource;
 
     public String getMappingText() {

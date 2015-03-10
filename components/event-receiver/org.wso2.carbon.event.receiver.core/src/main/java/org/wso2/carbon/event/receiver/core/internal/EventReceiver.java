@@ -55,7 +55,7 @@ public class EventReceiver implements EventProducer {
     private EventProducerCallback callBack;
 
     public EventReceiver(EventReceiverConfiguration eventReceiverConfiguration,
-                         StreamDefinition exportedStreamDefinition, AxisConfiguration axisConfiguration)
+                         StreamDefinition exportedStreamDefinition)
             throws EventReceiverConfigurationException {
         this.eventReceiverConfiguration = eventReceiverConfiguration;
         int tenantId = PrivilegedCarbonContext.getThreadLocalCarbonContext().getTenantId();
@@ -96,10 +96,10 @@ public class EventReceiver implements EventProducer {
             try {
                 if (this.customMappingEnabled) {
                     EventReceiverServiceValueHolder.getInputEventAdapterService().create(
-                            eventReceiverConfiguration.getFromAdapterConfiguration(), new MappedEventSubscription(), tenantId, axisConfiguration);
+                            eventReceiverConfiguration.getFromAdapterConfiguration(), new MappedEventSubscription());
                 } else {
                     EventReceiverServiceValueHolder.getInputEventAdapterService().create(
-                            eventReceiverConfiguration.getFromAdapterConfiguration(), new TypedEventSubscription(), tenantId, axisConfiguration);
+                            eventReceiverConfiguration.getFromAdapterConfiguration(), new TypedEventSubscription());
                 }
             } catch (InputEventAdapterException e) {
                 throw new EventReceiverConfigurationException("Cannot subscribe to input event adapter :" + inputEventAdapterName + ", error in configuration.", e);
@@ -237,7 +237,7 @@ public class EventReceiver implements EventProducer {
 
     public void destroy() {
         int tenantId = PrivilegedCarbonContext.getThreadLocalCarbonContext().getTenantId();
-        EventReceiverServiceValueHolder.getInputEventAdapterService().destroy(eventReceiverConfiguration.getFromAdapterConfiguration().getName(), tenantId);
+        EventReceiverServiceValueHolder.getInputEventAdapterService().destroy(eventReceiverConfiguration.getFromAdapterConfiguration().getName());
 
     }
 
