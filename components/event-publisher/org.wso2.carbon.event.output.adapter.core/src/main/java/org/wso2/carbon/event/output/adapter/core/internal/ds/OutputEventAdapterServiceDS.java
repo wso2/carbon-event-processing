@@ -23,6 +23,7 @@ import org.wso2.carbon.event.output.adapter.core.internal.CarbonOutputEventAdapt
 import org.wso2.carbon.event.output.adapter.core.internal.EventAdapterConstants;
 import org.wso2.carbon.event.output.adapter.core.internal.config.AdapterConfigs;
 import org.wso2.carbon.utils.CarbonUtils;
+import org.wso2.carbon.utils.ConfigurationContextService;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
@@ -36,6 +37,9 @@ import java.util.List;
  * @scr.reference name="output.event.adapter.tracker.service"
  * interface="org.wso2.carbon.event.output.adapter.core.OutputEventAdapterFactory" cardinality="0..n"
  * policy="dynamic" bind="setEventAdapterType" unbind="unSetEventAdapterType"
+ * @scr.reference name="config.context.service"
+ * interface="org.wso2.carbon.utils.ConfigurationContextService" cardinality="0..1" policy="dynamic"
+ * bind="setConfigurationContextService" unbind="unsetConfigurationContextService"
  */
 public class OutputEventAdapterServiceDS {
 
@@ -115,6 +119,17 @@ public class OutputEventAdapterServiceDS {
             log.error("Error in loading " + EventAdapterConstants.GLOBAL_CONFIG_FILE_NAME + " from " + path + ", hence Output Event Adapters will be running with default global configs.");
         }
         return new AdapterConfigs();
+    }
+
+    protected void setConfigurationContextService(
+            ConfigurationContextService configurationContextService) {
+        OutputEventAdapterServiceValueHolder.setConfigurationContextService(configurationContextService);
+    }
+
+    protected void unsetConfigurationContextService(
+            ConfigurationContextService configurationContextService) {
+        OutputEventAdapterServiceValueHolder.setConfigurationContextService(null);
+
     }
 }
 

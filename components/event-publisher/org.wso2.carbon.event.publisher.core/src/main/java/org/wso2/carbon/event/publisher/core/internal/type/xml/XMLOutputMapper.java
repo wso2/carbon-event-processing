@@ -80,7 +80,7 @@ public class XMLOutputMapper implements OutputMapper {
         XMLOutputMapping textOutputMapping = ((XMLOutputMapping) eventPublisherConfiguration.getOutputMapping());
         String actualMappingText = textOutputMapping.getMappingXMLText();
         if (textOutputMapping.isRegistryResource()) {
-            actualMappingText = EventPublisherServiceValueHolder.getCarbonEventPublisherService().getRegistryResourceContent(textOutputMapping.getMappingXMLText(), tenantId);
+            actualMappingText = EventPublisherServiceValueHolder.getCarbonEventPublisherService().getRegistryResourceContent(textOutputMapping.getMappingXMLText());
         }
         this.outputXMLText = actualMappingText;
         List<String> mappingProperties = getOutputMappingPropertyList(actualMappingText);

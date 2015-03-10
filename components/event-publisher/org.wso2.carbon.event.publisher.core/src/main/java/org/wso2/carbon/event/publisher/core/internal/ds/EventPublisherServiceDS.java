@@ -27,6 +27,7 @@ import org.wso2.carbon.event.statistics.EventStatisticsService;
 import org.wso2.carbon.event.stream.manager.core.EventStreamService;
 import org.wso2.carbon.registry.core.exceptions.RegistryException;
 import org.wso2.carbon.registry.core.service.RegistryService;
+import org.wso2.carbon.utils.ConfigurationContextService;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -49,6 +50,9 @@ import java.util.List;
  * @scr.reference name="eventStreamManager.service"
  * interface="org.wso2.carbon.event.stream.manager.core.EventStreamService" cardinality="1..1"
  * policy="dynamic" bind="setEventStreamService" unbind="unsetEventStreamService"
+ * @scr.reference name="config.context.service"
+ * interface="org.wso2.carbon.utils.ConfigurationContextService" cardinality="0..1" policy="dynamic"
+ * bind="setConfigurationContextService" unbind="unsetConfigurationContextService"
  */
 public class EventPublisherServiceDS {
     private static final Log log = LogFactory.getLog(EventPublisherServiceDS.class);
@@ -142,6 +146,17 @@ public class EventPublisherServiceDS {
                 log.error(e.getMessage(), e);
             }
         }
+
+    }
+
+    protected void setConfigurationContextService(
+            ConfigurationContextService configurationContextService) {
+        EventPublisherServiceValueHolder.setConfigurationContextService(configurationContextService);
+    }
+
+    protected void unsetConfigurationContextService(
+            ConfigurationContextService configurationContextService) {
+        EventPublisherServiceValueHolder.setConfigurationContextService(null);
 
     }
 
