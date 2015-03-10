@@ -26,6 +26,7 @@ import org.wso2.carbon.context.PrivilegedCarbonContext;
 import org.wso2.carbon.databridge.commons.StreamDefinition;
 import org.wso2.carbon.event.processor.common.storm.config.StormDeploymentConfig;
 import org.wso2.carbon.event.processor.core.*;
+import org.wso2.carbon.event.processor.core.internal.persistence.PersistenceManager;
 import org.wso2.siddhi.core.ExecutionPlanRuntime;
 import org.wso2.carbon.event.processor.core.exception.ExecutionPlanConfigurationException;
 import org.wso2.carbon.event.processor.core.exception.ExecutionPlanDependencyValidationException;
@@ -301,8 +302,8 @@ public class CarbonEventProcessorService implements EventProcessorService {
         }
 
         if (distributed) {
-            String queryExpression = EventProcessorUtil.constructQueryExpression(importDefinitions,
-                    exportDefinitions, "");
+            String queryExpression = EventProcessorUtil.constructQueryExpression(executionPlanConfiguration.getName(),
+                    importDefinitions, exportDefinitions, "");
             executionPlanRuntime = siddhiManager.createExecutionPlanRuntime(queryExpression);//todo move inside??
             if (stormDeploymentConfig != null && stormDeploymentConfig.isManagerNode() && EventProcessorValueHolder
                     .getStormManagerServer().isStormManager()) {
@@ -315,9 +316,8 @@ public class CarbonEventProcessorService implements EventProcessorService {
             }
         } else {
             try {
-                String queryExpression = EventProcessorUtil.constructQueryExpression(importDefinitions,
-                        exportDefinitions,
-                        executionPlanConfiguration.getQueryExpressions());
+                String queryExpression = EventProcessorUtil.constructQueryExpression(executionPlanConfiguration.getName(),
+                        importDefinitions, exportDefinitions, "");
                 executionPlanRuntime = siddhiManager.createExecutionPlanRuntime(queryExpression);
             } catch (Exception e) {
                 throw new ExecutionPlanConfigurationException("Invalid query specified, " + e.getMessage(), e);
@@ -336,8 +336,20 @@ public class CarbonEventProcessorService implements EventProcessorService {
                     currentCepMembershipInfo);
         }
 
+        PersistenceManager persistenceManager = null;
+        try {
+            int persistenceTimeInterval = Integer.parseInt(executionPlanConfiguration.getSiddhiConfigurationProperties().
+                    get(EventProcessorConstants.SIDDHI_SNAPSHOT_INTERVAL));
+            if (persistenceTimeInterval > 0) {
+                persistenceManager = new PersistenceManager(executionPlanRuntime, EventProcessorValueHolder.getScheduledExecutorService(),
+                        persistenceTimeInterval, PrivilegedCarbonContext.getThreadLocalCarbonContext().getTenantId());
+            }
+        } catch (NumberFormatException e) {
+
+        }
+
         ExecutionPlan executionPlan = new ExecutionPlan(executionPlanConfiguration.getName(), executionPlanRuntime,
-                executionPlanConfiguration, haManager);
+                executionPlanConfiguration, haManager, persistenceManager);
         tenantExecutionPlans.put(executionPlanConfiguration.getName(), executionPlan);
 
         /**
@@ -422,15 +434,21 @@ public class CarbonEventProcessorService implements EventProcessorService {
 
         if (executionPlanRuntime != null) {
             executionPlanRuntime.start();
+            executionPlanRuntime.restoreLastRevision();
         }
 
         if (haManager != null) {
             haManager.init();
         }
+
+        if (persistenceManager != null) {
+            persistenceManager.init();
+        }
+
     }
 
     public List<StreamDefinition> getSiddhiStreams(String[] inputStreamDefinitions,
-                                                   String queryExpressions)  {
+                                                   String queryExpressions) {
         ExecutionPlanRuntime executionPlanRuntime = createMockExecutionPlanRuntime(inputStreamDefinitions,
                 queryExpressions);
         Collection<AbstractDefinition> streamDefinitions = executionPlanRuntime.getStreamDefinitionMap().values();
@@ -465,17 +483,17 @@ public class CarbonEventProcessorService implements EventProcessorService {
         return EventProcessorConstants.NO_DEPENDENCY_INFO_MSG;
     }
 
-    public boolean validateSiddhiQueries(String[] inputStreamDefinitions, String queryExpressions){
+    public boolean validateSiddhiQueries(String[] inputStreamDefinitions, String queryExpressions) {
         ExecutionPlanRuntime executionPlanRuntime = createMockExecutionPlanRuntime(inputStreamDefinitions,
                 queryExpressions);
         executionPlanRuntime.shutdown();
         return true;
     }
 
-    private ExecutionPlanRuntime createMockExecutionPlanRuntime(String[] inputStreamDefinitions, String executionPlan){
+    private ExecutionPlanRuntime createMockExecutionPlanRuntime(String[] inputStreamDefinitions, String executionPlan) {
         SiddhiManager siddhiManager = EventProcessorValueHolder.getSiddhiManager();
         ExecutionPlanRuntime executionPlanRuntime = siddhiManager.createExecutionPlanRuntime(EventProcessorUtil
-                .constructQueryExpression(Arrays.asList(inputStreamDefinitions),new ArrayList<String>(0),executionPlan));
+                .constructQueryExpression("", Arrays.asList(inputStreamDefinitions), new ArrayList<String>(0), executionPlan));
         return executionPlanRuntime;
 
     }
@@ -564,7 +582,7 @@ public class CarbonEventProcessorService implements EventProcessorService {
     }
 
     public String getActiveExecutionPlanConfigurationContent(String planName, AxisConfiguration axisConfiguration)
-            throws ExecutionPlanConfigurationException{
+            throws ExecutionPlanConfigurationException {
         int tenantId = PrivilegedCarbonContext.getThreadLocalCarbonContext().getTenantId();
         ExecutionPlanConfigurationFile configFile = getExecutionPlanConfigurationFileByPlanName(planName, tenantId);
         if (configFile == null) {
@@ -852,5 +870,13 @@ public class CarbonEventProcessorService implements EventProcessorService {
 
     public void addCurrentCEPMembership(CEPMembership cepMembership) {
         currentCepMembershipInfo = cepMembership;
+    }
+
+    public void shutdown() {
+        for (Map<String, ExecutionPlan> executionPlans : tenantSpecificExecutionPlans.values()) {
+            for (ExecutionPlan executionPlan : executionPlans.values()) {
+                executionPlan.shutdown();
+            }
+        }
     }
 }

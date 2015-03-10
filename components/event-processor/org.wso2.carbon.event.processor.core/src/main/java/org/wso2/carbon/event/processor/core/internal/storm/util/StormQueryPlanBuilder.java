@@ -99,7 +99,7 @@ public class StormQueryPlanBuilder {
             throws SiddhiParserException {
         List<Element> processorElementList = new ArrayList<Element>();
         List<String> stringQueryList = Arrays.asList(queryExpressions.split(";"));
-        String fullQueryExpression = EventProcessorUtil.constructQueryExpression(importedStreams, exportedStreams,
+        String fullQueryExpression = EventProcessorUtil.constructQueryExpression("", importedStreams, exportedStreams,
                 queryExpressions);
         ExecutionPlanRuntime executionPlanRuntime = EventProcessorValueHolder.getSiddhiManager()
                 .createExecutionPlanRuntime(fullQueryExpression);

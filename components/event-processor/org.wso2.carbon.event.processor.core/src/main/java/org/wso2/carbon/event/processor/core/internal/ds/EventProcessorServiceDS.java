@@ -33,6 +33,7 @@ import org.wso2.carbon.event.processor.core.EventProcessorService;
 import org.wso2.carbon.event.processor.core.internal.CarbonEventProcessorService;
 import org.wso2.carbon.event.processor.core.internal.ha.server.HAManagementServer;
 import org.wso2.carbon.event.processor.core.internal.listener.EventStreamListenerImpl;
+import org.wso2.carbon.event.processor.core.internal.persistence.FileSystemPersistenceStore;
 import org.wso2.carbon.event.processor.core.internal.storm.manager.StormManagerServer;
 import org.wso2.carbon.event.processor.core.internal.util.EventProcessorConstants;
 import org.wso2.carbon.event.statistics.EventStatisticsService;
@@ -42,8 +43,11 @@ import org.wso2.carbon.user.core.UserRealm;
 import org.wso2.carbon.utils.CarbonUtils;
 import org.wso2.carbon.utils.ConfigurationContextService;
 import org.wso2.siddhi.core.SiddhiManager;
+import org.wso2.siddhi.core.util.persistence.PersistenceStore;
 
 import java.io.File;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
 
 /**
  * @scr.component name="eventProcessorService.component" immediate="true"
@@ -92,11 +96,21 @@ public class EventProcessorServiceDS {
             }
 
 
+
             context.getBundleContext().registerService(EventProcessorService.class.getName(), carbonEventProcessorService, null);
             EventProcessorValueHolder.getEventStreamService().registerEventStreamListener(new EventStreamListenerImpl());
 
             SiddhiManager siddhiManager = new SiddhiManager();
             EventProcessorValueHolder.registerSiddhiManager(siddhiManager);
+
+            // TODO: Get the class of the PersistenceStore from a configuration file
+            PersistenceStore persistenceStore = new FileSystemPersistenceStore();
+            EventProcessorValueHolder.setPersistenceStore(persistenceStore);
+            siddhiManager.setPersistenceStore(persistenceStore);
+            // TODO: Get the pool size from a configuration file
+            ScheduledExecutorService scheduledExecutorService = Executors.newScheduledThreadPool(1);
+            EventProcessorValueHolder.setScheduledExecutorService(scheduledExecutorService);
+
             if (log.isDebugEnabled()) {
                 log.debug("Successfully deployed EventProcessorService");
             }
@@ -114,6 +128,8 @@ public class EventProcessorServiceDS {
             if (stormManagerServer != null) {
                 stormManagerServer.stop();
             }
+            EventProcessorValueHolder.getScheduledExecutorService().shutdownNow();
+            EventProcessorValueHolder.getEventProcessorService().shutdown();
         } catch (RuntimeException e) {
             log.error("Error in stopping Storm Manager Service : " + e.getMessage(), e);
         }
