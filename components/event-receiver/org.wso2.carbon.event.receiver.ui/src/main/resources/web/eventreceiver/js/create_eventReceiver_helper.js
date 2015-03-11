@@ -805,8 +805,10 @@ function addInputXpathDef() {
 
     var newCell1 = newTableRow.insertCell(1);
     newCell1.innerHTML = xpathNs.value;
+    YAHOO.util.Dom.addClass(newCell1, "property-names");
 
     var newCell2 = newTableRow.insertCell(2);
+    YAHOO.util.Dom.addClass(newCell2, "property-names");
     newCell2.innerHTML = ' <a class="icon-link" style="background-image:url(../admin/images/delete.gif)" onclick="removeInputProperty(this,\'' + 'xml' + '\')">Delete</a>';
 
     prefixName.value = "";

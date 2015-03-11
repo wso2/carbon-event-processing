@@ -361,7 +361,8 @@
                         </thead>
                         <tbody id="inputXpathPrefixTBody">
                         <%
-                            for (EventMappingPropertyDto xpathDefinition : eventReceiverConfigurationDto.getXpathDefinitionMappingPropertyDtos()) {
+                            if (eventReceiverConfigurationDto.getXpathDefinitionMappingPropertyDtos() != null) {
+                                for (EventMappingPropertyDto xpathDefinition : eventReceiverConfigurationDto.getXpathDefinitionMappingPropertyDtos()) {
                         %>
                         <tr>
                             <td class="property-names"><%=xpathDefinition.getName()%>
@@ -370,11 +371,29 @@
                             </td>
                         </tr>
                         <%
+                                }
                             }
                         %>
                         </tbody>
                     </table>
                 </td>
+            </tr>
+            <%
+                String parentSelectorXpathProperty = eventReceiverConfigurationDto.getParentSelectorXpath();
+            %>
+            <tr>
+                <td colspan="2">
+                    <table class="normal">
+                        <tbody>
+                        <tr>
+                            <td><fmt:message key="event.receiver.parentselector.xpath"/></td>
+                            <td><input type="text" id="batchProcessingEnabled"
+                                       value="<%=parentSelectorXpathProperty%>"
+                                       disabled/>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
             </tr>
 
             <tr fromElementKey="inputXmlMapping">
@@ -395,7 +414,6 @@
                         </thead>
                         <tbody id="inputXpathExprTBody">
                         <%
-                            String parentSelectorXpathProperty = eventReceiverConfigurationDto.getParentSelectorXpath();
                             for (EventMappingPropertyDto xpathExpressions : eventReceiverConfigurationDto.getMappingPropertyDtos()) {
                         %>
                         <tr>
@@ -414,20 +432,6 @@
                         </tbody>
                     </table>
                 </td>
-            </tr>
-            <tr>
-                <td colspan="2">
-                    <table class="normal">
-                        <tbody>
-                        <tr>
-                            <td><fmt:message key="event.receiver.parentselector.xpath"/></td>
-                            <td><input type="text" id="batchProcessingEnabled"
-                                       value="<%=parentSelectorXpathProperty%>"
-                                       disabled/>
-                            </td>
-                        </tr>
-                        </tbody>
-                    </table>
             </tr>
             <%
             } else if (mappingType.equals("map")) {
