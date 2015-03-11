@@ -26,6 +26,4 @@ public final class WebsocketLocalEventAdapterConstants {
     }
 
     public static final String ADAPTER_TYPE_WEBSOCKET_LOCAL = "websocket-local";
-    public static final String ADAPTER_TOPIC = "websocket.local.topic";
-    public static final String ADAPTER_TOPIC_HINT = "websocket.local.topic.hint";
 }

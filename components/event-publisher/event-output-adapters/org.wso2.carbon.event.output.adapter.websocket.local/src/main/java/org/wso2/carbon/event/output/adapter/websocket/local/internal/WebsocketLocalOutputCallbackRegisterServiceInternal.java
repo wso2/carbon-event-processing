@@ -21,76 +21,62 @@ import org.wso2.carbon.event.output.adapter.websocket.local.WebsocketLocalOutput
 
 import javax.websocket.Session;
 import java.util.Iterator;
-import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 public class WebsocketLocalOutputCallbackRegisterServiceInternal implements WebsocketLocalOutputCallbackRegisterService {
 
-    private ConcurrentHashMap<Integer, ConcurrentHashMap<String, ConcurrentHashMap<String, CopyOnWriteArrayList<Session>>>> outputEventAdaptorSessionMap;               //TODO should this be static? I think no, because we're using a value holder to ensure that a single instance is used throughout.
+    private ConcurrentHashMap<Integer, ConcurrentHashMap<String, CopyOnWriteArrayList<Session>>> outputEventAdaptorSessionMap;               //TODO should this be static? I think no, because we're using a value holder to ensure that a single instance is used throughout.
 
     public WebsocketLocalOutputCallbackRegisterServiceInternal(){
         outputEventAdaptorSessionMap =
-                new ConcurrentHashMap<Integer, ConcurrentHashMap<String, ConcurrentHashMap<String, CopyOnWriteArrayList<Session>>>>();
+                new ConcurrentHashMap<Integer, ConcurrentHashMap<String, CopyOnWriteArrayList<Session>>>();
     }
 
 
-    public void subscribe(int tenantId, String adaptorName, String topic, Session session) {
-        ConcurrentHashMap<String, ConcurrentHashMap<String, CopyOnWriteArrayList<Session>>> tenantSpecificAdaptorMap = outputEventAdaptorSessionMap.get(tenantId);
+    public void subscribe(int tenantId, String adaptorName, Session session) {
+        ConcurrentHashMap<String, CopyOnWriteArrayList<Session>> tenantSpecificAdaptorMap = outputEventAdaptorSessionMap.get(tenantId);
         if (tenantSpecificAdaptorMap == null) {
-            tenantSpecificAdaptorMap = new ConcurrentHashMap<String, ConcurrentHashMap<String, CopyOnWriteArrayList<Session>>>();
+            tenantSpecificAdaptorMap = new ConcurrentHashMap<String, CopyOnWriteArrayList<Session>>();
             if (null != outputEventAdaptorSessionMap.putIfAbsent(tenantId, tenantSpecificAdaptorMap)){
                 tenantSpecificAdaptorMap = outputEventAdaptorSessionMap.get(tenantId);
             }
         }
-        ConcurrentHashMap<String, CopyOnWriteArrayList<Session>> adaptorSpecificTopicMap = tenantSpecificAdaptorMap.get(adaptorName);
-        if (adaptorSpecificTopicMap == null) {
-            adaptorSpecificTopicMap = new ConcurrentHashMap<String, CopyOnWriteArrayList<Session>>();
-            if (null != tenantSpecificAdaptorMap.putIfAbsent(adaptorName, adaptorSpecificTopicMap)){
-                adaptorSpecificTopicMap = tenantSpecificAdaptorMap.get(adaptorName);
+        CopyOnWriteArrayList<Session> adapterSpecificSessions = tenantSpecificAdaptorMap.get(adaptorName);
+        if (adapterSpecificSessions == null){
+            adapterSpecificSessions = new CopyOnWriteArrayList<Session>();
+            if (null != tenantSpecificAdaptorMap.putIfAbsent(adaptorName,adapterSpecificSessions)){
+                adapterSpecificSessions = tenantSpecificAdaptorMap.get(adaptorName);
             }
         }
-        CopyOnWriteArrayList<Session> topicSpecificSessions = adaptorSpecificTopicMap.get(topic);
-        if (topicSpecificSessions == null){
-            topicSpecificSessions = new CopyOnWriteArrayList<Session>();
-            if (null != adaptorSpecificTopicMap.putIfAbsent(topic,topicSpecificSessions)){
-                topicSpecificSessions = adaptorSpecificTopicMap.get(topic);
-            }
-        }
-        topicSpecificSessions.add(session);
+        adapterSpecificSessions.add(session);
     }
 
 
-    public CopyOnWriteArrayList<Session> getSessions(int tenantId, String adaptorName, String topic){
-        Map<String, ConcurrentHashMap<String, CopyOnWriteArrayList<Session>>> tenantSpecificAdaptorMap = outputEventAdaptorSessionMap.get(tenantId);
+    public CopyOnWriteArrayList<Session> getSessions(int tenantId, String adaptorName){
+        ConcurrentHashMap<String, CopyOnWriteArrayList<Session>> tenantSpecificAdaptorMap = outputEventAdaptorSessionMap.get(tenantId);
         if (tenantSpecificAdaptorMap != null) {
-            Map<String, CopyOnWriteArrayList<Session>> adaptorSpecificTopicMap = tenantSpecificAdaptorMap.get(adaptorName);
-            if (adaptorSpecificTopicMap != null) {
-                CopyOnWriteArrayList<Session> topicSpecificSessions = adaptorSpecificTopicMap.get(topic);
-                return topicSpecificSessions;
-            }
+            CopyOnWriteArrayList<Session> adapterSpecificSessions = tenantSpecificAdaptorMap.get(adaptorName);
+            return adapterSpecificSessions;
         }
         return null;
     }
 
-    public void unsubscribe(int tenantId, String adaptorName, String topic, Session session) {
-        Map<String, ConcurrentHashMap<String, CopyOnWriteArrayList<Session>>> tenantSpecificAdaptorMap = outputEventAdaptorSessionMap.get(tenantId);
+    public void unsubscribe(int tenantId, String adaptorName, Session session) {
+        ConcurrentHashMap<String, CopyOnWriteArrayList<Session>> tenantSpecificAdaptorMap = outputEventAdaptorSessionMap.get(tenantId);
         if (tenantSpecificAdaptorMap != null) {
-            Map<String, CopyOnWriteArrayList<Session>> adaptorSpecificTopicMap = tenantSpecificAdaptorMap.get(adaptorName);
-            if (adaptorSpecificTopicMap != null) {
-                CopyOnWriteArrayList<Session> topicSpecificSessions = adaptorSpecificTopicMap.get(topic);
-                if (topicSpecificSessions != null) {
-                    Session sessionToRemove = null;
-                    for (Iterator<Session> iterator = topicSpecificSessions.iterator(); iterator.hasNext(); ) {
-                        Session thisSession = iterator.next();
-                        if (session.getId().equals(thisSession.getId())) {
-                            sessionToRemove = session;
-                            break;
-                        }
+            CopyOnWriteArrayList<Session> adapterSpecificSessions = tenantSpecificAdaptorMap.get(adaptorName);
+            if (adapterSpecificSessions != null) {
+                Session sessionToRemove = null;
+                for (Iterator<Session> iterator = adapterSpecificSessions.iterator(); iterator.hasNext(); ) {
+                    Session thisSession = iterator.next();
+                    if (session.getId().equals(thisSession.getId())) {
+                        sessionToRemove = session;
+                        break;
                     }
-                    if (sessionToRemove != null){
-                        topicSpecificSessions.remove(sessionToRemove);
-                    }
+                }
+                if (sessionToRemove != null) {
+                    adapterSpecificSessions.remove(sessionToRemove);
                 }
             }
         }

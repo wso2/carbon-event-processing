@@ -25,38 +25,38 @@ import javax.websocket.server.PathParam;
 import javax.websocket.server.ServerEndpoint;
 
 
-@ServerEndpoint(value = "/{adaptorname}/{topic}")
-public class SuperTenantTopicSubscriptionEndpoint extends TopicSubscriptionEndpoint{
+@ServerEndpoint(value = "/{adaptorname}")
+public class SuperTenantSubscriptionEndpoint extends SubscriptionEndpoint {
 
-    private static final Log log = LogFactory.getLog(SuperTenantTopicSubscriptionEndpoint.class);
+    private static final Log log = LogFactory.getLog(SuperTenantSubscriptionEndpoint.class);
     private int tenantId;
 
     @OnOpen
-    public void onOpen (Session session, @PathParam("topic") String topic, @PathParam("adaptorname") String adaptorName) {
+    public void onOpen (Session session, @PathParam("adaptorname") String adaptorName) {
         if (log.isDebugEnabled()) {
-            log.debug("WebSocket opened, for Session id: "+session.getId()+", for the Adaptor:"+adaptorName+", for the Topic:"+topic);
+            log.debug("WebSocket opened, for Session id: "+session.getId()+", for the Adaptor:"+adaptorName);
         }
         PrivilegedCarbonContext carbonContext = PrivilegedCarbonContext.getThreadLocalCarbonContext();
         carbonContext.setTenantId(-1234);
         tenantId = carbonContext.getTenantId();
-        websocketLocalOutputCallbackRegisterService.subscribe(tenantId, adaptorName, topic, session);
+        websocketLocalOutputCallbackRegisterService.subscribe(tenantId, adaptorName, session);
     }
 
     @OnMessage
-    public void onMessage (Session session, String message, @PathParam("topic") String topic, @PathParam("adaptorname") String adaptorName) {
+    public void onMessage (Session session, String message, @PathParam("adaptorname") String adaptorName) {
         if (log.isDebugEnabled()) {
-            log.debug("Received: " + message+", for Session id: "+session.getId()+", for the Adaptor:"+adaptorName+", for the Topic:"+topic);
+            log.debug("Received: " + message+", for Session id: "+session.getId()+", for the Adaptor:"+adaptorName);
         }
     }
 
     @OnClose
-    public void onClose (Session session, CloseReason reason, @PathParam("topic") String topic, @PathParam("adaptorname") String adaptorName) {
-        super.onClose(session, reason, topic, adaptorName, tenantId);
+    public void onClose (Session session, CloseReason reason, @PathParam("adaptorname") String adaptorName) {
+        super.onClose(session, reason, adaptorName, tenantId);
     }
 
     @OnError
-    public void onError (Session session, Throwable throwable, @PathParam("topic") String topic, @PathParam("adaptorname") String adaptorName) {
-        super.onError(session, throwable, topic, adaptorName, tenantId);
+    public void onError (Session session, Throwable throwable, @PathParam("adaptorname") String adaptorName) {
+        super.onError(session, throwable, adaptorName, tenantId);
     }
 
 }

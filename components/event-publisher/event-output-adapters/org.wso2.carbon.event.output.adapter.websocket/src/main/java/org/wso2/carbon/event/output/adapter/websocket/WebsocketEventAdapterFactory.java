@@ -52,13 +52,6 @@ public class WebsocketEventAdapterFactory extends OutputEventAdapterFactory {
         adapterServerURL.setRequired(true);
         staticPropertyList.add(adapterServerURL);
 
-        Property adapterTopic = new Property(WebsocketEventAdapterConstants.ADAPTER_TOPIC);
-        adapterTopic.setDisplayName(
-                resourceBundle.getString(WebsocketEventAdapterConstants.ADAPTER_TOPIC));
-        adapterTopic.setHint(resourceBundle.getString(WebsocketEventAdapterConstants.ADAPTER_TOPIC_HINT));
-        adapterTopic.setRequired(false);
-        staticPropertyList.add(adapterTopic);
-
         return staticPropertyList;
     }
 

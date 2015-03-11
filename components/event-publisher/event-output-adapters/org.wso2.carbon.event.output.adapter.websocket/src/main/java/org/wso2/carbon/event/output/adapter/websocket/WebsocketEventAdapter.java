@@ -66,10 +66,6 @@ public final class WebsocketEventAdapter implements OutputEventAdapter {
         ClientEndpointConfig clientEndpointConfig = ClientEndpointConfig.Builder.create().build();
         ClientManager client = ClientManager.createClient();
         socketServerUrl = eventAdapterConfiguration.getStaticProperties().get(WebsocketEventAdapterConstants.ADAPTER_SERVER_URL);
-        String topic = eventAdapterConfiguration.getStaticProperties().get(WebsocketEventAdapterConstants.ADAPTER_TOPIC);
-        if (topic != null){
-            socketServerUrl = socketServerUrl+"/"+topic;
-        }
         try {
             session = client.connectToServer(new WebsocketClient(), clientEndpointConfig, new URI(socketServerUrl));
         } catch (DeploymentException e) {

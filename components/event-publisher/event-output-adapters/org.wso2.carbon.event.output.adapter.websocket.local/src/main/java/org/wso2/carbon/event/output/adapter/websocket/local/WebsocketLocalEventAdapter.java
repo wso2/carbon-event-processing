@@ -66,9 +66,8 @@ public final class WebsocketLocalEventAdapter implements OutputEventAdapter {
 
     @Override
     public void publish(Object message, Map<String, String> dynamicProperties) {
-        String topic = eventAdapterConfiguration.getStaticProperties().get(WebsocketLocalEventAdapterConstants.ADAPTER_TOPIC);
         WebsocketLocalOutputCallbackRegisterServiceInternal websocketLocalOutputCallbackRegisterServiceInternal = WebsocketLocalEventAdaptorServiceInternalValueHolder.getWebsocketLocalOutputCallbackRegisterServiceInternal();
-        CopyOnWriteArrayList<Session> sessions = websocketLocalOutputCallbackRegisterServiceInternal.getSessions(tenantID, eventAdapterConfiguration.getName(), topic);
+        CopyOnWriteArrayList<Session> sessions = websocketLocalOutputCallbackRegisterServiceInternal.getSessions(tenantID, eventAdapterConfiguration.getName());
         if (sessions != null){
             if (message instanceof Object[]) {
                 //TODO: should these be sent one by one or as a whole? My suggestion is that we define a new schema and convert Object[] into it,
@@ -90,7 +89,7 @@ public final class WebsocketLocalEventAdapter implements OutputEventAdapter {
         } else {
             if (log.isDebugEnabled()) {
                 log.debug("Dropping the message: '"+message+"', since no clients have being registered to receive events from websocket-local adapter: '"
-                        +eventAdapterConfiguration.getName()+"', for tenant ID: "+tenantID+", for topic: "+topic);
+                        +eventAdapterConfiguration.getName()+"', for tenant ID: "+tenantID);
             }
         }
     }

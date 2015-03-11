@@ -25,8 +25,6 @@ import org.wso2.carbon.event.output.adapter.websocket.local.internal.util.Websoc
 import java.util.*;
 
 public class WebsocketLocalEventAdapterFactory extends OutputEventAdapterFactory {
-    private ResourceBundle resourceBundle = ResourceBundle.getBundle("org.wso2.carbon.event.output.adapter.websocket.local.i18n.Resources", Locale.getDefault());
-
     @Override
     public String getType() {
         return WebsocketLocalEventAdapterConstants.ADAPTER_TYPE_WEBSOCKET_LOCAL;
@@ -43,16 +41,7 @@ public class WebsocketLocalEventAdapterFactory extends OutputEventAdapterFactory
 
     @Override
     public List<Property> getStaticPropertyList() {
-        List<Property> staticPropertyList = new ArrayList<Property>();
-
-        Property adapterTopic = new Property(WebsocketLocalEventAdapterConstants.ADAPTER_TOPIC);
-        adapterTopic.setDisplayName(
-                resourceBundle.getString(WebsocketLocalEventAdapterConstants.ADAPTER_TOPIC));
-        adapterTopic.setHint(resourceBundle.getString(WebsocketLocalEventAdapterConstants.ADAPTER_TOPIC_HINT));
-        adapterTopic.setRequired(true);
-        staticPropertyList.add(adapterTopic);
-
-        return staticPropertyList;
+        return null;
     }
 
     @Override

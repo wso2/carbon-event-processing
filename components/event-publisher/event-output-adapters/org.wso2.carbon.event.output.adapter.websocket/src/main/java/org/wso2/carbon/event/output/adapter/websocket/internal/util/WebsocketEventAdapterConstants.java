@@ -26,6 +26,4 @@ public final class WebsocketEventAdapterConstants {
     public static final String ADAPTER_TYPE_WEBSOCKET = "websocket";
     public static final String ADAPTER_SERVER_URL = "websocket.server.url";
     public static final String ADAPTER_SERVER_URL_HINT = "websocket.server.url.hint";
-    public static final String ADAPTER_TOPIC = "websocket.topic";
-    public static final String ADAPTER_TOPIC_HINT = "websocket.topic.hint";
 }

@@ -25,27 +25,27 @@ import javax.websocket.CloseReason;
 import javax.websocket.Session;
 
 
-public class TopicSubscriptionEndpoint {
+public class SubscriptionEndpoint {
 
     protected WebsocketLocalOutputCallbackRegisterService websocketLocalOutputCallbackRegisterService;
 
-    private static final Log log = LogFactory.getLog(TopicSubscriptionEndpoint.class);
+    private static final Log log = LogFactory.getLog(SubscriptionEndpoint.class);
 
-    public TopicSubscriptionEndpoint() {
+    public SubscriptionEndpoint() {
         websocketLocalOutputCallbackRegisterService = (WebsocketLocalOutputCallbackRegisterService) PrivilegedCarbonContext.getThreadLocalCarbonContext()
                 .getOSGiService(WebsocketLocalOutputCallbackRegisterService.class);
     }
 
-    public void onClose (Session session, CloseReason reason, String topic, String adaptorName, int tenantId) {
+    public void onClose (Session session, CloseReason reason, String adaptorName, int tenantId) {
         if (log.isDebugEnabled()) {
             log.debug("Closing a WebSocket due to "+reason.getReasonPhrase()+", for session ID:"+session.getId()+", for request URI - "+session.getRequestURI());
         }
-        websocketLocalOutputCallbackRegisterService.unsubscribe(tenantId, adaptorName, topic, session);
+        websocketLocalOutputCallbackRegisterService.unsubscribe(tenantId, adaptorName, session);
     }
 
-    public void onError (Session session, Throwable throwable,String topic, String adaptorName, int tenantId) {
+    public void onError (Session session, Throwable throwable, String adaptorName, int tenantId) {
         log.error("Error occurred in session ID: "+session.getId()+", for request URI - "+session.getRequestURI()+", "+throwable.getMessage(),throwable);
-        websocketLocalOutputCallbackRegisterService.unsubscribe(tenantId, adaptorName, topic, session);
+        websocketLocalOutputCallbackRegisterService.unsubscribe(tenantId, adaptorName, session);
     }
 
 }
