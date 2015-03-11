@@ -53,7 +53,7 @@ public final class WebsocketEventAdapter implements OutputEventAdapter {
 
     @Override
     public void init() throws OutputEventAdapterException {
-        //Nothing to initialize.
+        WebsocketEventAdapterFactory.validateOutputEventAdapterConfigurations(eventAdapterConfiguration);
     }
 
     @Override

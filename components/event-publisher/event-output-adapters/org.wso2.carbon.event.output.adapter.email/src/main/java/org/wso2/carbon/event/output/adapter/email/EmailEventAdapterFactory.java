@@ -74,10 +74,4 @@ public class EmailEventAdapterFactory extends OutputEventAdapterFactory {
             String> globalProperties) {
         return new EmailEventAdapter(eventAdapterConfiguration, globalProperties);
     }
-
-    @Override
-    public void validateOutputEventAdapterConfigurations(OutputEventAdapterConfiguration eventAdapterConfiguration) throws OutputEventAdapterException {
-        //Nothing to validate
-    }
-
 }

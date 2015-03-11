@@ -117,13 +117,6 @@ public class CarbonOutputEventAdapterService implements OutputEventAdapterServic
                 }
             }
         }
-        try{
-            adapterFactory.validateOutputEventAdapterConfigurations(outputEventAdapterConfiguration);
-        } catch (OutputEventAdapterException e){
-            throw new OutputEventAdapterException("Output Event Adapter not created as invalid input given as Output Event Adapter Configuration, for the adapter type " +
-                    outputEventAdapterConfiguration.getType()+"with name "
-                    + outputEventAdapterConfiguration.getName(),e);
-        }
         Map<String, String> globalProperties = OutputEventAdapterServiceValueHolder.getGlobalAdapterConfigs().
                 getAdapterConfig(outputEventAdapterConfiguration.getType()).getGlobalPropertiesAsMap();
         eventAdapters.put(outputEventAdapterConfiguration.getName(), new OutputAdapterRuntime(adapterFactory.

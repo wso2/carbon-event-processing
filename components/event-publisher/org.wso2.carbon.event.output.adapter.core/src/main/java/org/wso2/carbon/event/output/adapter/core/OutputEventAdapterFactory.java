@@ -33,16 +33,6 @@ public abstract class OutputEventAdapterFactory {
 
     public abstract OutputEventAdapter createEventAdapter(OutputEventAdapterConfiguration eventAdapterConfiguration, Map<String, String> globalProperties);
 
-    /**
-     * Use this method for any adapter-type-specific eventAdapterConfiguration validations.
-     * Throw OutputEventAdapterException if invalid configurations are given.
-     *
-     * @param eventAdapterConfiguration - Configuration Details of the event adapter, to be validated.
-     * @throws org.wso2.carbon.event.output.adapter.core.exception.OutputEventAdapterException
-     *
-     */
-    public abstract void validateOutputEventAdapterConfigurations(OutputEventAdapterConfiguration eventAdapterConfiguration) throws OutputEventAdapterException;
-
     public OutputEventAdapterSchema getOutputEventAdapterSchema() {
         if (outputEventAdapterSchema == null) {
             outputEventAdapterSchema = new OutputEventAdapterSchema(getType(), getSupportedMessageFormats(), getStaticPropertyList(), getDynamicPropertyList());

@@ -67,8 +67,7 @@ public class WebsocketEventAdapterFactory extends OutputEventAdapterFactory {
         return null;
     }
 
-    @Override
-    public void validateOutputEventAdapterConfigurations(OutputEventAdapterConfiguration eventAdapterConfiguration) throws OutputEventAdapterException {
+    public static void validateOutputEventAdapterConfigurations(OutputEventAdapterConfiguration eventAdapterConfiguration) throws OutputEventAdapterException {
         String socketServerUrl = eventAdapterConfiguration.getStaticProperties().get(WebsocketEventAdapterConstants.ADAPTER_SERVER_URL);
         if (!socketServerUrl.startsWith("ws://")){
             throw new OutputEventAdapterException("Provided websocket URL - "+socketServerUrl+" is invalid for websocket output adaptor with name"+

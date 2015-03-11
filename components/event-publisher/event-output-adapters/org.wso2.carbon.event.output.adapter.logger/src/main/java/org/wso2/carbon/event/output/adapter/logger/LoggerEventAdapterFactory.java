@@ -66,9 +66,4 @@ public class LoggerEventAdapterFactory extends OutputEventAdapterFactory {
     public OutputEventAdapter createEventAdapter(OutputEventAdapterConfiguration eventAdapterConfiguration, Map<String, String> globalProperties) {
         return new LoggerEventAdapter(eventAdapterConfiguration,globalProperties);
     }
-
-    @Override
-    public void validateOutputEventAdapterConfigurations(OutputEventAdapterConfiguration eventAdapterConfiguration) throws OutputEventAdapterException {
-        //Nothing to validate
-    }
 }

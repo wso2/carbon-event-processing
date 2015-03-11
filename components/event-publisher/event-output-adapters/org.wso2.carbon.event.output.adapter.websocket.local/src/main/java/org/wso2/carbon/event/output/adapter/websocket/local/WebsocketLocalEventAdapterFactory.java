@@ -64,10 +64,4 @@ public class WebsocketLocalEventAdapterFactory extends OutputEventAdapterFactory
     public OutputEventAdapter createEventAdapter(OutputEventAdapterConfiguration eventAdapterConfiguration, Map<String, String> globalProperties) {
         return new WebsocketLocalEventAdapter(eventAdapterConfiguration,globalProperties);
     }
-
-    @Override
-    public void validateOutputEventAdapterConfigurations(OutputEventAdapterConfiguration eventAdapterConfiguration) throws OutputEventAdapterException {
-        //Nothing to validate
-    }
-
 }
