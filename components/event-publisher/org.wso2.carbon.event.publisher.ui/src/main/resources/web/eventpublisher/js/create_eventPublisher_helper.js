@@ -35,7 +35,7 @@ function fillTextIn(obj) {
 
 
 function loadEventAdapterProperties(messageProperty, eventPublisherInputTable, propertyLoop,
-                                           propertyValue, requiredValue,insertRowCount) {
+                                           propertyValue, requiredValue, insertRowCount) {
 
     var tableRow = eventPublisherInputTable.insertRow(insertRowCount);
     var textLabel = tableRow.insertCell(0);
@@ -43,7 +43,7 @@ function loadEventAdapterProperties(messageProperty, eventPublisherInputTable, p
     textLabel.innerHTML = displayName;
     var requiredElementId = propertyValue;
     var textPasswordType = "text";
-    var hint = ""
+    var hint = ""  ;
     var defaultValue = "";
 
     if (messageProperty.localRequired) {
@@ -75,9 +75,7 @@ function loadEventAdapterProperties(messageProperty, eventPublisherInputTable, p
         else {
             inputField.innerHTML = '<div class="' + classType + '"> <input style="width:75%" type="' + textPasswordType + '" id="' + requiredElementId + propertyLoop + '" name="' + messageProperty.localKey + '" value="' + defaultValue + '" class="initE"  /> </div>';
         }
-    }
-
-    else {
+    } else {
 
         var option = '';
         jQuery.each(messageProperty.localOptions, function (index, localOption) {
@@ -91,10 +89,9 @@ function loadEventAdapterProperties(messageProperty, eventPublisherInputTable, p
         });
 
 
-        if (hint != undefined) {
+        if (hint != undefined && hint != "") {
             inputField.innerHTML = '<div class="' + classType + '"> <select   id="' + requiredElementId + propertyLoop + '" name="' + messageProperty.localKey + '">' + option + '</select><br/> <div class="sectionHelp">' + hint + '</div></div>';
-        }
-        else {
+        } else {
             inputField.innerHTML = '<div class="' + classType + '"> <select  id="' + requiredElementId + propertyLoop + '" name="' + messageProperty.localKey + '"  />' + option + ' </div>';
         }
     }
@@ -137,31 +134,33 @@ function loadEventAdapterData(adapterSchema) {
     var inputProperty = "property_";
     var inputRequiredProperty = "property_Required_";
     var initialRowValue = 6;
+    var index=0;
     if (adapterSchema.localOutputEventAdapterStaticProperties != undefined) {
 
         var tableRow = eventPublisherInputTable.insertRow(initialRowValue);
         var textLabel = tableRow.insertCell(0);
         var header = document.getElementById("staticHeader").getAttribute("name");
-        textLabel.innerHTML = '<b><i><span style="color: #666666; ">'+header+'</span></i></b>';
-        initialRowValue+=1;
+        textLabel.innerHTML = '<b><i><span style="color: #666666; ">' + header + '</span></i></b>';
+        initialRowValue += 1;
 
         for (i = 0; i < adapterSchema.localOutputEventAdapterStaticProperties.length; i++) {
             // for each property, add a text and input field in a row
-            loadEventAdapterProperties(adapterSchema.localOutputEventAdapterStaticProperties[i], eventPublisherInputTable, i, inputProperty, inputRequiredProperty, initialRowValue);
+            loadEventAdapterProperties(adapterSchema.localOutputEventAdapterStaticProperties[i], eventPublisherInputTable, i, inputProperty, inputRequiredProperty, initialRowValue + i);
         }
-       initialRowValue+=adapterSchema.localOutputEventAdapterStaticProperties.length;
+        index = adapterSchema.localOutputEventAdapterStaticProperties.length;
+        initialRowValue += adapterSchema.localOutputEventAdapterStaticProperties.length;
     }
     if (adapterSchema.localOutputEventAdapterDynamicProperties != undefined) {
 
         var tableRow = eventPublisherInputTable.insertRow(initialRowValue);
         var textLabel = tableRow.insertCell(0);
         var header = document.getElementById("dynamicHeader").getAttribute("name");
-        textLabel.innerHTML = '<b><i><span style="color: #666666; ">'+header+'</span></i></b>';
-        initialRowValue+=1;
+        textLabel.innerHTML = '<b><i><span style="color: #666666; ">' + header + '</span></i></b>';
+        initialRowValue += 1;
 
         for (i = 0; i < adapterSchema.localOutputEventAdapterDynamicProperties.length; i++) {
             // for each property, add a text and input field in a row
-            loadEventAdapterProperties(adapterSchema.localOutputEventAdapterDynamicProperties[i], eventPublisherInputTable, i, inputProperty, inputRequiredProperty, initialRowValue);
+            loadEventAdapterProperties(adapterSchema.localOutputEventAdapterDynamicProperties[i], eventPublisherInputTable, i + index, inputProperty, inputRequiredProperty, initialRowValue + i);
         }
     }
 }
