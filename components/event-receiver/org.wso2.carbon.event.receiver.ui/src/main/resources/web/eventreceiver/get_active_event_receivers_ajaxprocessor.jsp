@@ -21,7 +21,7 @@
 <%
     // get Event Stream Definition
     EventReceiverAdminServiceStub stub = EventReceiverUIUtils.getEventReceiverAdminService(config, session, request);
-    EventReceiverConfigurationInfoDto[] eventReceivers = stub.getAllActiveEventReceiverConfiguration();
+    EventReceiverConfigurationInfoDto[] eventReceivers = stub.getAllActiveEventReceiverConfigurations();
     String[] eventReceiverNames = null;
     String responseText = "";
     if (eventReceivers != null && eventReceivers.length > 0) {

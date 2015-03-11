@@ -12,22 +12,23 @@
  * CONDITIONS OF ANY KIND, either express or implied.  See the License for the
  * specific language governing permissions and limitations under the License.
  */
-package org.wso2.carbon.event.receiver.core.config;
+package org.wso2.carbon.event.receiver.core;
 
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMFactory;
 import org.wso2.carbon.databridge.commons.StreamDefinition;
+import org.wso2.carbon.event.receiver.core.config.EventReceiverConfiguration;
+import org.wso2.carbon.event.receiver.core.config.InputMapping;
 import org.wso2.carbon.event.receiver.core.exception.EventReceiverConfigurationException;
-import org.wso2.carbon.event.receiver.core.internal.InputMapper;
 
 
 public interface InputMapperFactory {
 
     /**
-     * Construct an {@link InputMapping} from the give omElement and return it.
+     * Construct an {@link org.wso2.carbon.event.receiver.core.config.InputMapping} from the give omElement and return it.
      *
      * @param omElement the {@link OMElement} that will be used to construct input mapping
-     * @return the constructed {@link InputMapping}
+     * @return the constructed {@link org.wso2.carbon.event.receiver.core.config.InputMapping}
      */
     InputMapping constructInputMappingFromOM(OMElement omElement)
             throws EventReceiverConfigurationException;
@@ -44,9 +45,9 @@ public interface InputMapperFactory {
     /**
      * Constructs an returns an appropriate InputMapper depending on the Factory Implementation
      *
-     * @param eventReceiverConfiguration the {@link EventReceiverConfiguration} to be used
+     * @param eventReceiverConfiguration the {@link org.wso2.carbon.event.receiver.core.config.EventReceiverConfiguration} to be used
      * @param exportedStreamDefinition     the {@link StreamDefinition} exported from the event receiver
-     * @return the {@link org.wso2.carbon.event.receiver.core.internal.InputMapper} instance based on the supplied configuration
+     * @return the {@link InputMapper} instance based on the supplied configuration
      */
     InputMapper constructInputMapper(EventReceiverConfiguration eventReceiverConfiguration,
                                      StreamDefinition exportedStreamDefinition)

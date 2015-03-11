@@ -16,7 +16,7 @@ package org.wso2.carbon.event.receiver.core.internal.ds;
 
 import org.wso2.carbon.event.input.adapter.core.InputEventAdapterService;
 import org.wso2.carbon.event.input.adapter.core.MessageType;
-import org.wso2.carbon.event.receiver.core.config.InputMapperFactory;
+import org.wso2.carbon.event.receiver.core.InputMapperFactory;
 import org.wso2.carbon.event.receiver.core.internal.CarbonEventReceiverService;
 import org.wso2.carbon.event.receiver.core.internal.type.json.JSONInputMapperFactory;
 import org.wso2.carbon.event.receiver.core.internal.type.map.MapInputMapperFactory;

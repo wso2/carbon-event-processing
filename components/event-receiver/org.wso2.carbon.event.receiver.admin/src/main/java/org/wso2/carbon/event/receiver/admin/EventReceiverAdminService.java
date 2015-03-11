@@ -27,13 +27,10 @@ import org.wso2.carbon.event.input.adapter.core.InputEventAdapterSchema;
 import org.wso2.carbon.event.input.adapter.core.InputEventAdapterService;
 import org.wso2.carbon.event.input.adapter.core.Property;
 import org.wso2.carbon.event.receiver.admin.internal.EventReceiverAdminConstants;
-import org.wso2.carbon.event.receiver.admin.internal.PropertyAttributeTypeConstants;
 import org.wso2.carbon.event.receiver.admin.internal.ds.EventReceiverAdminServiceValueHolder;
 import org.wso2.carbon.event.receiver.core.EventReceiverService;
 import org.wso2.carbon.event.receiver.core.config.*;
-import org.wso2.carbon.event.receiver.core.config.mapping.JSONInputMapping;
 import org.wso2.carbon.event.receiver.core.config.mapping.*;
-import org.wso2.carbon.event.receiver.core.config.mapping.WSO2EventInputMapping;
 import org.wso2.carbon.event.receiver.core.exception.EventReceiverConfigurationException;
 
 import java.util.*;
@@ -147,15 +144,13 @@ public class EventReceiverAdminService extends AbstractAdmin {
             String eventReceiverName) throws AxisFault {
 
         EventReceiverService eventReceiverService = EventReceiverAdminServiceValueHolder.getEventReceiverService();
-        int tenantId = PrivilegedCarbonContext.getThreadLocalCarbonContext().getTenantId();
-        AxisConfiguration axisConfiguration = getAxisConfig();
 
         EventReceiverConfiguration eventReceiverConfiguration = eventReceiverService.getActiveEventReceiverConfiguration(eventReceiverName);
         if (eventReceiverConfiguration != null) {
             EventReceiverConfigurationDto eventReceiverConfigurationDto = new EventReceiverConfigurationDto();
             eventReceiverConfigurationDto.setEventReceiverName(eventReceiverConfiguration.getEventReceiverName());
             String streamNameWithVersion = eventReceiverConfiguration.getToStreamName() + ":" + eventReceiverConfiguration.getToStreamVersion();
-            eventReceiverConfigurationDto.setFromStreamNameWithVersion(streamNameWithVersion);
+            eventReceiverConfigurationDto.setToStreamNameWithVersion(streamNameWithVersion);
 
             InputEventAdapterConfiguration fromAdapterConfiguration = eventReceiverConfiguration.getFromAdapterConfiguration();
 
@@ -175,21 +170,79 @@ public class EventReceiverAdminService extends AbstractAdmin {
                 DetailInputAdapterPropertyDto[] detailInputAdapterPropertyDtos = getPropertyConfigurations(inputAdapterProperties, inputEventAdapterSchema.getPropertyList());
                 fromAdapterConfigurationDto.setInputEventAdapterProperties(detailInputAdapterPropertyDtos);
 
-                eventReceiverConfigurationDto.setToAdapterConfigurationDto(fromAdapterConfigurationDto);
+                eventReceiverConfigurationDto.setFromAdapterConfigurationDto(fromAdapterConfigurationDto);
             }
 
             InputMapping inputMapping = eventReceiverConfiguration.getInputMapping();
-            List<EventMappingPropertyDto> eventMappingPropertyDtos = new ArrayList<EventMappingPropertyDto>();
-            for (InputMappingAttribute inputMappingAttribute : inputMapping.getInputMappingAttributes()) {
 
-                EventMappingPropertyDto eventInputPropertyConfigurationDto = new EventMappingPropertyDto();
-                eventInputPropertyConfigurationDto.setName(inputMappingAttribute.getToElementKey());
-                eventInputPropertyConfigurationDto.setValueOf(inputMappingAttribute.getFromElementKey());
-                eventInputPropertyConfigurationDto.setType(EventReceiverAdminConstants.ATTRIBUTE_TYPE_STRING_MAP.get(inputMappingAttribute.getToElementType()));
-                eventInputPropertyConfigurationDto.setDefaultValue(inputMappingAttribute.getDefaultValue());
-                eventMappingPropertyDtos.add(eventInputPropertyConfigurationDto);
+            eventReceiverConfigurationDto.setCustomMappingEnabled(eventReceiverConfiguration.getInputMapping().isCustomMappingEnabled());
+            eventReceiverConfigurationDto.setMessageFormat(inputMapping.getMappingType());
+
+            if (inputMapping.isCustomMappingEnabled()) {
+                if (inputMapping.getMappingType().equalsIgnoreCase(EventReceiverConstants.ER_WSO2EVENT_MAPPING_TYPE)) {
+                    List<EventMappingPropertyDto> metaMappingPropertyDtos = new ArrayList<EventMappingPropertyDto>();
+                    List<EventMappingPropertyDto> correlationMappingPropertyDtos = new ArrayList<EventMappingPropertyDto>();
+                    List<EventMappingPropertyDto> payloadMappingPropertyDtos = new ArrayList<EventMappingPropertyDto>();
+
+                    for (InputMappingAttribute inputMappingAttribute : inputMapping.getInputMappingAttributes()) {
+                        EventMappingPropertyDto mappingPropertyDto = new EventMappingPropertyDto();
+                        mappingPropertyDto.setName(inputMappingAttribute.getFromElementKey());
+                        mappingPropertyDto.setValueOf(inputMappingAttribute.getToElementKey());
+                        mappingPropertyDto.setType(EventReceiverAdminConstants.ATTRIBUTE_TYPE_STRING_MAP.get(inputMappingAttribute.getToElementType()));
+                        if (EventReceiverConstants.META_DATA_VAL.equalsIgnoreCase(inputMappingAttribute.getFromElementType())) {
+                            metaMappingPropertyDtos.add(mappingPropertyDto);
+                        } else if (EventReceiverConstants.CORRELATION_DATA_VAL.equalsIgnoreCase(inputMappingAttribute.getFromElementType())) {
+                            correlationMappingPropertyDtos.add(mappingPropertyDto);
+                        } else if (EventReceiverConstants.PAYLOAD_DATA_VAL.equalsIgnoreCase(inputMappingAttribute.getFromElementType())) {
+                            payloadMappingPropertyDtos.add(mappingPropertyDto);
+                        }
+                    }
+
+                    eventReceiverConfigurationDto.setMetaMappingPropertyDtos(metaMappingPropertyDtos.toArray(new EventMappingPropertyDto[metaMappingPropertyDtos.size()]));
+                    eventReceiverConfigurationDto.setCorrelationMappingPropertyDtos(correlationMappingPropertyDtos.toArray(new EventMappingPropertyDto[correlationMappingPropertyDtos.size()]));
+                    eventReceiverConfigurationDto.setMappingPropertyDtos(payloadMappingPropertyDtos.toArray(new EventMappingPropertyDto[payloadMappingPropertyDtos.size()]));
+                } else if (inputMapping.getMappingType().equalsIgnoreCase(EventReceiverConstants.ER_XML_MAPPING_TYPE)) {
+
+                    List<EventMappingPropertyDto> xPathDefinitions = new ArrayList<EventMappingPropertyDto>();
+                    for (XPathDefinition xPathDefinition : ((XMLInputMapping) inputMapping).getXPathDefinitions()) {
+                        EventMappingPropertyDto mappingPropertyDto = new EventMappingPropertyDto();
+                        mappingPropertyDto.setName(xPathDefinition.getPrefix());
+                        mappingPropertyDto.setValueOf(xPathDefinition.getNamespaceUri());
+                        xPathDefinitions.add(mappingPropertyDto);
+
+                    }
+                    eventReceiverConfigurationDto.setXpathDefinitionMappingPropertyDtos(xPathDefinitions.toArray(new EventMappingPropertyDto[xPathDefinitions.size()]));
+
+                    List<EventMappingPropertyDto> mappingPropertyDtos = new ArrayList<EventMappingPropertyDto>();
+                    for (InputMappingAttribute inputMappingAttribute : inputMapping.getInputMappingAttributes()) {
+                        EventMappingPropertyDto mappingPropertyDto = new EventMappingPropertyDto();
+                        mappingPropertyDto.setName(inputMappingAttribute.getFromElementKey());
+                        mappingPropertyDto.setValueOf(inputMappingAttribute.getToElementKey());
+                        mappingPropertyDto.setType(EventReceiverAdminConstants.ATTRIBUTE_TYPE_STRING_MAP.get(inputMappingAttribute.getToElementType()));
+                        mappingPropertyDtos.add(mappingPropertyDto);
+
+                    }
+                    eventReceiverConfigurationDto.setMappingPropertyDtos(mappingPropertyDtos.toArray(new EventMappingPropertyDto[mappingPropertyDtos.size()]));
+                    eventReceiverConfigurationDto.setParentSelectorXpath(((XMLInputMapping) inputMapping).getParentSelectorXpath());
+
+                } else {
+
+                    // for map, text and json
+
+                    List<EventMappingPropertyDto> mappingPropertyDtos = new ArrayList<EventMappingPropertyDto>();
+                    for (InputMappingAttribute inputMappingAttribute : inputMapping.getInputMappingAttributes()) {
+                        EventMappingPropertyDto mappingPropertyDto = new EventMappingPropertyDto();
+                        mappingPropertyDto.setName(inputMappingAttribute.getFromElementKey());
+                        mappingPropertyDto.setValueOf(inputMappingAttribute.getToElementKey());
+                        mappingPropertyDto.setType(EventReceiverAdminConstants.ATTRIBUTE_TYPE_STRING_MAP.get(inputMappingAttribute.getToElementType()));
+                        mappingPropertyDtos.add(mappingPropertyDto);
+
+                    }
+                    eventReceiverConfigurationDto.setMappingPropertyDtos(mappingPropertyDtos.toArray(new EventMappingPropertyDto[mappingPropertyDtos.size()]));
+
+                }
             }
-            eventReceiverConfigurationDto.setMappingPropertyDtos(eventMappingPropertyDtos.toArray(new EventMappingPropertyDto[eventMappingPropertyDtos.size()]));
+
             return eventReceiverConfigurationDto;
         }
 
@@ -304,9 +357,6 @@ public class EventReceiverAdminService extends AbstractAdmin {
                 eventReceiverConfiguration.setToStreamName(toStreamProperties[0]);
                 eventReceiverConfiguration.setToStreamVersion(toStreamProperties[1]);
 
-                AxisConfiguration axisConfiguration = getAxisConfig();
-//                StreamDefinition streamDefinition = eventReceiverService.getStreamDefinition(streamNameWithVersion, axisConfiguration);
-
                 constructInputAdapterRelatedConfigs(eventReceiverName, eventAdapterType, inputPropertyConfiguration,
                         eventReceiverConfiguration, EventReceiverConstants.ER_WSO2EVENT_MAPPING_TYPE);
 
@@ -316,19 +366,19 @@ public class EventReceiverAdminService extends AbstractAdmin {
                 if (mappingEnabled) {
                     if (metaData != null && metaData.length != 0) {
                         for (EventMappingPropertyDto wso2EventInputPropertyConfiguration : metaData) {
-                            InputMappingAttribute inputProperty = new InputMappingAttribute(wso2EventInputPropertyConfiguration.getName(), wso2EventInputPropertyConfiguration.getValueOf(), PropertyAttributeTypeConstants.STRING_ATTRIBUTE_TYPE_MAP.get(wso2EventInputPropertyConfiguration.getType()), EventReceiverConstants.META_DATA_VAL);
+                            InputMappingAttribute inputProperty = new InputMappingAttribute(wso2EventInputPropertyConfiguration.getName(), wso2EventInputPropertyConfiguration.getValueOf(), EventReceiverAdminConstants.STRING_ATTRIBUTE_TYPE_MAP.get(wso2EventInputPropertyConfiguration.getType()), EventReceiverConstants.META_DATA_VAL);
                             wso2EventInputMapping.addInputMappingAttribute(inputProperty);
                         }
                     }
                     if (correlationData != null && correlationData.length != 0) {
                         for (EventMappingPropertyDto wso2EventInputPropertyConfiguration : correlationData) {
-                            InputMappingAttribute inputProperty = new InputMappingAttribute(wso2EventInputPropertyConfiguration.getName(), wso2EventInputPropertyConfiguration.getValueOf(), PropertyAttributeTypeConstants.STRING_ATTRIBUTE_TYPE_MAP.get(wso2EventInputPropertyConfiguration.getType()), EventReceiverConstants.CORRELATION_DATA_VAL);
+                            InputMappingAttribute inputProperty = new InputMappingAttribute(wso2EventInputPropertyConfiguration.getName(), wso2EventInputPropertyConfiguration.getValueOf(), EventReceiverAdminConstants.STRING_ATTRIBUTE_TYPE_MAP.get(wso2EventInputPropertyConfiguration.getType()), EventReceiverConstants.CORRELATION_DATA_VAL);
                             wso2EventInputMapping.addInputMappingAttribute(inputProperty);
                         }
                     }
                     if (payloadData != null && payloadData.length != 0) {
                         for (EventMappingPropertyDto wso2EventInputPropertyConfiguration : payloadData) {
-                            InputMappingAttribute inputProperty = new InputMappingAttribute(wso2EventInputPropertyConfiguration.getName(), wso2EventInputPropertyConfiguration.getValueOf(), PropertyAttributeTypeConstants.STRING_ATTRIBUTE_TYPE_MAP.get(wso2EventInputPropertyConfiguration.getType()), EventReceiverConstants.PAYLOAD_DATA_VAL);
+                            InputMappingAttribute inputProperty = new InputMappingAttribute(wso2EventInputPropertyConfiguration.getName(), wso2EventInputPropertyConfiguration.getValueOf(), EventReceiverAdminConstants.STRING_ATTRIBUTE_TYPE_MAP.get(wso2EventInputPropertyConfiguration.getType()), EventReceiverConstants.PAYLOAD_DATA_VAL);
                             wso2EventInputMapping.addInputMappingAttribute(inputProperty);
                         }
                     }
@@ -364,9 +414,6 @@ public class EventReceiverAdminService extends AbstractAdmin {
                 eventReceiverConfiguration.setToStreamName(toStreamProperties[0]);
                 eventReceiverConfiguration.setToStreamVersion(toStreamProperties[1]);
 
-                AxisConfiguration axisConfiguration = getAxisConfig();
-                int tenantId = PrivilegedCarbonContext.getThreadLocalCarbonContext().getTenantId();
-
                 constructInputAdapterRelatedConfigs(eventReceiverName, eventAdapterType, inputPropertyConfiguration,
                         eventReceiverConfiguration, EventReceiverConstants.ER_TEXT_MAPPING_TYPE);
 
@@ -375,7 +422,7 @@ public class EventReceiverAdminService extends AbstractAdmin {
                 if (mappingEnabled) {
                     if (inputMappings != null && inputMappings.length != 0) {
                         for (EventMappingPropertyDto mappingProperty : inputMappings) {
-                            InputMappingAttribute inputProperty = new InputMappingAttribute(mappingProperty.getName(), mappingProperty.getValueOf(), PropertyAttributeTypeConstants.STRING_ATTRIBUTE_TYPE_MAP.get(mappingProperty.getType()));
+                            InputMappingAttribute inputProperty = new InputMappingAttribute(mappingProperty.getName(), mappingProperty.getValueOf(), EventReceiverAdminConstants.STRING_ATTRIBUTE_TYPE_MAP.get(mappingProperty.getType()));
                             textInputMapping.addInputMappingAttribute(inputProperty);
                         }
                     }
@@ -415,8 +462,6 @@ public class EventReceiverAdminService extends AbstractAdmin {
                 eventReceiverConfiguration.setToStreamName(toStreamProperties[0]);
                 eventReceiverConfiguration.setToStreamVersion(toStreamProperties[1]);
 
-                AxisConfiguration axisConfiguration = getAxisConfig();
-
                 constructInputAdapterRelatedConfigs(eventReceiverName, eventAdapterType, inputPropertyConfiguration,
                         eventReceiverConfiguration, EventReceiverConstants.ER_XML_MAPPING_TYPE);
 
@@ -435,7 +480,7 @@ public class EventReceiverAdminService extends AbstractAdmin {
                 if (mappingEnabled) {
                     if (inputMappings != null && inputMappings.length != 0) {
                         for (EventMappingPropertyDto mappingProperty : inputMappings) {
-                            InputMappingAttribute inputProperty = new InputMappingAttribute(mappingProperty.getName(),mappingProperty.getValueOf(), PropertyAttributeTypeConstants.STRING_ATTRIBUTE_TYPE_MAP.get(mappingProperty.getType()));
+                            InputMappingAttribute inputProperty = new InputMappingAttribute(mappingProperty.getName(), mappingProperty.getValueOf(), EventReceiverAdminConstants.STRING_ATTRIBUTE_TYPE_MAP.get(mappingProperty.getType()));
                             inputProperty.setDefaultValue(mappingProperty.getDefaultValue());
                             xmlInputMapping.addInputMappingAttribute(inputProperty);
                         }
@@ -473,8 +518,6 @@ public class EventReceiverAdminService extends AbstractAdmin {
                 eventReceiverConfiguration.setToStreamName(toStreamProperties[0]);
                 eventReceiverConfiguration.setToStreamVersion(toStreamProperties[1]);
 
-                AxisConfiguration axisConfiguration = getAxisConfig();
-
                 constructInputAdapterRelatedConfigs(eventReceiverName, eventAdapterType, inputPropertyConfiguration,
                         eventReceiverConfiguration, EventReceiverConstants.ER_MAP_MAPPING_TYPE);
 
@@ -485,7 +528,7 @@ public class EventReceiverAdminService extends AbstractAdmin {
                 if (mappingEnabled) {
                     if (inputMappings != null && inputMappings.length != 0) {
                         for (EventMappingPropertyDto mappingProperty : inputMappings) {
-                            InputMappingAttribute inputProperty = new InputMappingAttribute(mappingProperty.getName(), mappingProperty.getValueOf(), PropertyAttributeTypeConstants.STRING_ATTRIBUTE_TYPE_MAP.get(mappingProperty.getType()));
+                            InputMappingAttribute inputProperty = new InputMappingAttribute(mappingProperty.getName(), mappingProperty.getValueOf(), EventReceiverAdminConstants.STRING_ATTRIBUTE_TYPE_MAP.get(mappingProperty.getType()));
                             mapInputMapping.addInputMappingAttribute(inputProperty);
                         }
                     }
@@ -523,8 +566,6 @@ public class EventReceiverAdminService extends AbstractAdmin {
                 eventReceiverConfiguration.setToStreamName(toStreamProperties[0]);
                 eventReceiverConfiguration.setToStreamVersion(toStreamProperties[1]);
 
-                AxisConfiguration axisConfiguration = getAxisConfig();
-
                 constructInputAdapterRelatedConfigs(eventReceiverName, eventAdapterType, inputPropertyConfiguration,
                         eventReceiverConfiguration, EventReceiverConstants.ER_JSON_MAPPING_TYPE);
 
@@ -533,7 +574,7 @@ public class EventReceiverAdminService extends AbstractAdmin {
                 if (mappingEnabled) {
                     if (inputMappings != null && inputMappings.length != 0) {
                         for (EventMappingPropertyDto mappingProperty : inputMappings) {
-                            InputMappingAttribute inputProperty = new InputMappingAttribute(mappingProperty.getName(), mappingProperty.getValueOf(), PropertyAttributeTypeConstants.STRING_ATTRIBUTE_TYPE_MAP.get(mappingProperty.getType()));
+                            InputMappingAttribute inputProperty = new InputMappingAttribute(mappingProperty.getName(), mappingProperty.getValueOf(), EventReceiverAdminConstants.STRING_ATTRIBUTE_TYPE_MAP.get(mappingProperty.getType()));
                             jsonInputMapping.addInputMappingAttribute(inputProperty);
                         }
                     }
@@ -681,12 +722,12 @@ public class EventReceiverAdminService extends AbstractAdmin {
 
         if (metaAttributeList != null) {
             for (Attribute attribute : metaAttributeList) {
-                attributes += PropertyAttributeTypeConstants.PROPERTY_META_PREFIX + attribute.getName() + " " + attribute.getType().toString().toLowerCase() + ", \n";
+                attributes += EventReceiverAdminConstants.PROPERTY_META_PREFIX + attribute.getName() + " " + attribute.getType().toString().toLowerCase() + ", \n";
             }
         }
         if (correlationAttributeList != null) {
             for (Attribute attribute : correlationAttributeList) {
-                attributes += PropertyAttributeTypeConstants.PROPERTY_CORRELATION_PREFIX + attribute.getName() + " " + attribute.getType().toString().toLowerCase() + ", \n";
+                attributes += EventReceiverAdminConstants.PROPERTY_CORRELATION_PREFIX + attribute.getName() + " " + attribute.getType().toString().toLowerCase() + ", \n";
             }
         }
         if (payloadAttributeList != null) {
@@ -729,7 +770,7 @@ public class EventReceiverAdminService extends AbstractAdmin {
             List<Attribute> metaDataList = streamDefinition.getMetaData();
             if (metaDataList != null) {
                 for (Attribute attribute : metaDataList) {
-                    if (propertyName.equalsIgnoreCase(PropertyAttributeTypeConstants.PROPERTY_META_PREFIX + attribute.getName())) {
+                    if (propertyName.equalsIgnoreCase(EventReceiverAdminConstants.PROPERTY_META_PREFIX + attribute.getName())) {
                         return attribute.getType().toString().toLowerCase();
                     }
                 }
@@ -738,7 +779,7 @@ public class EventReceiverAdminService extends AbstractAdmin {
             List<Attribute> correlationDataList = streamDefinition.getCorrelationData();
             if (correlationDataList != null) {
                 for (Attribute attribute : correlationDataList) {
-                    if (propertyName.equalsIgnoreCase(PropertyAttributeTypeConstants.PROPERTY_CORRELATION_PREFIX + attribute.getName())) {
+                    if (propertyName.equalsIgnoreCase(EventReceiverAdminConstants.PROPERTY_CORRELATION_PREFIX + attribute.getName())) {
                         return attribute.getType().toString().toLowerCase();
                     }
                 }

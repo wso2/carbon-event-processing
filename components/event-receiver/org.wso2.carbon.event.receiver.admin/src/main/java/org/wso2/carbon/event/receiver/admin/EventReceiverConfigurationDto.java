@@ -19,13 +19,19 @@ public class EventReceiverConfigurationDto {
 
     private String eventReceiverName;
 
-    private String fromStreamNameWithVersion;
+    private String toStreamNameWithVersion;
 
-    private InputAdapterConfigurationDto toAdapterConfigurationDto;
+    private InputAdapterConfigurationDto fromAdapterConfigurationDto;
 
     private String messageFormat;
 
+    private boolean customMappingEnabled;
+
+    private String parentSelectorXpath;
     private EventMappingPropertyDto[] mappingPropertyDtos;
+    private EventMappingPropertyDto[] metaMappingPropertyDtos;
+    private EventMappingPropertyDto[] correlationMappingPropertyDtos;
+    private EventMappingPropertyDto[] xpathDefinitionMappingPropertyDtos;
 
     public String getEventReceiverName() {
         return eventReceiverName;
@@ -35,21 +41,21 @@ public class EventReceiverConfigurationDto {
         this.eventReceiverName = eventReceiverName;
     }
 
-    public String getFromStreamNameWithVersion() {
-        return fromStreamNameWithVersion;
+    public String getToStreamNameWithVersion() {
+        return toStreamNameWithVersion;
     }
 
-    public void setFromStreamNameWithVersion(String fromStreamNameWithVersion) {
-        this.fromStreamNameWithVersion = fromStreamNameWithVersion;
+    public void setToStreamNameWithVersion(String toStreamNameWithVersion) {
+        this.toStreamNameWithVersion = toStreamNameWithVersion;
     }
 
-    public InputAdapterConfigurationDto getToAdapterConfigurationDto() {
-        return toAdapterConfigurationDto;
+    public InputAdapterConfigurationDto getFromAdapterConfigurationDto() {
+        return fromAdapterConfigurationDto;
     }
 
-    public void setToAdapterConfigurationDto(
-            InputAdapterConfigurationDto toAdapterConfigurationDto) {
-        this.toAdapterConfigurationDto = toAdapterConfigurationDto;
+    public void setFromAdapterConfigurationDto(
+            InputAdapterConfigurationDto fromAdapterConfigurationDto) {
+        this.fromAdapterConfigurationDto = fromAdapterConfigurationDto;
     }
 
     public String getMessageFormat() {
@@ -66,5 +72,45 @@ public class EventReceiverConfigurationDto {
 
     public void setMappingPropertyDtos(EventMappingPropertyDto[] mappingPropertyDtos) {
         this.mappingPropertyDtos = mappingPropertyDtos;
+    }
+
+    public boolean isCustomMappingEnabled() {
+        return customMappingEnabled;
+    }
+
+    public void setCustomMappingEnabled(boolean customMappingEnabled) {
+        this.customMappingEnabled = customMappingEnabled;
+    }
+
+    public EventMappingPropertyDto[] getMetaMappingPropertyDtos() {
+        return metaMappingPropertyDtos;
+    }
+
+    public void setMetaMappingPropertyDtos(EventMappingPropertyDto[] metaMappingPropertyDtos) {
+        this.metaMappingPropertyDtos = metaMappingPropertyDtos;
+    }
+
+    public EventMappingPropertyDto[] getCorrelationMappingPropertyDtos() {
+        return correlationMappingPropertyDtos;
+    }
+
+    public void setCorrelationMappingPropertyDtos(EventMappingPropertyDto[] correlationMappingPropertyDtos) {
+        this.correlationMappingPropertyDtos = correlationMappingPropertyDtos;
+    }
+
+    public EventMappingPropertyDto[] getXpathDefinitionMappingPropertyDtos() {
+        return xpathDefinitionMappingPropertyDtos;
+    }
+
+    public void setXpathDefinitionMappingPropertyDtos(EventMappingPropertyDto[] xpathDefinitionMappingPropertyDtos) {
+        this.xpathDefinitionMappingPropertyDtos = xpathDefinitionMappingPropertyDtos;
+    }
+
+    public String getParentSelectorXpath() {
+        return parentSelectorXpath;
+    }
+
+    public void setParentSelectorXpath(String parentSelectorXpath) {
+        this.parentSelectorXpath = parentSelectorXpath;
     }
 }
