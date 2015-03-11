@@ -18,6 +18,7 @@
 package org.wso2.carbon.event.output.adapter.email;
 
 import org.wso2.carbon.event.output.adapter.core.*;
+import org.wso2.carbon.event.output.adapter.core.exception.OutputEventAdapterException;
 import org.wso2.carbon.event.output.adapter.email.internal.util.EmailEventAdapterConstants;
 
 import java.util.*;
@@ -72,6 +73,11 @@ public class EmailEventAdapterFactory extends OutputEventAdapterFactory {
     public OutputEventAdapter createEventAdapter(OutputEventAdapterConfiguration eventAdapterConfiguration, Map<String,
             String> globalProperties) {
         return new EmailEventAdapter(eventAdapterConfiguration, globalProperties);
+    }
+
+    @Override
+    public void validateOutputEventAdapterConfigurations(OutputEventAdapterConfiguration eventAdapterConfiguration) throws OutputEventAdapterException {
+        //Nothing to validate
     }
 
 }

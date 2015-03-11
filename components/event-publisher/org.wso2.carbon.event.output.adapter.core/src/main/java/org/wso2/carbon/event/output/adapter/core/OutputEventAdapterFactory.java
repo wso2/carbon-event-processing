@@ -14,6 +14,8 @@
  */
 package org.wso2.carbon.event.output.adapter.core;
 
+import org.wso2.carbon.event.output.adapter.core.exception.OutputEventAdapterException;
+
 import java.util.List;
 import java.util.Map;
 
@@ -30,6 +32,16 @@ public abstract class OutputEventAdapterFactory {
     public abstract List<Property> getDynamicPropertyList();
 
     public abstract OutputEventAdapter createEventAdapter(OutputEventAdapterConfiguration eventAdapterConfiguration, Map<String, String> globalProperties);
+
+    /**
+     * Use this method for any adapter-type-specific eventAdapterConfiguration validations.
+     * Throw OutputEventAdapterException if invalid configurations are given.
+     *
+     * @param eventAdapterConfiguration - Configuration Details of the event adapter, to be validated.
+     * @throws org.wso2.carbon.event.output.adapter.core.exception.OutputEventAdapterException
+     *
+     */
+    public abstract void validateOutputEventAdapterConfigurations(OutputEventAdapterConfiguration eventAdapterConfiguration) throws OutputEventAdapterException;
 
     public OutputEventAdapterSchema getOutputEventAdapterSchema() {
         if (outputEventAdapterSchema == null) {

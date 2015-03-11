@@ -19,6 +19,7 @@ package org.wso2.carbon.event.output.adapter.logger;
 
 
 import org.wso2.carbon.event.output.adapter.core.*;
+import org.wso2.carbon.event.output.adapter.core.exception.OutputEventAdapterException;
 import org.wso2.carbon.event.output.adapter.logger.internal.util.LoggerEventAdapterConstants;
 
 import java.util.*;
@@ -66,4 +67,8 @@ public class LoggerEventAdapterFactory extends OutputEventAdapterFactory {
         return new LoggerEventAdapter(eventAdapterConfiguration,globalProperties);
     }
 
+    @Override
+    public void validateOutputEventAdapterConfigurations(OutputEventAdapterConfiguration eventAdapterConfiguration) throws OutputEventAdapterException {
+        //Nothing to validate
+    }
 }
