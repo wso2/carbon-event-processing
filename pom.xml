@@ -321,6 +321,12 @@
                 <scope>provided</scope>
             </dependency>
             <dependency>
+                <artifactId>org.wso2.carbon.event.output.adapter.websocket.local</artifactId>
+                <groupId>org.wso2.carbon.event-processing</groupId>
+                <version>${carbon.event.processing.version}</version>
+                <scope>provided</scope>
+            </dependency>
+            <dependency>
                 <groupId>org.wso2.carbon.event-processing</groupId>
                 <artifactId>org.wso2.carbon.event.processor.common</artifactId>
                 <version>${carbon.event.processing.version}</version>
