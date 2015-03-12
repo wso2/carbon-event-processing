@@ -92,7 +92,7 @@ public class HTTPEventAdapterFactory extends OutputEventAdapterFactory {
 
     @Override
     public OutputEventAdapter createEventAdapter(OutputEventAdapterConfiguration eventAdapterConfiguration,
-                                                 Map<String, String> globalProperties, int tenantId) {
+                                                 Map<String, String> globalProperties) {
         return new HTTPEventAdapter(eventAdapterConfiguration, globalProperties);
     }
 }
