@@ -26,7 +26,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 
 public class WebsocketLocalOutputCallbackRegisterServiceImpl implements WebsocketLocalOutputCallbackRegisterService {
 
-    private ConcurrentHashMap<Integer, ConcurrentHashMap<String, CopyOnWriteArrayList<Session>>> outputEventAdaptorSessionMap;               //TODO should this be static? I think no, because we're using a value holder to ensure that a single instance is used throughout.
+    private ConcurrentHashMap<Integer, ConcurrentHashMap<String, CopyOnWriteArrayList<Session>>> outputEventAdaptorSessionMap;
 
     public WebsocketLocalOutputCallbackRegisterServiceImpl(){
         outputEventAdaptorSessionMap =

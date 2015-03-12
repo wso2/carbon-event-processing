@@ -19,10 +19,11 @@ package org.wso2.carbon.event.output.adapter.websocket.local;
 
 
 import org.wso2.carbon.event.output.adapter.core.*;
-import org.wso2.carbon.event.output.adapter.core.exception.OutputEventAdapterException;
 import org.wso2.carbon.event.output.adapter.websocket.local.internal.util.WebsocketLocalEventAdapterConstants;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 public class WebsocketLocalEventAdapterFactory extends OutputEventAdapterFactory {
     @Override
