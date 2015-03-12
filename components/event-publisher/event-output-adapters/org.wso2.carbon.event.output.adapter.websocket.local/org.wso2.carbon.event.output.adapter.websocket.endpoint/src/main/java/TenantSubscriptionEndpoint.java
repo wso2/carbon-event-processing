@@ -44,7 +44,7 @@ public class TenantSubscriptionEndpoint extends SubscriptionEndpoint {
     @OnMessage
     public void onMessage (Session session, String message, @PathParam("adaptorname") String adaptorName, @PathParam("tdomain") String tdomain) {
         if (log.isDebugEnabled()) {
-            log.debug("Received: " + message+", for Session id: "+session.getId()+", for tenant domain"+tdomain+", for the Adaptor:"+adaptorName);
+            log.debug("Received and dropped message from client. Message: " + message+", for Session id: "+session.getId()+", for tenant domain"+tdomain+", for the Adaptor:"+adaptorName);
         }
     }
 
