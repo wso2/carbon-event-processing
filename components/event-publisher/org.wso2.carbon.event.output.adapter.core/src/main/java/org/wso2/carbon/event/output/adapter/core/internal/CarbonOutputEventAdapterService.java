@@ -99,6 +99,24 @@ public class CarbonOutputEventAdapterService implements OutputEventAdapterServic
             throw new OutputEventAdapterException("Output Event Adapter not created as another adapter with same name '"
                     + outputEventAdapterConfiguration.getName() + "' already exist for tenant " + tenantId);
         }
+        //check if all the required properties are given here
+        List<Property> staticPropertyList = adapterFactory.getStaticPropertyList();
+        if(staticPropertyList != null){
+            Map<String,String> staticPropertyMap = outputEventAdapterConfiguration.getStaticProperties();
+            for (Property property: staticPropertyList){
+                if(property.isRequired()){
+                    if(staticPropertyMap == null){
+                        throw new OutputEventAdapterException("Output Event Adapter not created as the 'staticProperties' are null, " +
+                                "which means, the required property "+property.getPropertyName()+" is not  being set, for the adapter type " +
+                                outputEventAdapterConfiguration.getType());
+                    }
+                    if(staticPropertyMap.get(property.getPropertyName()) == null){
+                        throw new OutputEventAdapterException("Output Event Adapter not created as the required property: "+property.getPropertyName()+
+                                " is not set, for the adapter type " +outputEventAdapterConfiguration.getType());
+                    }
+                }
+            }
+        }
         Map<String, String> globalProperties = OutputEventAdapterServiceValueHolder.getGlobalAdapterConfigs().
                 getAdapterConfig(outputEventAdapterConfiguration.getType()).getGlobalPropertiesAsMap();
         eventAdapters.put(outputEventAdapterConfiguration.getName(), new OutputAdapterRuntime(adapterFactory.

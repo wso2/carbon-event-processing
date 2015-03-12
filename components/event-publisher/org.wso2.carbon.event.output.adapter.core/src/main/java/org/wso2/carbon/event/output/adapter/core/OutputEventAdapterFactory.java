@@ -14,6 +14,8 @@
  */
 package org.wso2.carbon.event.output.adapter.core;
 
+import org.wso2.carbon.event.output.adapter.core.exception.OutputEventAdapterException;
+
 import java.util.List;
 import java.util.Map;
 
