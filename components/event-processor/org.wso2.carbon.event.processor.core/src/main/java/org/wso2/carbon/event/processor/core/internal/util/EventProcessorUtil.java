@@ -27,6 +27,7 @@ import org.wso2.carbon.databridge.commons.StreamDefinition;
 import org.wso2.carbon.databridge.commons.exception.MalformedStreamDefinitionException;
 import org.wso2.carbon.event.processor.core.StreamConfiguration;
 import org.wso2.carbon.event.processor.core.exception.ExecutionPlanConfigurationException;
+import org.wso2.siddhi.core.util.SiddhiConstants;
 import org.wso2.siddhi.query.api.definition.Attribute;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
@@ -261,10 +262,13 @@ public class EventProcessorUtil {
      * @param queryExpressions  query expression given in the ExecutionPlanConfiguration
      * @return
      */
-    public static String constructQueryExpression(List<String> importDefinitions, List<String> exportDefinitions,
+    public static String constructQueryExpression(String executionPlanName, List<String> importDefinitions, List<String> exportDefinitions,
                                                   String queryExpressions) {
         StringBuilder builder = new StringBuilder();
 
+        if (executionPlanName != null && executionPlanName.length() > 0) {
+            builder.append("@plan:").append(SiddhiConstants.ANNOTATION_NAME).append("('").append(executionPlanName).append("')");
+        }
         for (String definition : importDefinitions) {
             builder.append(definition);
         }

@@ -31,12 +31,15 @@ import org.wso2.carbon.utils.ConfigurationContextService;
 import org.wso2.siddhi.core.util.persistence.PersistenceStore;
 import org.wso2.siddhi.core.SiddhiManager;
 
+import java.util.concurrent.ScheduledExecutorService;
+
 public class EventProcessorValueHolder {
     private static CarbonEventProcessorService eventProcessorService;
     private static EventStatisticsService eventStatisticsService;
     private static EventStreamService eventStreamService;
     private static HazelcastInstance hazelcastInstance;
     private static PersistenceStore persistenceStore;
+    private static ScheduledExecutorService scheduledExecutorService;
     private static UserRealm userRealm;
     private static DataSourceService dataSourceService;
     private static ServerConfigurationService serverConfiguration;
@@ -94,7 +97,15 @@ public class EventProcessorValueHolder {
     public static void setPersistenceStore(PersistenceStore persistenceStore) {
         EventProcessorValueHolder.persistenceStore = persistenceStore;
     }
-//
+
+    public static ScheduledExecutorService getScheduledExecutorService() {
+        return scheduledExecutorService;
+    }
+
+    public static void setScheduledExecutorService(ScheduledExecutorService scheduledExecutorService) {
+        EventProcessorValueHolder.scheduledExecutorService = scheduledExecutorService;
+    }
+    //
 //    public static DataAccessService getDataAccessService() {
 //        return dataAccessService;
 //    }
