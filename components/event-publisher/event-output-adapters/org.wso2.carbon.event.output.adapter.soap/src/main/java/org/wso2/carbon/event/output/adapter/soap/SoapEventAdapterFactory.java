@@ -85,7 +85,7 @@ public class SoapEventAdapterFactory extends OutputEventAdapterFactory {
 
     @Override
     public OutputEventAdapter createEventAdapter(OutputEventAdapterConfiguration eventAdapterConfiguration, Map<String,
-            String> globalProperties, int tenantId) {
+            String> globalProperties) {
         return new SoapEventAdapter(eventAdapterConfiguration, globalProperties);
     }
 
