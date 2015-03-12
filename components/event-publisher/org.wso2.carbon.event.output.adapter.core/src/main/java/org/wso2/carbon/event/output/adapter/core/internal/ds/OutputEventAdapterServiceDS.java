@@ -126,5 +126,11 @@ public class OutputEventAdapterServiceDS {
         OutputEventAdapterServiceValueHolder.setConfigurationContextService(configurationContextService);
     }
 
+    protected void unsetConfigurationContextService(
+            ConfigurationContextService configurationContextService) {
+        OutputEventAdapterServiceValueHolder.setConfigurationContextService(null);
+
+    }
+
 }
 
