@@ -171,14 +171,15 @@ public class EventPublisherConfigurationHelper {
             throw new EventPublisherValidationException("Event Adapter with type: " + eventAdapterType + " does not exist", eventAdapterType);
         }
 
-        List<Property> propertyList = adapterSchema.getStaticPropertyList();
-        if (propertyList != null && adapterSchema.getDynamicPropertyList() != null) {
+        List<Property> propertyList = new ArrayList<Property>();
+        if (adapterSchema.getDynamicPropertyList() != null) {
             propertyList.addAll(adapterSchema.getDynamicPropertyList());
-        } else {
-            propertyList = adapterSchema.getDynamicPropertyList();
+        }
+        if (adapterSchema.getDynamicPropertyList() != null) {
+            propertyList.addAll(adapterSchema.getDynamicPropertyList());
         }
 
-        if (propertyList != null) {
+        if (propertyList.size() > 0) {
 
             for (Property property : propertyList) {
                 if (property.isRequired()) {

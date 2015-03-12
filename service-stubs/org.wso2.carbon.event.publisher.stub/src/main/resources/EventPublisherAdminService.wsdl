@@ -270,14 +270,15 @@
             </xs:complexType>
             <xs:complexType name="EventPublisherConfigurationDto">
                 <xs:sequence>
+                    <xs:element minOccurs="0" name="customMappingEnabled" type="xs:boolean"></xs:element>
                     <xs:element minOccurs="0" name="eventPublisherName" nillable="true" type="xs:string"></xs:element>
-                    <xs:element minOccurs="0" name="fromStreamNameWithVersion" nillable="true" type="xs:string"></xs:element>
+                    <xs:element minOccurs="0" name="toStreamNameWithVersion" nillable="true" type="xs:string"></xs:element>
                     <xs:element minOccurs="0" name="jsonOutputMappingDto" nillable="true" type="ax2102:JSONOutputMappingDto"></xs:element>
                     <xs:element minOccurs="0" name="mapOutputMappingDto" nillable="true" type="ax2102:MapOutputMappingDto"></xs:element>
                     <xs:element minOccurs="0" name="messageFormat" nillable="true" type="xs:string"></xs:element>
                     <xs:element minOccurs="0" name="streamDefinition" nillable="true" type="xs:string"></xs:element>
                     <xs:element minOccurs="0" name="textOutputMappingDto" nillable="true" type="ax2102:TextOutputMappingDto"></xs:element>
-                    <xs:element minOccurs="0" name="toAdapterConfigurationDto" nillable="true" type="ax2102:OutputAdapterConfigurationDto"></xs:element>
+                    <xs:element minOccurs="0" name="fromAdapterConfigurationDto" nillable="true" type="ax2102:OutputAdapterConfigurationDto"></xs:element>
                     <xs:element minOccurs="0" name="wso2EventOutputMappingDto" nillable="true" type="ax2102:WSO2EventOutputMappingDto"></xs:element>
                     <xs:element minOccurs="0" name="xmlOutputMappingDto" nillable="true" type="ax2102:XMLOutputMappingDto"></xs:element>
                 </xs:sequence>
@@ -1057,13 +1058,13 @@
     </wsdl:binding>
     <wsdl:service name="EventPublisherAdminService">
         <wsdl:port name="EventPublisherAdminServiceHttpsSoap11Endpoint" binding="ns:EventPublisherAdminServiceSoap11Binding">
-            <soap:address location="https://192.168.1.7:9443/services/EventPublisherAdminService.EventPublisherAdminServiceHttpsSoap11Endpoint/"></soap:address>
+            <soap:address location="https://192.168.1.6:9443/services/EventPublisherAdminService.EventPublisherAdminServiceHttpsSoap11Endpoint/"></soap:address>
         </wsdl:port>
         <wsdl:port name="EventPublisherAdminServiceHttpsSoap12Endpoint" binding="ns:EventPublisherAdminServiceSoap12Binding">
-            <soap12:address location="https://192.168.1.7:9443/services/EventPublisherAdminService.EventPublisherAdminServiceHttpsSoap12Endpoint/"></soap12:address>
+            <soap12:address location="https://192.168.1.6:9443/services/EventPublisherAdminService.EventPublisherAdminServiceHttpsSoap12Endpoint/"></soap12:address>
         </wsdl:port>
         <wsdl:port name="EventPublisherAdminServiceHttpsEndpoint" binding="ns:EventPublisherAdminServiceHttpBinding">
-            <http:address location="https://192.168.1.7:9443/services/EventPublisherAdminService.EventPublisherAdminServiceHttpsEndpoint/"></http:address>
+            <http:address location="https://192.168.1.6:9443/services/EventPublisherAdminService.EventPublisherAdminServiceHttpsEndpoint/"></http:address>
         </wsdl:port>
     </wsdl:service>
 </wsdl:definitions>

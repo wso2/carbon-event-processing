@@ -17,6 +17,8 @@
 <%@ page import="org.wso2.carbon.event.stream.manager.stub.EventStreamAdminServiceStub" %>
 <%@ page import="org.wso2.carbon.event.stream.manager.stub.types.EventStreamDefinitionDto" %>
 <%@ page import="java.util.List" %>
+<%@ page import="java.util.ArrayList" %>
+<%@ page import="org.wso2.carbon.event.stream.manager.stub.types.EventStreamAttributeDto" %>
 
 <fmt:bundle basename="org.wso2.carbon.event.receiver.ui.i18n.Resources">
     <link type="text/css" href="../eventreceiver/css/eventReceiver.css" rel="stylesheet"/>
@@ -26,6 +28,40 @@
         EventStreamAdminServiceStub eventStreamAdminServiceStub = EventReceiverUIUtils.getEventStreamAdminService(config, session, request);
         EventStreamDefinitionDto streamDefinitionDto = eventStreamAdminServiceStub.getStreamDefinitionDto(streamId);
         List<String> attributeList = EventReceiverUIUtils.getAttributeListWithPrefix(streamDefinitionDto);
+       String types ="[";
+        boolean initial=true;
+        if (streamDefinitionDto.getMetaData() != null) {
+            for (EventStreamAttributeDto attributeDto : streamDefinitionDto.getMetaData()) {
+                if(initial){
+                    types +="\""+attributeDto.getAttributeType()+"\"";
+                    initial=false;
+                }  else {
+                    types +=",\""+attributeDto.getAttributeType()+"\"";
+                }
+            }
+        }
+        if (streamDefinitionDto.getCorrelationData() != null) {
+            for (EventStreamAttributeDto attributeDto : streamDefinitionDto.getCorrelationData()) {
+                if(initial){
+                    types +="\""+attributeDto.getAttributeType()+"\"";
+                    initial=false;
+                }  else {
+                    types +=",\""+attributeDto.getAttributeType()+"\"";
+                }
+            }
+        }
+        if (streamDefinitionDto.getPayloadData() != null) {
+            for (EventStreamAttributeDto attributeDto : streamDefinitionDto.getPayloadData()) {
+                if(initial){
+                    types +="\""+attributeDto.getAttributeType()+"\"";
+                    initial=false;
+                }  else {
+                    types +=",\""+attributeDto.getAttributeType()+"\"";
+                }
+            }
+        }
+        types+="]";
+
 
     %>
 
@@ -93,6 +129,8 @@
                 <div class="noDataDiv-plain" id="noInputProperties">
                     No Text Mappings Available
                 </div>
+                <div id="streamMapping" mapping='<%=types%>' style="display:none">
+                </div>
                 <table id="addTextMappingTable" class="normal">
                     <tbody>
                     <tr>
@@ -105,7 +143,7 @@
                         <td class="col-small"><fmt:message key="event.receiver.property.valueof"/> :
                         </td>
                         <td>
-                            <select id="inputPropertyName">
+                            <select id="inputPropertyName" onchange="updateAttributeType()">
                                 <% for (String attributeData : attributeList) {
                                     String[] attributeValues = attributeData.split(" ");
                                 %>
@@ -113,10 +151,9 @@
                                 </option>
                                 <% }%>
                             </select>
-
                         </td>
                         <td><fmt:message key="event.receiver.property.type"/>:
-                            <select id="inputPropertyType">
+                            <select id="inputPropertyType" disabled="disabled">
                                 <option value="int">int</option>
                                 <option value="long">long</option>
                                 <option value="double">double</option>

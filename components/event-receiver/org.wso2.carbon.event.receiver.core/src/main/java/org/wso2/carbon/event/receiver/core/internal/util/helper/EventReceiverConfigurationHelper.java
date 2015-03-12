@@ -31,7 +31,7 @@ import org.wso2.carbon.event.receiver.core.config.InputMappingAttribute;
 import org.wso2.carbon.event.receiver.core.exception.EventReceiverConfigurationException;
 import org.wso2.carbon.event.receiver.core.exception.EventReceiverStreamValidationException;
 import org.wso2.carbon.event.receiver.core.exception.EventReceiverValidationException;
-import org.wso2.carbon.event.receiver.core.internal.InputMapper;
+import org.wso2.carbon.event.receiver.core.InputMapper;
 import org.wso2.carbon.event.receiver.core.internal.ds.EventReceiverServiceValueHolder;
 import org.wso2.carbon.event.receiver.core.internal.type.json.JSONInputMapperConfigurationBuilder;
 import org.wso2.carbon.event.receiver.core.internal.type.map.MapInputMappingConfigBuilder;
@@ -260,7 +260,7 @@ public class EventReceiverConfigurationHelper {
                         Attribute prependedAttribute = new Attribute(EventReceiverConstants.META_DATA_PREFIX + attribute.getName(), attribute.getType());
                         if (!outputAttributes.contains(prependedAttribute)) {
                             throw new EventReceiverStreamValidationException("The meta data attribute '" + attribute.getName()
-                                    + "' in stream : '" + streamId + "' cannot be found under attributes exported by this event receiver mapping", streamId);
+                                    + "' in stream '" + streamId + "' cannot be found under attributes exported by this event receiver mapping", streamId);
                         } else {
                             outputAttributes.remove(prependedAttribute);
                         }
@@ -272,7 +272,7 @@ public class EventReceiverConfigurationHelper {
                         Attribute prependedAttribute = new Attribute(EventReceiverConstants.CORRELATION_DATA_PREFIX + attribute.getName(), attribute.getType());
                         if (!outputAttributes.contains(prependedAttribute)) {
                             throw new EventReceiverStreamValidationException("The correlation data attribute '" + attribute.getName()
-                                    + "' in stream : '" + streamId + "' cannot be found under attributes exported by this event receiver mapping", streamId);
+                                    + "' in stream '" + streamId + "' cannot be found under attributes exported by this event receiver mapping", streamId);
                         } else {
                             outputAttributes.remove(prependedAttribute);
                         }
@@ -283,7 +283,7 @@ public class EventReceiverConfigurationHelper {
                     for (Attribute attribute : payloadAttributeList) {
                         if (!outputAttributes.contains(attribute)) {
                             throw new EventReceiverStreamValidationException("The payload data attribute '" + attribute.getName()
-                                    + "' in stream : '" + streamId + "' cannot be found under attributes exported by this event receiver mapping", streamId);
+                                    + "' in stream '" + streamId + "' cannot be found under attributes exported by this event receiver mapping", streamId);
                         } else {
                             outputAttributes.remove(attribute);
                         }
@@ -291,7 +291,7 @@ public class EventReceiverConfigurationHelper {
                 }
                 if (outputAttributes.size() > 0) {
                     throw new EventReceiverStreamValidationException("The attribute '" + outputAttributes.get(0).getName()
-                            + "' exported by this event receiver mapping cannot be found not in : '" + streamId + "'", streamId);
+                            + "' exported by this event receiver mapping cannot be found not in '" + streamId + "'", streamId);
 
                 }
             }

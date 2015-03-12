@@ -33,7 +33,7 @@ import org.wso2.carbon.event.receiver.core.config.mapping.XPathDefinition;
 import org.wso2.carbon.event.receiver.core.exception.EventReceiverConfigurationException;
 import org.wso2.carbon.event.receiver.core.exception.EventReceiverProcessingException;
 import org.wso2.carbon.event.receiver.core.exception.EventReceiverStreamValidationException;
-import org.wso2.carbon.event.receiver.core.internal.InputMapper;
+import org.wso2.carbon.event.receiver.core.InputMapper;
 import org.wso2.carbon.event.receiver.core.internal.type.xml.config.ReflectionBasedObjectSupplier;
 import org.wso2.carbon.event.receiver.core.internal.type.xml.config.XPathData;
 import org.wso2.carbon.event.receiver.core.internal.util.EventReceiverUtil;

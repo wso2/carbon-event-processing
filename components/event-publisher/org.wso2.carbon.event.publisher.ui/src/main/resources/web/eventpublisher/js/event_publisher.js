@@ -88,15 +88,6 @@ function getMapDataValues(dataTable) {
 }
 
 
-function removeOutputProperty(link, format) {
-    var rowToRemove = link.parentNode.parentNode;
-    var propertyToERemove = rowToRemove.cells[0].innerHTML.trim();
-    rowToRemove.parentNode.removeChild(rowToRemove);
-    CARBON.showInfoDialog("Output Property removed successfully!!");
-    return;
-}
-
-
 function addOutputMapProperty() {
     var propName = document.getElementById("outputMapPropName");
     var propValueOf = document.getElementById("outputMapPropValueOf");
@@ -138,34 +129,10 @@ function addOutputMapProperty() {
 
 }
 
-function enableMapping(isEnabled) {
-    var mappingRow1 = document.getElementById("outputWSO2EventMappingMeta");
-    var mappingRow2 = document.getElementById("outputWSO2EventMappingCorrelation");
-    var mappingRow3 = document.getElementById("outputWSO2EventMappingPayload");
-    if (isEnabled) {
-        mappingRow1.style.display = "";
-        mappingRow2.style.display = "";
-        mappingRow3.style.display = "";
-    } else {
-        mappingRow1.style.display = "none";
-        mappingRow2.style.display = "none";
-        mappingRow3.style.display = "none";
-    }
-}
-
-
 var ENABLE = "enable";
 var DISABLE = "disable";
 var STAT = "statistics";
 var TRACE = "Tracing";
-
-function deleteOutFlowEventPublisher(eventStreamWithVersion, eventPublisherName) {
-    var theform = document.getElementById('deleteForm1');
-    theform.eventPublisher.value = eventPublisherName;
-    theform.eventStreamWithVersion.value = eventStreamWithVersion;
-    theform.submit();
-}
-
 
 function deleteEventPublisher(eventPublisherName) {
     var theform = document.getElementById('deleteForm');
@@ -266,90 +233,7 @@ function disablePublisherTracing(eventPublisherName) {
                 });
 }
 
-function createPopupEventPublisherUI(streamId) {
-
-    new Ajax.Request('../eventpublisher/create_event_publisher.jsp', {
-        method:'POST',
-        parameters:{streamId:streamId},
-        asynchronous:false,
-        onSuccess:function (data) {
-            showCustomEventPublisherPopupDialog(data.responseText, "Create Event Publisher", "80%", "", onSuccessCreateEventPublisher, "90%");
-        }
-    });
-}
-
-
-function showCustomEventPublisherPopupDialog(message, title, windowHight, okButton, callback,
-                                             windowWidth) {
-    var strDialog = "<div id='custom_dialog' title='" + title + "'><div id='popupDialog'></div>" + message + "</div>";
-    var requiredWidth = 750;
-    if (windowWidth) {
-        requiredWidth = windowWidth;
-    }
-    var func = function () {
-        jQuery("#custom_dcontainer").hide();
-        jQuery("#custom_dcontainer").html(strDialog);
-        if (okButton) {
-            jQuery("#custom_dialog").dialog({
-                                                close:function () {
-                                                    jQuery(this).dialog('destroy').remove();
-                                                    jQuery("#custom_dcontainer").empty();
-                                                    return false;
-                                                },
-                                                buttons:{
-                                                    "OK":function () {
-                                                        if (callback && typeof callback == "function") {
-                                                            callback();
-                                                        }
-                                                        jQuery(this).dialog("destroy").remove();
-                                                        jQuery("#custom_dcontainer").empty();
-                                                        return false;
-                                                    }
-                                                },
-                                                autoOpen:false,
-                                                height:windowHight,
-                                                width:requiredWidth,
-                                                minHeight:windowHight,
-                                                minWidth:requiredWidth,
-                                                modal:true
-                                            });
-        } else {
-            jQuery("#custom_dialog").dialog({
-                                                close:function () {
-                                                    if (callback && typeof callback == "function") {
-                                                        callback();
-                                                    }
-                                                    jQuery(this).dialog('destroy').remove();
-                                                    jQuery("#custom_dcontainer").empty();
-                                                    return false;
-                                                },
-                                                autoOpen:false,
-                                                height:windowHight,
-                                                width:requiredWidth,
-                                                minHeight:windowHight,
-                                                minWidth:requiredWidth,
-                                                modal:true
-                                            });
-        }
-
-        jQuery('.ui-dialog-titlebar-close').click(function () {
-            jQuery('#custom_dialog').dialog("destroy").remove();
-            jQuery("#custom_dcontainer").empty();
-            jQuery("#custom_dcontainer").html('');
-        });
-        jQuery("#custom_dcontainer").show();
-        jQuery("#custom_dialog").dialog("open");
-    };
-    if (!pageLoaded) {
-        jQuery(document).ready(func);
-    } else {
-        func();
-    }
-
-}
-
-
-function addEventPublisherViaPopup(form, streamNameWithVersion) {
+function addEventPublisher(form, streamNameWithVersion) {
 
     var isFieldEmpty = false;
     var inline = "inline";
@@ -574,7 +458,7 @@ function addEventPublisherViaPopup(form, streamNameWithVersion) {
 
     } else if (document.getElementById("mappingTypeFilter")[document.getElementById("mappingTypeFilter").selectedIndex].text == 'json') {
 
-        var jsonData = ""
+        var jsonData = "";
         var customMappingEnabled = "disable";
 
         if (advancedMappingCounter % 2 != 0) {
@@ -607,7 +491,7 @@ function addEventPublisherViaPopup(form, streamNameWithVersion) {
                         customCarbonWindowClose();
                     } else {
                         CARBON.showErrorDialog("Failed to add event publisher, Exception: " + response.responseText.trim());
-                    }     advancedMappingCounter
+                    }
                 }
             })
         }

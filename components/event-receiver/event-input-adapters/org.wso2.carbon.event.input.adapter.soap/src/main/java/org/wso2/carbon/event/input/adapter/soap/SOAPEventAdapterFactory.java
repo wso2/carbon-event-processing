@@ -15,7 +15,6 @@
 package org.wso2.carbon.event.input.adapter.soap;
 
 
-import org.apache.axis2.engine.AxisConfiguration;
 import org.wso2.carbon.event.input.adapter.core.*;
 import org.wso2.carbon.event.input.adapter.soap.internal.util.SOAPEventAdapterConstants;
 
@@ -54,7 +53,7 @@ public class SOAPEventAdapterFactory extends InputEventAdapterFactory {
     }
 
     @Override
-    public InputEventAdapter createEventAdapter(InputEventAdapterConfiguration eventAdapterConfiguration, Map<String, String> globalProperties, int tenantId, AxisConfiguration axisConfiguration) {
-        return new SOAPEventAdapter(eventAdapterConfiguration,globalProperties,tenantId, axisConfiguration);
+    public InputEventAdapter createEventAdapter(InputEventAdapterConfiguration eventAdapterConfiguration, Map<String, String> globalProperties) {
+        return new SOAPEventAdapter(eventAdapterConfiguration,globalProperties);
     }
 }

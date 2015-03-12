@@ -15,7 +15,6 @@
 package org.wso2.carbon.event.input.adapter.http;
 
 
-import org.apache.axis2.engine.AxisConfiguration;
 import org.wso2.carbon.event.input.adapter.core.*;
 import org.wso2.carbon.event.input.adapter.http.internal.util.HTTPEventAdapterConstants;
 
@@ -53,7 +52,7 @@ public class HTTPEventAdapterFactory extends InputEventAdapterFactory {
     }
 
     @Override
-    public InputEventAdapter createEventAdapter(InputEventAdapterConfiguration eventAdapterConfiguration, Map<String, String> globalProperties, int tenantId, AxisConfiguration axisConfiguration) {
+    public InputEventAdapter createEventAdapter(InputEventAdapterConfiguration eventAdapterConfiguration, Map<String, String> globalProperties) {
         return new HTTPEventAdapter(eventAdapterConfiguration,globalProperties);
     }
 }

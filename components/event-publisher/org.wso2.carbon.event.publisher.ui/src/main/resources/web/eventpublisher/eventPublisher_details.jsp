@@ -336,7 +336,8 @@
 <td class="formRaw" colspan="2">
 <div id="outerDiv">
 <%
-    if (eventPublisherConfigurationDto.getMessageFormat().equalsIgnoreCase("wso2event")) {
+
+    if (eventPublisherConfigurationDto.getMessageFormat().equalsIgnoreCase("wso2event") && eventPublisherConfigurationDto.getCustomMappingEnabled()) {
 %>
 <div id="innerDiv1">
     <table class="styledLeft noBorders spacer-bot"
@@ -448,7 +449,7 @@
 </div>
 
 <%
-} else if (eventPublisherConfigurationDto.getMessageFormat().equalsIgnoreCase("text")) {
+} else if (eventPublisherConfigurationDto.getMessageFormat().equalsIgnoreCase("text") && eventPublisherConfigurationDto.getCustomMappingEnabled()) {
 %>
 
 <div id="innerDiv2">
@@ -524,7 +525,7 @@
 </div>
 
 <%
-} else if (eventPublisherConfigurationDto.getMessageFormat().equalsIgnoreCase("xml")) {
+} else if (eventPublisherConfigurationDto.getMessageFormat().equalsIgnoreCase("xml") && eventPublisherConfigurationDto.getCustomMappingEnabled()) {
 %>
 
 <div id="innerDiv3">
@@ -598,7 +599,7 @@
 </div>
 
 <%
-} else if (eventPublisherConfigurationDto.getMessageFormat().equalsIgnoreCase("map")) {
+} else if (eventPublisherConfigurationDto.getMessageFormat().equalsIgnoreCase("map") && eventPublisherConfigurationDto.getCustomMappingEnabled()) {
 %>
 
 <div id="innerDiv4">
@@ -640,10 +641,10 @@
     </table>
 </div>
 <%
-} else if (eventPublisherConfigurationDto.getMessageFormat().equalsIgnoreCase("json")) {
+} else if (eventPublisherConfigurationDto.getMessageFormat().equalsIgnoreCase("json") && eventPublisherConfigurationDto.getCustomMappingEnabled()) {
 %>
 
-<div id="innerDiv5">
+    <div id="innerDiv5">
     <table class="styledLeft noBorders spacer-bot"
            style="width:100%">
         <tbody>

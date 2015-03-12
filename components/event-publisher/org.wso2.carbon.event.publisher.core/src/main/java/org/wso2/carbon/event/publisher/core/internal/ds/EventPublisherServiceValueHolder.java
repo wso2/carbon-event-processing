@@ -29,6 +29,7 @@ import org.wso2.carbon.event.stream.manager.core.EventStreamService;
 import org.wso2.carbon.registry.core.Registry;
 import org.wso2.carbon.registry.core.exceptions.RegistryException;
 import org.wso2.carbon.registry.core.service.RegistryService;
+import org.wso2.carbon.utils.ConfigurationContextService;
 
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -50,6 +51,7 @@ public class EventPublisherServiceValueHolder {
     }
 
     private static EventStatisticsService eventStatisticsService;
+    private static ConfigurationContextService configurationContextService;
 
     private EventPublisherServiceValueHolder() {
 
@@ -108,5 +110,13 @@ public class EventPublisherServiceValueHolder {
 
     public static EventStreamService getEventStreamService() {
         return EventPublisherServiceValueHolder.eventStreamService;
+    }
+
+    public static void setConfigurationContextService(ConfigurationContextService configurationContextService) {
+        EventPublisherServiceValueHolder.configurationContextService = configurationContextService;
+    }
+
+    public static ConfigurationContextService getConfigurationContextService() {
+        return configurationContextService;
     }
 }

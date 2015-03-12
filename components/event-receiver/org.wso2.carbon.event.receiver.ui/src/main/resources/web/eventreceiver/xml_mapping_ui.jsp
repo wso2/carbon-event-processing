@@ -54,7 +54,7 @@
                     <tbody id="inputXpathPrefixTBody"></tbody>
                 </table>
                 <div class="noDataDiv-plain" id="noInputPrefixes">
-                    No XPath definitions available
+                    <fmt:message key="event.receiver.property.no.xpath.definitions"/>
                 </div>
                 <table id="addXpathDefinition" class="normal">
                     <tbody>

@@ -25,7 +25,7 @@ import org.wso2.carbon.databridge.commons.StreamDefinition;
 import org.wso2.carbon.event.input.adapter.core.*;
 import org.wso2.carbon.event.receiver.core.config.EventReceiverConfiguration;
 import org.wso2.carbon.event.receiver.core.config.EventReceiverConstants;
-import org.wso2.carbon.event.receiver.core.config.InputMapperFactory;
+import org.wso2.carbon.event.receiver.core.InputMapperFactory;
 import org.wso2.carbon.event.receiver.core.exception.EventReceiverConfigurationException;
 import org.wso2.carbon.event.receiver.core.exception.EventReceiverStreamValidationException;
 import org.wso2.carbon.event.receiver.core.exception.EventReceiverValidationException;

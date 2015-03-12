@@ -33,7 +33,7 @@
 
     <modules>
         <module>service-stubs</module>
-        <module>components/adaptors</module>
+        <!--<module>components/adaptors</module>-->
         <module>components/event-publisher</module>
         <module>components/event-receiver</module>
         <module>components/event-processor</module>
@@ -41,12 +41,12 @@
         <module>components/event-flow</module>
         <module>components/event-monitor</module>
         <module>components/application-deployer</module>
-        <module>features/adaptors</module>
-        <module>features/event-processor</module>
-        <module>features/event-monitor</module>
-        <module>features/event-stream</module>
-        <module>features/event-flow</module>
-        <module>features/application-deployer</module>
+        <!--<module>features/adaptors</module>-->
+        <!--<module>features/event-processor</module>-->
+        <!--<module>features/event-monitor</module>-->
+        <!--<module>features/event-stream</module>-->
+        <!--<module>features/event-flow</module>-->
+        <!--<module>features/application-deployer</module>-->
     </modules>
 
     <dependencyManagement>

@@ -25,6 +25,7 @@ import org.apache.commons.logging.LogFactory;
 import org.wso2.carbon.event.publisher.core.EventPublisherDeployer;
 import org.wso2.carbon.event.publisher.core.config.EventPublisherConstants;
 import org.wso2.carbon.event.publisher.core.exception.EventPublisherConfigurationException;
+import org.wso2.carbon.event.publisher.core.internal.util.EventPublisherUtil;
 
 import java.io.*;
 
@@ -36,16 +37,16 @@ public class EventPublisherConfigurationFilesystemInvoker {
     private static final Log log = LogFactory.getLog(EventPublisherConfigurationFilesystemInvoker.class);
 
     public static void save(OMElement eventPublisherOMElement,
-                            String fileName,
-                            AxisConfiguration axisConfiguration)
+                            String fileName)
             throws EventPublisherConfigurationException {
 
-        EventPublisherConfigurationFilesystemInvoker.save(eventPublisherOMElement.toString(), fileName, axisConfiguration);
+        EventPublisherConfigurationFilesystemInvoker.save(eventPublisherOMElement.toString(), fileName);
     }
 
     public static void save(String eventPublisher,
-                            String fileName, AxisConfiguration axisConfiguration)
+                            String fileName)
             throws EventPublisherConfigurationException {
+        AxisConfiguration axisConfiguration = EventPublisherUtil.getAxisConfiguration();
         EventPublisherDeployer eventPublisherDeployer = (EventPublisherDeployer) getDeployer(axisConfiguration, EventPublisherConstants.EF_CONFIG_DIRECTORY);
         String filePath = getFilePathFromFilename(fileName, axisConfiguration);
         try {
@@ -64,10 +65,10 @@ public class EventPublisherConfigurationFilesystemInvoker {
         }
     }
 
-    public static void delete(String fileName,
-                              AxisConfiguration axisConfiguration)
+    public static void delete(String fileName)
             throws EventPublisherConfigurationException {
         try {
+            AxisConfiguration axisConfiguration = EventPublisherUtil.getAxisConfiguration();
             String filePath = getFilePathFromFilename(fileName, axisConfiguration);
             File file = new File(filePath);
             if (file.exists()) {
@@ -94,8 +95,9 @@ public class EventPublisherConfigurationFilesystemInvoker {
         return file.exists();
     }
 
-    public static void reload(String filePath, AxisConfiguration axisConfiguration)
+    public static void reload(String filePath)
             throws EventPublisherConfigurationException {
+       AxisConfiguration axisConfiguration= EventPublisherUtil.getAxisConfiguration();
         EventPublisherDeployer deployer = (EventPublisherDeployer) getDeployer(axisConfiguration, EventPublisherConstants.EF_CONFIG_DIRECTORY);
         try {
             deployer.processUndeployment(filePath);
@@ -106,12 +108,12 @@ public class EventPublisherConfigurationFilesystemInvoker {
 
     }
 
-    public static String readEventPublisherConfigurationFile(String fileName,
-                                                             AxisConfiguration axisConfiguration)
+    public static String readEventPublisherConfigurationFile(String fileName)
             throws EventPublisherConfigurationException {
         BufferedReader bufferedReader = null;
         StringBuilder stringBuilder = new StringBuilder();
         try {
+            AxisConfiguration axisConfiguration = EventPublisherUtil.getAxisConfiguration();
             String filePath = getFilePathFromFilename(fileName, axisConfiguration);
             bufferedReader = new BufferedReader(new FileReader(filePath));
             String line;

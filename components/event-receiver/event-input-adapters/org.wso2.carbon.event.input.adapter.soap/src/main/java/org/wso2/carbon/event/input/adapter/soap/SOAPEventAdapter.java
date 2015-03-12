@@ -16,9 +16,10 @@
 package org.wso2.carbon.event.input.adapter.soap;
 
 import org.apache.axis2.AxisFault;
-import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.wso2.carbon.context.PrivilegedCarbonContext;
+import org.wso2.carbon.event.input.adapter.core.EventAdapterUtil;
 import org.wso2.carbon.event.input.adapter.core.InputEventAdapter;
 import org.wso2.carbon.event.input.adapter.core.InputEventAdapterConfiguration;
 import org.wso2.carbon.event.input.adapter.core.InputEventAdapterListener;
@@ -36,8 +37,6 @@ public final class SOAPEventAdapter implements InputEventAdapter {
     private static final Log log = LogFactory.getLog(SOAPEventAdapter.class);
     private final InputEventAdapterConfiguration eventAdapterConfiguration;
     private final Map<String, String> globalProperties;
-    private int tenantId;
-    private AxisConfiguration axisConfiguration;
     private InputEventAdapterListener eventAdaptorListener;
     private final String id = UUID.randomUUID().toString();
 
@@ -45,11 +44,9 @@ public final class SOAPEventAdapter implements InputEventAdapter {
 //            SOAPEventAdapterConstants.ADAPTER_MAX_THREAD_POOL_SIZE, SOAPEventAdapterConstants.DEFAULT_KEEP_ALIVE_TIME, TimeUnit.SECONDS,
 //            new LinkedBlockingQueue<Runnable>(SOAPEventAdapterConstants.ADAPTER_EXECUTOR_JOB_QUEUE_SIZE));
 
-    public SOAPEventAdapter(InputEventAdapterConfiguration eventAdapterConfiguration, Map<String, String> globalProperties, int tenantId, AxisConfiguration axisConfiguration) {
+    public SOAPEventAdapter(InputEventAdapterConfiguration eventAdapterConfiguration, Map<String, String> globalProperties) {
         this.eventAdapterConfiguration = eventAdapterConfiguration;
         this.globalProperties = globalProperties;
-        this.tenantId = tenantId;
-        this.axisConfiguration = axisConfiguration;
     }
 
 
@@ -65,10 +62,11 @@ public final class SOAPEventAdapter implements InputEventAdapter {
 
     @Override
     public void connect() {
+        int tenantId = PrivilegedCarbonContext.getThreadLocalCarbonContext().getTenantId();
         String operation = eventAdapterConfiguration.getProperties().get(SOAPEventAdapterConstants.ADAPTER_MESSAGE_OPERATION_NAME);
-
         try {
-            Axis2ServiceManager.registerService(eventAdapterConfiguration.getName(), operation, this, axisConfiguration);
+
+            Axis2ServiceManager.registerService(eventAdapterConfiguration.getName(), operation, this, EventAdapterUtil.getAxisConfiguration());
         } catch (AxisFault axisFault) {
             throw new InputEventAdapterRuntimeException("Cannot register Input Adapter " + eventAdapterConfiguration.getName() + " for the operation " + operation + " on tenant " + tenantId, axisFault);
         }
@@ -76,9 +74,10 @@ public final class SOAPEventAdapter implements InputEventAdapter {
 
     @Override
     public void disconnect() {
+        int tenantId = PrivilegedCarbonContext.getThreadLocalCarbonContext().getTenantId();
         String operation = eventAdapterConfiguration.getProperties().get(SOAPEventAdapterConstants.ADAPTER_MESSAGE_OPERATION_NAME);
         try {
-            Axis2ServiceManager.unregisterService(eventAdapterConfiguration.getName(), operation, this, axisConfiguration);
+            Axis2ServiceManager.unregisterService(eventAdapterConfiguration.getName(), operation, this, EventAdapterUtil.getAxisConfiguration());
         } catch (AxisFault axisFault) {
             throw new InputEventAdapterRuntimeException("Cannot unregister Input Adapter " + eventAdapterConfiguration.getName() + " for the operation " + operation + " on tenant " + tenantId, axisFault);
         }

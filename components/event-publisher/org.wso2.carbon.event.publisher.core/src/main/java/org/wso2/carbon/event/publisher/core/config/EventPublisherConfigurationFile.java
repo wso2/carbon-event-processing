@@ -17,7 +17,7 @@
 */
 package org.wso2.carbon.event.publisher.core.config;
 
-import org.apache.axis2.engine.AxisConfiguration;
+import org.wso2.carbon.utils.multitenancy.MultitenantConstants;
 
 /**
  * To create objects of event adapter file details
@@ -37,7 +37,7 @@ public class EventPublisherConfigurationFile {
 
     private String deploymentStatusMessage = "";
 
-    private AxisConfiguration axisConfiguration;
+    private int tenantId = MultitenantConstants.INVALID_TENANT_ID;
 
     public void setFilePath(String filePath) {
         this.filePath = filePath;
@@ -71,14 +71,6 @@ public class EventPublisherConfigurationFile {
         this.deploymentStatusMessage = deploymentStatusMessage;
     }
 
-    public AxisConfiguration getAxisConfiguration() {
-        return axisConfiguration;
-    }
-
-    public void setAxisConfiguration(AxisConfiguration axisConfiguration) {
-        this.axisConfiguration = axisConfiguration;
-    }
-
     public String getEventPublisherName() {
         return eventPublisherName;
     }
@@ -95,4 +87,11 @@ public class EventPublisherConfigurationFile {
         this.fileName = fileName;
     }
 
+    public int getTenantId() {
+        return tenantId;
+    }
+
+    public void setTenantId(int tenantId) {
+        this.tenantId = tenantId;
+    }
 }

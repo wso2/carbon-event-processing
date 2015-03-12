@@ -29,7 +29,7 @@ public abstract class OutputEventAdapterFactory {
 
     public abstract List<Property> getDynamicPropertyList();
 
-    public abstract OutputEventAdapter createEventAdapter(OutputEventAdapterConfiguration eventAdapterConfiguration, Map<String, String> globalProperties, int tenantId);
+    public abstract OutputEventAdapter createEventAdapter(OutputEventAdapterConfiguration eventAdapterConfiguration, Map<String, String> globalProperties);
 
     public OutputEventAdapterSchema getOutputEventAdapterSchema() {
         if (outputEventAdapterSchema == null) {

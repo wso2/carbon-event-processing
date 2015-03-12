@@ -18,8 +18,8 @@ import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMFactory;
 import org.wso2.carbon.databridge.commons.StreamDefinition;
 import org.wso2.carbon.event.receiver.core.config.EventReceiverConfiguration;
-import org.wso2.carbon.event.receiver.core.internal.InputMapper;
-import org.wso2.carbon.event.receiver.core.config.InputMapperFactory;
+import org.wso2.carbon.event.receiver.core.InputMapper;
+import org.wso2.carbon.event.receiver.core.InputMapperFactory;
 import org.wso2.carbon.event.receiver.core.config.InputMapping;
 import org.wso2.carbon.event.receiver.core.exception.EventReceiverConfigurationException;
 

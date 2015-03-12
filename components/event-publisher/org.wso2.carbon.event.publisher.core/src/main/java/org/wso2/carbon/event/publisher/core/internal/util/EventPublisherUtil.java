@@ -14,9 +14,14 @@
  */
 package org.wso2.carbon.event.publisher.core.internal.util;
 
+import org.apache.axis2.engine.AxisConfiguration;
+import org.wso2.carbon.context.CarbonContext;
+import org.wso2.carbon.core.multitenancy.utils.TenantAxisUtils;
 import org.wso2.carbon.event.publisher.core.config.EventPublisherConfiguration;
 import org.wso2.carbon.event.publisher.core.config.EventPublisherConstants;
 import org.wso2.carbon.event.publisher.core.exception.EventPublisherConfigurationException;
+import org.wso2.carbon.event.publisher.core.internal.ds.EventPublisherServiceValueHolder;
+import org.wso2.carbon.utils.multitenancy.MultitenantConstants;
 
 import java.io.File;
 
@@ -58,5 +63,18 @@ public class EventPublisherUtil {
 
         return streamId;
     }
-    
+
+    public static AxisConfiguration getAxisConfiguration() {
+        AxisConfiguration axisConfiguration = null;
+        if (CarbonContext.getThreadLocalCarbonContext().getTenantId() == MultitenantConstants.SUPER_TENANT_ID) {
+            axisConfiguration = EventPublisherServiceValueHolder.getConfigurationContextService().
+                    getServerConfigContext().getAxisConfiguration();
+        } else {
+            axisConfiguration = TenantAxisUtils.getTenantAxisConfiguration(CarbonContext.
+                            getThreadLocalCarbonContext().getTenantDomain(),
+                    EventPublisherServiceValueHolder.getConfigurationContextService().
+                            getServerConfigContext());
+        }
+        return axisConfiguration;
+    }
 }

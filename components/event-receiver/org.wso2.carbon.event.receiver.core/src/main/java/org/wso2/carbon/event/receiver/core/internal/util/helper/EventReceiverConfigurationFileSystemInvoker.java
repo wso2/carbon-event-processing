@@ -21,7 +21,9 @@ import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.wso2.carbon.context.PrivilegedCarbonContext;
+import org.wso2.carbon.event.input.adapter.core.EventAdapterUtil;
 import org.wso2.carbon.event.receiver.core.EventReceiverDeployer;
+import org.wso2.carbon.event.receiver.core.config.EventReceiverConfigurationFile;
 import org.wso2.carbon.event.receiver.core.config.EventReceiverConstants;
 import org.wso2.carbon.event.receiver.core.exception.EventReceiverConfigurationException;
 import org.wso2.carbon.event.receiver.core.internal.util.XmlFormatter;
@@ -32,18 +34,15 @@ import java.io.*;
 public class EventReceiverConfigurationFileSystemInvoker {
     private static final Log log = LogFactory.getLog(EventReceiverConfigurationFileSystemInvoker.class);
 
-    public static void save(
-            OMElement eventReceiverConfigOMElement,
-            String fileName, AxisConfiguration axisConfiguration)
+    public static void save(OMElement eventReceiverConfigOMElement, String fileName)
             throws EventReceiverConfigurationException {
-        saveAndDeploy(eventReceiverConfigOMElement.toString(), fileName, axisConfiguration);
+        saveAndDeploy(eventReceiverConfigOMElement.toString(), fileName);
     }
 
-    public static void saveAndDeploy(String eventReceiverConfigXml, String fileName,
-                                     AxisConfiguration axisConfiguration)
+    public static void saveAndDeploy(String eventReceiverConfigXml, String fileName)
             throws EventReceiverConfigurationException {
-        EventReceiverDeployer eventReceiverDeployer = EventReceiverConfigurationHelper.getEventReceiverDeployer(axisConfiguration);
-        String filePath = getFilePathFromFilename(fileName, axisConfiguration);
+        EventReceiverDeployer eventReceiverDeployer = EventReceiverConfigurationHelper.getEventReceiverDeployer(EventAdapterUtil.getAxisConfiguration());
+        String filePath = getFilePathFromFilename(fileName);
         try {
             /* save contents to .xml file */
             BufferedWriter out = new BufferedWriter(new FileWriter(filePath));
@@ -60,15 +59,15 @@ public class EventReceiverConfigurationFileSystemInvoker {
         }
     }
 
-    public static void delete(String fileName, AxisConfiguration axisConfiguration)
+    public static void delete(String fileName)
             throws EventReceiverConfigurationException {
 
         try {
-            String filePath = getFilePathFromFilename(fileName, axisConfiguration);
+            String filePath = getFilePathFromFilename(fileName);
             File file = new File(filePath);
             String filename = file.getName();
             if (file.exists()) {
-                EventReceiverDeployer eventReceiverDeployer = EventReceiverConfigurationHelper.getEventReceiverDeployer(axisConfiguration);
+                EventReceiverDeployer eventReceiverDeployer = EventReceiverConfigurationHelper.getEventReceiverDeployer(EventAdapterUtil.getAxisConfiguration());
                 eventReceiverDeployer.getUndeployedEventReceiverFilePaths().add(filePath);
                 boolean fileDeleted = file.delete();
                 if (!fileDeleted) {
@@ -90,12 +89,12 @@ public class EventReceiverConfigurationFileSystemInvoker {
         return file.exists();
     }
 
-    public static String readEventReceiverConfigurationFile(String fileName, AxisConfiguration axisConfiguration)
+    public static String readEventReceiverConfigurationFile(String fileName)
             throws EventReceiverConfigurationException {
         BufferedReader bufferedReader = null;
         StringBuilder stringBuilder = new StringBuilder();
         try {
-            bufferedReader = new BufferedReader(new FileReader(getFilePathFromFilename(fileName, axisConfiguration)));
+            bufferedReader = new BufferedReader(new FileReader(getFilePathFromFilename(fileName)));
             String line;
             while ((line = bufferedReader.readLine()) != null) {
                 stringBuilder.append(line).append("\n");
@@ -116,8 +115,10 @@ public class EventReceiverConfigurationFileSystemInvoker {
         return stringBuilder.toString().trim();
     }
 
-    public static void reload(String filePath, AxisConfiguration axisConfiguration)
+    public static void reload(EventReceiverConfigurationFile eventReceiverConfigurationFile)
             throws EventReceiverConfigurationException {
+        String filePath = eventReceiverConfigurationFile.getFilePath();
+        AxisConfiguration axisConfiguration = EventAdapterUtil.getAxisConfiguration();
         EventReceiverDeployer deployer = EventReceiverConfigurationHelper.getEventReceiverDeployer(axisConfiguration);
         try {
             deployer.processUndeployment(filePath);
@@ -125,11 +126,6 @@ public class EventReceiverConfigurationFileSystemInvoker {
         } catch (DeploymentException e) {
             throw new EventReceiverConfigurationException(e);
         }
-    }
-
-    private static String getFilePathFromFilename(String filename,
-                                                  AxisConfiguration axisConfiguration) {
-        return new File(axisConfiguration.getRepository().getPath()).getAbsolutePath() + File.separator + EventReceiverConstants.ER_CONFIG_DIRECTORY + File.separator + filename;
     }
 
     /**
