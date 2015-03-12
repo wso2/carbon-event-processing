@@ -515,6 +515,16 @@
             </dependency>
             <dependency>
                 <groupId>org.wso2.carbon.event-processing</groupId>
+                <artifactId>org.wso2.carbon.event.receiver.core</artifactId>
+                <version>${carbon.event.processing.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.wso2.carbon.event-processing</groupId>
+                <artifactId>org.wso2.carbon.event.publisher.core</artifactId>
+                <version>${carbon.event.processing.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.wso2.carbon.event-processing</groupId>
                 <artifactId>org.wso2.carbon.event.stream.manager.stub</artifactId>
                 <version>${carbon.event.processing.version}</version>
             </dependency>
