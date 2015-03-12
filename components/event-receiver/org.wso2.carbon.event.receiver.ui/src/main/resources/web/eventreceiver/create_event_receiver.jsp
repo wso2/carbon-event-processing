@@ -222,20 +222,6 @@
 
 </tr>
 
-<%--<tr>--%>
-    <%--<td>--%>
-        <%--<fmt:message key="stream.attributes"/>--%>
-    <%--</td>--%>
-    <%--<td>--%>
-        <%--<textArea class="expandedTextarea" id="streamDefinitionText" name="streamDefinitionText"--%>
-                  <%--readonly="true"--%>
-                  <%--cols="60"><%=streamDefinition%>--%>
-        <%--</textArea>--%>
-
-    <%--</td>--%>
-
-<%--</tr>--%>
-
 <tr>
     <td colspan="2">
         <b><fmt:message key="mapping.heading"/></b>
@@ -345,7 +331,7 @@
 <tbody>
 <tr>
     <td class="formRaw">
-        <table id="noEventBuilderInputTable" class="normal-nopadding"
+        <table id="noEventReceiverInputTable" class="normal-nopadding"
                style="width:100%">
             <tbody>
 
