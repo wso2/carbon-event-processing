@@ -27,7 +27,7 @@
     <artifactId>org.wso2.carbon.event.output.adapter.soap</artifactId>
 
     <packaging>bundle</packaging>
-    <name>WSO2 Carbon - Event Output Soap Event Adaptor Module</name>
+    <name>WSO2 Carbon - Event Output SOAP Event Adaptor Module</name>
     <description>org.wso2.carbon.event.output.adaptor.soap provides the back-end functionality of ws event adaptor
     </description>
     <url>http://wso2.org</url>

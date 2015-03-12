@@ -19,7 +19,7 @@ package org.wso2.carbon.event.output.adapter.core;
  */
 public class Property {
 
-    private String propertyName;
+    private final String propertyName;
     // property is a required field or not
     private boolean isRequired = false;
     // property is a password field or not

@@ -28,11 +28,11 @@ import java.util.Map;
  * Created on 2/27/15.
  */
 public class OutputAdapterRuntime {
-    private static Log log = LogFactory.getLog(OutputAdapterRuntime.class);
-    private OutputEventAdapter outputEventAdapter;
-    private String name;
+    private static final Log log = LogFactory.getLog(OutputAdapterRuntime.class);
+    private final OutputEventAdapter outputEventAdapter;
+    private final String name;
     private volatile boolean connected = false;
-    private DecayTimer timer = new DecayTimer();
+    private final DecayTimer timer = new DecayTimer();
     private volatile long nextConnectionTime;
 
 

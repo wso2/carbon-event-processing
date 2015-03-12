@@ -44,7 +44,7 @@ import java.util.List;
 public class OutputEventAdapterServiceDS {
 
     private static final Log log = LogFactory.getLog(OutputEventAdapterServiceDS.class);
-    public static List<OutputEventAdapterFactory> outputEventAdapterFactories = new ArrayList<OutputEventAdapterFactory>();
+    private final static List<OutputEventAdapterFactory> outputEventAdapterFactories = new ArrayList<OutputEventAdapterFactory>();
 
     /**
      * initialize the Event Adapter Manager core service here.
@@ -126,10 +126,5 @@ public class OutputEventAdapterServiceDS {
         OutputEventAdapterServiceValueHolder.setConfigurationContextService(configurationContextService);
     }
 
-    protected void unsetConfigurationContextService(
-            ConfigurationContextService configurationContextService) {
-        OutputEventAdapterServiceValueHolder.setConfigurationContextService(null);
-
-    }
 }
 
