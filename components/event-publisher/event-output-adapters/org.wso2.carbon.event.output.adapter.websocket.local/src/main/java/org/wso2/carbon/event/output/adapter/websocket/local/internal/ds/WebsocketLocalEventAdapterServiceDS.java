@@ -23,7 +23,7 @@ import org.osgi.service.component.ComponentContext;
 import org.wso2.carbon.event.output.adapter.core.OutputEventAdapterFactory;
 import org.wso2.carbon.event.output.adapter.websocket.local.WebsocketLocalEventAdapterFactory;
 import org.wso2.carbon.event.output.adapter.websocket.local.WebsocketLocalOutputCallbackRegisterService;
-import org.wso2.carbon.event.output.adapter.websocket.local.internal.WebsocketLocalOutputCallbackRegisterServiceInternal;
+import org.wso2.carbon.event.output.adapter.websocket.local.internal.WebsocketLocalOutputCallbackRegisterServiceImpl;
 
 /**
  * @scr.component component.name="output.Websocket.AdapterService.component" immediate="true"
@@ -43,10 +43,10 @@ public class WebsocketLocalEventAdapterServiceDS {
             OutputEventAdapterFactory websocketLocalEventAdapterFactory = new WebsocketLocalEventAdapterFactory();
             context.getBundleContext().registerService(OutputEventAdapterFactory.class.getName(), websocketLocalEventAdapterFactory, null);
 
-            WebsocketLocalOutputCallbackRegisterServiceInternal websocketLocalOutputCallbackRegisterServiceInternal = new WebsocketLocalOutputCallbackRegisterServiceInternal();
-            context.getBundleContext().registerService(WebsocketLocalOutputCallbackRegisterService.class.getName(), websocketLocalOutputCallbackRegisterServiceInternal, null);
+            WebsocketLocalOutputCallbackRegisterServiceImpl websocketLocalOutputCallbackRegisterServiceImpl = new WebsocketLocalOutputCallbackRegisterServiceImpl();
+            context.getBundleContext().registerService(WebsocketLocalOutputCallbackRegisterService.class.getName(), websocketLocalOutputCallbackRegisterServiceImpl, null);
 
-            WebsocketLocalEventAdaptorServiceInternalValueHolder.registerWebsocketOutputCallbackRegisterServiceInternal(websocketLocalOutputCallbackRegisterServiceInternal);
+            WebsocketLocalEventAdaptorServiceInternalValueHolder.registerWebsocketOutputCallbackRegisterServiceInternal(websocketLocalOutputCallbackRegisterServiceImpl);
 
             if (log.isDebugEnabled()) {
                 log.debug("Successfully deployed the output websocket-local adapter service");

@@ -21,14 +21,12 @@ package org.wso2.carbon.event.output.adapter.websocket.local;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.wso2.carbon.context.CarbonContext;
-import org.wso2.carbon.context.PrivilegedCarbonContext;
 import org.wso2.carbon.event.output.adapter.core.OutputEventAdapter;
 import org.wso2.carbon.event.output.adapter.core.OutputEventAdapterConfiguration;
 import org.wso2.carbon.event.output.adapter.core.exception.OutputEventAdapterException;
 import org.wso2.carbon.event.output.adapter.core.exception.TestConnectionNotSupportedException;
-import org.wso2.carbon.event.output.adapter.websocket.local.internal.WebsocketLocalOutputCallbackRegisterServiceInternal;
+import org.wso2.carbon.event.output.adapter.websocket.local.internal.WebsocketLocalOutputCallbackRegisterServiceImpl;
 import org.wso2.carbon.event.output.adapter.websocket.local.internal.ds.WebsocketLocalEventAdaptorServiceInternalValueHolder;
-import org.wso2.carbon.event.output.adapter.websocket.local.internal.util.WebsocketLocalEventAdapterConstants;
 
 import javax.websocket.Session;
 import java.util.Map;
@@ -66,16 +64,15 @@ public final class WebsocketLocalEventAdapter implements OutputEventAdapter {
 
     @Override
     public void publish(Object message, Map<String, String> dynamicProperties) {
-        WebsocketLocalOutputCallbackRegisterServiceInternal websocketLocalOutputCallbackRegisterServiceInternal = WebsocketLocalEventAdaptorServiceInternalValueHolder.getWebsocketLocalOutputCallbackRegisterServiceInternal();
-        CopyOnWriteArrayList<Session> sessions = websocketLocalOutputCallbackRegisterServiceInternal.getSessions(tenantID, eventAdapterConfiguration.getName());
+        WebsocketLocalOutputCallbackRegisterServiceImpl websocketLocalOutputCallbackRegisterServiceImpl = WebsocketLocalEventAdaptorServiceInternalValueHolder.getWebsocketLocalOutputCallbackRegisterServiceImpl();
+        CopyOnWriteArrayList<Session> sessions = websocketLocalOutputCallbackRegisterServiceImpl.getSessions(tenantID, eventAdapterConfiguration.getName());
         if (sessions != null){
             if (message instanceof Object[]) {
-                //TODO: should these be sent one by one or as a whole? My suggestion is that we define a new schema and convert Object[] into it,
-                // and send the converted string as one message to the receiving party, so they can adopt the schema and parse the message. Saves expensive communication overhead.
+                //TODO: send message in one send() operation by defining a new events-schema.
                 for (Object object : (Object[])message){
                     for (Session session : sessions){
                         synchronized (session){
-                            session.getAsyncRemote().sendText(message.toString());  //this method call was synchronized to fix CEP-996
+                            session.getAsyncRemote().sendText(object.toString());  //this method call was synchronized to fix CEP-996
                         }
                     }
                 }

@@ -17,20 +17,20 @@
  */
 package org.wso2.carbon.event.output.adapter.websocket.local.internal.ds;
 
-import org.wso2.carbon.event.output.adapter.websocket.local.internal.WebsocketLocalOutputCallbackRegisterServiceInternal;
+import org.wso2.carbon.event.output.adapter.websocket.local.internal.WebsocketLocalOutputCallbackRegisterServiceImpl;
 
 /**
- * Creates a holder of type WebsocketLocalOutputCallbackRegisterServiceInternal.
+ * Creates a holder of type WebsocketLocalOutputCallbackRegisterServiceImpl.
  */
 public final class WebsocketLocalEventAdaptorServiceInternalValueHolder {
 
-    private static WebsocketLocalOutputCallbackRegisterServiceInternal websocketLocalOutputCallbackRegisterServiceInternal;
+    private static WebsocketLocalOutputCallbackRegisterServiceImpl websocketLocalOutputCallbackRegisterServiceImpl;
 
-    public static void registerWebsocketOutputCallbackRegisterServiceInternal(WebsocketLocalOutputCallbackRegisterServiceInternal websocketLocalOutputCallbackRegisterServiceInternal) {
-        WebsocketLocalEventAdaptorServiceInternalValueHolder.websocketLocalOutputCallbackRegisterServiceInternal = websocketLocalOutputCallbackRegisterServiceInternal;
+    public static void registerWebsocketOutputCallbackRegisterServiceInternal(WebsocketLocalOutputCallbackRegisterServiceImpl websocketLocalOutputCallbackRegisterServiceImpl) {
+        WebsocketLocalEventAdaptorServiceInternalValueHolder.websocketLocalOutputCallbackRegisterServiceImpl = websocketLocalOutputCallbackRegisterServiceImpl;
     }
 
-    public static WebsocketLocalOutputCallbackRegisterServiceInternal getWebsocketLocalOutputCallbackRegisterServiceInternal() {
-        return WebsocketLocalEventAdaptorServiceInternalValueHolder.websocketLocalOutputCallbackRegisterServiceInternal;
+    public static WebsocketLocalOutputCallbackRegisterServiceImpl getWebsocketLocalOutputCallbackRegisterServiceImpl() {
+        return WebsocketLocalEventAdaptorServiceInternalValueHolder.websocketLocalOutputCallbackRegisterServiceImpl;
     }
 }
