@@ -268,11 +268,16 @@
             </xs:complexType>
             <xs:complexType name="EventReceiverConfigurationDto">
                 <xs:sequence>
+                    <xs:element maxOccurs="unbounded" minOccurs="0" name="correlationMappingPropertyDtos" nillable="true" type="ax2104:EventMappingPropertyDto"></xs:element>
+                    <xs:element minOccurs="0" name="customMappingEnabled" type="xs:boolean"></xs:element>
                     <xs:element minOccurs="0" name="eventReceiverName" nillable="true" type="xs:string"></xs:element>
-                    <xs:element minOccurs="0" name="fromStreamNameWithVersion" nillable="true" type="xs:string"></xs:element>
+                    <xs:element minOccurs="0" name="fromAdapterConfigurationDto" nillable="true" type="ax2104:InputAdapterConfigurationDto"></xs:element>
                     <xs:element maxOccurs="unbounded" minOccurs="0" name="mappingPropertyDtos" nillable="true" type="ax2104:EventMappingPropertyDto"></xs:element>
                     <xs:element minOccurs="0" name="messageFormat" nillable="true" type="xs:string"></xs:element>
-                    <xs:element minOccurs="0" name="toAdapterConfigurationDto" nillable="true" type="ax2104:InputAdapterConfigurationDto"></xs:element>
+                    <xs:element maxOccurs="unbounded" minOccurs="0" name="metaMappingPropertyDtos" nillable="true" type="ax2104:EventMappingPropertyDto"></xs:element>
+                    <xs:element minOccurs="0" name="parentSelectorXpath" nillable="true" type="xs:string"></xs:element>
+                    <xs:element minOccurs="0" name="toStreamNameWithVersion" nillable="true" type="xs:string"></xs:element>
+                    <xs:element maxOccurs="unbounded" minOccurs="0" name="xpathDefinitionMappingPropertyDtos" nillable="true" type="ax2104:EventMappingPropertyDto"></xs:element>
                 </xs:sequence>
             </xs:complexType>
             <xs:complexType name="EventMappingPropertyDto">

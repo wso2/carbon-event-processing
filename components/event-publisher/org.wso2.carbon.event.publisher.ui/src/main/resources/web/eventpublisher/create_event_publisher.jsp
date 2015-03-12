@@ -207,7 +207,9 @@
 %>
 <%
     DetailOutputAdapterPropertyDto[] eventAdapterProperties = outputAdapterConfigurationDto.getOutputEventAdapterStaticProperties();
+    int initialDynamicIndex = 0;
     if (eventAdapterProperties != null && eventAdapterProperties.length > 0) {
+        initialDynamicIndex=eventAdapterProperties.length;
 %>
 <tr>
     <td>
@@ -215,7 +217,7 @@
     </td>
 </tr>
 <%
-    for (int index = 0; index < eventAdapterProperties.length; index++) {
+    for (int index=0; index < eventAdapterProperties.length; index++) {
 %>
 <tr>
     <td class="leftCol-med"><%=eventAdapterProperties[index].getDisplayName()%>
@@ -285,7 +287,8 @@
     </td>
 </tr>
 <%
-    for (int index = 0; index < eventAdapterProperties.length; index++) {
+
+    for ( int index = 0; index < eventAdapterProperties.length; index++) {
 %>
 <tr>
     <td class="leftCol-med"><%=eventAdapterProperties[index].getDisplayName()%>
@@ -314,7 +317,7 @@
             %>
 
             <select name="<%=eventAdapterProperties[index].getKey()%>"
-                    id="<%=propertyId%><%=index%>">
+                    id="<%=propertyId%><%=index+initialDynamicIndex%>">
 
                 <%
                     for (String property : eventAdapterProperties[index].getOptions()) {
@@ -332,7 +335,7 @@
             <% } else { %>
             <input type="<%=type%>"
                    name="<%=eventAdapterProperties[index].getKey()%>"
-                   id="<%=propertyId%><%=index%>" class="initE"
+                   id="<%=propertyId%><%=index+initialDynamicIndex%>" class="initE"
                    style="width:75%"
                    value="<%= (eventAdapterProperties[index].getDefaultValue()) != null ? eventAdapterProperties[index].getDefaultValue() : "" %>"
                     />

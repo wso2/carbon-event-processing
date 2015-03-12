@@ -337,7 +337,7 @@ public class CarbonEventReceiverService implements EventReceiverService {
                 if ((eventReceiverConfigurationFile.getFileName().equals(fileName))) {
                     if (eventReceiverConfigurationFile.getStatus().
                             equals(EventReceiverConfigurationFile.Status.DEPLOYED)) {
-                        String eventReceiverName = eventReceiverConfigurationFile.getFileName();
+                        String eventReceiverName = eventReceiverConfigurationFile.getEventReceiverName();
                         EventReceiver eventReceiver = tenantSpecificEventReceiverConfigurationMap.get(tenantId).remove(eventReceiverName);
                         if (eventReceiver != null) {
                             EventReceiverServiceValueHolder.getEventStreamService().unsubscribe(eventReceiver, tenantId);

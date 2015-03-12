@@ -92,7 +92,8 @@ public final class Axis2ServiceManager {
 
     public static void unregisterService(String serviceName, String operationName, SOAPEventAdapter soapEventAdapter, AxisConfiguration axisConfiguration) throws AxisFault {
 
-        String id = serviceName + SOAPEventAdapterConstants.SEPARATOR + operationName;
+        int tenantId = CarbonContext.getThreadLocalCarbonContext().getTenantId();
+        String id = tenantId + SOAPEventAdapterConstants.SEPARATOR + serviceName + SOAPEventAdapterConstants.SEPARATOR + operationName;
         List<SOAPEventAdapter> soapEventAdapters = ADAPTER_MAP.get(id);
         soapEventAdapters.remove(soapEventAdapter);
         if (soapEventAdapters.size() == 0) {

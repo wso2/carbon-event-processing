@@ -33,7 +33,7 @@ function fillTextIn(obj) {
     }
 }
 
-function loadEventAdapterProperty(inputAdapterProperty, eventReceiverInputTable,propertyLoop) {
+function loadEventAdapterProperty(inputAdapterProperty, eventReceiverInputTable, propertyLoop) {
 
     var property = inputAdapterProperty.localDisplayName.trim();
     var tableRow = eventReceiverInputTable.insertRow(4);
@@ -70,10 +70,10 @@ function loadEventAdapterProperty(inputAdapterProperty, eventReceiverInputTable,
     if (inputAdapterProperty.localOptions == '') {
 
         if (hint != undefined) {
-            inputField.innerHTML = '<div class="' + classType + '"> <input style="width:75%" type="' + textPasswordType + '" id="'+requiredElementId + propertyLoop + '" name="' + inputAdapterProperty.localKey + '" value="' + defaultValue + '" class="initE"  /> <br/> <div class="sectionHelp">' + hint + '</div></div>';
+            inputField.innerHTML = '<div class="' + classType + '"> <input style="width:75%" type="' + textPasswordType + '" id="' + requiredElementId + propertyLoop + '" name="' + inputAdapterProperty.localKey + '" value="' + defaultValue + '" class="initE"  /> <br/> <div class="sectionHelp">' + hint + '</div></div>';
         }
         else {
-            inputField.innerHTML = '<div class="' + classType + '"> <input style="width:75%" type="' + textPasswordType + '" id="'+requiredElementId + propertyLoop + '" name="' + inputAdapterProperty.localKey + '" value="' + defaultValue + '" class="initE"  /> </div>';
+            inputField.innerHTML = '<div class="' + classType + '"> <input style="width:75%" type="' + textPasswordType + '" id="' + requiredElementId + propertyLoop + '" name="' + inputAdapterProperty.localKey + '" value="' + defaultValue + '" class="initE"  /> </div>';
         }
     }
 
@@ -119,7 +119,7 @@ function loadEventAdapterProperties(adapterSchema) {
     }
     for (var i = 0; i < adapterSchema.localInputEventAdapterProperties.length; i++) {
         // for each property, add a text and input field in a row
-        loadEventAdapterProperty(adapterSchema.localInputEventAdapterProperties[i], eventReceiverInputTable,i);
+        loadEventAdapterProperty(adapterSchema.localInputEventAdapterProperties[i], eventReceiverInputTable, i);
     }
 
 }
@@ -129,29 +129,29 @@ function loadEventAdapterRelatedProperties(toPropertyHeader) {
     var selected_text = document.getElementById("eventAdapterTypeFilter").options[selectedIndex].text;
 
     jQuery.ajax({
-                    type:"POST",
-                    url:"../eventreceiver/get_adapter_properties_ajaxprocessor.jsp?eventAdapterType=" + selected_text + "",
-                    data:{},
-                    contentType:"application/json; charset=utf-8",
-                    dataType:"text",
-                    async:false,
-                    success:function (propertiesString) {
+        type: "POST",
+        url: "../eventreceiver/get_adapter_properties_ajaxprocessor.jsp?eventAdapterType=" + selected_text + "",
+        data: {},
+        contentType: "application/json; charset=utf-8",
+        dataType: "text",
+        async: false,
+        success: function (propertiesString) {
 
-                        if (propertiesString != null) {
-                            var jsonObject = JSON.parse(propertiesString);
-                            loadEventAdapterProperties(jsonObject);
+            if (propertiesString != null) {
+                var jsonObject = JSON.parse(propertiesString);
+                loadEventAdapterProperties(jsonObject);
 
-                            //if (jsonObject != undefined) {
-                            //    var propertyLoop = 0;
-                            //    jQuery.each(jsonObject, function (index, messageProperty) {
-                            //        loadEventAdapterMessageProperties(messageProperty, eventReceiverInputTable, propertyLoop, inputProperty, inputRequiredProperty);
-                            //        propertyLoop = propertyLoop + 1;
-                            //    });
-                            //}
+                //if (jsonObject != undefined) {
+                //    var propertyLoop = 0;
+                //    jQuery.each(jsonObject, function (index, messageProperty) {
+                //        loadEventAdapterMessageProperties(messageProperty, eventReceiverInputTable, propertyLoop, inputProperty, inputRequiredProperty);
+                //        propertyLoop = propertyLoop + 1;
+                //    });
+                //}
 
-                        }
-                    }
-                });
+            }
+        }
+    });
 
     loadMappingUiElements();
 }
@@ -181,12 +181,12 @@ function loadMappingUiElements() {
     outerDiv.innerHTML = "";
 
     jQuery.ajax({
-        type:"POST",
-        url:"../eventbuilder/get_mapping_ui_ajaxprocessor.jsp?mappingType=" + inputMappingType + "&streamNameWithVersion=" + streamNameWithVersion,
-        data:{},
-        contentType:"text/html; charset=utf-8",
-        dataType:"text",
-        success:function (ui_content) {
+        type: "POST",
+        url: "../eventbuilder/get_mapping_ui_ajaxprocessor.jsp?mappingType=" + inputMappingType + "&streamNameWithVersion=" + streamNameWithVersion,
+        data: {},
+        contentType: "text/html; charset=utf-8",
+        dataType: "text",
+        success: function (ui_content) {
             if (ui_content != null) {
                 outerDiv.innerHTML = ui_content;
             }
@@ -301,8 +301,8 @@ function addInputTextProperty() {
         var row = tableTBody.rows[i];
         var column1 = row.cells[1].innerHTML;
 
-        if(propName.value == column1) {
-            error = propName.value +" already defined.\n";
+        if (propName.value == column1) {
+            error = propName.value + " already defined.\n";
             break;
         }
     }
@@ -323,8 +323,6 @@ function addInputTextProperty() {
 //            return;
 //        }
 //    }
-
-
 
 
     //add new row
@@ -504,9 +502,9 @@ function addEventReceiverViaPopup(form, toStreamId, redirectPage) {
     var propertyString = "";
 
     // all properties, not required and required are checked
-    while (document.getElementById("property_Required_" + propertyCount) != null||document.getElementById("property_" + propertyCount) != null) {
+    while (document.getElementById("property_Required_" + propertyCount) != null || document.getElementById("property_" + propertyCount) != null) {
         // if required fields are empty
-        if(document.getElementById("property_Required_" + propertyCount) != null) {
+        if (document.getElementById("property_Required_" + propertyCount) != null) {
             if (document.getElementById("property_Required_" + propertyCount).value.trim() == "") {
                 // values are empty in fields
                 isFieldEmpty = true;
@@ -528,7 +526,7 @@ function addEventReceiverViaPopup(form, toStreamId, redirectPage) {
             if (notRequiredPropertyValue == "") {
                 notRequiredPropertyValue = "  ";
             }
-            propertyString = propertyString + notRequiredPropertyName + "$=" + notRequiredPropertyValue + "|=";            
+            propertyString = propertyString + notRequiredPropertyName + "$=" + notRequiredPropertyValue + "|=";
         }
         propertyCount++;
     }
@@ -556,17 +554,19 @@ function addEventReceiverViaPopup(form, toStreamId, redirectPage) {
             return;
         } else {
             new Ajax.Request('../eventreceiver/add_event_receiver_ajaxprocessor.jsp', {
-                method:'POST',
-                asynchronous:false,
-                parameters:{eventReceiverName:eventReceiverName, toStreamName:toStreamName,
-                    toStreamVersion:toStreamVersion, eventAdapterInfo:eventAdapterInfo, mappingType:mappingType,
-                    propertySet:propertyString, customMappingValue:customMappingValue,
-                    metaData:metaData, correlationData:correlationData, payloadData:payloadData},
-                onSuccess:function (event) {
+                method: 'POST',
+                asynchronous: false,
+                parameters: {
+                    eventReceiverName: eventReceiverName, toStreamName: toStreamName,
+                    toStreamVersion: toStreamVersion, eventAdapterInfo: eventAdapterInfo, mappingType: mappingType,
+                    propertySet: propertyString, customMappingValue: customMappingValue,
+                    metaData: metaData, correlationData: correlationData, payloadData: payloadData
+                },
+                onSuccess: function (event) {
                     if ("true" == event.responseText.trim()) {
                         CARBON.showInfoDialog("Event receiver added successfully!!", function () {
                             if (redirectPage != "none") {
-                                window.location.href = "../eventstream/stream_in_flows.jsp?ordinal=1&eventStreamWithVersion=" + toStreamId;
+                                window.location.href = "../eventreceiver/index.jsp?ordinal=1";
                             }
                         }, null);
                         customCarbonWindowClose();
@@ -595,16 +595,23 @@ function addEventReceiverViaPopup(form, toStreamId, redirectPage) {
             return;
         } else {
             new Ajax.Request('../eventreceiver/add_event_receiver_ajaxprocessor.jsp', {
-                method:'POST',
-                asynchronous:false,
-                parameters:{eventReceiverName:eventReceiverName, toStreamName:toStreamName,
-                    toStreamVersion:toStreamVersion, eventAdapterInfo:eventAdapterInfo, mappingType:mappingType, propertySet:propertyString,
-                    textData:textData, customMappingValue:customMappingValue},
-                onSuccess:function (event) {
+                method: 'POST',
+                asynchronous: false,
+                parameters: {
+                    eventReceiverName: eventReceiverName,
+                    toStreamName: toStreamName,
+                    toStreamVersion: toStreamVersion,
+                    eventAdapterInfo: eventAdapterInfo,
+                    mappingType: mappingType,
+                    propertySet: propertyString,
+                    textData: textData,
+                    customMappingValue: customMappingValue
+                },
+                onSuccess: function (event) {
                     if ("true" == event.responseText.trim()) {
                         CARBON.showInfoDialog("Event receiver added successfully!!", function () {
                             if (redirectPage != "none") {
-                                window.location.href = "../eventstream/stream_in_flows.jsp?ordinal=1&eventStreamWithVersion=" + toStreamId;
+                                window.location.href = "../eventreceiver/index.jsp?ordinal=1";
                             }
                         }, null);
                         customCarbonWindowClose();
@@ -641,16 +648,25 @@ function addEventReceiverViaPopup(form, toStreamId, redirectPage) {
             return;
         } else {
             new Ajax.Request('../eventreceiver/add_event_receiver_ajaxprocessor.jsp', {
-                method:'POST',
-                asynchronous:false,
-                parameters:{eventReceiverName:eventReceiverName, toStreamName:toStreamName,
-                    toStreamVersion:toStreamVersion, eventAdapterInfo:eventAdapterInfo, mappingType:mappingType, propertySet:propertyString,
-                    parentSelectorXpath:parentSelectorXpath, prefixData:prefixData, xpathData:xpathData, customMappingValue:customMappingValue},
-                onSuccess:function (event) {
+                method: 'POST',
+                asynchronous: false,
+                parameters: {
+                    eventReceiverName: eventReceiverName,
+                    toStreamName: toStreamName,
+                    toStreamVersion: toStreamVersion,
+                    eventAdapterInfo: eventAdapterInfo,
+                    mappingType: mappingType,
+                    propertySet: propertyString,
+                    parentSelectorXpath: parentSelectorXpath,
+                    prefixData: prefixData,
+                    xpathData: xpathData,
+                    customMappingValue: customMappingValue
+                },
+                onSuccess: function (event) {
                     if ("true" == event.responseText.trim()) {
                         CARBON.showInfoDialog("Event receiver added successfully!!", function () {
                             if (redirectPage != "none") {
-                                window.location.href = "../eventstream/stream_in_flows.jsp?ordinal=1&eventStreamWithVersion=" + toStreamId;
+                                window.location.href = "../eventreceiver/index.jsp?ordinal=1";
                             }
                         }, null);
                         customCarbonWindowClose();
@@ -677,16 +693,23 @@ function addEventReceiverViaPopup(form, toStreamId, redirectPage) {
         }
         else {
             new Ajax.Request('../eventreceiver/add_event_receiver_ajaxprocessor.jsp', {
-                method:'POST',
-                asynchronous:false,
-                parameters:{eventReceiverName:eventReceiverName, toStreamName:toStreamName,
-                    toStreamVersion:toStreamVersion, eventAdapterInfo:eventAdapterInfo, mappingType:mappingType, propertySet:propertyString,
-                    mapData:mapData, customMappingValue:customMappingValue},
-                onSuccess:function (event) {
+                method: 'POST',
+                asynchronous: false,
+                parameters: {
+                    eventReceiverName: eventReceiverName,
+                    toStreamName: toStreamName,
+                    toStreamVersion: toStreamVersion,
+                    eventAdapterInfo: eventAdapterInfo,
+                    mappingType: mappingType,
+                    propertySet: propertyString,
+                    mapData: mapData,
+                    customMappingValue: customMappingValue
+                },
+                onSuccess: function (event) {
                     if ("true" == event.responseText.trim()) {
                         CARBON.showInfoDialog("Event receiver added successfully!!", function () {
                             if (redirectPage != "none") {
-                                window.location.href = "../eventstream/stream_in_flows.jsp?ordinal=1&eventStreamWithVersion=" + toStreamId;
+                                window.location.href = "../eventreceiver/index.jsp?ordinal=1";
                             }
                         }, null);
                         customCarbonWindowClose();
@@ -712,16 +735,23 @@ function addEventReceiverViaPopup(form, toStreamId, redirectPage) {
             return;
         } else {
             new Ajax.Request('../eventreceiver/add_event_receiver_ajaxprocessor.jsp', {
-                method:'POST',
-                asynchronous:false,
-                parameters:{eventReceiverName:eventReceiverName, toStreamName:toStreamName,
-                    toStreamVersion:toStreamVersion, eventAdapterInfo:eventAdapterInfo, mappingType:mappingType, propertySet:propertyString,
-                    jsonData:jsonData, customMappingValue:customMappingValue},
-                onSuccess:function (event) {
+                method: 'POST',
+                asynchronous: false,
+                parameters: {
+                    eventReceiverName: eventReceiverName,
+                    toStreamName: toStreamName,
+                    toStreamVersion: toStreamVersion,
+                    eventAdapterInfo: eventAdapterInfo,
+                    mappingType: mappingType,
+                    propertySet: propertyString,
+                    jsonData: jsonData,
+                    customMappingValue: customMappingValue
+                },
+                onSuccess: function (event) {
                     if ("true" == event.responseText.trim()) {
                         CARBON.showInfoDialog("Event receiver added successfully!!", function () {
                             if (redirectPage != "none") {
-                                window.location.href = "../eventstream/stream_in_flows.jsp?ordinal=1&eventStreamWithVersion=" + toStreamId;
+                                window.location.href = "../eventreceiver/index.jsp?ordinal=1";
                             }
                         }, null);
                         customCarbonWindowClose();
@@ -733,7 +763,6 @@ function addEventReceiverViaPopup(form, toStreamId, redirectPage) {
         }
     }
 }
-
 
 
 function addInputXpathDef() {
@@ -776,8 +805,10 @@ function addInputXpathDef() {
 
     var newCell1 = newTableRow.insertCell(1);
     newCell1.innerHTML = xpathNs.value;
+    YAHOO.util.Dom.addClass(newCell1, "property-names");
 
     var newCell2 = newTableRow.insertCell(2);
+    YAHOO.util.Dom.addClass(newCell2, "property-names");
     newCell2.innerHTML = ' <a class="icon-link" style="background-image:url(../admin/images/delete.gif)" onclick="removeInputProperty(this,\'' + 'xml' + '\')">Delete</a>';
 
     prefixName.value = "";

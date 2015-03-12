@@ -24,6 +24,28 @@ import java.util.Map;
 @SuppressWarnings("unchecked")
 public class EventReceiverAdminConstants {
 
+
+    public static final String ATTR_TYPE_FLOAT = "float";
+    public static final String ATTR_TYPE_DOUBLE = "double";
+    public static final String ATTR_TYPE_INTEGER = "int";
+    public static final String ATTR_TYPE_LONG = "long";
+    public static final String ATTR_TYPE_STRING = "string";
+    public static final String ATTR_TYPE_BOOL = "boolean";
+
+
+    public static final Map<String, AttributeType> STRING_ATTRIBUTE_TYPE_MAP = Collections.unmodifiableMap(new HashMap<String, AttributeType>() {{
+        put(ATTR_TYPE_BOOL, AttributeType.BOOL);
+        put(ATTR_TYPE_STRING, AttributeType.STRING);
+        put(ATTR_TYPE_DOUBLE, AttributeType.DOUBLE);
+        put(ATTR_TYPE_FLOAT, AttributeType.FLOAT);
+        put(ATTR_TYPE_INTEGER, AttributeType.INT);
+        put(ATTR_TYPE_LONG, AttributeType.LONG);
+    }});
+
+    public static final String PROPERTY_META_PREFIX = "meta_";
+    public static final String PROPERTY_CORRELATION_PREFIX = "correlation_";
+
+
     public static final Map<AttributeType, String> ATTRIBUTE_TYPE_STRING_MAP = Collections.unmodifiableMap(new HashMap<AttributeType, String>() {{
         put(AttributeType.BOOL, EventReceiverConstants.ATTR_TYPE_BOOL);
         put(AttributeType.STRING, EventReceiverConstants.ATTR_TYPE_STRING);
