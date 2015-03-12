@@ -26,6 +26,7 @@ public class EventStreamInfoDto {
     private String streamVersion;
     private String streamDefinition;
     private String streamDescription;
+    private boolean editable;
 
     public EventStreamInfoDto(String streamName, String streamVersion) {
         this.streamName = streamName;
@@ -65,5 +66,13 @@ public class EventStreamInfoDto {
 
     public void setStreamVersion(String streamVersion) {
         this.streamVersion = streamVersion;
+    }
+
+    public void setEditable(boolean editable) {
+        this.editable = editable;
+    }
+
+    public boolean isEditable() {
+        return editable;
     }
 }

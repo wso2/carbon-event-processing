@@ -353,8 +353,6 @@ public class EventJunction implements EventProducerCallback {
                 }
             }
         }
-
-
     }
 
     private void populateEventTemplate(StreamDefinition definition) {

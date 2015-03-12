@@ -12,7 +12,7 @@
  * CONDITIONS OF ANY KIND, either express or implied.  See the License for the
  * specific language governing permissions and limitations under the License.
  */
-package org.wso2.carbon.event.receiver.core.internal;
+package org.wso2.carbon.event.receiver.core;
 
 import org.wso2.carbon.databridge.commons.Attribute;
 import org.wso2.carbon.event.receiver.core.exception.EventReceiverConfigurationException;

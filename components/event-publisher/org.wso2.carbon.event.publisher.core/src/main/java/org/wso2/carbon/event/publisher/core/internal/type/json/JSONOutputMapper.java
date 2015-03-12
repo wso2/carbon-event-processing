@@ -120,7 +120,7 @@ public class JSONOutputMapper implements OutputMapper {
         JSONOutputMapping jsonOutputMapping = ((JSONOutputMapping) eventPublisherConfiguration.getOutputMapping());
         String actualMappingText = jsonOutputMapping.getMappingText();
         if (jsonOutputMapping.isRegistryResource()) {
-            actualMappingText = EventPublisherServiceValueHolder.getCarbonEventPublisherService().getRegistryResourceContent(jsonOutputMapping.getMappingText(), tenantId);
+            actualMappingText = EventPublisherServiceValueHolder.getCarbonEventPublisherService().getRegistryResourceContent(jsonOutputMapping.getMappingText());
         }
 
         setMappingTextList(actualMappingText);

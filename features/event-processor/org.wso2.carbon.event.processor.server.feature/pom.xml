@@ -85,6 +85,10 @@
             <groupId>org.yaml</groupId>
             <artifactId>snakeyaml</artifactId>
         </dependency>
+        <dependency>
+            <groupId>org.antlr</groupId>
+            <artifactId>antlr4-runtime</artifactId>
+        </dependency>
     </dependencies>
 
 
@@ -178,6 +182,9 @@
                                 </bundleDef>
                                 <bundleDef>
                                     org.yaml:snakeyaml:${snakeyaml.version}
+                                </bundleDef>
+                                <bundleDef>
+                                    org.antlr:antlr4-runtime:${antlr.version}
                                 </bundleDef>
                             </bundles>
                             <importFeatures>

@@ -34,17 +34,16 @@ function fillTextIn(obj) {
 }
 
 
-function loadEventAdapterMessageProperties(messageProperty, eventPublisherInputTable, propertyLoop,
-                                           propertyValue, requiredValue) {
+function loadEventAdapterProperties(messageProperty, eventPublisherInputTable, propertyLoop,
+                                           propertyValue, requiredValue, insertRowCount) {
 
-    var property = messageProperty.localDisplayName.trim();
-    var tableRow = eventPublisherInputTable.insertRow(5);
+    var tableRow = eventPublisherInputTable.insertRow(insertRowCount);
     var textLabel = tableRow.insertCell(0);
     var displayName = messageProperty.localDisplayName.trim();
     textLabel.innerHTML = displayName;
     var requiredElementId = propertyValue;
     var textPasswordType = "text";
-    var hint = ""
+    var hint = ""  ;
     var defaultValue = "";
 
     if (messageProperty.localRequired) {
@@ -76,9 +75,7 @@ function loadEventAdapterMessageProperties(messageProperty, eventPublisherInputT
         else {
             inputField.innerHTML = '<div class="' + classType + '"> <input style="width:75%" type="' + textPasswordType + '" id="' + requiredElementId + propertyLoop + '" name="' + messageProperty.localKey + '" value="' + defaultValue + '" class="initE"  /> </div>';
         }
-    }
-
-    else {
+    } else {
 
         var option = '';
         jQuery.each(messageProperty.localOptions, function (index, localOption) {
@@ -92,17 +89,12 @@ function loadEventAdapterMessageProperties(messageProperty, eventPublisherInputT
         });
 
 
-        if (hint != undefined) {
+        if (hint != undefined && hint != "") {
             inputField.innerHTML = '<div class="' + classType + '"> <select   id="' + requiredElementId + propertyLoop + '" name="' + messageProperty.localKey + '">' + option + '</select><br/> <div class="sectionHelp">' + hint + '</div></div>';
-        }
-        else {
+        } else {
             inputField.innerHTML = '<div class="' + classType + '"> <select  id="' + requiredElementId + propertyLoop + '" name="' + messageProperty.localKey + '"  />' + option + ' </div>';
         }
-
-
     }
-
-
 }
 
 
@@ -125,70 +117,75 @@ function showEventStreamDefinition() {
                 });
 }
 
+
+function loadEventAdapterData(adapterSchema) {
+
+    jQuery('#mappingTypeFilter').empty();
+    for (var i = 0; i < adapterSchema.localSupportedMessageFormats.length; i++) {
+        // for each property, add a text and input field in a row
+        jQuery('#mappingTypeFilter').append('<option>' + adapterSchema.localSupportedMessageFormats[i].trim() + '</option>');
+    }
+
+    var eventPublisherInputTable = document.getElementById("eventPublisherInputTable");
+    // delete message properties related fields
+    for (i = eventPublisherInputTable.rows.length - 5; i > 5; i--) {
+        eventPublisherInputTable.deleteRow(i);
+    }
+    var inputProperty = "property_";
+    var inputRequiredProperty = "property_Required_";
+    var initialRowValue = 6;
+    var index=0;
+    if (adapterSchema.localOutputEventAdapterStaticProperties != undefined) {
+
+        var tableRow = eventPublisherInputTable.insertRow(initialRowValue);
+        var textLabel = tableRow.insertCell(0);
+        var header = document.getElementById("staticHeader").getAttribute("name");
+        textLabel.innerHTML = '<b><i><span style="color: #666666; ">' + header + '</span></i></b>';
+        initialRowValue += 1;
+
+        for (i = 0; i < adapterSchema.localOutputEventAdapterStaticProperties.length; i++) {
+            // for each property, add a text and input field in a row
+            loadEventAdapterProperties(adapterSchema.localOutputEventAdapterStaticProperties[i], eventPublisherInputTable, i, inputProperty, inputRequiredProperty, initialRowValue + i);
+        }
+        index = adapterSchema.localOutputEventAdapterStaticProperties.length;
+        initialRowValue += adapterSchema.localOutputEventAdapterStaticProperties.length;
+    }
+    if (adapterSchema.localOutputEventAdapterDynamicProperties != undefined) {
+
+        var tableRow = eventPublisherInputTable.insertRow(initialRowValue);
+        var textLabel = tableRow.insertCell(0);
+        var header = document.getElementById("dynamicHeader").getAttribute("name");
+        textLabel.innerHTML = '<b><i><span style="color: #666666; ">' + header + '</span></i></b>';
+        initialRowValue += 1;
+
+        for (i = 0; i < adapterSchema.localOutputEventAdapterDynamicProperties.length; i++) {
+            // for each property, add a text and input field in a row
+            loadEventAdapterProperties(adapterSchema.localOutputEventAdapterDynamicProperties[i], eventPublisherInputTable, i + index, inputProperty, inputRequiredProperty, initialRowValue + i);
+        }
+    }
+}
+
 function loadEventAdapterRelatedProperties(toPropertyHeader) {
 
     var selectedIndex = document.getElementById("eventAdapterTypeFilter").selectedIndex;
     var selected_text = document.getElementById("eventAdapterTypeFilter").options[selectedIndex].text;
 
-
     jQuery.ajax({
-                    type:"POST",
-                    url:"../eventpublisher/get_mappings_ajaxprocessor.jsp?eventAdapterType=" + selected_text + "",
-                    data:{},
-                    contentType:"application/json; charset=utf-8",
-                    dataType:"text",
-                    async:false,
-                    success:function (mappingTypes) {
+        type:"POST",
+        url:"../eventpublisher/get_adapter_properties_ajaxprocessor.jsp?eventAdapterType=" + selected_text + "",
+        data:{},
+        contentType:"application/json; charset=utf-8",
+        dataType:"text",
+        async:false,
+        success:function (propertiesString) {
 
-                        if (mappingTypes != null) {
-                            mappingTypes = mappingTypes.trim();
-                            // properties are taken as | separated property names
-                            var mappings = mappingTypes.split("|=");
-                            var propertyCount = mappings.length;
-                            jQuery('#mappingTypeFilter').empty();
-                            // for each property, add a text and input field in a row
-                            for (i = 1; i < propertyCount; i++) {
-                                if (mappings[i].trim() != "") {
-                                    jQuery('#mappingTypeFilter').append('<option>' + mappings[i].trim() + '</option>');
-                                }
-                            }
+            if (propertiesString != null) {
+                var jsonObject = JSON.parse(propertiesString);
+                loadEventAdapterData(jsonObject);
 
-                        }
-                    }
-                });
-
-
-    var eventPublisherInputTable = document.getElementById("eventPublisherInputTable");
-// delete message properties related fields
-    for (i = eventPublisherInputTable.rows.length - 5; i > 4; i--) {
-        eventPublisherInputTable.deleteRow(i);
-    }
-
-    jQuery.ajax({
-                    type:"POST",
-                    url:"../eventpublisher/get_message_properties_ajaxprocessor.jsp?eventAdapterType=" + selected_text + "",
-                    data:{},
-                    contentType:"application/json; charset=utf-8",
-                    dataType:"text",
-                    async:false,
-                    success:function (propertiesString) {
-
-                        if (propertiesString != null) {
-                            var jsonObject = JSON.parse(propertiesString);
-
-                            if (jsonObject != undefined) {
-                                var propertyLoop = 0;
-                                var inputProperty = "property_";
-                                var inputRequiredProperty = "property_Required_";
-                                jQuery.each(jsonObject, function (index, messageProperty) {
-                                    loadEventAdapterMessageProperties(messageProperty, eventPublisherInputTable, propertyLoop, inputProperty, inputRequiredProperty);
-                                    propertyLoop = propertyLoop + 1;
-                                });
-                            }
-
-                        }
-                    }
-                });
+            }
+        }
+    });
 
     showMappingContext();
 }

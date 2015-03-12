@@ -60,7 +60,7 @@
 
                 <%
                     EventReceiverAdminServiceStub stub = EventReceiverUIUtils.getEventReceiverAdminService(config, session, request);
-                    EventReceiverConfigurationFileDto[] eventReceiverDetailsArray = stub.getAllInactiveEventReceiverConfiguration();
+                    EventReceiverConfigurationFileDto[] eventReceiverDetailsArray = stub.getAllInactiveEventReceiverConfigurations();
                     if (eventReceiverDetailsArray != null) {
                 %>
                 <thead>

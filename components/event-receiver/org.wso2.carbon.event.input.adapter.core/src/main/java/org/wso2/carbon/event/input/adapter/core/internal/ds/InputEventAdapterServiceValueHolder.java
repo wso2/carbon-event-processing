@@ -18,6 +18,7 @@ import org.wso2.carbon.event.input.adapter.core.internal.config.AdapterConfigs;
 import org.wso2.carbon.event.statistics.EventStatisticsService;
 import org.wso2.carbon.event.input.adapter.core.internal.CarbonInputEventAdapterService;
 import org.wso2.carbon.registry.core.service.RegistryService;
+import org.wso2.carbon.utils.ConfigurationContextService;
 
 public class InputEventAdapterServiceValueHolder {
 
@@ -25,6 +26,8 @@ public class InputEventAdapterServiceValueHolder {
     private static RegistryService registryService;
     private static EventStatisticsService eventStatisticsService;
     private static AdapterConfigs globalAdapterConfigs;
+    private static ConfigurationContextService configurationContextService;
+
 
     private InputEventAdapterServiceValueHolder() {
 
@@ -60,5 +63,13 @@ public class InputEventAdapterServiceValueHolder {
 
     public static AdapterConfigs getGlobalAdapterConfigs() {
         return globalAdapterConfigs;
+    }
+
+    public static ConfigurationContextService getConfigurationContextService() {
+        return configurationContextService;
+    }
+
+    public static void setConfigurationContextService(ConfigurationContextService configurationContextService) {
+        InputEventAdapterServiceValueHolder.configurationContextService = configurationContextService;
     }
 }

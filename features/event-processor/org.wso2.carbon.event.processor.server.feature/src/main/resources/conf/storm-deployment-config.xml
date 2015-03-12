@@ -10,13 +10,9 @@
                 <hostName>localhost</hostName>
                 <port>8904</port>
             </manager>
-            <manager>
-                <hostName>localhost</hostName>
-                <port>8905</port>
-            </manager>
         </managers>
         <reconnectionInterval>20000</reconnectionInterval>
-	<heartbeatInterval>5000</heartbeatInterval>
+        <heartbeatInterval>5000</heartbeatInterval>
     </management>
 
     <transport>
@@ -25,12 +21,12 @@
             <max>15100</max>
         </portRange>
         <reconnectionInterval>20000</reconnectionInterval>
-	<topologyResubmitInterval>10000</topologyResubmitInterval>
+        <topologyResubmitInterval>10000</topologyResubmitInterval>
     </transport>
 
     <node>
         <receiver enable="true"/>
-        <publisher enable="false"/>
+        <publisher enable="true"/>
         <manager enable="true">
             <hostName>localhost</hostName>
             <port>8904</port>

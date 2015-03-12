@@ -19,8 +19,8 @@
         import="org.wso2.carbon.event.receiver.stub.types.EventReceiverConfigurationDto" %>
 <%@ page import="org.wso2.carbon.event.receiver.ui.EventReceiverUIUtils" %>
 <%@ page import="org.wso2.carbon.event.receiver.stub.types.EventMappingPropertyDto" %>
-<%@ page import="org.wso2.carbon.event.receiver.stub.types.OutputAdapterConfigurationDto" %>
-<%@ page import="org.wso2.carbon.event.receiver.stub.types.DetailOutputAdapterPropertyDto" %>
+<%@ page import="org.wso2.carbon.event.receiver.stub.types.InputAdapterConfigurationDto" %>
+<%@ page import="org.wso2.carbon.event.receiver.stub.types.DetailInputAdapterPropertyDto" %>
 <%@ taglib uri="http://wso2.org/projects/carbon/taglibs/carbontags.jar" prefix="carbon" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 
@@ -113,33 +113,98 @@
 </tr>
 
 <tr>
-    <td><fmt:message key="event.stream.name"/><span class="required">*</span></td>
-    <td><select name="streamIdFilter" id="streamIdFilter" disabled="disabled">
-        <%
-
-        %>
-        <option><%=eventReceiverConfigurationDto.getFromStreamNameWithVersion()%>
+    <td><fmt:message key="event.adapter.type"/><span class="required">*</span></td>
+    <td><select name="eventAdapterTypeFilter"
+                id="eventAdapterTypeFilter" disabled="disabled">
+        <option><%=eventReceiverConfigurationDto.getFromAdapterConfigurationDto().getEventAdapterType()%>
         </option>
-
-
     </select>
-
     </td>
-
 </tr>
+
+
+
+<%
+    InputAdapterConfigurationDto fromPropertyConfigurationDto = eventReceiverConfigurationDto.getFromAdapterConfigurationDto();
+    if (fromPropertyConfigurationDto != null) {
+%>
+<%
+    if (fromPropertyConfigurationDto.getInputEventAdapterProperties()!=null && fromPropertyConfigurationDto.getInputEventAdapterProperties().length > 0) {
+%>
 <tr>
     <td>
-        <fmt:message key="stream.attributes"/>
+        <b><i><span style="color: #666666; "><fmt:message key="properties.heading"/></span></i></b>
     </td>
+</tr>
+<%
+    DetailInputAdapterPropertyDto[] eventReceiverPropertyDto = fromPropertyConfigurationDto.getInputEventAdapterProperties();
+    for (int index = 0; index < eventReceiverPropertyDto.length; index++) {
+%>
+<tr>
+
+
+    <td class="leftCol-med"><%=eventReceiverPropertyDto[index].getDisplayName()%>
+        <%
+            String propertyId = "property_";
+            if (eventReceiverPropertyDto[index].getRequired()) {
+                propertyId = "property_Required_";
+
+        %>
+        <span class="required">*</span>
+        <%
+            }
+        %>
+    </td>
+    <%
+        String type = "text";
+        if (eventReceiverPropertyDto[index].getSecured()) {
+            type = "password";
+        }
+    %>
+
     <td>
-        <textArea class="expandedTextarea" id="streamDefinitionText" name="streamDefinitionText"
-                  readonly="true"
-                  cols="60"
-                  disabled="disabled"><%=eventReceiverConfigurationDto.getStreamDefinition()%>
-        </textArea>
+        <div class=outputFields>
+            <%
+                if (eventReceiverPropertyDto[index].getOptions()[0] != null) {
+            %>
+
+            <select name="<%=eventReceiverPropertyDto[index].getKey()%>"
+                    id="<%=propertyId%><%=index%>" disabled="disabled">
+
+                <%
+                    for (String property : eventReceiverPropertyDto[index].getOptions()) {
+                        if (property.equals(eventReceiverPropertyDto[index].getValue())) {
+                %>
+                <option selected="selected"><%=property%>
+                </option>
+                <% } else { %>
+                <option><%=property%>
+                </option>
+                <% }
+                } %>
+            </select>
+
+            <% } else { %>
+            <input type="<%=type%>"
+                   name="<%=eventReceiverPropertyDto[index].getKey()%>"
+                   id="<%=propertyId%><%=index%>" class="initE"
+                   style="width:75%"
+                   value="<%= eventReceiverPropertyDto[index].getValue() != null ? eventReceiverPropertyDto[index].getValue() : "" %>" disabled="disabled"/>
+
+            <% } %>
+
+
+        </div>
     </td>
 
 </tr>
+<%
+        }
+    }
+%>
+<%
+    }
+%>
 
 <tr>
     <td>
@@ -148,172 +213,20 @@
 </tr>
 
 <tr>
-    <td><fmt:message key="event.adapter.type"/><span class="required">*</span></td>
-    <td><select name="eventAdapterTypeFilter"
-                id="eventAdapterTypeFilter" disabled="disabled">
-        <option><%=eventReceiverConfigurationDto.getToAdapterConfigurationDto().getEventAdapterType()%>
+    <td><fmt:message key="event.stream.name"/><span class="required">*</span></td>
+    <td><select name="streamIdFilter" id="streamIdFilter" disabled="disabled">
+        <%
+
+        %>
+        <option><%=eventReceiverConfigurationDto.getToStreamNameWithVersion()%>
         </option>
+
+
     </select>
-    </td>
-</tr>
 
-
-<%
-    OutputAdapterConfigurationDto toPropertyConfigurationDto = eventReceiverConfigurationDto.getToAdapterConfigurationDto();
-    if (toPropertyConfigurationDto != null) {
-%>
-<%
-    if (toPropertyConfigurationDto.getOutputEventAdapterStaticProperties()!=null && toPropertyConfigurationDto.getOutputEventAdapterStaticProperties().length > 0) {
-%>
-<tr>
-    <td>
-        <b><i><span style="color: #666666; "><fmt:message key="static.properties.heading"/></span></i></b>
-    </td>
-</tr>
-<%
-    DetailOutputAdapterPropertyDto[] eventReceiverPropertyDto = toPropertyConfigurationDto.getOutputEventAdapterStaticProperties();
-    for (int index = 0; index < eventReceiverPropertyDto.length; index++) {
-%>
-<tr>
-
-
-    <td class="leftCol-med"><%=eventReceiverPropertyDto[index].getDisplayName()%>
-        <%
-            String propertyId = "property_";
-            if (eventReceiverPropertyDto[index].getRequired()) {
-                propertyId = "property_Required_";
-
-        %>
-        <span class="required">*</span>
-        <%
-            }
-        %>
-    </td>
-    <%
-        String type = "text";
-        if (eventReceiverPropertyDto[index].getSecured()) {
-            type = "password";
-        }
-    %>
-
-    <td>
-        <div class=outputFields>
-            <%
-                if (eventReceiverPropertyDto[index].getOptions()[0] != null) {
-            %>
-
-            <select name="<%=eventReceiverPropertyDto[index].getKey()%>"
-                    id="<%=propertyId%><%=index%>" disabled="disabled">
-
-                <%
-                    for (String property : eventReceiverPropertyDto[index].getOptions()) {
-                        if (property.equals(eventReceiverPropertyDto[index].getValue())) {
-                %>
-                <option selected="selected"><%=property%>
-                </option>
-                <% } else { %>
-                <option><%=property%>
-                </option>
-                <% }
-                } %>
-            </select>
-
-            <% } else { %>
-            <input type="<%=type%>"
-                   name="<%=eventReceiverPropertyDto[index].getKey()%>"
-                   id="<%=propertyId%><%=index%>" class="initE"
-                   style="width:75%"
-                   value="<%= eventReceiverPropertyDto[index].getValue() != null ? eventReceiverPropertyDto[index].getValue() : "" %>" disabled="disabled"/>
-
-            <% } %>
-
-
-        </div>
     </td>
 
 </tr>
-<%
-        }
-    }
-%>
-<%
-    if (toPropertyConfigurationDto.getOutputEventAdapterDynamicProperties()!=null && toPropertyConfigurationDto.getOutputEventAdapterDynamicProperties().length > 0) {
-%>
-<tr>
-    <td>
-        <b><i><span style="color: #666666; "><fmt:message key="dynamic.properties.heading"/></span></i></b>
-    </td>
-</tr>
-<%
-    DetailOutputAdapterPropertyDto[] eventReceiverPropertyDto = toPropertyConfigurationDto.getOutputEventAdapterDynamicProperties();
-    for (int index = 0; index < eventReceiverPropertyDto.length; index++) {
-%>
-<tr>
-
-
-    <td class="leftCol-med"><%=eventReceiverPropertyDto[index].getDisplayName()%>
-        <%
-            String propertyId = "property_";
-            if (eventReceiverPropertyDto[index].getRequired()) {
-                propertyId = "property_Required_";
-
-        %>
-        <span class="required">*</span>
-        <%
-            }
-        %>
-    </td>
-    <%
-        String type = "text";
-        if (eventReceiverPropertyDto[index].getSecured()) {
-            type = "password";
-        }
-    %>
-
-    <td>
-        <div class=outputFields>
-            <%
-                if (eventReceiverPropertyDto[index].getOptions()[0] != null) {
-            %>
-
-            <select name="<%=eventReceiverPropertyDto[index].getKey()%>"
-                    id="<%=propertyId%><%=index%>" disabled="disabled">
-
-                <%
-                    for (String property : eventReceiverPropertyDto[index].getOptions()) {
-                        if (property.equals(eventReceiverPropertyDto[index].getValue())) {
-                %>
-                <option selected="selected"><%=property%>
-                </option>
-                <% } else { %>
-                <option><%=property%>
-                </option>
-                <% }
-                } %>
-            </select>
-
-            <% } else { %>
-            <input type="<%=type%>"
-                   name="<%=eventReceiverPropertyDto[index].getKey()%>"
-                   id="<%=propertyId%><%=index%>" class="initE"
-                   style="width:75%"
-                   value="<%= eventReceiverPropertyDto[index].getValue() != null ? eventReceiverPropertyDto[index].getValue() : "" %>" disabled="disabled"/>
-
-            <% } %>
-
-
-        </div>
-    </td>
-
-</tr>
-<%
-        }
-    }
-%>
-<%
-    }
-%>
-
 
 <tr>
     <td colspan="2">
@@ -332,394 +245,339 @@
 
 </tr>
 
+<%
+    boolean customMappingEnabled = eventReceiverConfigurationDto.getCustomMappingEnabled();
+    String mappingType= eventReceiverConfigurationDto.getMessageFormat();
+%>
 <tr>
-<td class="formRaw" colspan="2">
-<div id="outerDiv">
-<%
-    if (eventReceiverConfigurationDto.getMessageFormat().equalsIgnoreCase("wso2event")) {
-%>
-<div id="innerDiv1">
-    <table class="styledLeft noBorders spacer-bot"
-           style="width:100%">
-        <tbody>
-        <tr name="outputWSO2EventMapping">
-            <td colspan="2" class="middle-header">
-                <fmt:message key="wso2event.mapping"/>
-            </td>
-        </tr>
-        <tr name="outputWSO2EventMapping">
-            <td colspan="2">
+    <td id="mappingUiTd" colspan="2">
+        <table class="styledLeft noBorders spacer-bot"
+               style="width:100%">
+            <tbody>
+            <%
+                if (customMappingEnabled) {
+            %>
 
-                <h6><fmt:message key="property.data.type.meta"/></h6>
-                <% if (eventReceiverConfigurationDto.getWso2EventOutputMappingDto().getMetaWSO2EventMappingProperties() != null && eventReceiverConfigurationDto.getWso2EventOutputMappingDto().getMetaWSO2EventMappingProperties()[0] != null) { %>
-                <table class="styledLeft noBorders spacer-bot" id="outputMetaDataTable">
-                    <thead>
-                    <th class="leftCol-med"><fmt:message key="property.name"/></th>
-                    <th class="leftCol-med"><fmt:message key="property.value.of"/></th>
-                    <th class="leftCol-med"><fmt:message key="property.type"/></th>
-                    </thead>
-                    <% EventMappingPropertyDto[] eventMappingPropertyDtos = eventReceiverConfigurationDto.getWso2EventOutputMappingDto().getMetaWSO2EventMappingProperties();
-                        for (EventMappingPropertyDto eventMappingPropertyDto : eventMappingPropertyDtos) { %>
-                    <tr>
-                        <td class="property-names"><%=eventMappingPropertyDto.getName()%>
-                        </td>
-                        <td class="property-names"><%=eventMappingPropertyDto.getValueOf()%>
-                        </td>
-                        <td class="property-names"><%=eventMappingPropertyDto.getType()%>
-                        </td>
-                    </tr>
-                    <% } %>
+            <%
+                if (mappingType != null) {
+                    if (mappingType.equals("wso2event")) {
+            %>
+            <tr fromElementKey="inputWso2EventMapping">
+                <td colspan="2" class="middle-header">
+                    <fmt:message key="event.receiver.mapping.wso2event"/>
+                </td>
+            </tr>
 
-                </table>
-                <% } else { %>
-                <div class="noDataDiv-plain" id="noOutputMetaData">
-                    <fmt:message key="no.meta.defined.message"/>
-                </div>
-                <% } %>
-            </td>
-        </tr>
+            <tr fromElementKey="inputWso2EventMapping">
+                <td colspan="2">
 
+                    <h6><fmt:message key="wso2event.mapping.header"/></h6>
+                    <table class="styledLeft noBorders spacer-bot"
+                           id="inputWso2EventDataTable">
+                        <thead>
+                        <th class="leftCol-med"><fmt:message
+                                key="event.receiver.property.name"/></th>
+                        <th class="leftCol-med"><fmt:message
+                                key="event.receiver.property.inputtype"/></th>
+                        <th class="leftCol-med"><fmt:message
+                                key="event.receiver.property.valueof"/></th>
+                        <th class="leftCol-med"><fmt:message
+                                key="event.receiver.property.type"/></th>
+                        </thead>
+                        <tbody>
+                        <%
+                            for (EventMappingPropertyDto metaEbProperties : eventReceiverConfigurationDto.getMetaMappingPropertyDtos()) {
+                        %>
+                        <tr id="mappingRow">
+                            <td class="property-names"><%=metaEbProperties.getName()%>
+                            </td>
+                            <td class="property-names">
+                                <%="meta"%>
+                            </td>
+                            <td class="property-names"><%=metaEbProperties.getValueOf()%>
+                            </td>
+                            <td class="property-names"><%=metaEbProperties.getType()%>
+                            </td>
+                        </tr>
+                        <%
+                            }
+                        %>
+                        <%
+                            for (EventMappingPropertyDto correlationEbProperties : eventReceiverConfigurationDto.getCorrelationMappingPropertyDtos()) {
+                        %>
+                        <tr id="mappingRow">
+                            <td class="property-names"><%=correlationEbProperties.getName()%>
+                            </td>
+                            <td class="property-names">
+                                <%="correlation"%>
+                            </td>
+                            <td class="property-names"><%=correlationEbProperties.getValueOf()%>
+                            </td>
+                            <td class="property-names"><%=correlationEbProperties.getType()%>
+                            </td>
+                        </tr>
+                        <%
+                            }
+                        %>
+                        <%
+                            for (EventMappingPropertyDto payloadEbProperties : eventReceiverConfigurationDto.getMappingPropertyDtos()) {
+                        %>
+                        <tr id="mappingRow">
+                            <td class="property-names"><%=payloadEbProperties.getName()%>
+                            </td>
+                            <td class="property-names">
+                                <%="payload"%>
+                            </td>
+                            <td class="property-names"><%=payloadEbProperties.getValueOf()%>
+                            </td>
+                            <td class="property-names"><%=payloadEbProperties.getType()%>
+                            </td>
+                        </tr>
+                        <%
+                            }
+                        %>
+                        </tbody>
+                    </table>
+                </td>
+            </tr>
+            <%
+            } else if (mappingType.equals("xml")) {
+            %>
+            <tr fromElementKey="inputXmlMapping">
+                <td colspan="2" class="middle-header">
+                    <fmt:message key="event.receiver.mapping.xml"/>
+                </td>
+            </tr>
+            <tr fromElementKey="inputXmlMapping">
+                <td colspan="2">
 
-        <tr name="outputWSO2EventMapping">
-            <td colspan="2">
+                    <h6><fmt:message key="xpath.prefix.header"/></h6>
+                    <table class="styledLeft noBorders spacer-bot" id="inputXpathPrefixTable">
+                        <thead>
+                        <th class="leftCol-med"><fmt:message
+                                key="event.receiver.xpath.prefix"/></th>
+                        <th class="leftCol-med"><fmt:message
+                                key="event.receiver.xpath.ns"/></th>
+                        </thead>
+                        <tbody id="inputXpathPrefixTBody">
+                        <%
+                            if (eventReceiverConfigurationDto.getXpathDefinitionMappingPropertyDtos() != null) {
+                                for (EventMappingPropertyDto xpathDefinition : eventReceiverConfigurationDto.getXpathDefinitionMappingPropertyDtos()) {
+                        %>
+                        <tr>
+                            <td class="property-names"><%=xpathDefinition.getName()%>
+                            </td>
+                            <td class="property-names"><%=xpathDefinition.getValueOf()%>
+                            </td>
+                        </tr>
+                        <%
+                                }
+                            }
+                        %>
+                        </tbody>
+                    </table>
+                </td>
+            </tr>
+            <%
+                String parentSelectorXpathProperty = eventReceiverConfigurationDto.getParentSelectorXpath();
+            %>
+            <tr>
+                <td colspan="2">
+                    <table class="normal">
+                        <tbody>
+                        <tr>
+                            <td><fmt:message key="event.receiver.parentselector.xpath"/></td>
+                            <td><input type="text" id="batchProcessingEnabled"
+                                       value="<%=parentSelectorXpathProperty%>"
+                                       disabled/>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+            </tr>
 
-                <h6><fmt:message key="property.data.type.correlation"/></h6>
-                <% if (eventReceiverConfigurationDto.getWso2EventOutputMappingDto().getCorrelationWSO2EventMappingProperties() != null && eventReceiverConfigurationDto.getWso2EventOutputMappingDto().getCorrelationWSO2EventMappingProperties()[0] != null) { %>
-                <table class="styledLeft noBorders spacer-bot"
-                       id="outputCorrelationDataTable">
-                    <thead>
-                    <th class="leftCol-med"><fmt:message key="property.name"/></th>
-                    <th class="leftCol-med"><fmt:message key="property.value.of"/></th>
-                    <th class="leftCol-med"><fmt:message key="property.type"/></th>
-                    </thead>
-                    <% EventMappingPropertyDto[] eventMappingPropertyDtos = eventReceiverConfigurationDto.getWso2EventOutputMappingDto().getCorrelationWSO2EventMappingProperties();
-                        for (EventMappingPropertyDto eventMappingPropertyDto : eventMappingPropertyDtos) { %>
-                    <tr>
-                        <td class="property-names"><%=eventMappingPropertyDto.getName()%>
-                        </td>
-                        <td class="property-names"><%=eventMappingPropertyDto.getValueOf()%>
-                        </td>
-                        <td class="property-names"><%=eventMappingPropertyDto.getType()%>
-                        </td>
-                    </tr>
-                    <% } %>
-                </table>
-                <% } else {%>
-                <div class="noDataDiv-plain" id="noOutputCorrelationData">
-                    <fmt:message key="no.correlation.defined.message"/>
-                </div>
-                <% } %>
-            </td>
-        </tr>
+            <tr fromElementKey="inputXmlMapping">
+                <td colspan="2">
 
-        <tr name="outputWSO2EventMapping">
-            <td colspan="2">
-                <h6><fmt:message key="property.data.type.payload"/></h6>
-                <% if (eventReceiverConfigurationDto.getWso2EventOutputMappingDto().getPayloadWSO2EventMappingProperties() != null && eventReceiverConfigurationDto.getWso2EventOutputMappingDto().getPayloadWSO2EventMappingProperties()[0] != null) { %>
-                <table class="styledLeft noBorders spacer-bot"
-                       id="outputPayloadDataTable">
-                    <thead>
-                    <th class="leftCol-med"><fmt:message key="property.name"/></th>
-                    <th class="leftCol-med"><fmt:message key="property.value.of"/></th>
-                    <th class="leftCol-med"><fmt:message key="property.type"/></th>
-                    </thead>
-                    <% EventMappingPropertyDto[] eventMappingPropertyDtos = eventReceiverConfigurationDto.getWso2EventOutputMappingDto().getPayloadWSO2EventMappingProperties();
-                        for (EventMappingPropertyDto eventMappingPropertyDto : eventMappingPropertyDtos) { %>
-                    <tr>
-                        <td class="property-names"><%=eventMappingPropertyDto.getName()%>
-                        </td>
-                        <td class="property-names"><%=eventMappingPropertyDto.getValueOf()%>
-                        </td>
-                        <td class="property-names"><%=eventMappingPropertyDto.getType()%>
-                        </td>
-                    </tr>
-                    <% } %>
-                </table>
-                <% } else { %>
-                <div class="noDataDiv-plain" id="noOutputPayloadData">
-                    <fmt:message key="no.payload.defined.message"/>
-                </div>
-                <% } %>
-            </td>
-        </tr>
+                    <h6><fmt:message key="xpath.expression.header"/></h6>
+                    <table class="styledLeft noBorders spacer-bot"
+                           id="inputXpathExprTable">
+                        <thead>
+                        <th class="leftCol-med"><fmt:message
+                                key="event.receiver.property.xpath"/></th>
+                        <th class="leftCol-med"><fmt:message
+                                key="event.receiver.property.valueof"/></th>
+                        <th class="leftCol-med"><fmt:message
+                                key="event.receiver.property.type"/></th>
+                        <th class="leftCol-med"><fmt:message
+                                key="event.receiver.property.default"/></th>
+                        </thead>
+                        <tbody id="inputXpathExprTBody">
+                        <%
+                            for (EventMappingPropertyDto xpathExpressions : eventReceiverConfigurationDto.getMappingPropertyDtos()) {
+                        %>
+                        <tr>
+                            <td class="property-names"><%=xpathExpressions.getName()%>
+                            </td>
+                            <td class="property-names"><%=xpathExpressions.getValueOf()%>
+                            </td>
+                            <td class="property-names"><%=xpathExpressions.getType()%>
+                            </td>
+                            <td class="property-names"><%=xpathExpressions.getDefaultValue() != null ? xpathExpressions.getDefaultValue() : ""%>
+                            </td>
+                        </tr>
+                        <%
+                            }
+                        %>
+                        </tbody>
+                    </table>
+                </td>
+            </tr>
+            <%
+            } else if (mappingType.equals("map")) {
+            %>
+            <tr fromElementKey="inputMapMapping">
+                <td colspan="2" class="middle-header">
+                    <fmt:message key="event.receiver.mapping.map"/>
+                </td>
+            </tr>
+            <tr fromElementKey="inputMapMapping">
+                <td colspan="2">
 
-        </tbody>
-    </table>
-</div>
+                    <h6><fmt:message key="map.mapping.header"/></h6>
+                    <table class="styledLeft noBorders spacer-bot"
+                           id="inputMapDataTable">
+                        <thead>
+                        <th class="leftCol-med"><fmt:message
+                                key="event.receiver.property.name"/></th>
+                        <th class="leftCol-med"><fmt:message
+                                key="event.receiver.property.valueof"/></th>
+                        <th class="leftCol-med"><fmt:message
+                                key="event.receiver.property.type"/></th>
+                        <th class="leftCol-med"><fmt:message
+                                key="event.receiver.property.default"/></th>
+                        </thead>
+                        <tbody>
+                        <%
+                            for (EventMappingPropertyDto getMappingProperties : eventReceiverConfigurationDto.getMappingPropertyDtos()) {
+                        %>
+                        <tr>
+                            <td class="property-names"><%=getMappingProperties.getName()%>
+                            </td>
+                            <td class="property-names"><%=getMappingProperties.getValueOf()%>
+                            </td>
+                            <td class="property-names"><%=getMappingProperties.getType()%>
+                            </td>
+                            <td class="property-names"><%=getMappingProperties.getDefaultValue() != null ? getMappingProperties.getDefaultValue() : ""%>
+                            </td>
+                        </tr>
+                        <%
+                            }
+                        %>
+                        </tbody>
+                    </table>
+                </td>
+            </tr>
+            <%
 
-<%
-} else if (eventReceiverConfigurationDto.getMessageFormat().equalsIgnoreCase("text")) {
-%>
+            } else if (mappingType.equals("text")) {
+            %>
+            <tr fromElementKey="inputTextMapping">
+                <td colspan="2" class="middle-header">
+                    <fmt:message key="event.receiver.mapping.text"/>
+                </td>
+            </tr>
+            <tr fromElementKey="inputTextMapping">
+                <td colspan="2">
 
-<div id="innerDiv2">
-    <table class="styledLeft noBorders spacer-bot"
-           style="width:100%">
-        <tbody>
-        <tr name="outputTextMapping">
-            <td colspan="3" class="middle-header">
-                <fmt:message key="text.mapping"/>
-            </td>
-        </tr>
-        <% if (!(eventReceiverConfigurationDto.getTextOutputMappingDto().getRegistryResource())) {%>
-        <tr>
-            <td class="leftCol-med" colspan="1"><fmt:message key="output.mapping.content"/><span
-                    class="required">*</span></td>
-            <td colspan="2">
-                <input id="inline_text" type="radio" checked="checked" value="content"
-                       name="inline_text" disabled="disabled">
-                <label for="inline_text"><fmt:message key="inline.input"/></label>
-                <input id="registry_text" type="radio" value="reg" name="registry_text"
-                       disabled="disabled">
-                <label for="registry_text"><fmt:message key="registry.input"/></label>
-            </td>
-        </tr>
-        <tr name="outputTextMappingInline" id="outputTextMappingInline">
-            <td colspan="3">
-                <p>
-                    <textarea id="textSourceText" name="textSourceText"
-                              style="border:solid 1px rgb(204, 204, 204); width: 99%;
-    height: 150px; margin-top: 5px;"
-                              name="textSource"
-                              rows="30"
-                              disabled="disabled"><%= eventReceiverConfigurationDto.getTextOutputMappingDto().getMappingText() %>
-                    </textarea>
-                </p>
-            </td>
-        </tr>
-        <% } else { %>
-        <tr>
-            <td colspan="1" class="leftCol-med"><fmt:message key="output.mapping.content"/><span
-                    class="required">*</span></td>
-            <td colspan="2">
-                <input id="inline_text_reg" type="radio" value="content"
-                       name="inline_text" disabled="disabled">
-                <label for="inline_text_reg"><fmt:message key="inline.input"/></label>
-                <input id="registry_text_reg" type="radio" value="reg" name="registry_text"
-                       disabled="disabled" checked="checked">
-                <label for="registry_text_reg"><fmt:message key="registry.input"/></label>
-            </td>
-        </tr>
-        <tr name="outputTextMappingRegistry" id="outputTextMappingRegistry">
-            <td class="leftCol-med" colspan="1"><fmt:message key="resource.path"/><span
-                    class="required">*</span></td>
-            <td colspan="1">
-                <input type="text" id="textSourceRegistry" disabled="disabled" class="initE"
-                       value="<%=eventReceiverConfigurationDto.getTextOutputMappingDto().getMappingText() !=null ? eventReceiverConfigurationDto.getTextOutputMappingDto().getMappingText() : ""%>"
-                       style="width:100%"/>
-            </td>
+                    <h6><fmt:message key="text.mapping.header"/></h6>
+                    <table class="styledLeft noBorders spacer-bot"
+                           id="inputTextMappingTable">
+                        <thead>
+                        <th class="leftCol-med"><fmt:message
+                                key="event.receiver.property.regex"/></th>
+                        <th class="leftCol-med"><fmt:message
+                                key="event.receiver.property.valueof"/></th>
+                        <th class="leftCol-med"><fmt:message
+                                key="event.receiver.property.type"/></th>
+                        <th class="leftCol-med"><fmt:message
+                                key="event.receiver.property.default"/></th>
+                        </thead>
+                        <tbody id="inputTextMappingTBody">
+                        <%
+                            for (EventMappingPropertyDto eventReceiverMessagePropertyDto : eventReceiverConfigurationDto.getMappingPropertyDtos()) {
+                        %>
+                        <tr>
+                            <td class="property-names"><%=eventReceiverMessagePropertyDto.getName()%>
+                            </td>
+                            <td class="property-names"><%=eventReceiverMessagePropertyDto.getValueOf()%>
+                            </td>
+                            <td class="property-names"><%=eventReceiverMessagePropertyDto.getType()%>
+                            </td>
+                            <td class="property-names"><%=eventReceiverMessagePropertyDto.getDefaultValue() != null ? eventReceiverMessagePropertyDto.getDefaultValue() : ""%>
+                            </td>
+                        </tr>
+                        <%
+                            }
+                        %>
 
-            <td class="nopadding" style="border:none" colspan="1">
-                <a href="#registryBrowserLink" class="registry-picker-icon-link"
-                   style="padding-left:20px"><fmt:message
-                        key="conf.registry"/></a>
-                <a href="#registryBrowserLink"
-                   class="registry-picker-icon-link"
-                   style="padding-left:20px"><fmt:message
-                        key="gov.registry"/></a>
-            </td>
-        </tr>
-        <% } %>
-        </tbody>
-    </table>
-</div>
+                        </tbody>
+                    </table>
+                </td>
+            </tr>
+            <%
+            } else if (mappingType.equals("json")) {
+            %>
+            <tr fromElementKey="inputJsonMapping">
+                <td colspan="2" class="middle-header">
+                    <fmt:message key="event.receiver.mapping.json"/>
+                </td>
+            </tr>
+            <tr fromElementKey="inputJsonMapping">
+                <td colspan="2">
 
-<%
-} else if (eventReceiverConfigurationDto.getMessageFormat().equalsIgnoreCase("xml")) {
-%>
-
-<div id="innerDiv3">
-    <table class="styledLeft noBorders spacer-bot"
-           style="width:100%">
-        <tbody>
-        <tr name="outputXMLMapping">
-            <td colspan="3" class="middle-header">
-                <fmt:message key="xml.mapping"/>
-            </td>
-        </tr>
-        <% if (!eventReceiverConfigurationDto.getXmlOutputMappingDto().getRegistryResource()) { %>
-        <tr>
-            <td colspan="1" class="leftCol-med"><fmt:message key="output.mapping.content"/><span
-                    class="required">*</span></td>
-            <td colspan="2">
-                <input id="inline_xml" type="radio" checked="checked" value="content"
-                       name="inline_xml" disabled="disabled">
-                <label for="inline_xml"><fmt:message key="inline.input"/></label>
-                <input id="registry_xml" type="radio" value="reg" name="registry_xml"
-                       disabled="disabled">
-                <label for="registry_xml"><fmt:message key="registry.input"/></label>
-            </td>
-        </tr>
-        <tr name="outputXMLMappingInline" id="outputXMLMappingInline">
-            <td colspan="3">
-                <p>
-                    <textarea id="xmlSourceText"
-                              style="border:solid 1px rgb(204, 204, 204); width: 99%;
-                                     height: 150px; margin-top: 5px;"
-                              name="xmlSource"
-                              rows="30"
-                              disabled="disabled"><%=eventReceiverConfigurationDto.getXmlOutputMappingDto().getMappingXMLText() != null ? eventReceiverConfigurationDto.getXmlOutputMappingDto().getMappingXMLText() : ""%>
-                    </textarea>
-                </p>
-            </td>
-        </tr>
-        <% } else { %>
-        <tr>
-            <td colspan="1" class="leftCol-med"><fmt:message key="output.mapping.content"/><span
-                    class="required">*</span></td>
-            <td colspan="2">
-                <input id="inline_xml_reg" type="radio" value="content"
-                       name="inline_xml" disabled="disabled">
-                <label for="inline_xml_reg"><fmt:message key="inline.input"/></label>
-                <input id="registry_xml_reg" type="radio" value="reg" name="registry_xml"
-                       disabled="disabled" checked="checked">
-                <label for="registry_xml_reg"><fmt:message key="registry.input"/></label>
-            </td>
-        </tr>
-        <tr name="outputXMLMappingRegistry" id="outputXMLMappingRegistry">
-            <td class="leftCol-med" colspan="1"><fmt:message key="resource.path"/><span
-                    class="required">*</span></td>
-            <td colspan="1">
-                <input type="text" id="xmlSourceRegistry" disabled="disabled" class="initE" value=""
-                       style="width:100%"/>
-            </td>
-            <td class="nopadding" style="border:none" colspan="1">
-                <a href="#registryBrowserLink" class="registry-picker-icon-link"
-                   style="padding-left:20px"><fmt:message
-                        key="conf.registry"/></a>
-                <a href="#registryBrowserLink"
-                   class="registry-picker-icon-link"
-                   style="padding-left:20px"><fmt:message
-                        key="gov.registry"/></a>
-            </td>
-        </tr>
-        <% } %>
-        </tbody>
-    </table>
-</div>
-
-<%
-} else if (eventReceiverConfigurationDto.getMessageFormat().equalsIgnoreCase("map")) {
-%>
-
-<div id="innerDiv4">
-    <table class="styledLeft noBorders spacer-bot"
-           style="width:100%">
-        <tbody>
-        <tr name="outputMapMapping">
-            <td colspan="2" class="middle-header">
-                <fmt:message key="map.mapping"/>
-            </td>
-        </tr>
-        <% if (eventReceiverConfigurationDto.getMapOutputMappingDto().getEventMappingProperties() != null && eventReceiverConfigurationDto.getMapOutputMappingDto().getEventMappingProperties()[0] != null) { %>
-        <tr name="outputMapMapping">
-            <td colspan="2">
-                <table class="styledLeft noBorders spacer-bot" id="outputMapPropertiesTable">
-                    <thead>
-                    <th class="leftCol-med"><fmt:message key="property.name"/></th>
-                    <th class="leftCol-med"><fmt:message key="property.value.of"/></th>
-                    </thead>
-                    <% EventMappingPropertyDto[] eventMappingPropertyDtos = eventReceiverConfigurationDto.getMapOutputMappingDto().getEventMappingProperties();
-                        for (EventMappingPropertyDto eventMappingPropertyDto : eventMappingPropertyDtos) { %>
-                    <tr>
-                        <td class="property-names"><%=eventMappingPropertyDto.getName()%>
-                        </td>
-                        <td class="property-names"><%=eventMappingPropertyDto.getValueOf()%>
-                        </td>
-                    </tr>
-                    <% } %>
-                </table>
-                <% } else { %>
-                <div class="noDataDiv-plain" id="noOutputMapProperties">
-                    <fmt:message key="no.map.properties.defined"/>
-                </div>
-                <% } %>
-            </td>
-        </tr>
-
-        </tbody>
-    </table>
-</div>
-<%
-} else if (eventReceiverConfigurationDto.getMessageFormat().equalsIgnoreCase("json")) {
-%>
-
-<div id="innerDiv5">
-    <table class="styledLeft noBorders spacer-bot"
-           style="width:100%">
-        <tbody>
-        <tr name="outputJSONMapping">
-            <td colspan="3" class="middle-header">
-                <fmt:message key="json.mapping"/>
-            </td>
-        </tr>
-        <% if (!eventReceiverConfigurationDto.getJsonOutputMappingDto().getRegistryResource()) { %>
-        <tr>
-            <td colspan="1" class="leftCol-med"><fmt:message key="output.mapping.content"/><span
-                    class="required">*</span></td>
-            <td colspan="2">
-                <input id="inline_json" type="radio" checked="checked" value="content"
-                       name="inline_json" disabled="disabled">
-                <label for="inline_json"><fmt:message key="inline.input"/></label>
-                <input id="registry_json" type="radio" value="reg" name="registry_json"
-                       disabled="disabled">
-                <label for="registry_json"><fmt:message key="registry.input"/></label>
-            </td>
-        </tr>
-        <tr name="outputJSONMappingInline" id="outputJSONMappingInline">
-            <td colspan="3">
-                <p>
-                    <textarea id="jsonSourceText"
-                              style="border:solid 1px rgb(204, 204, 204); width: 99%;
-                                     height: 150px; margin-top: 5px;"
-                              name="jsonSource"
-                              rows="30"
-                              disabled="disabled"><%=eventReceiverConfigurationDto.getJsonOutputMappingDto().getMappingText()!=null ? eventReceiverConfigurationDto.getJsonOutputMappingDto().getMappingText() : ""%>
-                    </textarea>
-                </p>
-            </td>
-        </tr>
-        <% } else { %>
-        <tr>
-            <td colspan="1" class="leftCol-med"><fmt:message key="output.mapping.content"/><span
-                    class="required">*</span></td>
-            <td colspan="2">
-                <input id="inline_json_text" type="radio" value="content"
-                       name="inline_json_text" disabled="disabled">
-                <label for="inline_json_text"><fmt:message key="inline.input"/></label>
-                <input id="registry_json_reg" type="radio" value="reg" name="registry_json"
-                       disabled="disabled" checked="checked">
-                <label for="registry_json_reg"><fmt:message key="registry.input"/></label>
-            </td>
-        </tr>
-        <tr name="outputJSONMappingRegistry" id="outputJSONMappingRegistry">
-            <td class="leftCol-med" colspan="1"><fmt:message key="resource.path"/><span
-                    class="required">*</span></td>
-            <td colspan="1">
-                <input type="text" id="jsonSourceRegistry" disabled="disabled" class="initE"
-                       value="<%=eventReceiverConfigurationDto.getJsonOutputMappingDto().getMappingText() != null ? eventReceiverConfigurationDto.getJsonOutputMappingDto().getMappingText() : ""%>"
-                       style="width:100%"/>
-            </td>
-            <td colspan="1" class="nopadding" style="border:none">
-                <a href="#registryBrowserLink" class="registry-picker-icon-link"
-                   style="padding-left:20px"><fmt:message
-                        key="conf.registry"/></a>
-                <a href="#registryBrowserLink"
-                   class="registry-picker-icon-link"
-                   style="padding-left:20px"><fmt:message
-                        key="gov.registry"/></a>
-            </td>
-        </tr>
-        <% } %>
-        </tbody>
-    </table>
-</div>
-
-<%
-    }
-%>
-
-</div>
-</td>
+                    <h6><fmt:message key="jsonpath.expression.header"/></h6>
+                    <table class="styledLeft noBorders spacer-bot"
+                           id="inputJsonpathExprTable">
+                        <thead>
+                        <th class="leftCol-med"><fmt:message
+                                key="event.receiver.property.jsonpath"/></th>
+                        <th class="leftCol-med"><fmt:message
+                                key="event.receiver.property.valueof"/></th>
+                        <th class="leftCol-med"><fmt:message
+                                key="event.receiver.property.type"/></th>
+                        <th class="leftCol-med"><fmt:message
+                                key="event.receiver.property.default"/></th>
+                        </thead>
+                        <tbody id="inputJsonpathExprTBody">
+                        <%
+                            for (EventMappingPropertyDto jsonpathExpressions : eventReceiverConfigurationDto.getMappingPropertyDtos()) {
+                        %>
+                        <tr>
+                            <td class="property-names"><%=jsonpathExpressions.getName()%>
+                            </td>
+                            <td class="property-names"><%=jsonpathExpressions.getValueOf()%>
+                            </td>
+                            <td class="property-names"><%=jsonpathExpressions.getType()%>
+                            </td>
+                            <td class="property-names"><%=jsonpathExpressions.getDefaultValue() != null ? jsonpathExpressions.getDefaultValue() : ""%>
+                            </td>
+                        </tr>
+                        <%
+                            }
+                        %>
+                        </tbody>
+                    </table>
+                </td>
+            </tr>
+            <%
+                        }
+                    }
+                }
+            %>
+            </tbody>
+        </table>
+    </td>
 </tr>
 </tbody>
 </table>

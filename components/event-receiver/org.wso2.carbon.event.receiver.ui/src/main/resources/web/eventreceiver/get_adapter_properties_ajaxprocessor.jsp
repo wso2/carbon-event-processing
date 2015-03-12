@@ -16,22 +16,20 @@
 <%@ page
         import="org.wso2.carbon.event.receiver.stub.EventReceiverAdminServiceStub" %>
 <%@ page
-        import="org.wso2.carbon.event.receiver.stub.types.EventReceiverConfigurationDto" %>
+        import="org.wso2.carbon.event.receiver.stub.types.InputAdapterConfigurationDto" %>
 <%@ page import="org.wso2.carbon.event.receiver.ui.EventReceiverUIUtils" %>
 
 <%
-    // get Event Adapter properties
     EventReceiverAdminServiceStub stub = EventReceiverUIUtils.getEventReceiverAdminService(config, session, request);
     String eventAdapterType = request.getParameter("eventAdapterType");
-
+%>
+<%
     if (eventAdapterType != null) {
-        EventReceiverPropertyDto[] eventReceiverPropertiesDto = stub.getEventReceiverMessageProperties(eventAdapterType);
         String propertiesString = "";
-        propertiesString = new Gson().toJson(eventReceiverPropertiesDto);
-
+        InputAdapterConfigurationDto configurationDto = stub.getInputAdapterConfigurationSchema(eventAdapterType);
+        propertiesString = new Gson().toJson(configurationDto);
 
 %>
-
 
 <%=propertiesString%>
 <%

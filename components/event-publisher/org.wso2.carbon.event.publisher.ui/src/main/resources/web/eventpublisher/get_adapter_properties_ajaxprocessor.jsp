@@ -12,22 +12,26 @@
   ~ CONDITIONS OF ANY KIND, either express or implied.  See the License for the
   ~ specific language governing permissions and limitations under the License.
   --%>
-<%@ page import="org.wso2.carbon.event.receiver.ui.EventReceiverUIUtils" %>
+<%@ page import="com.google.gson.Gson" %>
 <%@ page
-        import="org.wso2.carbon.event.output.adapter.manager.stub.OutputEventAdapterManagerAdminServiceStub" %>
+        import="org.wso2.carbon.event.publisher.stub.EventPublisherAdminServiceStub" %>
+<%@ page import="org.wso2.carbon.event.publisher.ui.EventPublisherUIUtils" %>
+<%@ page import="org.wso2.carbon.event.publisher.stub.types.OutputAdapterConfigurationDto" %>
+
 <%
-    OutputEventAdapterManagerAdminServiceStub stub = EventReceiverUIUtils.getOutputEventManagerAdminService(config, session, request);
+    // get Event Adapter properties
+    EventPublisherAdminServiceStub stub = EventPublisherUIUtils.getEventPublisherAdminService(config, session, request);
     String eventAdapterType = request.getParameter("eventAdapterType");
-%>
-<%
+
     if (eventAdapterType != null) {
-        String supportedMappings = "";
-        String[] mappingTypes = stub.getSupportedMappingTypes(eventAdapterType);
-        for (String mappingType : mappingTypes) {
-            supportedMappings = supportedMappings + "|=" + mappingType;
-        }
+        OutputAdapterConfigurationDto eventPublisherPropertiesDto = stub.getOutputAdapterConfigurationSchema(eventAdapterType);
+        String propertiesString = "";
+        propertiesString = new Gson().toJson(eventPublisherPropertiesDto);
+
+
 %>
-<%=supportedMappings%>
+<%=propertiesString%>
 <%
     }
+
 %>

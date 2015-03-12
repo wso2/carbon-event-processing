@@ -84,7 +84,7 @@
                 /permission/admin/manage/event-publish
             </parameter>
         </operation>
-        <operation name="deployWSO2EventReceiverConfiguration">
+        <operation name="deployWso2EventReceiverConfiguration">
             <parameter name="AuthorizationAction" locked="true">
                 /permission/admin/manage/event-publish
             </parameter>

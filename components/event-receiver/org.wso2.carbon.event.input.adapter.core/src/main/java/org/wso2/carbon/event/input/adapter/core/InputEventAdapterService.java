@@ -45,14 +45,13 @@ public interface InputEventAdapterService {
     InputEventAdapterSchema getInputEventAdapterSchema(String eventAdapterType);
 
 
-    void create(InputEventAdapterConfiguration inputEventAdapterConfiguration, InputEventAdapterSubscription inputEventAdapterSubscription, int tenantId) throws InputEventAdapterException;
+    void create(InputEventAdapterConfiguration inputEventAdapterConfiguration, InputEventAdapterSubscription inputEventAdapterSubscription) throws InputEventAdapterException;
 
     /**
      * publish testConnect message using the given event adapter.
-     *
      * @param inputEventAdapterConfiguration - Configuration Details of the event adapter
      */
     void testConnection(InputEventAdapterConfiguration inputEventAdapterConfiguration) throws InputEventAdapterException, TestConnectionNotSupportedException;
 
-    void destroy(String name, int tenantId);
+    void destroy(String name);
 }

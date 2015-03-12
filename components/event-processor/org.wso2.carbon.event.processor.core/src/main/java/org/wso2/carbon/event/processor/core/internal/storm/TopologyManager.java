@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2005-2014, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
+ * Copyright (c) 2005-2015, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
  *
  *  WSO2 Inc. licenses this file to you under the Apache License,
  *  Version 2.0 (the "License"); you may not use this file except
@@ -30,12 +30,11 @@ import org.w3c.dom.Document;
 import org.wso2.carbon.event.processor.core.ExecutionPlanConfiguration;
 import org.wso2.carbon.event.processor.core.exception.ExecutionPlanConfigurationException;
 import org.wso2.carbon.event.processor.core.exception.StormDeploymentException;
+import org.wso2.carbon.event.processor.core.exception.StormQueryConstructionException;
 import org.wso2.carbon.event.processor.core.internal.ds.EventProcessorValueHolder;
 import org.wso2.carbon.event.processor.core.internal.storm.util.StormQueryPlanBuilder;
 import org.wso2.carbon.event.processor.core.internal.storm.util.StormTopologyConstructor;
 import org.wso2.carbon.utils.CarbonUtils;
-import org.wso2.siddhi.query.api.definition.AbstractDefinition;
-import org.wso2.siddhi.query.api.definition.StreamDefinition;
 import org.yaml.snakeyaml.Yaml;
 
 import javax.xml.stream.XMLStreamException;
@@ -48,7 +47,6 @@ import javax.xml.transform.stream.StreamResult;
 import java.io.*;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ConcurrentMap;
 
 /**
  * The Siddhi Topology Manager
@@ -132,17 +130,24 @@ public class TopologyManager {
     public static void submitTopology(ExecutionPlanConfiguration configuration, List<String> importStreams,
                                       List<String> exportStreams, int tenantId, int resubmitRetryInterval) throws
             StormDeploymentException, ExecutionPlanConfigurationException {
-        Document document = StormQueryPlanBuilder.constructStormQueryPlanXML(configuration, importStreams, exportStreams);
         String executionPlanName = configuration.getName();
         TopologyBuilder builder;
         try {
+            Document document = StormQueryPlanBuilder.constructStormQueryPlanXML(configuration, importStreams, exportStreams);
             String stormQueryPlan = getStringQueryPlan(document);
+            if (log.isDebugEnabled()) {
+                log.debug("Following is the generated Storm query plan for execution plan: " + configuration.getName() +
+                        "\n" + stormQueryPlan);
+            }
             builder = StormTopologyConstructor.constructTopologyBuilder(stormQueryPlan, executionPlanName, tenantId, EventProcessorValueHolder.getStormDeploymentConfig());
         } catch (XMLStreamException e) {
-            throw new ExecutionPlanConfigurationException("Invalid Config for Execution Plan " + executionPlanName + " for tenant " + tenantId, e);
+            throw new StormDeploymentException("Invalid Config for Execution Plan " + executionPlanName + " for tenant " + tenantId, e);
         } catch (TransformerException e) {
-            throw new ExecutionPlanConfigurationException("Error while converting to storm query plan string. " +
+            throw new StormDeploymentException("Error while converting to storm query plan string. " +
                     "Execution plan: " + executionPlanName + " Tenant: " + tenantId, e);
+        } catch (StormQueryConstructionException e) {
+            throw new StormDeploymentException("Error while converting to XML storm query plan. " +
+                    "Execution plan: " + executionPlanName + " Tenant: " + tenantId + ". " + e.getMessage(), e);
         }
 
         String uploadedJarLocation = StormSubmitter.submitJar(stormConfig, jarLocation);
@@ -245,7 +250,6 @@ public class TopologyManager {
 
         @Override
         public void run() {
-            //TODO : Make topology resubmission time configurable. Default =5s
             //TODO : Handle execution plan undeploy. Stop retrying.
             do {
                 log.info("Retrying to submit topology '" + getTopologyName(executionPlanName, tenantId) + "' in " + retryInterval + "ms");

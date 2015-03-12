@@ -10,19 +10,14 @@ import org.wso2.carbon.application.deployer.AppDeployerConstants;
 import org.wso2.carbon.application.deployer.AppDeployerUtils;
 import org.wso2.carbon.application.deployer.CarbonApplication;
 import org.wso2.carbon.event.processing.application.deployer.internal.EventProcessingAppDeployerDS;
-import org.wso2.carbon.event.processing.application.deployer.internal.ServiceHolder;
 import org.wso2.carbon.application.deployer.config.Artifact;
 import org.wso2.carbon.application.deployer.config.CappFile;
 import org.wso2.carbon.application.deployer.handler.AppDeploymentHandler;
-import org.wso2.carbon.context.PrivilegedCarbonContext;
-import org.wso2.carbon.databridge.commons.StreamDefinition;
-import org.wso2.carbon.databridge.commons.utils.EventDefinitionConverterUtils;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.Scanner;
 
 
 public class EventProcessingAppDeployer implements AppDeploymentHandler {
@@ -57,8 +52,9 @@ public class EventProcessingAppDeployer implements AppDeploymentHandler {
         }
 
         try {
-            deployEventStreams();
-
+            //deployEventStreams();
+            deployTypeSpecifiedArtifacts(eventStreams, axisConfig,
+                    EventProcessingAppDeployerConstants.CEP_EVENT_STREAM_DIR, EventProcessingAppDeployerConstants.FILE_TYPE_JSON);
             deployTypeSpecifiedArtifacts(inputEventAdaptors, axisConfig,
                     EventProcessingAppDeployerConstants.CEP_INPUT_EVENT_ADAPTOR_DIR, EventProcessingAppDeployerConstants.FILE_TYPE_XML);
             deployTypeSpecifiedArtifacts(eventBuilders, axisConfig, EventProcessingAppDeployerConstants.CEP_EVENT_BUILDER_DIR,
@@ -79,13 +75,13 @@ public class EventProcessingAppDeployer implements AppDeploymentHandler {
         }
     }
 
-    private void deployEventStreams() throws DeploymentException {
+    /*private void deployEventStreams() throws DeploymentException {
         for(Artifact artifact: eventStreams) {
             String path = artifact.getExtractedPath() + File.separator + artifact.getFiles().get(0).getName();
             try {
                 String content = new Scanner(new File(path)).useDelimiter("\\Z").next();
                 StreamDefinition streamDefinition = EventDefinitionConverterUtils.convertFromJson(content);
-                ServiceHolder.getEventStreamStoreService().saveStreamDefinition(streamDefinition,
+                ServiceHolder.getEventStreamStoreService().addEventStreamDefinition(streamDefinition,
                         PrivilegedCarbonContext.getThreadLocalCarbonContext().getTenantId());
             } catch (Exception e) {
                 artifact.setDeploymentStatus(AppDeployerConstants.DEPLOYMENT_STATUS_FAILED);
@@ -94,7 +90,7 @@ public class EventProcessingAppDeployer implements AppDeploymentHandler {
                         + artifact.getName() + " due to " + e.getMessage(), e);
             }
         }
-    }
+    }*/
 
     private void deployTypeSpecifiedArtifacts(List<Artifact> artifacts, AxisConfiguration axisConfig, String directory,
                                               String fileType) throws DeploymentException {
@@ -174,20 +170,6 @@ public class EventProcessingAppDeployer implements AppDeploymentHandler {
                     artifact.setDeploymentStatus(AppDeployerConstants.DEPLOYMENT_STATUS_FAILED);
                     log.error("Error occured while trying to undeploy : " + artifact.getName() + " due to " + e.getMessage(), e);
                 }
-            } else if(EventProcessingAppDeployerConstants.CEP_EVENT_STREAM_TYPE.equals(artifact.getType()) /*second condition to be added*/) {
-                StreamDefinition streamDefinition;
-                try {
-                    String path = artifact.getExtractedPath() + File.separator + artifact.getFiles().get(0).getName();
-                    String content = new Scanner(new File(path)).useDelimiter("\\Z").next();
-                    streamDefinition = EventDefinitionConverterUtils.convertFromJson(content);
-                    ServiceHolder.getEventStreamStoreService().deleteStreamDefinition(
-                            streamDefinition.getName(),
-                            streamDefinition.getVersion(),
-                            PrivilegedCarbonContext.getThreadLocalCarbonContext().getTenantId());
-                } catch (Exception e) {
-                    artifact.setDeploymentStatus(AppDeployerConstants.DEPLOYMENT_STATUS_FAILED);
-                    log.error("Error occured while trying to undeploy : " + artifact.getName() + " due to " + e.getMessage(), e);
-                }
             }
         }
     }
@@ -204,6 +186,8 @@ public class EventProcessingAppDeployer implements AppDeploymentHandler {
             deployer =  AppDeployerUtils.getArtifactDeployer(axisConfig, EventProcessingAppDeployerConstants.CEP_INPUT_EVENT_ADAPTOR_DIR, "xml");
         } else if(EventProcessingAppDeployerConstants.CEP_OUTPUT_EVENT_ADAPTOR_TYPE.equals(artifact.getType())) {
             deployer =  AppDeployerUtils.getArtifactDeployer(axisConfig, EventProcessingAppDeployerConstants.CEP_OUTPUT_EVENT_ADAPTOR_DIR, "xml");
+        } else if (EventProcessingAppDeployerConstants.CEP_EVENT_STREAM_TYPE.equals(artifact.getType())) {
+            deployer =  AppDeployerUtils.getArtifactDeployer(axisConfig, EventProcessingAppDeployerConstants.CEP_EVENT_STREAM_DIR, "json");
         } else {
             deployer = null;
         }

@@ -86,7 +86,7 @@ public class TextOutputMapper implements OutputMapper {
         TextOutputMapping textOutputMapping = ((TextOutputMapping) eventPublisherConfiguration.getOutputMapping());
         String actualMappingText = textOutputMapping.getMappingText();
         if (textOutputMapping.isRegistryResource()) {
-            actualMappingText = EventPublisherServiceValueHolder.getCarbonEventPublisherService().getRegistryResourceContent(textOutputMapping.getMappingText(), tenantId);
+            actualMappingText = EventPublisherServiceValueHolder.getCarbonEventPublisherService().getRegistryResourceContent(textOutputMapping.getMappingText());
         }
 
         setMappingTextList(actualMappingText);

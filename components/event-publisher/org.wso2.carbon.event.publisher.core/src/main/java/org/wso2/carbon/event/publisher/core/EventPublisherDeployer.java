@@ -21,7 +21,6 @@ import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.deployment.AbstractDeployer;
 import org.apache.axis2.deployment.DeploymentException;
 import org.apache.axis2.deployment.repository.util.DeploymentFileData;
-import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.wso2.carbon.context.PrivilegedCarbonContext;
@@ -147,7 +146,6 @@ public class EventPublisherDeployer extends AbstractDeployer implements EventPro
 
         File eventPublisherFile = deploymentFileData.getFile();
         boolean isEditable = !eventPublisherFile.getAbsolutePath().contains(File.separator + "carbonapps" + File.separator);
-        AxisConfiguration axisConfiguration = configurationContext.getAxisConfiguration();
         CarbonEventPublisherService carbonEventPublisherService = EventPublisherServiceValueHolder.getCarbonEventPublisherService();
         int tenantId = PrivilegedCarbonContext.getThreadLocalCarbonContext().getTenantId();
         String eventPublisherName = "";
@@ -169,7 +167,7 @@ public class EventPublisherDeployer extends AbstractDeployer implements EventPro
                     if (!carbonEventPublisherService.isEventPublisherAlreadyExists(tenantId, eventPublisherName)) {
                         carbonEventPublisherService.addEventPublisherConfiguration(eventPublisherConfiguration);
                         carbonEventPublisherService.addEventPublisherConfigurationFile(createEventPublisherConfigurationFile(eventPublisherName,
-                                deploymentFileData.getFile(), EventPublisherConfigurationFile.Status.DEPLOYED, axisConfiguration, null, null), tenantId);
+                                deploymentFileData.getFile(), EventPublisherConfigurationFile.Status.DEPLOYED, tenantId, null, null), tenantId);
                         log.info("Event Publisher configuration successfully deployed and in active state : " + eventPublisherName);
                     } else {
                         throw new EventPublisherConfigurationException("Event Publisher not deployed and in inactive state," +
@@ -182,20 +180,20 @@ public class EventPublisherDeployer extends AbstractDeployer implements EventPro
             } catch (EventPublisherConfigurationException ex) {
                 log.error("Error, Event Publisher not deployed and in inactive state, " + ex.getMessage(), ex);
                 carbonEventPublisherService.addEventPublisherConfigurationFile(createEventPublisherConfigurationFile(eventPublisherName, deploymentFileData.getFile(),
-                        EventPublisherConfigurationFile.Status.ERROR, null, "Exception when deploying event publisher configuration file:\n" + ex.getMessage(), null), tenantId);
+                        EventPublisherConfigurationFile.Status.ERROR, tenantId, "Exception when deploying event publisher configuration file:\n" + ex.getMessage(), null), tenantId);
                 throw new EventPublisherConfigurationException(ex.getMessage(), ex);
             } catch (EventPublisherValidationException ex) {
                 carbonEventPublisherService.addEventPublisherConfigurationFile(createEventPublisherConfigurationFile(eventPublisherName, deploymentFileData.getFile(),
-                        EventPublisherConfigurationFile.Status.WAITING_FOR_DEPENDENCY, axisConfiguration, ex.getMessage(), ex.getDependency()), tenantId);
+                        EventPublisherConfigurationFile.Status.WAITING_FOR_DEPENDENCY, tenantId, ex.getMessage(), ex.getDependency()), tenantId);
                 log.info("Event Publisher deployment held back and in inactive state : " + eventPublisherFile.getName() + ", waiting for Output Event Adapter dependency : " + ex.getDependency());
             } catch (EventPublisherStreamValidationException e) {
                 carbonEventPublisherService.addEventPublisherConfigurationFile(createEventPublisherConfigurationFile(eventPublisherName, deploymentFileData.getFile(),
-                        EventPublisherConfigurationFile.Status.WAITING_FOR_STREAM_DEPENDENCY, axisConfiguration, e.getMessage(), e.getDependency()), tenantId);
+                        EventPublisherConfigurationFile.Status.WAITING_FOR_STREAM_DEPENDENCY, tenantId, e.getMessage(), e.getDependency()), tenantId);
                 log.info("Event Publisher deployment held back and in inactive state :" + eventPublisherFile.getName() + ", Stream validation exception : " + e.getMessage());
             } catch (Throwable e) {
                 log.error("Event Publisher not deployed, invalid configuration found at " + eventPublisherFile.getName() + ", and in inactive state, " + e.getMessage(), e);
                 carbonEventPublisherService.addEventPublisherConfigurationFile(createEventPublisherConfigurationFile(eventPublisherName,
-                        deploymentFileData.getFile(), EventPublisherConfigurationFile.Status.ERROR, null, "Deployment exception: " + e.getMessage(), null), tenantId);
+                        deploymentFileData.getFile(), EventPublisherConfigurationFile.Status.ERROR, tenantId, "Deployment exception: " + e.getMessage(), null), tenantId);
                 throw new EventPublisherConfigurationException(e);
             }
         } else {
@@ -229,7 +227,7 @@ public class EventPublisherDeployer extends AbstractDeployer implements EventPro
             String eventPublisherName,
             File file,
             EventPublisherConfigurationFile.Status status,
-            AxisConfiguration axisConfiguration,
+            int tenantId,
             String deploymentStatusMessage,
             String dependency) {
         EventPublisherConfigurationFile eventPublisherConfigurationFile = new EventPublisherConfigurationFile();
@@ -239,7 +237,7 @@ public class EventPublisherDeployer extends AbstractDeployer implements EventPro
         eventPublisherConfigurationFile.setStatus(status);
         eventPublisherConfigurationFile.setDependency(dependency);
         eventPublisherConfigurationFile.setDeploymentStatusMessage(deploymentStatusMessage);
-        eventPublisherConfigurationFile.setAxisConfiguration(axisConfiguration);
+        eventPublisherConfigurationFile.setTenantId(tenantId);
 
         return eventPublisherConfigurationFile;
     }
