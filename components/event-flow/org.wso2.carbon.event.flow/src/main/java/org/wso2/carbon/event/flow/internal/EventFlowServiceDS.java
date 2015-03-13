@@ -24,12 +24,12 @@ import org.osgi.service.component.ComponentContext;
 import org.wso2.carbon.event.processor.core.EventProcessorService;
 import org.wso2.carbon.event.publisher.core.EventPublisherService;
 import org.wso2.carbon.event.receiver.core.EventReceiverService;
-import org.wso2.carbon.event.stream.manager.core.EventStreamService;
+import org.wso2.carbon.event.stream.core.EventStreamService;
 
 /**
  * @scr.component name="eventFlowService.component" immediate="true"
  * @scr.reference name="eventStreamManager.service"
- * interface="org.wso2.carbon.event.stream.manager.core.EventStreamService" cardinality="1..1"
+ * interface="org.wso2.carbon.event.stream.core.EventStreamService" cardinality="1..1"
  * policy="dynamic" bind="setEventStreamService" unbind="unsetEventStreamService"
  * @scr.reference name="eventProcessor.service"
  * interface="org.wso2.carbon.event.processor.core.EventProcessorService" cardinality="1..1"

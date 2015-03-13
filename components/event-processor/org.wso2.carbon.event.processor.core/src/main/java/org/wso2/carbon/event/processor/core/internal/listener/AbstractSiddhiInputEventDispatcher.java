@@ -24,7 +24,7 @@ import org.wso2.carbon.event.processor.core.ExecutionPlanConfiguration;
 import org.wso2.carbon.event.processor.core.internal.ds.EventProcessorValueHolder;
 import org.wso2.carbon.event.processor.core.internal.util.EventProcessorConstants;
 import org.wso2.carbon.event.statistics.EventStatisticsMonitor;
-import org.wso2.carbon.event.stream.manager.core.SiddhiEventConsumer;
+import org.wso2.carbon.event.stream.core.SiddhiEventConsumer;
 import org.wso2.siddhi.core.event.Event;
 
 import java.util.Arrays;

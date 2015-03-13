@@ -24,7 +24,7 @@
 <%@ page import="org.wso2.carbon.event.processor.stub.types.StreamConfigurationDto" %>
 <%@ page import="org.wso2.carbon.event.processor.ui.EventProcessorUIUtils" %>
 <%@ page import="org.wso2.carbon.event.processor.ui.UIConstants" %>
-<%@ page import="org.wso2.carbon.event.stream.manager.stub.EventStreamAdminServiceStub" %>
+<%@ page import="org.wso2.carbon.event.stream.stub.EventStreamAdminServiceStub" %>
 
 
 <fmt:bundle basename="org.wso2.carbon.event.processor.ui.i18n.Resources">

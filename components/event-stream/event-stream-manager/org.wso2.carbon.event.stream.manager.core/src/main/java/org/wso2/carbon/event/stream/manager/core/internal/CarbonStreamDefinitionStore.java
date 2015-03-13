@@ -1,4 +1,4 @@
-package org.wso2.carbon.event.stream.manager.core.internal;
+package org.wso2.carbon.event.stream.core.internal;
 
 import com.hazelcast.core.*;
 import org.apache.commons.logging.Log;
@@ -7,12 +7,12 @@ import org.wso2.carbon.core.multitenancy.utils.TenantAxisUtils;
 import org.wso2.carbon.databridge.commons.StreamDefinition;
 import org.wso2.carbon.databridge.commons.exception.MalformedStreamDefinitionException;
 import org.wso2.carbon.databridge.commons.utils.EventDefinitionConverterUtils;
-import org.wso2.carbon.event.stream.manager.core.StreamDefinitionStore;
-import org.wso2.carbon.event.stream.manager.core.exception.StreamDefinitionNotFoundException;
-import org.wso2.carbon.event.stream.manager.core.exception.StreamDefinitionStoreException;
-import org.wso2.carbon.event.stream.manager.core.internal.ds.EventStreamServiceValueHolder;
-import org.wso2.carbon.event.stream.manager.core.internal.stream.StreamAddRemoveListener;
-import org.wso2.carbon.event.stream.manager.core.internal.util.RegistryStreamDefinitionStoreUtil;
+import org.wso2.carbon.event.stream.core.StreamDefinitionStore;
+import org.wso2.carbon.event.stream.core.exception.StreamDefinitionNotFoundException;
+import org.wso2.carbon.event.stream.core.exception.StreamDefinitionStoreException;
+import org.wso2.carbon.event.stream.core.internal.ds.EventStreamServiceValueHolder;
+import org.wso2.carbon.event.stream.core.internal.stream.StreamAddRemoveListener;
+import org.wso2.carbon.event.stream.core.internal.util.RegistryStreamDefinitionStoreUtil;
 import org.wso2.carbon.registry.core.Resource;
 import org.wso2.carbon.registry.core.exceptions.RegistryException;
 import org.wso2.carbon.registry.core.session.UserRegistry;

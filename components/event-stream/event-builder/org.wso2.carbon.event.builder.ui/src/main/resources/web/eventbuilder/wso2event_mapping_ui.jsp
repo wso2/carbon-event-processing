@@ -17,9 +17,9 @@
 --%>
 <%@ page import="org.wso2.carbon.event.builder.ui.EventBuilderUIConstants" %>
 <%@ page import="org.wso2.carbon.event.builder.ui.EventBuilderUIUtils" %>
-<%@ page import="org.wso2.carbon.event.stream.manager.stub.EventStreamAdminServiceStub" %>
-<%@ page import="org.wso2.carbon.event.stream.manager.stub.types.EventStreamAttributeDto" %>
-<%@ page import="org.wso2.carbon.event.stream.manager.stub.types.EventStreamDefinitionDto" %>
+<%@ page import="org.wso2.carbon.event.stream.stub.EventStreamAdminServiceStub" %>
+<%@ page import="org.wso2.carbon.event.stream.stub.types.EventStreamAttributeDto" %>
+<%@ page import="org.wso2.carbon.event.stream.stub.types.EventStreamDefinitionDto" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 
 <fmt:bundle basename="org.wso2.carbon.event.builder.ui.i18n.Resources">

@@ -56,7 +56,7 @@
                         </goals>
                         <configuration>
                             <id>org.wso2.carbon.event.flow.server</id>
-                            <propertiesFile>../../../../etc/feature.properties</propertiesFile>
+                            <propertiesFile>../../etc/feature.properties</propertiesFile>
                             <adviceFile>
                                 <properties>
                                     <propertyDef>org.wso2.carbon.p2.category.type:server</propertyDef>
@@ -71,13 +71,11 @@
                             <importFeatures>
                                 <importFeatureDef>org.wso2.carbon.core:${carbon.kernel.version}
                                 </importFeatureDef>
-                                <importFeatureDef>org.wso2.carbon.event.input.adaptor.server:${carbon.event.processing.version}
+                                <importFeatureDef>org.wso2.carbon.event.receiver.server:${carbon.event.processing.version}
                                 </importFeatureDef>
-                                <importFeatureDef>org.wso2.carbon.event.builder.server:${carbon.event.processing.version}
+                                <importFeatureDef>org.wso2.carbon.event.publisher.server:${carbon.event.processing.version}
                                 </importFeatureDef>
-                                <importFeatureDef>org.wso2.carbon.event.formatter.server:${carbon.event.processing.version}
-                                </importFeatureDef>
-                                <importFeatureDef>org.wso2.carbon.event.stream.manager.server:${carbon.event.processing.version}
+                                <importFeatureDef>org.wso2.carbon.event.stream.server:${carbon.analytics.common.version}
                                 </importFeatureDef>
                                 <importFeatureDef>org.wso2.carbon.event.processor.server:${carbon.event.processing.version}
                                 </importFeatureDef>

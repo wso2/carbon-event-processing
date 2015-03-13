@@ -41,7 +41,7 @@
         <module>org.wso2.carbon.event.flow.stub</module>
         <module>org.wso2.carbon.event.processor.stub</module>
         <module>org.wso2.carbon.event.simulator.stub</module>
-        <module>org.wso2.carbon.event.stream.manager.stub</module>
+        <!--<module>org.wso2.carbon.event.stream.stub</module>-->
         <!--<module>org.wso2.carbon.event.input.adaptor.manager.stub</module>-->
         <!--<module>org.wso2.carbon.event.output.adaptor.manager.stub</module>-->
         <module>org.wso2.carbon.event.tracer.stub</module>

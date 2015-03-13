@@ -35,7 +35,7 @@
     <url>http://wso2.org</url>
 
     <modules>
-        <module>event-stream-manager</module>
+        <!--<module>event-stream-manager</module>-->
         <!--<module>event-builder</module>-->
         <!--<module>event-formatter</module>-->
         <module>event-simulator</module>

@@ -15,7 +15,7 @@
 * specific language governing permissions and limitations
 * under the License.
 */
-package org.wso2.carbon.event.stream.manager.core.internal.util;
+package org.wso2.carbon.event.stream.core.internal.util;
 
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMException;
@@ -24,10 +24,10 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.wso2.carbon.databridge.commons.StreamDefinition;
 import org.wso2.carbon.databridge.commons.exception.MalformedStreamDefinitionException;
-import org.wso2.carbon.event.stream.manager.core.EventStreamConfig;
-import org.wso2.carbon.event.stream.manager.core.exception.EventStreamConfigurationException;
-import org.wso2.carbon.event.stream.manager.core.internal.CarbonEventStreamService;
-import org.wso2.carbon.event.stream.manager.core.internal.ds.EventStreamServiceValueHolder;
+import org.wso2.carbon.event.stream.core.EventStreamConfig;
+import org.wso2.carbon.event.stream.core.exception.EventStreamConfigurationException;
+import org.wso2.carbon.event.stream.core.internal.CarbonEventStreamService;
+import org.wso2.carbon.event.stream.core.internal.ds.EventStreamServiceValueHolder;
 import org.wso2.carbon.utils.ServerConstants;
 import org.wso2.carbon.utils.multitenancy.MultitenantConstants;
 

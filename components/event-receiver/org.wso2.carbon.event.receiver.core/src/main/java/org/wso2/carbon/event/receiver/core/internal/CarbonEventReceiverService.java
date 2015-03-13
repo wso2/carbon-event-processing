@@ -34,8 +34,8 @@ import org.wso2.carbon.event.receiver.core.internal.util.EventReceiverConfigurat
 import org.wso2.carbon.event.receiver.core.internal.util.EventReceiverUtil;
 import org.wso2.carbon.event.receiver.core.internal.util.helper.EventReceiverConfigurationFileSystemInvoker;
 import org.wso2.carbon.event.receiver.core.internal.util.helper.EventReceiverConfigurationHelper;
-import org.wso2.carbon.event.stream.manager.core.EventStreamService;
-import org.wso2.carbon.event.stream.manager.core.exception.EventStreamConfigurationException;
+import org.wso2.carbon.event.stream.core.EventStreamService;
+import org.wso2.carbon.event.stream.core.exception.EventStreamConfigurationException;
 
 import javax.xml.stream.XMLStreamException;
 import java.io.File;
@@ -220,11 +220,10 @@ public class CarbonEventReceiverService implements EventReceiverService {
             throws EventReceiverConfigurationException {
 
         List<String> streamList = new ArrayList<String>();
-        int tenantId = PrivilegedCarbonContext.getThreadLocalCarbonContext().getTenantId();
         EventStreamService eventStreamService = EventReceiverServiceValueHolder.getEventStreamService();
         Collection<StreamDefinition> eventStreamDefinitionList;
         try {
-            eventStreamDefinitionList = eventStreamService.getAllStreamDefinitions(tenantId);
+            eventStreamDefinitionList = eventStreamService.getAllStreamDefinitions();
             if (eventStreamDefinitionList != null) {
                 for (StreamDefinition streamDefinition : eventStreamDefinitionList) {
                     streamList.add(streamDefinition.getStreamId());
@@ -298,7 +297,7 @@ public class CarbonEventReceiverService implements EventReceiverService {
         StreamDefinition exportedStreamDefinition = null;
         try {
             exportedStreamDefinition = EventReceiverServiceValueHolder.getEventStreamService().getStreamDefinition(
-                    eventReceiverConfiguration.getToStreamName(), eventReceiverConfiguration.getToStreamVersion(), tenantId);
+                    eventReceiverConfiguration.getToStreamName(), eventReceiverConfiguration.getToStreamVersion());
         } catch (EventStreamConfigurationException e) {
             throw new EventReceiverConfigurationException("Error while retrieving stream definition for stream " + eventReceiverConfiguration.getToStreamName() + ":" + eventReceiverConfiguration.getToStreamVersion() + " from store", e);
         }
@@ -318,7 +317,7 @@ public class CarbonEventReceiverService implements EventReceiverService {
         // End; Checking preconditions to add the event receiver
         EventReceiver eventReceiver = new EventReceiver(eventReceiverConfiguration, exportedStreamDefinition);
         try {
-            EventReceiverServiceValueHolder.getEventStreamService().subscribe(eventReceiver, tenantId);
+            EventReceiverServiceValueHolder.getEventStreamService().subscribe(eventReceiver);
         } catch (EventStreamConfigurationException e) {
             //ignored as this is already checked
         }
@@ -340,7 +339,7 @@ public class CarbonEventReceiverService implements EventReceiverService {
                         String eventReceiverName = eventReceiverConfigurationFile.getEventReceiverName();
                         EventReceiver eventReceiver = tenantSpecificEventReceiverConfigurationMap.get(tenantId).remove(eventReceiverName);
                         if (eventReceiver != null) {
-                            EventReceiverServiceValueHolder.getEventStreamService().unsubscribe(eventReceiver, tenantId);
+                            EventReceiverServiceValueHolder.getEventStreamService().unsubscribe(eventReceiver);
                             eventReceiver.destroy();
                         }
                     }

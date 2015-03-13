@@ -21,14 +21,14 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.osgi.service.component.ComponentContext;
 import org.wso2.carbon.event.simulator.core.EventSimulator;
-import org.wso2.carbon.event.stream.manager.core.EventStreamService;
+import org.wso2.carbon.event.stream.core.EventStreamService;
 import org.wso2.carbon.ndatasource.core.DataSourceService;
 import org.wso2.carbon.event.simulator.core.internal.ds.EventSimulatorValueHolder;
 
 /**
  * @scr.component name="eventSimulatorService.component" immediate="true"
  * @scr.reference name="stream.carboneventstream.service"
- * interface="org.wso2.carbon.event.stream.manager.core.EventStreamService"
+ * interface="org.wso2.carbon.event.stream.core.EventStreamService"
  * cardinality="1..1" bind="setEventStreamService" unbind="unsetEventStreamService"
  * @scr.reference name="org.wso2.carbon.ndatasource" interface="org.wso2.carbon.ndatasource.core.DataSourceService"
  * cardinality="1..1" policy="dynamic" bind="setDataSourceService" unbind="unsetDataSourceService"

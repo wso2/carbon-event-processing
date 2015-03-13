@@ -15,10 +15,10 @@
 ~ specific language governing permissions and limitations
 ~ under the License.
 --%>
-<%@ page import="org.wso2.carbon.event.stream.manager.stub.EventStreamAdminServiceStub" %>
-<%@ page import="org.wso2.carbon.event.stream.manager.stub.types.EventStreamAttributeDto" %>
-<%@ page import="org.wso2.carbon.event.stream.manager.stub.types.EventStreamDefinitionDto" %>
-<%@ page import="org.wso2.carbon.event.stream.manager.ui.EventStreamUIUtils" %>
+<%@ page import="org.wso2.carbon.event.stream.stub.EventStreamAdminServiceStub" %>
+<%@ page import="org.wso2.carbon.event.stream.stub.types.EventStreamAttributeDto" %>
+<%@ page import="org.wso2.carbon.event.stream.stub.types.EventStreamDefinitionDto" %>
+<%@ page import="org.wso2.carbon.event.stream.ui.EventStreamUIUtils" %>
 
 <%
 	

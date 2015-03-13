@@ -20,8 +20,8 @@ package org.wso2.carbon.event.processor.core;
 import org.wso2.carbon.event.processor.core.internal.ha.HAManager;
 import org.wso2.carbon.event.processor.core.internal.persistence.PersistenceManager;
 import org.wso2.carbon.event.processor.core.internal.storm.SiddhiStormOutputEventListener;
-import org.wso2.carbon.event.stream.manager.core.EventProducer;
-import org.wso2.carbon.event.stream.manager.core.SiddhiEventConsumer;
+import org.wso2.carbon.event.stream.core.EventProducer;
+import org.wso2.carbon.event.stream.core.SiddhiEventConsumer;
 import org.wso2.siddhi.core.ExecutionPlanRuntime;
 
 import java.util.ArrayList;

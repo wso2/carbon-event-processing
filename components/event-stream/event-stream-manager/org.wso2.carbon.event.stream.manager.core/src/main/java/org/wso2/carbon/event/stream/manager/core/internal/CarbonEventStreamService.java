@@ -15,7 +15,7 @@
 * specific language governing permissions and limitations
 * under the License.
 */
-package org.wso2.carbon.event.stream.manager.core.internal;
+package org.wso2.carbon.event.stream.core.internal;
 
 import org.apache.axis2.deployment.DeploymentEngine;
 import org.apache.axis2.deployment.repository.util.DeploymentFileData;
@@ -26,13 +26,13 @@ import org.wso2.carbon.base.MultitenantConstants;
 import org.wso2.carbon.core.multitenancy.utils.TenantAxisUtils;
 import org.wso2.carbon.databridge.commons.StreamDefinition;
 import org.wso2.carbon.databridge.commons.utils.DataBridgeCommonsUtils;
-import org.wso2.carbon.event.stream.manager.core.*;
-import org.wso2.carbon.event.stream.manager.core.exception.EventStreamConfigurationException;
-import org.wso2.carbon.event.stream.manager.core.exception.StreamDefinitionAlreadyDefinedException;
-import org.wso2.carbon.event.stream.manager.core.internal.ds.EventStreamServiceValueHolder;
-import org.wso2.carbon.event.stream.manager.core.internal.stream.EventJunction;
-import org.wso2.carbon.event.stream.manager.core.internal.util.EventStreamConstants;
-import org.wso2.carbon.event.stream.manager.core.internal.util.SampleEventGenerator;
+import org.wso2.carbon.event.stream.core.*;
+import org.wso2.carbon.event.stream.core.exception.EventStreamConfigurationException;
+import org.wso2.carbon.event.stream.core.exception.StreamDefinitionAlreadyDefinedException;
+import org.wso2.carbon.event.stream.core.internal.ds.EventStreamServiceValueHolder;
+import org.wso2.carbon.event.stream.core.internal.stream.EventJunction;
+import org.wso2.carbon.event.stream.core.internal.util.EventStreamConstants;
+import org.wso2.carbon.event.stream.core.internal.util.SampleEventGenerator;
 import org.wso2.carbon.utils.multitenancy.MultitenantUtils;
 
 import java.io.File;

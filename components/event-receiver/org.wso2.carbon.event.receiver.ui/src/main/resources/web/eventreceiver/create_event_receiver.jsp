@@ -14,7 +14,7 @@
   --%>
 <%@ page import="org.wso2.carbon.event.receiver.stub.EventReceiverAdminServiceStub" %>
 <%@ page import="org.wso2.carbon.event.receiver.ui.EventReceiverUIUtils" %>
-<%@ page import="org.wso2.carbon.event.stream.manager.stub.EventStreamAdminServiceStub" %>
+<%@ page import="org.wso2.carbon.event.stream.stub.EventStreamAdminServiceStub" %>
 <%@ page import="org.wso2.carbon.event.receiver.stub.types.DetailInputAdapterPropertyDto" %>
 <%@ page import="org.wso2.carbon.event.receiver.stub.types.InputAdapterConfigurationDto" %>
 <%@ taglib uri="http://wso2.org/projects/carbon/taglibs/carbontags.jar" prefix="carbon" %>

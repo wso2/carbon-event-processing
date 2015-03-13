@@ -21,7 +21,7 @@ package org.wso2.carbon.event.flow.internal;
 import org.wso2.carbon.event.processor.core.EventProcessorService;
 import org.wso2.carbon.event.publisher.core.EventPublisherService;
 import org.wso2.carbon.event.receiver.core.EventReceiverService;
-import org.wso2.carbon.event.stream.manager.core.EventStreamService;
+import org.wso2.carbon.event.stream.core.EventStreamService;
 
 public class EventFlowServiceValueHolder {
     private static EventStreamService eventStreamService;

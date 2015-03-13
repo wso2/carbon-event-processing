@@ -15,7 +15,7 @@
 * specific language governing permissions and limitations
 * under the License.
 */
-package org.wso2.carbon.event.stream.manager.core.internal.util;
+package org.wso2.carbon.event.stream.core.internal.util;
 
 import com.google.gson.JsonObject;
 import org.apache.axiom.om.OMAbstractFactory;
@@ -26,7 +26,7 @@ import org.apache.commons.logging.LogFactory;
 import org.wso2.carbon.databridge.commons.Attribute;
 import org.wso2.carbon.databridge.commons.AttributeType;
 import org.wso2.carbon.databridge.commons.StreamDefinition;
-import org.wso2.carbon.event.stream.manager.core.exception.EventStreamConfigurationException;
+import org.wso2.carbon.event.stream.core.exception.EventStreamConfigurationException;
 
 import javax.xml.namespace.QName;
 import java.util.List;

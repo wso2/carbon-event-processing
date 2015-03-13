@@ -18,9 +18,9 @@
 <%@ page import="org.wso2.carbon.event.formatter.ui.EventFormatterUIConstants" %>
 <%@ page
         import="org.wso2.carbon.event.formatter.ui.EventFormatterUIUtils" %>
-<%@ page import="org.wso2.carbon.event.stream.manager.stub.EventStreamAdminServiceStub" %>
-<%@ page import="org.wso2.carbon.event.stream.manager.stub.types.EventStreamAttributeDto" %>
-<%@ page import="org.wso2.carbon.event.stream.manager.stub.types.EventStreamDefinitionDto" %>
+<%@ page import="org.wso2.carbon.event.stream.stub.EventStreamAdminServiceStub" %>
+<%@ page import="org.wso2.carbon.event.stream.stub.types.EventStreamAttributeDto" %>
+<%@ page import="org.wso2.carbon.event.stream.stub.types.EventStreamDefinitionDto" %>
 
 <%
     // get Event Stream Definition

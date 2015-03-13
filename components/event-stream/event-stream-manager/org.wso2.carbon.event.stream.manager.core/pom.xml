@@ -26,11 +26,11 @@
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
-    <artifactId>org.wso2.carbon.event.stream.manager.core</artifactId>
+    <artifactId>org.wso2.carbon.event.stream.core</artifactId>
     <version>2.0.4-SNAPSHOT</version>
     <packaging>bundle</packaging>
     <name>WSO2 Carbon - Event Stream Manager Core</name>
-    <description>org.wso2.carbon.event.stream.manager.core provides the core functionality for event
+    <description>org.wso2.carbon.event.stream.core provides the core functionality for event
         stream
     </description>
     <url>http://wso2.org</url>
@@ -89,10 +89,10 @@
                         <Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
                         <Bundle-Name>${project.artifactId}</Bundle-Name>
 
-                        <Private-Package>org.wso2.carbon.event.stream.manager.core.internal.*
+                        <Private-Package>org.wso2.carbon.event.stream.core.internal.*
                         </Private-Package>
-                        <Export-Package>!org.wso2.carbon.event.stream.manager.core.internal,
-                            org.wso2.carbon.event.stream.manager.*
+                        <Export-Package>!org.wso2.carbon.event.stream.core.internal,
+                            org.wso2.carbon.event.stream.*
                         </Export-Package>
 
                         <Import-Package>

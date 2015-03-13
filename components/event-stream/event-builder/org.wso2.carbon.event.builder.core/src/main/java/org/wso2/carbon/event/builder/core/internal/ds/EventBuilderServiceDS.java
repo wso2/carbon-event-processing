@@ -30,7 +30,7 @@ import org.wso2.carbon.event.input.adaptor.core.InputEventAdaptorService;
 import org.wso2.carbon.event.input.adaptor.manager.core.InputEventAdaptorManagerService;
 import org.wso2.carbon.event.input.adaptor.manager.core.exception.InputEventAdaptorManagerConfigurationException;
 import org.wso2.carbon.event.statistics.EventStatisticsService;
-import org.wso2.carbon.event.stream.manager.core.EventStreamService;
+import org.wso2.carbon.event.stream.core.EventStreamService;
 import org.wso2.carbon.registry.core.exceptions.RegistryException;
 import org.wso2.carbon.registry.core.service.RegistryService;
 import org.wso2.carbon.utils.ConfigurationContextService;
@@ -51,7 +51,7 @@ import org.wso2.carbon.utils.ConfigurationContextService;
  * interface="org.wso2.carbon.event.statistics.EventStatisticsService" cardinality="1..1"
  * policy="dynamic" bind="setEventStatisticsService" unbind="unsetEventStatisticsService"
  * @scr.reference name="eventStreamManager.service"
- * interface="org.wso2.carbon.event.stream.manager.core.EventStreamService" cardinality="1..1"
+ * interface="org.wso2.carbon.event.stream.core.EventStreamService" cardinality="1..1"
  * policy="dynamic" bind="setEventStreamService" unbind="unsetEventStreamService"
  * @scr.reference name="databridge.receiver.service"
  * interface="org.wso2.carbon.databridge.core.DataBridgeReceiverService" cardinality="1..1"

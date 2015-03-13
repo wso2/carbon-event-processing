@@ -1,4 +1,4 @@
-package org.wso2.carbon.event.stream.manager.core;
+package org.wso2.carbon.event.stream.core;
 
 import org.wso2.carbon.databridge.commons.StreamDefinition;
 

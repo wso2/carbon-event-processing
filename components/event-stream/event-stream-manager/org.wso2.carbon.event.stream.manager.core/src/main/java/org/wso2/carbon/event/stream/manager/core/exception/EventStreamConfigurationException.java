@@ -15,7 +15,7 @@
 * specific language governing permissions and limitations
 * under the License.
 */
-package org.wso2.carbon.event.stream.manager.core.exception;
+package org.wso2.carbon.event.stream.core.exception;
 
 /**
  * If there is a problem when creating the event builder configuration.

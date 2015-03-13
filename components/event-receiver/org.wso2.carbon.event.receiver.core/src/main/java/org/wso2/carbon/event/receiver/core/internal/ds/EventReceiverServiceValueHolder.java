@@ -24,7 +24,7 @@ import org.wso2.carbon.event.receiver.core.internal.type.text.TextInputMapperFac
 import org.wso2.carbon.event.receiver.core.internal.type.wso2event.WSO2EventInputMapperFactory;
 import org.wso2.carbon.event.receiver.core.internal.type.xml.XMLInputMapperFactory;
 import org.wso2.carbon.event.statistics.EventStatisticsService;
-import org.wso2.carbon.event.stream.manager.core.EventStreamService;
+import org.wso2.carbon.event.stream.core.EventStreamService;
 import org.wso2.carbon.registry.core.service.RegistryService;
 import org.wso2.carbon.utils.ConfigurationContextService;
 

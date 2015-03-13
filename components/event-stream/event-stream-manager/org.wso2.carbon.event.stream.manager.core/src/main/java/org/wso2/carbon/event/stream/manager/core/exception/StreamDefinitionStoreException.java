@@ -19,7 +19,7 @@
  */
 
 
-package org.wso2.carbon.event.stream.manager.core.exception;
+package org.wso2.carbon.event.stream.core.exception;
 
 public class StreamDefinitionStoreException extends Exception {
     private String errorMessage;

@@ -28,7 +28,7 @@ import org.wso2.carbon.event.output.adaptor.core.OutputEventAdaptorService;
 import org.wso2.carbon.event.output.adaptor.manager.core.OutputEventAdaptorManagerService;
 import org.wso2.carbon.event.output.adaptor.manager.core.exception.OutputEventAdaptorManagerConfigurationException;
 import org.wso2.carbon.event.statistics.EventStatisticsService;
-import org.wso2.carbon.event.stream.manager.core.EventStreamService;
+import org.wso2.carbon.event.stream.core.EventStreamService;
 import org.wso2.carbon.registry.core.exceptions.RegistryException;
 import org.wso2.carbon.registry.core.service.RegistryService;
 
@@ -48,7 +48,7 @@ import org.wso2.carbon.registry.core.service.RegistryService;
  * interface="org.wso2.carbon.event.statistics.EventStatisticsService" cardinality="1..1"
  * policy="dynamic" bind="setEventStatisticsService" unbind="unsetEventStatisticsService"
  * @scr.reference name="eventStreamManager.service"
- * interface="org.wso2.carbon.event.stream.manager.core.EventStreamService" cardinality="1..1"
+ * interface="org.wso2.carbon.event.stream.core.EventStreamService" cardinality="1..1"
  * policy="dynamic" bind="setEventStreamService" unbind="unsetEventStreamService"
  */
 public class EventFormatterServiceDS {

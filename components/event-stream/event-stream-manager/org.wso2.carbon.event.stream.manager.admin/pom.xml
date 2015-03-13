@@ -27,7 +27,7 @@
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
-    <artifactId>org.wso2.carbon.event.stream.manager.admin</artifactId>
+    <artifactId>org.wso2.carbon.event.stream.admin</artifactId>
     <version>2.0.4-SNAPSHOT</version>
     <packaging>bundle</packaging>
     <name>WSO2 Carbon - Event Stream Manager Admin</name>
@@ -38,7 +38,7 @@
     <dependencies>
         <dependency>
             <groupId>org.wso2.carbon.event-processing</groupId>
-            <artifactId>org.wso2.carbon.event.stream.manager.core</artifactId>
+            <artifactId>org.wso2.carbon.event.stream.core</artifactId>
         </dependency>
         <dependency>
             <groupId>org.wso2.carbon</groupId>
@@ -74,10 +74,10 @@
                         <Bundle-Name>${project.artifactId}</Bundle-Name>
                         <Carbon-Component>UIBundle</Carbon-Component>
                         <Export-Package>
-                            org.wso2.carbon.event.stream.manager.admin.*,
+                            org.wso2.carbon.event.stream.admin.*,
                         </Export-Package>
                         <Import-Package>
-                            org.wso2.carbon.event.stream.manager.core.*,
+                            org.wso2.carbon.event.stream.core.*,
                             org.wso2.carbon.utils,
                             *;resolution:=optional
                         </Import-Package>

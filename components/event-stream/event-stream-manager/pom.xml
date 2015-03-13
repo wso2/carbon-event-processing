@@ -36,9 +36,9 @@
     <url>http://wso2.org</url>
 
     <modules>
-        <module>org.wso2.carbon.event.stream.manager.core</module>
-        <module>org.wso2.carbon.event.stream.manager.admin</module>
-        <module>org.wso2.carbon.event.stream.manager.ui</module>
+        <module>org.wso2.carbon.event.stream.core</module>
+        <module>org.wso2.carbon.event.stream.admin</module>
+        <module>org.wso2.carbon.event.stream.ui</module>
     </modules>
 
     

@@ -28,8 +28,8 @@ import org.wso2.carbon.event.processor.core.exception.ExecutionPlanConfiguration
 import org.wso2.carbon.event.processor.core.exception.ExecutionPlanDependencyValidationException;
 import org.wso2.carbon.event.processor.core.internal.ds.EventProcessorValueHolder;
 import org.wso2.carbon.event.processor.core.internal.util.EventProcessorConstants;
-import org.wso2.carbon.event.stream.manager.core.EventStreamService;
-import org.wso2.carbon.event.stream.manager.core.exception.EventStreamConfigurationException;
+import org.wso2.carbon.event.stream.core.EventStreamService;
+import org.wso2.carbon.event.stream.core.exception.EventStreamConfigurationException;
 
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamReader;
@@ -325,7 +325,7 @@ public class EventProcessorConfigurationHelper {
 
         EventStreamService eventStreamService = EventProcessorValueHolder.getEventStreamService();
         try {
-            StreamDefinition streamDefinition = eventStreamService.getStreamDefinition(streamName, streamVersion, tenantId);
+            StreamDefinition streamDefinition = eventStreamService.getStreamDefinition(streamName, streamVersion);
             if (streamDefinition != null) {
                 return true;
             }

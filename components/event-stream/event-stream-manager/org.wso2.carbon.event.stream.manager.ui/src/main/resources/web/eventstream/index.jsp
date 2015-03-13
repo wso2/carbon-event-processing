@@ -18,15 +18,15 @@
 <%@ taglib uri="http://wso2.org/projects/carbon/taglibs/carbontags.jar" prefix="carbon" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 
-<%@ page import="org.wso2.carbon.event.stream.manager.stub.EventStreamAdminServiceStub" %>
-<%@ page import="org.wso2.carbon.event.stream.manager.stub.types.EventStreamInfoDto" %>
-<%@ page import="org.wso2.carbon.event.stream.manager.ui.EventStreamUIUtils" %>
+<%@ page import="org.wso2.carbon.event.stream.stub.EventStreamAdminServiceStub" %>
+<%@ page import="org.wso2.carbon.event.stream.stub.types.EventStreamInfoDto" %>
+<%@ page import="org.wso2.carbon.event.stream.ui.EventStreamUIUtils" %>
 
-<fmt:bundle basename="org.wso2.carbon.event.stream.manager.ui.i18n.Resources">
+<fmt:bundle basename="org.wso2.carbon.event.stream.ui.i18n.Resources">
 
     <carbon:breadcrumb
             label="eventstream.list"
-            resourceBundle="org.wso2.carbon.event.stream.manager.ui.i18n.Resources"
+            resourceBundle="org.wso2.carbon.event.stream.ui.i18n.Resources"
             topPage="false"
             request="<%=request%>"/>
 

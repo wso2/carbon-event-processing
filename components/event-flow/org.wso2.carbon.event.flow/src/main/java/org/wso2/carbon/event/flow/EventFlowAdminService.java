@@ -42,7 +42,7 @@ public class EventFlowAdminService extends AbstractAdmin {
             int tenantId = PrivilegedCarbonContext.getThreadLocalCarbonContext().getTenantId();
             List<EventReceiverConfiguration> eventReceiverConfigurations = EventFlowServiceValueHolder.getEventReceiverService().getAllActiveEventReceiverConfigurations();
             List<EventPublisherConfiguration> eventPublisherConfigurations = EventFlowServiceValueHolder.getEventPublisherService().getAllActiveEventPublisherConfigurations();
-            List<String> streamIds = EventFlowServiceValueHolder.getEventStreamService().getStreamIds(tenantId);
+            List<String> streamIds = EventFlowServiceValueHolder.getEventStreamService().getStreamIds();
             Map<String, ExecutionPlanConfiguration> executionPlanConfigurations = EventFlowServiceValueHolder.getEventProcessorService().getAllActiveExecutionConfigurations(tenantId);
 
             StringBuilder eventFlow = new StringBuilder(" '{ \"nodes\": [ ");

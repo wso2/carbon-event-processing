@@ -15,20 +15,20 @@
 * specific language governing permissions and limitations
 * under the License.
 */
-package org.wso2.carbon.event.stream.manager.core.internal.ds;
+package org.wso2.carbon.event.stream.core.internal.ds;
 
 import com.hazelcast.core.*;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.osgi.service.component.ComponentContext;
-import org.wso2.carbon.event.stream.manager.core.EventStreamService;
-import org.wso2.carbon.event.stream.manager.core.StreamDefinitionStore;
-import org.wso2.carbon.event.stream.manager.core.exception.EventStreamConfigurationException;
-import org.wso2.carbon.event.stream.manager.core.internal.CarbonEventStreamService;
-import org.wso2.carbon.event.stream.manager.core.internal.CarbonStreamDefinitionStore;
-import org.wso2.carbon.event.stream.manager.core.internal.stream.DataBridgeStreamAddRemoveListenerImpl;
-import org.wso2.carbon.event.stream.manager.core.internal.util.EventStreamConfigurationHelper;
-import org.wso2.carbon.event.stream.manager.core.internal.util.helper.TenantMgtListenerImpl;
+import org.wso2.carbon.event.stream.core.EventStreamService;
+import org.wso2.carbon.event.stream.core.StreamDefinitionStore;
+import org.wso2.carbon.event.stream.core.exception.EventStreamConfigurationException;
+import org.wso2.carbon.event.stream.core.internal.CarbonEventStreamService;
+import org.wso2.carbon.event.stream.core.internal.CarbonStreamDefinitionStore;
+import org.wso2.carbon.event.stream.core.internal.stream.DataBridgeStreamAddRemoveListenerImpl;
+import org.wso2.carbon.event.stream.core.internal.util.EventStreamConfigurationHelper;
+import org.wso2.carbon.event.stream.core.internal.util.helper.TenantMgtListenerImpl;
 import org.wso2.carbon.registry.core.exceptions.RegistryException;
 import org.wso2.carbon.registry.core.service.RegistryService;
 import org.wso2.carbon.stratos.common.listeners.TenantMgtListener;

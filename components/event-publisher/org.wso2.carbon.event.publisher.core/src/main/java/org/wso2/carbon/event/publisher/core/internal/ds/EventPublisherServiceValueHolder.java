@@ -25,7 +25,7 @@ import org.wso2.carbon.event.publisher.core.internal.type.text.TextOutputMapperF
 import org.wso2.carbon.event.publisher.core.internal.type.wso2event.WSO2EventOutputMapperFactory;
 import org.wso2.carbon.event.publisher.core.internal.type.xml.XMLOutputMapperFactory;
 import org.wso2.carbon.event.statistics.EventStatisticsService;
-import org.wso2.carbon.event.stream.manager.core.EventStreamService;
+import org.wso2.carbon.event.stream.core.EventStreamService;
 import org.wso2.carbon.registry.core.Registry;
 import org.wso2.carbon.registry.core.exceptions.RegistryException;
 import org.wso2.carbon.registry.core.service.RegistryService;

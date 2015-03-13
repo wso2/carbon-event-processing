@@ -15,9 +15,9 @@
 * specific language governing permissions and limitations
 * under the License.
 */
-package org.wso2.carbon.event.stream.manager.core.internal.util.helper;
+package org.wso2.carbon.event.stream.core.internal.util.helper;
 
-import org.wso2.carbon.event.stream.manager.core.internal.util.TenantDefaultArtifactDeployer;
+import org.wso2.carbon.event.stream.core.internal.util.TenantDefaultArtifactDeployer;
 import org.wso2.carbon.stratos.common.beans.TenantInfoBean;
 import org.wso2.carbon.stratos.common.exception.StratosException;
 import org.wso2.carbon.stratos.common.listeners.TenantMgtListener;

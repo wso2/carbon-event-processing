@@ -22,7 +22,7 @@ import org.apache.commons.logging.LogFactory;
 import org.wso2.carbon.event.formatter.core.exception.EventFormatterConfigurationException;
 import org.wso2.carbon.event.formatter.core.internal.CarbonEventFormatterService;
 import org.wso2.carbon.event.formatter.core.internal.ds.EventFormatterServiceValueHolder;
-import org.wso2.carbon.event.stream.manager.core.EventStreamListener;
+import org.wso2.carbon.event.stream.core.EventStreamListener;
 
 public class EventStreamListenerImpl implements EventStreamListener {
 

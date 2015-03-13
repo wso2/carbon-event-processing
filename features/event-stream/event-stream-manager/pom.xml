@@ -34,9 +34,9 @@
 
 
     <modules>
-        <module>org.wso2.carbon.event.stream.manager.feature</module>
-        <module>org.wso2.carbon.event.stream.manager.server.feature</module>
-        <module>org.wso2.carbon.event.stream.manager.ui.feature</module>
+        <module>org.wso2.carbon.event.stream.feature</module>
+        <module>org.wso2.carbon.event.stream.server.feature</module>
+        <module>org.wso2.carbon.event.stream.ui.feature</module>
     </modules>
 
 

@@ -28,8 +28,8 @@ import org.wso2.carbon.event.publisher.core.exception.EventPublisherConfiguratio
 import org.wso2.carbon.event.publisher.core.exception.EventPublisherStreamValidationException;
 import org.wso2.carbon.event.publisher.core.internal.ds.EventPublisherServiceValueHolder;
 import org.wso2.carbon.event.statistics.EventStatisticsMonitor;
-import org.wso2.carbon.event.stream.manager.core.RawEventConsumer;
-import org.wso2.carbon.event.stream.manager.core.exception.EventStreamConfigurationException;
+import org.wso2.carbon.event.stream.core.RawEventConsumer;
+import org.wso2.carbon.event.stream.core.exception.EventStreamConfigurationException;
 
 import java.util.*;
 
@@ -68,7 +68,7 @@ public class EventPublisher implements RawEventConsumer {
         StreamDefinition inputStreamDefinition = null;
 
         try {
-            inputStreamDefinition = EventPublisherServiceValueHolder.getEventStreamService().getStreamDefinition(inputStreamName, inputStreamVersion, tenantId);
+            inputStreamDefinition = EventPublisherServiceValueHolder.getEventStreamService().getStreamDefinition(inputStreamName, inputStreamVersion);
         } catch (EventStreamConfigurationException e) {
             throw new EventPublisherConfigurationException("Cannot retrieve the stream definition from stream store : " + e.getMessage());
         }
@@ -92,7 +92,7 @@ public class EventPublisher implements RawEventConsumer {
         }
 
         try {
-            EventPublisherServiceValueHolder.getEventStreamService().subscribe(this, tenantId);
+            EventPublisherServiceValueHolder.getEventStreamService().subscribe(this);
         } catch (EventStreamConfigurationException e) {
             throw new EventPublisherStreamValidationException("Stream " + streamId + " does not exist", streamId);
         }

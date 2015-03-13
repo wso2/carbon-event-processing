@@ -15,11 +15,11 @@
 * specific language governing permissions and limitations
 * under the License.
 */
-package org.wso2.carbon.event.stream.manager.core.internal.ds;
+package org.wso2.carbon.event.stream.core.internal.ds;
 
 import com.hazelcast.core.HazelcastInstance;
-import org.wso2.carbon.event.stream.manager.core.StreamDefinitionStore;
-import org.wso2.carbon.event.stream.manager.core.internal.CarbonEventStreamService;
+import org.wso2.carbon.event.stream.core.StreamDefinitionStore;
+import org.wso2.carbon.event.stream.core.internal.CarbonEventStreamService;
 import org.wso2.carbon.registry.core.Registry;
 import org.wso2.carbon.registry.core.exceptions.RegistryException;
 import org.wso2.carbon.registry.core.service.RegistryService;

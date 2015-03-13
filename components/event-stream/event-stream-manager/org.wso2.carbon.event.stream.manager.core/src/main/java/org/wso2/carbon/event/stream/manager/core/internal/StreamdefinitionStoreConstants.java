@@ -1,4 +1,4 @@
-package org.wso2.carbon.event.stream.manager.core.internal;
+package org.wso2.carbon.event.stream.core.internal;
 
 public class StreamdefinitionStoreConstants {
 
