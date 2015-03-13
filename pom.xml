@@ -42,11 +42,13 @@
         <module>components/event-monitor</module>
         <module>components/application-deployer</module>
         <!--<module>features/adaptors</module>-->
-        <!--<module>features/event-processor</module>-->
-        <!--<module>features/event-monitor</module>-->
-        <!--<module>features/event-stream</module>-->
-        <!--<module>features/event-flow</module>-->
-        <!--<module>features/application-deployer</module>-->
+        <module>features/event-processor</module>
+        <module>features/event-publisher</module>
+        <module>features/event-receiver</module>
+        <module>features/event-monitor</module>
+        <module>features/event-stream</module>
+        <module>features/event-flow</module>
+        <module>features/application-deployer</module>
     </modules>
 
     <dependencyManagement>
@@ -553,6 +555,58 @@
                 <artifactId>org.wso2.carbon.event.processing.application.deployer</artifactId>
                 <version>${carbon.event.processing.version}</version>
             </dependency>
+
+            <dependency>
+                <groupId>org.wso2.carbon.event-processing</groupId>
+                <artifactId>org.wso2.carbon.event.output.adapter.core</artifactId>
+                <version>${carbon.event.processing.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.wso2.carbon.event-processing</groupId>
+                <artifactId>org.wso2.carbon.event.publisher.admin</artifactId>
+                <version>${carbon.event.processing.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.wso2.carbon.event-processing</groupId>
+                <artifactId>org.wso2.carbon.event.publisher.core</artifactId>
+                <version>${carbon.event.processing.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.wso2.carbon.event-processing</groupId>
+                <artifactId>org.wso2.carbon.event.publisher.stub</artifactId>
+                <version>${carbon.event.processing.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.wso2.carbon.event-processing</groupId>
+                <artifactId>org.wso2.carbon.event.publisher.ui</artifactId>
+                <version>${carbon.event.processing.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.wso2.carbon.event-processing</groupId>
+                <artifactId>org.wso2.carbon.event.input.adapter.core</artifactId>
+                <version>${carbon.event.processing.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.wso2.carbon.event-processing</groupId>
+                <artifactId>org.wso2.carbon.event.receiver.admin</artifactId>
+                <version>${carbon.event.processing.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.wso2.carbon.event-processing</groupId>
+                <artifactId>org.wso2.carbon.event.receiver.core</artifactId>
+                <version>${carbon.event.processing.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.wso2.carbon.event-processing</groupId>
+                <artifactId>org.wso2.carbon.event.receiver.stub</artifactId>
+                <version>${carbon.event.processing.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.wso2.carbon.event-processing</groupId>
+                <artifactId>org.wso2.carbon.event.receiver.ui</artifactId>
+                <version>${carbon.event.processing.version}</version>
+            </dependency>
             <!--carbon event processing dependencies stop-->
 
             <!--siddhi dependencies start-->
@@ -850,6 +904,44 @@
             <dependency>
                 <groupId>org.wso2.carbon.event-processing</groupId>
                 <artifactId>org.wso2.carbon.event.tracer.server.feature</artifactId>
+                <version>${carbon.event.processing.version}</version>
+                <type>zip</type>
+            </dependency>
+
+            <dependency>
+                <groupId>org.wso2.carbon.event-processing</groupId>
+                <artifactId>org.wso2.carbon.event.publisher.server.feature</artifactId>
+                <version>${carbon.event.processing.version}</version>
+                <type>zip</type>
+            </dependency>
+            <dependency>
+                <groupId>org.wso2.carbon.event-processing</groupId>
+                <artifactId>org.wso2.carbon.event.output.adapter.server.feature</artifactId>
+                <version>${carbon.event.processing.version}</version>
+                <type>zip</type>
+            </dependency>
+            <dependency>
+                <groupId>org.wso2.carbon.event-processing</groupId>
+                <artifactId>org.wso2.carbon.event.publisher.ui.feature</artifactId>
+                <version>${carbon.event.processing.version}</version>
+                <type>zip</type>
+            </dependency>
+
+            <dependency>
+                <groupId>org.wso2.carbon.event-processing</groupId>
+                <artifactId>org.wso2.carbon.event.receiver.server.feature</artifactId>
+                <version>${carbon.event.processing.version}</version>
+                <type>zip</type>
+            </dependency>
+            <dependency>
+                <groupId>org.wso2.carbon.event-processing</groupId>
+                <artifactId>org.wso2.carbon.event.input.adapter.server.feature</artifactId>
+                <version>${carbon.event.processing.version}</version>
+                <type>zip</type>
+            </dependency>
+            <dependency>
+                <groupId>org.wso2.carbon.event-processing</groupId>
+                <artifactId>org.wso2.carbon.event.receiver.ui.feature</artifactId>
                 <version>${carbon.event.processing.version}</version>
                 <type>zip</type>
             </dependency>
