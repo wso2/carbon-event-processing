@@ -38,8 +38,8 @@ public class ExecutionInfo {
     private String preparedUpdateStatement;
     private String preparedCreateTableStatement;
     private String preparedTableExistenceCheckStatement;
-    private DataSource datasource;
     private boolean updateMode;
+    private boolean tableExist = false;
 
     public List<Attribute> getInsertQueryColumnOrder() {
         return insertQueryColumnOrder;
@@ -97,19 +97,19 @@ public class ExecutionInfo {
         this.existenceCheckQueryColumnOrder = existenceCheckQueryColumnOrder;
     }
 
-    public DataSource getDatasource() {
-        return datasource;
-    }
-
-    public void setDatasource(DataSource datasource) {
-        this.datasource = datasource;
-    }
-
     public String getPreparedTableExistenceCheckStatement() {
         return preparedTableExistenceCheckStatement;
     }
 
     public void setPreparedTableExistenceCheckStatement(String preparedTableExistenceCheckStatement) {
         this.preparedTableExistenceCheckStatement = preparedTableExistenceCheckStatement;
+    }
+
+    public boolean isTableExist() {
+        return tableExist;
+    }
+
+    public void setTableExist(boolean tableExist) {
+        this.tableExist = tableExist;
     }
 }

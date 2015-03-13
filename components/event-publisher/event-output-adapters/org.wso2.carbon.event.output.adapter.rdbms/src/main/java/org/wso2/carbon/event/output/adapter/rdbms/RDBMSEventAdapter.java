@@ -60,7 +60,7 @@ public class RDBMSEventAdapter implements OutputEventAdapter {
     private ResourceBundle resourceBundle;
     private Map<String, String> dbTypeMappings;
     private ExecutionInfo executionInfo = null;
-    private Connection con = null;
+    private DataSource dataSource;
 
     public RDBMSEventAdapter(OutputEventAdapterConfiguration eventAdapterConfiguration,
             Map<String, String> globalProperties) {
@@ -79,8 +79,9 @@ public class RDBMSEventAdapter implements OutputEventAdapter {
     @Override
     public void testConnect() throws TestConnectionNotSupportedException {
 
+        DataSource dataSource;
+        Connection con = null;
         try {
-            DataSource dataSource;
             CarbonDataSource carbonDataSource = RDBMSEventAdapterServiceValueHolder.getDataSourceService().
                     getDataSource(eventAdapterConfiguration.getStaticProperties().
                             get(RDBMSEventAdapterConstants.ADAPTER_GENERIC_RDBMS_DATASOURCE_NAME));
@@ -101,16 +102,17 @@ public class RDBMSEventAdapter implements OutputEventAdapter {
     @Override
     public void connect() {
 
+        Connection con = null;
         try {
-            CarbonDataSource carbonDataSource = RDBMSEventAdapterServiceValueHolder.getDataSourceService().getDataSource(
-                    eventAdapterConfiguration.getStaticProperties().get(RDBMSEventAdapterConstants
-                            .ADAPTER_GENERIC_RDBMS_DATASOURCE_NAME));
+            CarbonDataSource carbonDataSource = RDBMSEventAdapterServiceValueHolder.getDataSourceService()
+                    .getDataSource(
+                            eventAdapterConfiguration.getStaticProperties().get(RDBMSEventAdapterConstants
+                                    .ADAPTER_GENERIC_RDBMS_DATASOURCE_NAME));
+            dataSource = (DataSource) carbonDataSource.getDSObject();
             con = ((DataSource) carbonDataSource.getDSObject()).getConnection();
         } catch (DataSourceException e) {
-            log.error(
-                    "There is no any data-source found called : " + eventAdapterConfiguration.getStaticProperties().get(
-                            RDBMSEventAdapterConstants
-                                    .ADAPTER_GENERIC_RDBMS_DATASOURCE_NAME), e);
+            log.error("There is no any data-source found called : " + eventAdapterConfiguration.getStaticProperties()
+                    .get(RDBMSEventAdapterConstants.ADAPTER_GENERIC_RDBMS_DATASOURCE_NAME), e);
             throw new ConnectionUnavailableException(e.getMessage(), e);
         } catch (SQLException e) {
             throw new ConnectionUnavailableException(e);
@@ -128,7 +130,8 @@ public class RDBMSEventAdapter implements OutputEventAdapter {
         try {
             if (message instanceof Map) {
 
-                tableName = eventAdapterConfiguration.getStaticProperties().get(RDBMSEventAdapterConstants.ADAPTER_GENERIC_RDBMS_TABLE_NAME);
+                tableName = eventAdapterConfiguration.getStaticProperties().get(RDBMSEventAdapterConstants
+                        .ADAPTER_GENERIC_RDBMS_TABLE_NAME);
                 String executionMode = eventAdapterConfiguration.getStaticProperties().get(RDBMSEventAdapterConstants
                         .ADAPTER_GENERIC_RDBMS_EXECUTION_MODE);
                 String updateColumnKeys = eventAdapterConfiguration.getStaticProperties().get(RDBMSEventAdapterConstants
@@ -159,157 +162,136 @@ public class RDBMSEventAdapter implements OutputEventAdapter {
             executionInfo.setUpdateMode(true);
         }
 
-        try {
-            CarbonDataSource carbonDataSource = RDBMSEventAdapterServiceValueHolder.getDataSourceService().getDataSource(
-                    eventAdapterConfiguration.getStaticProperties().get(
-                            RDBMSEventAdapterConstants.ADAPTER_GENERIC_RDBMS_DATASOURCE_NAME));
+        //Constructing (eg: ID  varchar2(255),INFORMATION  varchar2(255)) type values : column_types
+        StringBuilder column_types = new StringBuilder("");
 
-            if (carbonDataSource != null) {
-                executionInfo.setDatasource((DataSource) carbonDataSource.getDSObject());
+        //Constructing (eg: id,information) type values : columns
+        StringBuilder columns = new StringBuilder("");
+
+        //Constructing (eg: ?,?,?) type values : valuePositionsBuilder
+        StringBuilder valuePositionsBuilder = new StringBuilder("");
+
+        List<Attribute> tableInsertColumnList = new ArrayList<Attribute>();
+        boolean appendComma = false;
+        for (Map.Entry<String, Object> entry : (((Map<String, Object>) message).entrySet())) {
+            AttributeType type = null;
+            String columnName = entry.getKey().toUpperCase();
+            if (appendComma) {
+                column_types.append(dbTypeMappings.get(RDBMSEventAdapterConstants.ADAPTER_GENERIC_RDBMS_COMMA));
             }
-
-            try {
-                con = executionInfo.getDatasource().getConnection();
-            } catch (SQLException e) {
-                throw new ConnectionUnavailableException(e);
+            column_types.append(columnName).append("  ");
+            if (entry.getValue() instanceof Integer) {
+                type = AttributeType.INT;
+                column_types.append(dbTypeMappings.get(RDBMSEventAdapterConstants.ADAPTER_GENERIC_RDBMS_INTEGER));
+            } else if (entry.getValue() instanceof Long) {
+                type = AttributeType.LONG;
+                column_types.append(dbTypeMappings.get(RDBMSEventAdapterConstants.ADAPTER_GENERIC_RDBMS_LONG));
+            } else if (entry.getValue() instanceof Float) {
+                type = AttributeType.FLOAT;
+                column_types.append(dbTypeMappings.get(RDBMSEventAdapterConstants.ADAPTER_GENERIC_RDBMS_FLOAT));
+            } else if (entry.getValue() instanceof Double) {
+                type = AttributeType.DOUBLE;
+                column_types.append(dbTypeMappings.get(RDBMSEventAdapterConstants.ADAPTER_GENERIC_RDBMS_DOUBLE));
+            } else if (entry.getValue() instanceof String) {
+                type = AttributeType.STRING;
+                column_types.append(dbTypeMappings.get(RDBMSEventAdapterConstants.ADAPTER_GENERIC_RDBMS_STRING));
+            } else if (entry.getValue() instanceof Boolean) {
+                type = AttributeType.BOOL;
+                column_types.append(dbTypeMappings.get(RDBMSEventAdapterConstants.ADAPTER_GENERIC_RDBMS_BOOLEAN));
             }
-
-            //Constructing (eg: ID  varchar2(255),INFORMATION  varchar2(255)) type values : column_types
-            StringBuilder column_types = new StringBuilder("");
-
-            //Constructing (eg: id,information) type values : columns
-            StringBuilder columns = new StringBuilder("");
-
-            //Constructing (eg: ?,?,?) type values : valuePositionsBuilder
-            StringBuilder valuePositionsBuilder = new StringBuilder("");
-
-            List<Attribute> tableInsertColumnList = new ArrayList<Attribute>();
-            boolean appendComma = false;
-            for (Map.Entry<String, Object> entry : (((Map<String, Object>) message).entrySet())) {
-                AttributeType type = null;
-                String columnName = entry.getKey().toUpperCase();
-                if (appendComma) {
-                    column_types.append(dbTypeMappings.get(RDBMSEventAdapterConstants.ADAPTER_GENERIC_RDBMS_COMMA));
-                }
-                column_types.append(columnName).append("  ");
-                if (entry.getValue() instanceof Integer) {
-                    type = AttributeType.INT;
-                    column_types.append(dbTypeMappings.get(RDBMSEventAdapterConstants.ADAPTER_GENERIC_RDBMS_INTEGER));
-                } else if (entry.getValue() instanceof Long) {
-                    type = AttributeType.LONG;
-                    column_types.append(dbTypeMappings.get(RDBMSEventAdapterConstants.ADAPTER_GENERIC_RDBMS_LONG));
-                } else if (entry.getValue() instanceof Float) {
-                    type = AttributeType.FLOAT;
-                    column_types.append(dbTypeMappings.get(RDBMSEventAdapterConstants.ADAPTER_GENERIC_RDBMS_FLOAT));
-                } else if (entry.getValue() instanceof Double) {
-                    type = AttributeType.DOUBLE;
-                    column_types.append(dbTypeMappings.get(RDBMSEventAdapterConstants.ADAPTER_GENERIC_RDBMS_DOUBLE));
-                } else if (entry.getValue() instanceof String) {
-                    type = AttributeType.STRING;
-                    column_types.append(dbTypeMappings.get(RDBMSEventAdapterConstants.ADAPTER_GENERIC_RDBMS_STRING));
-                } else if (entry.getValue() instanceof Boolean) {
-                    type = AttributeType.BOOL;
-                    column_types.append(dbTypeMappings.get(RDBMSEventAdapterConstants.ADAPTER_GENERIC_RDBMS_BOOLEAN));
-                }
-                Attribute attribute = new Attribute(entry.getKey(), type);
-                if (appendComma) {
-                    columns.append(dbTypeMappings.get(RDBMSEventAdapterConstants.ADAPTER_GENERIC_RDBMS_COMMA));
-                    valuePositionsBuilder
-                            .append(dbTypeMappings.get(RDBMSEventAdapterConstants.ADAPTER_GENERIC_RDBMS_COMMA));
-                } else {
-                    appendComma = true;
-                }
-                tableInsertColumnList.add(attribute);
-                columns.append(attribute.getName());
+            Attribute attribute = new Attribute(entry.getKey(), type);
+            if (appendComma) {
+                columns.append(dbTypeMappings.get(RDBMSEventAdapterConstants.ADAPTER_GENERIC_RDBMS_COMMA));
                 valuePositionsBuilder
-                        .append(dbTypeMappings.get(RDBMSEventAdapterConstants.ADAPTER_GENERIC_RDBMS_QUESTION_MARK));
+                        .append(dbTypeMappings.get(RDBMSEventAdapterConstants.ADAPTER_GENERIC_RDBMS_COMMA));
+            } else {
+                appendComma = true;
             }
+            tableInsertColumnList.add(attribute);
+            columns.append(attribute.getName());
+            valuePositionsBuilder
+                    .append(dbTypeMappings.get(RDBMSEventAdapterConstants.ADAPTER_GENERIC_RDBMS_QUESTION_MARK));
+        }
 
-            //Constructing quert to create a new table
-            String createTableQuery = constructQuery(tableName, dbTypeMappings.get(RDBMSEventAdapterConstants
-                    .ADAPTER_GENERIC_RDBMS_CREATE_TABLE), column_types, null, null, null, null);
+        //Constructing quert to create a new table
+        String createTableQuery = constructQuery(tableName, dbTypeMappings.get(RDBMSEventAdapterConstants
+                .ADAPTER_GENERIC_RDBMS_CREATE_TABLE), column_types, null, null, null, null);
 
-            //constructing query to insert date into the table row
-            String insertTableRowQuery = constructQuery(tableName, dbTypeMappings.get(RDBMSEventAdapterConstants
-                    .ADAPTER_GENERIC_RDBMS_INSERT_DATA), null, columns, valuePositionsBuilder, null, null);
+        //constructing query to insert date into the table row
+        String insertTableRowQuery = constructQuery(tableName, dbTypeMappings.get(RDBMSEventAdapterConstants
+                .ADAPTER_GENERIC_RDBMS_INSERT_DATA), null, columns, valuePositionsBuilder, null, null);
 
-            //Constructing query to check for the table existence
-            String isTableExistQuery = constructQuery(tableName, dbTypeMappings.get(RDBMSEventAdapterConstants
-                    .ADAPTER_GENERIC_RDBMS_TABLE_EXIST), null, null, null, null, null);
+        //Constructing query to check for the table existence
+        String isTableExistQuery = constructQuery(tableName, dbTypeMappings.get(RDBMSEventAdapterConstants
+                .ADAPTER_GENERIC_RDBMS_TABLE_EXIST), null, null, null, null, null);
 
-            executionInfo.setPreparedInsertStatement(insertTableRowQuery);
-            executionInfo.setPreparedCreateTableStatement(createTableQuery);
-            executionInfo.setInsertQueryColumnOrder(tableInsertColumnList);
-            executionInfo.setPreparedTableExistenceCheckStatement(isTableExistQuery);
+        executionInfo.setPreparedInsertStatement(insertTableRowQuery);
+        executionInfo.setPreparedCreateTableStatement(createTableQuery);
+        executionInfo.setInsertQueryColumnOrder(tableInsertColumnList);
+        executionInfo.setPreparedTableExistenceCheckStatement(isTableExistQuery);
 
-            if (executionMode.equalsIgnoreCase(
-                    resourceBundle.getString(RDBMSEventAdapterConstants.ADAPTER_GENERIC_RDBMS_EXECUTION_MODE_UPDATE))) {
+        if (executionMode.equalsIgnoreCase(
+                resourceBundle.getString(RDBMSEventAdapterConstants.ADAPTER_GENERIC_RDBMS_EXECUTION_MODE_UPDATE))) {
 
-                String[] queryAttributes = updateColumnKeys.trim().split(",");
-                List<Attribute> queryAttributeList = new ArrayList<Attribute>(queryAttributes.length);
+            String[] queryAttributes = updateColumnKeys.trim().split(",");
+            List<Attribute> queryAttributeList = new ArrayList<Attribute>(queryAttributes.length);
 
-                for (int i = 0; i < queryAttributes.length; i++) {
+            for (int i = 0; i < queryAttributes.length; i++) {
 
-                    for (Attribute attribute : executionInfo.getInsertQueryColumnOrder()) {
-                        if (queryAttributes[i].equalsIgnoreCase(attribute.getName())) {
-                            queryAttributeList.add(attribute);
-                            break;
-                        }
+                for (Attribute attribute : executionInfo.getInsertQueryColumnOrder()) {
+                    if (queryAttributes[i].equalsIgnoreCase(attribute.getName())) {
+                        queryAttributeList.add(attribute);
+                        break;
                     }
                 }
-                executionInfo.setExistenceCheckQueryColumnOrder(queryAttributeList);
+            }
+            executionInfo.setExistenceCheckQueryColumnOrder(queryAttributeList);
 
-                //Constructing (eg: information = ?  , latitude = ?) type values : column_values
-                StringBuilder column_values = new StringBuilder("");
-                List<Attribute> updateAttributes = new ArrayList<Attribute>();
+            //Constructing (eg: information = ?  , latitude = ?) type values : column_values
+            StringBuilder column_values = new StringBuilder("");
+            List<Attribute> updateAttributes = new ArrayList<Attribute>();
 
-                appendComma = false;
-                for (Attribute at : executionInfo.getInsertQueryColumnOrder()) {
-                    if (!executionInfo.getExistenceCheckQueryColumnOrder().contains(at)) {
-                        if (appendComma) {
-                            column_values.append(" ").append(dbTypeMappings.get(RDBMSEventAdapterConstants
-                                    .ADAPTER_GENERIC_RDBMS_COMMA)).append(" ");
-                        }
-                        column_values.append(at.getName());
+            appendComma = false;
+            for (Attribute at : executionInfo.getInsertQueryColumnOrder()) {
+                if (!executionInfo.getExistenceCheckQueryColumnOrder().contains(at)) {
+                    if (appendComma) {
                         column_values.append(" ").append(dbTypeMappings.get(RDBMSEventAdapterConstants
-                                .ADAPTER_GENERIC_RDBMS_EQUAL)).append(" ")
-                                .append(dbTypeMappings.get(RDBMSEventAdapterConstants
-                                        .ADAPTER_GENERIC_RDBMS_QUESTION_MARK)).append(" ");
-                        updateAttributes.add(at);
-                        appendComma = true;
+                                .ADAPTER_GENERIC_RDBMS_COMMA)).append(" ");
                     }
-                }
-
-                //Constructing (eg: id = ?) type values for WHERE condition : condition
-                StringBuilder condition = new StringBuilder("");
-                boolean appendAnd = false;
-                for (Attribute at : executionInfo.getExistenceCheckQueryColumnOrder()) {
-                    if (appendAnd) {
-                        condition.append(" ").append(dbTypeMappings.get(RDBMSEventAdapterConstants
-                                .ADAPTER_GENERIC_RDBMS_AND)).append(" ");
-                    }
-                    condition.append(at.getName());
-                    condition.append(" ").append(dbTypeMappings.get(RDBMSEventAdapterConstants
+                    column_values.append(at.getName());
+                    column_values.append(" ").append(dbTypeMappings.get(RDBMSEventAdapterConstants
                             .ADAPTER_GENERIC_RDBMS_EQUAL)).append(" ")
                             .append(dbTypeMappings.get(RDBMSEventAdapterConstants
                                     .ADAPTER_GENERIC_RDBMS_QUESTION_MARK)).append(" ");
                     updateAttributes.add(at);
-                    appendAnd = true;
+                    appendComma = true;
                 }
-                executionInfo.setUpdateQueryColumnOrder(updateAttributes);
-
-                //constructing query to update data into the table
-                String tableUpdateRowQuery = constructQuery(tableName, dbTypeMappings.get(RDBMSEventAdapterConstants
-                        .ADAPTER_GENERIC_RDBMS_UPDATE_TABLE), null, null, null, column_values, condition);
-                executionInfo.setPreparedUpdateStatement(tableUpdateRowQuery);
             }
-        } catch (DataSourceException e) {
-            log.error("There is no any data-source found called : " + eventAdapterConfiguration.getStaticProperties()
-                    .get(RDBMSEventAdapterConstants.ADAPTER_GENERIC_RDBMS_DATASOURCE_NAME), e);
-            throw new ConnectionUnavailableException(e.getMessage(), e);
-        } finally {
-            cleanupConnections(null, con);
+
+            //Constructing (eg: id = ?) type values for WHERE condition : condition
+            StringBuilder condition = new StringBuilder("");
+            boolean appendAnd = false;
+            for (Attribute at : executionInfo.getExistenceCheckQueryColumnOrder()) {
+                if (appendAnd) {
+                    condition.append(" ").append(dbTypeMappings.get(RDBMSEventAdapterConstants
+                            .ADAPTER_GENERIC_RDBMS_AND)).append(" ");
+                }
+                condition.append(at.getName());
+                condition.append(" ").append(dbTypeMappings.get(RDBMSEventAdapterConstants
+                        .ADAPTER_GENERIC_RDBMS_EQUAL)).append(" ")
+                        .append(dbTypeMappings.get(RDBMSEventAdapterConstants
+                                .ADAPTER_GENERIC_RDBMS_QUESTION_MARK)).append(" ");
+                updateAttributes.add(at);
+                appendAnd = true;
+            }
+            executionInfo.setUpdateQueryColumnOrder(updateAttributes);
+
+            //constructing query to update data into the table
+            String tableUpdateRowQuery = constructQuery(tableName, dbTypeMappings.get(RDBMSEventAdapterConstants
+                    .ADAPTER_GENERIC_RDBMS_UPDATE_TABLE), null, null, null, column_values, condition);
+            executionInfo.setPreparedUpdateStatement(tableUpdateRowQuery);
         }
+
     }
 
     public void executeProcessActions(Object message, ExecutionInfo executionInfo, String tableName)
@@ -323,9 +305,10 @@ public class RDBMSEventAdapter implements OutputEventAdapter {
             throws OutputEventAdapterException {
 
         PreparedStatement stmt = null;
+        Connection con;
 
         try {
-            con = executionInfo.getDatasource().getConnection();
+            con = dataSource.getConnection();
         } catch (SQLException e) {
             throw new ConnectionUnavailableException(e);
         }
@@ -417,32 +400,38 @@ public class RDBMSEventAdapter implements OutputEventAdapter {
 
         Statement stmt = null;
         Boolean tableExists = true;
+        Connection con;
 
         try {
-            con = executionInfo.getDatasource().getConnection();
+            con = dataSource.getConnection();
         } catch (SQLException e) {
             throw new ConnectionUnavailableException(e);
         }
 
-        try {
-            stmt = con.createStatement();
-            stmt.executeQuery(executionInfo.getPreparedTableExistenceCheckStatement());
-        } catch (SQLException e) {
-            tableExists = false;
-            if (log.isDebugEnabled()) {
-                log.debug("Table " + tableName + " does not Exist. Table Will be created. ");
-            }
-        }
+        if (!executionInfo.isTableExist()) {
 
-        try {
-            if (!tableExists) {
-                stmt.executeUpdate(executionInfo.getPreparedCreateTableStatement());
-                con.commit();
+            try {
+                stmt = con.createStatement();
+                stmt.executeQuery(executionInfo.getPreparedTableExistenceCheckStatement());
+                executionInfo.setTableExist(true);
+            } catch (SQLException e) {
+                tableExists = false;
+                if (log.isDebugEnabled()) {
+                    log.debug("Table " + tableName + " does not Exist. Table Will be created. ");
+                }
             }
-        } catch (SQLException e) {
-            throw new OutputEventAdapterException("Cannot Execute Create Table Query. " + e.getMessage(), e);
-        } finally {
-            cleanupConnections(stmt, con);
+
+            try {
+                if (!tableExists) {
+                    stmt.executeUpdate(executionInfo.getPreparedCreateTableStatement());
+                    con.commit();
+                    executionInfo.setTableExist(true);
+                }
+            } catch (SQLException e) {
+                throw new OutputEventAdapterException("Cannot Execute Create Table Query. " + e.getMessage(), e);
+            } finally {
+                cleanupConnections(stmt, con);
+            }
         }
     }
 
@@ -497,15 +486,17 @@ public class RDBMSEventAdapter implements OutputEventAdapter {
     /**
      * Populate specific db Mappings
      */
-    private void populateDbMappings() throws OutputEventAdapterException{
+    private void populateDbMappings() throws OutputEventAdapterException {
 
         String dbName;
         dbTypeMappings = new HashMap<String, String>();
+        Connection con;
 
         try {
-            CarbonDataSource carbonDataSource = RDBMSEventAdapterServiceValueHolder.getDataSourceService().getDataSource(
-                    eventAdapterConfiguration.getStaticProperties().get(RDBMSEventAdapterConstants
-                            .ADAPTER_GENERIC_RDBMS_DATASOURCE_NAME));
+            CarbonDataSource carbonDataSource = RDBMSEventAdapterServiceValueHolder.getDataSourceService()
+                    .getDataSource(
+                            eventAdapterConfiguration.getStaticProperties().get(RDBMSEventAdapterConstants
+                                    .ADAPTER_GENERIC_RDBMS_DATASOURCE_NAME));
             con = ((DataSource) carbonDataSource.getDSObject()).getConnection();
             DatabaseMetaData databaseMetaData = con.getMetaData();
             dbName = databaseMetaData.getDatabaseProductName();
@@ -513,15 +504,14 @@ public class RDBMSEventAdapter implements OutputEventAdapter {
         } catch (DataSourceException e) {
             log.error(
                     "There is no any data-source found called : " + eventAdapterConfiguration.getStaticProperties().get(
-                            RDBMSEventAdapterConstants
-                                    .ADAPTER_GENERIC_RDBMS_DATASOURCE_NAME), e);
+                            RDBMSEventAdapterConstants.ADAPTER_GENERIC_RDBMS_DATASOURCE_NAME), e);
             throw new ConnectionUnavailableException(e.getMessage(), e);
         } catch (SQLException e) {
             throw new ConnectionUnavailableException(e);
         }
 
-        Map<String, String> defaultMappings = new HashMap<String, String>();
-        String[] staticAttributes = {RDBMSEventAdapterConstants.ADAPTER_GENERIC_RDBMS_STRING,
+       // Map<String, String> defaultMappings = new HashMap<String, String>();
+        String[] staticAttributes = { RDBMSEventAdapterConstants.ADAPTER_GENERIC_RDBMS_STRING,
                 RDBMSEventAdapterConstants.ADAPTER_GENERIC_RDBMS_DOUBLE,
                 RDBMSEventAdapterConstants.ADAPTER_GENERIC_RDBMS_INTEGER,
                 RDBMSEventAdapterConstants.ADAPTER_GENERIC_RDBMS_LONG,
@@ -536,49 +526,54 @@ public class RDBMSEventAdapter implements OutputEventAdapter {
                 RDBMSEventAdapterConstants.ADAPTER_GENERIC_RDBMS_COMMA,
                 RDBMSEventAdapterConstants.ADAPTER_GENERIC_RDBMS_QUESTION_MARK,
                 RDBMSEventAdapterConstants.ADAPTER_GENERIC_RDBMS_EQUAL,
-                RDBMSEventAdapterConstants.ADAPTER_GENERIC_RDBMS_AND};
-
-        for (Map.Entry<String, String> entry : globalProperties.entrySet()) {
-
-            if (entry.getKey().indexOf('.') == -1) {
-                defaultMappings.put(entry.getKey(), entry.getValue());
-            }
-        }
+                RDBMSEventAdapterConstants.ADAPTER_GENERIC_RDBMS_AND };
 
         Boolean staticAttributeExist;
-        Boolean valueExist = null;
         String attribute = null;
-        for (Map.Entry<String, String> defaultMap : defaultMappings.entrySet()) {
-            staticAttributeExist = false;
-            for(int i=0 ; i<staticAttributes.length ; i++){
+        Map<String, String> defaultMappings = new HashMap<String, String>();
 
+
+        for(int i=0 ; i<staticAttributes.length ; i++){
+            staticAttributeExist = false;
+            for (Map.Entry<String, String> entry : globalProperties.entrySet()) {
                 attribute = staticAttributes[i];
-                if(defaultMap.getKey().contains(staticAttributes[i])){
+                if(staticAttributes[i].equals(entry.getKey())){
                     staticAttributeExist = true;
-                    for (Map.Entry<String, String> entry : globalProperties.entrySet()) {
-                        valueExist = false;
-                        if (entry.getKey().contains(dbName)) {
-                            if (entry.getKey().contains(defaultMap.getKey())) {
-                                dbTypeMappings.put(defaultMap.getKey(), entry.getValue());
-                                valueExist = true;
-                                break;
-                            }
-                        }
-                    }
-                    if(!valueExist){
-                        dbTypeMappings.put(defaultMap.getKey(), defaultMap.getValue());
-                    }
+                    defaultMappings.put(entry.getKey(), entry.getValue());
+                    break;
                 }
             }
             if(!staticAttributeExist){
-                throw new OutputEventAdapterException("A mandatory attribute " + attribute + "does not exist");
+                throw new OutputEventAdapterRuntimeException("A mandatory attribute " + attribute + " does not exist");
             }
         }
+
+        Boolean valueExist;
+
+        for (Map.Entry<String, String> defaultMap : defaultMappings.entrySet()) {
+            valueExist = false;
+            for (Map.Entry<String, String> entry : globalProperties.entrySet()) {
+                if (entry.getKey().contains(dbName)) {
+                    if (entry.getKey().contains(defaultMap.getKey())) {
+                        dbTypeMappings.put(defaultMap.getKey(), entry.getValue());
+                        valueExist = true;
+                        break;
+                    }
+                }
+            }
+            if(!valueExist){
+                dbTypeMappings.put(defaultMap.getKey(), defaultMap.getValue());
+            }
+        }
+
     }
 
     @Override
     public void disconnect() {
 
+        if (dataSource != null) {
+            dataSource = null;
+        }
     }
 
     @Override
@@ -586,6 +581,9 @@ public class RDBMSEventAdapter implements OutputEventAdapter {
 
         if (executionInfo != null) {
             executionInfo = null;
+        }
+        if (dataSource != null) {
+            dataSource = null;
         }
     }
 }
