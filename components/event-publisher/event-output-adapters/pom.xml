@@ -34,6 +34,7 @@
     <modules>
         <module>org.wso2.carbon.event.output.adapter.logger</module>
         <module>org.wso2.carbon.event.output.adapter.email</module>
+        <module>org.wso2.carbon.event.output.adapter.rdbms</module>
         <module>org.wso2.carbon.event.output.adapter.http</module>
         <module>org.wso2.carbon.event.output.adapter.soap</module>
         <module>org.wso2.carbon.event.output.adapter.websocket</module>

@@ -15,7 +15,6 @@
 package org.wso2.carbon.event.publisher.admin;
 
 import org.apache.axis2.AxisFault;
-import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.wso2.carbon.context.PrivilegedCarbonContext;
@@ -47,7 +46,6 @@ public class EventPublisherAdminService extends AbstractAdmin {
 
         try {
             EventPublisherService eventPublisherService = EventPublisherAdminServiceValueHolder.getEventPublisherService();
-            int tenantId = PrivilegedCarbonContext.getThreadLocalCarbonContext().getTenantId();
 
             // get event publisher configurations
             List<EventPublisherConfiguration> eventPublisherConfigurationList;
@@ -74,7 +72,15 @@ public class EventPublisherAdminService extends AbstractAdmin {
                     eventPublisherConfigurationInfoDtoArray[index].setEnableTracing(eventPublisherConfiguration.isTracingEnabled());
                     eventPublisherConfigurationInfoDtoArray[index].setEditable(eventPublisherConfiguration.isEditable());
                 }
+                Arrays.sort(eventPublisherConfigurationInfoDtoArray,new Comparator() {
+
+                    @Override
+                    public int compare(Object o1, Object o2) {
+                        return ((EventPublisherConfigurationInfoDto) o1).getEventPublisherName().compareTo(((EventPublisherConfigurationInfoDto) o2).getEventPublisherName());
+                    }
+                });
                 return eventPublisherConfigurationInfoDtoArray;
+
             } else {
                 return new EventPublisherConfigurationInfoDto[0];
             }
@@ -90,7 +96,6 @@ public class EventPublisherAdminService extends AbstractAdmin {
 
         try {
             EventPublisherService eventPublisherService = EventPublisherAdminServiceValueHolder.getEventPublisherService();
-            int tenantId = PrivilegedCarbonContext.getThreadLocalCarbonContext().getTenantId();
 
             // get event publisher configurations
             List<EventPublisherConfiguration> eventPublisherConfigurationList;
@@ -114,6 +119,13 @@ public class EventPublisherAdminService extends AbstractAdmin {
                     eventPublisherConfigurationInfoDtoArray[index].setEnableTracing(eventPublisherConfiguration.isTracingEnabled());
                     eventPublisherConfigurationInfoDtoArray[index].setEditable(eventPublisherConfiguration.isEditable());
                 }
+                Arrays.sort(eventPublisherConfigurationInfoDtoArray,new Comparator() {
+
+                    @Override
+                    public int compare(Object o1, Object o2) {
+                        return ((EventPublisherConfigurationInfoDto) o1).getEventPublisherName().compareTo(((EventPublisherConfigurationInfoDto) o2).getEventPublisherName());
+                    }
+                });
                 return eventPublisherConfigurationInfoDtoArray;
             } else {
                 return new EventPublisherConfigurationInfoDto[0];
@@ -128,7 +140,6 @@ public class EventPublisherAdminService extends AbstractAdmin {
             throws AxisFault {
 
         EventPublisherService eventPublisherService = EventPublisherAdminServiceValueHolder.getEventPublisherService();
-        AxisConfiguration axisConfiguration = getAxisConfig();
         List<EventPublisherConfigurationFile> eventPublisherConfigurationFileList = eventPublisherService.getAllInactiveEventPublisherConfigurations();
         if (eventPublisherConfigurationFileList != null) {
 
@@ -147,6 +158,13 @@ public class EventPublisherAdminService extends AbstractAdmin {
 
                 eventPublisherFileDtoArray[index] = new EventPublisherConfigurationFileDto(fileName, eventPublisherName, statusMsg);
             }
+            Arrays.sort(eventPublisherFileDtoArray,new Comparator() {
+
+                @Override
+                public int compare(Object o1, Object o2) {
+                    return ((EventPublisherConfigurationFileDto) o1).getFileName().compareTo(((EventPublisherConfigurationFileDto) o2).getFileName());
+                }
+            });
             return eventPublisherFileDtoArray;
         } else {
             return new EventPublisherConfigurationFileDto[0];
@@ -157,8 +175,6 @@ public class EventPublisherAdminService extends AbstractAdmin {
             String eventPublisherName) throws AxisFault {
 
         EventPublisherService eventPublisherService = EventPublisherAdminServiceValueHolder.getEventPublisherService();
-        int tenantId = PrivilegedCarbonContext.getThreadLocalCarbonContext().getTenantId();
-        AxisConfiguration axisConfiguration = getAxisConfig();
 
         try {
             EventPublisherConfiguration eventPublisherConfiguration = eventPublisherService.getActiveEventPublisherConfiguration(eventPublisherName);
@@ -265,7 +281,6 @@ public class EventPublisherAdminService extends AbstractAdmin {
     public String getActiveEventPublisherConfigurationContent(String eventPublisherName)
             throws AxisFault {
         EventPublisherService eventPublisherService = EventPublisherAdminServiceValueHolder.getEventPublisherService();
-        AxisConfiguration axisConfiguration = getAxisConfig();
         try {
             return eventPublisherService.getActiveEventPublisherConfigurationContent(eventPublisherName);
         } catch (EventPublisherConfigurationException e) {
@@ -289,7 +304,6 @@ public class EventPublisherAdminService extends AbstractAdmin {
     public void undeployActiveEventPublisherConfiguration(String eventPublisherName)
             throws AxisFault {
         EventPublisherService eventPublisherService = EventPublisherAdminServiceValueHolder.getEventPublisherService();
-        AxisConfiguration axisConfiguration = getAxisConfig();
         try {
             eventPublisherService.undeployActiveEventPublisherConfiguration(eventPublisherName);
         } catch (EventPublisherConfigurationException e) {
@@ -302,7 +316,6 @@ public class EventPublisherAdminService extends AbstractAdmin {
             throws AxisFault {
         EventPublisherService eventPublisherService = EventPublisherAdminServiceValueHolder.getEventPublisherService();
         try {
-            AxisConfiguration axisConfiguration = getAxisConfig();
             eventPublisherService.undeployInactiveEventPublisherConfiguration(fileName);
         } catch (EventPublisherConfigurationException e) {
             log.error(e.getMessage(), e);
@@ -314,7 +327,6 @@ public class EventPublisherAdminService extends AbstractAdmin {
                                                       String eventPublisherName)
             throws AxisFault {
         EventPublisherService eventPublisherService = EventPublisherAdminServiceValueHolder.getEventPublisherService();
-        AxisConfiguration axisConfiguration = getAxisConfig();
         try {
             eventPublisherService.editActiveEventPublisherConfiguration(eventPublisherConfiguration, eventPublisherName);
         } catch (EventPublisherConfigurationException e) {
@@ -329,7 +341,6 @@ public class EventPublisherAdminService extends AbstractAdmin {
             throws AxisFault {
 
         EventPublisherService eventPublisherService = EventPublisherAdminServiceValueHolder.getEventPublisherService();
-        AxisConfiguration axisConfiguration = getAxisConfig();
         try {
             eventPublisherService.editInactiveEventPublisherConfiguration(eventPublisherConfiguration, fileName);
         } catch (EventPublisherConfigurationException e) {
@@ -370,7 +381,6 @@ public class EventPublisherAdminService extends AbstractAdmin {
                 eventPublisherConfiguration.setFromStreamName(fromStreamProperties[0]);
                 eventPublisherConfiguration.setFromStreamVersion(fromStreamProperties[1]);
 
-                AxisConfiguration axisConfiguration = getAxisConfig();
                 StreamDefinition streamDefinition = eventPublisherService.getStreamDefinition(streamNameWithVersion);
 
                 constructOutputAdapterRelatedConfigs(eventPublisherName, eventAdapterType, outputPropertyConfiguration,
@@ -445,9 +455,6 @@ public class EventPublisherAdminService extends AbstractAdmin {
                 eventPublisherConfiguration.setFromStreamName(fromStreamProperties[0]);
                 eventPublisherConfiguration.setFromStreamVersion(fromStreamProperties[1]);
 
-                AxisConfiguration axisConfiguration = getAxisConfig();
-                int tenantId = PrivilegedCarbonContext.getThreadLocalCarbonContext().getTenantId();
-
                 constructOutputAdapterRelatedConfigs(eventPublisherName, eventAdapterType, outputPropertyConfiguration,
                         eventPublisherConfiguration, EventPublisherConstants.EF_TEXT_MAPPING_TYPE);
 
@@ -502,8 +509,6 @@ public class EventPublisherAdminService extends AbstractAdmin {
                 eventPublisherConfiguration.setFromStreamName(fromStreamProperties[0]);
                 eventPublisherConfiguration.setFromStreamVersion(fromStreamProperties[1]);
 
-                AxisConfiguration axisConfiguration = getAxisConfig();
-
                 constructOutputAdapterRelatedConfigs(eventPublisherName, eventAdapterType, outputPropertyConfiguration,
                         eventPublisherConfiguration, EventPublisherConstants.EF_XML_MAPPING_TYPE);
 
@@ -553,8 +558,6 @@ public class EventPublisherAdminService extends AbstractAdmin {
                 String[] fromStreamProperties = streamNameWithVersion.split(":");
                 eventPublisherConfiguration.setFromStreamName(fromStreamProperties[0]);
                 eventPublisherConfiguration.setFromStreamVersion(fromStreamProperties[1]);
-
-                AxisConfiguration axisConfiguration = getAxisConfig();
 
                 constructOutputAdapterRelatedConfigs(eventPublisherName, eventAdapterType, outputPropertyConfiguration,
                         eventPublisherConfiguration, EventPublisherConstants.EF_MAP_MAPPING_TYPE);
@@ -612,8 +615,6 @@ public class EventPublisherAdminService extends AbstractAdmin {
                 eventPublisherConfiguration.setFromStreamName(fromStreamProperties[0]);
                 eventPublisherConfiguration.setFromStreamVersion(fromStreamProperties[1]);
 
-                AxisConfiguration axisConfiguration = getAxisConfig();
-
                 constructOutputAdapterRelatedConfigs(eventPublisherName, eventAdapterType, outputPropertyConfiguration,
                         eventPublisherConfiguration, EventPublisherConstants.EF_JSON_MAPPING_TYPE);
 
@@ -649,7 +650,6 @@ public class EventPublisherAdminService extends AbstractAdmin {
     public void setStatisticsEnabled(String eventPublisherName, boolean flag) throws AxisFault {
 
         EventPublisherService eventPublisherService = EventPublisherAdminServiceValueHolder.getEventPublisherService();
-        AxisConfiguration axisConfiguration = getAxisConfig();
         try {
             eventPublisherService.setStatisticsEnabled(eventPublisherName, flag);
         } catch (EventPublisherConfigurationException e) {
@@ -660,7 +660,6 @@ public class EventPublisherAdminService extends AbstractAdmin {
 
     public void setTracingEnabled(String eventPublisherName, boolean flag) throws AxisFault {
         EventPublisherService eventPublisherService = EventPublisherAdminServiceValueHolder.getEventPublisherService();
-        AxisConfiguration axisConfiguration = getAxisConfig();
         try {
             eventPublisherService.setTraceEnabled(eventPublisherName, flag);
         } catch (EventPublisherConfigurationException e) {
@@ -690,6 +689,7 @@ public class EventPublisherAdminService extends AbstractAdmin {
         if (outputEventAdapters == null) {
             return new String[0];
         } else {
+            Collections.sort(outputEventAdapters);
             String[] types = new String[outputEventAdapters.size()];
             return outputEventAdapters.toArray(types);
         }

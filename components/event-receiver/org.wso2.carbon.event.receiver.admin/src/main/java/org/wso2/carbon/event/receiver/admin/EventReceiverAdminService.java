@@ -69,6 +69,13 @@ public class EventReceiverAdminService extends AbstractAdmin {
                 eventReceiverConfigurationInfoDtoArray[index].setEnableTracing(eventReceiverConfiguration.isTraceEnabled());
                 eventReceiverConfigurationInfoDtoArray[index].setEditable(eventReceiverConfiguration.isEditable());
             }
+            Arrays.sort(eventReceiverConfigurationInfoDtoArray, new Comparator() {
+
+                @Override
+                public int compare(Object o1, Object o2) {
+                    return ((EventReceiverConfigurationInfoDto) o1).getEventReceiverName().compareTo(((EventReceiverConfigurationInfoDto) o2).getEventReceiverName());
+                }
+            });
             return eventReceiverConfigurationInfoDtoArray;
         } else {
             return new EventReceiverConfigurationInfoDto[0];
@@ -103,6 +110,13 @@ public class EventReceiverAdminService extends AbstractAdmin {
                 eventReceiverConfigurationInfoDtoArray[index].setEnableTracing(eventReceiverConfiguration.isTraceEnabled());
                 eventReceiverConfigurationInfoDtoArray[index].setEditable(eventReceiverConfiguration.isEditable());
             }
+            Arrays.sort(eventReceiverConfigurationInfoDtoArray,new Comparator() {
+
+                @Override
+                public int compare(Object o1, Object o2) {
+                    return ((EventReceiverConfigurationInfoDto) o1).getEventReceiverName().compareTo(((EventReceiverConfigurationInfoDto) o2).getEventReceiverName());
+                }
+            });
             return eventReceiverConfigurationInfoDtoArray;
         } else {
             return new EventReceiverConfigurationInfoDto[0];
@@ -131,6 +145,13 @@ public class EventReceiverAdminService extends AbstractAdmin {
 
                 eventReceiverFileDtoArray[index] = new EventReceiverConfigurationFileDto(fileName, eventReceiverName, statusMsg);
             }
+            Arrays.sort(eventReceiverFileDtoArray,new Comparator() {
+
+                @Override
+                public int compare(Object o1, Object o2) {
+                    return ((EventReceiverConfigurationFileDto) o1).getFileName().compareTo(((EventReceiverConfigurationFileDto) o2).getFileName());
+                }
+            });
             return eventReceiverFileDtoArray;
         } else {
             return new EventReceiverConfigurationFileDto[0];
@@ -636,6 +657,7 @@ public class EventReceiverAdminService extends AbstractAdmin {
         if (inputEventAdapters == null) {
             return new String[0];
         } else {
+            Collections.sort(inputEventAdapters);
             String[] types = new String[inputEventAdapters.size()];
             return inputEventAdapters.toArray(types);
         }
@@ -696,7 +718,6 @@ public class EventReceiverAdminService extends AbstractAdmin {
                     inComingStreamAttributes.add(attribute.getName());
                 }
             }
-
 
             if (inputEventAttributes.size() > 0) {
                 if (inComingStreamAttributes.containsAll(inputEventAttributes)) {

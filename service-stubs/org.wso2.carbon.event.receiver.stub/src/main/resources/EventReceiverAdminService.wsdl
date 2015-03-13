@@ -1025,13 +1025,13 @@
     </wsdl:binding>
     <wsdl:service name="EventReceiverAdminService">
         <wsdl:port name="EventReceiverAdminServiceHttpsSoap11Endpoint" binding="ns:EventReceiverAdminServiceSoap11Binding">
-            <soap:address location="https://10.100.1.144:9443/services/EventReceiverAdminService.EventReceiverAdminServiceHttpsSoap11Endpoint/"></soap:address>
+            <soap:address location="https://192.168.1.6:9443/services/EventReceiverAdminService.EventReceiverAdminServiceHttpsSoap11Endpoint/"></soap:address>
         </wsdl:port>
         <wsdl:port name="EventReceiverAdminServiceHttpsSoap12Endpoint" binding="ns:EventReceiverAdminServiceSoap12Binding">
-            <soap12:address location="https://10.100.1.144:9443/services/EventReceiverAdminService.EventReceiverAdminServiceHttpsSoap12Endpoint/"></soap12:address>
+            <soap12:address location="https://192.168.1.6:9443/services/EventReceiverAdminService.EventReceiverAdminServiceHttpsSoap12Endpoint/"></soap12:address>
         </wsdl:port>
         <wsdl:port name="EventReceiverAdminServiceHttpsEndpoint" binding="ns:EventReceiverAdminServiceHttpBinding">
-            <http:address location="https://10.100.1.144:9443/services/EventReceiverAdminService.EventReceiverAdminServiceHttpsEndpoint/"></http:address>
+            <http:address location="https://192.168.1.6:9443/services/EventReceiverAdminService.EventReceiverAdminServiceHttpsEndpoint/"></http:address>
         </wsdl:port>
     </wsdl:service>
 </wsdl:definitions>

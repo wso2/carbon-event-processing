@@ -272,13 +272,13 @@
                 <xs:sequence>
                     <xs:element minOccurs="0" name="customMappingEnabled" type="xs:boolean"></xs:element>
                     <xs:element minOccurs="0" name="eventPublisherName" nillable="true" type="xs:string"></xs:element>
-                    <xs:element minOccurs="0" name="toStreamNameWithVersion" nillable="true" type="xs:string"></xs:element>
+                    <xs:element minOccurs="0" name="fromStreamNameWithVersion" nillable="true" type="xs:string"></xs:element>
                     <xs:element minOccurs="0" name="jsonOutputMappingDto" nillable="true" type="ax2102:JSONOutputMappingDto"></xs:element>
                     <xs:element minOccurs="0" name="mapOutputMappingDto" nillable="true" type="ax2102:MapOutputMappingDto"></xs:element>
                     <xs:element minOccurs="0" name="messageFormat" nillable="true" type="xs:string"></xs:element>
                     <xs:element minOccurs="0" name="streamDefinition" nillable="true" type="xs:string"></xs:element>
                     <xs:element minOccurs="0" name="textOutputMappingDto" nillable="true" type="ax2102:TextOutputMappingDto"></xs:element>
-                    <xs:element minOccurs="0" name="fromAdapterConfigurationDto" nillable="true" type="ax2102:OutputAdapterConfigurationDto"></xs:element>
+                    <xs:element minOccurs="0" name="toAdapterConfigurationDto" nillable="true" type="ax2102:OutputAdapterConfigurationDto"></xs:element>
                     <xs:element minOccurs="0" name="wso2EventOutputMappingDto" nillable="true" type="ax2102:WSO2EventOutputMappingDto"></xs:element>
                     <xs:element minOccurs="0" name="xmlOutputMappingDto" nillable="true" type="ax2102:XMLOutputMappingDto"></xs:element>
                 </xs:sequence>

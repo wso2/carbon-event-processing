@@ -38,8 +38,8 @@ public class CarbonOutputEventAdapterService implements OutputEventAdapterServic
     private static final String EVENT_TRACE_LOGGER = "EVENT_TRACE_LOGGER";
     private Logger trace = Logger.getLogger(EVENT_TRACE_LOGGER);
 
-    private Map<String, OutputEventAdapterFactory> eventAdapterFactoryMap;
-    private ConcurrentHashMap<Integer, ConcurrentHashMap<String, OutputAdapterRuntime>> tenantSpecificEventAdapters;
+    private final Map<String, OutputEventAdapterFactory> eventAdapterFactoryMap;
+    private final ConcurrentHashMap<Integer, ConcurrentHashMap<String, OutputAdapterRuntime>> tenantSpecificEventAdapters;
 
 
     public CarbonOutputEventAdapterService() {

@@ -72,9 +72,8 @@ public class OutputEventAdapterConfiguration {
         if (name != null ? !name.equals(that.name) : that.name != null) return false;
         if (staticProperties != null ? !staticProperties.equals(that.staticProperties) : that.staticProperties != null)
             return false;
-        if (type != null ? !type.equals(that.type) : that.type != null) return false;
+        return !(type != null ? !type.equals(that.type) : that.type != null);
 
-        return true;
     }
 
     @Override
