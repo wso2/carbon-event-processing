@@ -139,9 +139,9 @@ public class RDBMSEventAdapter implements OutputEventAdapter {
 
                 if (executionInfo == null) {
                     executionInfo = new ExecutionInfo();
-                    initializeDatabaseExecutionInfo(tableName, executionMode, updateColumnKeys, message, executionInfo);
+                    initializeDatabaseExecutionInfo(tableName, executionMode, updateColumnKeys, message);
                 }
-                executeProcessActions(message, executionInfo, tableName);
+                executeProcessActions(message,tableName);
             } else {
                 throw new OutputEventAdapterRuntimeException(
                         message.getClass().toString() + "is not a compatible type. Hence Event is dropped.");
@@ -155,7 +155,7 @@ public class RDBMSEventAdapter implements OutputEventAdapter {
      * Construct all the queries and assign to executionInfo instance
      */
     private void initializeDatabaseExecutionInfo(String tableName, String executionMode, String updateColumnKeys,
-            Object message, ExecutionInfo executionInfo) {
+            Object message) {
 
         if (resourceBundle.getString(RDBMSEventAdapterConstants.ADAPTER_GENERIC_RDBMS_EXECUTION_MODE_UPDATE)
                 .equalsIgnoreCase(executionMode)) {
@@ -294,14 +294,14 @@ public class RDBMSEventAdapter implements OutputEventAdapter {
 
     }
 
-    public void executeProcessActions(Object message, ExecutionInfo executionInfo, String tableName)
+    public void executeProcessActions(Object message,String tableName)
             throws OutputEventAdapterException {
 
-        createTableIfNotExist(executionInfo, tableName);
-        executeDbActions(message, executionInfo);
+        createTableIfNotExist(tableName);
+        executeDbActions(message);
     }
 
-    public void executeDbActions(Object message, ExecutionInfo executionInfo)
+    public void executeDbActions(Object message)
             throws OutputEventAdapterException {
 
         PreparedStatement stmt = null;
@@ -395,7 +395,7 @@ public class RDBMSEventAdapter implements OutputEventAdapter {
         }
     }
 
-    public void createTableIfNotExist(ExecutionInfo executionInfo, String tableName)
+    public void createTableIfNotExist(String tableName)
             throws OutputEventAdapterException {
 
         Statement stmt = null;
@@ -573,6 +573,9 @@ public class RDBMSEventAdapter implements OutputEventAdapter {
 
         if (dataSource != null) {
             dataSource = null;
+        }
+        if (executionInfo != null) {
+            executionInfo.setTableExist(false);
         }
     }
 
