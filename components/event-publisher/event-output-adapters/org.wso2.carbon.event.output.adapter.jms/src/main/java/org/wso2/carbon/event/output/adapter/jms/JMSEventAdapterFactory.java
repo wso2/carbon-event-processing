@@ -50,14 +50,16 @@ public class JMSEventAdapterFactory  extends OutputEventAdapterFactory {
         initialContextProperty.setDisplayName(
                 resourceBundle.getString(JMSEventAdapterConstants.JNDI_INITIAL_CONTEXT_FACTORY_CLASS));
         initialContextProperty.setRequired(true);
-        initialContextProperty.setHint(resourceBundle.getString(JMSEventAdapterConstants.JNDI_INITIAL_CONTEXT_FACTORY_CLASS_HINT));
+        initialContextProperty.setHint(resourceBundle.getString(
+                                                    JMSEventAdapterConstants.JNDI_INITIAL_CONTEXT_FACTORY_CLASS_HINT));
 
         // JNDI Provider URL
         Property javaNamingProviderUrlProperty = new Property(JMSEventAdapterConstants.JAVA_NAMING_PROVIDER_URL);
         javaNamingProviderUrlProperty.setDisplayName(
                 resourceBundle.getString(JMSEventAdapterConstants.JAVA_NAMING_PROVIDER_URL));
         javaNamingProviderUrlProperty.setRequired(true);
-        javaNamingProviderUrlProperty.setHint(resourceBundle.getString(JMSEventAdapterConstants.JAVA_NAMING_PROVIDER_URL_HINT));
+        javaNamingProviderUrlProperty.setHint(resourceBundle.getString(
+                                                            JMSEventAdapterConstants.JAVA_NAMING_PROVIDER_URL_HINT));
 
         // JNDI Username
         Property userNameProperty = new Property(JMSEventAdapterConstants.ADAPTER_JMS_USERNAME);
@@ -71,11 +73,13 @@ public class JMSEventAdapterFactory  extends OutputEventAdapterFactory {
                 resourceBundle.getString(JMSEventAdapterConstants.ADAPTER_JMS_PASSWORD));
 
         // Connection Factory JNDI Name
-        Property connectionFactoryNameProperty = new Property(JMSEventAdapterConstants.ADAPTER_JMS_CONNECTION_FACTORY_JNDINAME);
+        Property connectionFactoryNameProperty = new Property(
+                                                     JMSEventAdapterConstants.ADAPTER_JMS_CONNECTION_FACTORY_JNDINAME);
         connectionFactoryNameProperty.setRequired(true);
         connectionFactoryNameProperty.setDisplayName(
                 resourceBundle.getString(JMSEventAdapterConstants.ADAPTER_JMS_CONNECTION_FACTORY_JNDINAME));
-        connectionFactoryNameProperty.setHint(resourceBundle.getString(JMSEventAdapterConstants.ADAPTER_JMS_CONNECTION_FACTORY_JNDINAME_HINT));
+        connectionFactoryNameProperty.setHint(resourceBundle.getString(
+                                                JMSEventAdapterConstants.ADAPTER_JMS_CONNECTION_FACTORY_JNDINAME_HINT));
 
         // Destination Type
         Property destinationTypeProperty = new Property(JMSEventAdapterConstants.ADAPTER_JMS_DESTINATION_TYPE);
@@ -84,7 +88,14 @@ public class JMSEventAdapterFactory  extends OutputEventAdapterFactory {
                 resourceBundle.getString(JMSEventAdapterConstants.ADAPTER_JMS_DESTINATION_TYPE));
         destinationTypeProperty.setOptions(new String[]{"queue", "topic"});
         destinationTypeProperty.setDefaultValue("topic");
-        destinationTypeProperty.setHint(resourceBundle.getString(JMSEventAdapterConstants.ADAPTER_JMS_DESTINATION_TYPE_HINT));
+        destinationTypeProperty.setHint(resourceBundle.getString(
+                                                           JMSEventAdapterConstants.ADAPTER_JMS_DESTINATION_TYPE_HINT));
+
+        // Topic
+        Property topicProperty = new Property(JMSEventAdapterConstants.ADAPTER_JMS_DESTINATION);
+        topicProperty.setDisplayName(
+                resourceBundle.getString(JMSEventAdapterConstants.ADAPTER_JMS_DESTINATION));
+        topicProperty.setRequired(true);
 
         staticPropertyList.add(initialContextProperty);
         staticPropertyList.add(javaNamingProviderUrlProperty);
@@ -92,6 +103,7 @@ public class JMSEventAdapterFactory  extends OutputEventAdapterFactory {
         staticPropertyList.add(passwordProperty);
         staticPropertyList.add(connectionFactoryNameProperty);
         staticPropertyList.add(destinationTypeProperty);
+        staticPropertyList.add(topicProperty);
 
         return staticPropertyList;
 
@@ -101,19 +113,11 @@ public class JMSEventAdapterFactory  extends OutputEventAdapterFactory {
     public List<Property> getDynamicPropertyList() {
         List<Property> dynamicPropertyList = new ArrayList<Property>();
 
-        // Topic
-        Property topicProperty = new Property(JMSEventAdapterConstants.ADAPTER_JMS_DESTINATION);
-        topicProperty.setDisplayName(
-                resourceBundle.getString(JMSEventAdapterConstants.ADAPTER_JMS_DESTINATION));
-        topicProperty.setRequired(true);
-
         // Header
         Property headerProperty = new Property(JMSEventAdapterConstants.ADAPTER_JMS_HEADER);
         headerProperty.setDisplayName(
                 resourceBundle.getString(JMSEventAdapterConstants.ADAPTER_JMS_HEADER));
         headerProperty.setHint(resourceBundle.getString(JMSEventAdapterConstants.ADAPTER_JMS_HEADER_HINT));
-
-        dynamicPropertyList.add(topicProperty);
         dynamicPropertyList.add(headerProperty);
 
         return dynamicPropertyList;

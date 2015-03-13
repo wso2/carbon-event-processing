@@ -41,8 +41,8 @@ public class JMSEventAdapter implements OutputEventAdapter {
     private OutputEventAdapterConfiguration eventAdapterConfiguration;
     private Map<String, String> globalProperties;
 
-
-    private ConcurrentHashMap<String, ConcurrentHashMap<String, PublisherDetails>> publisherMap = new ConcurrentHashMap<String, ConcurrentHashMap<String, PublisherDetails>>();
+    private ConcurrentHashMap<String, ConcurrentHashMap<String, PublisherDetails>> publisherMap =
+                                                                        new ConcurrentHashMap<String, ConcurrentHashMap<String, PublisherDetails>>();
 
     public JMSEventAdapter(OutputEventAdapterConfiguration eventAdapterConfiguration,
                              Map<String, String> globalProperties) {
@@ -68,21 +68,24 @@ public class JMSEventAdapter implements OutputEventAdapter {
     @Override
     public void publish(Object message, Map<String, String> dynamicProperties) {
 
-        ConcurrentHashMap<String, PublisherDetails> topicEventSender = publisherMap.get("dynamicConfig");
+        ConcurrentHashMap<String, PublisherDetails> topicEventSender = publisherMap.get(
+                                                                                  eventAdapterConfiguration.getName());
         if (null == topicEventSender) {
             topicEventSender = new ConcurrentHashMap<String, PublisherDetails>();
-            if (null != publisherMap.putIfAbsent("dynamicConfig", topicEventSender)) {
-                topicEventSender = publisherMap.get("dynamicConfig");
+            if (null != publisherMap.putIfAbsent(eventAdapterConfiguration.getName(), topicEventSender)) {
+                topicEventSender = publisherMap.get(eventAdapterConfiguration.getName());
             }
         }
 
-        String topicName = dynamicProperties.get(JMSEventAdapterConstants.ADAPTER_JMS_DESTINATION);
+        String topicName = eventAdapterConfiguration.getStaticProperties().get(
+                                                                      JMSEventAdapterConstants.ADAPTER_JMS_DESTINATION);
         PublisherDetails publisherDetails = topicEventSender.get(topicName);
+
         Map<String, String> messageConfig = new HashMap<String, String>();
         messageConfig.put(JMSConstants.PARAM_DESTINATION, topicName);
         try {
             if (null == publisherDetails) {
-                publisherDetails = initPublisher(dynamicProperties, topicEventSender, topicName, messageConfig);
+                publisherDetails = initPublisher(eventAdapterConfiguration, topicEventSender, topicName, messageConfig);
             }
             Message jmsMessage = publisherDetails.getJmsMessageSender().convertToJMSMessage(message, messageConfig);
             setJMSTransportHeaders(jmsMessage, dynamicProperties.get(JMSEventAdapterConstants.ADAPTER_JMS_HEADER));
@@ -109,17 +112,19 @@ public class JMSEventAdapter implements OutputEventAdapter {
     }
 
     private PublisherDetails initPublisher(
-            Map<String, String> dynamicProperties,
+            OutputEventAdapterConfiguration outputEventAdaptorConfiguration,
             ConcurrentHashMap<String, PublisherDetails> topicEventSender, String topicName,
             Map<String, String> messageConfig) {
-        PublisherDetails publisherDetails;
-        Hashtable<String, String> adaptorProperties = new Hashtable<String, String>();
-        adaptorProperties.putAll(dynamicProperties);
 
-        JMSConnectionFactory jmsConnectionFactory = new JMSConnectionFactory(adaptorProperties, "dynamicConfig");
+        PublisherDetails publisherDetails;
+        Hashtable<String, String> adaptorProperties =
+                                convertMapToHashTable(outputEventAdaptorConfiguration.getStaticProperties());
+        JMSConnectionFactory jmsConnectionFactory = new JMSConnectionFactory(adaptorProperties,
+                                                                     outputEventAdaptorConfiguration.getName());
         JMSMessageSender jmsMessageSender = new JMSMessageSender(jmsConnectionFactory, messageConfig);
         publisherDetails = new PublisherDetails(jmsConnectionFactory, jmsMessageSender);
         topicEventSender.put(topicName, publisherDetails);
+
         return publisherDetails;
     }
 
@@ -169,6 +174,32 @@ public class JMSEventAdapter implements OutputEventAdapter {
         public JMSMessageSender getJmsMessageSender() {
             return jmsMessageSender;
         }
+    }
+
+
+    private  Hashtable<String, String> convertMapToHashTable(Map<String, String>  map) {
+        Hashtable<String, String> table = new Hashtable();
+        Iterator it = map.entrySet().iterator();
+
+        //Iterate through the hash map
+        while (it.hasNext()) {
+            Map.Entry pair = (Map.Entry)it.next();
+            String key = pair.getKey().toString();
+            String value;
+
+            //If value is null empty string will be assigned
+            if ( pair.getValue() == null) {
+                value = "";
+            }
+            else {
+                value = pair.getValue().toString();
+            }
+
+            table.put(key, value);
+            it.remove();
+        }
+
+        return table;
     }
 
 }
