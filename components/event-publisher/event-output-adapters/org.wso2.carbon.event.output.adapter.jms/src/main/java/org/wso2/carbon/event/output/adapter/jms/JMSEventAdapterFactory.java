@@ -43,12 +43,7 @@ public class JMSEventAdapterFactory  extends OutputEventAdapterFactory {
 
     @Override
     public List<Property> getStaticPropertyList() {
-        return null;
-    }
-
-    @Override
-    public List<Property> getDynamicPropertyList() {
-        List<Property> dynamicPropertyList = new ArrayList<Property>();
+        List<Property> staticPropertyList = new ArrayList<Property>();
 
         // JNDI initial context factory class
         Property initialContextProperty = new Property(JMSEventAdapterConstants.JNDI_INITIAL_CONTEXT_FACTORY_CLASS);
@@ -91,13 +86,35 @@ public class JMSEventAdapterFactory  extends OutputEventAdapterFactory {
         destinationTypeProperty.setDefaultValue("topic");
         destinationTypeProperty.setHint(resourceBundle.getString(JMSEventAdapterConstants.ADAPTER_JMS_DESTINATION_TYPE_HINT));
 
-        dynamicPropertyList.add(initialContextProperty);
-        dynamicPropertyList.add(javaNamingProviderUrlProperty);
-        dynamicPropertyList.add(userNameProperty);
-        dynamicPropertyList.add(passwordProperty);
-        dynamicPropertyList.add(connectionFactoryNameProperty);
-        dynamicPropertyList.add(destinationTypeProperty);
+        staticPropertyList.add(initialContextProperty);
+        staticPropertyList.add(javaNamingProviderUrlProperty);
+        staticPropertyList.add(userNameProperty);
+        staticPropertyList.add(passwordProperty);
+        staticPropertyList.add(connectionFactoryNameProperty);
+        staticPropertyList.add(destinationTypeProperty);
 
+        return staticPropertyList;
+
+    }
+
+    @Override
+    public List<Property> getDynamicPropertyList() {
+        List<Property> dynamicPropertyList = new ArrayList<Property>();
+
+        // Topic
+        Property topicProperty = new Property(JMSEventAdapterConstants.ADAPTER_JMS_DESTINATION);
+        topicProperty.setDisplayName(
+                resourceBundle.getString(JMSEventAdapterConstants.ADAPTER_JMS_DESTINATION));
+        topicProperty.setRequired(true);
+
+        // Header
+        Property headerProperty = new Property(JMSEventAdapterConstants.ADAPTER_JMS_HEADER);
+        headerProperty.setDisplayName(
+                resourceBundle.getString(JMSEventAdapterConstants.ADAPTER_JMS_HEADER));
+        headerProperty.setHint(resourceBundle.getString(JMSEventAdapterConstants.ADAPTER_JMS_HEADER_HINT));
+
+        dynamicPropertyList.add(topicProperty);
+        dynamicPropertyList.add(headerProperty);
 
         return dynamicPropertyList;
     }
