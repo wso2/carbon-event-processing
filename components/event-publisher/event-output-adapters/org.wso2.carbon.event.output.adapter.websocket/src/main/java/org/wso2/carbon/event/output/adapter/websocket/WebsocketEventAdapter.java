@@ -98,7 +98,9 @@ public final class WebsocketEventAdapter implements OutputEventAdapter {
     @Override
     public void disconnect() {
         try {
-            session.close();
+            if(session != null){
+                session.close();
+            }
         } catch (IOException e) {
             throw new OutputEventAdapterRuntimeException("The adaptor "+eventAdapterConfiguration.getName()+" failed to disconnect from the websocket server "+
                     socketServerUrl ,e);
