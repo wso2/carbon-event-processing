@@ -38,8 +38,8 @@ public class CarbonOutputEventAdapterService implements OutputEventAdapterServic
     private static final String EVENT_TRACE_LOGGER = "EVENT_TRACE_LOGGER";
     private Logger trace = Logger.getLogger(EVENT_TRACE_LOGGER);
 
-    private Map<String, OutputEventAdapterFactory> eventAdapterFactoryMap;
-    private ConcurrentHashMap<Integer, ConcurrentHashMap<String, OutputAdapterRuntime>> tenantSpecificEventAdapters;
+    private final Map<String, OutputEventAdapterFactory> eventAdapterFactoryMap;
+    private final ConcurrentHashMap<Integer, ConcurrentHashMap<String, OutputAdapterRuntime>> tenantSpecificEventAdapters;
 
 
     public CarbonOutputEventAdapterService() {
@@ -98,6 +98,24 @@ public class CarbonOutputEventAdapterService implements OutputEventAdapterServic
         if (eventAdapters.get(outputEventAdapterConfiguration.getName()) != null) {
             throw new OutputEventAdapterException("Output Event Adapter not created as another adapter with same name '"
                     + outputEventAdapterConfiguration.getName() + "' already exist for tenant " + tenantId);
+        }
+        //check if all the required properties are given here
+        List<Property> staticPropertyList = adapterFactory.getStaticPropertyList();
+        if(staticPropertyList != null){
+            Map<String,String> staticPropertyMap = outputEventAdapterConfiguration.getStaticProperties();
+            for (Property property: staticPropertyList){
+                if(property.isRequired()){
+                    if(staticPropertyMap == null){
+                        throw new OutputEventAdapterException("Output Event Adapter not created as the 'staticProperties' are null, " +
+                                "which means, the required property "+property.getPropertyName()+" is not  being set, for the adapter type " +
+                                outputEventAdapterConfiguration.getType());
+                    }
+                    if(staticPropertyMap.get(property.getPropertyName()) == null){
+                        throw new OutputEventAdapterException("Output Event Adapter not created as the required property: "+property.getPropertyName()+
+                                " is not set, for the adapter type " +outputEventAdapterConfiguration.getType());
+                    }
+                }
+            }
         }
         Map<String, String> globalProperties = OutputEventAdapterServiceValueHolder.getGlobalAdapterConfigs().
                 getAdapterConfig(outputEventAdapterConfiguration.getType()).getGlobalPropertiesAsMap();

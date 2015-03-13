@@ -18,6 +18,7 @@
 package org.wso2.carbon.event.output.adapter.email;
 
 import org.wso2.carbon.event.output.adapter.core.*;
+import org.wso2.carbon.event.output.adapter.core.exception.OutputEventAdapterException;
 import org.wso2.carbon.event.output.adapter.email.internal.util.EmailEventAdapterConstants;
 
 import java.util.*;
@@ -73,5 +74,4 @@ public class EmailEventAdapterFactory extends OutputEventAdapterFactory {
             String> globalProperties) {
         return new EmailEventAdapter(eventAdapterConfiguration, globalProperties);
     }
-
 }

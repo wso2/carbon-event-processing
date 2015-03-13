@@ -22,10 +22,10 @@ import java.util.List;
  */
 public class OutputEventAdapterSchema {
 
-    private String type;
-    private List<String> supportedMessageFormats;
-    private List<Property> staticPropertyList;
-    private List<Property> dynamicPropertyList;
+    private final String type;
+    private final List<String> supportedMessageFormats;
+    private final List<Property> staticPropertyList;
+    private final List<Property> dynamicPropertyList;
 
     public OutputEventAdapterSchema(String type, List<String> supportedMessageFormats, List<Property> staticPropertyList, List<Property> dynamicPropertyList) {
         this.type = type;

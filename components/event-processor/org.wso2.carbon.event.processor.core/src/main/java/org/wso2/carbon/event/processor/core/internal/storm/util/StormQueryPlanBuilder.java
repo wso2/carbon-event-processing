@@ -157,7 +157,7 @@ public class StormQueryPlanBuilder {
                                                            List<String> importedStreams, List<String> exportedStreams)
             throws SiddhiParserException, StormQueryConstructionException {
         SiddhiManager mockSiddhiManager = new SiddhiManager();
-        String fullQueryExpression = EventProcessorUtil.constructQueryExpression(importedStreams, exportedStreams,
+        String fullQueryExpression = EventProcessorUtil.constructQueryExpression("", importedStreams, exportedStreams,
                 queryExpressions);
         ExecutionPlanRuntime executionPlanRuntime = mockSiddhiManager.createExecutionPlanRuntime(fullQueryExpression);
 

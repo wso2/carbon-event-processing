@@ -182,13 +182,16 @@ function loadMappingUiElements() {
 
     jQuery.ajax({
         type: "POST",
-        url: "../eventbuilder/get_mapping_ui_ajaxprocessor.jsp?mappingType=" + inputMappingType + "&streamNameWithVersion=" + streamNameWithVersion,
+        url: "../eventreceiver/get_mapping_ui_ajaxprocessor.jsp?mappingType=" + inputMappingType + "&streamNameWithVersion=" + streamNameWithVersion,
         data: {},
         contentType: "text/html; charset=utf-8",
         dataType: "text",
         success: function (ui_content) {
             if (ui_content != null) {
                 outerDiv.innerHTML = ui_content;
+                if (inputMappingType == "text") {
+                    updateAttributeType();
+                }
             }
         }
     });
@@ -857,6 +860,12 @@ function addInputRegexDef() {
 
     regex.value = "";
     noPropertyDiv.style.display = "none";
+}
+
+function updateAttributeType() {
+    var typeMap = JSON.parse( document.getElementById("streamMapping").getAttribute("mapping"));
+    var selectedIndex = document.getElementById("inputPropertyName").selectedIndex;
+    document.getElementById("inputPropertyType").value = typeMap[selectedIndex];
 }
 
 

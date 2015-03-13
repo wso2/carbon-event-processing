@@ -23,7 +23,7 @@ import org.wso2.carbon.utils.multitenancy.MultitenantConstants;
 public class EventAdapterUtil {
 
     public static AxisConfiguration getAxisConfiguration() {
-        AxisConfiguration axisConfiguration = null;
+        AxisConfiguration axisConfiguration;
         if (CarbonContext.getThreadLocalCarbonContext().getTenantId() == MultitenantConstants.SUPER_TENANT_ID) {
             axisConfiguration = OutputEventAdapterServiceValueHolder.getConfigurationContextService().
                     getServerConfigContext().getAxisConfiguration();
