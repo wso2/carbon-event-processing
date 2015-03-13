@@ -18,6 +18,7 @@
 package org.wso2.carbon.event.processor.core;
 
 import org.wso2.carbon.event.processor.core.internal.ha.HAManager;
+import org.wso2.carbon.event.processor.core.internal.persistence.PersistenceManager;
 import org.wso2.carbon.event.processor.core.internal.storm.SiddhiStormOutputEventListener;
 import org.wso2.carbon.event.stream.manager.core.EventProducer;
 import org.wso2.carbon.event.stream.manager.core.SiddhiEventConsumer;
@@ -32,17 +33,20 @@ public class ExecutionPlan {
     private ExecutionPlanConfiguration executionPlanConfiguration;
     private String name;
     private HAManager haManager;
+    private PersistenceManager persistenceManager;
     private List<EventProducer> eventProducers = new ArrayList<EventProducer>();
     private List<SiddhiEventConsumer> siddhiEventConsumers = new ArrayList<SiddhiEventConsumer>();
     private SiddhiStormOutputEventListener stormOutputListener;
 
 
     public ExecutionPlan(String name, ExecutionPlanRuntime executionPlanRuntime,
-                         ExecutionPlanConfiguration executionPlanConfiguration, HAManager haManager) {
+                         ExecutionPlanConfiguration executionPlanConfiguration, HAManager haManager,
+                         PersistenceManager persistenceManager) {
         this.executionPlanRuntime = executionPlanRuntime;
         this.executionPlanConfiguration = executionPlanConfiguration;
         this.name = name;
         this.haManager = haManager;
+        this.persistenceManager = persistenceManager;
     }
 
     public String getName() {
@@ -78,15 +82,26 @@ public class ExecutionPlan {
         this.haManager = haManager;
     }
 
+    public PersistenceManager getPersistenceManager() {
+        return persistenceManager;
+    }
+
+    public void setPersistenceManager(PersistenceManager persistenceManager) {
+        this.persistenceManager = persistenceManager;
+    }
+
     public void shutdown() {
         if (haManager != null) {
             haManager.shutdown();
         }
-        if(stormOutputListener!=null){
+        if (stormOutputListener != null) {
             stormOutputListener.shutdown();
         }
-        for(SiddhiEventConsumer siddhiEventConsumer:siddhiEventConsumers){
+        for (SiddhiEventConsumer siddhiEventConsumer : siddhiEventConsumers) {
             siddhiEventConsumer.shutdown();
+        }
+        if (persistenceManager != null) {
+            persistenceManager.shutdown();
         }
         executionPlanRuntime.shutdown();
     }
