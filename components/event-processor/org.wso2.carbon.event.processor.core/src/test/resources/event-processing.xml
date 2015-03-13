@@ -13,7 +13,7 @@
   ~ specific language governing permissions and limitations under the License.
   -->
 
-<cepConfig>
+<eventProcessingConfig>
 
     <processing mode="SingleNode">
         <persistnace class="">
@@ -22,6 +22,7 @@
     </processing>
 
     <processing mode="HA">
+
         <transport>
             <!--<hostName>localhost</hostName>-->
             <port>11224</port>
@@ -78,5 +79,5 @@
         <distributedUIUrl></distributedUIUrl>
 
     </processing>
-</cepConfig>
+</eventProcessingConfig>
 
