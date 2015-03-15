@@ -52,6 +52,11 @@
 <%
     EventPublisherAdminServiceStub eventPublisherAdminServiceStub = EventPublisherUIUtils.getEventPublisherAdminService(config, session, request);
     String[] outputAdapterTypes = eventPublisherAdminServiceStub.getAllOutputAdapterTypes();
+
+    String firstEventAdapterType = null;
+    if (outputAdapterTypes != null && outputAdapterTypes.length > 0) {
+        firstEventAdapterType = outputAdapterTypes[0];
+    }
     String streamId = request.getParameter("streamId");
     String redirectPage = request.getParameter("redirectPage");
 
@@ -60,7 +65,7 @@
     if (streamId == null && streamIds != null && streamIds.length > 0) {
         streamId = streamIds[0];
     }
-    if (streamId != null) {
+    if (streamId != null && firstEventAdapterType != null) {
         EventStreamDefinitionDto streamDefinitionDto = eventStreamAdminServiceStub.getStreamDefinitionDto(streamId);
         EventStreamAttributeDto[] metaAttributeList = streamDefinitionDto.getMetaData();
         EventStreamAttributeDto[] correlationAttributeList = streamDefinitionDto.getCorrelationData();
@@ -178,16 +183,11 @@
                                                                      key="to.heading"/>')"
                                                              id="eventAdapterTypeFilter">
                 <%
-                    String firstEventAdapterType = null;
-
-                    if (outputAdapterTypes != null) {
-                        firstEventAdapterType = outputAdapterTypes[0];
-                        for (String outputAdapterType : outputAdapterTypes) {
+                    for (String outputAdapterType : outputAdapterTypes) {
                 %>
                 <option value="<%=outputAdapterType%>"><%=outputAdapterType%>
                 </option>
                 <%
-                        }
                     }
                 %>
 
