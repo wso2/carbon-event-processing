@@ -28,7 +28,8 @@ public class JMSEventAdapterConstants {
     public static final String ADAPTER_JMS_USERNAME = "transport.jms.UserName";
     public static final String ADAPTER_JMS_PASSWORD = "transport.jms.Password";
     public static final String ADAPTER_JMS_CONNECTION_FACTORY_JNDINAME = "transport.jms.ConnectionFactoryJNDIName";
-    public static final String ADAPTER_JMS_CONNECTION_FACTORY_JNDINAME_HINT = "transport.jms.ConnectionFactoryJNDIName.hint";
+    public static final String ADAPTER_JMS_CONNECTION_FACTORY_JNDINAME_HINT =
+            "transport.jms.ConnectionFactoryJNDIName.hint";
     public static final String ADAPTER_JMS_DESTINATION_TYPE = "transport.jms.DestinationType";
     public static final String ADAPTER_JMS_DESTINATION_TYPE_HINT = "transport.jms.DestinationType.hint";
 

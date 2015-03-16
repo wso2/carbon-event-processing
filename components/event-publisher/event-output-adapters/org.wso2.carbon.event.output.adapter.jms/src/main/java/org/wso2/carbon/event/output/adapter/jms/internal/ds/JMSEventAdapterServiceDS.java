@@ -39,7 +39,8 @@ public class JMSEventAdapterServiceDS {
 
         try {
             OutputEventAdapterFactory jmsEventAdapterFactory = new JMSEventAdapterFactory();
-            context.getBundleContext().registerService(OutputEventAdapterFactory.class.getName(), jmsEventAdapterFactory, null);
+            context.getBundleContext().registerService(OutputEventAdapterFactory.class.getName(),
+                    jmsEventAdapterFactory, null);
             if (log.isDebugEnabled()) {
                 log.debug("Successfully deployed the output jms event adaptor service ");
             }

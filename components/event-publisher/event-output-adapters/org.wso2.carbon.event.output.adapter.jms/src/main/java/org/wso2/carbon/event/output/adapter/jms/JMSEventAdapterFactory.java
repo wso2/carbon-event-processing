@@ -22,7 +22,7 @@ import org.wso2.carbon.event.output.adapter.jms.internal.util.JMSEventAdapterCon
 
 import java.util.*;
 
-public class JMSEventAdapterFactory  extends OutputEventAdapterFactory {
+public class JMSEventAdapterFactory extends OutputEventAdapterFactory {
 
     private ResourceBundle resourceBundle =
             ResourceBundle.getBundle("org.wso2.carbon.event.output.adapter.jms.i18n.Resources", Locale.getDefault());
@@ -51,7 +51,7 @@ public class JMSEventAdapterFactory  extends OutputEventAdapterFactory {
                 resourceBundle.getString(JMSEventAdapterConstants.JNDI_INITIAL_CONTEXT_FACTORY_CLASS));
         initialContextProperty.setRequired(true);
         initialContextProperty.setHint(resourceBundle.getString(
-                                                    JMSEventAdapterConstants.JNDI_INITIAL_CONTEXT_FACTORY_CLASS_HINT));
+                JMSEventAdapterConstants.JNDI_INITIAL_CONTEXT_FACTORY_CLASS_HINT));
 
         // JNDI Provider URL
         Property javaNamingProviderUrlProperty = new Property(JMSEventAdapterConstants.JAVA_NAMING_PROVIDER_URL);
@@ -59,7 +59,7 @@ public class JMSEventAdapterFactory  extends OutputEventAdapterFactory {
                 resourceBundle.getString(JMSEventAdapterConstants.JAVA_NAMING_PROVIDER_URL));
         javaNamingProviderUrlProperty.setRequired(true);
         javaNamingProviderUrlProperty.setHint(resourceBundle.getString(
-                                                            JMSEventAdapterConstants.JAVA_NAMING_PROVIDER_URL_HINT));
+                JMSEventAdapterConstants.JAVA_NAMING_PROVIDER_URL_HINT));
 
         // JNDI Username
         Property userNameProperty = new Property(JMSEventAdapterConstants.ADAPTER_JMS_USERNAME);
@@ -74,12 +74,12 @@ public class JMSEventAdapterFactory  extends OutputEventAdapterFactory {
 
         // Connection Factory JNDI Name
         Property connectionFactoryNameProperty = new Property(
-                                                     JMSEventAdapterConstants.ADAPTER_JMS_CONNECTION_FACTORY_JNDINAME);
+                JMSEventAdapterConstants.ADAPTER_JMS_CONNECTION_FACTORY_JNDINAME);
         connectionFactoryNameProperty.setRequired(true);
         connectionFactoryNameProperty.setDisplayName(
                 resourceBundle.getString(JMSEventAdapterConstants.ADAPTER_JMS_CONNECTION_FACTORY_JNDINAME));
         connectionFactoryNameProperty.setHint(resourceBundle.getString(
-                                                JMSEventAdapterConstants.ADAPTER_JMS_CONNECTION_FACTORY_JNDINAME_HINT));
+                JMSEventAdapterConstants.ADAPTER_JMS_CONNECTION_FACTORY_JNDINAME_HINT));
 
         // Destination Type
         Property destinationTypeProperty = new Property(JMSEventAdapterConstants.ADAPTER_JMS_DESTINATION_TYPE);
@@ -89,7 +89,7 @@ public class JMSEventAdapterFactory  extends OutputEventAdapterFactory {
         destinationTypeProperty.setOptions(new String[]{"queue", "topic"});
         destinationTypeProperty.setDefaultValue("topic");
         destinationTypeProperty.setHint(resourceBundle.getString(
-                                                           JMSEventAdapterConstants.ADAPTER_JMS_DESTINATION_TYPE_HINT));
+                JMSEventAdapterConstants.ADAPTER_JMS_DESTINATION_TYPE_HINT));
 
         // Topic
         Property topicProperty = new Property(JMSEventAdapterConstants.ADAPTER_JMS_DESTINATION);

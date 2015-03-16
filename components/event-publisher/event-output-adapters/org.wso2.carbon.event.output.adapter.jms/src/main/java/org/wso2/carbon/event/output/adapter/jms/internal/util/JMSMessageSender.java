@@ -21,6 +21,7 @@ import org.apache.axiom.om.OMElement;
 import org.apache.axis2.transport.base.BaseConstants;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.wso2.carbon.event.output.adapter.core.exception.ConnectionUnavailableException;
 import org.wso2.carbon.event.output.adapter.core.exception.OutputEventAdapterRuntimeException;
 
 import javax.jms.*;
@@ -101,8 +102,8 @@ public class JMSMessageSender {
         this.session = jmsConnectionFactory.getSession(connection);
         this.destination =
                 jmsConnectionFactory.getSharedDestination() == null ?
-                jmsConnectionFactory.getDestination(messageProperties.get(JMSConstants.PARAM_DESTINATION)) :
-                jmsConnectionFactory.getSharedDestination();
+                        jmsConnectionFactory.getDestination(messageProperties.get(JMSConstants.PARAM_DESTINATION)) :
+                        jmsConnectionFactory.getSharedDestination();
         this.producer = jmsConnectionFactory.getMessageProducer(connection, session, destination);
     }
 
@@ -128,21 +129,21 @@ public class JMSMessageSender {
             try {
                 producer.setDeliveryMode(DeliveryMode.PERSISTENT);
             } catch (JMSException e) {
-                handleException("Error setting JMS Producer for PERSISTENT delivery", e);
+                handleConnectionException("Error setting JMS Producer for PERSISTENT delivery", e);
             }
         }
         if (priority != null) {
             try {
                 producer.setPriority(priority);
             } catch (JMSException e) {
-                handleException("Error setting JMS Producer priority to : " + priority, e);
+                handleConnectionException("Error setting JMS Producer priority to : " + priority, e);
             }
         }
         if (timeToLive != null) {
             try {
                 producer.setTimeToLive(timeToLive);
             } catch (JMSException e) {
-                handleException("Error setting JMS Producer TTL to : " + timeToLive, e);
+                handleConnectionException("Error setting JMS Producer TTL to : " + timeToLive, e);
             }
         }
 
@@ -177,11 +178,11 @@ public class JMSMessageSender {
             if (log.isDebugEnabled()) {
                 log.debug(
                         " with JMS Message ID : " + msgId +
-                        " to destination : " + producer.getDestination());
+                                " to destination : " + producer.getDestination());
             }
 
         } catch (JMSException e) {
-            handleException("Error sending message to destination : " + destination, e);
+            handleConnectionException("Error sending message to destination : " + destination, e);
 
         } finally {
 
@@ -222,13 +223,13 @@ public class JMSMessageSender {
 
                     if (log.isDebugEnabled()) {
                         log.debug((sendingSuccessful ? "Committed" : "Rolled back") +
-                                  " local (JMS Session) Transaction");
+                                " local (JMS Session) Transaction");
                     }
 
                 } catch (JMSException e) {
-                    handleException("Error committing/rolling back local (i.e. session) " +
-                                    "transaction after sending of message "//with MessageContext ID : " +
-                                    + " to destination : " + destination, e);
+                    handleConnectionException("Error committing/rolling back local (i.e. session) " +
+                            "transaction after sending of message "//with MessageContext ID : " +
+                            + " to destination : " + destination, e);
                 }
             }
         }
@@ -295,6 +296,11 @@ public class JMSMessageSender {
     private void handleException(String message, Exception e) {
         log.error(message, e);
         throw new OutputEventAdapterRuntimeException(message, e);
+    }
+
+    private void handleConnectionException(String message, Exception e) {
+        log.error(message, e);
+        throw new ConnectionUnavailableException(message, e);
     }
 
     private Boolean getBooleanProperty(Map<String, String> messageProperties, String name) {

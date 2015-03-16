@@ -84,9 +84,9 @@ public class JMSUtils extends BaseUtils {
             try {
                 assert replyDestination != null;
                 log.debug("Expecting a response to JMS Destination : " +
-                          (replyDestination instanceof Queue ?
-                           ((Queue) replyDestination).getQueueName() :
-                           ((Topic) replyDestination).getTopicName()));
+                        (replyDestination instanceof Queue ?
+                                ((Queue) replyDestination).getQueueName() :
+                                ((Topic) replyDestination).getTopicName()));
             } catch (JMSException ignore) {
             }
         }
@@ -112,7 +112,7 @@ public class JMSUtils extends BaseUtils {
         for (String name : messageConfiguration.keySet()) {
 
             if (name.startsWith(JMSConstants.JMSX_PREFIX) &&
-                !(name.equals(JMSConstants.JMSX_GROUP_ID) || name.equals(JMSConstants.JMSX_GROUP_SEQ))) {
+                    !(name.equals(JMSConstants.JMSX_GROUP_ID) || name.equals(JMSConstants.JMSX_GROUP_SEQ))) {
                 continue;
             }
 
@@ -193,7 +193,7 @@ public class JMSUtils extends BaseUtils {
                 Destination dest = message.getJMSDestination();
                 map.put(JMSConstants.JMS_DESTINATION,
                         dest instanceof Queue ?
-                        ((Queue) dest).getQueueName() : ((Topic) dest).getTopicName());
+                                ((Queue) dest).getQueueName() : ((Topic) dest).getTopicName());
             }
         } catch (JMSException ignore) {
         }
@@ -230,7 +230,7 @@ public class JMSUtils extends BaseUtils {
                 Destination dest = message.getJMSReplyTo();
                 map.put(JMSConstants.JMS_REPLY_TO,
                         dest instanceof Queue ?
-                        ((Queue) dest).getQueueName() : ((Topic) dest).getTopicName());
+                                ((Queue) dest).getQueueName() : ((Topic) dest).getTopicName());
             }
         } catch (JMSException ignore) {
         }
@@ -345,12 +345,12 @@ public class JMSUtils extends BaseUtils {
             if (object instanceof Reference) {
                 Reference ref = (Reference) object;
                 handleException("JNDI failed to de-reference Reference with name " +
-                                name + "; is the factory " + ref.getFactoryClassName() +
-                                " in your classpath?");
+                        name + "; is the factory " + ref.getFactoryClassName() +
+                        " in your classpath?");
                 return null;
             } else {
                 handleException("JNDI lookup of name " + name + " returned a " +
-                                object.getClass().getName() + " while a " + clazz + " was expected");
+                        object.getClass().getName() + " while a " + clazz + " was expected");
                 return null;
             }
         }
@@ -377,7 +377,7 @@ public class JMSUtils extends BaseUtils {
         Connection connection = null;
         if (log.isDebugEnabled()) {
             log.debug("Creating a " + (isQueue ? "Queue" : "Topic") +
-                      "Connection using credentials : (" + user + "/" + pass + ")");
+                    "Connection using credentials : (" + user + "/" + pass + ")");
         }
 
         if (jmsSpec11 || isQueue == null) {
@@ -550,8 +550,8 @@ public class JMSUtils extends BaseUtils {
         } catch (NameNotFoundException e) {
             try {
                 return JMSUtils.lookup(context, Destination.class,
-                                       (JMSConstants.DESTINATION_TYPE_TOPIC.equalsIgnoreCase(destinationType) ?
-                                        "dynamicTopics/" : "dynamicQueues/") + destinationName);
+                        (JMSConstants.DESTINATION_TYPE_TOPIC.equalsIgnoreCase(destinationType) ?
+                                "dynamicTopics/" : "dynamicQueues/") + destinationName);
             } catch (NamingException x) {
                 log.warn("Cannot locate destination : " + destinationName);
                 throw x;
