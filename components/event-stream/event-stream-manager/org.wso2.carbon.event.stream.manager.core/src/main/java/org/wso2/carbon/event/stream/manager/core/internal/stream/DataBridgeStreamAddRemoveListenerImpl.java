@@ -15,12 +15,12 @@
 * specific language governing permissions and limitations
 * under the License.
 */
-package org.wso2.carbon.event.stream.manager.core.internal.stream;
+package org.wso2.carbon.event.stream.core.internal.stream;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.wso2.carbon.event.stream.manager.core.exception.EventStreamConfigurationException;
-import org.wso2.carbon.event.stream.manager.core.internal.CarbonEventStreamService;
+import org.wso2.carbon.event.stream.core.exception.EventStreamConfigurationException;
+import org.wso2.carbon.event.stream.core.internal.CarbonEventStreamService;
 
 
 public class DataBridgeStreamAddRemoveListenerImpl implements StreamAddRemoveListener {

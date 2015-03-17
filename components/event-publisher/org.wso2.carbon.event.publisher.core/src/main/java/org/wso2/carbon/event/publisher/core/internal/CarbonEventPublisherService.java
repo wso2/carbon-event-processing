@@ -31,8 +31,8 @@ import org.wso2.carbon.event.publisher.core.internal.util.EventPublisherConfigur
 import org.wso2.carbon.event.publisher.core.internal.util.EventPublisherUtil;
 import org.wso2.carbon.event.publisher.core.internal.util.helper.EventPublisherConfigurationFilesystemInvoker;
 import org.wso2.carbon.event.publisher.core.internal.util.helper.EventPublisherConfigurationHelper;
-import org.wso2.carbon.event.stream.manager.core.EventStreamService;
-import org.wso2.carbon.event.stream.manager.core.exception.EventStreamConfigurationException;
+import org.wso2.carbon.event.stream.core.EventStreamService;
+import org.wso2.carbon.event.stream.core.exception.EventStreamConfigurationException;
 import org.wso2.carbon.registry.core.Resource;
 import org.wso2.carbon.registry.core.exceptions.RegistryException;
 import org.wso2.carbon.registry.core.service.RegistryService;
@@ -220,7 +220,7 @@ public class CarbonEventPublisherService implements EventPublisherService {
         int tenantId = PrivilegedCarbonContext.getThreadLocalCarbonContext().getTenantId();
         EventStreamService eventStreamService = EventPublisherServiceValueHolder.getEventStreamService();
         try {
-            return eventStreamService.getStreamDefinition(streamNameWithVersion, tenantId);
+            return eventStreamService.getStreamDefinition(streamNameWithVersion);
         } catch (EventStreamConfigurationException e) {
             throw new EventPublisherConfigurationException("Error while getting stream definition from store : " + e.getMessage(), e);
         }
@@ -327,7 +327,7 @@ public class CarbonEventPublisherService implements EventPublisherService {
                         String eventPublisherName = eventPublisherConfigurationFile.getEventPublisherName();
                         EventPublisher eventPublisher = tenantSpecificEventPublisherConfigurationMap.get(tenantId).remove(eventPublisherName);
                         if (eventPublisher != null) {
-                            EventPublisherServiceValueHolder.getEventStreamService().unsubscribe(eventPublisher, tenantId);
+                            EventPublisherServiceValueHolder.getEventStreamService().unsubscribe(eventPublisher);
                             eventPublisher.destroy();
                         }
                     }

@@ -30,8 +30,8 @@ import org.wso2.carbon.event.receiver.core.exception.EventReceiverConfigurationE
 import org.wso2.carbon.event.receiver.core.exception.EventReceiverStreamValidationException;
 import org.wso2.carbon.event.receiver.core.exception.EventReceiverValidationException;
 import org.wso2.carbon.event.receiver.core.internal.ds.EventReceiverServiceValueHolder;
-import org.wso2.carbon.event.stream.manager.core.EventStreamService;
-import org.wso2.carbon.event.stream.manager.core.exception.EventStreamConfigurationException;
+import org.wso2.carbon.event.stream.core.EventStreamService;
+import org.wso2.carbon.event.stream.core.exception.EventStreamConfigurationException;
 
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;
@@ -285,7 +285,7 @@ public class EventReceiverConfigurationBuilder {
 
         EventStreamService eventStreamService = EventReceiverServiceValueHolder.getEventStreamService();
         try {
-            StreamDefinition streamDefinition = eventStreamService.getStreamDefinition(streamName, streamVersion, tenantId);
+            StreamDefinition streamDefinition = eventStreamService.getStreamDefinition(streamName, streamVersion);
             if (streamDefinition != null) {
                 return true;
             }

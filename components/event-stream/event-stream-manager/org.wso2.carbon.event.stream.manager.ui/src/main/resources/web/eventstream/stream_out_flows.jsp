@@ -17,11 +17,11 @@
 --%>
 <%@ taglib uri="http://wso2.org/projects/carbon/taglibs/carbontags.jar" prefix="carbon" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
-<fmt:bundle basename="org.wso2.carbon.event.stream.manager.ui.i18n.Resources">
+<fmt:bundle basename="org.wso2.carbon.event.stream.ui.i18n.Resources">
 
     <carbon:breadcrumb
             label="eventstream.list"
-            resourceBundle="org.wso2.carbon.event.stream.manager.ui.i18n.Resources"
+            resourceBundle="org.wso2.carbon.event.stream.ui.i18n.Resources"
             topPage="false"
             request="<%=request%>"/>
 

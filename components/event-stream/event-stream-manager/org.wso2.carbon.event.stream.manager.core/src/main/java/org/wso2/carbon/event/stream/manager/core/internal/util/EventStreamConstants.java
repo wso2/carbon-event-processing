@@ -15,7 +15,7 @@
 * specific language governing permissions and limitations
 * under the License.
 */
-package org.wso2.carbon.event.stream.manager.core.internal.util;
+package org.wso2.carbon.event.stream.core.internal.util;
 
 import org.wso2.carbon.databridge.commons.AttributeType;
 

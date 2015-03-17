@@ -27,7 +27,7 @@ import org.apache.axis2.context.ConfigurationContext;
 import org.wso2.carbon.CarbonConstants;
 import org.wso2.carbon.event.processor.stub.EventProcessorAdminServiceStub;
 import org.wso2.carbon.event.processor.stub.types.StreamDefinitionDto;
-import org.wso2.carbon.event.stream.manager.stub.EventStreamAdminServiceStub;
+import org.wso2.carbon.event.stream.stub.EventStreamAdminServiceStub;
 import org.wso2.carbon.ui.CarbonUIUtil;
 
 import javax.servlet.ServletConfig;

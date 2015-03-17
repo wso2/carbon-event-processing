@@ -14,7 +14,7 @@
   --%>
 <%@ page import="org.wso2.carbon.event.receiver.stub.EventReceiverAdminServiceStub" %>
 <%@ page import="org.wso2.carbon.event.receiver.ui.EventReceiverUIUtils" %>
-<%@ page import="org.wso2.carbon.event.stream.manager.stub.EventStreamAdminServiceStub" %>
+<%@ page import="org.wso2.carbon.event.stream.stub.EventStreamAdminServiceStub" %>
 <%@ page import="org.wso2.carbon.event.receiver.stub.types.DetailInputAdapterPropertyDto" %>
 <%@ page import="org.wso2.carbon.event.receiver.stub.types.InputAdapterConfigurationDto" %>
 <%@ taglib uri="http://wso2.org/projects/carbon/taglibs/carbontags.jar" prefix="carbon" %>
@@ -42,6 +42,12 @@
 <%
     EventReceiverAdminServiceStub eventReceiverAdminServiceStub = EventReceiverUIUtils.getEventReceiverAdminService(config, session, request);
     String[] inputAdapterTypes = eventReceiverAdminServiceStub.getAllInputAdapterTypes();
+
+    String firstEventAdapterType = null;
+    if (inputAdapterTypes != null && inputAdapterTypes.length > 0) {
+        firstEventAdapterType = inputAdapterTypes[0];
+    }
+
     String streamId = request.getParameter("streamId");
     String redirectPage = request.getParameter("redirectPage");
 
@@ -50,7 +56,9 @@
     if (streamId == null && streamIds != null && streamIds.length > 0) {
         streamId = streamIds[0];
     }
-    if (streamId != null) {
+
+
+    if (streamId != null && firstEventAdapterType != null) {
 %>
 <br/>
 <thead>
@@ -94,17 +102,13 @@
                                                                      key="to.heading"/>')"
                                                              id="eventAdapterTypeFilter">
                 <%
-                    String firstEventAdapterType = null;
-
-                    if (inputAdapterTypes != null) {
-                        firstEventAdapterType = inputAdapterTypes[0];
-                        for (String inputAdapterType : inputAdapterTypes) {
+                    for (String inputAdapterType : inputAdapterTypes) {
                 %>
                 <option value="<%=inputAdapterType%>"><%=inputAdapterType%>
                 </option>
                 <%
-                        }
                     }
+
                 %>
 
             </select>

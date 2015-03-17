@@ -24,7 +24,7 @@ import org.wso2.carbon.event.processor.common.storm.config.StormDeploymentConfig
 import org.wso2.carbon.event.processor.core.internal.CarbonEventProcessorService;
 import org.wso2.carbon.event.processor.core.internal.storm.manager.StormManagerServer;
 import org.wso2.carbon.event.statistics.EventStatisticsService;
-import org.wso2.carbon.event.stream.manager.core.EventStreamService;
+import org.wso2.carbon.event.stream.core.EventStreamService;
 import org.wso2.carbon.ndatasource.core.DataSourceService;
 import org.wso2.carbon.user.core.UserRealm;
 import org.wso2.carbon.utils.ConfigurationContextService;

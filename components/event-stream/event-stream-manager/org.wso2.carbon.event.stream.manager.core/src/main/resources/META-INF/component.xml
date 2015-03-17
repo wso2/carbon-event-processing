@@ -20,7 +20,7 @@
         <deployer>
             <directory>eventstreams</directory>
             <extension>json</extension>
-            <class>org.wso2.carbon.event.stream.manager.core.EventStreamDeployer</class>
+            <class>org.wso2.carbon.event.stream.core.EventStreamDeployer</class>
         </deployer>
     </deployers>
     <ManagementPermissions>

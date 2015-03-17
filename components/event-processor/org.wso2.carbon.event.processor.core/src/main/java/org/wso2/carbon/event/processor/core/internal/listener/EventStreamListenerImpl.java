@@ -24,7 +24,7 @@ import org.wso2.carbon.event.processor.core.ExecutionPlanConfigurationFile;
 import org.wso2.carbon.event.processor.core.exception.ExecutionPlanConfigurationException;
 import org.wso2.carbon.event.processor.core.internal.CarbonEventProcessorService;
 import org.wso2.carbon.event.processor.core.internal.ds.EventProcessorValueHolder;
-import org.wso2.carbon.event.stream.manager.core.EventStreamListener;
+import org.wso2.carbon.event.stream.core.EventStreamListener;
 
 public class EventStreamListenerImpl implements EventStreamListener {
 

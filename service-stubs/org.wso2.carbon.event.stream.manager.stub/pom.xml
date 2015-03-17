@@ -26,7 +26,7 @@
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
-    <artifactId>org.wso2.carbon.event.stream.manager.stub</artifactId>
+    <artifactId>org.wso2.carbon.event.stream.stub</artifactId>
     <version>2.0.4-SNAPSHOT</version>
     <packaging>bundle</packaging>
     <name>WSO2 Carbon - Event Stream Manager Stub</name>
@@ -52,7 +52,7 @@
                                     <pathelement location="${settings.localRepository}/org/apache/axis2/wso2/axis2/${orbit.version.axis2}/axis2-${orbit.version.axis2}.jar" />
                                 </path>
                                 <java classname="org.apache.axis2.wsdl.WSDL2Java" fork="true">
-                                    <arg line="-uri src/main/resources/EventStreamAdminService.wsdl -u -uw -o target/generated-code -ns2p http://internal.admin.manager.stream.event.carbon.wso2.org=org.wso2.carbon.event.stream.manager.stub,http://internal.admin.manager.stream.event.carbon.wso2.org/xsd=org.wso2.carbon.event.stream.manager.stub.types" />
+                                    <arg line="-uri src/main/resources/EventStreamAdminService.wsdl -u -uw -o target/generated-code -ns2p http://internal.admin.manager.stream.event.carbon.wso2.org=org.wso2.carbon.event.stream.stub,http://internal.admin.manager.stream.event.carbon.wso2.org/xsd=org.wso2.carbon.event.stream.stub.types" />
                                     <classpath refid="wsdl2java.classpath" />
                                 </java>
                             </tasks>
@@ -91,7 +91,7 @@
                         <Bundle-Name>${project.artifactId}</Bundle-Name>
                         <Carbon-Component>UIBundle</Carbon-Component>
                         <Export-Package>
-                            org.wso2.carbon.event.stream.manager.stub.*;version="${carbon.event.processing.version}",
+                            org.wso2.carbon.event.stream.stub.*;version="${carbon.event.processing.version}",
                         </Export-Package>
                         <Import-Package>
                             !javax.xml.namespace,

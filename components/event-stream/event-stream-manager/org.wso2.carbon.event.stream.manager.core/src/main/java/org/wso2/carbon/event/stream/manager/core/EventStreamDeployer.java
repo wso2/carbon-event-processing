@@ -15,7 +15,7 @@
 * specific language governing permissions and limitations
 * under the License.
 */
-package org.wso2.carbon.event.stream.manager.core;
+package org.wso2.carbon.event.stream.core;
 
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.deployment.AbstractDeployer;
@@ -28,8 +28,8 @@ import org.wso2.carbon.databridge.commons.StreamDefinition;
 import org.wso2.carbon.databridge.commons.exception.MalformedStreamDefinitionException;
 import org.wso2.carbon.databridge.commons.utils.EventDefinitionConverterUtils;
 import org.wso2.carbon.event.processing.application.deployer.EventProcessingDeployer;
-import org.wso2.carbon.event.stream.manager.core.internal.CarbonEventStreamService;
-import org.wso2.carbon.event.stream.manager.core.internal.ds.EventStreamServiceValueHolder;
+import org.wso2.carbon.event.stream.core.internal.CarbonEventStreamService;
+import org.wso2.carbon.event.stream.core.internal.ds.EventStreamServiceValueHolder;
 
 import java.io.*;
 import java.util.Collections;
@@ -43,7 +43,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public class EventStreamDeployer extends AbstractDeployer implements EventProcessingDeployer {
 
-    private static Log log = LogFactory.getLog(org.wso2.carbon.event.stream.manager.core.EventStreamDeployer.class);
+    private static Log log = LogFactory.getLog(org.wso2.carbon.event.stream.core.EventStreamDeployer.class);
     private ConfigurationContext configurationContext;
     private Set<String> deployedEventStreamFilePaths = Collections.newSetFromMap(new ConcurrentHashMap<String, Boolean>());
     private Set<String> unDeployedEventStreamFilePaths = Collections.newSetFromMap(new ConcurrentHashMap<String, Boolean>());

@@ -1,4 +1,4 @@
-package org.wso2.carbon.event.stream.manager.core.internal.stream;
+package org.wso2.carbon.event.stream.core.internal.stream;
 
 /*
 * Copyright 2004,2005 The Apache Software Foundation.

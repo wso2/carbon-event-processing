@@ -87,7 +87,6 @@ public final class HTTPEventAdapterManager {
         List<HTTPEventAdapter> adapterList = ADAPTER_MAP.get(endpoint);
         if (adapterList != null) {
             adapterList.remove(httpEventAdapter);
-            httpEventAdapter.disconnect();
             httpEventAdapter.destroy();
             if (adapterList.size() == 0) {
                 httpService.unregister(endpoint);

@@ -33,8 +33,8 @@ import org.wso2.carbon.event.output.adaptor.core.message.config.OutputEventAdapt
 import org.wso2.carbon.event.output.adaptor.manager.core.OutputEventAdaptorManagerService;
 import org.wso2.carbon.event.output.adaptor.manager.core.exception.OutputEventAdaptorManagerConfigurationException;
 import org.wso2.carbon.event.statistics.EventStatisticsMonitor;
-import org.wso2.carbon.event.stream.manager.core.RawEventConsumer;
-import org.wso2.carbon.event.stream.manager.core.exception.EventStreamConfigurationException;
+import org.wso2.carbon.event.stream.core.RawEventConsumer;
+import org.wso2.carbon.event.stream.core.exception.EventStreamConfigurationException;
 
 import java.util.*;
 

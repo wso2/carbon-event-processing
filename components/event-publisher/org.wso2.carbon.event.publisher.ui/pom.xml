@@ -52,8 +52,8 @@
             <version>2.0.4-SNAPSHOT</version>
         </dependency>
         <dependency>
-            <groupId>org.wso2.carbon.event-processing</groupId>
-            <artifactId>org.wso2.carbon.event.stream.manager.stub</artifactId>
+            <groupId>org.wso2.carbon.analytics-common</groupId>
+            <artifactId>org.wso2.carbon.event.stream.stub</artifactId>
         </dependency>
     </dependencies>
 

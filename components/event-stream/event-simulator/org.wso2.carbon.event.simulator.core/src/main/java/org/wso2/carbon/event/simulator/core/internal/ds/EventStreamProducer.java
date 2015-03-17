@@ -18,8 +18,8 @@
 package org.wso2.carbon.event.simulator.core.internal.ds;
 
 
-import org.wso2.carbon.event.stream.manager.core.EventProducer;
-import org.wso2.carbon.event.stream.manager.core.EventProducerCallback;
+import org.wso2.carbon.event.stream.core.EventProducer;
+import org.wso2.carbon.event.stream.core.EventProducerCallback;
 
 public class EventStreamProducer implements EventProducer {
 

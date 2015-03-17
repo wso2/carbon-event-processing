@@ -54,7 +54,7 @@
         </dependency>
         <dependency>
             <groupId>org.wso2.carbon.event-processing</groupId>
-            <artifactId>org.wso2.carbon.event.stream.manager.stub</artifactId>
+            <artifactId>org.wso2.carbon.event.stream.stub</artifactId>
         </dependency>
         <dependency>
             <groupId>org.wso2.carbon.event-processing</groupId>
@@ -80,7 +80,7 @@
                         </Export-Package>
                         <Import-Package>
                             org.wso2.carbon.event.builder.stub,
-			    org.wso2.carbon.event.stream.manager.stub,
+			    org.wso2.carbon.event.stream.stub,
 			    org.wso2.carbon.event.input.adaptor.manager.stub,
                             org.wso2.carbon.utils,
                             org.apache.axis2.*,

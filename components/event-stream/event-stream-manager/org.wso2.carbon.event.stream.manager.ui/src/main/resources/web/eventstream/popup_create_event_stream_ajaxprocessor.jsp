@@ -15,13 +15,13 @@
 ~ specific language governing permissions and limitations
 ~ under the License.
 --%>
-<%@ page import="org.wso2.carbon.event.stream.manager.stub.types.EventStreamAttributeDto" %>
-<%@ page import="org.wso2.carbon.event.stream.manager.stub.types.EventStreamDefinitionDto" %>
-<%@ page import="org.wso2.carbon.event.stream.manager.ui.EventStreamUIUtils" %>
+<%@ page import="org.wso2.carbon.event.stream.stub.types.EventStreamAttributeDto" %>
+<%@ page import="org.wso2.carbon.event.stream.stub.types.EventStreamDefinitionDto" %>
+<%@ page import="org.wso2.carbon.event.stream.ui.EventStreamUIUtils" %>
 <%@ taglib uri="http://wso2.org/projects/carbon/taglibs/carbontags.jar" prefix="carbon" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 
-<fmt:bundle basename="org.wso2.carbon.event.stream.manager.ui.i18n.Resources">
+<fmt:bundle basename="org.wso2.carbon.event.stream.ui.i18n.Resources">
 <script type="text/javascript" src="../eventstream/js/event_stream.js"></script>
 <script type="text/javascript" src="../eventstream/js/registry-browser.js"></script>
 

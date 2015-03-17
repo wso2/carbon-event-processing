@@ -15,7 +15,7 @@
 * specific language governing permissions and limitations
 * under the License.
 */
-package org.wso2.carbon.event.stream.manager.core;
+package org.wso2.carbon.event.stream.core;
 
 /**
  * Represents sources that feed events to the event junction.

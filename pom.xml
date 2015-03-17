@@ -506,24 +506,24 @@
                 <version>${carbon.event.processing.version}</version>
             </dependency>
             <dependency>
-                <groupId>org.wso2.carbon.event-processing</groupId>
-                <artifactId>org.wso2.carbon.event.stream.manager.admin</artifactId>
-                <version>${carbon.event.processing.version}</version>
+                <groupId>org.wso2.carbon.analytics-common</groupId>
+                <artifactId>org.wso2.carbon.event.stream.admin</artifactId>
+                <version>${carbon.analytics.common.version}</version>
             </dependency>
             <dependency>
-                <groupId>org.wso2.carbon.event-processing</groupId>
-                <artifactId>org.wso2.carbon.event.stream.manager.core</artifactId>
-                <version>${carbon.event.processing.version}</version>
+                <groupId>org.wso2.carbon.analytics-common</groupId>
+                <artifactId>org.wso2.carbon.event.stream.core</artifactId>
+                <version>${carbon.analytics.common.version}</version>
             </dependency>
             <dependency>
-                <groupId>org.wso2.carbon.event-processing</groupId>
-                <artifactId>org.wso2.carbon.event.stream.manager.stub</artifactId>
-                <version>${carbon.event.processing.version}</version>
+                <groupId>org.wso2.carbon.analytics-common</groupId>
+                <artifactId>org.wso2.carbon.event.stream.stub</artifactId>
+                <version>${carbon.analytics.common.version}</version>
             </dependency>
             <dependency>
-                <groupId>org.wso2.carbon.event-processing</groupId>
-                <artifactId>org.wso2.carbon.event.stream.manager.ui</artifactId>
-                <version>${carbon.event.processing.version}</version>
+                <groupId>org.wso2.carbon.analytics-common</groupId>
+                <artifactId>org.wso2.carbon.event.stream.ui</artifactId>
+                <version>${carbon.analytics.common.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.wso2.carbon.event-processing</groupId>
@@ -890,15 +890,15 @@
                 <type>zip</type>
             </dependency>
             <dependency>
-                <groupId>org.wso2.carbon.event-processing</groupId>
-                <artifactId>org.wso2.carbon.event.stream.manager.server.feature</artifactId>
-                <version>${carbon.event.processing.version}</version>
+                <groupId>org.wso2.carbon.analytics-common</groupId>
+                <artifactId>org.wso2.carbon.event.stream.server.feature</artifactId>
+                <version>${carbon.analytics.common.version}</version>
                 <type>zip</type>
             </dependency>
             <dependency>
-                <groupId>org.wso2.carbon.event-processing</groupId>
-                <artifactId>org.wso2.carbon.event.stream.manager.ui.feature</artifactId>
-                <version>${carbon.event.processing.version}</version>
+                <groupId>org.wso2.carbon.analytics-common</groupId>
+                <artifactId>org.wso2.carbon.event.stream.ui.feature</artifactId>
+                <version>${carbon.analytics.common.version}</version>
                 <type>zip</type>
             </dependency>
             <dependency>
@@ -1185,6 +1185,7 @@
         <orbit.version.json>2.0.0.wso2v1</orbit.version.json>
 
         <carbon.commons.version>4.3.4</carbon.commons.version>
+        <carbon.analytics.common.version>1.0.0-SNAPSHOT</carbon.analytics.common.version>
         <!--<carbon.commons.imp.pkg.version>[4.3.0, 4.4.0)</carbon.commons.imp.pkg.version>-->
 
         <!--CEP versions-->

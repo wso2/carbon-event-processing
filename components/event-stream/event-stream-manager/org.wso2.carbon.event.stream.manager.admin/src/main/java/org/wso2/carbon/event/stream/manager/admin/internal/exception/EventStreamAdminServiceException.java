@@ -15,7 +15,7 @@
 * specific language governing permissions and limitations
 * under the License.
 */
-package org.wso2.carbon.event.stream.manager.admin.internal.exception;
+package org.wso2.carbon.event.stream.admin.internal.exception;
 
 public class EventStreamAdminServiceException extends Exception {
     public EventStreamAdminServiceException() {

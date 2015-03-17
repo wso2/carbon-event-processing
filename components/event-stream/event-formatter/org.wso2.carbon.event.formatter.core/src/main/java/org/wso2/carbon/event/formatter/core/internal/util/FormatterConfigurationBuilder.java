@@ -36,8 +36,8 @@ import org.wso2.carbon.event.output.adaptor.core.OutputEventAdaptorService;
 import org.wso2.carbon.event.output.adaptor.core.message.config.OutputEventAdaptorMessageConfiguration;
 import org.wso2.carbon.event.output.adaptor.manager.core.OutputEventAdaptorInfo;
 import org.wso2.carbon.event.output.adaptor.manager.core.OutputEventAdaptorManagerService;
-import org.wso2.carbon.event.stream.manager.core.EventStreamService;
-import org.wso2.carbon.event.stream.manager.core.exception.EventStreamConfigurationException;
+import org.wso2.carbon.event.stream.core.EventStreamService;
+import org.wso2.carbon.event.stream.core.exception.EventStreamConfigurationException;
 
 import javax.xml.namespace.QName;
 import java.util.Iterator;

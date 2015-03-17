@@ -32,8 +32,8 @@ import org.wso2.carbon.event.builder.core.internal.ds.EventBuilderServiceValueHo
 import org.wso2.carbon.event.builder.core.internal.util.EventBuilderConstants;
 import org.wso2.carbon.event.builder.core.internal.util.EventBuilderUtil;
 import org.wso2.carbon.event.builder.core.internal.util.helper.EventBuilderConfigHelper;
-import org.wso2.carbon.event.stream.manager.core.EventStreamService;
-import org.wso2.carbon.event.stream.manager.core.exception.EventStreamConfigurationException;
+import org.wso2.carbon.event.stream.core.EventStreamService;
+import org.wso2.carbon.event.stream.core.exception.EventStreamConfigurationException;
 
 import java.util.*;
 

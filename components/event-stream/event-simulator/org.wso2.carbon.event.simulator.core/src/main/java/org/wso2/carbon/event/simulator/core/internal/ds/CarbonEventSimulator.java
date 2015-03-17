@@ -32,9 +32,8 @@ import org.wso2.carbon.databridge.commons.Attribute;
 import org.wso2.carbon.databridge.commons.AttributeType;
 import org.wso2.carbon.databridge.commons.StreamDefinition;
 import org.wso2.carbon.event.simulator.core.*;
-import org.wso2.carbon.event.stream.manager.core.EventStreamConfig;
-import org.wso2.carbon.event.stream.manager.core.EventStreamService;
-import org.wso2.carbon.event.stream.manager.core.exception.EventStreamConfigurationException;
+import org.wso2.carbon.event.stream.core.EventStreamService;
+import org.wso2.carbon.event.stream.core.exception.EventStreamConfigurationException;
 import org.wso2.carbon.ndatasource.common.DataSourceException;
 import org.wso2.carbon.utils.CarbonUtils;
 import org.wso2.carbon.ndatasource.core.CarbonDataSource;
@@ -77,7 +76,7 @@ public class CarbonEventSimulator implements EventSimulator {
             EventStreamService eventStreamService = EventSimulatorValueHolder.getEventStreamService();
             int tenantId = PrivilegedCarbonContext.getThreadLocalCarbonContext().getTenantId();
             Collection<StreamDefinition> collection = new ArrayList<StreamDefinition>();
-            for(StreamDefinition streamDefinition: eventStreamService.getAllStreamDefinitions(tenantId)) {
+            for(StreamDefinition streamDefinition: eventStreamService.getAllStreamDefinitions()) {
                 collection.add(streamDefinition);
             }
             return collection;
@@ -164,7 +163,7 @@ public class CarbonEventSimulator implements EventSimulator {
             int tenantId = PrivilegedCarbonContext.getThreadLocalCarbonContext().getTenantId();
 
             try {
-                eventstreamservice.subscribe(eventStreamProducer, tenantId);
+                eventstreamservice.subscribe(eventStreamProducer);
 
             } catch (EventStreamConfigurationException e) {
                 log.error(e);
@@ -434,7 +433,7 @@ public class CarbonEventSimulator implements EventSimulator {
         StreamDefinition streamDefinition = null;
 
         try {
-            Collection<StreamDefinition> streamDefinitions = eventStreamService.getAllStreamDefinitions(tenantId);
+            Collection<StreamDefinition> streamDefinitions = eventStreamService.getAllStreamDefinitions();
 
             int index = 0;
             for (StreamDefinition streamDefinition1 : streamDefinitions) {

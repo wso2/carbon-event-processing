@@ -25,7 +25,7 @@ import org.wso2.carbon.event.processor.core.exception.StormQueryConstructionExce
 import org.wso2.carbon.event.processor.core.internal.storm.compiler.SiddhiQLStormQuerySplitter;
 import org.wso2.carbon.event.processor.core.internal.util.EventProcessorConstants;
 import org.wso2.carbon.event.processor.core.internal.util.EventProcessorUtil;
-import org.wso2.carbon.event.stream.manager.core.exception.EventStreamConfigurationException;
+import org.wso2.carbon.event.stream.core.exception.EventStreamConfigurationException;
 import org.wso2.siddhi.core.ExecutionPlanRuntime;
 import org.wso2.siddhi.core.SiddhiManager;
 import org.wso2.siddhi.query.api.ExecutionPlan;

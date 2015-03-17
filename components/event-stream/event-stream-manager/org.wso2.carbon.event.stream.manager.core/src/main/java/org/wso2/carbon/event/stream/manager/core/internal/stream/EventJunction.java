@@ -15,14 +15,14 @@
  *  specific language governing permissions and limitations
  *  under the License.
  */
-package org.wso2.carbon.event.stream.manager.core.internal.stream;
+package org.wso2.carbon.event.stream.core.internal.stream;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.wso2.carbon.databridge.commons.Event;
 import org.wso2.carbon.databridge.commons.StreamDefinition;
-import org.wso2.carbon.event.stream.manager.core.*;
-import org.wso2.carbon.event.stream.manager.core.internal.util.EventConverter;
+import org.wso2.carbon.event.stream.core.*;
+import org.wso2.carbon.event.stream.core.internal.util.EventConverter;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -1,20 +1,21 @@
 <%--
-~ Copyright (c) 2005-2014, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
-~
-~ WSO2 Inc. licenses this file to you under the Apache License,
-~ Version 2.0 (the "License"); you may not use this file except
-~ in compliance with the License.
-~ You may obtain a copy of the License at
-~
-~    http://www.apache.org/licenses/LICENSE-2.0
-~
-~ Unless required by applicable law or agreed to in writing,
-~ software distributed under the License is distributed on an
-~ "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
-~ KIND, either express or implied.  See the License for the
-~ specific language governing permissions and limitations
-~ under the License.
---%>
+  ~ Copyright (c) 2015, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
+  ~
+  ~ WSO2 Inc. licenses this file to you under the Apache License,
+  ~ Version 2.0 (the "License"); you may not use this file except
+  ~ in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~ http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing,
+  ~ software distributed under the License is distributed on an
+  ~ "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+  ~ KIND, either express or implied.  See the License for the
+  ~ specific language governing permissions and limitations
+  ~ under the License.
+  --%>
+
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@ page import="org.apache.axis2.context.ConfigurationContext" %>
 <%@ page import="org.wso2.carbon.CarbonConstants" %>
@@ -35,54 +36,36 @@
 
 <style>
 
-    .type-ES {
-        background-color: #54c082;
-    }
-
-    .type-EP  {
-        background-color: #a33c74;
-    }
-
-    .type-IEA  {
+    .type-ER {
         background-color: #3d35d5;
     }
 
-    .type-OEA {
-        background-color: #4cb5f4;
-    }
-
-    .type-EB  {
+    .type-ES {
         background-color: #FF8A3C;
     }
 
-    .type-EF {
-        background-color: #ffc719;
+    .type-EXP  {
+        background-color: #a33c74;
     }
 
+    .type-EP {
+        background-color: #54c082;
+    }
+
+    .type-ER-info  {
+        background-image: url(images/event_receiver.gif);
+    }
 
     .type-ES-info {
-        background-image: url(../eventstream/images/event-stream.png);
+        background-image: url(images/event_stream.png);
     }
 
-    .type-EP-info   {
-        background-image: url(../eventprocessor/images/executionPlan.gif);
-
+    .type-EXP-info   {
+        background-image: url(images/execution_plan.gif);
     }
 
-    .type-IEA-info   {
-        background-image: url(../inputeventadaptormanager/images/eventAdaptor.gif);
-    }
-
-    .type-OEA-info  {
-        background-image: url(../outputeventadaptormanager/images/eventAdaptor.gif);
-    }
-
-    .type-EB-info   {
-        background-image:url(../eventstream/images/eventBuilder.gif);
-    }
-
-    .type-EF-info  {
-        background-image:url(../eventstream/images/event_formatter.gif);
+    .type-EP-info  {
+        background-image:url(../event-flow/images/event_publisher.gif);
     }
 
     .node g div {
@@ -186,17 +169,13 @@ function tryDrawProcessingFlowInfo() {
 
     var g = new dagreD3.Digraph();
 
-    g.addNode("InputEventAdaptors", { label: '<div onclick="location.href = \'../inputeventadaptormanager/index.jsp \';" onmouseover="" style="cursor: pointer;" ><span class="infoType type type-IEA  type-IEA-info"></span><span name="nameElement" style="margin-right: 25px;" class="name-info" ><fmt:message key="input.event.adaptors"/></span></div>' });
-    g.addNode("EventBuilders", { label: '<div onclick="location.href = \'../eventbuilder/index.jsp \';" onmouseover="" style="cursor: pointer;"><span class="infoType type type-EB  type-EB-info"></span><span name="nameElement" style="margin-right: 25px;" class="name-info" ><fmt:message key="event.builders"/></span></div>' });
+    g.addNode("EventPublishers", { label: '<div onclick="location.href = \'../eventpublisher/index.jsp \';" onmouseover="" style="cursor: pointer;"><span class="infoType type type-EP  type-EP-info"></span><span name="nameElement" style="margin-right: 25px;" class="name-info" ><fmt:message key="event.publishers"/></span></div>' });
     g.addNode("EventStreams", { label: '<div onclick="location.href = \'../eventstream/index.jsp \';" onmouseover="" style="cursor: pointer;"><span class="infoType type type-ES  type-ES-info"></span><span name="nameElement" style="margin-right: 25px;" class="name-info" ><fmt:message key="event.streams"/></span></div>' });
-    g.addNode("EventFormatters", { label: '<div onclick="location.href = \'../eventformatter/index.jsp \';" onmouseover="" style="cursor: pointer;"><span class="infoType type type-EF  type-EF-info"></span><span name="nameElement" style="margin-right: 25px;" class="name-info" ><fmt:message key="event.formatters"/></span></div>' });
-    g.addNode("OutputEventAdaptors", { label: '<div onclick="location.href = \'../outputeventadaptormanager/index.jsp \';" onmouseover="" style="cursor: pointer;"><span class="infoType type type-OEA  type-OEA-info"></span><span name="nameElement" style="margin-right: 25px;" class="name-info" ><fmt:message key="output.event.adaptors"/></span></div>' });
-    g.addNode("ExecutionPlans", { label: '<div onclick="location.href = \'../eventprocessor/index.jsp \';" onmouseover="" style="cursor: pointer;"><span class="infoType type type-EP type-EP-info"></span><span name="nameElement" style="margin-right: 25px;" class="name-info" ><fmt:message key="execution.plans"/></span></div>' });
+    g.addNode("EventReceivers", { label: '<div onclick="location.href = \'../eventreceiver/index.jsp \';" onmouseover="" style="cursor: pointer;"><span class="infoType type type-ER  type-ER-info"></span><span name="nameElement" style="margin-right: 25px;" class="name-info" ><fmt:message key="event.receivers"/></span></div>' });
+    g.addNode("ExecutionPlans", { label: '<div onclick="location.href = \'../eventprocessor/index.jsp \';" onmouseover="" style="cursor: pointer;"><span class="infoType type type-EXP type-EXP-info"></span><span name="nameElement" style="margin-right: 25px;" class="name-info" ><fmt:message key="execution.plans"/></span></div>' });
 
-    g.addEdge(null, "InputEventAdaptors", "EventBuilders", { style: 'stroke: #7a0177; stroke-width: 2px;' });
-    g.addEdge(null, "EventBuilders", "EventStreams", { style: 'stroke: #7a0177; stroke-width: 2px;' });
-    g.addEdge(null, "EventStreams", "EventFormatters", { style: 'stroke: #7a0177; stroke-width: 2px;' });
-    g.addEdge(null, "EventFormatters", "OutputEventAdaptors", { style: 'stroke: #7a0177; stroke-width: 2px;' });
+    g.addEdge(null, "EventReceivers", "EventStreams", { style: 'stroke: #7a0177; stroke-width: 2px;' });
+    g.addEdge(null, "EventStreams", "EventPublishers", { style: 'stroke: #7a0177; stroke-width: 2px;' });
     g.addEdge(null, "EventStreams", "ExecutionPlans", { style: 'stroke: #7a0177; stroke-width: 2px;' });
     g.addEdge(null, "ExecutionPlans", "EventStreams", { style: 'stroke: #7a0177; stroke-width: 2px;' });
 

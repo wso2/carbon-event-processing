@@ -19,7 +19,7 @@ import org.apache.commons.logging.LogFactory;
 import org.wso2.carbon.databridge.commons.utils.DataBridgeCommonsUtils;
 import org.wso2.carbon.event.receiver.core.exception.EventReceiverConfigurationException;
 import org.wso2.carbon.event.receiver.core.internal.ds.EventReceiverServiceValueHolder;
-import org.wso2.carbon.event.stream.manager.core.EventStreamListener;
+import org.wso2.carbon.event.stream.core.EventStreamListener;
 
 public class EventStreamListenerImpl implements EventStreamListener {
 

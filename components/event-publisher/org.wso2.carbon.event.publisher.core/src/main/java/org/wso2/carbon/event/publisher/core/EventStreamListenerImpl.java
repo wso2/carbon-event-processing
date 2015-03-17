@@ -19,7 +19,7 @@ import org.apache.commons.logging.LogFactory;
 import org.wso2.carbon.event.publisher.core.exception.EventPublisherConfigurationException;
 import org.wso2.carbon.event.publisher.core.internal.CarbonEventPublisherService;
 import org.wso2.carbon.event.publisher.core.internal.ds.EventPublisherServiceValueHolder;
-import org.wso2.carbon.event.stream.manager.core.EventStreamListener;
+import org.wso2.carbon.event.stream.core.EventStreamListener;
 
 public class EventStreamListenerImpl implements EventStreamListener {
 

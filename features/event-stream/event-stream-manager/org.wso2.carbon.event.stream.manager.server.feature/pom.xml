@@ -27,7 +27,7 @@
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
-    <artifactId>org.wso2.carbon.event.stream.manager.server.feature</artifactId>
+    <artifactId>org.wso2.carbon.event.stream.server.feature</artifactId>
     <packaging>pom</packaging>
     <name>WSO2 Carbon - Event Stream Manager Server Feature</name>
     <version>2.0.4-SNAPSHOT</version>
@@ -38,11 +38,11 @@
     <dependencies>
         <dependency>
             <groupId>org.wso2.carbon.event-processing</groupId>
-            <artifactId>org.wso2.carbon.event.stream.manager.core</artifactId>
+            <artifactId>org.wso2.carbon.event.stream.core</artifactId>
         </dependency>
         <dependency>
             <groupId>org.wso2.carbon.event-processing</groupId>
-            <artifactId>org.wso2.carbon.event.stream.manager.admin</artifactId>
+            <artifactId>org.wso2.carbon.event.stream.admin</artifactId>
         </dependency>
     </dependencies>
 
@@ -86,7 +86,7 @@
                             <goal>p2-feature-gen</goal>
                         </goals>
                         <configuration>
-                            <id>org.wso2.carbon.event.stream.manager.server</id>
+                            <id>org.wso2.carbon.event.stream.server</id>
                             <propertiesFile>../../../../etc/feature.properties</propertiesFile>
                             <adviceFile>
                                 <properties>
@@ -97,10 +97,10 @@
                                 </properties>
                             </adviceFile>
                             <bundles>
-                                <bundleDef>org.wso2.carbon.event-processing:org.wso2.carbon.event.stream.manager.core:${carbon.event.processing.version}
+                                <bundleDef>org.wso2.carbon.event-processing:org.wso2.carbon.event.stream.core:${carbon.event.processing.version}
                                 </bundleDef>
                                 <bundleDef>
-                                    org.wso2.carbon.event-processing:org.wso2.carbon.event.stream.manager.admin:${carbon.event.processing.version}
+                                    org.wso2.carbon.event-processing:org.wso2.carbon.event.stream.admin:${carbon.event.processing.version}
                                 </bundleDef>
                             </bundles>
                             <importFeatures>

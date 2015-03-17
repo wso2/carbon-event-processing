@@ -34,7 +34,7 @@ import org.wso2.carbon.event.publisher.core.exception.EventPublisherValidationEx
 import org.wso2.carbon.event.publisher.core.internal.ds.EventPublisherServiceValueHolder;
 import org.wso2.carbon.event.publisher.core.internal.util.helper.EventPublisherConfigurationHelper;
 import org.wso2.carbon.event.publisher.core.internal.util.helper.XmlFormatter;
-import org.wso2.carbon.event.stream.manager.core.EventStreamService;
+import org.wso2.carbon.event.stream.core.EventStreamService;
 
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;
@@ -234,7 +234,7 @@ public class EventPublisherConfigurationBuilder {
 
         EventStreamService eventStreamService = EventPublisherServiceValueHolder.getEventStreamService();
         try {
-            StreamDefinition streamDefinition = eventStreamService.getStreamDefinition(streamName, streamVersion, tenantId);
+            StreamDefinition streamDefinition = eventStreamService.getStreamDefinition(streamName, streamVersion);
             if (streamDefinition != null) {
                 return true;
             }

@@ -16,22 +16,22 @@
 ~ under the License.
 --%>
 <%@ page
-	import="org.wso2.carbon.event.stream.manager.stub.EventStreamAdminServiceStub"%>
+	import="org.wso2.carbon.event.stream.stub.EventStreamAdminServiceStub"%>
 <%@ page
-	import="org.wso2.carbon.event.stream.manager.ui.EventStreamUIUtils"%>
+	import="org.wso2.carbon.event.stream.ui.EventStreamUIUtils"%>
 <%@ page
-	import="org.wso2.carbon.event.stream.manager.stub.types.EventStreamAttributeDto"%>
+	import="org.wso2.carbon.event.stream.stub.types.EventStreamAttributeDto"%>
 <%@ page
-	import="org.wso2.carbon.event.stream.manager.stub.types.EventStreamDefinitionDto"%>
+	import="org.wso2.carbon.event.stream.stub.types.EventStreamDefinitionDto"%>
 <%@ taglib uri="http://wso2.org/projects/carbon/taglibs/carbontags.jar"
 	prefix="carbon"%>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
 
 <fmt:bundle
-	basename="org.wso2.carbon.event.stream.manager.ui.i18n.Resources">
+	basename="org.wso2.carbon.event.stream.ui.i18n.Resources">
 
 	<carbon:breadcrumb label="eventstream.detail"
-		resourceBundle="org.wso2.carbon.event.stream.manager.ui.i18n.Resources"
+		resourceBundle="org.wso2.carbon.event.stream.ui.i18n.Resources"
 		topPage="false" request="<%=request%>" />
 
 

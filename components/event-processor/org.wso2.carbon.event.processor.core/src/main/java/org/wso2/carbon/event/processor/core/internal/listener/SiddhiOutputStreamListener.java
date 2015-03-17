@@ -23,8 +23,8 @@ import org.wso2.carbon.event.processor.core.ExecutionPlanConfiguration;
 import org.wso2.carbon.event.processor.core.internal.ds.EventProcessorValueHolder;
 import org.wso2.carbon.event.processor.core.internal.util.EventProcessorConstants;
 import org.wso2.carbon.event.statistics.EventStatisticsMonitor;
-import org.wso2.carbon.event.stream.manager.core.EventProducer;
-import org.wso2.carbon.event.stream.manager.core.EventProducerCallback;
+import org.wso2.carbon.event.stream.core.EventProducer;
+import org.wso2.carbon.event.stream.core.EventProducerCallback;
 import org.wso2.siddhi.core.event.Event;
 import org.wso2.siddhi.core.stream.output.StreamCallback;
 
