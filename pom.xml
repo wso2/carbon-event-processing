@@ -329,6 +329,18 @@
                 <scope>provided</scope>
             </dependency>
             <dependency>
+                <artifactId>org.wso2.carbon.event.input.adapter.websocket.local</artifactId>
+                <groupId>org.wso2.carbon.event-processing</groupId>
+                <version>${carbon.event.processing.version}</version>
+                <scope>provided</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.httpcomponents</groupId>
+                <artifactId>httpcore</artifactId>
+                <version>${apache.httpcore.version}</version>
+                <scope>provided</scope>
+            </dependency>
+            <dependency>
                 <groupId>org.wso2.carbon.event-processing</groupId>
                 <artifactId>org.wso2.carbon.event.processor.common</artifactId>
                 <version>${carbon.event.processing.version}</version>
@@ -1192,6 +1204,7 @@
         <siddhi.version>3.0.0-SNAPSHOT</siddhi.version>
         <carbon.event.processing.version>2.0.4-SNAPSHOT</carbon.event.processing.version>
         <storm.version>0.9.2-incubating.wso2v1</storm.version>
+        <apache.httpcore.version>4.2.4</apache.httpcore.version>
 
         <carbon.p2.plugin.version>1.5.3</carbon.p2.plugin.version>
         <tomcat.websocket.version>7.0.54</tomcat.websocket.version>
