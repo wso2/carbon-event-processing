@@ -124,7 +124,7 @@ public class SoapEventAdapter implements OutputEventAdapter {
         Map<String, String> headers = this.extractHeaders(dynamicProperties.get(
                 SoapEventAdapterConstants.ADAPTER_CONF_SOAP_HEADERS));
 
-            this.executorService.submit(new SoapSender(url, message, userName, password, headers));
+        this.executorService.submit(new SoapSender(url, message, userName, password, headers));
     }
 
     @Override
@@ -209,15 +209,20 @@ public class SoapEventAdapter implements OutputEventAdapter {
                     serviceClient.fireAndForget(AXIOMUtil.stringToOM(payload.toString()));
 
                 } catch (AxisFault e) {
-                    throw new ConnectionUnavailableException("Exception while sending events to soap endpoint ", e);
+                    throw new ConnectionUnavailableException("Exception in adapter "
+                            + eventAdapterConfiguration.getName() + " while sending events to soap endpoint "
+                            + this.url, e);
                 } catch (XMLStreamException e) {
                     throw new OutputEventAdapterRuntimeException(
-                            "Exception while converting the event to xml object ", e);
+                            "Exception occurred in adapter " + eventAdapterConfiguration.getName()
+                                    + " while converting the event to xml object ", e);
                 } catch (Exception e) {
-                    throw new OutputEventAdapterRuntimeException(e.getMessage(), e);
+                    throw new OutputEventAdapterRuntimeException("Exception occurred in adapter "
+                            + eventAdapterConfiguration.getName(), e);
                 }
             } catch (AxisFault axisFault) {
-                throw new OutputEventAdapterRuntimeException(axisFault.getMessage(), axisFault);
+                throw new OutputEventAdapterRuntimeException("Exception occurred in adapter "
+                        + eventAdapterConfiguration.getName(), axisFault);
             }
 
         }

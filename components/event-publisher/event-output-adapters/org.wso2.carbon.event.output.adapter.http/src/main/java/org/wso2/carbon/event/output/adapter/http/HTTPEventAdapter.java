@@ -250,12 +250,13 @@ public class HTTPEventAdapter implements OutputEventAdapter {
                 this.processAuthentication(method);
                 this.processHeaders(method);
                 httpClient.execute(method).getEntity().getContent().close();
-            }
-            catch (UnknownHostException e){
-                throw new ConnectionUnavailableException("Exception while connecting HTTP endpoint ", e);
-            }
-            catch (Exception e) {
-                throw new OutputEventAdapterRuntimeException("Error executing HTTP output event adapter sender: ", e);
+            } catch (UnknownHostException e) {
+                throw new ConnectionUnavailableException("Exception while connecting adapter "
+                        + eventAdapterConfiguration.getName() + " HTTP endpoint to " + this.getUrl(),
+                        e);
+            } catch (Exception e) {
+                throw new OutputEventAdapterRuntimeException("Error executing HTTP output event adapter "
+                        + eventAdapterConfiguration.getName() +" sender: ", e);
             }
         }
 

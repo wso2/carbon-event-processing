@@ -40,7 +40,7 @@ public class JMSEventAdapter implements OutputEventAdapter {
     private OutputEventAdapterConfiguration eventAdapterConfiguration;
     private Map<String, String> globalProperties;
 
-    private PublisherDetails publisherDetails=null;
+    private PublisherDetails publisherDetails = null;
 
     public JMSEventAdapter(OutputEventAdapterConfiguration eventAdapterConfiguration,
                            Map<String, String> globalProperties) {
@@ -85,17 +85,18 @@ public class JMSEventAdapter implements OutputEventAdapter {
     @Override
     public void publish(Object message, Map<String, String> dynamicProperties) {
 
-            Message jmsMessage = publisherDetails.getJmsMessageSender().convertToJMSMessage(message, publisherDetails.getMessageConfig());
-            setJMSTransportHeaders(jmsMessage, dynamicProperties.get(JMSEventAdapterConstants.ADAPTER_JMS_HEADER));
-            publisherDetails.getJmsMessageSender().send(jmsMessage, publisherDetails.getMessageConfig());
+        Message jmsMessage = publisherDetails.getJmsMessageSender().convertToJMSMessage(message,
+                publisherDetails.getMessageConfig());
+        setJMSTransportHeaders(jmsMessage, dynamicProperties.get(JMSEventAdapterConstants.ADAPTER_JMS_HEADER));
+        publisherDetails.getJmsMessageSender().send(jmsMessage, publisherDetails.getMessageConfig());
     }
 
     @Override
     public void disconnect() {
         if (publisherDetails != null) {
-                publisherDetails.getJmsMessageSender().close();
-                publisherDetails.getJmsConnectionFactory().stop();
-            }
+            publisherDetails.getJmsMessageSender().close();
+            publisherDetails.getJmsConnectionFactory().stop();
+        }
     }
 
     @Override
@@ -131,7 +132,7 @@ public class JMSEventAdapter implements OutputEventAdapter {
                     if (headerPropertyWithValue.length == 2) {
                         messageConfiguration.put(headerPropertyWithValue[0], headerPropertyWithValue[1]);
                     } else {
-                        log.warn("Header property not defined in the correct format");
+                        log.warn("Header property \" " + header + " \" is not defined in the correct format");
                     }
                 }
             }
@@ -149,7 +150,7 @@ public class JMSEventAdapter implements OutputEventAdapter {
     class PublisherDetails {
         private final JMSConnectionFactory jmsConnectionFactory;
         private final JMSMessageSender jmsMessageSender;
-        private final  Map<String, String> messageConfig;
+        private final Map<String, String> messageConfig;
 
         public PublisherDetails(JMSConnectionFactory jmsConnectionFactory,
                                 JMSMessageSender jmsMessageSender, Map<String, String> messageConfig) {
