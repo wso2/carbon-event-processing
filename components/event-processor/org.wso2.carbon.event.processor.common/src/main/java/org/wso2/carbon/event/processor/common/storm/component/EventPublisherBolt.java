@@ -76,12 +76,16 @@ public class EventPublisherBolt extends BaseBasicBolt {
         this.query = query;
         this.executionPlanName = executionPlanName;
         this.tenantId = tenantId;
-        this.logPrefix = "[" + executionPlanName + ":" + tenantId + "] - ";
+        this.logPrefix = "[" + tenantId + ":" + executionPlanName + ":" + "Event Publisher Bolt" + "]";
 
     }
 
     @Override
     public void execute(Tuple tuple, BasicOutputCollector basicOutputCollector) {
+        if (log.isDebugEnabled()) {
+            log.debug(logPrefix + " Received Event: " + tuple.getSourceStreamId() + ":" + Arrays.deepToString(tuple
+                    .getValues().toArray()));
+        }
         this.collector = basicOutputCollector;
         if (!initialized) {
             init();
@@ -90,7 +94,12 @@ public class EventPublisherBolt extends BaseBasicBolt {
         if (streamDefinition != null) {
             asyncEventPublisher.sendEvent(tuple.getValues().toArray(), tuple.getSourceStreamId());
         } else {
-            log.warn(logPrefix + "Tuple received for unknown stream " + tuple.getSourceStreamId() + ". Discarding event : " + tuple.toString());
+            log.warn(logPrefix + "Tuple received for unknown stream " + tuple.getSourceStreamId() + ". Discarding " +
+                    "event : " + Arrays.deepToString(tuple.getValues().toArray()));
+        }
+        if (log.isDebugEnabled()) {
+            log.debug(logPrefix + " Emitted Event: " + tuple.getSourceStreamId() + ":" + Arrays.deepToString(tuple
+                    .getValues().toArray()));
         }
     }
 
@@ -123,23 +132,26 @@ public class EventPublisherBolt extends BaseBasicBolt {
                 for (String outputStreamDefinition : outputStreamDefinitions) {
                     final StreamDefinition outputSiddhiDefinition = SiddhiCompiler.parseStreamDefinition
                             (outputStreamDefinition);
-                    log.info("Siddhi Bolt adding callback for stream: " + outputSiddhiDefinition.getId());
+                    log.info(logPrefix + "Adding callback for stream:" + outputSiddhiDefinition.getId());
                     executionPlanRuntime.addCallback(outputSiddhiDefinition.getId(), new StreamCallback() {
 
                         @Override
                         public void receive(Event[] events) {
                             for (Event event : events) {
+                                collector.emit(outputSiddhiDefinition.getId(), Arrays.asList(event.getData()));
                                 if (log.isDebugEnabled()) {
                                     if (++eventCount % 10000 == 0) {
                                         double timeSpentInSecs = (System.currentTimeMillis() - batchStartTime) / 1000.0D;
                                         double throughput = 10000 / timeSpentInSecs;
-                                        log.debug("Processed 10000 events in " + timeSpentInSecs + " seconds, " +
-                                                "throughput : " + throughput + " events/sec");
+                                        log.debug(logPrefix + "Processed 10000 events in " + timeSpentInSecs + " " +
+                                                "seconds, throughput : " + throughput + " events/sec. Stream : " +
+                                                outputSiddhiDefinition.getId());
                                         eventCount = 0;
                                         batchStartTime = System.currentTimeMillis();
                                     }
+                                    log.debug(logPrefix + "Emitted event:" + outputSiddhiDefinition.getId() + ":" +
+                                            event.toString());
                                 }
-                                collector.emit(outputSiddhiDefinition.getId(), Arrays.asList(event.getData()));
                             }
                         }
                     });
@@ -155,9 +167,7 @@ public class EventPublisherBolt extends BaseBasicBolt {
 
             asyncEventPublisher = new AsyncEventPublisher(AsyncEventPublisher.DestinationType.CEP_PUBLISHER,
                     new HashSet<StreamDefinition>(streamIdToDefinitionMap.values()),
-                    stormDeploymentConfig.getManagers().get(0).getHostName(),
-                    stormDeploymentConfig.getManagers().get(0).getPort(),
-                    executionPlanName, tenantId, stormDeploymentConfig);
+                    stormDeploymentConfig.getManagers(), executionPlanName, tenantId, stormDeploymentConfig);
 
             asyncEventPublisher.initializeConnection(false);
         } catch (Throwable e) {

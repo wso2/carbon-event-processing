@@ -16,6 +16,7 @@ import org.wso2.siddhi.query.api.definition.StreamDefinition;
 
 import java.io.IOException;
 import java.net.SocketException;
+import java.util.List;
 import java.util.Set;
 import java.util.concurrent.Executors;
 
@@ -36,8 +37,7 @@ public class AsyncEventPublisher implements EventHandler<AsynchronousEventBuffer
     private String executionPlanName;
     private int tenantId;
     private String thisHostIp;
-    private String managerServiceHost;
-    private int managerServicePort;
+    private List<StormDeploymentConfig.HostAndPort> managerServiceEndpoints;
     private StormDeploymentConfig stormDeploymentConfig;
 
     private TCPEventPublisher tcpEventPublisher = null;
@@ -47,18 +47,18 @@ public class AsyncEventPublisher implements EventHandler<AsynchronousEventBuffer
     private boolean shutdown = false;
 
     public AsyncEventPublisher(DestinationType destinationType, Set<StreamDefinition> streams,
-                               String managerServiceIp, int managerServicePort, String executionPlanName, int tenantId, StormDeploymentConfig stormDeploymentConfig){
+                               List<StormDeploymentConfig.HostAndPort> managerServiceEndpoints,
+                               String executionPlanName, int tenantId, StormDeploymentConfig stormDeploymentConfig){
         this.destinationType = destinationType;
         this.streams = streams;
         this.executionPlanName = executionPlanName;
         this.tenantId = tenantId;
-        this.managerServiceHost = managerServiceIp;
-        this.managerServicePort = managerServicePort;
+        this.managerServiceEndpoints = managerServiceEndpoints;
         this.stormDeploymentConfig = stormDeploymentConfig;
         this.endpointConnectionCreator = new EndpointConnectionCreator();
         this.destinationTypeString = (destinationType == DestinationType.STORM_RECEIVER) ? "Storm Receiver" : "CEP Publisher";
         this.publisherTypeString = (destinationType == DestinationType.STORM_RECEIVER) ? "CEP Receiver" : "Publisher Bolt";
-        this.logPrefix = "[" + publisherTypeString + "| ExecPlan:" + executionPlanName + ", TenantID:" + tenantId + "]";
+        this.logPrefix = "[" + tenantId + ":" + executionPlanName + ":" + publisherTypeString + "]";
     }
 
     /**
@@ -120,7 +120,8 @@ public class AsyncEventPublisher implements EventHandler<AsynchronousEventBuffer
         try{
             tcpEventPublisher.sendEvent(dataHolder.getStreamId(), (Object[])dataHolder.getData(), endOfBatch);
         } catch (IOException e) {
-            log.error(logPrefix + "Error while trying to send event to " + destinationTypeString + " at " + tcpEventPublisher.getHostUrl(), e);
+            log.error(logPrefix + "Error while trying to send event to " + destinationTypeString + " at " +
+                    tcpEventPublisher.getHostUrl(), e);
             reconnect();
             onEvent(dataHolder, sequence, endOfBatch);
         }
@@ -171,46 +172,56 @@ public class AsyncEventPublisher implements EventHandler<AsynchronousEventBuffer
          * to connect to manager service.
          * @return endpoint Host and port in <ip>:<port> format
          */
-        public String getEndpointFromManagerService(){
+        public String getEndpointFromManagerService() {
             String endpointHostPort = null;
             do {
-                TTransport transport = null;
-                try {
-                    transport = new TSocket(managerServiceHost, managerServicePort);
-                    TProtocol protocol = new TBinaryProtocol(transport);
-                    transport.open();
-                    StormManagerService.Client client = new StormManagerService.Client(protocol);
+                for (StormDeploymentConfig.HostAndPort endpoint : managerServiceEndpoints) {
+                    TTransport transport = null;
+                    try {
+                        transport = new TSocket(endpoint.getHostName(), endpoint.getPort());
+                        TProtocol protocol = new TBinaryProtocol(transport);
+                        transport.open();
+                        StormManagerService.Client client = new StormManagerService.Client(protocol);
 
-                    if (destinationType == DestinationType.CEP_PUBLISHER){
-                        endpointHostPort = client.getCEPPublisher(tenantId, executionPlanName, thisHostIp);
-                    }else{
-                        endpointHostPort = client.getStormReceiver(tenantId, executionPlanName, thisHostIp);
-                    }
-                    log.info(logPrefix + "Retrieved " + destinationTypeString + " at " + endpointHostPort +" from storm manager service");
-                } catch (Exception e) {
-                    log.error(logPrefix + "Error while trying retrieve information from storm manager service", e);
-                } finally {
-                    if (transport != null) {
-                        transport.close();
+                        if (destinationType == DestinationType.CEP_PUBLISHER) {
+                            endpointHostPort = client.getCEPPublisher(tenantId, executionPlanName, thisHostIp);
+                        } else {
+                            endpointHostPort = client.getStormReceiver(tenantId, executionPlanName, thisHostIp);
+                        }
+                        log.info(logPrefix + "Retrieved " + destinationTypeString + " at " + endpointHostPort + " " +
+                                "from storm manager service at" + endpoint.getHostName() + ":" + endpoint.getPort());
+                        break;
+                    } catch (Exception e) {
+                        log.error(logPrefix + "Error while trying retrieve " + destinationType.name() +
+                                "endpoint information from storm manager service at " +
+                                endpoint.getHostName() + ":" + endpoint.getPort() + "Trying next Storm manager.", e);
+                        continue;
+                    } finally {
+                        if (transport != null) {
+                            transport.close();
+                        }
                     }
                 }
 
-                synchronized (AsyncEventPublisher.this){
-                    if (shutdown){
+                synchronized (AsyncEventPublisher.this) {
+                    if (shutdown) {
                         log.info(logPrefix + "Stopping attempting to connect to Storm manager service.Async event publisher is shutdown");
                         return null;
                     }
                 }
 
-                if (endpointHostPort == null){
+                if (endpointHostPort == null) {
                     try {
-                        log.info(logPrefix + "Retrying to retrieve endpoint from manager service in " + stormDeploymentConfig.getManagementReconnectInterval()
-                                +  "ms to get a " + destinationTypeString);
+                        log.info(logPrefix + "Failed to retrieve " + destinationType.name() + " from given " +
+                                "set of Storm Managers. Retrying to retrieve endpoint from manager " +
+                                "service in " + stormDeploymentConfig.getManagementReconnectInterval()
+                                + "ms to get a " + destinationTypeString);
                         Thread.sleep(stormDeploymentConfig.getManagementReconnectInterval());
                     } catch (InterruptedException e1) {
-                        // ignore
+                        Thread.currentThread().interrupt();
                     }
                 }
+
             } while (endpointHostPort == null);
 
             return endpointHostPort;
@@ -226,10 +237,10 @@ public class AsyncEventPublisher implements EventHandler<AsynchronousEventBuffer
         public TCPEventPublisher connectToEndpoint(String endpointHostPort, int retryAttempts){
             TCPEventPublisher tcpEventPublisher = null;
             int attemptCount = 0;
-
+            String endpoint = endpointHostPort;
             do {
                 try {
-                    tcpEventPublisher = new TCPEventPublisher(endpointHostPort, true);
+                    tcpEventPublisher = new TCPEventPublisher(endpoint, true);
                     StringBuilder streamsIDs = new StringBuilder();
 
                     for (StreamDefinition siddhiStreamDefinition : streams){
@@ -237,14 +248,14 @@ public class AsyncEventPublisher implements EventHandler<AsynchronousEventBuffer
                         streamsIDs.append(siddhiStreamDefinition.getId() + ",");
                     }
 
-                    log.info(logPrefix + "Connected to " + destinationTypeString + " at " + endpointHostPort + " for the Stream(s) " + streamsIDs.toString());
+                    log.info(logPrefix + "Connected to " + destinationTypeString + " at " + endpoint + " for the Stream(s) " + streamsIDs.toString());
                 } catch (IOException e) {
-                    log.error(logPrefix + "Error while trying to connect to " + destinationTypeString + " at " + endpointHostPort, e);
+                    log.error(logPrefix + "Error while trying to connect to " + destinationTypeString + " at " + endpoint, e);
                 }
 
                 synchronized (AsyncEventPublisher.this){
                     if (shutdown){
-                        log.info(logPrefix + "Stopping attempting to connect to endpoint " + endpointHostPort + ". Async event publisher is shutdown");
+                        log.info(logPrefix + "Stopping attempting to connect to endpoint " + endpoint + ". Async event publisher is shutdown");
                         return null;
                     }
                 }
@@ -255,11 +266,12 @@ public class AsyncEventPublisher implements EventHandler<AsynchronousEventBuffer
                         return null;
                     }
                     try {
-                        log.info(logPrefix + "Retrying(" + attemptCount + ") to connect to " + destinationTypeString + " at " + endpointHostPort + " in "
+                        log.info(logPrefix + "Retrying(" + attemptCount + ") to connect to " + destinationTypeString + " at " + endpoint + " in "
                                 + stormDeploymentConfig.getTransportReconnectInterval() + "ms");
                         Thread.sleep(stormDeploymentConfig.getTransportReconnectInterval());
+                        endpoint = getEndpointFromManagerService();
                     } catch (InterruptedException e1) {
-                        // ignore
+                        Thread.currentThread().interrupt();
                     }
                 }
             } while (tcpEventPublisher == null);

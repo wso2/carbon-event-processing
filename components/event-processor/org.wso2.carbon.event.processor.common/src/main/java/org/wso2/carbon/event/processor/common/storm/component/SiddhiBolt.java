@@ -44,6 +44,7 @@ import java.util.Map;
  */
 
 public class SiddhiBolt extends BaseBasicBolt {
+    private final String name;
     private transient Logger log = Logger.getLogger(SiddhiBolt.class);
     private transient SiddhiManager siddhiManager;
 
@@ -63,6 +64,7 @@ public class SiddhiBolt extends BaseBasicBolt {
     private BasicOutputCollector collector;
     private int eventCount;
     private long batchStartTime;
+    private String logPrefix;
 
     private transient ExecutionPlanRuntime executionPlanRuntime;
 
@@ -73,11 +75,14 @@ public class SiddhiBolt extends BaseBasicBolt {
      * @param query                   - Siddhi query
      * @param outputSiddhiDefinitions
      */
-    public SiddhiBolt(List<String> inputStreamDefinitions, String query, List<String> outputSiddhiDefinitions) {
+    public SiddhiBolt(String name, List<String> inputStreamDefinitions, String query,
+                      List<String> outputSiddhiDefinitions, String executionPlanName, int tenantId) {
         this.inputStreamDefinitions = inputStreamDefinitions;
         this.query = query;
         this.outputStreamDefinitions = outputSiddhiDefinitions;
+        this.name = name;
         init();
+        this.logPrefix = "[" + tenantId + ":" + executionPlanName + ":" + name + "]";
     }
 
     /**
@@ -96,23 +101,26 @@ public class SiddhiBolt extends BaseBasicBolt {
         for (String outputStreamDefinition : outputStreamDefinitions) {
             final StreamDefinition outputSiddhiDefinition = SiddhiCompiler.parseStreamDefinition
                     (outputStreamDefinition);
-            log.info("Siddhi Bolt adding callback for stream: " + outputSiddhiDefinition.getId());
+            log.info(logPrefix +" Adding callback for stream: " + outputSiddhiDefinition.getId());
             executionPlanRuntime.addCallback(outputSiddhiDefinition.getId(), new StreamCallback() {
 
                 @Override
                 public void receive(Event[] events) {
                     for (Event event : events) {
+                        collector.emit(outputSiddhiDefinition.getId(), Arrays.asList(event.getData()));
                         if (log.isDebugEnabled()) {
                             if (++eventCount % 10000 == 0) {
                                 double timeSpentInSecs = (System.currentTimeMillis() - batchStartTime) / 1000.0D;
                                 double throughput = 10000 / timeSpentInSecs;
-                                log.debug("Processed 10000 events in " + timeSpentInSecs + " seconds, " +
-                                        "throughput : " + throughput + " events/sec");
+                                log.debug(logPrefix + "Processed 10000 events in " + timeSpentInSecs + " seconds, " +
+                                        "throughput : " + throughput + " events/sec. Stream :" +
+                                        outputSiddhiDefinition.getId());
                                 eventCount = 0;
                                 batchStartTime = System.currentTimeMillis();
                             }
+                            log.debug(logPrefix + "Emitted Event:" + outputSiddhiDefinition.getId() +
+                                    ":" + event.toString());
                         }
-                        collector.emit(outputSiddhiDefinition.getId(), Arrays.asList(event.getData()));
                     }
                 }
             });
@@ -134,11 +142,16 @@ public class SiddhiBolt extends BaseBasicBolt {
         try {
             this.collector = collector;
             InputHandler inputHandler = executionPlanRuntime.getInputHandler(tuple.getSourceStreamId());
+            if (log.isDebugEnabled()) {
+                log.debug(logPrefix + "Received Event: " + tuple.getSourceStreamId() + ":" + Arrays.deepToString
+                        (tuple.getValues().toArray()));
+            }
 
             if (inputHandler != null) {
                 inputHandler.send(tuple.getValues().toArray());
             } else {
-                log.warn("Event received for unknown stream " + tuple.getSourceStreamId() + ". Discarding the event :" + tuple.toString());
+                log.warn(logPrefix + "Event received for unknown stream " + tuple.getSourceStreamId() + ". Discarding" +
+                        " the event :" + Arrays.deepToString(tuple.getValues().toArray()));
             }
         } catch (InterruptedException e) {
             log.error(e);
@@ -155,7 +168,8 @@ public class SiddhiBolt extends BaseBasicBolt {
         for (String outputStreamDefinition : outputStreamDefinitions) {
             StreamDefinition siddhiOutputDefinition = SiddhiCompiler.parseStreamDefinition(outputStreamDefinition);
             if (outputStreamDefinition == null) {
-                throw new RuntimeException("Cannot find exported stream - " + siddhiOutputDefinition.getId());
+                throw new RuntimeException(logPrefix + "Cannot find exported stream : " + siddhiOutputDefinition.getId
+                        ());
             }
             List<String> list = new ArrayList<String>();
 
@@ -164,7 +178,7 @@ public class SiddhiBolt extends BaseBasicBolt {
             }
             Fields fields = new Fields(list);
             declarer.declareStream(siddhiOutputDefinition.getId(), fields);
-            log.info("Declaring output field for stream -" + siddhiOutputDefinition.getId());
+            log.info(logPrefix + "Declaring output field for stream :" + siddhiOutputDefinition.getId());
         }
     }
 }
