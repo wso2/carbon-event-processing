@@ -23,10 +23,10 @@ import java.util.List;
 
 public class StormDeploymentConfig implements Serializable {
 
-    private boolean receiverNode = false;
-    private boolean publisherNode = false;
-    private boolean managerNode = false;
-    private HostAndPort localManagerConfig;
+    private boolean receiverNode = true;
+    private boolean publisherNode = true;
+    private boolean managerNode = true;
+    private HostAndPort localManagerConfig = new HostAndPort("localhost", 8904);
 
     private List<HostAndPort> managers = new ArrayList<HostAndPort>();
 
@@ -39,6 +39,11 @@ public class StormDeploymentConfig implements Serializable {
     private int topologySubmitRetryInterval = 10000;
     private int heartbeatInterval = 5000;
     private int managementReconnectInterval = 10000;
+
+    private int receiverSpoutParallelism = 1;
+    private int publisherBoltParallelism = 1;
+
+    private String distributedUIUrl;
 
 
     public int getHeartbeatInterval() {
@@ -154,5 +159,29 @@ public class StormDeploymentConfig implements Serializable {
         public int getPort() {
             return port;
         }
+    }
+
+    public int getPublisherBoltParallelism() {
+        return publisherBoltParallelism;
+    }
+
+    public void setPublisherBoltParallelism(int publisherBoltParallelism) {
+        this.publisherBoltParallelism = publisherBoltParallelism;
+    }
+
+    public int getReceiverSpoutParallelism() {
+        return receiverSpoutParallelism;
+    }
+
+    public void setReceiverSpoutParallelism(int receiverSpoutParallelism) {
+        this.receiverSpoutParallelism = receiverSpoutParallelism;
+    }
+
+    public String getDistributedUIUrl() {
+        return distributedUIUrl;
+    }
+
+    public void setDistributedUIUrl(String distributedUIUrl) {
+        this.distributedUIUrl = distributedUIUrl;
     }
 }
