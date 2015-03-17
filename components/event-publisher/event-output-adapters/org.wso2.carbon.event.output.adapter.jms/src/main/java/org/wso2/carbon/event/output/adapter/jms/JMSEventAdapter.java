@@ -21,7 +21,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.wso2.carbon.event.output.adapter.core.OutputEventAdapter;
 import org.wso2.carbon.event.output.adapter.core.OutputEventAdapterConfiguration;
-import org.wso2.carbon.event.output.adapter.core.exception.ConnectionUnavailableException;
 import org.wso2.carbon.event.output.adapter.core.exception.OutputEventAdapterException;
 import org.wso2.carbon.event.output.adapter.core.exception.OutputEventAdapterRuntimeException;
 import org.wso2.carbon.event.output.adapter.core.exception.TestConnectionNotSupportedException;
@@ -31,7 +30,6 @@ import javax.jms.Connection;
 import javax.jms.Message;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 import javax.jms.JMSException;
 import javax.jms.Session;
 import java.util.*;
@@ -82,8 +80,6 @@ public class JMSEventAdapter implements OutputEventAdapter {
         Map<String, String> messageConfig = new HashMap<String, String>();
         messageConfig.put(JMSConstants.PARAM_DESTINATION, topicName);
         publisherDetails = initPublisher(eventAdapterConfiguration, messageConfig);
-
-        //not required
     }
 
     @Override

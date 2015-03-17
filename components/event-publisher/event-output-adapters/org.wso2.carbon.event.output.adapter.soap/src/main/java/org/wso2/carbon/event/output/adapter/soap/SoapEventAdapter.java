@@ -32,6 +32,7 @@ import org.apache.neethi.PolicyEngine;
 import org.apache.rampart.RampartMessageData;
 import org.wso2.carbon.event.output.adapter.core.OutputEventAdapter;
 import org.wso2.carbon.event.output.adapter.core.OutputEventAdapterConfiguration;
+import org.wso2.carbon.event.output.adapter.core.exception.ConnectionUnavailableException;
 import org.wso2.carbon.event.output.adapter.core.exception.OutputEventAdapterException;
 import org.wso2.carbon.event.output.adapter.core.exception.OutputEventAdapterRuntimeException;
 import org.wso2.carbon.event.output.adapter.core.exception.TestConnectionNotSupportedException;
@@ -123,8 +124,7 @@ public class SoapEventAdapter implements OutputEventAdapter {
         Map<String, String> headers = this.extractHeaders(dynamicProperties.get(
                 SoapEventAdapterConstants.ADAPTER_CONF_SOAP_HEADERS));
 
-        this.executorService.submit(new SoapSender(url, message, userName, password, headers));
-
+            this.executorService.submit(new SoapSender(url, message, userName, password, headers));
     }
 
     @Override
@@ -208,9 +208,8 @@ public class SoapEventAdapter implements OutputEventAdapter {
                     serviceClient.setOptions(options);
                     serviceClient.fireAndForget(AXIOMUtil.stringToOM(payload.toString()));
 
-                } catch (AxisFault axisFault) {
-                    throw new OutputEventAdapterRuntimeException(
-                            "Exception while sending events to soap endpoint ", axisFault);
+                } catch (AxisFault e) {
+                    throw new ConnectionUnavailableException("Exception while sending events to soap endpoint ", e);
                 } catch (XMLStreamException e) {
                     throw new OutputEventAdapterRuntimeException(
                             "Exception while converting the event to xml object ", e);

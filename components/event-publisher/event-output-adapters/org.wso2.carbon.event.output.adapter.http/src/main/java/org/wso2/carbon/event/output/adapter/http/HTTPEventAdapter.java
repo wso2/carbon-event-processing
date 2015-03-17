@@ -26,12 +26,15 @@ import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.SystemDefaultHttpClient;
 import org.wso2.carbon.event.output.adapter.core.OutputEventAdapter;
 import org.wso2.carbon.event.output.adapter.core.OutputEventAdapterConfiguration;
+import org.wso2.carbon.event.output.adapter.core.exception.ConnectionUnavailableException;
 import org.wso2.carbon.event.output.adapter.core.exception.OutputEventAdapterException;
+import org.wso2.carbon.event.output.adapter.core.exception.OutputEventAdapterRuntimeException;
 import org.wso2.carbon.event.output.adapter.core.exception.TestConnectionNotSupportedException;
 import org.wso2.carbon.event.output.adapter.http.internal.util.HTTPEventAdapterConstants;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.conn.params.ConnRoutePNames;
 
+import java.net.UnknownHostException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
@@ -247,8 +250,12 @@ public class HTTPEventAdapter implements OutputEventAdapter {
                 this.processAuthentication(method);
                 this.processHeaders(method);
                 httpClient.execute(method).getEntity().getContent().close();
-            } catch (Exception e) {
-                log.error("Error executing HTTP output event adapter sender: " + e.getMessage(), e);
+            }
+            catch (UnknownHostException e){
+                throw new ConnectionUnavailableException("Exception while connecting HTTP endpoint ", e);
+            }
+            catch (Exception e) {
+                throw new OutputEventAdapterRuntimeException("Error executing HTTP output event adapter sender: ", e);
             }
         }
 
