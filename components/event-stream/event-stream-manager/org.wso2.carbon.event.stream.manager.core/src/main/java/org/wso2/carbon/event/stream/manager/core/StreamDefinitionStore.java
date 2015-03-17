@@ -1,11 +1,11 @@
-package org.wso2.carbon.event.stream.manager.core;
+package org.wso2.carbon.event.stream.core;
 
 import com.hazelcast.core.MembershipEvent;
 import org.wso2.carbon.databridge.commons.StreamDefinition;
-import org.wso2.carbon.event.stream.manager.core.exception.StreamDefinitionAlreadyDefinedException;
-import org.wso2.carbon.event.stream.manager.core.exception.StreamDefinitionNotFoundException;
-import org.wso2.carbon.event.stream.manager.core.exception.StreamDefinitionStoreException;
-import org.wso2.carbon.event.stream.manager.core.internal.stream.StreamAddRemoveListener;
+import org.wso2.carbon.event.stream.core.exception.StreamDefinitionAlreadyDefinedException;
+import org.wso2.carbon.event.stream.core.exception.StreamDefinitionNotFoundException;
+import org.wso2.carbon.event.stream.core.exception.StreamDefinitionStoreException;
+import org.wso2.carbon.event.stream.core.internal.stream.StreamAddRemoveListener;
 
 import java.util.Collection;
 

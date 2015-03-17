@@ -15,18 +15,18 @@
 * specific language governing permissions and limitations
 * under the License.
 */
-package org.wso2.carbon.event.stream.manager.admin.internal.ds;
+package org.wso2.carbon.event.stream.admin.internal.ds;
 
 import org.osgi.service.component.ComponentContext;
-import org.wso2.carbon.event.stream.manager.admin.internal.util.EventStreamAdminServiceValueHolder;
-import org.wso2.carbon.event.stream.manager.core.EventStreamService;
+import org.wso2.carbon.event.stream.admin.internal.util.EventStreamAdminServiceValueHolder;
+import org.wso2.carbon.event.stream.core.EventStreamService;
 
 /**
  * This class is used to get the EventFormatter service.
  *
  * @scr.component name="eventStreamAdmin.component" immediate="true"
  * @scr.reference name="eventStreamService.service"
- * interface="org.wso2.carbon.event.stream.manager.core.EventStreamService" cardinality="1..1"
+ * interface="org.wso2.carbon.event.stream.core.EventStreamService" cardinality="1..1"
  * policy="dynamic" bind="setEventStreamService" unbind="unsetEventStreamService"
  */
 public class EventStreamAdminServiceDS {

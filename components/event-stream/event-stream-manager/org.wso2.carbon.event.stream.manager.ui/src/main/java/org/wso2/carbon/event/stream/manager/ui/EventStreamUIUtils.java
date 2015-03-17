@@ -15,7 +15,7 @@
 * specific language governing permissions and limitations
 * under the License.
 */
-package org.wso2.carbon.event.stream.manager.ui;
+package org.wso2.carbon.event.stream.ui;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
@@ -26,9 +26,9 @@ import org.apache.axis2.client.Options;
 import org.apache.axis2.client.ServiceClient;
 import org.apache.axis2.context.ConfigurationContext;
 import org.wso2.carbon.CarbonConstants;
-import org.wso2.carbon.event.stream.manager.stub.EventStreamAdminServiceStub;
-import org.wso2.carbon.event.stream.manager.stub.types.EventStreamAttributeDto;
-import org.wso2.carbon.event.stream.manager.stub.types.EventStreamDefinitionDto;
+import org.wso2.carbon.event.stream.stub.EventStreamAdminServiceStub;
+import org.wso2.carbon.event.stream.stub.types.EventStreamAttributeDto;
+import org.wso2.carbon.event.stream.stub.types.EventStreamDefinitionDto;
 import org.wso2.carbon.ui.CarbonUIUtil;
 
 import javax.servlet.ServletConfig;

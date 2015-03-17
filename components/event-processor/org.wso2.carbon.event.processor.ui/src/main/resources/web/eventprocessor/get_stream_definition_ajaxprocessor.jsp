@@ -16,7 +16,7 @@
 ~ under the License.
 --%>
 <%@ page import="org.wso2.carbon.event.processor.ui.EventProcessorUIUtils" %>
-<%@ page import="org.wso2.carbon.event.stream.manager.stub.EventStreamAdminServiceStub" %>
+<%@ page import="org.wso2.carbon.event.stream.stub.EventStreamAdminServiceStub" %>
 
 <%
     EventStreamAdminServiceStub streamAdminServiceStub = EventProcessorUIUtils.getEventStreamAdminService(config, session, request);

@@ -26,7 +26,7 @@
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
-    <artifactId>org.wso2.carbon.event.stream.manager.ui</artifactId>
+    <artifactId>org.wso2.carbon.event.stream.ui</artifactId>
     <packaging>bundle</packaging>
     <version>2.0.4-SNAPSHOT</version>
     <name>WSO2 Carbon - Event Stream Manager UI</name>
@@ -46,7 +46,7 @@
         </dependency>
         <dependency>
             <groupId>org.wso2.carbon.event-processing</groupId>
-            <artifactId>org.wso2.carbon.event.stream.manager.stub</artifactId>
+            <artifactId>org.wso2.carbon.event.stream.stub</artifactId>
         </dependency>
         <dependency>
             <groupId>com.google.code.gson</groupId>
@@ -68,10 +68,10 @@
                         <Bundle-Name>${project.artifactId}</Bundle-Name>
                         <Carbon-Component>UIBundle</Carbon-Component>
                         <Export-Package>
-                            org.wso2.carbon.event.stream.manager.ui.*,
+                            org.wso2.carbon.event.stream.ui.*,
                         </Export-Package>
                         <Import-Package>
-                            org.wso2.carbon.event.stream.manager.stub.*,
+                            org.wso2.carbon.event.stream.stub.*,
                             org.wso2.carbon.utils,
                             org.apache.axis2.*,
                             org.apache.axiom.*,

@@ -34,7 +34,7 @@ import org.wso2.carbon.event.processor.core.internal.persistence.FileSystemPersi
 import org.wso2.carbon.event.processor.core.internal.storm.manager.StormManagerServer;
 import org.wso2.carbon.event.processor.core.internal.util.EventProcessorConstants;
 import org.wso2.carbon.event.statistics.EventStatisticsService;
-import org.wso2.carbon.event.stream.manager.core.EventStreamService;
+import org.wso2.carbon.event.stream.core.EventStreamService;
 import org.wso2.carbon.ndatasource.core.DataSourceService;
 import org.wso2.carbon.user.core.UserRealm;
 import org.wso2.carbon.utils.CarbonUtils;
@@ -55,7 +55,7 @@ import java.util.concurrent.ScheduledExecutorService;
  * interface="org.wso2.carbon.databridge.core.definitionstore.AbstractStreamDefinitionStore" cardinality="1..1"
  * policy="dynamic" bind="setEventStreamStoreService" unbind="unsetEventStreamStoreService"
  * @scr.reference name="eventStreamManager.service"
- * interface="org.wso2.carbon.event.stream.manager.core.EventStreamService" cardinality="1..1"
+ * interface="org.wso2.carbon.event.stream.core.EventStreamService" cardinality="1..1"
  * policy="dynamic" bind="setEventStreamManagerService" unbind="unsetEventStreamManagerService"
  * @scr.reference name="hazelcast.instance.service"
  * interface="com.hazelcast.core.HazelcastInstance" cardinality="0..1"
@@ -95,7 +95,7 @@ public class EventProcessorServiceDS {
 
 
             context.getBundleContext().registerService(EventProcessorService.class.getName(), carbonEventProcessorService, null);
-            EventProcessorValueHolder.getEventStreamService().registerEventStreamListener(new EventStreamListenerImpl());
+            context.getBundleContext().registerService(EventStreamListenerImpl.class.getName(), new EventStreamListenerImpl(), null);
 
             SiddhiManager siddhiManager = new SiddhiManager();
             EventProcessorValueHolder.registerSiddhiManager(siddhiManager);

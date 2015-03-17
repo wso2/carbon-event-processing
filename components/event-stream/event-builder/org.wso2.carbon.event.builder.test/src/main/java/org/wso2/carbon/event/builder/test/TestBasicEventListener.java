@@ -19,7 +19,7 @@ package org.wso2.carbon.event.builder.test;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.wso2.carbon.event.stream.manager.core.RawEventConsumer;
+import org.wso2.carbon.event.stream.core.RawEventConsumer;
 
 /**
  * Topic subscription call back handler implementation

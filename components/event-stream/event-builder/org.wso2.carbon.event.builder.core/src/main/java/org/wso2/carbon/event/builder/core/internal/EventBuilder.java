@@ -39,8 +39,8 @@ import org.wso2.carbon.event.input.adaptor.core.config.InputEventAdaptorConfigur
 import org.wso2.carbon.event.input.adaptor.core.exception.InputEventAdaptorEventProcessingException;
 import org.wso2.carbon.event.input.adaptor.manager.core.exception.InputEventAdaptorManagerConfigurationException;
 import org.wso2.carbon.event.statistics.EventStatisticsMonitor;
-import org.wso2.carbon.event.stream.manager.core.EventProducer;
-import org.wso2.carbon.event.stream.manager.core.EventProducerCallback;
+import org.wso2.carbon.event.stream.core.EventProducer;
+import org.wso2.carbon.event.stream.core.EventProducerCallback;
 
 import java.util.Arrays;
 import java.util.List;

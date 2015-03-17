@@ -16,9 +16,9 @@
 ~ under the License.
 --%>
 <%@ page import="com.google.gson.Gson" %>
-<%@ page import="org.wso2.carbon.event.stream.manager.stub.EventStreamAdminServiceStub" %>
-<%@ page import="org.wso2.carbon.event.stream.manager.stub.types.EventStreamInfoDto" %>
-<%@ page import="org.wso2.carbon.event.stream.manager.ui.EventStreamUIUtils" %>
+<%@ page import="org.wso2.carbon.event.stream.stub.EventStreamAdminServiceStub" %>
+<%@ page import="org.wso2.carbon.event.stream.stub.types.EventStreamInfoDto" %>
+<%@ page import="org.wso2.carbon.event.stream.ui.EventStreamUIUtils" %>
 
 <%
     // get Event Stream Definition

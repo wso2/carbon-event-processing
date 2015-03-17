@@ -30,8 +30,8 @@ import org.wso2.carbon.event.receiver.core.InputMapper;
 import org.wso2.carbon.event.receiver.core.internal.ds.EventReceiverServiceValueHolder;
 import org.wso2.carbon.event.receiver.core.internal.util.EventReceiverUtil;
 import org.wso2.carbon.event.receiver.core.internal.util.helper.EventReceiverConfigurationHelper;
-import org.wso2.carbon.event.stream.manager.core.EventStreamService;
-import org.wso2.carbon.event.stream.manager.core.exception.EventStreamConfigurationException;
+import org.wso2.carbon.event.stream.core.EventStreamService;
+import org.wso2.carbon.event.stream.core.exception.EventStreamConfigurationException;
 
 import java.util.*;
 
@@ -58,7 +58,7 @@ public class WSO2EventInputMapper implements InputMapper {
         EventStreamService eventStreamService = EventReceiverServiceValueHolder.getEventStreamService();
 
         try {
-            this.importedStreamDefinition = eventStreamService.getStreamDefinition(fromStreamName, fromStreamVersion, tenantId);
+            this.importedStreamDefinition = eventStreamService.getStreamDefinition(fromStreamName, fromStreamVersion);
         } catch (EventStreamConfigurationException e) {
             throw new EventReceiverStreamValidationException("Error while retrieving stream definition : " + e.getMessage(), fromStreamName + ":" + fromStreamVersion);
         }

@@ -47,9 +47,9 @@ import org.wso2.carbon.event.processor.core.internal.util.EventProcessorConfigur
 import org.wso2.carbon.event.processor.core.internal.util.EventProcessorConstants;
 import org.wso2.carbon.event.processor.core.internal.util.EventProcessorUtil;
 import org.wso2.carbon.event.processor.core.internal.util.helper.EventProcessorConfigurationHelper;
-import org.wso2.carbon.event.stream.manager.core.EventProducer;
-import org.wso2.carbon.event.stream.manager.core.SiddhiEventConsumer;
-import org.wso2.carbon.event.stream.manager.core.exception.EventStreamConfigurationException;
+import org.wso2.carbon.event.stream.core.EventProducer;
+import org.wso2.carbon.event.stream.core.SiddhiEventConsumer;
+import org.wso2.carbon.event.stream.core.exception.EventStreamConfigurationException;
 import org.wso2.siddhi.core.SiddhiManager;
 import org.wso2.siddhi.core.stream.input.InputHandler;
 import org.wso2.siddhi.query.api.definition.AbstractDefinition;
@@ -231,7 +231,7 @@ public class CarbonEventProcessorService implements EventProcessorService {
         // This iteration exists only as a check. Actual usage of imported stream configs is further down
         for (StreamConfiguration streamConfiguration : executionPlanConfiguration.getImportedStreams()) {
             try {
-                StreamDefinition streamDefinition = EventProcessorValueHolder.getEventStreamService().getStreamDefinition(streamConfiguration.getStreamId(), tenantId);
+                StreamDefinition streamDefinition = EventProcessorValueHolder.getEventStreamService().getStreamDefinition(streamConfiguration.getStreamId());
                 if (streamDefinition == null) {
                     throw new ExecutionPlanDependencyValidationException(streamConfiguration.getStreamId(), "Imported Stream " + streamConfiguration.getStreamId() + " does not exist");
                 }
@@ -244,7 +244,7 @@ public class CarbonEventProcessorService implements EventProcessorService {
         // This iteration exists only as a check. Actual usage of exported stream configs is further down
         for (StreamConfiguration streamConfiguration : executionPlanConfiguration.getExportedStreams()) {
             try {
-                StreamDefinition streamDefinition = EventProcessorValueHolder.getEventStreamService().getStreamDefinition(streamConfiguration.getStreamId(), tenantId);
+                StreamDefinition streamDefinition = EventProcessorValueHolder.getEventStreamService().getStreamDefinition(streamConfiguration.getStreamId());
                 if (streamDefinition == null) {
                     throw new ExecutionPlanDependencyValidationException(streamConfiguration.getStreamId(),
                             "Exported Stream " + streamConfiguration.getStreamId() + " does not exist");
@@ -265,7 +265,7 @@ public class CarbonEventProcessorService implements EventProcessorService {
             StreamDefinition streamDefinition;
             try {
                 streamDefinition = EventProcessorValueHolder.getEventStreamService().getStreamDefinition
-                        (importedStreamConfiguration.getStreamId(), tenantId);
+                        (importedStreamConfiguration.getStreamId());
                 importDefinitions.add(EventProcessorUtil.getDefinitionString(streamDefinition,
                         importedStreamConfiguration.getSiddhiStreamName()));
             } catch (EventStreamConfigurationException e) {
@@ -278,7 +278,7 @@ public class CarbonEventProcessorService implements EventProcessorService {
             try {
 
                 streamDefinition = EventProcessorValueHolder.getEventStreamService().getStreamDefinition(
-                        exportedStreamConfiguration.getStreamId(), tenantId);
+                        exportedStreamConfiguration.getStreamId());
                 exportDefinitions.add(EventProcessorUtil.getDefinitionString(streamDefinition,
                         exportedStreamConfiguration.getSiddhiStreamName()));
             } catch (EventStreamConfigurationException e) {
@@ -375,7 +375,7 @@ public class CarbonEventProcessorService implements EventProcessorService {
             if (distributed && stormDeploymentConfig != null && stormDeploymentConfig.isPublisherNode()) {
                 try {
                     StreamDefinition databridgeDefinition = EventProcessorValueHolder.getEventStreamService()
-                            .getStreamDefinition(exportedStreamConfiguration.getStreamId(), tenantId);
+                            .getStreamDefinition(exportedStreamConfiguration.getStreamId());
                     org.wso2.siddhi.query.api.definition.StreamDefinition siddhiStreamDefinition = EventProcessorUtil
                             .convertToSiddhiStreamDefinition(databridgeDefinition, exportedStreamConfiguration.getSiddhiStreamName());
                     stormOutputListener.registerOutputStreamListener(siddhiStreamDefinition, streamCallback);
@@ -386,7 +386,7 @@ public class CarbonEventProcessorService implements EventProcessorService {
                 executionPlanRuntime.addCallback(exportedStreamConfiguration.getSiddhiStreamName(), streamCallback);
             }
             try {
-                EventProcessorValueHolder.getEventStreamService().subscribe(streamCallback, tenantId);
+                EventProcessorValueHolder.getEventStreamService().subscribe(streamCallback);
             } catch (EventStreamConfigurationException e) {
                 //ignored as this will never happen
             }
@@ -411,7 +411,7 @@ public class CarbonEventProcessorService implements EventProcessorService {
                 StreamDefinition streamDefinition = null;
                 try {
                     streamDefinition = EventProcessorValueHolder.getEventStreamService().getStreamDefinition
-                            (importedStreamConfiguration.getStreamId(), tenantId);
+                            (importedStreamConfiguration.getStreamId());
                 } catch (EventStreamConfigurationException e) {
                     // Ignore as this would never happen
                 }
@@ -424,7 +424,7 @@ public class CarbonEventProcessorService implements EventProcessorService {
             }
 
             try {
-                EventProcessorValueHolder.getEventStreamService().subscribe(eventDispatcher, tenantId);
+                EventProcessorValueHolder.getEventStreamService().subscribe(eventDispatcher);
                 executionPlan.addConsumer(eventDispatcher);
             } catch (EventStreamConfigurationException e) {
                 //ignored as this will never happen
@@ -539,11 +539,11 @@ public class CarbonEventProcessorService implements EventProcessorService {
 
             // releasing junction listeners.
             for (SiddhiEventConsumer eventConsumer : executionPlan.getSiddhiEventConsumers()) {
-                EventProcessorValueHolder.getEventStreamService().unsubscribe(eventConsumer, tenantId);
+                EventProcessorValueHolder.getEventStreamService().unsubscribe(eventConsumer);
             }
 
             for (EventProducer eventProducer : executionPlan.getEventProducers()) {
-                EventProcessorValueHolder.getEventStreamService().unsubscribe(eventProducer, tenantId);
+                EventProcessorValueHolder.getEventStreamService().unsubscribe(eventProducer);
             }
 
         }

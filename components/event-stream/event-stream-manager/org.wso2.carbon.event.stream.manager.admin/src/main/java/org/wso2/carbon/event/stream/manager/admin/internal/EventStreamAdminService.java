@@ -15,7 +15,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.wso2.carbon.event.stream.manager.admin.internal;
+package org.wso2.carbon.event.stream.admin.internal;
 
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.deployment.DeploymentEngine;
@@ -29,13 +29,13 @@ import org.wso2.carbon.databridge.commons.StreamDefinition;
 import org.wso2.carbon.databridge.commons.exception.MalformedStreamDefinitionException;
 import org.wso2.carbon.databridge.commons.utils.EventDefinitionConverterUtils;
 import org.wso2.carbon.event.processing.application.deployer.EventProcessingDeployer;
-import org.wso2.carbon.event.stream.manager.admin.internal.util.EventAttributeTypeConstants;
-import org.wso2.carbon.event.stream.manager.admin.internal.util.EventStreamAdminServiceValueHolder;
-import org.wso2.carbon.event.stream.manager.admin.internal.util.EventStreamManagerConstants;
-import org.wso2.carbon.event.stream.manager.core.EventStreamConfig;
-import org.wso2.carbon.event.stream.manager.core.EventStreamDeployer;
-import org.wso2.carbon.event.stream.manager.core.EventStreamService;
-import org.wso2.carbon.event.stream.manager.core.exception.EventStreamConfigurationException;
+import org.wso2.carbon.event.stream.admin.internal.util.EventAttributeTypeConstants;
+import org.wso2.carbon.event.stream.admin.internal.util.EventStreamAdminServiceValueHolder;
+import org.wso2.carbon.event.stream.admin.internal.util.EventStreamManagerConstants;
+import org.wso2.carbon.event.stream.core.EventStreamConfig;
+import org.wso2.carbon.event.stream.core.EventStreamDeployer;
+import org.wso2.carbon.event.stream.core.EventStreamService;
+import org.wso2.carbon.event.stream.core.exception.EventStreamConfigurationException;
 
 import org.wso2.carbon.databridge.commons.AttributeType;
 
