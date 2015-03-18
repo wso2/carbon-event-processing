@@ -104,7 +104,7 @@ function loadEventAdapterProperty(inputAdapterProperty, eventReceiverInputTable,
 
 }
 
-function loadEventAdapterProperties(adapterSchema) {
+function loadEventAdapterProperties(adapterSchema, propertiesHeading) {
 
     jQuery('#mappingTypeFilter').empty();
     for (var i = 0; i < adapterSchema.localSupportedMessageFormats.length; i++) {
@@ -114,8 +114,13 @@ function loadEventAdapterProperties(adapterSchema) {
 
     var eventReceiverInputTable = document.getElementById("eventReceiverInputTable");
 // delete message properties related fields
-    for (i = eventReceiverInputTable.rows.length - 7; i > 3; i--) {
+    for (i = eventReceiverInputTable.rows.length - 7; i > 2; i--) {
         eventReceiverInputTable.deleteRow(i);
+    }
+    if(adapterSchema.localInputEventAdapterProperties.length > 0){
+        var tableRow = eventReceiverInputTable.insertRow(3);
+        var inputField = tableRow.insertCell(0);
+        inputField.innerHTML = '<b><i><span style="color: #666666; ">'+propertiesHeading+'</span></i></b>';
     }
     for (var i = 0; i < adapterSchema.localInputEventAdapterProperties.length; i++) {
         // for each property, add a text and input field in a row
@@ -123,7 +128,7 @@ function loadEventAdapterProperties(adapterSchema) {
     }
 
 }
-function loadEventAdapterRelatedProperties(toPropertyHeader) {
+function loadEventAdapterRelatedProperties(toPropertyHeader, propertiesHeading) {
 
     var selectedIndex = document.getElementById("eventAdapterTypeFilter").selectedIndex;
     var selected_text = document.getElementById("eventAdapterTypeFilter").options[selectedIndex].text;
@@ -139,7 +144,7 @@ function loadEventAdapterRelatedProperties(toPropertyHeader) {
 
             if (propertiesString != null) {
                 var jsonObject = JSON.parse(propertiesString);
-                loadEventAdapterProperties(jsonObject);
+                loadEventAdapterProperties(jsonObject, propertiesHeading);
 
                 //if (jsonObject != undefined) {
                 //    var propertyLoop = 0;
