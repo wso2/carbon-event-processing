@@ -82,7 +82,7 @@ public class EventProcessorServiceDS {
 
             new HAManagementServer(carbonEventProcessorService);
 
-            String stormConfigDirPath = CarbonUtils.getCarbonConfigDirPath() + File.separator + "cep" + File.separator + "storm";
+            String stormConfigDirPath = CarbonUtils.getCarbonConfigDirPath();
             StormDeploymentConfig stormDeploymentConfig = StormDeploymentConfigReader.loadConfigurations(stormConfigDirPath);
             if (stormDeploymentConfig != null) {
                 EventProcessorValueHolder.registerStormDeploymentConfig(stormDeploymentConfig);

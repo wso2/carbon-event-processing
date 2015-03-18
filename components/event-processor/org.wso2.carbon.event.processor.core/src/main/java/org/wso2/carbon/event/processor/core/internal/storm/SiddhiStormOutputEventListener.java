@@ -55,19 +55,19 @@ public class SiddhiStormOutputEventListener implements StreamCallback {
     private TCPEventServer tcpEventServer;
     private String logPrefix = "";
     private ExecutorService executorService = Executors.newSingleThreadExecutor();
-    private int heartBeatInterval;
+    private int heartbeatInterval;
 
     public SiddhiStormOutputEventListener(ExecutionPlanConfiguration executionPlanConfiguration, int tenantId,
                                           StormDeploymentConfig stormDeploymentConfig) {
         this.executionPlanConfiguration = executionPlanConfiguration;
         this.tenantId = tenantId;
         this.stormDeploymentConfig = stormDeploymentConfig;
-        this.heartBeatInterval = stormDeploymentConfig.getHeartbeatInterval();
+        this.heartbeatInterval = stormDeploymentConfig.getHeartbeatInterval();
         init();
     }
 
     private void init() {
-        logPrefix = "[CEP Publisher|ExecPlan:" + executionPlanConfiguration.getName() + ", TenantID:" + tenantId + "] ";
+        logPrefix = "[" + tenantId + ":" + executionPlanConfiguration.getName() + ":" + "CEP Publisher" + "]";
         log.info(logPrefix + "Initializing storm output event listener");
 
         try {
@@ -115,20 +115,54 @@ public class SiddhiStormOutputEventListener implements StreamCallback {
 
 
     class Registrar implements Runnable {
+        private String managerHost;
+        private int managerPort;
 
         @Override
         public void run() {
-            if (log.isDebugEnabled()){
-                log.debug(logPrefix + "Registering CEP publisher with " + thisHostIp + ":" + listeningPort);
-            }
+            log.info(logPrefix + "Registering CEP publisher for " + thisHostIp + ":" + listeningPort);
 
             // Infinitely call register. Each register call will act as a heartbeat
             while (true) {
-                registerCEPPublisherWithStormMangerService();
+                if (registerCEPPublisherWithStormMangerService()) {
+                    while(true) {
+                        TTransport transport = null;
+                        try {
+                            transport = new TSocket(managerHost, managerPort);
+                            TProtocol protocol = new TBinaryProtocol(transport);
+                            transport.open();
+
+                            StormManagerService.Client client = new StormManagerService.Client(protocol);
+                            client.registerCEPPublisher(tenantId, executionPlanConfiguration.getName(), thisHostIp,
+                                    listeningPort);
+                            if (log.isDebugEnabled()) {
+                                log.debug(logPrefix + "Successfully registered CEP publisher for " + thisHostIp + ":" +
+                                        listeningPort);
+                            }
+                            try {
+                                Thread.sleep(heartbeatInterval);
+                            } catch (InterruptedException e1) {
+                                Thread.currentThread().interrupt();
+                            }
+                        } catch (Exception e) {
+                            log.error(logPrefix + "Error in registering CEP publisher for " + thisHostIp + ":" +
+                                    listeningPort + " with manager " + managerHost + ":" + managerPort +". Trying " +
+                                    "next manager after " + heartbeatInterval + "ms", e);
+                            break;
+                        } finally {
+                            if (transport != null) {
+                                transport.close();
+                            }
+                        }
+                    }
+                }else{
+                    log.error(logPrefix + "Error registering CEP publisher with current manager. Retrying " +
+                            "after " + heartbeatInterval + "ms");
+                }
                 try {
-                    Thread.sleep(heartBeatInterval);
+                    Thread.sleep(heartbeatInterval);
                 } catch (InterruptedException e1) {
-                    continue;
+                    Thread.currentThread().interrupt();
                 }
             }
 
@@ -136,25 +170,32 @@ public class SiddhiStormOutputEventListener implements StreamCallback {
 
         private boolean registerCEPPublisherWithStormMangerService() {
             TTransport transport = null;
-            try {
-                transport = new TSocket(stormDeploymentConfig.getManagers().get(0).getHostName(), stormDeploymentConfig.getManagers().get(0).getPort());
-                TProtocol protocol = new TBinaryProtocol(transport);
-                transport.open();
+            for(StormDeploymentConfig.HostAndPort endpoint:stormDeploymentConfig.getManagers()) {
+                try {
+                    transport = new TSocket(endpoint.getHostName(), endpoint.getPort());
+                    TProtocol protocol = new TBinaryProtocol(transport);
+                    transport.open();
 
-                StormManagerService.Client client = new StormManagerService.Client(protocol);
-                client.registerCEPPublisher(tenantId, executionPlanConfiguration.getName(), thisHostIp, listeningPort);
-                if (log.isDebugEnabled()){
-                    log.debug(logPrefix + "Successfully registeredCEP publisher with " + thisHostIp + ":" + listeningPort);
-                }
-                return true;
-            } catch (Exception e) {
-                log.error(logPrefix + "Error in registering CEP publisher", e);
-                return false;
-            } finally {
-                if (transport != null) {
-                    transport.close();
+                    StormManagerService.Client client = new StormManagerService.Client(protocol);
+                    client.registerCEPPublisher(tenantId, executionPlanConfiguration.getName(), thisHostIp,
+                            listeningPort);
+                    log.info(logPrefix + "Successfully registered CEP publisher for " + thisHostIp + ":" +
+                            listeningPort);
+                    managerHost = endpoint.getHostName();
+                    managerPort = endpoint.getPort();
+                    return true;
+                } catch (Exception e) {
+                    log.error(logPrefix + "Error in registering CEP publisher for " + thisHostIp + ":" +
+                            listeningPort + " with manager " + endpoint.getHostName() + ":" + endpoint.getPort() + "." +
+                            " Trying next manager", e);
+                    continue;
+                } finally {
+                    if (transport != null) {
+                        transport.close();
+                    }
                 }
             }
+            return false;
         }
     }
 }

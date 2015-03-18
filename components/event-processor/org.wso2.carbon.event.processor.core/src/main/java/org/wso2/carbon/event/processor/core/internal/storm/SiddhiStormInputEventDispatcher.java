@@ -66,8 +66,7 @@ public class SiddhiStormInputEventDispatcher extends AbstractSiddhiInputEventDis
 
             asyncEventPublisher = new AsyncEventPublisher(AsyncEventPublisher.DestinationType.STORM_RECEIVER,
                                                           streamDefinitions,
-                                                          stormDeploymentConfig.getManagers().get(0).getHostName(),
-                                                          stormDeploymentConfig.getManagers().get(0).getPort(),
+                                                          stormDeploymentConfig.getManagers(),
                                                           executionPlanConfiguration.getName(),
                                                           tenantId,
                                                           stormDeploymentConfig);

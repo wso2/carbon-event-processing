@@ -111,11 +111,12 @@ public class StormTopologyConstructor {
             for (String streamDefinition : outputStreamDefinitions) {
                 componentInfoHolder.addOutputStream(streamDefinition);
             }
-            BoltDeclarer declarer = builder.setBolt(name, new SiddhiBolt(inputStreamDefinitions,
-                    queryElement.getText(), outputStreamDefinitions), Integer.parseInt(parallel));
+            BoltDeclarer declarer = builder.setBolt(name, new SiddhiBolt(name, inputStreamDefinitions,
+                    queryElement.getText(), outputStreamDefinitions, executionPlanName, tenantId),
+                    Integer.parseInt(parallel));
             //enforcing parallelism
             if (isEnforced.equals("true")) {
-                declarer.setMaxTaskParallelism(Integer.parseInt(parallel));     //todo add enforce property
+                declarer.setMaxTaskParallelism(Integer.parseInt(parallel));
             }
             componentInfoHolder.setDeclarer(declarer);
             topologyInfoHolder.addComponent(componentInfoHolder);

@@ -102,7 +102,7 @@ public class EventReceiverSpout extends BaseRichSpout implements StreamCallback 
         for (String definition : incomingStreamDefinitions) {
             this.incomingStreamDefinitions.add(SiddhiCompiler.parseStreamDefinition(definition));
         }
-        this.logPrefix = "{" + executionPlanName + ":" + tenantId + "} - ";
+        this.logPrefix = "[" + tenantId + ":" + executionPlanName + ":" + "Event Receiver Spout" + "]";
     }
 
     @Override
@@ -112,7 +112,7 @@ public class EventReceiverSpout extends BaseRichSpout implements StreamCallback 
             Fields fields = new Fields(siddhiStreamDefinition.getAttributeNameArray());
             outputFieldsDeclarer.declareStream(siddhiStreamDefinition.getId(), fields);
             incomingStreamIDs.add(siddhiStreamDefinition.getId());
-            log.info(logPrefix + "Declaring output fields for stream - " + siddhiStreamDefinition.getId());
+            log.info(logPrefix + "Declaring output fields for stream : " + siddhiStreamDefinition.getId());
         }
     }
 
@@ -143,14 +143,13 @@ public class EventReceiverSpout extends BaseRichSpout implements StreamCallback 
     public void nextTuple() {
         Event event = storedEvents.poll();
         if (event != null) {
-            final String siddhiStreamName = event.getStreamId();        //use custom event obj?
-
+            final String siddhiStreamName = event.getStreamId();
             if (incomingStreamIDs.contains(siddhiStreamName)) {
-                if (log.isDebugEnabled()) {
-                    log.debug(logPrefix + "Sending event : " + siddhiStreamName + " => " + event.toString());
-                }
                 spoutOutputCollector.emit(siddhiStreamName, Arrays.asList(event.getData()));
-                updateThroughputCounter();
+                if (log.isDebugEnabled()) {
+                    log.debug(logPrefix + " Emitted Event: " + siddhiStreamName + ":" + event.toString());
+                    updateThroughputCounter();
+                }
             } else {
                 log.warn(logPrefix + "Event received for unknown stream : " + siddhiStreamName);
             }
@@ -180,23 +179,56 @@ public class EventReceiverSpout extends BaseRichSpout implements StreamCallback 
     @Override
     public void receive(String streamId, Object[] eventData) {
         if (log.isDebugEnabled()) {
-            log.debug(logPrefix + "Received event for stream '" + streamId + "': " + Arrays.deepToString(eventData));
+            log.debug(logPrefix + " Received Event: " + streamId + ":" + Arrays.deepToString(eventData));
         }
         storedEvents.add(new Event(System.currentTimeMillis(), eventData, streamId));
     }
 
 
     class Registrar implements Runnable {
+        private String managerHost;
+        private int managerPort;
 
         @Override
         public void run() {
-            if (log.isDebugEnabled()) {
-                log.debug(logPrefix + "Registering Storm receiver with " + thisHostIp + ":" + listeningPort);
-            }
-
+            log.info(logPrefix + "Registering Event Receiver Spout for " + thisHostIp + ":" + listeningPort);
+            
             // Infinitely call register. Each register call will act as a heartbeat
             while (true) {
-                registerStormReceiverWithStormMangerService();
+                if (registerStormReceiverWithStormMangerService()) {
+                    while(true) {
+                        TTransport transport = null;
+                        try {
+                            transport = new TSocket(managerHost, managerPort);
+                            TProtocol protocol = new TBinaryProtocol(transport);
+                            transport.open();
+
+                            StormManagerService.Client client = new StormManagerService.Client(protocol);
+                            client.registerStormReceiver(tenantId, executionPlanName, thisHostIp, listeningPort);
+                            if (log.isDebugEnabled()) {
+                                log.debug(logPrefix + "Successfully registered Event Receiver Spout for " +
+                                        thisHostIp + ":" + listeningPort);
+                            }
+                            try {
+                                Thread.sleep(heartbeatInterval);
+                            } catch (InterruptedException e1) {
+                                continue;
+                            }
+                        } catch (Exception e) {
+                            log.error(logPrefix + "Error in registering Event Receiver Spout for " + thisHostIp + ":" +
+                                    listeningPort + "with manager" + managerHost + ":" + managerPort +". Trying next " +
+                                    "manager after " + heartbeatInterval + "ms", e);
+                            break;
+                        } finally {
+                            if (transport != null) {
+                                transport.close();
+                            }
+                        }
+                    }
+                }else{
+                    log.error(logPrefix + "Error registering Event Receiver Spout with given set of manager nodes. " +
+                            "Retrying after " + heartbeatInterval + "ms");
+                }
                 try {
                     Thread.sleep(heartbeatInterval);
                 } catch (InterruptedException e1) {
@@ -207,23 +239,33 @@ public class EventReceiverSpout extends BaseRichSpout implements StreamCallback 
 
         private boolean registerStormReceiverWithStormMangerService() {
             TTransport transport = null;
-            try {
-                transport = new TSocket(stormDeploymentConfig.getManagers().get(0).getHostName(), stormDeploymentConfig.getManagers().get(0).getPort());
-                TProtocol protocol = new TBinaryProtocol(transport);
-                transport.open();
+            for (StormDeploymentConfig.HostAndPort endpoint : stormDeploymentConfig.getManagers()) {
+                try {
+                    transport = new TSocket(endpoint.getHostName(), endpoint.getPort());
+                    TProtocol protocol = new TBinaryProtocol(transport);
+                    transport.open();
 
-                StormManagerService.Client client = new StormManagerService.Client(protocol);
-                client.registerStormReceiver(tenantId, executionPlanName, thisHostIp, listeningPort);
-                log.info(logPrefix + "Successfully registering Storm receiver with " + thisHostIp + ":" + listeningPort);
-                return true;
-            } catch (Exception e) {
-                log.error(logPrefix + "Error in registering Storm receiver", e);
-                return false;
-            } finally {
-                if (transport != null) {
-                    transport.close();
+                    StormManagerService.Client client = new StormManagerService.Client(protocol);
+                    client.registerStormReceiver(tenantId, executionPlanName, thisHostIp, listeningPort);
+                    //if (log.isDebugEnabled()) {
+                        log.info(logPrefix + "Successfully registered Event Receiver Spout for " + thisHostIp + ":" +
+                                listeningPort);
+                    //}
+                    managerHost = endpoint.getHostName();
+                    managerPort = endpoint.getPort();
+                    return true;
+                } catch (Exception e) {
+                    log.error(logPrefix + "Error in registering Event Receiver Spout for " + thisHostIp + ":" +
+                            listeningPort + " with manager " + endpoint.getHostName() + ":" + endpoint.getPort() +
+                            "Trying next manager.", e);
+                    continue;
+                } finally {
+                    if (transport != null) {
+                        transport.close();
+                    }
                 }
             }
+            return false;
         }
     }
 }
