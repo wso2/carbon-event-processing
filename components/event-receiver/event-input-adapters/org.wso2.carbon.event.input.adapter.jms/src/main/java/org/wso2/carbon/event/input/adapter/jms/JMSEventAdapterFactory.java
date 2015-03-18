@@ -24,7 +24,8 @@ import java.util.*;
 
 public class JMSEventAdapterFactory extends InputEventAdapterFactory {
 
-    private ResourceBundle resourceBundle = ResourceBundle.getBundle("org.wso2.carbon.event.input.adapter.soap.i18n.Resources", Locale.getDefault());
+    private ResourceBundle resourceBundle = ResourceBundle.getBundle
+            ("org.wso2.carbon.event.input.adapter.jms.i18n.Resources", Locale.getDefault());
 
     @Override
     public String getType() {
@@ -34,7 +35,12 @@ public class JMSEventAdapterFactory extends InputEventAdapterFactory {
     @Override
     public List<String> getSupportedMessageFormats() {
         List<String> supportInputMessageTypes = new ArrayList<String>();
+
         supportInputMessageTypes.add(MessageType.XML);
+        supportInputMessageTypes.add(MessageType.JSON);
+        supportInputMessageTypes.add(MessageType.MAP);
+        supportInputMessageTypes.add(MessageType.TEXT);
+
         return supportInputMessageTypes;
     }
 
@@ -42,13 +48,81 @@ public class JMSEventAdapterFactory extends InputEventAdapterFactory {
     public List<Property> getPropertyList() {
         List<Property> propertyList = new ArrayList<Property>();
 
+        // Topic
+        Property topicProperty = new Property(JMSEventAdapterConstants.ADAPTER_JMS_DESTINATION);
+        topicProperty.setDisplayName(
+                resourceBundle.getString(JMSEventAdapterConstants.ADAPTER_JMS_DESTINATION));
+        topicProperty.setRequired(true);
+        topicProperty.setHint(resourceBundle.getString(JMSEventAdapterConstants.ADAPTER_JMS_DESTINATION_HINT));
+        propertyList.add(topicProperty);
+
+
+        // JNDI initial context factory class
+        Property initialContextProperty = new Property(JMSEventAdapterConstants.JNDI_INITIAL_CONTEXT_FACTORY_CLASS);
+        initialContextProperty.setDisplayName(
+                resourceBundle.getString(JMSEventAdapterConstants.JNDI_INITIAL_CONTEXT_FACTORY_CLASS));
+        initialContextProperty.setRequired(true);
+        initialContextProperty.setHint(resourceBundle.getString(JMSEventAdapterConstants.JNDI_INITIAL_CONTEXT_FACTORY_CLASS_HINT));
+        propertyList.add(initialContextProperty);
+
+
+        // JNDI Provider URL
+        Property javaNamingProviderUrlProperty = new Property(JMSEventAdapterConstants.JAVA_NAMING_PROVIDER_URL);
+        javaNamingProviderUrlProperty.setDisplayName(
+                resourceBundle.getString(JMSEventAdapterConstants.JAVA_NAMING_PROVIDER_URL));
+        javaNamingProviderUrlProperty.setRequired(true);
+        javaNamingProviderUrlProperty.setHint(resourceBundle.getString(JMSEventAdapterConstants.JAVA_NAMING_PROVIDER_URL_HINT));
+        propertyList.add(javaNamingProviderUrlProperty);
+
+
+        // JNDI Username
+        Property userNameProperty = new Property(JMSEventAdapterConstants.ADAPTER_JMS_USERNAME);
+        userNameProperty.setDisplayName(
+                resourceBundle.getString(JMSEventAdapterConstants.ADAPTER_JMS_USERNAME));
+        propertyList.add(userNameProperty);
+
+
+        // JNDI Password
+        Property passwordProperty = new Property(JMSEventAdapterConstants.ADAPTER_JMS_PASSWORD);
+        passwordProperty.setSecured(true);
+        passwordProperty.setDisplayName(
+                resourceBundle.getString(JMSEventAdapterConstants.ADAPTER_JMS_PASSWORD));
+        propertyList.add(passwordProperty);
+
+        // Connection Factory JNDI Name
+        Property connectionFactoryNameProperty = new Property(JMSEventAdapterConstants.ADAPTER_JMS_CONNECTION_FACTORY_JNDINAME);
+        connectionFactoryNameProperty.setRequired(true);
+        connectionFactoryNameProperty.setDisplayName(
+                resourceBundle.getString(JMSEventAdapterConstants.ADAPTER_JMS_CONNECTION_FACTORY_JNDINAME));
+        connectionFactoryNameProperty.setHint(resourceBundle.getString(JMSEventAdapterConstants.ADAPTER_JMS_CONNECTION_FACTORY_JNDINAME_HINT));
+        propertyList.add(connectionFactoryNameProperty);
+
+
+        // Destination Type
+        Property destinationTypeProperty = new Property(JMSEventAdapterConstants.ADAPTER_JMS_DESTINATION_TYPE);
+        destinationTypeProperty.setRequired(true);
+        destinationTypeProperty.setDisplayName(
+                resourceBundle.getString(JMSEventAdapterConstants.ADAPTER_JMS_DESTINATION_TYPE));
+        destinationTypeProperty.setOptions(new String[]{"queue", "topic"});
+        destinationTypeProperty.setDefaultValue("topic");
+        destinationTypeProperty.setHint(resourceBundle.getString(JMSEventAdapterConstants.ADAPTER_JMS_DESTINATION_TYPE_HINT));
+        propertyList.add(destinationTypeProperty);
+
+        // Connection Factory JNDI Name
+        Property subscriberNameProperty = new Property(JMSEventAdapterConstants.ADAPTER_JMS_DURABLE_SUBSCRIBER_NAME);
+        subscriberNameProperty.setRequired(false);
+        subscriberNameProperty.setDisplayName(
+                resourceBundle.getString(JMSEventAdapterConstants.ADAPTER_JMS_DURABLE_SUBSCRIBER_NAME));
+        subscriberNameProperty.setHint(resourceBundle.getString(JMSEventAdapterConstants.ADAPTER_JMS_DURABLE_SUBSCRIBER_NAME_HINT));
+        propertyList.add(subscriberNameProperty);
 
 
         return propertyList;
     }
 
     @Override
-    public InputEventAdapter createEventAdapter(InputEventAdapterConfiguration eventAdapterConfiguration, Map<String, String> globalProperties) {
-        return new JMSEventAdapter(eventAdapterConfiguration,globalProperties);
+    public InputEventAdapter createEventAdapter(InputEventAdapterConfiguration eventAdapterConfiguration,
+                                                Map<String, String> globalProperties) {
+        return new JMSEventAdapter(eventAdapterConfiguration, globalProperties);
     }
 }

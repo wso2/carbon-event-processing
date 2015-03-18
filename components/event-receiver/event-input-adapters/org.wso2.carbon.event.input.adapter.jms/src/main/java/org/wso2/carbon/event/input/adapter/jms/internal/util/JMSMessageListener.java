@@ -21,8 +21,8 @@ import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.wso2.carbon.context.PrivilegedCarbonContext;
-import org.wso2.carbon.event.input.adaptor.core.InputEventAdaptorListener;
-import org.wso2.carbon.event.input.adaptor.core.exception.InputEventAdaptorEventProcessingException;
+import org.wso2.carbon.event.input.adapter.core.InputEventAdapterListener;
+import org.wso2.carbon.event.input.adapter.core.exception.InputEventAdapterRuntimeException;
 
 import javax.jms.*;
 import java.io.UnsupportedEncodingException;
@@ -32,11 +32,11 @@ import java.util.Map;
 
 public class JMSMessageListener implements MessageListener {
     private static final Log log = LogFactory.getLog(JMSMessageListener.class);
-    private InputEventAdaptorListener eventAdaptorListener = null;
+    private InputEventAdapterListener eventAdaptorListener = null;
     private final int tenantId;
     private final String tenantDomain;
 
-    public JMSMessageListener(InputEventAdaptorListener eventAdaptorListener,
+    public JMSMessageListener(InputEventAdapterListener eventAdaptorListener,
                               AxisConfiguration axisConfiguration) {
         this.eventAdaptorListener = eventAdaptorListener;
         tenantId = PrivilegedCarbonContext.getThreadLocalCarbonContext().getTenantId();
@@ -51,7 +51,7 @@ public class JMSMessageListener implements MessageListener {
             if (message != null) {
 
                 if (log.isDebugEnabled()) {
-                    log.debug("Event received in JMS Event Adaptor - "+message);
+                    log.debug("Event received in JMS Event Adaptor - " + message);
                 }
 
                 if (message instanceof TextMessage) {
@@ -60,12 +60,12 @@ public class JMSMessageListener implements MessageListener {
                     // not happen here since this message will be built later.
                     try {
                         String msgText = textMessage.getText();
-                        eventAdaptorListener.onEventCall(msgText);
+                        eventAdaptorListener.onEvent(msgText);
                     } catch (JMSException e) {
                         if (log.isErrorEnabled()) {
                             log.error("Failed to get text from " + textMessage, e);
                         }
-                    } catch (InputEventAdaptorEventProcessingException e) {
+                    } catch (InputEventAdapterRuntimeException e) {
                         if (log.isErrorEnabled()) {
                             log.error(e);
                         }
@@ -80,11 +80,11 @@ public class JMSMessageListener implements MessageListener {
                             name = names.nextElement();
                             event.put(name, mapMessage.getObject((String) name));
                         }
-                        eventAdaptorListener.onEventCall(event);
+                        eventAdaptorListener.onEvent(event);
 
                     } catch (JMSException e) {
                         log.error("Can not read the map message ", e);
-                    } catch (InputEventAdaptorEventProcessingException e) {
+                    } catch (InputEventAdapterRuntimeException e) {
                         log.error("Can not send the message to broker ", e);
                     }
                 } else if (message instanceof BytesMessage) {
@@ -92,8 +92,8 @@ public class JMSMessageListener implements MessageListener {
                     byte[] bytes;
                     bytes = new byte[(int) bytesMessage.getBodyLength()];
                     bytesMessage.readBytes(bytes);
-                    eventAdaptorListener.onEventCall(new String(bytes, "UTF-8"));
-                }else{
+                    eventAdaptorListener.onEvent(new String(bytes, "UTF-8"));
+                } else {
                     log.warn("Event dropped due to unsupported message type");
                 }
             } else {

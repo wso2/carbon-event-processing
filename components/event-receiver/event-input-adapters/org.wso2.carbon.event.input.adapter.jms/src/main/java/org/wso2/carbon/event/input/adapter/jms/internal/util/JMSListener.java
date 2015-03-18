@@ -77,7 +77,8 @@ public class JMSListener implements Runnable {
         while (!connected) {
             boolean jmsProviderStarted = checkJMSConnection(stm);
             if (jmsProviderStarted) {
-                log.info("Connection attempt: " + r + " for JMS Provider for listener: " + listenerName + " was successful!");
+                log.info("Connection attempt: " + r + " for JMS Provider for listener: " + listenerName
+                        + " was successful!");
                 connected = true;
                 stm.start();
 
@@ -102,9 +103,11 @@ public class JMSListener implements Runnable {
                         " of type " + JMSUtils.getDestinationTypeAsString(stm.getDestinationType()) +
                         " for listener " + listenerName + " have not yet started after 3 seconds ..");
             } else {
-                log.error("Unable to continue server startup as it seems the JMS Provider is not yet started. Please start the JMS provider now.");
+                log.error("Unable to continue server startup as it seems the JMS Provider " +
+                        "is not yet started. Please start the JMS provider now.");
                 retryDuration = (long) (retryDuration * reconnectionProgressionFactor);
-                log.error("Connection attempt : " + (r++) + " for JMS Provider failed. Next retry in " + (retryDuration / 1000) + " seconds");
+                log.error("Connection attempt : " + (r++) + " for JMS Provider failed. Next retry in "
+                        + (retryDuration / 1000) + " seconds");
                 if (retryDuration > maxReconnectDuration) {
                     retryDuration = maxReconnectDuration;
                 }
@@ -124,7 +127,8 @@ public class JMSListener implements Runnable {
             ConnectionFactory jmsConFactory = null;
             try {
                 jmsConFactory = JMSUtils.lookup(
-                        new InitialContext(stm.getJmsProperties()), ConnectionFactory.class, stm.getConnFactoryJNDIName());
+                        new InitialContext(stm.getJmsProperties()), ConnectionFactory.class,
+                        stm.getConnFactoryJNDIName());
             } catch (NamingException e) {
                 log.error("Error looking up connection factory : " + stm.getConnFactoryJNDIName() +
                         "using JNDI properties : " + jmsProperties, e);
@@ -168,10 +172,10 @@ public class JMSListener implements Runnable {
      */
     @Override
     public void run() {
-          start();
+        start();
     }
 
-    public void startListener()  {
+    public void startListener() {
         new Thread(this).start();
     }
 }

@@ -61,8 +61,8 @@ public class JMSEventAdapterServiceValueHolder {
         lateStartAdaptorListeners.add(lateStartAdaptorListener);
     }
 
-    public static void loadLateStartEventAdaptors(){
-        for (LateStartAdapterListener lateStartAdaptorListener : lateStartAdaptorListeners){
+    public static void loadLateStartEventAdaptors() {
+        for (LateStartAdapterListener lateStartAdaptorListener : lateStartAdaptorListeners) {
             lateStartAdaptorListener.tryStartAdaptor();
         }
     }

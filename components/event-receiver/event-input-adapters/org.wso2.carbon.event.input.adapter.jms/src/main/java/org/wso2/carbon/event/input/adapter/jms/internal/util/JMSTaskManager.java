@@ -21,7 +21,7 @@ import org.apache.axis2.transport.base.BaseConstants;
 import org.apache.axis2.transport.base.threads.WorkerPool;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.wso2.carbon.event.input.adaptor.core.exception.InputEventAdaptorEventProcessingException;
+import org.wso2.carbon.event.input.adapter.core.exception.InputEventAdapterRuntimeException;
 
 import javax.jms.*;
 import javax.jms.IllegalStateException;
@@ -36,15 +36,15 @@ import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
- * Each adaptor will have one JMSTaskManager instance that will create, manage and also destroy
+ * Each adapter will have one JMSTaskManager instance that will create, manage and also destroy
  * idle tasks created for it, for message receipt. This will also allow individual tasks to cache
  * the Connection, Session or Consumer as necessary, considering the transactionality required and
  * user preference.
  * <p/>
- * This also acts as the ExceptionListener for all JMS connections made on behalf of the adaptor.
+ * This also acts as the ExceptionListener for all JMS connections made on behalf of the adapter.
  * Since the ExceptionListener is notified by a JMS provider on a "serious" error, we simply try
  * to re-connect. Thus a connection failure for a single task, will re-initialize the state afresh
- * for the transport adaptor, by discarding all connections.
+ * for the transport adapter, by discarding all connections.
  */
 public class JMSTaskManager {
 
@@ -75,9 +75,9 @@ public class JMSTaskManager {
     private static final int STATE_FAILURE = 4;
 
     /**
-     * The name of the adaptor managed by this instance
+     * The name of the adapter managed by this instance
      */
-    private String eventAdaptorName;
+    private String eventAdapterName;
     /**
      * The ConnectionFactory MUST refer to an XAConnectionFactory to use JTA
      */
@@ -159,7 +159,7 @@ public class JMSTaskManager {
      */
     private UserTransaction sharedUserTransaction = null;
     /**
-     * Should this transport adaptor use JMS 1.1 ? (when false, defaults to 1.0.2b)
+     * Should this transport adapter use JMS 1.1 ? (when false, defaults to 1.0.2b)
      */
     private boolean jmsSpec11 = false;
 
@@ -254,28 +254,28 @@ public class JMSTaskManager {
         if (cacheLevel == JMSConstants.CACHE_AUTO) {
             cacheLevel =
                     transactionality == BaseConstants.TRANSACTION_NONE ?
-                    JMSConstants.CACHE_CONSUMER : JMSConstants.CACHE_NONE;
+                            JMSConstants.CACHE_CONSUMER : JMSConstants.CACHE_NONE;
         }
         switch (cacheLevel) {
             case JMSConstants.CACHE_NONE:
                 log.debug("No JMS resources will be cached/shared between poller " +
-                          "worker tasks of event adaptor : " + eventAdaptorName);
+                        "worker tasks of event adapter : " + eventAdapterName);
                 break;
             case JMSConstants.CACHE_CONNECTION:
                 log.debug("Only the JMS Connection will be cached and shared between *all* " +
-                          "poller task invocations");
+                        "poller task invocations");
                 break;
             case JMSConstants.CACHE_SESSION:
                 log.debug("The JMS Connection and Session will be cached and shared between " +
-                          "successive poller task invocations");
+                        "successive poller task invocations");
                 break;
             case JMSConstants.CACHE_CONSUMER:
                 log.debug("The JMS Connection, Session and MessageConsumer will be cached and " +
-                          "shared between successive poller task invocations");
+                        "shared between successive poller task invocations");
                 break;
             default: {
                 handleException("Invalid cache level : " + cacheLevel +
-                                " for event adaptor : " + eventAdaptorName);
+                        " for event adapter : " + eventAdapterName);
             }
         }
 
@@ -284,7 +284,7 @@ public class JMSTaskManager {
         }
 
         JMSTaskManagerState = STATE_STARTED;
-        log.info("Task manager for event adaptor : " + eventAdaptorName + " [re-]initialized");
+        log.info("Task manager for event adapter : " + eventAdapterName + " [re-]initialized");
     }
 
     /**
@@ -293,7 +293,7 @@ public class JMSTaskManager {
     public synchronized void stop() {
 
         if (log.isDebugEnabled()) {
-            log.debug("Stopping JMSTaskManager for event adaptor : " + eventAdaptorName);
+            log.debug("Stopping JMSTaskManager for event adapter : " + eventAdapterName);
         }
 
         if (JMSTaskManagerState != STATE_FAILURE) {
@@ -328,13 +328,13 @@ public class JMSTaskManager {
         }
 
         if (activeTaskCount > 0) {
-            log.warn("Unable to shutdown all polling tasks of event adaptor : " + eventAdaptorName);
+            log.warn("Unable to shutdown all polling tasks of event adapter : " + eventAdapterName);
         }
 
         if (JMSTaskManagerState != STATE_FAILURE) {
             JMSTaskManagerState = STATE_STOPPED;
         }
-        log.info("Task manager for event adaptor : " + receiveTimeout + " shutdown");
+        log.info("Task manager for event adapter : " + receiveTimeout + " shutdown");
     }
 
     /**
@@ -376,7 +376,7 @@ public class JMSTaskManager {
      */
     private void scheduleNewTaskIfAppropriate() {
         if (JMSTaskManagerState == STATE_STARTED &&
-            pollingTasks.size() < getMaxConcurrentConsumers() && getIdleTaskCount() == 0) {
+                pollingTasks.size() < getMaxConcurrentConsumers() && getIdleTaskCount() == 0) {
             workerPool.execute(new MessageListenerTask());
         }
     }
@@ -463,7 +463,7 @@ public class JMSTaskManager {
                     try {
                         connection.stop();
                     } catch (JMSException e) {
-                        log.warn("Error pausing Message Listener task for event adaptor : " + eventAdaptorName);
+                        log.warn("Error pausing Message Listener task for event adapter : " + eventAdapterName);
                     }
                 }
                 workerState = STATE_PAUSED;
@@ -478,7 +478,7 @@ public class JMSTaskManager {
                 try {
                     connection.start();
                 } catch (JMSException e) {
-                    log.warn("Error resuming Message Listener task for event adaptor : " + eventAdaptorName);
+                    log.warn("Error resuming Message Listener task for event adapter : " + eventAdapterName);
                 }
             }
             workerState = STATE_STARTED;
@@ -498,8 +498,8 @@ public class JMSTaskManager {
 
             try {
                 while (isActive() &&
-                       (getMaxMessagesPerTask() < 0 || messageCount < getMaxMessagesPerTask()) &&
-                       (getConcurrentConsumers() == 1 || idleExecutionCount < getIdleTaskExecutionLimit())) {
+                        (getMaxMessagesPerTask() < 0 || messageCount < getMaxMessagesPerTask()) &&
+                        (getConcurrentConsumers() == 1 || idleExecutionCount < getIdleTaskExecutionLimit())) {
 
                     UserTransaction ut = null;
                     try {
@@ -523,13 +523,13 @@ public class JMSTaskManager {
                         if (message != null) {
                             try {
                                 log.trace("<<<<<<< READ message with Message ID : " +
-                                          message.getJMSMessageID() + " from : " + destination +
-                                          " by Thread ID : " + Thread.currentThread().getId());
+                                        message.getJMSMessageID() + " from : " + destination +
+                                        " by Thread ID : " + Thread.currentThread().getId());
                             } catch (JMSException ignore) {
                             }
                         } else {
                             log.trace("No message received by Thread ID : " +
-                                      Thread.currentThread().getId() + " for destination : " + destination);
+                                    Thread.currentThread().getId() + " for destination : " + destination);
                         }
                     }
 
@@ -551,14 +551,14 @@ public class JMSTaskManager {
 
                 if (log.isTraceEnabled()) {
                     log.trace("Listener task with Thread ID : " + Thread.currentThread().getId() +
-                              " is stopping after processing : " + messageCount + " messages :: " +
-                              " isActive : " + isActive() + " maxMessagesPerTask : " +
-                              getMaxMessagesPerTask() + " concurrentConsumers : " + getConcurrentConsumers() +
-                              " idleExecutionCount : " + idleExecutionCount + " idleTaskExecutionLimit : " +
-                              getIdleTaskExecutionLimit());
+                            " is stopping after processing : " + messageCount + " messages :: " +
+                            " isActive : " + isActive() + " maxMessagesPerTask : " +
+                            getMaxMessagesPerTask() + " concurrentConsumers : " + getConcurrentConsumers() +
+                            " idleExecutionCount : " + idleExecutionCount + " idleTaskExecutionLimit : " +
+                            getIdleTaskExecutionLimit());
                 } else if (log.isDebugEnabled()) {
                     log.debug("Listener task with Thread ID : " + Thread.currentThread().getId() +
-                              " is stopping after processing : " + messageCount + " messages");
+                            " is stopping after processing : " + messageCount + " messages");
                 }
 
                 // Close the consumer and session before decrementing activeTaskCount.
@@ -603,8 +603,8 @@ public class JMSTaskManager {
             }
 
             if (log.isDebugEnabled()) {
-                log.debug("Waiting for a message for event adaptor : " + eventAdaptorName + " - duration : "
-                          + (getReceiveTimeout() < 0 ? "unlimited" : (getReceiveTimeout() + "ms")));
+                log.debug("Waiting for a message for event adapter : " + eventAdapterName + " - duration : "
+                        + (getReceiveTimeout() < 0 ? "unlimited" : (getReceiveTimeout() + "ms")));
             }
 
             try {
@@ -616,7 +616,7 @@ public class JMSTaskManager {
             } catch (IllegalStateException ignore) {
                 // probably the consumer (shared) was closed.. which is still ok.. as we didn't read
             } catch (JMSException e) {
-                logError("Error receiving message for event adaptor : " + eventAdaptorName, e);
+                logError("Error receiving message for event adapter : " + eventAdapterName, e);
             }
             return null;
         }
@@ -673,7 +673,7 @@ public class JMSTaskManager {
                     }
                 } catch (JMSException e) {
                     logError("Error " + (commitOrAck ? "committing" : "rolling back") +
-                             " local session txn for message : " + messageId, e);
+                            " local session txn for message : " + messageId, e);
                 }
 
                 // if a JTA transaction was being used, commit it or rollback
@@ -693,7 +693,7 @@ public class JMSTaskManager {
                     }
                 } catch (Exception e) {
                     logError("Error " + (commitOrAck ? "committing" : "rolling back") +
-                             " JTA txn for message : " + messageId + " from the session", e);
+                            " JTA txn for message : " + messageId + " from the session", e);
                 }
 
                 // close the consumer
@@ -736,7 +736,7 @@ public class JMSTaskManager {
 
             do {
                 try {
-                    log.info("Reconnection attempt : " + r + " for event adaptor : " + eventAdaptorName);
+                    log.info("Reconnection attempt : " + r + " for event adapter : " + eventAdapterName);
                     start();
                 } catch (Exception ignore) {
                 }
@@ -755,8 +755,8 @@ public class JMSTaskManager {
 
                 if (!connected) {
                     retryDuration = (long) (retryDuration * reconnectionProgressionFactor);
-                    log.error("Reconnection attempt : " + (r++) + " for event adaptor : " + eventAdaptorName +
-                              " failed. Next retry in " + (retryDuration / 1000) + " seconds");
+                    log.error("Reconnection attempt : " + (r++) + " for event adapter : " + eventAdapterName +
+                            " failed. Next retry in " + (retryDuration / 1000) + " seconds");
                     if (retryDuration > maxReconnectDuration) {
                         retryDuration = maxReconnectDuration;
                     }
@@ -767,8 +767,8 @@ public class JMSTaskManager {
                     }
                 } else {
                     isOnExceptionError = false;
-                    log.info("Reconnection attempt: " + r + " for event adaptor: " + eventAdaptorName +
-                             " was successful!");
+                    log.info("Reconnection attempt: " + r + " for event adapter: " + eventAdapterName +
+                            " was successful!");
                 }
 
 
@@ -829,7 +829,7 @@ public class JMSTaskManager {
          * Get a Session that could/should be used by this task - depends on the cache level to reuse
          *
          * @return the shared Session if cache level is higher than CACHE_CONNECTION, or a new Session
-         *         created using the Connection passed, or a new/shared connection
+         * created using the Connection passed, or a new/shared connection
          */
         private Session getSession() {
             if (session == null || cacheLevel < JMSConstants.CACHE_SESSION) {
@@ -843,7 +843,7 @@ public class JMSTaskManager {
          * level to reuse
          *
          * @return the shared MessageConsumer if cache level is higher than CACHE_SESSION, or a new
-         *         MessageConsumer possibly using the Connection and Session passed in
+         * MessageConsumer possibly using the Connection and Session passed in
          */
         private MessageConsumer getMessageConsumer() {
             if (consumer == null || cacheLevel < JMSConstants.CACHE_CONSUMER) {
@@ -857,10 +857,10 @@ public class JMSTaskManager {
          */
         private void closeConnection() {
             if (connection != null &&
-                cacheLevel < JMSConstants.CACHE_CONNECTION) {
+                    cacheLevel < JMSConstants.CACHE_CONNECTION) {
                 try {
                     if (log.isDebugEnabled()) {
-                        log.debug("Closing non-shared JMS connection for event adaptor : " + eventAdaptorName);
+                        log.debug("Closing non-shared JMS connection for event adapter : " + eventAdapterName);
                     }
                     connection.close();
                 } catch (JMSException e) {
@@ -878,10 +878,10 @@ public class JMSTaskManager {
          */
         private void closeSession(boolean forced) {
             if (session != null &&
-                (cacheLevel < JMSConstants.CACHE_SESSION || forced)) {
+                    (cacheLevel < JMSConstants.CACHE_SESSION || forced)) {
                 try {
                     if (log.isDebugEnabled()) {
-                        log.debug("Closing non-shared JMS session for event adaptor : " + eventAdaptorName);
+                        log.debug("Closing non-shared JMS session for event adapter : " + eventAdapterName);
                     }
                     session.close();
                 } catch (JMSException e) {
@@ -899,10 +899,10 @@ public class JMSTaskManager {
          */
         private void closeConsumer(boolean forced) {
             if (consumer != null &&
-                (cacheLevel < JMSConstants.CACHE_CONSUMER || forced)) {
+                    (cacheLevel < JMSConstants.CACHE_CONSUMER || forced)) {
                 try {
                     if (log.isDebugEnabled()) {
-                        log.debug("Closing non-shared JMS consumer for event adaptor : " + eventAdaptorName);
+                        log.debug("Closing non-shared JMS consumer for event adapter : " + eventAdapterName);
                     }
                     consumerCount.decrementAndGet();
                     consumer.close();
@@ -927,7 +927,7 @@ public class JMSTaskManager {
                 log.debug("Connected to the JMS connection factory : " + getConnFactoryJNDIName());
             } catch (NamingException e) {
                 handleException("Error looking up connection factory : " + getConnFactoryJNDIName() +
-                                " using JNDI properties : " + jmsProperties, e);
+                        " using JNDI properties : " + jmsProperties, e);
             }
 
             Connection connection = null;
@@ -940,11 +940,11 @@ public class JMSTaskManager {
 
                 connection.setExceptionListener(this);
                 connection.start();
-                log.debug("JMS Connection for event adaptor : " + eventAdaptorName + " created and started");
+                log.debug("JMS Connection for event adapter : " + eventAdapterName + " created and started");
 
             } catch (JMSException e) {
                 handleException("Error acquiring a JMS connection to : " + getConnFactoryJNDIName() +
-                                " using JNDI properties : " + jmsProperties, e);
+                        " using JNDI properties : " + jmsProperties, e);
             }
             return connection;
         }
@@ -957,13 +957,13 @@ public class JMSTaskManager {
         private Session createSession() {
             try {
                 if (log.isDebugEnabled()) {
-                    log.debug("Creating a new JMS Session for event adaptor : " + eventAdaptorName);
+                    log.debug("Creating a new JMS Session for event adapter : " + eventAdapterName);
                 }
                 return JMSUtils.createSession(
                         connection, isSessionTransacted(), getSessionAckMode(), isJmsSpec11(), isQueue());
 
             } catch (JMSException e) {
-                handleException("Error creating JMS session for event adaptor : " + eventAdaptorName, e);
+                handleException("Error creating JMS session for event adapter : " + eventAdapterName, e);
             }
             return null;
         }
@@ -976,19 +976,19 @@ public class JMSTaskManager {
         private MessageConsumer createConsumer() {
             try {
                 if (log.isDebugEnabled()) {
-                    log.debug("Creating a new JMS MessageConsumer for event adaptor : " + eventAdaptorName);
+                    log.debug("Creating a new JMS MessageConsumer for event adapter : " + eventAdapterName);
                 }
 
                 MessageConsumer consumer = JMSUtils.createConsumer(
                         session, getDestination(session), isQueue(),
                         (isSubscriptionDurable() && getDurableSubscriberName() != null ?
-                         getDurableSubscriberName() : eventAdaptorName),
+                                getDurableSubscriberName() : eventAdapterName),
                         getMessageSelector(), isPubSubNoLocal(), isSubscriptionDurable(), isJmsSpec11());
                 consumerCount.incrementAndGet();
                 return consumer;
 
             } catch (JMSException e) {
-                handleException("Error creating JMS consumer for event adaptor : " + eventAdaptorName, e);
+                handleException("Error creating JMS consumer for event adapter : " + eventAdapterName, e);
             }
             return null;
         }
@@ -997,7 +997,7 @@ public class JMSTaskManager {
     // -------------- mundane private methods ----------------
 
     /**
-     * Get the InitialContext for lookup using the JNDI parameters applicable to the event adaptor
+     * Get the InitialContext for lookup using the JNDI parameters applicable to the event adapter
      *
      * @return the InitialContext to be used
      * @throws javax.naming.NamingException
@@ -1020,10 +1020,10 @@ public class JMSTaskManager {
             try {
                 context = getInitialContext();
                 destination = JMSUtils.lookupDestination(context, getDestinationJNDIName(),
-                                                         JMSUtils.getDestinationTypeAsString(destinationType));
+                        JMSUtils.getDestinationTypeAsString(destinationType));
                 if (log.isDebugEnabled()) {
                     log.debug("JMS Destination with JNDI name : " + getDestinationJNDIName() +
-                              " found for event adaptor " + eventAdaptorName);
+                            " found for event adapter " + eventAdapterName);
                 }
             } catch (NamingException e) {
                 try {
@@ -1038,14 +1038,14 @@ public class JMSTaskManager {
                         }
                         default: {
                             handleException("Error looking up JMS destination : " +
-                                            getDestinationJNDIName() + " using JNDI properties : " +
-                                            jmsProperties, e);
+                                    getDestinationJNDIName() + " using JNDI properties : " +
+                                    jmsProperties, e);
                         }
                     }
                 } catch (JMSException j) {
                     handleException("Error looking up JMS destination and auto " +
-                                    "creating JMS destination : " + getDestinationJNDIName() +
-                                    " using JNDI properties : " + jmsProperties, e);
+                            "creating JMS destination : " + getDestinationJNDIName() +
+                            " using JNDI properties : " + jmsProperties, e);
                 }
             }
         }
@@ -1060,7 +1060,7 @@ public class JMSTaskManager {
     private UserTransaction getUserTransaction() {
         if (!cacheUserTransaction) {
             if (log.isDebugEnabled()) {
-                log.debug("Acquiring a new UserTransaction for event adaptor : " + eventAdaptorName);
+                log.debug("Acquiring a new UserTransaction for event adapter : " + eventAdapterName);
             }
 
             try {
@@ -1069,7 +1069,7 @@ public class JMSTaskManager {
                         JMSUtils.lookup(context, UserTransaction.class, getUserTransactionJNDIName());
             } catch (NamingException e) {
                 handleException("Error looking up UserTransaction : " + getUserTransactionJNDIName() +
-                                " using JNDI properties : " + jmsProperties, e);
+                        " using JNDI properties : " + jmsProperties, e);
             }
         }
 
@@ -1079,11 +1079,11 @@ public class JMSTaskManager {
                 sharedUserTransaction =
                         JMSUtils.lookup(context, UserTransaction.class, getUserTransactionJNDIName());
                 if (log.isDebugEnabled()) {
-                    log.debug("Acquired shared UserTransaction for event adator : " + eventAdaptorName);
+                    log.debug("Acquired shared UserTransaction for event adator : " + eventAdapterName);
                 }
             } catch (NamingException e) {
                 handleException("Error looking up UserTransaction : " + getUserTransactionJNDIName() +
-                                " using JNDI properties : " + jmsProperties, e);
+                        " using JNDI properties : " + jmsProperties, e);
             }
         }
         return sharedUserTransaction;
@@ -1113,21 +1113,21 @@ public class JMSTaskManager {
 
     private void handleException(String msg, Exception e) {
         log.error(msg, e);
-        throw new InputEventAdaptorEventProcessingException(msg, e);
+        throw new InputEventAdapterRuntimeException(msg, e);
     }
 
     private void handleException(String msg) {
         log.error(msg);
-        throw new InputEventAdaptorEventProcessingException(msg);
+        throw new InputEventAdapterRuntimeException(msg);
     }
 
     // -------------- getters and setters ------------------
-    public String getEventAdaptorName() {
-        return eventAdaptorName;
+    public String getEventAdapterName() {
+        return eventAdapterName;
     }
 
-    public void setEventAdaptorName(String eventAdaptorName) {
-        this.eventAdaptorName = eventAdaptorName;
+    public void setEventAdapterName(String eventAdapterName) {
+        this.eventAdapterName = eventAdapterName;
     }
 
     public String getConnFactoryJNDIName() {

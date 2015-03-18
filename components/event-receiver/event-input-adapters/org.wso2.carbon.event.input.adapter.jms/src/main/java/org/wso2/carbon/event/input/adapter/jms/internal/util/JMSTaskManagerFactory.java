@@ -20,7 +20,7 @@ package org.wso2.carbon.event.input.adapter.jms.internal.util;
 import org.apache.axis2.description.Parameter;
 import org.apache.axis2.transport.base.BaseConstants;
 import org.apache.axis2.transport.base.threads.WorkerPool;
-import org.wso2.carbon.event.input.adaptor.core.exception.InputEventAdaptorEventProcessingException;
+import org.wso2.carbon.event.input.adapter.core.exception.InputEventAdapterRuntimeException;
 
 import javax.jms.Session;
 import java.util.HashMap;
@@ -49,7 +49,7 @@ public class JMSTaskManagerFactory {
 
         JMSTaskManager stm = new JMSTaskManager();
 
-        stm.setEventAdaptorName(name);
+        stm.setEventAdapterName(name);
         stm.addJmsProperties(cf);
         stm.addJmsProperties(svc);
 
@@ -62,7 +62,7 @@ public class JMSTaskManagerFactory {
         stm.setDestinationJNDIName(destName);
         stm.setDestinationType(getDestinationType(svc, cf));
         if (getOptionalBooleanProperty(JMSConstants.PARAM_SUB_DURABLE, svc, cf) != null &&
-            getOptionalBooleanProperty(JMSConstants.PARAM_SUB_DURABLE, svc, cf)) {
+                getOptionalBooleanProperty(JMSConstants.PARAM_SUB_DURABLE, svc, cf)) {
             stm.setDurableSubscriberClientId(getRqdStringProperty(
                     JMSConstants.PARAM_DURABLE_SUB_CLIENT_ID, svc, cf));
         }
@@ -172,7 +172,7 @@ public class JMSTaskManagerFactory {
             value = cfMap.get(key);
         }
         if (value == null) {
-            throw new InputEventAdaptorEventProcessingException("Service/connection factory property : " + key);
+            throw new InputEventAdapterRuntimeException("Service/connection factory property : " + key);
         }
         return value;
     }
@@ -212,7 +212,7 @@ public class JMSTaskManagerFactory {
             try {
                 return Integer.parseInt(value);
             } catch (NumberFormatException e) {
-                throw new InputEventAdaptorEventProcessingException("Invalid value : " + value + " for " + key);
+                throw new InputEventAdapterRuntimeException("Invalid value : " + value + " for " + key);
             }
         }
         return null;
@@ -229,7 +229,7 @@ public class JMSTaskManagerFactory {
             try {
                 return Double.parseDouble(value);
             } catch (NumberFormatException e) {
-                throw new InputEventAdaptorEventProcessingException("Invalid value : " + value + " for " + key);
+                throw new InputEventAdapterRuntimeException("Invalid value : " + value + " for " + key);
             }
         }
         return null;
@@ -252,8 +252,8 @@ public class JMSTaskManagerFactory {
             } else if (BaseConstants.STR_TRANSACTION_LOCAL.equalsIgnoreCase(val)) {
                 return BaseConstants.TRANSACTION_LOCAL;
             } else {
-                throw new InputEventAdaptorEventProcessingException("Invalid option : " + val + " for parameter : " +
-                                                                    BaseConstants.STR_TRANSACTION_JTA);
+                throw new InputEventAdapterRuntimeException("Invalid option : " + val + " for parameter : " +
+                        BaseConstants.STR_TRANSACTION_JTA);
             }
         }
     }
@@ -292,7 +292,7 @@ public class JMSTaskManagerFactory {
             try {
                 return Integer.parseInt(val);
             } catch (NumberFormatException ignore) {
-                throw new InputEventAdaptorEventProcessingException("Invalid session acknowledgement mode : " + val);
+                throw new InputEventAdapterRuntimeException("Invalid session acknowledgement mode : " + val);
             }
         }
     }
@@ -314,7 +314,7 @@ public class JMSTaskManagerFactory {
         } else if ("consumer".equals(val)) {
             return JMSConstants.CACHE_CONSUMER;
         } else if (val != null) {
-            throw new InputEventAdaptorEventProcessingException("Invalid cache level : " + val);
+            throw new InputEventAdapterRuntimeException("Invalid cache level : " + val);
         }
         return JMSConstants.CACHE_AUTO;
     }

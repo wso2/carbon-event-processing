@@ -26,11 +26,12 @@ import org.wso2.carbon.event.input.adapter.jms.JMSEventAdapterFactory;
 import org.wso2.carbon.utils.ConfigurationContextService;
 
 /**
- * @scr.component name="input.jmsEventAdaptorService.component" immediate="true"
+ * @scr.component component.name="input.Jms.AdapterService.component" immediate="true"
  * @scr.reference name="configurationcontext.service"
  * interface="org.wso2.carbon.utils.ConfigurationContextService" cardinality="1..1"
  * policy="dynamic" bind="setConfigurationContextService" unbind="unsetConfigurationContextService"
  */
+
 public class JMSEventAdapterServiceDS {
 
     private static final Log log = LogFactory.getLog(JMSEventAdapterServiceDS.class);
@@ -44,7 +45,8 @@ public class JMSEventAdapterServiceDS {
 
         try {
             InputEventAdapterFactory jmsEventAdaptorFactory = new JMSEventAdapterFactory();
-            context.getBundleContext().registerService(InputEventAdapterFactory.class.getName(), jmsEventAdaptorFactory, null);
+            context.getBundleContext().registerService(InputEventAdapterFactory.class.getName(), jmsEventAdaptorFactory,
+                    null);
             if (log.isDebugEnabled()) {
                 log.debug("Successfully deployed the input jms event adaptor");
             }

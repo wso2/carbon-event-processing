@@ -18,6 +18,8 @@
 package org.wso2.carbon.event.input.adapter.jms;
 
 import org.apache.axis2.AxisFault;
+import org.apache.axis2.engine.AxisConfiguration;
+import org.apache.axis2.transport.base.threads.NativeWorkerPool;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.wso2.carbon.context.PrivilegedCarbonContext;
@@ -28,19 +30,24 @@ import org.wso2.carbon.event.input.adapter.core.InputEventAdapterListener;
 import org.wso2.carbon.event.input.adapter.core.exception.InputEventAdapterException;
 import org.wso2.carbon.event.input.adapter.core.exception.InputEventAdapterRuntimeException;
 import org.wso2.carbon.event.input.adapter.core.exception.TestConnectionNotSupportedException;
-import org.wso2.carbon.event.input.adapter.jms.internal.util.JMSEventAdapterConstants;
+import org.wso2.carbon.event.input.adapter.jms.internal.util.*;
 
-import java.util.Map;
-import java.util.UUID;
+import javax.jms.JMSException;
+import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class JMSEventAdapter implements InputEventAdapter {
 
     private static final Log log = LogFactory.getLog(JMSEventAdapter.class);
     private final InputEventAdapterConfiguration eventAdapterConfiguration;
     private final Map<String, String> globalProperties;
-    private InputEventAdapterListener eventAdaptorListener;
+    private InputEventAdapterListener eventAdapterListener;
     private final String id = UUID.randomUUID().toString();
+    String subscriptionId;
 
+    private ConcurrentHashMap<Integer, ConcurrentHashMap<String,
+            ConcurrentHashMap<String, ConcurrentHashMap<String,
+                    SubscriptionDetails>>>> tenantAdaptorDestinationSubscriptionsMap = new ConcurrentHashMap<Integer, ConcurrentHashMap<String, ConcurrentHashMap<String, ConcurrentHashMap<String, SubscriptionDetails>>>>();
 //    public static ExecutorService executorService = new ThreadPoolExecutor(SOAPEventAdapterConstants.ADAPTER_MIN_THREAD_POOL_SIZE,
 //            SOAPEventAdapterConstants.ADAPTER_MAX_THREAD_POOL_SIZE, SOAPEventAdapterConstants.DEFAULT_KEEP_ALIVE_TIME, TimeUnit.SECONDS,
 //            new LinkedBlockingQueue<Runnable>(SOAPEventAdapterConstants.ADAPTER_EXECUTOR_JOB_QUEUE_SIZE));
@@ -52,8 +59,8 @@ public class JMSEventAdapter implements InputEventAdapter {
 
 
     @Override
-    public void init(InputEventAdapterListener eventAdaptorListener) throws InputEventAdapterException {
-        this.eventAdaptorListener = eventAdaptorListener;
+    public void init(InputEventAdapterListener eventAdapterListener) throws InputEventAdapterException {
+        this.eventAdapterListener = eventAdapterListener;
     }
 
     @Override
@@ -64,11 +71,56 @@ public class JMSEventAdapter implements InputEventAdapter {
     @Override
     public void connect() {
 
+        subscriptionId = UUID.randomUUID().toString();
+        int tenantId = PrivilegedCarbonContext.getThreadLocalCarbonContext().getTenantId();
+
+
+        createJMSAdaptorListener(eventAdapterListener, EventAdapterUtil.getAxisConfiguration(), "1", tenantId);
+
     }
 
     @Override
     public void disconnect() {
 
+        String destination = eventAdapterConfiguration.getProperties()
+                .get(JMSEventAdapterConstants.ADAPTER_JMS_DESTINATION);
+
+        int tenantId = PrivilegedCarbonContext.getThreadLocalCarbonContext().getTenantId();
+
+        ConcurrentHashMap<String, ConcurrentHashMap<String, ConcurrentHashMap<String, SubscriptionDetails>>>
+                adaptorDestinationSubscriptionsMap = tenantAdaptorDestinationSubscriptionsMap.get(tenantId);
+        if (adaptorDestinationSubscriptionsMap == null) {
+            throw new InputEventAdapterRuntimeException("There is no subscription for " + destination + " for tenant "
+                    + PrivilegedCarbonContext.getThreadLocalCarbonContext().getTenantDomain(true));
+        }
+
+        ConcurrentHashMap<String, ConcurrentHashMap<String, SubscriptionDetails>> destinationSubscriptionsMap =
+                adaptorDestinationSubscriptionsMap.get(eventAdapterConfiguration.getName());
+        if (destinationSubscriptionsMap == null) {
+            throw new InputEventAdapterRuntimeException("There is no subscription for " + destination
+                    + " for event adaptor " + eventAdapterConfiguration.getName());
+        }
+
+        ConcurrentHashMap<String, SubscriptionDetails> subscriptionsMap = destinationSubscriptionsMap.get(destination);
+        if (subscriptionsMap == null) {
+            throw new InputEventAdapterRuntimeException("There is no subscription for " + destination);
+        }
+
+        SubscriptionDetails subscriptionDetails = subscriptionsMap.get(subscriptionId);
+        if (subscriptionDetails == null) {
+            throw new InputEventAdapterRuntimeException("There is no subscription for " + destination
+                    + " for the subscriptionId:" + subscriptionId);
+        } else {
+
+            try {
+                subscriptionDetails.close();
+                subscriptionsMap.remove(subscriptionId);
+            } catch (JMSException e) {
+                throw new InputEventAdapterRuntimeException("Can not unsubscribe from the destination " + destination
+                        + " with the event adaptor " + eventAdapterConfiguration.getName(), e);
+            }
+
+        }
     }
 
     @Override
@@ -76,7 +128,7 @@ public class JMSEventAdapter implements InputEventAdapter {
     }
 
     public InputEventAdapterListener getEventAdaptorListener() {
-        return eventAdaptorListener;
+        return eventAdapterListener;
     }
 
     @Override
@@ -95,4 +147,107 @@ public class JMSEventAdapter implements InputEventAdapter {
     public int hashCode() {
         return id.hashCode();
     }
+
+    private void createJMSAdaptorListener(
+            InputEventAdapterListener inputEventAdaptorListener,
+            AxisConfiguration axisConfiguration, String subscriptionId, int tenantId) {
+
+
+        ConcurrentHashMap<String, ConcurrentHashMap<String, ConcurrentHashMap<String, SubscriptionDetails>>>
+                adaptorDestinationSubscriptionsMap = tenantAdaptorDestinationSubscriptionsMap.get(tenantId);
+        if (adaptorDestinationSubscriptionsMap == null) {
+            adaptorDestinationSubscriptionsMap =
+                    new ConcurrentHashMap<String, ConcurrentHashMap<String, ConcurrentHashMap<String, SubscriptionDetails>>>();
+            if (null != tenantAdaptorDestinationSubscriptionsMap.putIfAbsent(tenantId, adaptorDestinationSubscriptionsMap)) {
+                adaptorDestinationSubscriptionsMap = tenantAdaptorDestinationSubscriptionsMap.get(tenantId);
+            }
+        }
+
+        ConcurrentHashMap<String, ConcurrentHashMap<String, SubscriptionDetails>> destinationSubscriptionsMap =
+                adaptorDestinationSubscriptionsMap.get(eventAdapterConfiguration.getName());
+        if (destinationSubscriptionsMap == null) {
+            destinationSubscriptionsMap = new ConcurrentHashMap<String, ConcurrentHashMap<String, SubscriptionDetails>>();
+            if (null != adaptorDestinationSubscriptionsMap.putIfAbsent(eventAdapterConfiguration.getName(),
+                    destinationSubscriptionsMap)) {
+                destinationSubscriptionsMap = adaptorDestinationSubscriptionsMap.get(eventAdapterConfiguration.getName());
+            }
+        }
+
+        String destination = eventAdapterConfiguration.getProperties().get(JMSEventAdapterConstants.ADAPTER_JMS_DESTINATION);
+
+        ConcurrentHashMap<String, SubscriptionDetails> subscriptionsMap = destinationSubscriptionsMap.get(destination);
+        if (subscriptionsMap == null) {
+            subscriptionsMap = new ConcurrentHashMap<String, SubscriptionDetails>();
+            if (null != destinationSubscriptionsMap.putIfAbsent(destination, subscriptionsMap)) {
+                subscriptionsMap = destinationSubscriptionsMap.get(destination);
+            }
+        }
+
+
+        Map<String, String> adaptorProperties = new HashMap<String, String>();
+
+
+        adaptorProperties.putAll(eventAdapterConfiguration.getProperties());
+
+        JMSConnectionFactory jmsConnectionFactory = new JMSConnectionFactory(convertMapToHashTable(adaptorProperties),
+                eventAdapterConfiguration.getName());
+
+
+        Map<String, String> messageConfig = new HashMap<String, String>();
+        messageConfig.put(JMSConstants.PARAM_DESTINATION, destination);
+        JMSTaskManager jmsTaskManager = JMSTaskManagerFactory.createTaskManagerForService(jmsConnectionFactory,
+                eventAdapterConfiguration.getName(), new NativeWorkerPool(4, 100, 1000, 1000, "JMS Threads",
+                        "JMSThreads" + UUID.randomUUID().toString()), messageConfig);
+        jmsTaskManager.setJmsMessageListener(new JMSMessageListener(inputEventAdaptorListener, axisConfiguration));
+
+        JMSListener jmsListener = new JMSListener(eventAdapterConfiguration.getName() + "#" + destination,
+                jmsTaskManager);
+        jmsListener.startListener();
+        SubscriptionDetails subscriptionDetails = new SubscriptionDetails(jmsConnectionFactory, jmsListener);
+        subscriptionsMap.put(subscriptionId, subscriptionDetails);
+
+    }
+
+
+    private Hashtable<String, String> convertMapToHashTable(Map<String, String> map) {
+        Hashtable<String, String> table = new Hashtable();
+        Iterator it = map.entrySet().iterator();
+        //Iterate through the hash map
+        while (it.hasNext()) {
+            Map.Entry pair = (Map.Entry) it.next();
+            //null values will be removed
+            if (pair.getValue() != null) {
+                table.put(pair.getKey().toString(), pair.getValue().toString());
+            }
+        }
+        return table;
+    }
+
+
+    class SubscriptionDetails {
+
+        private final JMSConnectionFactory jmsConnectionFactory;
+        private final JMSListener jmsListener;
+
+        public SubscriptionDetails(JMSConnectionFactory jmsConnectionFactory,
+                                   JMSListener jmsListener) {
+            this.jmsConnectionFactory = jmsConnectionFactory;
+            this.jmsListener = jmsListener;
+        }
+
+        public void close() throws JMSException {
+            this.jmsListener.stopListener();
+            this.jmsConnectionFactory.stop();
+        }
+
+        public JMSConnectionFactory getJmsConnectionFactory() {
+            return jmsConnectionFactory;
+        }
+
+        public JMSListener getJmsListener() {
+            return jmsListener;
+        }
+    }
+
+
 }
