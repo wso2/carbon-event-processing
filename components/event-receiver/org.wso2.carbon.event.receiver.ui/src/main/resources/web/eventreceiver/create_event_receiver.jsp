@@ -99,7 +99,7 @@
         <table>
             <td class="custom-noPadding" width="60%"><select name="eventAdapterTypeFilter"
                                                              onchange="loadEventAdapterRelatedProperties('<fmt:message
-                                                                     key="to.heading"/>')"
+                                                                     key="to.heading"/>','<fmt:message key="properties.heading"/>')"
                                                              id="eventAdapterTypeFilter">
                 <%
                     for (String inputAdapterType : inputAdapterTypes) {
