@@ -26,7 +26,7 @@
             <region>region1</region>
             <order>5</order>
             <style-class>home</style-class>
-            <icon>../event-flow/images/flow.gif</icon>
+            <icon>../event-flow/images/event-flow.png</icon>
             <require-permission>/permission/admin/manage/event-processor</require-permission>
             <!--<require-super-tenant>true</require-super-tenant>-->
         </menu>

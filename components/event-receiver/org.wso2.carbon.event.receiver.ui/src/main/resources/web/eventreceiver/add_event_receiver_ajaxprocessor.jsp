@@ -63,7 +63,7 @@
 
             if (propertySet != null) {
                 String[] properties = propertySet.split("\\|=");
-                if (properties != null) {
+                if (properties != null && !propertySet.equals("")) {
                     // construct event receiver property array for each event receiver property
                     basicInputAdapterPropertyDtos = new BasicInputAdapterPropertyDto[properties.length];
                     int index = 0;
@@ -81,13 +81,8 @@
                 }
             }
 
-            if (basicInputAdapterPropertyDtos == null) {
-                msg = "No message configuration properties found.";
 %>
-<%=msg%>
 <%
-                return;
-            }
             if (inputMappingType.equals("wso2event")) {
                 EventMappingPropertyDto[] metaEbProperties = null;
                 EventMappingPropertyDto[] correlationEbProperties = null;
