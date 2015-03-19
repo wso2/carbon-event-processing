@@ -53,7 +53,7 @@
     }
 
     .type-ER-info  {
-        background-image: url(images/event_receiver.gif);
+        background-image: url(images/event-receiver.png);
     }
 
     .type-ES-info {
@@ -65,7 +65,7 @@
     }
 
     .type-EP-info  {
-        background-image:url(../event-flow/images/event_publisher.gif);
+        background-image:url(../event-flow/images/event-publisher.png);
     }
 
     .node g div {

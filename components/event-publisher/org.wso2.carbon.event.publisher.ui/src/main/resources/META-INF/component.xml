@@ -37,7 +37,7 @@
             <region>region1</region>
             <order>30</order>
             <style-class>home</style-class>
-            <icon>../eventpublisher/images/event_publisher.gif</icon>
+            <icon>../eventpublisher/images/event-publisher.png</icon>
             <require-permission>/permission/admin/manage/event-publish</require-permission>
         </menu>
     </menus>
