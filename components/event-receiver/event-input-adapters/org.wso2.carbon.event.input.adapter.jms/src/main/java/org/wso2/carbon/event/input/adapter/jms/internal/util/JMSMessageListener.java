@@ -36,8 +36,7 @@ public class JMSMessageListener implements MessageListener {
     private final int tenantId;
     private final String tenantDomain;
 
-    public JMSMessageListener(InputEventAdapterListener eventAdaptorListener,
-                              AxisConfiguration axisConfiguration) {
+    public JMSMessageListener(InputEventAdapterListener eventAdaptorListener) {
         this.eventAdaptorListener = eventAdaptorListener;
         tenantId = PrivilegedCarbonContext.getThreadLocalCarbonContext().getTenantId();
         tenantDomain = PrivilegedCarbonContext.getThreadLocalCarbonContext().getTenantDomain(true);

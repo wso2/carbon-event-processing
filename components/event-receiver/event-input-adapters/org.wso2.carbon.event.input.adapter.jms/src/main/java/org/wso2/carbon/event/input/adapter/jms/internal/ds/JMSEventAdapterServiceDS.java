@@ -44,14 +44,14 @@ public class JMSEventAdapterServiceDS {
     protected void activate(ComponentContext context) {
 
         try {
-            InputEventAdapterFactory jmsEventAdaptorFactory = new JMSEventAdapterFactory();
-            context.getBundleContext().registerService(InputEventAdapterFactory.class.getName(), jmsEventAdaptorFactory,
+            InputEventAdapterFactory jmsEventAdapterFactory = new JMSEventAdapterFactory();
+            context.getBundleContext().registerService(InputEventAdapterFactory.class.getName(), jmsEventAdapterFactory,
                     null);
             if (log.isDebugEnabled()) {
-                log.debug("Successfully deployed the input jms event adaptor");
+                log.debug("Successfully deployed the input jms event adapter");
             }
         } catch (RuntimeException e) {
-            log.error("Can not deployed the input jms event adaptor", e);
+            log.error("Can not deployed the input jms event adapter", e);
         } catch (Exception ex) {
             log.error(ex);
         }

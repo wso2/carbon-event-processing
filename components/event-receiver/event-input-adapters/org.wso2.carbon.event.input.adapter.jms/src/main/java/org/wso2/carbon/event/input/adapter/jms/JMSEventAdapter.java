@@ -17,13 +17,8 @@
 */
 package org.wso2.carbon.event.input.adapter.jms;
 
-import org.apache.axis2.AxisFault;
-import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.transport.base.threads.NativeWorkerPool;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.wso2.carbon.context.PrivilegedCarbonContext;
-import org.wso2.carbon.event.input.adapter.core.EventAdapterUtil;
 import org.wso2.carbon.event.input.adapter.core.InputEventAdapter;
 import org.wso2.carbon.event.input.adapter.core.InputEventAdapterConfiguration;
 import org.wso2.carbon.event.input.adapter.core.InputEventAdapterListener;
@@ -38,7 +33,6 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public class JMSEventAdapter implements InputEventAdapter {
 
-    private static final Log log = LogFactory.getLog(JMSEventAdapter.class);
     private final InputEventAdapterConfiguration eventAdapterConfiguration;
     private final Map<String, String> globalProperties;
     private InputEventAdapterListener eventAdapterListener;
@@ -48,11 +42,13 @@ public class JMSEventAdapter implements InputEventAdapter {
     private ConcurrentHashMap<Integer, ConcurrentHashMap<String,
             ConcurrentHashMap<String, ConcurrentHashMap<String,
                     SubscriptionDetails>>>> tenantAdaptorDestinationSubscriptionsMap = new ConcurrentHashMap<Integer, ConcurrentHashMap<String, ConcurrentHashMap<String, ConcurrentHashMap<String, SubscriptionDetails>>>>();
-//    public static ExecutorService executorService = new ThreadPoolExecutor(SOAPEventAdapterConstants.ADAPTER_MIN_THREAD_POOL_SIZE,
-//            SOAPEventAdapterConstants.ADAPTER_MAX_THREAD_POOL_SIZE, SOAPEventAdapterConstants.DEFAULT_KEEP_ALIVE_TIME, TimeUnit.SECONDS,
-//            new LinkedBlockingQueue<Runnable>(SOAPEventAdapterConstants.ADAPTER_EXECUTOR_JOB_QUEUE_SIZE));
+//    public static ExecutorService executorService = new ThreadPoolExecutor(
+//                                                      SOAPEventAdapterConstants.ADAPTER_MIN_THREAD_POOL_SIZE,
+//            SOAPEventAdapterConstants.ADAPTER_MAX_THREAD_POOL_SIZE, SOAPEventAdapterConstants.DEFAULT_KEEP_ALIVE_TIME,
+//      TimeUnit.SECONDS, new LinkedBlockingQueue<Runnable>(SOAPEventAdapterConstants.ADAPTER_EXECUTOR_JOB_QUEUE_SIZE));
 
-    public JMSEventAdapter(InputEventAdapterConfiguration eventAdapterConfiguration, Map<String, String> globalProperties) {
+    public JMSEventAdapter(InputEventAdapterConfiguration eventAdapterConfiguration,
+                           Map<String, String> globalProperties) {
         this.eventAdapterConfiguration = eventAdapterConfiguration;
         this.globalProperties = globalProperties;
     }
@@ -73,9 +69,7 @@ public class JMSEventAdapter implements InputEventAdapter {
 
         subscriptionId = UUID.randomUUID().toString();
         int tenantId = PrivilegedCarbonContext.getThreadLocalCarbonContext().getTenantId();
-
-
-        createJMSAdaptorListener(eventAdapterListener, EventAdapterUtil.getAxisConfiguration(), "1", tenantId);
+        createJMSAdaptorListener(eventAdapterListener, "1", tenantId);
 
     }
 
@@ -149,16 +143,17 @@ public class JMSEventAdapter implements InputEventAdapter {
     }
 
     private void createJMSAdaptorListener(
-            InputEventAdapterListener inputEventAdaptorListener,
-            AxisConfiguration axisConfiguration, String subscriptionId, int tenantId) {
+            InputEventAdapterListener inputEventAdaptorListener, String subscriptionId, int tenantId) {
 
 
         ConcurrentHashMap<String, ConcurrentHashMap<String, ConcurrentHashMap<String, SubscriptionDetails>>>
                 adaptorDestinationSubscriptionsMap = tenantAdaptorDestinationSubscriptionsMap.get(tenantId);
         if (adaptorDestinationSubscriptionsMap == null) {
-            adaptorDestinationSubscriptionsMap =
-                    new ConcurrentHashMap<String, ConcurrentHashMap<String, ConcurrentHashMap<String, SubscriptionDetails>>>();
-            if (null != tenantAdaptorDestinationSubscriptionsMap.putIfAbsent(tenantId, adaptorDestinationSubscriptionsMap)) {
+            adaptorDestinationSubscriptionsMap = new ConcurrentHashMap<String,
+                    ConcurrentHashMap<String, ConcurrentHashMap<String, SubscriptionDetails>>>();
+
+            if (null != tenantAdaptorDestinationSubscriptionsMap.putIfAbsent(tenantId,
+                    adaptorDestinationSubscriptionsMap)) {
                 adaptorDestinationSubscriptionsMap = tenantAdaptorDestinationSubscriptionsMap.get(tenantId);
             }
         }
@@ -166,14 +161,18 @@ public class JMSEventAdapter implements InputEventAdapter {
         ConcurrentHashMap<String, ConcurrentHashMap<String, SubscriptionDetails>> destinationSubscriptionsMap =
                 adaptorDestinationSubscriptionsMap.get(eventAdapterConfiguration.getName());
         if (destinationSubscriptionsMap == null) {
-            destinationSubscriptionsMap = new ConcurrentHashMap<String, ConcurrentHashMap<String, SubscriptionDetails>>();
+            destinationSubscriptionsMap = new ConcurrentHashMap<String,
+                    ConcurrentHashMap<String, SubscriptionDetails>>();
+
             if (null != adaptorDestinationSubscriptionsMap.putIfAbsent(eventAdapterConfiguration.getName(),
                     destinationSubscriptionsMap)) {
-                destinationSubscriptionsMap = adaptorDestinationSubscriptionsMap.get(eventAdapterConfiguration.getName());
+                destinationSubscriptionsMap = adaptorDestinationSubscriptionsMap.get(
+                        eventAdapterConfiguration.getName());
             }
         }
 
-        String destination = eventAdapterConfiguration.getProperties().get(JMSEventAdapterConstants.ADAPTER_JMS_DESTINATION);
+        String destination = eventAdapterConfiguration.getProperties().get(
+                JMSEventAdapterConstants.ADAPTER_JMS_DESTINATION);
 
         ConcurrentHashMap<String, SubscriptionDetails> subscriptionsMap = destinationSubscriptionsMap.get(destination);
         if (subscriptionsMap == null) {
@@ -198,7 +197,7 @@ public class JMSEventAdapter implements InputEventAdapter {
         JMSTaskManager jmsTaskManager = JMSTaskManagerFactory.createTaskManagerForService(jmsConnectionFactory,
                 eventAdapterConfiguration.getName(), new NativeWorkerPool(4, 100, 1000, 1000, "JMS Threads",
                         "JMSThreads" + UUID.randomUUID().toString()), messageConfig);
-        jmsTaskManager.setJmsMessageListener(new JMSMessageListener(inputEventAdaptorListener, axisConfiguration));
+        jmsTaskManager.setJmsMessageListener(new JMSMessageListener(inputEventAdaptorListener));
 
         JMSListener jmsListener = new JMSListener(eventAdapterConfiguration.getName() + "#" + destination,
                 jmsTaskManager);

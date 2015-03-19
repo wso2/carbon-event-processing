@@ -28,8 +28,9 @@ import java.util.List;
 public class JMSEventAdapterServiceValueHolder {
 
     private static ConfigurationContextService configurationContextService;
-    private static List<LateStartAdapterListener> lateStartAdaptorListeners = new ArrayList<LateStartAdapterListener>();
-    private static final org.apache.commons.logging.Log log = LogFactory.getLog(JMSEventAdapterServiceValueHolder.class);
+    private static List<LateStartAdapterListener> lateStartAdapterListeners = new ArrayList<LateStartAdapterListener>();
+    private static final org.apache.commons.logging.Log log =
+            LogFactory.getLog(JMSEventAdapterServiceValueHolder.class);
 
     public static void registerConfigurationContextService(
             ConfigurationContextService configurationContextService) {
@@ -38,9 +39,9 @@ public class JMSEventAdapterServiceValueHolder {
             @Override
             public void run() {
                 try {
-                    log.info("JMS input event adaptor waiting for dependent configurations to load");
+                    log.info("JMS input event adapter waiting for dependent configurations to load");
                     Thread.sleep(JMSEventAdapterConstants.AXIS_TIME_INTERVAL_IN_MILLISECONDS * 4);
-                    loadLateStartEventAdaptors();
+                    loadLateStartEventAdapters();
                 } catch (InterruptedException e) {
                     log.error(e.getMessage(), e);
                 }
@@ -57,13 +58,13 @@ public class JMSEventAdapterServiceValueHolder {
         return configurationContextService;
     }
 
-    public static void addLateStartAdaptorListener(LateStartAdapterListener lateStartAdaptorListener) {
-        lateStartAdaptorListeners.add(lateStartAdaptorListener);
+    public static void addLateStartAdapterListener(LateStartAdapterListener lateStartAdapterListener) {
+        lateStartAdapterListeners.add(lateStartAdapterListener);
     }
 
-    public static void loadLateStartEventAdaptors() {
-        for (LateStartAdapterListener lateStartAdaptorListener : lateStartAdaptorListeners) {
-            lateStartAdaptorListener.tryStartAdaptor();
+    public static void loadLateStartEventAdapters() {
+        for (LateStartAdapterListener lateStartAdapterListener : lateStartAdapterListeners) {
+            lateStartAdapterListener.tryStartAdapter();
         }
     }
 

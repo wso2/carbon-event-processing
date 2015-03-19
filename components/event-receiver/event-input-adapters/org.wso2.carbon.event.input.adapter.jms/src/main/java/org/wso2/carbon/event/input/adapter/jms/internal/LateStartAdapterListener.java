@@ -18,5 +18,5 @@
 package org.wso2.carbon.event.input.adapter.jms.internal;
 
 public interface LateStartAdapterListener {
-    public void tryStartAdaptor();
+    public void tryStartAdapter();
 }

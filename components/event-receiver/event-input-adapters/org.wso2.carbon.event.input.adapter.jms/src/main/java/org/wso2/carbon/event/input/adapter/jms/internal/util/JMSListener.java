@@ -73,7 +73,8 @@ public class JMSListener implements Runnable {
 
 
         // First we will check whether jms provider is started or not, as if not it will throw a continuous error log
-        // If jms provider not started we will wait for exponentially increasing time intervals, till the provider is started
+        // If jms provider not started we will wait for exponentially increasing time intervals,
+        // till the provider is started
         while (!connected) {
             boolean jmsProviderStarted = checkJMSConnection(stm);
             if (jmsProviderStarted) {
