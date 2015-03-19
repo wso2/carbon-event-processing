@@ -32,7 +32,6 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public class MQTTEventAdapter implements OutputEventAdapter {
 
-    private static final Log log = LogFactory.getLog(MQTTEventAdapter.class);
     private OutputEventAdapterConfiguration eventAdapterConfiguration;
     private Map<String, String> globalProperties;
     private ConcurrentHashMap<String, ConcurrentHashMap<String, ConcurrentHashMap<String, MQTTAdapterPublisher>>>

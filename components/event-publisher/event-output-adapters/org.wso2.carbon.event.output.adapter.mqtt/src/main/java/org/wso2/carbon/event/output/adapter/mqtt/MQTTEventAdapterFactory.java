@@ -36,7 +36,8 @@ public class MQTTEventAdapterFactory extends OutputEventAdapterFactory {
         List<String> supportedMessageFormats = new ArrayList<String>();
         supportedMessageFormats.add(MessageType.XML);
         supportedMessageFormats.add(MessageType.JSON);
-        supportedMessageFormats.add(MessageType.TEXT);;
+        supportedMessageFormats.add(MessageType.TEXT);
+        ;
         return supportedMessageFormats;
     }
 
@@ -90,7 +91,7 @@ public class MQTTEventAdapterFactory extends OutputEventAdapterFactory {
         staticPropertyList.add(keepAlive);
 
         return staticPropertyList;
-        
+
     }
 
     @Override
@@ -127,6 +128,6 @@ public class MQTTEventAdapterFactory extends OutputEventAdapterFactory {
     @Override
     public OutputEventAdapter createEventAdapter(OutputEventAdapterConfiguration eventAdapterConfiguration,
                                                  Map<String, String> globalProperties) {
-        return new MQTTEventAdapter(eventAdapterConfiguration,globalProperties);
+        return new MQTTEventAdapter(eventAdapterConfiguration, globalProperties);
     }
 }

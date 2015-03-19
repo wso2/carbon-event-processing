@@ -51,7 +51,7 @@ public class MQTTAdapterPublisher {
         this.topic = topic;
 
         //SORTING messages until the server fetches them
-        String temp_directory = System.getProperty("java.io.tmpdir");
+        String temp_directory = System.getProperty(MQTTEventAdapterConstants.ADAPTER_TEMP_DIRECTORY_NAME);
         MqttDefaultFilePersistence dataStore = new MqttDefaultFilePersistence(temp_directory);
 
 
@@ -75,8 +75,9 @@ public class MQTTAdapterPublisher {
             mqttClient.connect(connectionOptions);
 
         } catch (MqttException e) {
-            log.error(e);
-            // throw new OutputEventAdapterException(e);
+            log.error("Error occurred when constructing MQTT client for broker url : "
+                    + mqttBrokerConnectionConfiguration.getBrokerUrl());
+            handleException(e);
         }
 
     }
@@ -92,6 +93,8 @@ public class MQTTAdapterPublisher {
             // quality of service.
             mqttClient.publish(topic, message);
         } catch (MqttException e) {
+            log.error("Error occurred when publishing message for MQTT server : "
+                    + mqttClient.getServerURI());
             handleException(e);
         }
     }
@@ -102,6 +105,8 @@ public class MQTTAdapterPublisher {
             MqttMessage message = new MqttMessage(payload.getBytes());
             mqttClient.publish(topic, message);
         } catch (MqttException e) {
+            log.error("Error occurred when publishing message for MQTT server : "
+                    + mqttClient.getServerURI());
             handleException(e);
         }
     }
@@ -115,12 +120,11 @@ public class MQTTAdapterPublisher {
         }
     }
 
-    private void handleException(MqttException e){
+    private void handleException(MqttException e) {
         //Check for Client not connected exception code and throw ConnectionUnavailableException
-        if (e.getReasonCode() == 32104){
+        if (e.getReasonCode() == 32104) {
             throw new ConnectionUnavailableException(e);
-        }
-        else {
+        } else {
             throw new OutputEventAdapterRuntimeException(e);
         }
     }

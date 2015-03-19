@@ -36,6 +36,7 @@ public final class MQTTEventAdapterConstants {
     public static final String ADAPTER_CONF_CLEAN_SESSION = "cleanSession";
     public static final String ADAPTER_CONF_CLEAN_SESSION_HINT = "cleanSession.hint";
     public static final String ADAPTER_CONF_KEEP_ALIVE = "keepAlive";
+    public static final String ADAPTER_TEMP_DIRECTORY_NAME = "java.io.tmpdir";
 
 
 }
