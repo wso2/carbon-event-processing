@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2005 - 2014, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
+ * Copyright (c) 2005 - 2015, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy
@@ -25,8 +25,6 @@ import java.util.*;
 
 public class KafkaEventAdapterFactory extends InputEventAdapterFactory {
     private ResourceBundle resourceBundle = ResourceBundle.getBundle("org.wso2.carbon.event.input.adapter.kafka.i18n.Resources", Locale.getDefault());
-    private static Log log = LogFactory.getLog(KafkaEventAdapterFactory.class);
-
 
     @Override
     public String getType() {

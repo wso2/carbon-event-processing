@@ -1,5 +1,5 @@
 /*
-*  Copyright (c) 2005-2014, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
+*  Copyright (c) 2005-2015, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
 *
 *  WSO2 Inc. licenses this file to you under the Apache License,
 *  Version 2.0 (the "License"); you may not use this file except
@@ -26,16 +26,16 @@ import org.wso2.carbon.event.input.adapter.core.InputEventAdapterListener;
 
 public class KafkaConsumer implements Runnable {
 
-    private KafkaStream m_stream;
-    private InputEventAdapterListener m_brokerListener;
+    private KafkaStream stream;
+    private InputEventAdapterListener brokerListener;
     private String evento;
     private int tenantId;
     private Log log = LogFactory.getLog(KafkaConsumer.class);
 
-    public KafkaConsumer(KafkaStream a_stream, InputEventAdapterListener a_brokerListener, int tenantId) {
-        m_stream = a_stream;
-        m_brokerListener = a_brokerListener;
-        this.tenantId = tenantId;
+    public KafkaConsumer(KafkaStream inStream, InputEventAdapterListener inBrokerListener, int inTenantId) {
+        stream = inStream;
+        brokerListener = inBrokerListener;
+        this.tenantId = inTenantId;
     }
 
     public void run() {
@@ -43,16 +43,16 @@ public class KafkaConsumer implements Runnable {
                 PrivilegedCarbonContext.startTenantFlow();
                 PrivilegedCarbonContext.getThreadLocalCarbonContext().setTenantId(tenantId);
 
-            ConsumerIterator<byte[], byte[]> it = m_stream.iterator();
+            ConsumerIterator<byte[], byte[]> it = stream.iterator();
             while (it.hasNext()) {
                 evento = new String(it.next().message());
                 if(log.isDebugEnabled()){
                     log.debug("Event received in Kafka Event Adaptor - "+evento);
                 }
-                m_brokerListener.onEvent(evento);
+                brokerListener.onEvent(evento);
             }
         } catch (Throwable t) {
-            t.printStackTrace();
+            log.error("Error while consuming event " + t);
         }
         finally {
             PrivilegedCarbonContext.endTenantFlow();

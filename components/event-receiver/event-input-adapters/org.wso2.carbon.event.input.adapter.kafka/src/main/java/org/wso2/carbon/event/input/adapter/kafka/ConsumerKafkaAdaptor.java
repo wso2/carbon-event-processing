@@ -1,5 +1,5 @@
 /*
-*  Copyright (c) 2005-2014, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
+*  Copyright (c) 2005-2015, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
 *
 *  WSO2 Inc. licenses this file to you under the Apache License,
 *  Version 2.0 (the "License"); you may not use this file except
@@ -37,10 +37,10 @@ public class ConsumerKafkaAdaptor {
     private Log log = LogFactory.getLog(ConsumerKafkaAdaptor.class);
     private int tenantId;
 
-    public ConsumerKafkaAdaptor(String a_topic, int tenantId,
+    public ConsumerKafkaAdaptor(String inTopic, int tenantId,
                                 ConsumerConfig conf) {
         consumer = kafka.consumer.Consumer.createJavaConsumerConnector(conf);
-        this.topic = a_topic;
+        this.topic = inTopic;
         this.tenantId = tenantId;
     }
 
@@ -53,25 +53,25 @@ public class ConsumerKafkaAdaptor {
         }
     }
 
-    public void run(int a_numThreads, InputEventAdapterListener a_brokerListener) {
+    public void run(int numThreads, InputEventAdapterListener brokerListener) {
         try {
             Map<String, Integer> topicCountMap = new HashMap<String, Integer>();
-            topicCountMap.put(topic, a_numThreads);
+            topicCountMap.put(topic, numThreads);
             Map<String, List<KafkaStream<byte[], byte[]>>> consumerMap = consumer.createMessageStreams(topicCountMap);
             List<KafkaStream<byte[], byte[]>> streams = consumerMap.get(topic);
 
             // now launch all the threads
             //
-            executor = Executors.newFixedThreadPool(a_numThreads);
+            executor = Executors.newFixedThreadPool(numThreads);
 
             // now create an object to consume the messages
             //
             for (final KafkaStream stream : streams) {
 
-                executor.submit(new KafkaConsumer(stream, a_brokerListener, tenantId));
+                executor.submit(new KafkaConsumer(stream, brokerListener, tenantId));
             }
         } catch (Throwable t) {
-            t.printStackTrace();
+            log.error("Error while creating KafkaConsumer ", t);
         }
     }
 }

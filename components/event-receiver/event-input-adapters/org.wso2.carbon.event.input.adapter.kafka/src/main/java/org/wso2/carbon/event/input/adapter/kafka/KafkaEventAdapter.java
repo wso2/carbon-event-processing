@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2005 - 2014, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
+ * Copyright (c) 2005 - 2015, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy
@@ -66,7 +66,7 @@ public final class KafkaEventAdapter implements InputEventAdapter {
         String subscriptionId = UUID.randomUUID().toString();
         if (!readyToPoll) {
            readyToPoll = true;
-           log.info("readyToPoll " + topic);
+           log.debug("Adapter " + eventAdapterConfiguration.getName() + " readyToPoll " + topic );
         } else {
             createKafkaAdaptorListener(eventAdaptorListener, eventAdapterConfiguration, subscriptionId, tenantId);
         }
@@ -78,7 +78,7 @@ public final class KafkaEventAdapter implements InputEventAdapter {
         if (consumerAdaptorMap != null) {
             consumerAdaptorMap = null;
             readyToPoll = false;
-            log.info("Disconnected " + topic);
+            log.debug("Adapter " + eventAdapterConfiguration.getName() + " disconnected " + topic);
         }
     }
 
@@ -95,11 +95,11 @@ public final class KafkaEventAdapter implements InputEventAdapter {
         return id.hashCode();
     }
 
-    private static ConsumerConfig createConsumerConfig(String a_zookeeper, String a_groupId,
+    private static ConsumerConfig createConsumerConfig(String zookeeper, String groupId,
                                                        String optionalConfigs) {
         Properties props = new Properties();
-        props.put("zookeeper.connect", a_zookeeper);
-        props.put("group.id", a_groupId);
+        props.put(KafkaEventAdapterConstants.ADAPTOR_SUSCRIBER_ZOOKEEPER_CONNECT, zookeeper);
+        props.put(KafkaEventAdapterConstants.ADAPTOR_SUSCRIBER_GROUP_ID, groupId);
 
         if (optionalConfigs != null) {
             String[] optionalProperties = optionalConfigs.split(",");
@@ -110,7 +110,7 @@ public final class KafkaEventAdapter implements InputEventAdapter {
                     if (configPropertyWithValue.length == 2) {
                         props.put(configPropertyWithValue[0], configPropertyWithValue[1]);
                     } else {
-                        log.warn("Optional configuration property not defined in the correct format");
+                        log.warn("Optional configuration property not defined in the correct format.\nRequired - property_name1:property_value1,property_name2:property_value2\nFound - " + optionalConfigs);
                     }
                 }
             }
