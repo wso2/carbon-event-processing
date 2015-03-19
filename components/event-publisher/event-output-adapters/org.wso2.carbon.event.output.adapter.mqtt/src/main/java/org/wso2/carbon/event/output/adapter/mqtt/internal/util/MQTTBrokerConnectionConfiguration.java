@@ -19,8 +19,8 @@ package org.wso2.carbon.event.output.adapter.mqtt.internal.util;
 
 public class MQTTBrokerConnectionConfiguration {
 
-    private String brokerUsername = null;
-    private String brokerPassword = null;
+    private String brokerUsername;
+    private String brokerPassword;
     private boolean cleanSession = true;
     private int keepAlive = 60000;
     private String brokerUrl;

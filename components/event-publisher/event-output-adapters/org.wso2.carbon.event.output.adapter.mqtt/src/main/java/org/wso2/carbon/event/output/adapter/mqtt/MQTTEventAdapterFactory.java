@@ -37,7 +37,6 @@ public class MQTTEventAdapterFactory extends OutputEventAdapterFactory {
         supportedMessageFormats.add(MessageType.XML);
         supportedMessageFormats.add(MessageType.JSON);
         supportedMessageFormats.add(MessageType.TEXT);
-        ;
         return supportedMessageFormats;
     }
 
@@ -110,7 +109,7 @@ public class MQTTEventAdapterFactory extends OutputEventAdapterFactory {
                 resourceBundle.getString(MQTTEventAdapterConstants.ADAPTER_MESSAGE_CLIENTID));
         clientId.setRequired(true);
 
-        // set Quality f Service
+        // set Quality of Service
         Property qos = new Property(MQTTEventAdapterConstants.ADAPTER_MESSAGE_QOS);
         qos.setDisplayName(
                 resourceBundle.getString(MQTTEventAdapterConstants.ADAPTER_MESSAGE_QOS));

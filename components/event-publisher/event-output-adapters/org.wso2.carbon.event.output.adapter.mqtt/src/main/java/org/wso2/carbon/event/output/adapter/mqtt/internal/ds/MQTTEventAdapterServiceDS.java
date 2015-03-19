@@ -32,9 +32,9 @@ public class MQTTEventAdapterServiceDS {
     private static final Log log = LogFactory.getLog(MQTTEventAdapterServiceDS.class);
 
     /**
-     * initialize the agent service here service here.
+     * Deployment of the MQTT event adapter service will be done.
      *
-     * @param context
+     * @param context bundle context where service is registered
      */
     protected void activate(ComponentContext context) {
 
