@@ -39,6 +39,8 @@ public class MQTTEventAdapter implements OutputEventAdapter {
             publisherMap = new ConcurrentHashMap<String,
             ConcurrentHashMap<String, ConcurrentHashMap<String, MQTTAdapterPublisher>>>();
 
+    private ConcurrentHashMap<String, ConcurrentHashMap<String, MQTTAdapterPublisher>> clientIdSpecificEventSenderMap;
+
     public MQTTEventAdapter(OutputEventAdapterConfiguration eventAdapterConfiguration,
                             Map<String, String> globalProperties) {
         this.eventAdapterConfiguration = eventAdapterConfiguration;
@@ -58,14 +60,7 @@ public class MQTTEventAdapter implements OutputEventAdapter {
 
     @Override
     public void connect() {
-        //not required
-    }
-
-    @Override
-    public void publish(Object message, Map<String, String> dynamicProperties) {
-
-        ConcurrentHashMap<String, ConcurrentHashMap<String, MQTTAdapterPublisher>> clientIdSpecificEventSenderMap =
-                publisherMap.get(eventAdapterConfiguration.getName());
+        clientIdSpecificEventSenderMap = publisherMap.get(eventAdapterConfiguration.getName());
         if (null == clientIdSpecificEventSenderMap) {
             clientIdSpecificEventSenderMap =
                     new ConcurrentHashMap<String, ConcurrentHashMap<String, MQTTAdapterPublisher>>();
@@ -73,7 +68,10 @@ public class MQTTEventAdapter implements OutputEventAdapter {
                 clientIdSpecificEventSenderMap = publisherMap.get(eventAdapterConfiguration.getName());
             }
         }
+    }
 
+    @Override
+    public void publish(Object message, Map<String, String> dynamicProperties) {
         String clientId = dynamicProperties.get(MQTTEventAdapterConstants.ADAPTER_MESSAGE_CLIENTID);
         ConcurrentHashMap<String, MQTTAdapterPublisher> topicSpecificEventPublisherMap =
                 clientIdSpecificEventSenderMap.get(clientId);
@@ -85,8 +83,8 @@ public class MQTTEventAdapter implements OutputEventAdapter {
         }
 
         String topic = dynamicProperties.get(MQTTEventAdapterConstants.ADAPTER_MESSAGE_TOPIC);
-        MQTTAdapterPublisher mqttAdaptorPublisher = topicSpecificEventPublisherMap.get(topic);
-        if (mqttAdaptorPublisher == null) {
+        MQTTAdapterPublisher mqttAdapterPublisher = topicSpecificEventPublisherMap.get(topic);
+        if (mqttAdapterPublisher == null) {
             MQTTBrokerConnectionConfiguration mqttBrokerConnectionConfiguration =
                     new MQTTBrokerConnectionConfiguration(eventAdapterConfiguration.getStaticProperties()
                             .get(MQTTEventAdapterConstants.ADAPTER_CONF_URL),
@@ -99,24 +97,24 @@ public class MQTTEventAdapter implements OutputEventAdapter {
                             eventAdapterConfiguration.getStaticProperties()
                                     .get(MQTTEventAdapterConstants.ADAPTER_CONF_KEEP_ALIVE));
 
-            mqttAdaptorPublisher = new MQTTAdapterPublisher(mqttBrokerConnectionConfiguration,
+            mqttAdapterPublisher = new MQTTAdapterPublisher(mqttBrokerConnectionConfiguration,
                     dynamicProperties.get(MQTTEventAdapterConstants.ADAPTER_MESSAGE_TOPIC),
                     dynamicProperties.get(MQTTEventAdapterConstants.ADAPTER_MESSAGE_CLIENTID));
-            topicSpecificEventPublisherMap.put(topic,mqttAdaptorPublisher);
+            topicSpecificEventPublisherMap.put(topic, mqttAdapterPublisher);
         }
         String qos = eventAdapterConfiguration.getStaticProperties().get(MQTTEventAdapterConstants.ADAPTER_MESSAGE_QOS);
 
         if (qos == null) {
-            mqttAdaptorPublisher.publish(message.toString());
+            mqttAdapterPublisher.publish(message.toString());
         } else {
-            mqttAdaptorPublisher.publish(Integer.parseInt(qos), message.toString());
+            mqttAdapterPublisher.publish(Integer.parseInt(qos), message.toString());
         }
 
     }
 
     @Override
     public void disconnect() {
-        //not required
+        publisherMap.clear();
     }
 
     @Override
