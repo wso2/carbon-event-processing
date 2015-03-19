@@ -197,6 +197,7 @@ public class EventReceiverDeployer extends AbstractDeployer implements EventProc
                 carbonEventReceiverService.addEventReceiverConfigurationFile(createEventReceiverConfigurationFile(eventReceiverName, deploymentFileData.getFile(),
                         EventReceiverConfigurationFile.Status.WAITING_FOR_STREAM_DEPENDENCY, tenantId, e.getMessage(), e.getDependency()), tenantId);
                 log.info("Event receiver deployment held back and in inactive state :" + eventReceiverFile.getName() + ", Stream validation exception :" + e.getMessage());
+
             } catch (Throwable e) {
                 log.error("Event Receiver not deployed, invalid configuration found at " + eventReceiverFile.getName() + ", and in inactive state, " + e.getMessage(), e);
                 carbonEventReceiverService.addEventReceiverConfigurationFile(createEventReceiverConfigurationFile(eventReceiverName, deploymentFileData.getFile(),

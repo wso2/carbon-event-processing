@@ -71,7 +71,9 @@
                         String[] propertyNameAndValue = property.split("\\$=");
                         if (propertyNameAndValue != null) {
                             basicInputAdapterPropertyDtos[index] = new BasicInputAdapterPropertyDto();
-                            basicInputAdapterPropertyDtos[index].setKey(propertyNameAndValue[0].trim());
+
+
+
                             basicInputAdapterPropertyDtos[index].setValue(propertyNameAndValue[1].trim());
                             index++;
                         }
