@@ -338,13 +338,28 @@
         <table id="noEventReceiverInputTable" class="normal-nopadding"
                style="width:100%">
             <tbody>
+                <tr>
+                <%if(streamId == null){%>
 
-            <tr>
-                <td class="leftCol-med" colspan="2">Event Streams or Input
-                                                    Event Adapters are not available, Please create
-                                                    an Input Event Adapter to continue...
-                </td>
-            </tr>
+                    <td class="leftCol-med" colspan="2">
+                        <span style="float: left; position: relative; margin-top: 5px;">
+                            <fmt:message key="event.receiver.error.no.stream"/>
+                        </span>
+                        <a href="../eventstream/create_event_stream.jsp?ordinal=1"
+                           style="background-image:url(images/add.gif);"
+                           class="icon-link">
+                            Add Event Stream
+                        </a>
+                    </td>
+
+
+                <%}else{%>
+                    <td class="leftCol-med"  colspan="2">
+                        <fmt:message key="event.receiver.error.no.input.adapter"/>
+                    </td>
+
+                <%}%>
+                </tr>
             </tbody>
         </table>
     </td>
