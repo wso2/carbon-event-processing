@@ -38,6 +38,7 @@
         <module>org.wso2.carbon.event.input.adapter.websocket</module>
         <module>org.wso2.carbon.event.input.adapter.websocket.local</module>
         <module>org.wso2.carbon.event.input.adapter.websocket.local/org.wso2.carbon.event.input.adapter.websocket.endpoint</module>
+        <module>org.wso2.carbon.event.input.adapter.jms</module>
     </modules>
 </project>
 
