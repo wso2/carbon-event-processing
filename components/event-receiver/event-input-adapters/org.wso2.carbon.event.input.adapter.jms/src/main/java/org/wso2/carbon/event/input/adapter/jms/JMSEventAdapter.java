@@ -37,7 +37,6 @@ public class JMSEventAdapter implements InputEventAdapter {
     private final Map<String, String> globalProperties;
     private InputEventAdapterListener eventAdapterListener;
     private final String id = UUID.randomUUID().toString();
-    String subscriptionId;
 
     private ConcurrentHashMap<Integer, ConcurrentHashMap<String,
             ConcurrentHashMap<String, ConcurrentHashMap<String,
@@ -67,7 +66,6 @@ public class JMSEventAdapter implements InputEventAdapter {
     @Override
     public void connect() {
 
-        subscriptionId = UUID.randomUUID().toString();
         int tenantId = PrivilegedCarbonContext.getThreadLocalCarbonContext().getTenantId();
         createJMSAdaptorListener(eventAdapterListener, "1", tenantId);
 
@@ -100,15 +98,15 @@ public class JMSEventAdapter implements InputEventAdapter {
             throw new InputEventAdapterRuntimeException("There is no subscription for " + destination);
         }
 
-        SubscriptionDetails subscriptionDetails = subscriptionsMap.get(subscriptionId);
+        SubscriptionDetails subscriptionDetails = subscriptionsMap.get(id);
         if (subscriptionDetails == null) {
             throw new InputEventAdapterRuntimeException("There is no subscription for " + destination
-                    + " for the subscriptionId:" + subscriptionId);
+                    + " for the subscriptionId:" + id);
         } else {
 
             try {
                 subscriptionDetails.close();
-                subscriptionsMap.remove(subscriptionId);
+                subscriptionsMap.remove(id);
             } catch (JMSException e) {
                 throw new InputEventAdapterRuntimeException("Can not unsubscribe from the destination " + destination
                         + " with the event adaptor " + eventAdapterConfiguration.getName(), e);
