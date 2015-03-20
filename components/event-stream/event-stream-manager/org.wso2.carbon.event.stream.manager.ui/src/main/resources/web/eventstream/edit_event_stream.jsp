@@ -30,8 +30,8 @@
         topPage="false"
         request="<%=request%>"/>
 
-<script type="text/javascript" src="js/event_stream.js"></script>
-<script type="text/javascript" src="js/registry-browser.js"></script>
+<script type="text/javascript" src="../eventstream/js/event_stream.js"></script>
+<script type="text/javascript" src="../eventstream/js/registry-browser.js"></script>
 
 <link type="text/css" href="css/eventStream.css" rel="stylesheet"/>
 <script type="text/javascript" src="../admin/js/breadcrumbs.js"></script>

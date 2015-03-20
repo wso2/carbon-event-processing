@@ -43,12 +43,12 @@
 		src="../yui/build/yahoo-dom-event/yahoo-dom-event.js"></script>
 	<script type="text/javascript"
 		src="../yui/build/connection/connection-min.js"></script>
-	<script type="text/javascript" src="js/event_stream.js"></script>
+	<script type="text/javascript" src="../eventstream/js/event_stream.js"></script>
 	<script type="text/javascript"
-		src="js/create_eventStream_helper.js"></script>
+		src="../eventstream/js/create_eventStream_helper.js"></script>
 	<script type="text/javascript" src="../ajax/js/prototype.js"></script>
 	<script type="text/javascript"
-		src="js/vkbeautify.0.99.00.beta.js"></script>
+		src="../eventstream/js/vkbeautify.0.99.00.beta.js"></script>
 
 	<%
 		String eventStreamWithVersion = request.getParameter("eventStreamWithVersion");
