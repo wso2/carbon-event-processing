@@ -17,13 +17,14 @@
  */
 package org.wso2.carbon.event.processor.core.internal.ds;
 
-import com.hazelcast.core.*;
+import com.hazelcast.core.HazelcastInstance;
+import com.hazelcast.core.MemberAttributeEvent;
+import com.hazelcast.core.MembershipEvent;
+import com.hazelcast.core.MembershipListener;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.osgi.service.component.ComponentContext;
 import org.wso2.carbon.base.api.ServerConfigurationService;
-//import org.wso2.carbon.cassandra.dataaccess.DataAccessService;
-import org.wso2.carbon.databridge.core.definitionstore.AbstractStreamDefinitionStore;
 import org.wso2.carbon.event.processor.common.storm.config.StormDeploymentConfig;
 import org.wso2.carbon.event.processor.common.storm.config.StormDeploymentConfigReader;
 import org.wso2.carbon.event.processor.core.EventProcessorService;
@@ -34,6 +35,7 @@ import org.wso2.carbon.event.processor.core.internal.persistence.FileSystemPersi
 import org.wso2.carbon.event.processor.core.internal.storm.manager.StormManagerServer;
 import org.wso2.carbon.event.processor.core.internal.util.EventProcessorConstants;
 import org.wso2.carbon.event.statistics.EventStatisticsService;
+import org.wso2.carbon.event.stream.core.EventStreamListener;
 import org.wso2.carbon.event.stream.core.EventStreamService;
 import org.wso2.carbon.ndatasource.core.DataSourceService;
 import org.wso2.carbon.user.core.UserRealm;
@@ -42,7 +44,6 @@ import org.wso2.carbon.utils.ConfigurationContextService;
 import org.wso2.siddhi.core.SiddhiManager;
 import org.wso2.siddhi.core.util.persistence.PersistenceStore;
 
-import java.io.File;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 
@@ -51,12 +52,9 @@ import java.util.concurrent.ScheduledExecutorService;
  * @scr.reference name="eventStatistics.service"
  * interface="org.wso2.carbon.event.statistics.EventStatisticsService" cardinality="1..1"
  * policy="dynamic" bind="setEventStatisticsService" unbind="unsetEventStatisticsService"
- * @scr.reference name="stream.definitionStore.service"
- * interface="org.wso2.carbon.databridge.core.definitionstore.AbstractStreamDefinitionStore" cardinality="1..1"
- * policy="dynamic" bind="setEventStreamStoreService" unbind="unsetEventStreamStoreService"
  * @scr.reference name="eventStreamManager.service"
  * interface="org.wso2.carbon.event.stream.core.EventStreamService" cardinality="1..1"
- * policy="dynamic" bind="setEventStreamManagerService" unbind="unsetEventStreamManagerService"
+ * policy="dynamic" bind="setEventStreamService" unbind="unsetEventStreamService"
  * @scr.reference name="hazelcast.instance.service"
  * interface="com.hazelcast.core.HazelcastInstance" cardinality="0..1"
  * policy="dynamic" bind="setHazelcastInstance" unbind="unsetHazelcastInstance"
@@ -95,7 +93,7 @@ public class EventProcessorServiceDS {
 
 
             context.getBundleContext().registerService(EventProcessorService.class.getName(), carbonEventProcessorService, null);
-            context.getBundleContext().registerService(EventStreamListenerImpl.class.getName(), new EventStreamListenerImpl(), null);
+            context.getBundleContext().registerService(EventStreamListener.class.getName(), new EventStreamListenerImpl(), null);
 
             SiddhiManager siddhiManager = new SiddhiManager();
             EventProcessorValueHolder.registerSiddhiManager(siddhiManager);
@@ -141,20 +139,13 @@ public class EventProcessorServiceDS {
         EventProcessorValueHolder.registerEventStatisticsService(null);
     }
 
-    protected void setEventStreamStoreService(AbstractStreamDefinitionStore streamDefinitionStore) {
-        EventProcessorValueHolder.registerStreamDefinitionStore(streamDefinitionStore);
+
+    protected void setEventStreamService(EventStreamService eventStreamService) {
+        EventProcessorValueHolder.registerEventStreamService(eventStreamService);
     }
 
-    protected void unsetEventStreamStoreService(AbstractStreamDefinitionStore streamDefinitionStore) {
-        EventProcessorValueHolder.registerStreamDefinitionStore(null);
-    }
-
-    protected void setEventStreamManagerService(EventStreamService eventStreamService) {
-        EventProcessorValueHolder.registerEventStreamManagerService(eventStreamService);
-    }
-
-    protected void unsetEventStreamManagerService(EventStreamService eventStreamService) {
-        EventProcessorValueHolder.registerEventStreamManagerService(null);
+    protected void unsetEventStreamService(EventStreamService eventStreamService) {
+        EventProcessorValueHolder.registerEventStreamService(null);
     }
 
     protected void setHazelcastInstance(HazelcastInstance hazelcastInstance) {

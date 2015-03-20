@@ -75,7 +75,8 @@
                         <Export-Package>
                             !org.wso2.carbon.event.input.adapter.core.internal,
                             !org.wso2.carbon.event.input.adapter.core.internal.*,
-                            org.wso2.carbon.event.input.adapter.core.*
+                            org.wso2.carbon.event.input.adapter.core.*,
+                            org.wso2.carbon.event.input.adapter.core
                         </Export-Package>
                         <Import-Package>
                             *;resolution:=optional
