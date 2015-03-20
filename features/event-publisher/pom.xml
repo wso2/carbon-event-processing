@@ -37,6 +37,17 @@
         <module>org.wso2.carbon.event.publisher.server.feature</module>
         <module>org.wso2.carbon.event.output.adapter.server.feature</module>
         <module>org.wso2.carbon.event.output.adapter.email.server.feature</module>
+        <module>org.wso2.carbon.event.output.adapter.http.server.feature</module>
+        <module>org.wso2.carbon.event.output.adapter.jms.server.feature</module>
+        <module>org.wso2.carbon.event.output.adapter.kafka.server.feature</module>
+        <module>org.wso2.carbon.event.output.adapter.logger.server.feature</module>
+        <module>org.wso2.carbon.event.output.adapter.rdbms.server.feature</module>
+        <module>org.wso2.carbon.event.output.adapter.soap.server.feature</module>
+        <module>org.wso2.carbon.event.output.adapter.websocket.server.feature</module>
+        <module>org.wso2.carbon.event.output.adapter.websocket.local.server.feature</module>
+        <module>org.wso2.carbon.event.output.adapter.wso2event.server.feature</module>
+        <module>org.wso2.carbon.event.output.adapter.feature</module>
+
     </modules>
 
 
