@@ -53,6 +53,24 @@
             <type>zip</type>
             <version>${carbon.event.processing.version}</version>
         </dependency>
+        <dependency>
+            <groupId>org.wso2.carbon.event-processing</groupId>
+            <artifactId>org.wso2.carbon.event.input.adapter.soap.server.feature</artifactId>
+            <type>zip</type>
+            <version>${carbon.event.processing.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.wso2.carbon.event-processing</groupId>
+            <artifactId>org.wso2.carbon.event.input.adapter.websocket.server.feature</artifactId>
+            <type>zip</type>
+            <version>${carbon.event.processing.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.wso2.carbon.event-processing</groupId>
+            <artifactId>org.wso2.carbon.event.input.adapter.websocket.local.server.feature</artifactId>
+            <type>zip</type>
+            <version>${carbon.event.processing.version}</version>
+        </dependency>
 
     </dependencies>
 
@@ -81,6 +99,15 @@
 
                                 <featureArtifactDef>
                                     org.wso2.carbon.event-processing:org.wso2.carbon.event.input.adapter.http.server.feature:${carbon.event.processing.version}
+                                </featureArtifactDef>
+                                <featureArtifactDef>
+                                    org.wso2.carbon.event-processing:org.wso2.carbon.event.input.adapter.soap.server.feature:${carbon.event.processing.version}
+                                </featureArtifactDef>
+                                <featureArtifactDef>
+                                    org.wso2.carbon.event-processing:org.wso2.carbon.event.input.adapter.websocket.server.feature:${carbon.event.processing.version}
+                                </featureArtifactDef>
+                                <featureArtifactDef>
+                                    org.wso2.carbon.event-processing:org.wso2.carbon.event.input.adapter.websocket.local.server.feature:${carbon.event.processing.version}
                                 </featureArtifactDef>
 
                             </includedFeatures>
