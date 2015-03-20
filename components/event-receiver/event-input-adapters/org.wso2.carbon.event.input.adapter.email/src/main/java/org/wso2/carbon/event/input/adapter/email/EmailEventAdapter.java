@@ -66,7 +66,8 @@ public class EmailEventAdapter implements InputEventAdapter {
             Axis2Util.removeEmailServiceOperation(eventAdapterConfiguration, EventAdapterUtil.getAxisConfiguration(),
                     id);
         } catch (AxisFault axisFault) {
-            throw new InputEventAdapterRuntimeException("Can not remove operation ", axisFault);
+            throw new InputEventAdapterRuntimeException("Can not remove operation in event adapter "
+                    + eventAdapterConfiguration.getName(), axisFault);
         }
     }
 
@@ -99,8 +100,9 @@ public class EmailEventAdapter implements InputEventAdapter {
         try {
             Axis2Util.registerAxis2EmailService(eventAdapterConfiguration, eventAdaptorListener, axisConfiguration, id);
         } catch (AxisFault axisFault) {
-            throw new InputEventAdapterRuntimeException("Can not create the axis2 service to receive email events",
-                    axisFault);
+            throw new InputEventAdapterRuntimeException(
+                    "Can not create the axis2 service to receive email events in event adapter "
+                            + eventAdapterConfiguration.getName(), axisFault);
         }
 
 

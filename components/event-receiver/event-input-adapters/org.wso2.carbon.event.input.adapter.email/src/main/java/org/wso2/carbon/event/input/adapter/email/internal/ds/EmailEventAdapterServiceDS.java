@@ -26,8 +26,7 @@ import org.wso2.carbon.utils.ConfigurationContextService;
 
 
 /**
- * @scr.component component.name="input.Email
- * .AdapterService.component" immediate="true"
+ * @scr.component component.name="input.Email.AdapterService.component" immediate="true"
  * @scr.reference name="configurationcontext.service"
  * interface="org.wso2.carbon.utils.ConfigurationContextService" cardinality="1..1"
  * policy="dynamic" bind="setConfigurationContextService" unbind="unsetConfigurationContextService"
