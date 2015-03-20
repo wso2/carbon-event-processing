@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
+
 <!--
   ~ Copyright (c) 2015, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
   ~
@@ -27,33 +28,13 @@
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
-    <artifactId>org.wso2.carbon.event.receiver.feature</artifactId>
+    <artifactId>org.wso2.carbon.event.input.adapter.http.server.feature</artifactId>
     <packaging>pom</packaging>
-    <name>WSO2 Carbon - Event Receiver Feature</name>
-    <url>http://wso2.org</url>
+    <name>WSO2 Carbon - Event Input HTTP Adapter Server Feature</name>
     <version>2.0.4-SNAPSHOT</version>
-    <description>
-        This feature contains the bundles required for Event Receiver feature.
-    </description>
+    <url>http://wso2.org</url>
+    <description>This feature contains the bundles required for Input HTTP Event Adapter functionality</description>
 
-    <dependencies>
-        <dependency>
-            <groupId>org.wso2.carbon.event-processing</groupId>
-            <artifactId>org.wso2.carbon.event.receiver.server.feature</artifactId>
-            <type>zip</type>
-        </dependency>
-        <dependency>
-            <groupId>org.wso2.carbon.event-processing</groupId>
-            <artifactId>org.wso2.carbon.event.receiver.ui.feature</artifactId>
-            <type>zip</type>
-        </dependency>
-        <dependency>
-            <groupId>org.wso2.carbon.event-processing</groupId>
-            <artifactId>org.wso2.carbon.event.input.adapter.feature</artifactId>
-            <version>${carbon.event.processing.version}</version>
-            <type>zip</type>
-        </dependency>
-    </dependencies>
 
     <build>
         <plugins>
@@ -69,23 +50,25 @@
                             <goal>p2-feature-gen</goal>
                         </goals>
                         <configuration>
-                            <id>org.wso2.carbon.event.receiver</id>
+                            <id>org.wso2.carbon.event.input.adapter.http.server</id>
                             <propertiesFile>../../etc/feature.properties</propertiesFile>
+                            <adviceFile>
+                                <properties>
+                                    <propertyDef>org.wso2.carbon.p2.category.type:server
+                                    </propertyDef>
+                                    <propertyDef>org.eclipse.equinox.p2.type.group:false
+                                    </propertyDef>
+                                </properties>
+                            </adviceFile>
+                            <bundles>
+                                <bundleDef>
+                                    org.wso2.carbon.event-processing:org.wso2.carbon.event.input.adapter.http:${carbon.event.processing.version}
+                                </bundleDef>
+                            </bundles>
                             <importFeatures>
-                                <importFeatureDef>org.wso2.carbon.core:${carbon.kernel.version}
+                                <importFeatureDef>org.wso2.carbon.core.server:${carbon.kernel.version}
                                 </importFeatureDef>
                             </importFeatures>
-                            <includedFeatures>
-                                <includedFeatureDef>
-                                    org.wso2.carbon.event-processing:org.wso2.carbon.event.receiver.server.feature:${carbon.event.processing.version}
-                                </includedFeatureDef>
-                                <includedFeatureDef>
-                                    org.wso2.carbon.event-processing:org.wso2.carbon.event.receiver.ui.feature:${carbon.event.processing.version}
-                                </includedFeatureDef>
-                                <includedFeatureDef>
-                                    org.wso2.carbon.event-processing:org.wso2.carbon.event.input.adapter.feature:${carbon.event.processing.version}
-                                </includedFeatureDef>
-                            </includedFeatures>
                         </configuration>
                     </execution>
                 </executions>
