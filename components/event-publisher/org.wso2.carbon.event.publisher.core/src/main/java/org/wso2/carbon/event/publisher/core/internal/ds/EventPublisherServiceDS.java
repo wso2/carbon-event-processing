@@ -24,6 +24,7 @@ import org.wso2.carbon.event.publisher.core.EventStreamListenerImpl;
 import org.wso2.carbon.event.publisher.core.exception.EventPublisherConfigurationException;
 import org.wso2.carbon.event.publisher.core.internal.CarbonEventPublisherService;
 import org.wso2.carbon.event.statistics.EventStatisticsService;
+import org.wso2.carbon.event.stream.core.EventStreamListener;
 import org.wso2.carbon.event.stream.core.EventStreamService;
 import org.wso2.carbon.registry.core.exceptions.RegistryException;
 import org.wso2.carbon.registry.core.service.RegistryService;
@@ -70,7 +71,7 @@ public class EventPublisherServiceDS {
 
             activateInactiveEventPublisherConfigurations(carbonEventPublisherService);
 
-            context.getBundleContext().registerService(EventStreamListenerImpl.class.getName(), new EventStreamListenerImpl(), null);
+            context.getBundleContext().registerService(EventStreamListener.class.getName(), new EventStreamListenerImpl(), null);
 
         } catch (RuntimeException e) {
             log.error("Could not create EventPublisherService : " + e.getMessage(), e);

@@ -22,7 +22,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.osgi.service.component.ComponentContext;
 import org.wso2.carbon.base.api.ServerConfigurationService;
-//import org.wso2.carbon.cassandra.dataaccess.DataAccessService;
 import org.wso2.carbon.databridge.core.definitionstore.AbstractStreamDefinitionStore;
 import org.wso2.carbon.event.processor.common.storm.config.StormDeploymentConfig;
 import org.wso2.carbon.event.processor.common.storm.config.StormDeploymentConfigReader;
@@ -34,6 +33,7 @@ import org.wso2.carbon.event.processor.core.internal.persistence.FileSystemPersi
 import org.wso2.carbon.event.processor.core.internal.storm.manager.StormManagerServer;
 import org.wso2.carbon.event.processor.core.internal.util.EventProcessorConstants;
 import org.wso2.carbon.event.statistics.EventStatisticsService;
+import org.wso2.carbon.event.stream.core.EventStreamListener;
 import org.wso2.carbon.event.stream.core.EventStreamService;
 import org.wso2.carbon.ndatasource.core.DataSourceService;
 import org.wso2.carbon.user.core.UserRealm;
@@ -95,7 +95,7 @@ public class EventProcessorServiceDS {
 
 
             context.getBundleContext().registerService(EventProcessorService.class.getName(), carbonEventProcessorService, null);
-            context.getBundleContext().registerService(EventStreamListenerImpl.class.getName(), new EventStreamListenerImpl(), null);
+            context.getBundleContext().registerService(EventStreamListener.class.getName(), new EventStreamListenerImpl(), null);
 
             SiddhiManager siddhiManager = new SiddhiManager();
             EventProcessorValueHolder.registerSiddhiManager(siddhiManager);

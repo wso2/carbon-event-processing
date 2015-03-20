@@ -109,10 +109,8 @@ public class EmailEventAdapter implements OutputEventAdapter {
                 .replaceAll(" ", "").split(EmailEventAdapterConstants.EMAIL_SEPARATOR);
 
         //Send email for each emailId
-        if (emailIds != null) {
-            for (String email : emailIds) {
-                threadPoolExecutor.submit(new EmailSender(email, subject, message.toString()));
-            }
+        for (String email : emailIds) {
+            threadPoolExecutor.submit(new EmailSender(email, subject, message.toString()));
         }
     }
 
