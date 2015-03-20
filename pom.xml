@@ -38,7 +38,7 @@
         <module>components/event-publisher</module>
         <module>components/event-receiver</module>
         <module>components/event-processor</module>
-        <module>components/event-stream</module>
+        <module>components/event-simulator</module>
         <module>components/event-flow</module>
         <module>components/event-monitor</module>
         <module>components/application-deployer</module>
@@ -47,7 +47,7 @@
         <module>features/event-publisher</module>
         <module>features/event-receiver</module>
         <module>features/event-monitor</module>
-        <module>features/event-stream</module>
+        <module>features/event-simulator</module>
         <module>features/event-flow</module>
         <module>features/application-deployer</module>
     </modules>
@@ -189,31 +189,6 @@
             <!--carbon-kernel dependencies stop-->
 
             <!--carbon-commons dependencies start-->
-            <dependency>
-                <groupId>org.wso2.carbon.commons</groupId>
-                <artifactId>org.wso2.carbon.databridge.core</artifactId>
-                <version>${carbon.commons.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.wso2.carbon.commons</groupId>
-                <artifactId>org.wso2.carbon.databridge.agent.thrift</artifactId>
-                <version>${carbon.commons.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.wso2.carbon.commons</groupId>
-                <artifactId>org.wso2.carbon.databridge.commons</artifactId>
-                <version>${carbon.commons.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.wso2.carbon.commons</groupId>
-                <artifactId>org.wso2.carbon.databridge.commons.thrift</artifactId>
-                <version>${carbon.commons.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.wso2.carbon.commons</groupId>
-                <artifactId>org.wso2.carbon.databridge.receiver.thrift</artifactId>
-                <version>${carbon.commons.version}</version>
-            </dependency>
             <dependency>
                 <groupId>org.wso2.carbon.commons</groupId>
                 <artifactId>org.wso2.carbon.tenant.common</artifactId>
@@ -678,14 +653,20 @@
             <!--siddhi dependencies stop-->
 
             <!--features start-->
-            <!--carbon commons features start-->
+            <!--carbon analytics common features start-->
             <dependency>
-                <groupId>org.wso2.carbon.commons</groupId>
+                <groupId>org.wso2.carbon.analytics-common</groupId>
                 <artifactId>org.wso2.carbon.databridge.datareceiver.feature</artifactId>
-                <version>${carbon.commons.version}</version>
+                <version>${carbon.analytics-common.version}</version>
                 <type>zip</type>
             </dependency>
-            <!--carbon commons features end-->
+            <dependency>
+                <groupId>org.wso2.carbon.analytics-common</groupId>
+                <artifactId>org.wso2.carbon.databridge.datapublisher.feature</artifactId>
+                <version>${carbon.analytics-common.version}</version>
+                <type>zip</type>
+            </dependency>
+            <!--carbon analytics common features end-->
 
             <dependency>
                 <groupId>org.wso2.carbon.event-processing</groupId>
@@ -1240,6 +1221,7 @@
         <orbit.version.json>2.0.0.wso2v1</orbit.version.json>
 
         <carbon.commons.version>4.3.4</carbon.commons.version>
+        <carbon.analytics-common.version>1.0.0-SNAPSHOT</carbon.analytics-common.version>
         <carbon.analytics.common.version>1.0.0-SNAPSHOT</carbon.analytics.common.version>
         <!--<carbon.commons.imp.pkg.version>[4.3.0, 4.4.0)</carbon.commons.imp.pkg.version>-->
 

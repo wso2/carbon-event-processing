@@ -24,6 +24,7 @@ import org.wso2.carbon.event.receiver.core.exception.EventReceiverConfigurationE
 import org.wso2.carbon.event.receiver.core.internal.CarbonEventReceiverService;
 import org.wso2.carbon.event.receiver.core.internal.EventStreamListenerImpl;
 import org.wso2.carbon.event.statistics.EventStatisticsService;
+import org.wso2.carbon.event.stream.core.EventStreamListener;
 import org.wso2.carbon.event.stream.core.EventStreamService;
 import org.wso2.carbon.registry.core.exceptions.RegistryException;
 import org.wso2.carbon.registry.core.service.RegistryService;
@@ -31,7 +32,6 @@ import org.wso2.carbon.utils.ConfigurationContextService;
 
 import java.util.ArrayList;
 import java.util.List;
-
 
 /**
  * @scr.component name="eventReceiverService.component" immediate="true"
@@ -69,7 +69,7 @@ public class EventReceiverServiceDS {
             }
 
             activateInactiveEventReceiverConfigurations(carbonEventReceiverService);
-            context.getBundleContext().registerService(EventStreamListenerImpl.class.getName(), new EventStreamListenerImpl(), null);
+            context.getBundleContext().registerService(EventStreamListener.class.getName(), new EventStreamListenerImpl(), null);
         } catch (RuntimeException e) {
             log.error("Could not create EventReceiverService or EventReceiver : " + e.getMessage(), e);
         }
