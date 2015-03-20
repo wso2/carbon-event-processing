@@ -1,18 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-  ~ Copyright (c) 2005 - 2014, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
-  ~
-  ~ Licensed under the Apache License, Version 2.0 (the "License"); you may not
-  ~ use this file except in compliance with the License. You may obtain a copy
-  ~ of the License at
-  ~
-  ~ http://www.apache.org/licenses/LICENSE-2.0
-  ~
-  ~ Unless required by applicable law or agreed to in writing, software distributed
-  ~ under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
-  ~ CONDITIONS OF ANY KIND, either express or implied.  See the License for the
-  ~ specific language governing permissions and limitations under the License.
-  -->
+~ Copyright (c) 2005-2014, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
+~
+~ WSO2 Inc. licenses this file to you under the Apache License,
+~ Version 2.0 (the "License"); you may not use this file except
+~ in compliance with the License.
+~ You may obtain a copy of the License at
+~
+~    http://www.apache.org/licenses/LICENSE-2.0
+~
+~ Unless required by applicable law or agreed to in writing,
+~ software distributed under the License is distributed on an
+~ "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+~ KIND, either express or implied.  See the License for the
+~ specific language governing permissions and limitations
+~ under the License.
+-->
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
     <parent>
@@ -23,19 +26,13 @@
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
-    <artifactId>org.wso2.carbon.event.output.adapter.email.server.feature</artifactId>
+    <artifactId>org.wso2.carbon.event.output.adapter.logger.server.feature</artifactId>
     <packaging>pom</packaging>
-    <name>WSO2 Carbon - Event Output Email Adapter Server Feature</name>
+    <name>WSO2 Carbon - Event Output Logger Adapter Server Feature</name>
     <version>2.0.4-SNAPSHOT</version>
     <url>http://wso2.org</url>
-    <description>This feature contains the bundles required for Email Event Adapter functionality</description>
+    <description>This feature contains the bundles required for Logger Event Adapter functionality</description>
 
-    <dependencies>
-        <dependency>
-            <groupId>org.apache.axis2.transport</groupId>
-            <artifactId>axis2-transport-mail</artifactId>
-        </dependency>
-    </dependencies>
 
     <build>
         <plugins>
@@ -51,7 +48,7 @@
                             <goal>p2-feature-gen</goal>
                         </goals>
                         <configuration>
-                            <id>org.wso2.carbon.event.output.adapter.email.server</id>
+                            <id>org.wso2.carbon.event.output.adapter.logger.server</id>
                             <propertiesFile>../../etc/feature.properties</propertiesFile>
                             <adviceFile>
                                 <properties>
@@ -63,18 +60,12 @@
                             </adviceFile>
                             <bundles>
                                 <bundleDef>
-                                    org.wso2.carbon.event-processing:org.wso2.carbon.event.output.adapter.email:${carbon.event.processing.version}
-                                </bundleDef>
-                                <bundleDef>
-                                    org.apache.axis2.transport:axis2-transport-mail:${axis2-transports.version}
+                                    org.wso2.carbon.event-processing:org.wso2.carbon.event.output.adapter.logger:${carbon.event.processing.version}
                                 </bundleDef>
                             </bundles>
                             <importFeatures>
                                 <importFeatureDef>org.wso2.carbon.core.server:${carbon.kernel.version}
                                 </importFeatureDef>
-                                <importFeatureDef>org.wso2.carbon.event.output.adapter.server:${carbon.event.processing.version}
-                                </importFeatureDef>
-
                             </importFeatures>
                         </configuration>
                     </execution>
