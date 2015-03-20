@@ -30,5 +30,8 @@ public final class FileEventAdapterConstants {
     public static final int MAX_THREAD = 100;
     public static final long DEFAULT_KEEP_ALIVE_TIME = 20;
     public static final int AXIS_TIME_INTERVAL_IN_MILLISECONDS = 10000;
+    public static final String MIN_THREAD_NAME = "minThread";
+    public static final String MAX_THREAD_NAME = "maxThread";
+    public static final String DEFAULT_KEEP_ALIVE_TIME_NAME = "defaultKeepAliveTime";
 
 }

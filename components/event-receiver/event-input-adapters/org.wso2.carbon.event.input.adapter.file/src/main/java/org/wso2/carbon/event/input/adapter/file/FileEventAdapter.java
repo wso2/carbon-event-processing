@@ -17,7 +17,6 @@
 */
 package org.wso2.carbon.event.input.adapter.file;
 
-import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.commons.io.input.Tailer;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -46,12 +45,10 @@ public class FileEventAdapter implements InputEventAdapter {
     private static final Log log = LogFactory.getLog(FileEventAdapter.class);
     private ConcurrentHashMap<String, ConcurrentHashMap<String, FileTailerManager>> tailerMap =
             new ConcurrentHashMap<String, ConcurrentHashMap<String, FileTailerManager>>();
-    private ThreadPoolExecutor threadPoolExecutor = new ThreadPoolExecutor(FileEventAdapterConstants.MIN_THREAD,
-            FileEventAdapterConstants.MAX_THREAD, FileEventAdapterConstants.DEFAULT_KEEP_ALIVE_TIME,
-            TimeUnit.SECONDS, new LinkedBlockingQueue<Runnable>(1000));
+    private ThreadPoolExecutor threadPoolExecutor;
 
     public FileEventAdapter(InputEventAdapterConfiguration eventAdapterConfiguration,
-                           Map<String, String> globalProperties) {
+                            Map<String, String> globalProperties) {
         this.eventAdapterConfiguration = eventAdapterConfiguration;
         this.globalProperties = globalProperties;
     }
@@ -60,6 +57,36 @@ public class FileEventAdapter implements InputEventAdapter {
     @Override
     public void init(InputEventAdapterListener eventAdapterListener) throws InputEventAdapterException {
         this.eventAdapterListener = eventAdapterListener;
+
+        //ThreadPoolExecutor will be assigned  if it is null
+        if (threadPoolExecutor == null) {
+            int minThread;
+            int maxThread;
+            long defaultKeepAliveTime;
+
+            //If global properties are available those will be assigned else constant values will be assigned
+            if (globalProperties.get(FileEventAdapterConstants.MIN_THREAD_NAME) != null) {
+                minThread = Integer.parseInt(globalProperties.get(FileEventAdapterConstants.MIN_THREAD_NAME));
+            } else {
+                minThread = FileEventAdapterConstants.MIN_THREAD;
+            }
+
+            if (globalProperties.get(FileEventAdapterConstants.MAX_THREAD_NAME) != null) {
+                maxThread = Integer.parseInt(globalProperties.get(FileEventAdapterConstants.MAX_THREAD_NAME));
+            } else {
+                maxThread = FileEventAdapterConstants.MAX_THREAD;
+            }
+
+            if (globalProperties.get(FileEventAdapterConstants.DEFAULT_KEEP_ALIVE_TIME_NAME) != null) {
+                defaultKeepAliveTime = Integer.parseInt(globalProperties.get(
+                        FileEventAdapterConstants.DEFAULT_KEEP_ALIVE_TIME_NAME));
+            } else {
+                defaultKeepAliveTime = FileEventAdapterConstants.DEFAULT_KEEP_ALIVE_TIME;
+            }
+
+            threadPoolExecutor = new ThreadPoolExecutor(minThread, maxThread, defaultKeepAliveTime,
+                    TimeUnit.SECONDS, new LinkedBlockingQueue<Runnable>(1000));
+        }
     }
 
     @Override

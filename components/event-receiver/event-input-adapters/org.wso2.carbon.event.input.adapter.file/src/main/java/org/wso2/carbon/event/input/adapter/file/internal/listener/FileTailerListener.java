@@ -37,7 +37,7 @@ public class FileTailerListener extends TailerListenerAdapter {
             InputEventAdapterListener>();
     private static final Log log = LogFactory.getLog(FileTailerListener.class);
     private volatile InputEventAdapterListener[] inputEventAdapterListeners;
-    private int tenantId;
+    private int tenantId = PrivilegedCarbonContext.getThreadLocalCarbonContext().getTenantId();
 
     public FileTailerListener(String fileName) {
         this.fileName = fileName;
@@ -57,8 +57,8 @@ public class FileTailerListener extends TailerListenerAdapter {
         }
         isFileFound = true;
 
-        if(log.isDebugEnabled()){
-            log.debug("Event received in File Event Adapter - "+line);
+        if (log.isDebugEnabled()) {
+            log.debug("Event received in File Event Adapter - " + line);
         }
 
         PrivilegedCarbonContext.startTenantFlow();

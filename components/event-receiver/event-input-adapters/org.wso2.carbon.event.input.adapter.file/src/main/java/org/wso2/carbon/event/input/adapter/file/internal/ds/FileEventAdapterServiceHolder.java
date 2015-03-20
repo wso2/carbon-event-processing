@@ -51,7 +51,7 @@ public class FileEventAdapterServiceHolder {
 
     public static void unregisterConfigurationContextService(
             ConfigurationContextService configurationContextService) {
-       // FileEventAdapterServiceHolder.configurationContextService = configurationContextService;
+        FileEventAdapterServiceHolder.configurationContextService = configurationContextService;
     }
 
     public static ConfigurationContextService getConfigurationContextService() {
@@ -62,8 +62,8 @@ public class FileEventAdapterServiceHolder {
         lateStartAdapterListeners.add(lateStartAdapterListener);
     }
 
-    public static void loadLateStartEventAdapters(){
-        for (LateStartAdapterListener lateStartAdapterListener : lateStartAdapterListeners){
+    public static void loadLateStartEventAdapters() {
+        for (LateStartAdapterListener lateStartAdapterListener : lateStartAdapterListeners) {
             lateStartAdapterListener.tryStartAdapter();
         }
     }
