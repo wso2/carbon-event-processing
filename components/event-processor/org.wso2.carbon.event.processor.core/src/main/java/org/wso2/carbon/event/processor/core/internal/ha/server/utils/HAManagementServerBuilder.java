@@ -21,7 +21,7 @@ import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.impl.builder.StAXOMBuilder;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.wso2.carbon.databridge.core.exception.DataBridgeConfigurationException;
+import org.wso2.carbon.event.processor.core.exception.ExecutionPlanConfigurationException;
 import org.wso2.carbon.event.processor.core.internal.ha.server.HAManagementServerConfiguration;
 import org.wso2.carbon.utils.CarbonUtils;
 import org.wso2.carbon.utils.ServerConstants;
@@ -86,7 +86,7 @@ public final class HAManagementServerBuilder {
         }
     }
 
-    public static OMElement loadConfigXML() throws DataBridgeConfigurationException {
+    public static OMElement loadConfigXML() throws ExecutionPlanConfigurationException {
 
         String carbonHome = System.getProperty(ServerConstants.CARBON_CONFIG_DIR_PATH);
         String path = carbonHome + File.separator + HAManagementServerConstants.CEP_HA_MANAGEMENT_ELEMENT_CONFIG_XML;
@@ -104,12 +104,12 @@ public final class HAManagementServerBuilder {
             String errorMessage = HAManagementServerConstants.CEP_HA_MANAGER_ELEMENT
                     + "cannot be found in the path : " + path;
             log.error(errorMessage, e);
-            throw new DataBridgeConfigurationException(errorMessage, e);
+            throw new ExecutionPlanConfigurationException(errorMessage, e);
         } catch (XMLStreamException e) {
             String errorMessage = "Invalid XML for " + HAManagementServerConstants.CEP_HA_MANAGEMENT_ELEMENT_CONFIG_XML
                     + " located in the path : " + path;
             log.error(errorMessage, e);
-            throw new DataBridgeConfigurationException(errorMessage, e);
+            throw new ExecutionPlanConfigurationException(errorMessage, e);
         } finally {
             try {
                 if (inputStream != null) {

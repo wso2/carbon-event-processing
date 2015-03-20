@@ -36,10 +36,9 @@
         <dependency>
             <groupId>org.wso2.carbon.event-processing</groupId>
             <artifactId>org.wso2.carbon.event.output.adapter.core</artifactId>
-            <version>2.0.4-SNAPSHOT</version>
         </dependency>
         <dependency>
-            <groupId>org.wso2.carbon.commons</groupId>
+            <groupId>org.wso2.carbon.analytics-common</groupId>
             <artifactId>org.wso2.carbon.databridge.commons</artifactId>
         </dependency>
         <dependency>
