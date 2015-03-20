@@ -28,9 +28,9 @@
 <script type="text/javascript" src="../admin/js/main.js"></script>
 
 <script type="text/javascript"
-        src="../eventsimulator/js/eventstreamProperty_load.js"></script>
+        src="js/eventstreamProperty_load.js"></script>
 <script type="text/javascript"
-        src="../eventsimulator/js/stream_configuration.js"></script>
+        src="js/stream_configuration.js"></script>
 <link type="text/css" href="css/eventSimulator.css" rel="stylesheet"/>
 
 <div id="middle">

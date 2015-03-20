@@ -38,7 +38,7 @@
         <module>components/event-publisher</module>
         <module>components/event-receiver</module>
         <module>components/event-processor</module>
-        <module>components/event-stream</module>
+        <module>components/event-simulator</module>
         <module>components/event-flow</module>
         <module>components/event-monitor</module>
         <module>components/application-deployer</module>
@@ -47,7 +47,7 @@
         <module>features/event-publisher</module>
         <module>features/event-receiver</module>
         <module>features/event-monitor</module>
-        <module>features/event-stream</module>
+        <module>features/event-simulator</module>
         <module>features/event-flow</module>
         <module>features/application-deployer</module>
     </modules>
