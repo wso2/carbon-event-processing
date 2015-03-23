@@ -71,6 +71,42 @@
             <type>zip</type>
             <version>${carbon.event.processing.version}</version>
         </dependency>
+        <dependency>
+            <groupId>org.wso2.carbon.event-processing</groupId>
+            <artifactId>org.wso2.carbon.event.input.adapter.file.server.feature</artifactId>
+            <type>zip</type>
+            <version>${carbon.event.processing.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.wso2.carbon.event-processing</groupId>
+            <artifactId>org.wso2.carbon.event.input.adapter.email.server.feature</artifactId>
+            <type>zip</type>
+            <version>${carbon.event.processing.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.wso2.carbon.event-processing</groupId>
+            <artifactId>org.wso2.carbon.event.input.adapter.jms.server.feature</artifactId>
+            <type>zip</type>
+            <version>${carbon.event.processing.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.wso2.carbon.event-processing</groupId>
+            <artifactId>org.wso2.carbon.event.input.adapter.mqtt.server.feature</artifactId>
+            <type>zip</type>
+            <version>${carbon.event.processing.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.wso2.carbon.event-processing</groupId>
+            <artifactId>org.wso2.carbon.event.input.adapter.kafka.server.feature</artifactId>
+            <type>zip</type>
+            <version>${carbon.event.processing.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.wso2.carbon.event-processing</groupId>
+            <artifactId>org.wso2.carbon.event.input.adapter.wso2event.server.feature</artifactId>
+            <type>zip</type>
+            <version>${carbon.event.processing.version}</version>
+        </dependency>
 
     </dependencies>
 
@@ -108,6 +144,24 @@
                                 </featureArtifactDef>
                                 <featureArtifactDef>
                                     org.wso2.carbon.event-processing:org.wso2.carbon.event.input.adapter.websocket.local.server.feature:${carbon.event.processing.version}
+                                </featureArtifactDef>
+                                <featureArtifactDef>
+                                    org.wso2.carbon.event-processing:org.wso2.carbon.event.input.adapter.file.server.feature:${carbon.event.processing.version}
+                                </featureArtifactDef>
+                                <featureArtifactDef>
+                                    org.wso2.carbon.event-processing:org.wso2.carbon.event.input.adapter.email.server.feature:${carbon.event.processing.version}
+                                </featureArtifactDef>
+                                <featureArtifactDef>
+                                    org.wso2.carbon.event-processing:org.wso2.carbon.event.input.adapter.jms.server.feature:${carbon.event.processing.version}
+                                </featureArtifactDef>
+                                <featureArtifactDef>
+                                    org.wso2.carbon.event-processing:org.wso2.carbon.event.input.adapter.mqtt.server.feature:${carbon.event.processing.version}
+                                </featureArtifactDef>
+                                <featureArtifactDef>
+                                    org.wso2.carbon.event-processing:org.wso2.carbon.event.input.adapter.kafka.server.feature:${carbon.event.processing.version}
+                                </featureArtifactDef>
+                                <featureArtifactDef>
+                                    org.wso2.carbon.event-processing:org.wso2.carbon.event.input.adapter.wso2event.server.feature:${carbon.event.processing.version}
                                 </featureArtifactDef>
 
                             </includedFeatures>
