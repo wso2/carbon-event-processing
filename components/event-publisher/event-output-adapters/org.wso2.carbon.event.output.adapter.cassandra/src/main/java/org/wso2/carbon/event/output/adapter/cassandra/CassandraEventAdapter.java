@@ -55,6 +55,13 @@ public class CassandraEventAdapter implements OutputEventAdapter {
     private ConcurrentHashMap<Integer, ConcurrentHashMap<OutputEventAdapterConfiguration, EventAdapterInfo>> tenantedCassandraClusterCache = new ConcurrentHashMap<Integer, ConcurrentHashMap<OutputEventAdapterConfiguration, EventAdapterInfo>>();
     private StringSerializer sser = new StringSerializer();
     private int tenantId;
+    private String keySpaceName;
+    private String columnFamilyName;
+    private Mutator<String> mutator;
+    private String uuid;
+    private EventAdapterInfo eventAdapterInfo;
+    private MessageInfo messageInfo;
+
 
     public CassandraEventAdapter(OutputEventAdapterConfiguration eventAdapterConfiguration,
                                  Map<String, String> globalProperties) {
@@ -119,15 +126,10 @@ public class CassandraEventAdapter implements OutputEventAdapter {
 
     @Override
     public void connect() {
-
-    }
-
-    @Override
-    public void publish(Object message, Map<String, String> dynamicProperties) {
         ConcurrentHashMap<OutputEventAdapterConfiguration, EventAdapterInfo> cassandraClusterCache = null;
-        tenantId = PrivilegedCarbonContext.getThreadLocalCarbonContext().getTenantId();
-        if (message instanceof Map) {
-            try {
+        Map<String, String> staticProperties = eventAdapterConfiguration.getStaticProperties();
+
+        try{
                 cassandraClusterCache = tenantedCassandraClusterCache.get(tenantId);
                 if (null == cassandraClusterCache) {
                     cassandraClusterCache = new ConcurrentHashMap<OutputEventAdapterConfiguration, EventAdapterInfo>();
@@ -136,24 +138,24 @@ public class CassandraEventAdapter implements OutputEventAdapter {
                     }
                 }
 
-                EventAdapterInfo eventAdapterInfo = cassandraClusterCache.get(eventAdapterConfiguration);
+                eventAdapterInfo = cassandraClusterCache.get(eventAdapterConfiguration);
                 if (null == eventAdapterInfo) {
-                    Map<String, String> properties = eventAdapterConfiguration.getStaticProperties();
+
 
                     Map<String, String> credentials = new HashMap<String, String>();
-                    credentials.put("username", properties.get(CassandraEventAdapterConstants.ADAPTER_CASSANDRA_USER_NAME));
-                    credentials.put("password", properties.get(CassandraEventAdapterConstants.ADAPTER_CASSANDRA_PASSWORD));
+                    credentials.put("username", staticProperties.get(CassandraEventAdapterConstants.ADAPTER_CASSANDRA_USER_NAME));
+                    credentials.put("password", staticProperties.get(CassandraEventAdapterConstants.ADAPTER_CASSANDRA_PASSWORD));
 
                     // cleaning existing cached copies.
-                    Cluster cluster = HFactory.getCluster(properties.get(CassandraEventAdapterConstants.ADAPTER_CASSANDRA_CLUSTER_NAME));
+                    Cluster cluster = HFactory.getCluster(staticProperties.get(CassandraEventAdapterConstants.ADAPTER_CASSANDRA_CLUSTER_NAME));
                     if (cluster != null) {
                         HFactory.shutdownCluster(cluster);
                     }
 
                     CassandraHostConfigurator chc = new CassandraHostConfigurator(
-                            properties.get(CassandraEventAdapterConstants.ADAPTER_CASSANDRA_HOSTNAME) + ":" +
-                                    properties.get(CassandraEventAdapterConstants.ADAPTER_CASSANDRA_PORT));
-                    String clusterName = properties.get(CassandraEventAdapterConstants.ADAPTER_CASSANDRA_CLUSTER_NAME);
+                            staticProperties.get(CassandraEventAdapterConstants.ADAPTER_CASSANDRA_HOSTNAME) + ":" +
+                                    staticProperties.get(CassandraEventAdapterConstants.ADAPTER_CASSANDRA_PORT));
+                    String clusterName = staticProperties.get(CassandraEventAdapterConstants.ADAPTER_CASSANDRA_CLUSTER_NAME);
 
                     cluster = HFactory.createCluster(clusterName, chc, credentials);
 
@@ -164,7 +166,7 @@ public class CassandraEventAdapter implements OutputEventAdapter {
                         HFactory.shutdownCluster(cluster);
                         return;
                     }
-                    String indexAllColumnsString = dynamicProperties.get(CassandraEventAdapterConstants.ADAPTER_CASSANDRA_INDEX_ALL_COLUMNS);
+                    String indexAllColumnsString = staticProperties.get(CassandraEventAdapterConstants.ADAPTER_CASSANDRA_INDEX_ALL_COLUMNS);
                     boolean indexAllColumns = false;
                     if (indexAllColumnsString != null && indexAllColumnsString.equals("true")) {
                         indexAllColumns = true;
@@ -177,9 +179,10 @@ public class CassandraEventAdapter implements OutputEventAdapter {
                     }
                 }
 
-                String keySpaceName = dynamicProperties.get(CassandraEventAdapterConstants.ADAPTER_CASSANDRA_KEY_SPACE_NAME);
-                String columnFamilyName = dynamicProperties.get(CassandraEventAdapterConstants.ADAPTER_CASSANDRA_COLUMN_FAMILY_NAME);
-                MessageInfo messageInfo = eventAdapterInfo.getMessageInfoMap().get(eventAdapterConfiguration);
+                keySpaceName = staticProperties.get(CassandraEventAdapterConstants.ADAPTER_CASSANDRA_KEY_SPACE_NAME);
+                columnFamilyName = staticProperties.get(CassandraEventAdapterConstants.ADAPTER_CASSANDRA_COLUMN_FAMILY_NAME);
+
+                messageInfo = eventAdapterInfo.getMessageInfoMap().get(eventAdapterConfiguration);
                 if (null == messageInfo) {
                     Keyspace keyspace = HFactory.createKeyspace(keySpaceName, eventAdapterInfo.getCluster());
                     messageInfo = new MessageInfo(keyspace);
@@ -221,8 +224,23 @@ public class CassandraEventAdapter implements OutputEventAdapter {
                 }
 
 
-                Mutator<String> mutator = HFactory.createMutator(messageInfo.getKeyspace(), sser);
-                String uuid = UUID.randomUUID().toString();
+                mutator = HFactory.createMutator(messageInfo.getKeyspace(), sser);
+                uuid = UUID.randomUUID().toString();
+            }catch (Throwable t) {
+                if (cassandraClusterCache != null) {
+                    cassandraClusterCache.remove(eventAdapterConfiguration);
+                }
+                log.error("Cannot connect to Cassandra: " + t.getMessage(), t);
+            }
+    }
+
+    @Override
+    public void publish(Object message, Map<String, String> dynamicProperties) {
+        ConcurrentHashMap<OutputEventAdapterConfiguration, EventAdapterInfo> cassandraClusterCache = null;
+        tenantId = PrivilegedCarbonContext.getThreadLocalCarbonContext().getTenantId();
+
+        if (message instanceof Map) {
+            try{
                 for (Map.Entry<String, Object> entry : ((Map<String, Object>) message).entrySet()) {
 
                     if (eventAdapterInfo.isIndexAllColumns() && !messageInfo.getColumnNames().contains(entry.getKey())) {
@@ -246,9 +264,10 @@ public class CassandraEventAdapter implements OutputEventAdapter {
                 if (cassandraClusterCache != null) {
                     cassandraClusterCache.remove(eventAdapterConfiguration);
                 }
-                log.error("Cannot connect to Cassandra: " + t.getMessage(), t);
+                log.error("Cannot publish message to Cassandra: " + t.getMessage(), t);
             }
         }
+
     }
 
     @Override
