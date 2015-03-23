@@ -785,7 +785,7 @@
 <tr>
     <td class="buttonRow">
         <input type="button" value="<fmt:message key="add.event.publisher"/>"
-               onclick="addEventPublisher(document.getElementById('addEventPublisher') ,'<%=streamId%>')"/>
+               onclick="addEventPublisher(document.getElementById('addEventPublisher') ,document.getElementById('streamIdFilter')[document.getElementById('streamIdFilter').selectedIndex].value)"/>
     </td>
 </tr>
 <tr style="display: none">
