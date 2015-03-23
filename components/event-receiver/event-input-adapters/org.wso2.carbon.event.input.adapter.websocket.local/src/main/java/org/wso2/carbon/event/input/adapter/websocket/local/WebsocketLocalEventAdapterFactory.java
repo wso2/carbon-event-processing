@@ -6,7 +6,7 @@
  * in compliance with the License.
  * You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ *   http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
@@ -24,7 +24,6 @@ import org.wso2.carbon.event.input.adapter.websocket.local.internal.util.Websock
 import java.util.*;
 
 public class WebsocketLocalEventAdapterFactory extends InputEventAdapterFactory {
-    private ResourceBundle resourceBundle = ResourceBundle.getBundle("org.wso2.carbon.event.input.adapter.websocket.local.i18n.Resources", Locale.getDefault());
 
     @Override
     public String getType() {
