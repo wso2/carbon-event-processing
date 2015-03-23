@@ -117,11 +117,24 @@
 
         <dependency>
             <groupId>org.wso2.carbon.event-processing</groupId>
-            <artifactId>org.wso2.carbon.event.output.adapter.cassandra.server.feature</artifactId>
+            <artifactId>org.wso2.carbon.event.output.adapter.mqtt.server.feature</artifactId>
             <type>zip</type>
             <version>${carbon.event.processing.version}</version>
         </dependency>
 
+        <dependency>
+            <groupId>org.wso2.carbon.event-processing</groupId>
+            <artifactId>org.wso2.carbon.event.output.adapter.sms.server.feature</artifactId>
+            <type>zip</type>
+            <version>${carbon.event.processing.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.wso2.carbon.event-processing</groupId>
+            <artifactId>org.wso2.carbon.event.output.adapter.cassandra.server.feature</artifactId>
+            <type>zip</type>
+            <version>${carbon.event.processing.version}</version>
+        </dependency>
 
     </dependencies>
 
@@ -178,6 +191,12 @@
                                 </featureArtifactDef>
                                 <featureArtifactDef>
                                     org.wso2.carbon.event-processing:org.wso2.carbon.event.output.adapter.wso2event.server.feature:${carbon.event.processing.version}
+                                </featureArtifactDef>
+                                <featureArtifactDef>
+                                    org.wso2.carbon.event-processing:org.wso2.carbon.event.output.adapter.mqtt.server.feature:${carbon.event.processing.version}
+                                </featureArtifactDef>
+                                <featureArtifactDef>
+                                    org.wso2.carbon.event-processing:org.wso2.carbon.event.output.adapter.sms.server.feature:${carbon.event.processing.version}
                                 </featureArtifactDef>
                                 <featureArtifactDef>
                                     org.wso2.carbon.event-processing:org.wso2.carbon.event.output.adapter.cassandra.server.feature:${carbon.event.processing.version}
