@@ -63,6 +63,7 @@ public class FileEventAdapter implements InputEventAdapter {
             int minThread;
             int maxThread;
             long defaultKeepAliveTime;
+            int jobQueueSize;
 
             //If global properties are available those will be assigned else constant values will be assigned
             if (globalProperties.get(FileEventAdapterConstants.MIN_THREAD_NAME) != null) {
@@ -84,8 +85,15 @@ public class FileEventAdapter implements InputEventAdapter {
                 defaultKeepAliveTime = FileEventAdapterConstants.DEFAULT_KEEP_ALIVE_TIME;
             }
 
+            if (globalProperties.get(FileEventAdapterConstants.JOB_QUEUE_SIZE_NAME) != null) {
+                jobQueueSize = Integer.parseInt(globalProperties.get(
+                        FileEventAdapterConstants.JOB_QUEUE_SIZE_NAME));
+            } else {
+                jobQueueSize = FileEventAdapterConstants.JOB_QUEUE_SIZE;
+            }
+
             threadPoolExecutor = new ThreadPoolExecutor(minThread, maxThread, defaultKeepAliveTime,
-                    TimeUnit.SECONDS, new LinkedBlockingQueue<Runnable>(1000));
+                    TimeUnit.SECONDS, new LinkedBlockingQueue<Runnable>(jobQueueSize));
         }
     }
 

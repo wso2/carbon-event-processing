@@ -74,11 +74,6 @@ public class JMSEventAdapterFactory extends InputEventAdapterFactory {
                 JMSEventAdapterConstants.JAVA_NAMING_PROVIDER_URL_HINT));
         propertyList.add(javaNamingProviderUrlProperty);
 
-        // JNDI Username
-        Property userNameProperty = new Property(JMSEventAdapterConstants.ADAPTER_JMS_USERNAME);
-        userNameProperty.setDisplayName(
-                resourceBundle.getString(JMSEventAdapterConstants.ADAPTER_JMS_USERNAME));
-        propertyList.add(userNameProperty);
 
         // JNDI Password
         Property passwordProperty = new Property(JMSEventAdapterConstants.ADAPTER_JMS_PASSWORD);
@@ -86,6 +81,12 @@ public class JMSEventAdapterFactory extends InputEventAdapterFactory {
         passwordProperty.setDisplayName(
                 resourceBundle.getString(JMSEventAdapterConstants.ADAPTER_JMS_PASSWORD));
         propertyList.add(passwordProperty);
+
+        // JNDI Username
+        Property userNameProperty = new Property(JMSEventAdapterConstants.ADAPTER_JMS_USERNAME);
+        userNameProperty.setDisplayName(
+                resourceBundle.getString(JMSEventAdapterConstants.ADAPTER_JMS_USERNAME));
+        propertyList.add(userNameProperty);
 
         // Connection Factory JNDI Name
         Property connectionFactoryNameProperty = new Property(
