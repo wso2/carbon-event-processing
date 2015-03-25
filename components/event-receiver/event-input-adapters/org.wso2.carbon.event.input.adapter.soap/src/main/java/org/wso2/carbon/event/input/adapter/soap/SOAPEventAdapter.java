@@ -43,15 +43,11 @@ public final class SOAPEventAdapter implements InputEventAdapter {
     private InputEventAdapterListener eventAdaptorListener;
     private final String id = UUID.randomUUID().toString();
 
-//    public static ExecutorService executorService = new ThreadPoolExecutor(SOAPEventAdapterConstants.ADAPTER_MIN_THREAD_POOL_SIZE,
-//            SOAPEventAdapterConstants.ADAPTER_MAX_THREAD_POOL_SIZE, SOAPEventAdapterConstants.DEFAULT_KEEP_ALIVE_TIME, TimeUnit.SECONDS,
-//            new LinkedBlockingQueue<Runnable>(SOAPEventAdapterConstants.ADAPTER_EXECUTOR_JOB_QUEUE_SIZE));
-
-    public SOAPEventAdapter(InputEventAdapterConfiguration eventAdapterConfiguration, Map<String, String> globalProperties) {
+    public SOAPEventAdapter(InputEventAdapterConfiguration eventAdapterConfiguration,
+                            Map<String, String> globalProperties) {
         this.eventAdapterConfiguration = eventAdapterConfiguration;
         this.globalProperties = globalProperties;
     }
-
 
     @Override
     public void init(InputEventAdapterListener eventAdaptorListener) throws InputEventAdapterException {
@@ -66,23 +62,27 @@ public final class SOAPEventAdapter implements InputEventAdapter {
     @Override
     public void connect() {
         int tenantId = PrivilegedCarbonContext.getThreadLocalCarbonContext().getTenantId();
-        String operation = eventAdapterConfiguration.getProperties().get(SOAPEventAdapterConstants.ADAPTER_MESSAGE_OPERATION_NAME);
+
         try {
 
-            Axis2ServiceManager.registerService(eventAdapterConfiguration.getName(), operation, this, EventAdapterUtil.getAxisConfiguration());
+            Axis2ServiceManager.registerService(eventAdapterConfiguration.getName(), this,
+                    EventAdapterUtil.getAxisConfiguration());
         } catch (AxisFault axisFault) {
-            throw new InputEventAdapterRuntimeException("Cannot register Input Adapter " + eventAdapterConfiguration.getName() + " for the operation " + operation + " on tenant " + tenantId, axisFault);
+            throw new InputEventAdapterRuntimeException("Cannot register Input Adapter " +
+                    eventAdapterConfiguration.getName() + " on tenant " + tenantId, axisFault);
         }
     }
 
     @Override
     public void disconnect() {
         int tenantId = PrivilegedCarbonContext.getThreadLocalCarbonContext().getTenantId();
-        String operation = eventAdapterConfiguration.getProperties().get(SOAPEventAdapterConstants.ADAPTER_MESSAGE_OPERATION_NAME);
+
         try {
-            Axis2ServiceManager.unregisterService(eventAdapterConfiguration.getName(), operation, this, EventAdapterUtil.getAxisConfiguration());
+            Axis2ServiceManager.unregisterService(eventAdapterConfiguration.getName(), this,
+                    EventAdapterUtil.getAxisConfiguration());
         } catch (AxisFault axisFault) {
-            throw new InputEventAdapterRuntimeException("Cannot unregister Input Adapter " + eventAdapterConfiguration.getName() + " for the operation " + operation + " on tenant " + tenantId, axisFault);
+            throw new InputEventAdapterRuntimeException("Cannot unregister Input Adapter " +
+                    eventAdapterConfiguration.getName() + " on tenant " + tenantId, axisFault);
         }
     }
 

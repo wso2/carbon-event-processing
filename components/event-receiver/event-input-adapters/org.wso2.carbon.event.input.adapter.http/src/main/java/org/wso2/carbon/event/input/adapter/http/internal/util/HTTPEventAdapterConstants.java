@@ -21,8 +21,6 @@ public final class HTTPEventAdapterConstants {
     }
 
     public static final String ADAPTER_TYPE_HTTP = "http";
-    public static final String ADAPTER_MESSAGE_TOPIC = "topic";
-
     public static final int ADAPTER_MIN_THREAD_POOL_SIZE = 8;
     public static final int ADAPTER_MAX_THREAD_POOL_SIZE = 100;
     public static final int ADAPTER_EXECUTOR_JOB_QUEUE_SIZE = 10000;
@@ -30,6 +28,10 @@ public final class HTTPEventAdapterConstants {
     public static final String ENDPOINT_PREFIX = "/endpoints/";
     public static final String ENDPOINT_URL_SEPARATOR = "/";
     public static final String ENDPOINT_TENANT_KEY = "t";
+    public static final String ADAPTER_MIN_THREAD_POOL_SIZE_NAME = "minThread";
+    public static final String ADAPTER_MAX_THREAD_POOL_SIZE_NAME = "maxThread";
+    public static final String DEFAULT_KEEP_ALIVE_TIME_NAME = "defaultKeepAliveTime";
+    public static final String ADAPTER_EXECUTOR_JOB_QUEUE_SIZE_NAME = "jobQueueSize";
 
 
 }

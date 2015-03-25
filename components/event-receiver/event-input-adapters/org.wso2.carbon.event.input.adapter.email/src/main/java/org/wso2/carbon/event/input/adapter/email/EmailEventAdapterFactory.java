@@ -84,6 +84,8 @@ public class EmailEventAdapterFactory extends InputEventAdapterFactory {
         host.setDisplayName(
                 resourceBundle.getString(EmailEventAdapterConstants.ADAPTER_CONF_RECEIVING_EMAIL_PROTOCOL_HOST));
         host.setRequired(true);
+        host.setHint(
+                resourceBundle.getString(EmailEventAdapterConstants.ADAPTER_CONF_RECEIVING_EMAIL_PROTOCOL_HOST_HINT));
         propertyList.add(host);
 
         // set receiving mail host
@@ -91,6 +93,8 @@ public class EmailEventAdapterFactory extends InputEventAdapterFactory {
         port.setDisplayName(
                 resourceBundle.getString(EmailEventAdapterConstants.ADAPTER_CONF_RECEIVING_EMAIL_PROTOCOL_PORT));
         port.setRequired(true);
+        port.setHint(
+                resourceBundle.getString(EmailEventAdapterConstants.ADAPTER_CONF_RECEIVING_EMAIL_PROTOCOL_PORT_HINT));
         propertyList.add(port);
 
         // set receiving mail username
@@ -98,6 +102,8 @@ public class EmailEventAdapterFactory extends InputEventAdapterFactory {
         userName.setDisplayName(
                 resourceBundle.getString(EmailEventAdapterConstants.ADAPTER_CONF_RECEIVING_EMAIL_USERNAME));
         userName.setRequired(true);
+        userName.setHint(
+                resourceBundle.getString(EmailEventAdapterConstants.ADAPTER_CONF_RECEIVING_EMAIL_USERNAME_HINT));
         propertyList.add(userName);
 
         // set receiving mail password
@@ -106,6 +112,8 @@ public class EmailEventAdapterFactory extends InputEventAdapterFactory {
                 resourceBundle.getString(EmailEventAdapterConstants.ADAPTER_CONF_RECEIVING_EMAIL_PASSWORD));
         password.setRequired(true);
         password.setSecured(true);
+        password.setHint(
+                resourceBundle.getString(EmailEventAdapterConstants.ADAPTER_CONF_RECEIVING_EMAIL_PASSWORD_HINT));
         propertyList.add(password);
 
         // set receiving mail socket factory class

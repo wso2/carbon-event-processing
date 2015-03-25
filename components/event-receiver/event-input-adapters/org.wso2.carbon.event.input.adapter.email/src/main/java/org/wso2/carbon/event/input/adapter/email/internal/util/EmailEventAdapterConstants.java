@@ -32,9 +32,13 @@ public final class EmailEventAdapterConstants {
     public static final String ADAPTER_CONF_RECEIVING_EMAIL_POLL_INTERVAL = "transport.PollInterval";
     public static final String ADAPTER_CONF_RECEIVING_EMAIL_POLL_INTERVAL_HINT = "transport.PollInterval.hint";
     public static final String ADAPTER_CONF_RECEIVING_EMAIL_PROTOCOL_HOST = "mail.protocol.host";
+    public static final String ADAPTER_CONF_RECEIVING_EMAIL_PROTOCOL_HOST_HINT = "mail.protocol.host.hint";
     public static final String ADAPTER_CONF_RECEIVING_EMAIL_PROTOCOL_PORT = "mail.protocol.port";
+    public static final String ADAPTER_CONF_RECEIVING_EMAIL_PROTOCOL_PORT_HINT = "mail.protocol.port.hint";
     public static final String ADAPTER_CONF_RECEIVING_EMAIL_USERNAME = "mail.protocol.user";
+    public static final String ADAPTER_CONF_RECEIVING_EMAIL_USERNAME_HINT = "mail.protocol.user.hint";
     public static final String ADAPTER_CONF_RECEIVING_EMAIL_PASSWORD = "mail.protocol.password";
+    public static final String ADAPTER_CONF_RECEIVING_EMAIL_PASSWORD_HINT = "mail.protocol.password.hint";
     public static final String ADAPTER_CONF_RECEIVING_EMAIL_SOCKET_FACTORY_CLASS = "mail.protocol.socketFactory.class";
     public static final String ADAPTER_CONF_RECEIVING_EMAIL_SOCKET_FACTORY_FALLBACK =
             "mail.protocol.socketFactory.fallback";

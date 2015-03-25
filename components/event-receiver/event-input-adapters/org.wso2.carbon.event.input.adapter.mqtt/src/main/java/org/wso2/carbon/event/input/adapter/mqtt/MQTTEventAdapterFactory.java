@@ -55,16 +55,6 @@ public class MQTTEventAdapterFactory extends InputEventAdapterFactory {
         brokerUrl.setHint(resourceBundle.getString(MQTTEventAdapterConstants.ADAPTER_CONF_URL_HINT));
         propertyList.add(brokerUrl);
 
-
-        //Broker Username
-        Property userName = new Property(MQTTEventAdapterConstants.ADAPTER_CONF_USERNAME);
-        userName.setDisplayName(
-                resourceBundle.getString(MQTTEventAdapterConstants.ADAPTER_CONF_USERNAME));
-        userName.setRequired(false);
-        userName.setHint(
-                resourceBundle.getString(MQTTEventAdapterConstants.ADAPTER_CONF_USERNAME_HINT));
-        propertyList.add(userName);
-
         //Broker Password
         Property password = new Property(MQTTEventAdapterConstants.ADAPTER_CONF_PASSWORD);
         password.setDisplayName(
@@ -74,6 +64,14 @@ public class MQTTEventAdapterFactory extends InputEventAdapterFactory {
                 resourceBundle.getString(MQTTEventAdapterConstants.ADAPTER_CONF_PASSWORD_HINT));
         propertyList.add(password);
 
+        //Broker Username
+        Property userName = new Property(MQTTEventAdapterConstants.ADAPTER_CONF_USERNAME);
+        userName.setDisplayName(
+                resourceBundle.getString(MQTTEventAdapterConstants.ADAPTER_CONF_USERNAME));
+        userName.setRequired(false);
+        userName.setHint(
+                resourceBundle.getString(MQTTEventAdapterConstants.ADAPTER_CONF_USERNAME_HINT));
+        propertyList.add(userName);
 
         //Broker clear session
         Property clearSession = new Property(MQTTEventAdapterConstants.ADAPTER_CONF_CLEAN_SESSION);
@@ -98,6 +96,8 @@ public class MQTTEventAdapterFactory extends InputEventAdapterFactory {
         topicProperty.setDisplayName(
                 resourceBundle.getString(MQTTEventAdapterConstants.ADAPTER_MESSAGE_TOPIC));
         topicProperty.setRequired(true);
+        topicProperty.setHint(
+                resourceBundle.getString(MQTTEventAdapterConstants.ADAPTER_MESSAGE_TOPIC_HINT));
         propertyList.add(topicProperty);
 
         // set clientId
@@ -105,6 +105,8 @@ public class MQTTEventAdapterFactory extends InputEventAdapterFactory {
         clientId.setDisplayName(
                 resourceBundle.getString(MQTTEventAdapterConstants.ADAPTER_MESSAGE_CLIENTID));
         clientId.setRequired(true);
+        clientId.setHint(
+                resourceBundle.getString(MQTTEventAdapterConstants.ADAPTER_MESSAGE_CLIENTID_HINT));
         propertyList.add(clientId);
 
         return propertyList;
