@@ -498,4 +498,88 @@ function addEventPublisher(form, streamNameWithVersion) {
     }
 }
 
+function createImportedStreamDefinition() {
+    new Ajax.Request('../eventstream/popup_create_event_stream_ajaxprocessor.jsp', {
+        method:'POST',
+        asynchronous:false,
+        parameters:{callback:"inflow"},
+        onSuccess:function (data) {
+            showCustomPopupDialog(data.responseText, "Create Stream Definition", "80%", "", "", "90%");
+        }
+    });
+}
+
+/**
+ * Display the Info Message inside a jQuery UI's dialog widget.
+ * @method showPopupDialog
+ * @param {String} message to display
+ * @return {Boolean}
+ */
+function showCustomPopupDialog(message, title, windowHight, okButton, callback, windowWidth) {
+    var strDialog = "<div id='custom_dialog' title='" + title + "'><div id='popupDialog'></div>" + message + "</div>";
+    var requiredWidth = 750;
+    if (windowWidth) {
+        requiredWidth = windowWidth;
+    }
+    var func = function () {
+        jQuery("#custom_dcontainer").hide();
+        jQuery("#custom_dcontainer").html(strDialog);
+        if (okButton) {
+            jQuery("#custom_dialog").dialog({
+                close:function () {
+                    jQuery(this).dialog('destroy').remove();
+                    jQuery("#custom_dcontainer").empty();
+                    return false;
+                },
+                buttons:{
+                    "OK":function () {
+                        if (callback && typeof callback == "function") {
+                            callback();
+                        }
+                        jQuery(this).dialog("destroy").remove();
+                        jQuery("#custom_dcontainer").empty();
+                        return false;
+                    }
+                },
+                autoOpen:false,
+                height:windowHight,
+                width:requiredWidth,
+                minHeight:windowHight,
+                minWidth:requiredWidth,
+                modal:true
+            });
+        } else {
+            jQuery("#custom_dialog").dialog({
+                close:function () {
+                    if (callback && typeof callback == "function") {
+                        callback();
+                    }
+                    jQuery(this).dialog('destroy').remove();
+                    jQuery("#custom_dcontainer").empty();
+                    return false;
+                },
+                autoOpen:false,
+                height:windowHight,
+                width:requiredWidth,
+                minHeight:windowHight,
+                minWidth:requiredWidth,
+                modal:true
+            });
+        }
+
+        jQuery('.ui-dialog-titlebar-close').click(function () {
+            jQuery('#custom_dialog').dialog("destroy").remove();
+            jQuery("#custom_dcontainer").empty();
+            jQuery("#custom_dcontainer").html('');
+        });
+        jQuery("#custom_dcontainer").show();
+        jQuery("#custom_dialog").dialog("open");
+    };
+    if (!pageLoaded) {
+        jQuery(document).ready(func);
+    } else {
+        func();
+    }
+
+}
 

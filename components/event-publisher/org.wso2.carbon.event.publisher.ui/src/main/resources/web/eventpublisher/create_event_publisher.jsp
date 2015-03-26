@@ -45,6 +45,7 @@
 
 </script>
 
+<div id="custom_dcontainer" style="display:none"></div>
 <div id="middle">
 <h2><fmt:message key="title.event.publisher.create"/></h2>
 
@@ -808,7 +809,7 @@
                         <span style="float: left; position: relative; margin-top: 5px;">
                             <fmt:message key="event.receiver.error.no.stream"/>
                         </span>
-                    <a href="../eventstream/create_event_stream.jsp?ordinal=1"
+                    <a onclick="createImportedStreamDefinition()",
                        style="background-image:url(images/add.gif);"
                        class="icon-link">
                         Add Event Stream
