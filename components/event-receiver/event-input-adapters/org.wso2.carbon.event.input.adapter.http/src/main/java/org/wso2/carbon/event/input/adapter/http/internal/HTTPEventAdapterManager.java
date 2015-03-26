@@ -32,9 +32,6 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 
-/**
- * Created on 3/5/15.
- */
 public final class HTTPEventAdapterManager {
     public static Map<String, List<HTTPEventAdapter>> ADAPTER_MAP = new ConcurrentHashMap<String, List<HTTPEventAdapter>>();
 
@@ -42,16 +39,18 @@ public final class HTTPEventAdapterManager {
 
     }
 
-    public static synchronized void registerDynamicEndpoint(String adapterName, String topic, HTTPEventAdapter httpEventAdapter) {
+    public static synchronized void registerDynamicEndpoint(String adapterName, HTTPEventAdapter httpEventAdapter) {
 
         String tenantDomain = PrivilegedCarbonContext.getThreadLocalCarbonContext().getTenantDomain();
         int tenantId = PrivilegedCarbonContext.getThreadLocalCarbonContext().getTenantId();
 
         String endpoint;
         if (MultitenantConstants.SUPER_TENANT_DOMAIN_NAME.equals(tenantDomain)) {
-            endpoint = HTTPEventAdapterConstants.ENDPOINT_PREFIX + adapterName + HTTPEventAdapterConstants.ENDPOINT_URL_SEPARATOR + topic;
+            endpoint = HTTPEventAdapterConstants.ENDPOINT_PREFIX + adapterName;
         } else {
-            endpoint = HTTPEventAdapterConstants.ENDPOINT_PREFIX + HTTPEventAdapterConstants.ENDPOINT_TENANT_KEY + HTTPEventAdapterConstants.ENDPOINT_URL_SEPARATOR + tenantDomain + HTTPEventAdapterConstants.ENDPOINT_URL_SEPARATOR + adapterName + HTTPEventAdapterConstants.ENDPOINT_URL_SEPARATOR + topic;
+            endpoint = HTTPEventAdapterConstants.ENDPOINT_PREFIX + HTTPEventAdapterConstants.ENDPOINT_TENANT_KEY
+                    + HTTPEventAdapterConstants.ENDPOINT_URL_SEPARATOR + tenantDomain
+                    + HTTPEventAdapterConstants.ENDPOINT_URL_SEPARATOR + adapterName;
         }
         List<HTTPEventAdapter> adapterList = ADAPTER_MAP.get(endpoint);
         if (adapterList == null) {
@@ -75,14 +74,16 @@ public final class HTTPEventAdapterManager {
         }
     }
 
-    public static void unregisterDynamicEndpoint(String adapterName, String topic, HTTPEventAdapter httpEventAdapter) {
+    public static void unregisterDynamicEndpoint(String adapterName, HTTPEventAdapter httpEventAdapter) {
         HttpService httpService = HTTPEventAdapterServiceValueHolder.getHTTPService();
         String tenantDomain = PrivilegedCarbonContext.getThreadLocalCarbonContext().getTenantDomain();
         String endpoint;
         if (MultitenantConstants.SUPER_TENANT_DOMAIN_NAME.equals(tenantDomain)) {
-            endpoint = HTTPEventAdapterConstants.ENDPOINT_PREFIX + adapterName + HTTPEventAdapterConstants.ENDPOINT_URL_SEPARATOR + topic;
+            endpoint = HTTPEventAdapterConstants.ENDPOINT_PREFIX + adapterName;
         } else {
-            endpoint = HTTPEventAdapterConstants.ENDPOINT_PREFIX + HTTPEventAdapterConstants.ENDPOINT_TENANT_KEY + HTTPEventAdapterConstants.ENDPOINT_URL_SEPARATOR + tenantDomain + HTTPEventAdapterConstants.ENDPOINT_URL_SEPARATOR + adapterName + HTTPEventAdapterConstants.ENDPOINT_URL_SEPARATOR + topic;
+            endpoint = HTTPEventAdapterConstants.ENDPOINT_PREFIX + HTTPEventAdapterConstants.ENDPOINT_TENANT_KEY
+                    + HTTPEventAdapterConstants.ENDPOINT_URL_SEPARATOR
+                    + tenantDomain + HTTPEventAdapterConstants.ENDPOINT_URL_SEPARATOR + adapterName;
         }
         List<HTTPEventAdapter> adapterList = ADAPTER_MAP.get(endpoint);
         if (adapterList != null) {

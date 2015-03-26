@@ -93,13 +93,6 @@ public class CassandraEventAdapterFactory extends OutputEventAdapterFactory {
         port.setRequired(true);
         propertyList.add(port);
 
-        return propertyList;
-    }
-
-    @Override
-    public List<Property> getDynamicPropertyList() {
-        List<Property> propertyList = new ArrayList<Property>();
-
         // key space
         Property keySpace = new Property(CassandraEventAdapterConstants.ADAPTER_CASSANDRA_KEY_SPACE_NAME);
         keySpace.setDisplayName(
@@ -115,6 +108,11 @@ public class CassandraEventAdapterFactory extends OutputEventAdapterFactory {
         propertyList.add(columnFamily);
 
         return propertyList;
+    }
+
+    @Override
+    public List<Property> getDynamicPropertyList() {
+        return null;
     }
 
     @Override

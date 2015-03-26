@@ -22,7 +22,8 @@ import java.util.*;
 
 
 public class HTTPEventAdapterFactory extends InputEventAdapterFactory {
-    private ResourceBundle resourceBundle = ResourceBundle.getBundle("org.wso2.carbon.event.input.adapter.http.i18n.Resources", Locale.getDefault());
+    private ResourceBundle resourceBundle =
+            ResourceBundle.getBundle("org.wso2.carbon.event.input.adapter.http.i18n.Resources", Locale.getDefault());
 
     @Override
     public String getType() {
@@ -40,19 +41,12 @@ public class HTTPEventAdapterFactory extends InputEventAdapterFactory {
 
     @Override
     public List<Property> getPropertyList() {
-        List<Property> propertyList = new ArrayList<Property>();
-
-        // set topic
-        Property topicProperty = new Property(HTTPEventAdapterConstants.ADAPTER_MESSAGE_TOPIC);
-        topicProperty.setDisplayName(
-                resourceBundle.getString(HTTPEventAdapterConstants.ADAPTER_MESSAGE_TOPIC));
-        topicProperty.setRequired(true);
-        propertyList.add(topicProperty);
-        return propertyList;
+        return null;
     }
 
     @Override
-    public InputEventAdapter createEventAdapter(InputEventAdapterConfiguration eventAdapterConfiguration, Map<String, String> globalProperties) {
-        return new HTTPEventAdapter(eventAdapterConfiguration,globalProperties);
+    public InputEventAdapter createEventAdapter(InputEventAdapterConfiguration eventAdapterConfiguration,
+                                                Map<String, String> globalProperties) {
+        return new HTTPEventAdapter(eventAdapterConfiguration, globalProperties);
     }
 }

@@ -24,10 +24,6 @@ public final class SOAPEventAdapterConstants {
     }
 
     public static final String ADAPTER_TYPE_SOAP = "soap";
-    public static final String ADAPTER_MESSAGE_OPERATION_NAME = "operation";
-    public static final String ADAPTER_MESSAGE_HINT_OPERATION_NAME = "operation.hint";
-    
-
     public static final int ADAPTER_MIN_THREAD_POOL_SIZE = 8;
     public static final int ADAPTER_MAX_THREAD_POOL_SIZE = 100;
     public static final int ADAPTER_EXECUTOR_JOB_QUEUE_SIZE = 10000;
@@ -35,6 +31,7 @@ public final class SOAPEventAdapterConstants {
     public static final String ENDPOINT_PREFIX = "/endpoints/";
     public static final String SEPARATOR = "/";
     public static final String ENDPOINT_TENANT_KEY = "t";
+    public static final String OPERATION_NAME = "receiver";
 
 
 }
