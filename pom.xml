@@ -348,6 +348,12 @@
                 <scope>provided</scope>
             </dependency>
             <dependency>
+                <artifactId>org.wso2.carbon.event.output.adapter.ui</artifactId>
+                <groupId>org.wso2.carbon.event-processing</groupId>
+                <version>${carbon.event.processing.version}</version>
+                <scope>provided</scope>
+            </dependency>
+            <dependency>
                 <groupId>org.apache.httpcomponents</groupId>
                 <artifactId>httpcore</artifactId>
                 <version>${apache.httpcore.version}</version>
