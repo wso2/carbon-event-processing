@@ -25,6 +25,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.wso2.carbon.context.PrivilegedCarbonContext;
 import org.wso2.carbon.event.output.adapter.ui.UIOutputCallbackControllerService;
+import util.UIConstants;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.QueryParam;
@@ -69,7 +70,7 @@ public class TenantEventRetrievalEndpoint {
         carbonContext.setTenantDomain(tdomain,true);
         tenantId = carbonContext.getTenantId();
 
-        String streamId = streamName + ":" + version;
+        String streamId = streamName + UIConstants.ADAPTER_UI_COLON + version;
 
         JsonObject eventDetails = uiOutputCallbackControllerService.retrieveEvents(tenantId, streamName, version,
                 lastUpdatedTime);

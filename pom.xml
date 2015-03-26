@@ -320,6 +320,11 @@
                 <artifactId>antlr4-runtime</artifactId>
                 <version>${antlr.version}</version>
             </dependency>
+            <dependency>
+                <groupId>com.sun.jersey</groupId>
+                <artifactId>jersey-server</artifactId>
+                <version>${jersey.version}</version>
+            </dependency>
             <!--third party dependencies stop-->
 
             <!--carbon event processing dependencies start-->
@@ -1268,6 +1273,7 @@
         <javax.websocket.version>1.0</javax.websocket.version>
         <snakeyaml.version>1.11</snakeyaml.version>
         <antlr.version>4.5</antlr.version>
+        <jersey.version>1.8</jersey.version>
 
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.scm.id>my-scm-server</project.scm.id>

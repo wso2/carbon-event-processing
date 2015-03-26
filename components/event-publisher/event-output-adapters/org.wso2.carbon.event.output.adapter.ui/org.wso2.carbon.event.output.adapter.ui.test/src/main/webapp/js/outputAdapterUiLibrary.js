@@ -1,7 +1,7 @@
 /*
  *
  *
- *  Copyright (c) 2014-2015, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
+ *  Copyright (c) 2015, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
  *
  *  WSO2 Inc. licenses this file to you under the Apache License,
  *  Version 2.0 (the "License"); you may not use this file except
@@ -36,10 +36,9 @@ var CONSTANTS = {
     processModeHTTP : 'HTTP',
     processModeWebSocket : 'WEBSOCKET',
     processModeAuto : 'AUTO',
-    superTenantId : 'carbon.super'
-
-
-
+    superTenantId : 'carbon.super',
+    websocketWaitTime : 1000,
+    websocketTimeAppender : 400
 };
 
 
@@ -169,7 +168,7 @@ var webSocketOnError = function (err) {
 /**
  * Gracefully increments the connection retry
  */
-var waitTime = 1000;
+var waitTime = CONSTANTS.websocketWaitTime;
 function waitForSocketConnection(socket, callback){
     setTimeout(
         function () {
@@ -182,7 +181,7 @@ function waitForSocketConnection(socket, callback){
                 return;
             } else {
                 websocket = new WebSocket(webSocketUrl);
-                waitTime += 400;
+                waitTime += CONSTANTS.websocketTimeAppender;
                 waitForSocketConnection(websocket, callback);
             }
         }, waitTime);
@@ -202,7 +201,7 @@ function startPoll(){
             $.getJSON(httpUrl, function(responseText) {
                 if(firstPollingAttempt){
                     /*var data = $("textarea#idConsole").val();
-                    $("textarea#idConsole").val(data + "Successfully connected to HTTP.");*/
+                     $("textarea#idConsole").val(data + "Successfully connected to HTTP.");*/
                     firstPollingAttempt = false;
                 }
                 if($.parseJSON(responseText.eventsExists)){
@@ -213,10 +212,10 @@ function startPoll(){
                 }
                 startPoll();
             })
-            .fail(function(errorData) {
-                var errorData = JSON.parse(errorData.responseText);
+                .fail(function(errorData) {
+                    var errorData = JSON.parse(errorData.responseText);
                     onErrorFunction(errorData.error);
-            });
+                });
         }, polingInterval);
     })()
 }

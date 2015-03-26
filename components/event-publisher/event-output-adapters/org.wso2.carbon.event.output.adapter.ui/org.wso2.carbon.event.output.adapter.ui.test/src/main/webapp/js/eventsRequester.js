@@ -1,7 +1,7 @@
 /*
  *
  *
- *  Copyright (c) 2014-2015, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
+ *  Copyright (c) 2015, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
  *
  *  WSO2 Inc. licenses this file to you under the Apache License,
  *  Version 2.0 (the "License"); you may not use this file except
@@ -32,7 +32,9 @@ var CONSTANTS = {
     processModeHTTP : 'HTTP',
     processModeWebSocket : 'WEBSOCKET',
     processModeAuto : 'AUTO',
-    superTenantId : 'carbon.super'
+    superTenantId : 'carbon.super',
+    websocketWaitTime : 1000,
+    websocketTimeAppender : 400
 };
 
 var websocket = null;
@@ -113,11 +115,11 @@ function startPoll(){
                 }
                 startPoll();
             })
-            .fail(function(errorData) {
-                var data = $("textarea#idConsole").val();
-                var errorData = JSON.parse(errorData.responseText);
-                $("textarea#idConsole").val(data + errorData.error + "\n");
-            });
+                .fail(function(errorData) {
+                    var data = $("textarea#idConsole").val();
+                    var errorData = JSON.parse(errorData.responseText);
+                    $("textarea#idConsole").val(data + errorData.error + "\n");
+                });
         }, polingInterval);
     })()
 }
@@ -186,7 +188,7 @@ var webSocketOnError = function (err) {
 /**
  * Gracefully increments the connection retry
  */
-var waitTime = 1000;
+var waitTime = CONSTANTS.websocketWaitTime;
 function waitForSocketConnection(socket, callback){
     setTimeout(
         function () {
@@ -200,7 +202,7 @@ function waitForSocketConnection(socket, callback){
                 return;
             } else {
                 websocket = new WebSocket(webSocketUrl);
-                waitTime += 400;
+                waitTime += CONSTANTS.websocketTimeAppender;
                 waitForSocketConnection(websocket, callback);
             }
         }, waitTime);
