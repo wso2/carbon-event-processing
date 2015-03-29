@@ -582,4 +582,3 @@ function showCustomPopupDialog(message, title, windowHight, okButton, callback, 
     }
 
 }
-

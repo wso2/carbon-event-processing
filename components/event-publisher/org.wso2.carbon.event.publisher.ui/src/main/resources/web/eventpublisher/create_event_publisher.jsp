@@ -29,11 +29,14 @@
 
 <fmt:bundle basename="org.wso2.carbon.event.publisher.ui.i18n.Resources">
 <script type="text/javascript" src="../eventpublisher/js/event_publisher.js"></script>
+<script type="text/javascript" src="../eventpublisher/js/create_eventPublisher_helper.js"></script>
 <script type="text/javascript" src="../eventpublisher/js/registry-browser.js"></script>
+<link rel="stylesheet" href="../eventpublisher/css/eventPublisher.css"/>
 
 <script type="text/javascript" src="../resources/js/resource_util.js"></script>
 <jsp:include page="../resources/resources-i18n-ajaxprocessor.jsp"/>
 <link rel="stylesheet" type="text/css" href="../resources/css/registry.css"/>
+<link rel="stylesheet" href="../eventpublisher/css/codemirror.css"/>
 <script type="text/javascript" src="../ajax/js/prototype.js"></script>
 <script type="text/javascript"
         src="../eventpublisher/js/create_eventPublisher_helper.js"></script>
