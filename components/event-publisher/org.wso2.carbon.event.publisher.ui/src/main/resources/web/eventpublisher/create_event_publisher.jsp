@@ -29,11 +29,14 @@
 
 <fmt:bundle basename="org.wso2.carbon.event.publisher.ui.i18n.Resources">
 <script type="text/javascript" src="../eventpublisher/js/event_publisher.js"></script>
+<script type="text/javascript" src="../eventpublisher/js/create_eventPublisher_helper.js"></script>
 <script type="text/javascript" src="../eventpublisher/js/registry-browser.js"></script>
+<link rel="stylesheet" href="../eventpublisher/css/eventPublisher.css"/>
 
 <script type="text/javascript" src="../resources/js/resource_util.js"></script>
 <jsp:include page="../resources/resources-i18n-ajaxprocessor.jsp"/>
 <link rel="stylesheet" type="text/css" href="../resources/css/registry.css"/>
+<link rel="stylesheet" href="../eventpublisher/css/codemirror.css"/>
 <script type="text/javascript" src="../ajax/js/prototype.js"></script>
 <script type="text/javascript"
         src="../eventpublisher/js/create_eventPublisher_helper.js"></script>
@@ -45,6 +48,7 @@
 
 </script>
 
+<div id="custom_dcontainer" style="display:none"></div>
 <div id="middle">
 <h2><fmt:message key="title.event.publisher.create"/></h2>
 
@@ -808,7 +812,7 @@
                         <span style="float: left; position: relative; margin-top: 5px;">
                             <fmt:message key="event.receiver.error.no.stream"/>
                         </span>
-                    <a href="../eventstream/create_event_stream.jsp?ordinal=1"
+                    <a onclick="createImportedStreamDefinition()",
                        style="background-image:url(images/add.gif);"
                        class="icon-link">
                         Add Event Stream
