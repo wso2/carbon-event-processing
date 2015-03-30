@@ -15,51 +15,47 @@
  *  specific language governing permissions and limitations
  *  under the License.
  */
-package org.wso2.carbon.event.execution.manager.core.internal.processing;
+package org.wso2.carbon.event.execution.manager.core.dto;
 
 /**
- * DirectParam class keeps name and replaced value about the direct parameters that is mapped directly
- * with the query expressions,
+ * represent template configuration information
  */
-public class DirectParam {
+public class DomainConfigInfoDTO {
 
-    private String name;
-    private String value;
+    String name;
+    String description;
+    ConfigDTO[] configurations;
+    String[] streams;
 
-    /**
-     * get name
-     *
-     * @return direct parameter name
-     */
     public String getName() {
         return name;
     }
 
-    /**
-     * set name
-     *
-     * @param name direct parameter name
-     */
     public void setName(String name) {
         this.name = name;
     }
 
-    /**
-     * get value
-     *
-     * @return direct parameter value
-     */
-    public String getValue() {
-        return value;
+    public String getDescription() {
+        return description;
     }
 
-    /**
-     * set value
-     *
-     * @param value direct parameter value
-     */
-    public void setValue(String value) {
-        this.value = value;
+    public void setDescription(String description) {
+        this.description = description;
     }
 
+    public ConfigDTO[] getConfigurations() {
+        return configurations;
+    }
+
+    public void setConfigurations(ConfigDTO[] configurations) {
+        this.configurations = configurations;
+    }
+
+    public String[] getStreams() {
+        return streams;
+    }
+
+    public void setStreams(String[] streams) {
+        this.streams = streams;
+    }
 }

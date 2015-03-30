@@ -15,25 +15,18 @@
  *  specific language governing permissions and limitations
  *  under the License.
  */
-package org.wso2.carbon.event.execution.manager.core.internal.structure.domain;
+package org.wso2.carbon.event.execution.manager.core.dto;
 
-import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlElementWrapper;
-import javax.xml.bind.annotation.XmlRootElement;
+public class ConfigDTO {
 
-@XmlRootElement
-public class Template {
     String name;
     String description;
-    String executionPlan;
-    Parameter[] parameters;
+    ParameterDTO[] parameters;
 
     public String getName() {
         return name;
     }
 
-    @XmlAttribute
     public void setName(String name) {
         this.name = name;
     }
@@ -42,27 +35,15 @@ public class Template {
         return description;
     }
 
-    @XmlElement
     public void setDescription(String description) {
         this.description = description;
     }
 
-    public String getExecutionPlan() {
-        return executionPlan;
-    }
-
-    @XmlElement
-    public void setExecutionPlan(String executionPlan) {
-        this.executionPlan = executionPlan;
-    }
-
-    public Parameter[] getParameters() {
+    public ParameterDTO[] getParameters() {
         return parameters;
     }
 
-    @XmlElementWrapper(name = "parameters")
-    @XmlElement(name = "parameter")
-    public void setParameters(Parameter[] parameters) {
+    public void setParameters(ParameterDTO[] parameters) {
         this.parameters = parameters;
     }
 }

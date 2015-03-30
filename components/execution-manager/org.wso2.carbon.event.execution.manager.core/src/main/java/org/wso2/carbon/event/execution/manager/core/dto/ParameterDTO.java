@@ -15,17 +15,25 @@
  *  specific language governing permissions and limitations
  *  under the License.
  */
-package org.wso2.carbon.event.execution.manager.core.internal.util;
+package org.wso2.carbon.event.execution.manager.core.dto;
 
-import org.wso2.carbon.utils.CarbonUtils;
+public class ParameterDTO {
+    String name;
+    String value;
 
-public class ExecutionManagerConstants {
+    public String getName() {
+        return name;
+    }
 
-    public static String carbon_home = CarbonUtils.getCarbonHome();
-    public static final String TEMPLATE_DOMAIN_PATH = carbon_home + "/repository/conf/cep/template-domain";
-    public static final String TEMPLATE_CONFIG_PATH
-            = "/repository/components/org.wso2.carbon.event.execution.manager.core/template-config";
-    public static final String PATH_SEPARATOR = "/";
-    public static final String CONFIG_FILE_EXTENSION = ".xml";
-    public static final String DEFAULT_CHARSET = "UTF-8";
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getValue() {
+        return value;
+    }
+
+    public void setValue(String value) {
+        this.value = value;
+    }
 }

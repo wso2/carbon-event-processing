@@ -17,154 +17,54 @@
  */
 package org.wso2.carbon.event.execution.manager.core.internal.structure.domain;
 
-import javax.xml.bind.annotation.*;
-import java.util.ArrayList;
-import java.util.List;
+import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElementWrapper;
+import javax.xml.bind.annotation.XmlRootElement;
 
-
-/**
- * <p>Java class for TemplateDomain complex type.
- * 
- * <p>The following schema fragment specifies the expected content contained within this class.
- * 
- * <pre>
- * &lt;complexType name="TemplateDomain">
- *   &lt;complexContent>
- *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
- *       &lt;sequence>
- *         &lt;element name="Description" type="{http://www.w3.org/2001/XMLSchema}string"/>
- *         &lt;element name="Stream" type="{}Stream" maxOccurs="unbounded"/>
- *         &lt;element name="Template" type="{}Template" maxOccurs="unbounded"/>
- *       &lt;/sequence>
- *       &lt;attribute name="name" use="required" type="{http://www.w3.org/2001/XMLSchema}string" />
- *     &lt;/restriction>
- *   &lt;/complexContent>
- * &lt;/complexType>
- * </pre>
- * 
- * 
- */
-@XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "TemplateDomain", propOrder = {
-    "description",
-    "stream",
-    "template"
-})
+@XmlRootElement
 public class TemplateDomain {
 
-    @XmlElement(name = "Description", required = true)
-    protected String description;
-    @XmlElement(name = "Stream", required = true)
-    protected List<Stream> stream;
-    @XmlElement(name = "Template", required = true)
-    protected List<Template> template;
-    @XmlAttribute(name = "name", required = true)
-    protected String name;
+    String name;
+    String description;
+    Template[] templates;
+    String[] streams;
 
-    /**
-     * Gets the value of the description property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
-     */
-    public String getDescription() {
-        return description;
-    }
-
-    /**
-     * Sets the value of the description property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
-     */
-    public void setDescription(String value) {
-        this.description = value;
-    }
-
-    /**
-     * Gets the value of the stream property.
-     * 
-     * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the stream property.
-     * 
-     * <p>
-     * For example, to add a new item, do as follows:
-     * <pre>
-     *    getStream().add(newItem);
-     * </pre>
-     * 
-     * 
-     * <p>
-     * Objects of the following type(s) are allowed in the list
-     * {@link Stream }
-     * 
-     * 
-     */
-    public List<Stream> getStream() {
-        if (stream == null) {
-            stream = new ArrayList<Stream>();
-        }
-        return this.stream;
-    }
-
-    /**
-     * Gets the value of the template property.
-     * 
-     * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the template property.
-     * 
-     * <p>
-     * For example, to add a new item, do as follows:
-     * <pre>
-     *    getTemplate().add(newItem);
-     * </pre>
-     * 
-     * 
-     * <p>
-     * Objects of the following type(s) are allowed in the list
-     * {@link Template }
-     * 
-     * 
-     */
-    public List<Template> getTemplate() {
-        if (template == null) {
-            template = new ArrayList<Template>();
-        }
-        return this.template;
-    }
-
-    /**
-     * Gets the value of the name property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
-     */
     public String getName() {
         return name;
     }
 
-    /**
-     * Sets the value of the name property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
-     */
-    public void setName(String value) {
-        this.name = value;
+    @XmlAttribute
+    public void setName(String name) {
+        this.name = name;
     }
 
+    public String getDescription() {
+        return description;
+    }
+
+    @XmlElement
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public Template[] getTemplates() {
+        return templates;
+    }
+
+    @XmlElementWrapper(name = "templates")
+    @XmlElement(name = "template")
+    public void setTemplates(Template[] templates) {
+        this.templates = templates;
+    }
+
+    public String[] getStreams() {
+        return streams;
+    }
+
+    @XmlElementWrapper(name = "streams")
+    @XmlElement(name = "stream")
+    public void setStreams(String[] streams) {
+        this.streams = streams;
+    }
 }

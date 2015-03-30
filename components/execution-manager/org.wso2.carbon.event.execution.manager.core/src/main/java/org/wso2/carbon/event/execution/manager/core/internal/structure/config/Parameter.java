@@ -15,19 +15,17 @@
  *  specific language governing permissions and limitations
  *  under the License.
  */
-package org.wso2.carbon.event.execution.manager.core.internal.structure.domain;
+package org.wso2.carbon.event.execution.manager.core.internal.structure.config;
 
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 
 @XmlRootElement
-public class Template {
+public class Parameter {
+
     String name;
-    String description;
-    String executionPlan;
-    Parameter[] parameters;
+    String value;
 
     public String getName() {
         return name;
@@ -38,31 +36,12 @@ public class Template {
         this.name = name;
     }
 
-    public String getDescription() {
-        return description;
+    public String getValue() {
+        return value;
     }
 
     @XmlElement
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public String getExecutionPlan() {
-        return executionPlan;
-    }
-
-    @XmlElement
-    public void setExecutionPlan(String executionPlan) {
-        this.executionPlan = executionPlan;
-    }
-
-    public Parameter[] getParameters() {
-        return parameters;
-    }
-
-    @XmlElementWrapper(name = "parameters")
-    @XmlElement(name = "parameter")
-    public void setParameters(Parameter[] parameters) {
-        this.parameters = parameters;
+    public void setValue(String value) {
+        this.value = value;
     }
 }

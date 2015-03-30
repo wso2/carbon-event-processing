@@ -17,6 +17,7 @@
  */
 package org.wso2.carbon.event.execution.manager.core.internal.ds;
 
+import org.wso2.carbon.event.execution.manager.core.internal.processing.DomainInformation;
 import org.wso2.carbon.registry.core.service.RegistryService;
 import org.wso2.carbon.event.processor.core.EventProcessorService;
 
@@ -24,6 +25,7 @@ public class ExecutionManagerValueHolder {
 
     private static EventProcessorService eventProcessorService;
     private static RegistryService registryService;
+    private static DomainInformation domainInformation;
 
     public static EventProcessorService getEventProcessorService() {
         return eventProcessorService;
@@ -40,11 +42,20 @@ public class ExecutionManagerValueHolder {
     public static void unSetRegistryService() {
         ExecutionManagerValueHolder.registryService = null;
     }
+
     public static RegistryService getRegistryService() {
         return registryService;
     }
 
     public static void registerRegistryService(RegistryService registryService) {
-        ExecutionManagerValueHolder.registryService=registryService;
+        ExecutionManagerValueHolder.registryService = registryService;
+    }
+
+    public static DomainInformation getDomainInformation() {
+        return domainInformation;
+    }
+
+    public static void setDomainInformation(DomainInformation domainInformation) {
+        ExecutionManagerValueHolder.domainInformation = domainInformation;
     }
 }

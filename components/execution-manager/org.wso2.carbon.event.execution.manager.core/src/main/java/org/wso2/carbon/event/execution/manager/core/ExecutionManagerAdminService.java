@@ -21,25 +21,18 @@ import org.apache.axis2.AxisFault;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.wso2.carbon.core.AbstractAdmin;
+import org.wso2.carbon.event.execution.manager.core.dto.ConfigDTO;
+import org.wso2.carbon.event.execution.manager.core.dto.DomainConfigInfoDTO;
 import org.wso2.carbon.event.execution.manager.core.internal.ds.ExecutionManagerValueHolder;
 import org.wso2.carbon.event.execution.manager.core.internal.processing.DomainInformation;
-import org.wso2.carbon.event.execution.manager.core.internal.processing.Processing;
-import org.wso2.carbon.event.processor.core.EventProcessorService;
-import org.wso2.carbon.event.processor.core.exception.ExecutionPlanConfigurationException;
-import org.wso2.carbon.event.processor.core.exception.ExecutionPlanDependencyValidationException;
 
 public class ExecutionManagerAdminService extends AbstractAdmin {
-
-    private static final Log log = LogFactory.getLog(ExecutionManagerAdminService.class);
-    private DomainInformation domainInformation;
-    private ExecutionManager executionManager;
 
     /**
      * Default Constructor
      */
     public ExecutionManagerAdminService() {
-        domainInformation = new DomainInformation();
-        executionManager = new ExecutionManager();
+
     }
 
     /**
@@ -48,9 +41,9 @@ public class ExecutionManagerAdminService extends AbstractAdmin {
      * @return all template domain information
      * @throws org.apache.axis2.AxisFault
      */
-    public DomainInfoDTO[] getAllDomainInfoDTO() throws AxisFault {
+    public DomainConfigInfoDTO[] getAllTemplateDomains() throws AxisFault {
 
-        return domainInformation.getAllDomainInfo();
+        return ExecutionManagerValueHolder.getDomainInformation().getAllDomainInfo();
     }
 
     /**
@@ -60,72 +53,27 @@ public class ExecutionManagerAdminService extends AbstractAdmin {
      * @return template domain full details
      * @throws AxisFault
      */
-    public String getTemplateDomain(String domainName) throws AxisFault {
-        return domainInformation.getSpecificDomainInfo(domainName);
+    public DomainConfigInfoDTO getTemplateDomain(String domainName) throws AxisFault {
+        return ExecutionManagerValueHolder.getDomainInformation().getSpecificDomainInfo(domainName);
     }
 
     /**
-     * deploy an execution plan
+     * Delete specified configuration
      *
-     * @param executionPlanConfigurationXml execution plan xml content
-     * @throws AxisFault
+     * @param configName configuration name which needs to be deleted
      */
-    public void deployTemplateConfig(String executionPlanConfigurationXml) throws AxisFault {
-        log.debug("deployTemplateConfig");
-        log.debug("Template Wiring: " + executionPlanConfigurationXml);
-        EventProcessorService eventProcessorService = ExecutionManagerValueHolder.getEventProcessorService();
-        if (eventProcessorService != null) {
-            try {
-                Processing processConfig = new Processing();
-
-                String executionPlan = processConfig.getExecutionPlan(executionPlanConfigurationXml);
-                log.debug("Execution Plan: " + executionPlan);
-
-
-                eventProcessorService.deployExecutionPlanConfiguration(executionPlan, getAxisConfig());
-            } catch (ExecutionPlanConfigurationException e) {
-                log.error(e.getMessage(), e);
-                throw new AxisFault(e.getMessage(), e);
-            } catch (ExecutionPlanDependencyValidationException e) {
-                log.error(e.getMessage(), e);
-                throw new AxisFault(e.getMessage(), e);
-            } catch (Exception e) {
-                log.error(e.getMessage(), e);
-            }
-        } else {
-            throw new AxisFault("EventProcessorService is not available for EventProcessorAdminService in runtime!");
-        }
-
+    public void deleteTemplateConfig(String configName) {
+        ExecutionManagerValueHolder.getDomainInformation().deleteTemplateConfig(configName);
     }
 
     /**
-     * return details of all the available template configurations
+     * Create or update specified configuration
      *
-     * @return array of DomainConfigInfoDTO
-     * @throws AxisFault
+     * @param configuration configuration data transfer object
      */
-    public DomainConfigInfoDTO[] getAllDomainConfigInfoDTO() throws AxisFault {
-        return executionManager.getAllTemplateConfig();
+    public void saveTemplateConfig(String domainName, ConfigDTO configuration) {
+        ExecutionManagerValueHolder.getDomainInformation().saveTemplateConfig(domainName, configuration);
     }
 
-    /**
-     * get the content of a specified template configuration
-     *
-     * @param configName template configuration name
-     * @return xml content of the template configuration as a string value
-     */
-    public String getDomainConfig(String configName) {
-        return executionManager.getTemplateConfig(configName);
-    }
-
-    /**
-     * delete a template configuration
-     *
-     * @param configName template configuration name
-     * @throws AxisFault
-     */
-    public void deleteConfigInfo(String configName) throws AxisFault {
-        executionManager.deleteTemplateConfig(configName);
-    }
 
 }

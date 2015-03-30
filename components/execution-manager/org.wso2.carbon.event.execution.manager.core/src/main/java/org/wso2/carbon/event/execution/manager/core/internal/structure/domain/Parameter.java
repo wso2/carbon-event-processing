@@ -17,137 +17,71 @@
  */
 package org.wso2.carbon.event.execution.manager.core.internal.structure.domain;
 
-import javax.xml.bind.annotation.*;
+import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
 
-
-/**
- * <p>Java class for Parameter complex type.
- * 
- * <p>The following schema fragment specifies the expected content contained within this class.
- * 
- * <pre>
- * &lt;complexType name="Parameter">
- *   &lt;simpleContent>
- *     &lt;extension base="&lt;http://www.w3.org/2001/XMLSchema>string">
- *       &lt;attribute name="name" use="required" type="{http://www.w3.org/2001/XMLSchema}string" />
- *       &lt;attribute name="type" use="required" type="{http://www.w3.org/2001/XMLSchema}string" />
- *       &lt;attribute name="description" type="{http://www.w3.org/2001/XMLSchema}string" />
- *     &lt;/extension>
- *   &lt;/simpleContent>
- * &lt;/complexType>
- * </pre>
- * 
- * 
- */
-@XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "Parameter", propOrder = {
-    "value"
-})
+@XmlRootElement
 public class Parameter {
 
-    @XmlValue
-    protected String value;
-    @XmlAttribute(name = "name", required = true)
-    protected String name;
-    @XmlAttribute(name = "type", required = true)
-    protected String type;
-    @XmlAttribute(name = "description")
-    protected String description;
+    String name;
+    String type;
+    String displayName;
+    String description;
+    String defaultValue;
+    String options;
 
-    /**
-     * Gets the value of the value property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
-     */
-    public String getValue() {
-        return value;
-    }
-
-    /**
-     * Sets the value of the value property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
-     */
-    public void setValue(String value) {
-        this.value = value;
-    }
-
-    /**
-     * Gets the value of the name property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
-     */
     public String getName() {
         return name;
     }
 
-    /**
-     * Sets the value of the name property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
-     */
-    public void setName(String value) {
-        this.name = value;
+    @XmlAttribute
+    public void setName(String name) {
+        this.name = name;
     }
 
-    /**
-     * Gets the value of the type property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
-     */
     public String getType() {
         return type;
     }
 
-    /**
-     * Sets the value of the type property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
-     */
-    public void setType(String value) {
-        this.type = value;
+    @XmlAttribute
+    public void setType(String type) {
+        this.type = type;
     }
 
-    /**
-     * Gets the value of the description property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
-     */
+    public String getDisplayName() {
+        return displayName;
+    }
+
+    @XmlElement
+    public void setDisplayName(String displayName) {
+        this.displayName = displayName;
+    }
+
     public String getDescription() {
         return description;
     }
 
-    /**
-     * Sets the value of the description property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
-     */
-    public void setDescription(String value) {
-        this.description = value;
+    @XmlElement
+    public void setDescription(String description) {
+        this.description = description;
     }
 
+    public String getDefaultValue() {
+        return defaultValue;
+    }
+
+    @XmlElement
+    public void setDefaultValue(String defaultValue) {
+        this.defaultValue = defaultValue;
+    }
+
+    public String getOptions() {
+        return options;
+    }
+
+    @XmlElement
+    public void setOptions(String options) {
+        this.options = options;
+    }
 }

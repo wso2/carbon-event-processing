@@ -15,7 +15,7 @@
  *  specific language governing permissions and limitations
  *  under the License.
  */
-package org.wso2.carbon.event.execution.manager.core.internal.structure.domain;
+package org.wso2.carbon.event.execution.manager.core.internal.structure.config;
 
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
@@ -23,10 +23,11 @@ import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 
 @XmlRootElement
-public class Template {
+public class TemplateConfig {
+
     String name;
+    String from;
     String description;
-    String executionPlan;
     Parameter[] parameters;
 
     public String getName() {
@@ -38,6 +39,15 @@ public class Template {
         this.name = name;
     }
 
+    public String getFrom() {
+        return from;
+    }
+
+    @XmlAttribute
+    public void setFrom(String from) {
+        this.from = from;
+    }
+
     public String getDescription() {
         return description;
     }
@@ -45,15 +55,6 @@ public class Template {
     @XmlElement
     public void setDescription(String description) {
         this.description = description;
-    }
-
-    public String getExecutionPlan() {
-        return executionPlan;
-    }
-
-    @XmlElement
-    public void setExecutionPlan(String executionPlan) {
-        this.executionPlan = executionPlan;
     }
 
     public Parameter[] getParameters() {

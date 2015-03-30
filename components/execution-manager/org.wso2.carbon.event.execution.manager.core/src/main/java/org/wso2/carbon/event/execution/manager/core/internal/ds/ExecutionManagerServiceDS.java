@@ -19,6 +19,7 @@ package org.wso2.carbon.event.execution.manager.core.internal.ds;
 
 
 import org.osgi.service.component.ComponentContext;
+import org.wso2.carbon.event.execution.manager.core.internal.processing.DomainInformation;
 import org.wso2.carbon.event.processor.core.EventProcessorService;
 import org.wso2.carbon.registry.core.exceptions.RegistryException;
 import org.wso2.carbon.registry.core.service.RegistryService;
@@ -36,8 +37,9 @@ import org.wso2.carbon.registry.core.service.RegistryService;
  */
 
 public class ExecutionManagerServiceDS {
-    protected void activate(ComponentContext context) {
 
+    protected void activate(ComponentContext context) {
+        ExecutionManagerValueHolder.setDomainInformation(new DomainInformation());
     }
 
     public void setEventProcessorService(EventProcessorService eventProcessorService) {
@@ -51,6 +53,7 @@ public class ExecutionManagerServiceDS {
 
     protected void setRegistryService(RegistryService registryService) throws RegistryException {
         ExecutionManagerValueHolder.setRegistryService(registryService);
+
     }
 
     protected void unsetRegistryService(RegistryService registryService) {
