@@ -37,34 +37,29 @@
             /permission/admin/manage/event-processor
         </parameter>
 
-        <operation name="deployExecutionPlanConfiguration">
+        <operation name="deployExecutionPlan">
             <parameter name="AuthorizationAction" locked="true">
                 /permission/admin/manage/event-processor
             </parameter>
         </operation>
-        <operation name="deployExecutionPlanConfigurationFromConfigXml">
+        <operation name="undeployActiveExecutionPlan">
             <parameter name="AuthorizationAction" locked="true">
                 /permission/admin/manage/event-processor
             </parameter>
         </operation>
-        <operation name="undeployActiveExecutionPlanConfiguration">
-            <parameter name="AuthorizationAction" locked="true">
-                /permission/admin/manage/event-processor
-            </parameter>
-        </operation>
-        <operation name="undeployInactiveExecutionPlanConfiguration">
+        <operation name="undeployInactiveExecutionPlan">
             <parameter name="AuthorizationAction" locked="true">
                 /permission/admin/manage/event-processor
             </parameter>
         </operation>
 
-        <operation name="editActiveExecutionPlanConfiguration">
+        <operation name="editActiveExecutionPlan">
             <parameter name="AuthorizationAction" locked="true">
                 /permission/admin/manage/event-processor
             </parameter>
         </operation>
 
-        <operation name="editInactiveExecutionPlanConfiguration">
+        <operation name="editInactiveExecutionPlan">
             <parameter name="AuthorizationAction" locked="true">
                 /permission/admin/manage/event-processor
             </parameter>
@@ -88,12 +83,12 @@
             </parameter>
         </operation>
 
-        <operation name="getActiveExecutionPlanConfigurationContent">
+        <operation name="getActiveExecutionPlan">
             <parameter name="AuthorizationAction" locked="true">
                 /permission/admin/manage/event-processor
             </parameter>
         </operation>
-        <operation name="getInactiveExecutionPlanConfigurationContent">
+        <operation name="getInactiveExecutionPlan">
             <parameter name="AuthorizationAction" locked="true">
                 /permission/admin/manage/event-processor
             </parameter>
@@ -109,17 +104,12 @@
             </parameter>
         </operation>
 
-        <operation name="validateSiddhiQueries">
+        <operation name="validateExecutionPlan">
             <parameter name="AuthorizationAction" locked="true">
                 /permission/admin/manage/event-processor
             </parameter>
         </operation>
         <operation name="getSiddhiStreams">
-            <parameter name="AuthorizationAction" locked="true">
-                /permission/admin/manage/event-processor
-            </parameter>
-        </operation>
-        <operation name="getExecutionPlanStatusAsString">
             <parameter name="AuthorizationAction" locked="true">
                 /permission/admin/manage/event-processor
             </parameter>

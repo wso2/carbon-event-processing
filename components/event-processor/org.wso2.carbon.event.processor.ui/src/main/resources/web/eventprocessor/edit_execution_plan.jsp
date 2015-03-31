@@ -18,6 +18,7 @@
 <%@ page import="org.wso2.carbon.event.processor.stub.EventProcessorAdminServiceStub" %>
 <%@ page import="org.wso2.carbon.event.processor.ui.EventProcessorUIUtils" %>
 <%@ page import="java.util.ResourceBundle" %>
+<%@ page import="org.wso2.carbon.event.stream.stub.EventStreamAdminServiceStub" %>
 
 
 <%@ taglib uri="http://wso2.org/projects/carbon/taglibs/carbontags.jar" prefix="carbon" %>
@@ -75,46 +76,86 @@
     String executionPlanName = request.getParameter("execPlanName");
     String executionPlanPath = request.getParameter("execPlanPath");
 
-    String executionPlanFile = "";
+    String executionPlan = "";
     if (executionPlanName != null) {
         EventProcessorAdminServiceStub stub = EventProcessorUIUtils.getEventProcessorAdminService(config, session, request);
-        executionPlanFile = stub.getActiveExecutionPlanConfigurationContent(executionPlanName);
+        executionPlan = stub.getActiveExecutionPlan(executionPlanName);
 
     } else if (executionPlanPath != null) {
         EventProcessorAdminServiceStub stub = EventProcessorUIUtils.getEventProcessorAdminService(config, session, request);
-        executionPlanFile = stub.getInactiveExecutionPlanConfigurationContent(executionPlanPath);
+        executionPlan = stub.getInactiveExecutionPlan(executionPlanPath);
 
     }
 
+    EventStreamAdminServiceStub streamAdminServiceStub = EventProcessorUIUtils.getEventStreamAdminService(config, session, request);
+    String[] streamNames = streamAdminServiceStub.getStreamNames();
+
     Boolean loadEditArea = true;
-    String executionPlanFileConfiguratoin = executionPlanFile;
 
 %>
 
 <% if (loadEditArea) { %>
+
+<%--code mirror code--%>
+
+<link rel="stylesheet" href="../eventprocessor/css/codemirror.css"/>
+<link rel="stylesheet" href="../eventprocessor/css/event-processor.css"/>
+<script src="../eventprocessor/js/codemirror.js"></script>
+<script src="../eventprocessor/js/sql.js"></script>
+<script type="text/javascript"
+        src="../eventprocessor/js/create_execution_plan_helper.js"></script>
+
+<style>
+    .CodeMirror {
+        border-top: 1px solid #cccccc;
+        border-bottom: 1px solid black;
+    }
+</style>
+<script>
+    var init = function () {
+        var mime = 'text/siddhi-sql-db';
+
+        // get mime type
+        if (window.location.href.indexOf('mime=') > -1) {
+            mime = window.location.href.substr(window.location.href.indexOf('mime=') + 5);
+        }
+
+        window.queryEditor = CodeMirror.fromTextArea(document.getElementById('rawConfig'), {
+            mode: mime,
+            indentWithTabs: true,
+            smartIndent: true,
+            lineNumbers: true,
+            matchBrackets: true,
+            autofocus: true
+        });
+
+        //window.queryEditor.setValue();
+        //window.queryEditor.save();
+    };
+</script>
+
 <script type="text/javascript">
-    editAreaLoader.init({
-        id: "rawConfig"        // text area id
-        , syntax: "xml"            // syntax to be uses for highlighting
-        , start_highlight: true  // to display with highlight mode on start-up
+    jQuery(document).ready(function () {
+        init();
     });
 </script>
+
 <% } %>
 
 <script type="text/javascript">
     function updateConfiguration(form, executionPlanName) {
-        var newExecutionPlanConfig = "";
+        var newExecutionPlan = "";
 
         if (document.getElementById("rawConfig") != null) {
-            newExecutionPlanConfig = editAreaLoader.getValue("rawConfig");
+            newExecutionPlan = editAreaLoader.getValue("rawConfig");
         }
 
-        var parameters = "?execPlanName=" + executionPlanName + "&execPlanConfig=" + newExecutionPlanConfig;
+        var parameters = "?execPlanName=" + executionPlanName + "&execPlan=" + newExecutionPlan;
 
         new Ajax.Request('../eventprocessor/edit_execution_plan_ajaxprocessor.jsp', {
             method: 'POST',
             asynchronous: false,
-            parameters: {execPlanName: executionPlanName, execPlanConfig: newExecutionPlanConfig },
+            parameters: {execPlanName: executionPlanName, execPlan: newExecutionPlan },
             onSuccess: function (transport) {
                 if ("true" == transport.responseText.trim()) {
                     form.submit();
@@ -133,16 +174,16 @@
     }
 
     function updateNotDeployedConfiguration(form, executionPlanPath) {
-        var newExecutionPlanConfig = "";
+        var newExecutionPlan = "";
 
         if (document.getElementById("rawConfig") != null) {
-            newExecutionPlanConfig = editAreaLoader.getValue("rawConfig");
+            newExecutionPlan = editAreaLoader.getValue("rawConfig");
         }
 
         new Ajax.Request('../eventprocessor/edit_execution_plan_ajaxprocessor.jsp', {
             method: 'POST',
             asynchronous: false,
-            parameters: {execPlanPath: executionPlanPath, execPlanConfig: newExecutionPlanConfig },
+            parameters: {execPlanPath: executionPlanPath, execPlanConfig: newExecutionPlan },
             onSuccess: function (transport) {
                 if ("true" == transport.responseText.trim()) {
                     form.submit();
@@ -159,7 +200,6 @@
         });
 
     }
-
 
     function resetConfiguration(form) {
 
@@ -182,24 +222,107 @@
                                 <fmt:message key="save.advice"/>
                             </span>
             </div>
-            <table class="styledLeft" style="width:100%">
+            <table class="styledLeft noBorders spacer-bot" style="width:100%">
                 <thead>
                 <tr>
-                    <th>
+                    <th colspan="2">
                         <fmt:message key="execution.plan.configuration"/>
                     </th>
                 </tr>
                 </thead>
                 <tbody>
+
+                    <%-- imported stream definitions--%>
+
                 <tr>
-                    <td class="formRow">
+                    <td class="leftCol-med">
+                        <fmt:message key="import.stream"/><span class="required">*</span>
+                    </td>
+                    <td>
+                        <table>
+                            <td class="col-small"><fmt:message key="import.stream"/> :
+                            </td>
+                            <td><select id="importedStreamId" onfocus="this.selectedIndex = 0;" onchange="createImportedStreamDefinition(this)"
+                                        onclick="importedStreamDefSelectClick(this)">
+                                <%
+                                    if (streamNames != null) {
+                                        for (String streamName : streamNames) {
+
+                                %>
+                                <option value= <%= "\"" + streamName + "\""%>><%= streamName %>
+                                </option>
+                                <%
+                                        }
+                                    }
+                                %>
+                                <option value="createStreamDef">-- Create Stream Definition --</option>
+                            </select>
+                            </td>
+                            <td class="col-small"><fmt:message key="property.as"/> :
+                            </td>
+                            <td>
+                                <input type="text" id="importedStreamAs"/>
+                            </td>
+
+                            <td><input type="button" class="button"
+                                       value="<fmt:message key="import"/>"
+                                       onclick="addImportedStreamDefinition()"/>
+                            </td>
+                            <td id="addEventStreamTD"></td>
+                        </table>
+                    </td>
+                </tr>
+
+                    <%-- exported stream definitions--%>
+
+                <tr>
+                    <td class="leftCol-med">
+                        <fmt:message key="export.stream"/>
+                    </td>
+                    <td>
+                        <table id="addExportedStreams" class="normal">
+                            <tbody>
+                            <tr>
+                                <td class="col-small"><fmt:message key="property.value.of"/> :
+                                </td>
+                                <td>
+                                    <input type="text" id="exportedStreamValueOf"/>
+                                </td>
+                                <td class="col-small"><fmt:message key="property.stream.id"/> :
+                                </td>
+                                <td><select id="exportedStreamId" onfocus="this.selectedIndex = 0;" onchange="createExportedStreamDefinition(this)"
+                                            onclick="exportedStreamDefSelectClick(this)">
+                                    <%
+                                        if (streamNames != null && streamNames.length > 0) {
+                                            for (String streamName : streamNames) {
+
+                                    %>
+                                    <option value= <%= "\"" + streamName + "\""%>><%= streamName %>
+                                    </option>
+                                    <%
+                                            }
+                                        }
+                                    %>
+                                    <option value="createStreamDef">-- Create Stream Definition --</option>
+                                </select></td>
+                                <td>
+                                <td><input type="button" class="button"
+                                           value="<fmt:message key="add"/>"
+                                           onclick="addExportedStreamDefinition()"/>
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="formRow" colspan="2">
                         <table class="normal" style="width:100%">
                             <tr>
                                 <td id="rawConfigTD">
-                                    <textarea name="rawConfig" id="rawConfig"
-                                              style="border:solid 1px #cccccc; width: 99%; height: 400px; margin-top:5px;"><%=executionPlanFileConfiguratoin%>
+                                    <textarea name="rawConfig" id="rawConfig" onblur="window.queryEditor.save()"
+                                              style="border:solid 1px #cccccc; width: 99%; height: 400px; margin-top:5px;"><%=executionPlan%>
                                     </textarea>
-
                                     <% if (!loadEditArea) { %>
                                     <div style="padding:10px;color:#444;">
                                         <fmt:message key="syntax.disabled"/>

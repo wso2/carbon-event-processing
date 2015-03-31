@@ -59,6 +59,14 @@
             matchBrackets: true,
             autofocus: true
         });
+
+        window.queryEditor.setValue("/* Enter a unique ExecutionPlan */\n" +
+                "@Plan:name('ExecutionPlan')\n\n" +
+                "/* Enter a unique description for ExecutionPlan */\n" +
+                "-- @Plan:description('ExecutionPlan')\n" +
+                "\n" +
+                "/* define streams and write query here ... */\n");
+        window.queryEditor.save();
     };
 </script>
 
@@ -74,71 +82,11 @@
     EventStreamAdminServiceStub streamAdminServiceStub = EventProcessorUIUtils.getEventStreamAdminService(config, session, request);
     String[] streamNames = streamAdminServiceStub.getStreamNames();
 %>
+
 <tr>
 <td>
 <table width="100%">
 <tbody>
-<tr>
-
-    <td class="leftCol-med">Execution Plan Name<span class="required">*</span></td>
-    <td><input type="text" name="executionPlanName" id="executionPlanId"
-               class="initE"
-               style="width:75%"/>
-
-        <div class="sectionHelp">
-            Please Enter the Execution Plan Name.
-        </div>
-    </td>
-</tr>
-<tr>
-    <td class="leftCol-med">
-        Description
-    </td>
-    <td>
-        <textarea name="executionPlanDescription" id="executionPlanDescId"
-                  class="initE"
-                  style="width:75%"></textarea>
-
-        <div class="sectionHelp">
-            Please Enter the Execution Plan Description (optional).
-        </div>
-    </td>
-</tr>
-
-
-<tr name="siddhiConfigsHeader">
-    <td colspan="2">
-        <b>Siddhi Configurations</b>
-    </td>
-</tr>
-<tr>
-    <td class="leftCol-med">
-        Snapshot time interval
-    </td>
-
-    <td>
-        <input type="text" name="siddhiSnapshotTime" id="siddhiSnapshotTime"
-               class="initE" value="0"
-               style="width:75%"/>
-
-        <div class="sectionHelp">
-            Enter the snapshot time in minutes. Entering zero disables snapshots. (Cassandra should be configured and start)
-        </div>
-    </td>
-</tr>
-
-<tr>
-    <td class="leftCol-med">
-        Distributed processing
-    </td>
-    <td>
-        <select name="distributedProcessing" id="distributedProcessing">
-            <option value="RedundantNode">Redundant Node</option>
-            <option value="Distributed">Distributed</option>
-            <option value="false" selected="selected">Disabled</option>
-        </select>
-    </td>
-</tr>
 
 <tr>
     <td colspan="2">
@@ -188,47 +136,8 @@
     </td>
 </tr>
 
+    <%-- exported stream definitions--%>
 
-    <%--query expressions--%>
-
-
-<tr>
-    <td colspan="2">
-        <style>
-            div#workArea table#streamDefinitionsTable tbody tr td {
-                padding-left: 45px !important;
-            }
-        </style>
-        <table width="100%" style="border: 1px solid #cccccc">
-            <tr>
-                <td>
-                    <table id="streamDefinitionsTable" width="100%">
-                        <tbody>
-                        </tbody>
-                    </table>
-                </td>
-            </tr>
-            <tr>
-                <td>
-                    <textarea class="queryExpressionsTextArea" style="width:100%; height: 150px"
-                              id="queryExpressions"
-                              name="queryExpressions" onblur="window.queryEditor.save()"></textarea>
-                </td>
-            </tr>
-
-            <tr>
-                <td>
-                    <input type="button" class="button"
-                           value="<fmt:message key="validate.queries"/>"
-                           onclick="validateQueries()"/>
-                </td>
-            </tr>
-
-
-        </table>
-    </td>
-</tr>
-<tr></tr>
 <tr>
     <td class="leftCol-med">
         <fmt:message key="export.stream"/>
@@ -259,9 +168,7 @@
                     %>
                     <option value="createStreamDef">-- Create Stream Definition --</option>
                 </select></td>
-
                 <td>
-
                 <td><input type="button" class="button"
                            value="<fmt:message key="add"/>"
                            onclick="addExportedStreamDefinition()"/>
@@ -271,6 +178,37 @@
         </table>
     </td>
 </tr>
+
+
+    <%--query expressions--%>
+
+
+<tr>
+    <td colspan="2">
+        <style>
+            div#workArea table#streamDefinitionsTable tbody tr td {
+                padding-left: 45px !important;
+            }
+        </style>
+        <table width="100%" style="border: 1px solid #cccccc">
+            <tr>
+                <td>
+                    <textarea class="queryExpressionsTextArea" style="width:100%; height: 150px"
+                              id="queryExpressions"
+                              name="queryExpressions" onblur="window.queryEditor.save()"></textarea>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <input type="button" class="button"
+                           value="<fmt:message key="validate.queries"/>"
+                           onclick="validateQueries()"/>
+                </td>
+            </tr>
+        </table>
+    </td>
+</tr>
+<tr></tr>
 </tbody>
 </table>
 </td>

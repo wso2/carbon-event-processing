@@ -38,7 +38,7 @@ public class SiddhiRuntimeTestCase {
 
         ExecutionPlanConfiguration config = new ExecutionPlanConfiguration();
         config.setName("queryPlan1");
-        config.setQueryExpressions("from stockStream select symbol, price insert into financialDataStream;");
+        config.setExecutionPlan("from stockStream select symbol, price insert into financialDataStream;");
         StreamConfiguration in = new StreamConfiguration("stockStream", "1.0.0");
         StreamConfiguration out = new StreamConfiguration("financialDataStream", "1.0.0");
         config.addImportedStream(in);

@@ -30,10 +30,14 @@ import org.wso2.carbon.event.processor.core.internal.ds.EventProcessorValueHolde
 import org.wso2.carbon.event.processor.core.internal.util.EventProcessorConstants;
 import org.wso2.carbon.event.stream.core.EventStreamService;
 import org.wso2.carbon.event.stream.core.exception.EventStreamConfigurationException;
+import org.wso2.siddhi.query.api.ExecutionPlan;
+import org.wso2.siddhi.query.api.annotation.Element;
+import org.wso2.siddhi.query.api.util.AnnotationHelper;
+import org.wso2.siddhi.query.compiler.SiddhiCompiler;
 
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamReader;
-import java.util.HashMap;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.regex.Matcher;
@@ -41,10 +45,6 @@ import java.util.regex.Pattern;
 
 
 public class EventProcessorConfigurationHelper {
-
-    public static final String SIDDHI_STREAM_REGEX = "[a-zA-Z0-9_]+";
-    public static final String DATABRIDGE_STREAM_REGEX = "[a-zA-Z0-9_\\.]+";
-    public static final String STREAM_VER_REGEX = "([0-9]*)\\.([0-9]*)\\.([0-9]*)";
 
     public static ExecutionPlanConfiguration fromOM(OMElement executionPlanConfigElement) throws ExecutionPlanConfigurationException {
         if (!(executionPlanConfigElement.getQName().getLocalPart()).equals(EventProcessorConstants.EP_ELE_ROOT_ELEMENT)) {
@@ -58,15 +58,6 @@ public class EventProcessorConfigurationHelper {
         if (descIterator.hasNext()) {
             OMElement descriptionElement = (OMElement) descIterator.next();
             executionPlanConfiguration.setDescription(descriptionElement.getText());
-        }
-
-        Iterator siddhiConfigIterator = executionPlanConfigElement.getChildrenWithName(new QName(EventProcessorConstants.EP_CONF_NS, EventProcessorConstants.EP_ELE_SIDDHI_CONFIG));
-        while (siddhiConfigIterator.hasNext()) {
-            Iterator siddhiConfigPropertyIterator = ((OMElement) siddhiConfigIterator.next()).getChildrenWithName(new QName(EventProcessorConstants.EP_CONF_NS, EventProcessorConstants.EP_ELE_PROPERTY));
-            while (siddhiConfigPropertyIterator.hasNext()) {
-                OMElement configPropertyElement = (OMElement) siddhiConfigPropertyIterator.next();
-                executionPlanConfiguration.addSiddhiConfigurationProperty(configPropertyElement.getAttributeValue(new QName(EventProcessorConstants.EP_ATTR_NAME)), configPropertyElement.getText());
-            }
         }
 
         Iterator allImportedStreamsIterator = executionPlanConfigElement.getChildrenWithName(new QName(EventProcessorConstants.EP_CONF_NS, EventProcessorConstants.EP_ELE_IMP_STREAMS));
@@ -106,7 +97,7 @@ public class EventProcessorConfigurationHelper {
 
         Iterator queryIterator = executionPlanConfigElement.getChildrenWithName(new QName(EventProcessorConstants.EP_CONF_NS, EventProcessorConstants.EP_ELE_QUERIES));
         if (queryIterator.hasNext()) {
-            executionPlanConfiguration.setQueryExpressions(((OMElement) queryIterator.next()).getText());
+            executionPlanConfiguration.setExecutionPlan(((OMElement) queryIterator.next()).getText());
         }
 
         if (executionPlanConfigElement.getAttributeValue(new QName(EventProcessorConstants.EP_ATTR_STATISTICS)) != null && executionPlanConfigElement.getAttributeValue(new QName(EventProcessorConstants.EP_ATTR_STATISTICS)).equals(EventProcessorConstants.EP_ENABLE)) {
@@ -130,17 +121,6 @@ public class EventProcessorConfigurationHelper {
         description.setText(executionPlanConfiguration.getDescription());
         executionPlan.addChild(description);
 
-        OMElement siddhiConfiguration = factory.createOMElement(new QName(EventProcessorConstants.EP_ELE_SIDDHI_CONFIG));
-        siddhiConfiguration.setNamespace(executionPlan.getDefaultNamespace());
-        for (Map.Entry<String, String> entry : executionPlanConfiguration.getSiddhiConfigurationProperties().entrySet()) {
-            OMElement propertyElement = factory.createOMElement(new QName(EventProcessorConstants.EP_ELE_PROPERTY));
-            propertyElement.setNamespace(executionPlan.getDefaultNamespace());
-            propertyElement.addAttribute(EventProcessorConstants.EP_ATTR_NAME, entry.getKey(), null);
-            propertyElement.setText(entry.getValue());
-            siddhiConfiguration.addChild(propertyElement);
-        }
-        executionPlan.addChild(siddhiConfiguration);
-
         OMElement importedStreams = factory.createOMElement(new QName(EventProcessorConstants.EP_ELE_IMP_STREAMS));
         importedStreams.setNamespace(executionPlan.getDefaultNamespace());
         for (StreamConfiguration stream : executionPlanConfiguration.getImportedStreams()) {
@@ -160,7 +140,7 @@ public class EventProcessorConfigurationHelper {
 
         OMElement queries = factory.createOMElement(new QName(EventProcessorConstants.EP_ELE_QUERIES));
         queries.setNamespace(executionPlan.getDefaultNamespace());
-        factory.createOMText(queries, executionPlanConfiguration.getQueryExpressions(),
+        factory.createOMText(queries, executionPlanConfiguration.getExecutionPlan(),
                 XMLStreamReader.CDATA);
         executionPlan.addChild(queries);
 
@@ -196,131 +176,110 @@ public class EventProcessorConfigurationHelper {
         return executionPlan;
     }
 
-    public static void validateExecutionPlanConfiguration(OMElement executionPlanConfigElement, int tenantId) throws ExecutionPlanConfigurationException, ExecutionPlanDependencyValidationException {
-        if (!executionPlanConfigElement.getQName().getLocalPart().equals(EventProcessorConstants.EP_ELE_ROOT_ELEMENT)) {
-            throw new ExecutionPlanConfigurationException("Invalid root element expected:" + EventProcessorConstants.EP_ELE_ROOT_ELEMENT + " found:" + executionPlanConfigElement.getQName().getLocalPart());
+    /**
+     * Returns the execution plan name
+     * @param executionPlanAsString executionPlan (taken from code mirror) as a string
+     * @return execution plan name as given in @Plan:name('MyPlanName'). Returns null in the absence of @Plan:name('MyPlanName')
+     */
+    public static String getExecutionPlanName(String executionPlanAsString){
+        String executionPlanName = null;
+        ExecutionPlan executionPlan = SiddhiCompiler.parse(executionPlanAsString);
+        executionPlanName = AnnotationHelper.getAnnotationElement(EventProcessorConstants.ANNOTATION_NAME_NAME, null, executionPlan.getAnnotations()).getValue();
+        return executionPlanName;
+    }
+
+    public static void validateExecutionPlan(String executionPlan, int tenantId) throws ExecutionPlanConfigurationException, ExecutionPlanDependencyValidationException {
+        String planName;
+        int i = 0;      //this is maintained for giving more context info in error messages, when throwing exceptions.
+        ArrayList<String> importedStreams = new ArrayList<String>();
+        ArrayList<String> exportedStreams = new ArrayList<String>();
+        Pattern databridgeStreamNamePattern = Pattern.compile(EventProcessorConstants.DATABRIDGE_STREAM_REGEX);
+        Pattern streamVersionPattern = Pattern.compile(EventProcessorConstants.STREAM_VER_REGEX);
+
+        ExecutionPlan parsedExecPlan = SiddhiCompiler.parse(executionPlan);
+        Element element = AnnotationHelper.getAnnotationElement(EventProcessorConstants.ANNOTATION_NAME_NAME, null, parsedExecPlan.getAnnotations());
+        if (element == null) {                                                                        // check if plan name is given
+            throw new ExecutionPlanConfigurationException("Execution plan name is not given. Please specify execution plan name using the annotation " +
+                    "'@Plan:name('executionPlanNameHere')");
+        }
+        planName = element.getValue();
+        if (planName.equals("")) {
+            throw new ExecutionPlanConfigurationException("Execution plan name is empty. Hence the plan is invalid");
+        }
+        if (planName.trim().contains(" ")) {
+            throw new ExecutionPlanConfigurationException("Execution plan name '" + planName + "' contains whitespaces. Please remove whitespaces.");
         }
 
-        String name = null;
-        try {
-            name = executionPlanConfigElement.getAttributeValue(new QName(EventProcessorConstants.EP_ATTR_NAME));
-        } catch (Exception e) {
-            throw new ExecutionPlanConfigurationException("Execution plan name can't be null.");
-        }
-        if (name == null) {
-            throw new ExecutionPlanConfigurationException("Execution plan name can't be null.");
-        } else if (name.trim().contains(" ")) {
-            throw new ExecutionPlanConfigurationException("Execution plan name can't have spaces.");
-        }
-
-        Iterator descIterator = executionPlanConfigElement.getChildrenWithName(new QName(EventProcessorConstants.EP_CONF_NS, EventProcessorConstants.EP_ELE_DESC));
-        if (!descIterator.hasNext()) {
-            throw new ExecutionPlanConfigurationException("No description available:" + name);
-        }
-
-        HashMap<String, String> siddhiConfigParams = new HashMap<String, String>();
-        Iterator siddhiConfigIterator = executionPlanConfigElement.getChildrenWithName(new QName(EventProcessorConstants.EP_CONF_NS, EventProcessorConstants.EP_ELE_SIDDHI_CONFIG));
-        while (siddhiConfigIterator.hasNext()) {
-            Iterator siddhiConfigPropertyIterator = ((OMElement) siddhiConfigIterator.next()).getChildrenWithName(new QName(EventProcessorConstants.EP_CONF_NS, EventProcessorConstants.EP_ELE_PROPERTY));
-            while (siddhiConfigPropertyIterator.hasNext()) {
-                OMElement configPropertyElement = (OMElement) siddhiConfigPropertyIterator.next();
-                siddhiConfigParams.put(configPropertyElement.getAttributeValue(new QName(EventProcessorConstants.EP_ATTR_NAME)), configPropertyElement.getText());
+        for (Map.Entry<String, org.wso2.siddhi.query.api.definition.StreamDefinition> entry : parsedExecPlan.getStreamDefinitionMap().entrySet()) {
+            Element importElement = AnnotationHelper.getAnnotationElement(EventProcessorConstants.ANNOTATION_IMPORT, null, entry.getValue().getAnnotations());
+            Element exportElement = AnnotationHelper.getAnnotationElement(EventProcessorConstants.ANNOTATION_EXPORT, null, entry.getValue().getAnnotations());
+            if (importElement == null && exportElement == null) {                                        // check if each stream definition has either import or export annotation
+                throw new ExecutionPlanConfigurationException("Missing required annotation in " + i + "th of the " + parsedExecPlan.getStreamDefinitionMap().size() +
+                        "stream definition, with stream id '" + entry.getKey() + "'. Stream definition should have" +
+                        " either @Import or @Export annotation.");
             }
-        }
-
-        int siddhiSnapshotTime = 0;
-        try {
-            siddhiSnapshotTime = Integer.parseInt(siddhiConfigParams.get(EventProcessorConstants.SIDDHI_SNAPSHOT_INTERVAL).trim());
-            if (siddhiSnapshotTime < 0) {
-                throw new ExecutionPlanConfigurationException("Invalid Siddhi snapshot time interval in execution plan:" + name);
+            if (importElement != null) {                              //Treating import & export cases separately to give more specific error messages.
+                String importElementValue = importElement.getValue();
+                if (importElementValue == "") {
+                    throw new ExecutionPlanConfigurationException("Imported stream cannot be empty as in '@Import('')'. " +
+                            "Please correct " + i + "th of the " + parsedExecPlan.getStreamDefinitionMap().size() +
+                            "stream definition, with stream id '" + entry.getKey());
+                }
+                String[] streamIdComponents = importElementValue.split(EventProcessorConstants.STREAM_SEPARATOR);
+                if (streamIdComponents.length != 2) {
+                    throw new ExecutionPlanConfigurationException("Found malformed @Import element '" + importElementValue + "'. " +
+                            "@Import annotation should take the form '@Import('streamName:StreamVersion')'. " +
+                            "There should be one colon, separating the streamName and its version");
+                }
+                if ((!databridgeStreamNamePattern.matcher(streamIdComponents[0].trim()).matches())) {
+                    throw new ExecutionPlanConfigurationException("Invalid imported stream name[" + streamIdComponents[0] + "] in execution plan:" + planName +
+                            ". Stream name should match the regex '" + EventProcessorConstants.DATABRIDGE_STREAM_REGEX + "'");
+                }
+                Matcher m = streamVersionPattern.matcher(streamIdComponents[1].trim());
+                if (!m.matches()) {
+                    throw new ExecutionPlanConfigurationException("Invalid stream version [" + streamIdComponents[1] + "] for stream name " + streamIdComponents[0] + " in execution plan: " + planName +
+                            ". Stream version should match the regex '" + EventProcessorConstants.STREAM_VER_REGEX + "'");
+                }
+                validateIfStreamExists(streamIdComponents[0], streamIdComponents[1], tenantId);     // check if each Imported/Exported stream has actually being defined
+                if (exportedStreams.contains(importElementValue)) {                                   // check if same stream has been imported and exported.
+                    throw new ExecutionPlanConfigurationException("Imported stream '" + importElementValue + "' is also among the exported streams. Hence the execution plan is invalid");
+                }
+                importedStreams.add(importElementValue);
+            } else {
+                String exportElementValue = exportElement.getValue();
+                if (exportElementValue == "") {
+                    throw new ExecutionPlanConfigurationException("Exported stream cannot be empty as in '@Export('')'. " +
+                            "Please correct " + i + "th of the " + parsedExecPlan.getStreamDefinitionMap().size() +
+                            "stream definition, with stream id '" + entry.getKey());
+                }
+                String[] streamIdComponents = exportElementValue.split(EventProcessorConstants.STREAM_SEPARATOR);
+                if (streamIdComponents.length != 2) {
+                    throw new ExecutionPlanConfigurationException("Found malformed @Export element '" + exportElementValue + "'. " +
+                            "@Export annotation should take the form '@Export('streamName:StreamVersion')'. " +
+                            "There should be one colon, separating the streamName and its version");
+                }
+                if ((!databridgeStreamNamePattern.matcher(streamIdComponents[0].trim()).matches())) {
+                    throw new ExecutionPlanConfigurationException("Invalid exported stream name[" + streamIdComponents[0] + "] in execution plan:" + planName +
+                            ". Stream name should match the regex '" + EventProcessorConstants.DATABRIDGE_STREAM_REGEX + "'");
+                }
+                Matcher m = streamVersionPattern.matcher(streamIdComponents[1].trim());
+                if (!m.matches()) {
+                    throw new ExecutionPlanConfigurationException("Invalid stream version [" + streamIdComponents[1] + "] for stream name " + streamIdComponents[0] + " in execution plan: " + planName +
+                            ". Stream version should match the regex '" + EventProcessorConstants.STREAM_VER_REGEX + "'");
+                }
+                validateIfStreamExists(streamIdComponents[0], streamIdComponents[1], tenantId);
+                if (importedStreams.contains(exportElementValue)) {
+                    throw new ExecutionPlanConfigurationException("Exported stream '" + exportElementValue + "' is also among the imported streams. Hence the execution plan is invalid");
+                }
+                exportedStreams.add(exportElementValue);
             }
-            // TODO enable when distributed processing is available.
-//            Boolean.parseBoolean(siddhiConfigParams.get(EventProcessorConstants.SIDDHI_DISTRIBUTED_PROCESSING).trim());
-        } catch (NumberFormatException e) {
-            throw new ExecutionPlanConfigurationException("Invalid Siddhi snapshot time interval specified in execution plan : " + name);
-        }
-
-        Pattern siddhiStreamNamePattern = Pattern.compile(SIDDHI_STREAM_REGEX);
-        Pattern databridgeStreamNamePattern = Pattern.compile(DATABRIDGE_STREAM_REGEX);
-        Pattern streamVersionPattern = Pattern.compile(STREAM_VER_REGEX);
-        Iterator allImportedStreamsIterator = executionPlanConfigElement.getChildrenWithName(new QName(EventProcessorConstants.EP_CONF_NS, EventProcessorConstants.EP_ELE_IMP_STREAMS));
-        while (allImportedStreamsIterator.hasNext()) {
-            Iterator importedStreamIterator = ((OMElement) allImportedStreamsIterator.next()).getChildrenWithName(new QName(EventProcessorConstants.EP_CONF_NS, EventProcessorConstants.EP_ELE_STREAM));
-            while (importedStreamIterator.hasNext()) {
-                OMElement importedStream = (OMElement) importedStreamIterator.next();
-                String version = importedStream.getAttributeValue(new QName(EventProcessorConstants.EP_ATTR_VERSION));
-                if (version != null && version.trim().length() > 0) {
-                    Matcher m = streamVersionPattern.matcher(version.trim());
-                    if (!m.matches()) {
-                        throw new ExecutionPlanConfigurationException("Invalid stream version [" + version + "] in execution plan: " + name);
-                    }
-                }
-                String streamName = importedStream.getAttributeValue(new QName(EventProcessorConstants.EP_ATTR_NAME));
-                if (streamName == null || streamName.length() < 1 ||
-                        (!databridgeStreamNamePattern.matcher(streamName.trim()).matches())) {
-                    throw new ExecutionPlanConfigurationException("Invalid imported stream name[" + streamName + "] in execution plan:" + name);
-                }
-
-                validateStreamDetails(streamName, version, tenantId);
-                OMAttribute as = importedStream.getAttribute(new QName(EventProcessorConstants.EP_ATTR_AS));
-                if (as != null && as.getAttributeValue() != null) {
-                    if (!siddhiStreamNamePattern.matcher(as.getAttributeValue().trim()).matches()) {
-                        throw new ExecutionPlanConfigurationException("Invalid imported stream name as [" + streamName + "] in execution plan:" + name);
-                    }
-                }
-            }
-        }
-
-        Iterator allExportedStreamsIterator = executionPlanConfigElement.getChildrenWithName(new QName(EventProcessorConstants.EP_CONF_NS, EventProcessorConstants.EP_ELE_EXP_STREAMS));
-        while (allExportedStreamsIterator.hasNext()) {
-            Iterator exportedStreamIterator = ((OMElement) allExportedStreamsIterator.next()).getChildrenWithName(new QName(EventProcessorConstants.EP_CONF_NS, EventProcessorConstants.EP_ELE_STREAM));
-            while (exportedStreamIterator.hasNext()) {
-                OMElement exportedStream = (OMElement) exportedStreamIterator.next();
-
-                OMAttribute valueOf = exportedStream.getAttribute(new QName(EventProcessorConstants.EP_ATTR_VALUEOF));
-                if (valueOf == null || valueOf.getAttributeValue() == null ||
-                        valueOf.getAttributeValue().trim().length() < 1 ||
-                        (!siddhiStreamNamePattern.matcher(valueOf.getAttributeValue().trim()).matches())) {
-                    throw new ExecutionPlanConfigurationException("Invalid exported stream valueOf [" + valueOf.getAttributeValue() + "] in execution plan:" + name);
-
-                }
-
-                String version = exportedStream.getAttributeValue(new QName(EventProcessorConstants.EP_ATTR_VERSION));
-                if (version != null && version.trim().length() > 0) {
-                    if (!streamVersionPattern.matcher(version.trim()).matches()) {
-                        throw new ExecutionPlanConfigurationException("Invalid stream version [" + version + "] in execution plan: " + name);
-                    }
-                }
-
-                String streamName = exportedStream.getAttributeValue(new QName(EventProcessorConstants.EP_ATTR_NAME));
-                if (streamName != null && streamName.length() > 0) {
-                    if (!databridgeStreamNamePattern.matcher(streamName.trim()).matches()) {
-                        throw new ExecutionPlanConfigurationException("Invalid exported stream name[" + streamName + "] in execution plan:" + name);
-                    }
-                }
-
-                validateStreamDetails(streamName, version, tenantId);
-            }
-        }
-
-        Iterator queryIterator = executionPlanConfigElement.getChildrenWithName(new QName(EventProcessorConstants.EP_CONF_NS, EventProcessorConstants.EP_ELE_QUERIES));
-        if (queryIterator.hasNext()) {
-            String query = ((OMElement) queryIterator.next()).getText();
-            if (query == null || query.trim().length() < 1)
-                throw new ExecutionPlanConfigurationException("Invalid execution plan with no queries: " + name);
-        } else {
-            throw new ExecutionPlanConfigurationException("Invalid execution plan with no queries: " + name);
-
+            i++;
         }
     }
 
-    public static String getExecutionPlanName(OMElement executionPlanOMElement) {
-        return executionPlanOMElement.getAttributeValue(new QName(EventProcessorConstants.EP_ATTR_NAME));
-    }
 
-
-    private static boolean validateStreamDetails(String streamName, String streamVersion,
-                                                 int tenantId)
+    private static boolean validateIfStreamExists(String streamName, String streamVersion,
+                                                  int tenantId)
             throws ExecutionPlanConfigurationException, ExecutionPlanDependencyValidationException {
 
         EventStreamService eventStreamService = EventProcessorValueHolder.getEventStreamService();

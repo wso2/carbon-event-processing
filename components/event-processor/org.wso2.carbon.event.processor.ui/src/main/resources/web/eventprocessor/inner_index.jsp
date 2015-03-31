@@ -56,7 +56,7 @@
     }
 
     if (executionPlanName != null) {
-        stub.undeployActiveExecutionPlanConfiguration(executionPlanName);
+        stub.undeployActiveExecutionPlan(executionPlanName);
 %>
 <script type="text/javascript">CARBON.showInfoDialog('Execution Plan successfully deleted.');</script>
 <%
