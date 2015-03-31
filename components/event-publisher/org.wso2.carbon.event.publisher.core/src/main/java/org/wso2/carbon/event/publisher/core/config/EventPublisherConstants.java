@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2005 - 2014, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
+ * Copyright (c) 2015, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy
@@ -95,6 +95,8 @@ public final class EventPublisherConstants {
     public static final String EVENT_ATTRIBUTE_VALUE_SEPARATOR = ":";
     public static final String EVENT_ATTRIBUTE_SEPARATOR = ",";
     public static final String DEFAULT_STREAM_VERSION = "1.0.0";
+
+    public static final String EF_ATTR_ENCRYPTED = "encrypted";
 
 
     private EventPublisherConstants() {

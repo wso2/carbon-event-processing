@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2005 - 2014, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
+ * Copyright (c) 2015, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy
@@ -20,7 +20,9 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.wso2.carbon.context.PrivilegedCarbonContext;
 import org.wso2.carbon.databridge.commons.StreamDefinition;
+import org.wso2.carbon.event.output.adapter.core.OutputEventAdapterSchema;
 import org.wso2.carbon.event.output.adapter.core.OutputEventAdapterService;
+import org.wso2.carbon.event.output.adapter.core.Property;
 import org.wso2.carbon.event.publisher.core.EventPublisherService;
 import org.wso2.carbon.event.publisher.core.config.EventPublisherConfiguration;
 import org.wso2.carbon.event.publisher.core.config.EventPublisherConfigurationFile;
@@ -69,7 +71,7 @@ public class CarbonEventPublisherService implements EventPublisherService {
             String repoPath = EventPublisherUtil.getAxisConfiguration().getRepository().getPath();
             EventPublisherUtil.generateFilePath(eventPublisherName, repoPath);
             validateToRemoveInactiveEventPublisherConfiguration(eventPublisherName);
-            EventPublisherConfigurationFilesystemInvoker.save(omElement, eventPublisherName + EventPublisherConstants.EF_CONFIG_FILE_EXTENSION_WITH_DOT);
+            EventPublisherConfigurationFilesystemInvoker.encryptAndSave(omElement, eventPublisherName + EventPublisherConstants.EF_CONFIG_FILE_EXTENSION_WITH_DOT);
         } else {
             throw new EventPublisherConfigurationException("Mapping type of the Event Publisher " + eventPublisherName + " cannot be null");
         }
@@ -92,7 +94,7 @@ public class CarbonEventPublisherService implements EventPublisherService {
             String repoPath = EventPublisherUtil.getAxisConfiguration().getRepository().getPath();
             EventPublisherUtil.generateFilePath(eventPublisherName, repoPath);
             validateToRemoveInactiveEventPublisherConfiguration(eventPublisherName);
-            EventPublisherConfigurationFilesystemInvoker.save(omElement, eventPublisherName + ".xml");
+            EventPublisherConfigurationFilesystemInvoker.encryptAndSave(omElement, eventPublisherName + ".xml");
         } else {
             throw new EventPublisherConfigurationException("Mapping type of the Event Publisher " + eventPublisherName + " cannot be null");
         }
@@ -533,13 +535,13 @@ public class CarbonEventPublisherService implements EventPublisherService {
                 if (!(eventPublisherConfigurationObject.getEventPublisherName().equals(originalEventPublisherName))) {
                     if (!isEventPublisherAlreadyExists(tenantId, eventPublisherConfigurationObject.getEventPublisherName())) {
                         EventPublisherConfigurationFilesystemInvoker.delete(filename);
-                        EventPublisherConfigurationFilesystemInvoker.save(omElement, filename);
+                        EventPublisherConfigurationFilesystemInvoker.encryptAndSave(omElement, filename);
                     } else {
                         throw new EventPublisherConfigurationException("There is already a Event Publisher " + eventPublisherConfigurationObject.getEventPublisherName() + " with the same name");
                     }
                 } else {
                     EventPublisherConfigurationFilesystemInvoker.delete(filename);
-                    EventPublisherConfigurationFilesystemInvoker.save(omElement, filename);
+                    EventPublisherConfigurationFilesystemInvoker.encryptAndSave(omElement, filename);
                 }
             } else {
                 throw new EventPublisherConfigurationException("Mapping type of the Event Publisher " + originalEventPublisherName + " cannot be null");
@@ -581,6 +583,31 @@ public class CarbonEventPublisherService implements EventPublisherService {
             }
         }
 
+    }
+
+    public List<String> getEncryptedProperties(String eventAdaptorType) {
+        List<String> encryptedProperties = new ArrayList<String>(1);
+        //OutputEventAdapterDto dto = OutputEventAdaptorHolder.getInstance().getOutputEventAdaptorService().getEventAdaptorDto(eventAdaptorType);
+        OutputEventAdapterSchema outputEventAdapterSchema = EventPublisherServiceValueHolder.getOutputEventAdapterService().getOutputEventAdapterSchema(eventAdaptorType);
+        if (outputEventAdapterSchema != null) {
+            List<Property> properties = outputEventAdapterSchema.getStaticPropertyList();
+            if (properties != null) {
+                for (Property prop : properties) {
+                    if (prop.isSecured()) {
+                        encryptedProperties.add(prop.getPropertyName());
+                    }
+                }
+            }
+            properties = outputEventAdapterSchema.getDynamicPropertyList();
+            if (properties != null) {
+                for (Property prop : properties) {
+                    if (prop.isSecured()) {
+                        encryptedProperties.add(prop.getPropertyName());
+                    }
+                }
+            }
+        }
+        return encryptedProperties;
     }
 
 }
