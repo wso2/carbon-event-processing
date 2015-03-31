@@ -17,38 +17,40 @@
  */
 package org.wso2.carbon.event.execution.manager.core.internal.ds;
 
-
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.osgi.service.component.ComponentContext;
-import org.wso2.carbon.event.execution.manager.core.internal.processing.DomainInformation;
-import org.wso2.carbon.event.processor.core.EventProcessorService;
+import org.wso2.carbon.event.execution.manager.core.ExecutionManagerService;
+import org.wso2.carbon.event.execution.manager.core.internal.CarbonExecutionManagerService;
 import org.wso2.carbon.registry.core.exceptions.RegistryException;
 import org.wso2.carbon.registry.core.service.RegistryService;
 
 /**
  * This class is used to get the EventProcessor service.
- *
- * @scr.component name="eventProcessorAdmin.component" immediate="true"
- * @scr.reference name="eventProcessorService.service"
- * interface="org.wso2.carbon.event.processor.core.EventProcessorService" cardinality="1..1"
- * policy="dynamic" bind="setEventProcessorService" unbind="unsetEventProcessorService"
+ * @scr.component name="org.wso2.carbon.event.execution.manager.core.ExecutionManagerService" immediate="true"
  * @scr.reference name="registry.service"
  * interface="org.wso2.carbon.registry.core.service.RegistryService"
  * cardinality="1..1" policy="dynamic" bind="setRegistryService" unbind="unsetRegistryService"
  */
-
 public class ExecutionManagerServiceDS {
 
+    public static ExecutionManagerService executionManagerService;
+    private static final Log log = LogFactory.getLog(ExecutionManagerServiceDS.class);
+
     protected void activate(ComponentContext context) {
-        ExecutionManagerValueHolder.setDomainInformation(new DomainInformation());
-    }
 
-    public void setEventProcessorService(EventProcessorService eventProcessorService) {
-        ExecutionManagerValueHolder.registerEventProcessorService(eventProcessorService);
-    }
+        try {
+        executionManagerService = new CarbonExecutionManagerService();
+        context.getBundleContext().registerService(ExecutionManagerService.class.getName(),
+                executionManagerService, null);
+        ExecutionManagerValueHolder.setExecutionManagerService(executionManagerService);
 
-    public void unsetEventProcessorService(EventProcessorService eventProcessorService) {
-        ExecutionManagerValueHolder.registerEventProcessorService(null);
-
+            if (log.isDebugEnabled()) {
+                log.debug("Successfully deployed the execution manager core service");
+            }
+        } catch (RuntimeException e) {
+            log.error("Can not create the input execution manager core service ", e);
+        }
     }
 
     protected void setRegistryService(RegistryService registryService) throws RegistryException {

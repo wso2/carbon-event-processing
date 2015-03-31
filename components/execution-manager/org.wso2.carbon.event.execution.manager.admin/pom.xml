@@ -25,12 +25,12 @@
         <version>2.0.4-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
-
     <modelVersion>4.0.0</modelVersion>
+
+    <artifactId>org.wso2.carbon.event.execution.manager.admin</artifactId>
     <packaging>bundle</packaging>
-    <artifactId>org.wso2.carbon.event.execution.manager.core</artifactId>
-    <name>WSO2 Carbon - Execution Manager Core</name>
-    <description>org.wso2.carbon.event.execution.manager.core provides the back-end functionality of Execution Manager
+    <name>WSO2 Carbon - Execution Manager Admin</name>
+    <description>org.wso2.carbon.event.execution.manager.admin provides the service functionality of Execution Manager
     </description>
     <url>http://wso2.org</url>
 
@@ -52,31 +52,20 @@
         </dependency>
         <dependency>
             <groupId>org.wso2.carbon.event-processing</groupId>
-            <artifactId>org.wso2.carbon.event.processor.core</artifactId>
+            <artifactId>org.wso2.carbon.event.execution.manager.core</artifactId>
             <version>2.0.4-SNAPSHOT</version>
         </dependency>
-        <dependency>
-            <groupId>org.wso2.carbon</groupId>
-            <artifactId>org.wso2.carbon.registry.core</artifactId>
-            <version>4.3.0</version>
-        </dependency>
     </dependencies>
-
-
 
     <build>
         <plugins>
             <plugin>
                 <groupId>org.apache.felix</groupId>
                 <artifactId>maven-scr-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <id>generate-scr-scrdescriptor</id>
-                        <goals>
-                            <goal>scr</goal>
-                        </goals>
-                    </execution>
-                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
             </plugin>
             <plugin>
                 <groupId>org.apache.felix</groupId>
@@ -86,15 +75,15 @@
                     <instructions>
                         <Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
                         <Bundle-Name>${project.artifactId}</Bundle-Name>
-                        <Private-Package>
-                            org.wso2.carbon.event.execution.manager.core.internal.*
-                        </Private-Package>
+                        <Carbon-Component>UIBundle</Carbon-Component>
                         <Export-Package>
-                            !org.wso2.carbon.event.execution.manager.core.internal,
-                            !org.wso2.carbon.event.execution.manager.core.internal.*,
-                            org.wso2.carbon.event.execution.manager.core.*
+                            !org.wso2.carbon.event.execution.manager.admin.internal,
+                            !org.wso2.carbon.event.execution.manager.admin.internal.*,
+                            org.wso2.carbon.event.execution.manager.admin.*,
                         </Export-Package>
                         <Import-Package>
+                            org.wso2.carbon.event.execution.manager.core.*,
+                            org.wso2.carbon.utils,
                             *;resolution:=optional
                         </Import-Package>
                         <DynamicImport-Package>*</DynamicImport-Package>
@@ -103,5 +92,6 @@
             </plugin>
         </plugins>
     </build>
+
 
 </project>
