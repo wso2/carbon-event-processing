@@ -28,10 +28,14 @@
 <script type="text/javascript" src="../resources/js/resource_util.js"></script>
 <jsp:include page="../resources/resources-i18n-ajaxprocessor.jsp"/>
 <link rel="stylesheet" type="text/css" href="../resources/css/registry.css"/>
+<link rel="stylesheet" href="../eventreceiver/css/codemirror.css"/>
+<link rel="stylesheet" href="../eventreceiver/css/eventReceiver.css"/>
 <script type="text/javascript" src="../ajax/js/prototype.js"></script>
 <script type="text/javascript"
         src="../eventreceiver/js/create_eventReceiver_helper.js"></script>
 
+
+<div id="custom_dcontainer" style="display:none"></div>
 <div id="middle">
 <h2><fmt:message key="title.event.receiver.create"/></h2>
 
@@ -345,7 +349,7 @@
                         <span style="float: left; position: relative; margin-top: 5px;">
                             <fmt:message key="event.receiver.error.no.stream"/>
                         </span>
-                        <a href="../eventstream/create_event_stream.jsp?ordinal=1"
+                        <a onclick="createImportedStreamDefinition()",
                            style="background-image:url(images/add.gif);"
                            class="icon-link">
                             Add Event Stream

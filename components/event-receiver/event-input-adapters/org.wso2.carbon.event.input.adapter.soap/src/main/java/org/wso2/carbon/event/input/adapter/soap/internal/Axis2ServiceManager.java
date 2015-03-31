@@ -32,6 +32,7 @@ import org.wso2.carbon.context.CarbonContext;
 import org.wso2.carbon.event.input.adapter.core.exception.InputEventAdapterRuntimeException;
 import org.wso2.carbon.event.input.adapter.soap.SOAPEventAdapter;
 import org.wso2.carbon.event.input.adapter.soap.internal.util.SOAPEventAdapterConstants;
+import org.wso2.carbon.event.statistics.internal.Constants;
 
 import javax.xml.namespace.QName;
 import java.util.List;
@@ -39,9 +40,6 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 
-/**
- * Created on 3/5/15.
- */
 public final class Axis2ServiceManager {
     public static Map<String, List<SOAPEventAdapter>> ADAPTER_MAP = new ConcurrentHashMap<String, List<SOAPEventAdapter>>();
 
@@ -49,13 +47,14 @@ public final class Axis2ServiceManager {
 
     }
 
-    public static synchronized void registerService(String serviceName, String operationName, SOAPEventAdapter soapEventAdapter, AxisConfiguration axisConfiguration) throws AxisFault {
+    public static synchronized void registerService(String serviceName, SOAPEventAdapter soapEventAdapter,
+                                                    AxisConfiguration axisConfiguration) throws AxisFault {
 
 
 //        TenantManager.getTenantAxisConfiguration()
 //        TenantAxisUtils.getTenantAxisConfiguration()
         int tenantId = CarbonContext.getThreadLocalCarbonContext().getTenantId();
-        String id = tenantId + SOAPEventAdapterConstants.SEPARATOR + serviceName + SOAPEventAdapterConstants.SEPARATOR + operationName;
+        String id = tenantId + SOAPEventAdapterConstants.SEPARATOR + serviceName;
 
         List<SOAPEventAdapter> adapterList = ADAPTER_MAP.get(id);
         if (adapterList == null) {
@@ -77,15 +76,17 @@ public final class Axis2ServiceManager {
 
                 axisConfiguration.addService(axisService);
                 axisService.getAxisServiceGroup().addParameter(CarbonConstants.DYNAMIC_SERVICE_PARAM_NAME, "true");
-            }
 
-            AxisOperation axisOperation = axisService.getOperation(new QName("", operationName));
-            if (axisOperation == null) {
-                axisOperation = new InOnlyAxisOperation(new QName("", operationName));
-                axisOperation.setMessageReceiver(new SubscriptionMessageReceiver(serviceName, operationName, tenantId));
-                axisOperation.setSoapAction("urn:" + operationName);
-                axisConfiguration.getPhasesInfo().setOperationPhases(axisOperation);
-                axisService.addOperation(axisOperation);
+                AxisOperation axisOperation = axisService.getOperation(new QName("",
+                        SOAPEventAdapterConstants.OPERATION_NAME));
+                if (axisOperation == null) {
+                    axisOperation = new InOnlyAxisOperation(new QName("", SOAPEventAdapterConstants.OPERATION_NAME));
+                    axisOperation.setMessageReceiver(new SubscriptionMessageReceiver(serviceName,
+                            SOAPEventAdapterConstants.OPERATION_NAME, tenantId));
+                    axisOperation.setSoapAction("urn:" + SOAPEventAdapterConstants.OPERATION_NAME);
+                    axisConfiguration.getPhasesInfo().setOperationPhases(axisOperation);
+                    axisService.addOperation(axisOperation);
+                }
             }
 
         } else {
@@ -93,10 +94,11 @@ public final class Axis2ServiceManager {
         }
     }
 
-    public static void unregisterService(String serviceName, String operationName, SOAPEventAdapter soapEventAdapter, AxisConfiguration axisConfiguration) throws AxisFault {
+    public static void unregisterService(String serviceName, SOAPEventAdapter soapEventAdapter,
+                                         AxisConfiguration axisConfiguration) throws AxisFault {
 
         int tenantId = CarbonContext.getThreadLocalCarbonContext().getTenantId();
-        String id = tenantId + SOAPEventAdapterConstants.SEPARATOR + serviceName + SOAPEventAdapterConstants.SEPARATOR + operationName;
+        String id = tenantId + SOAPEventAdapterConstants.SEPARATOR + serviceName + SOAPEventAdapterConstants.SEPARATOR;
         List<SOAPEventAdapter> soapEventAdapters = ADAPTER_MAP.get(id);
         soapEventAdapters.remove(soapEventAdapter);
         if (soapEventAdapters.size() == 0) {
@@ -108,18 +110,19 @@ public final class Axis2ServiceManager {
                 throw new AxisFault("There is no service with the name " + serviceName);
             }
 
-            AxisOperation axisOperation = axisService.getOperation(new QName("", operationName));
+            AxisOperation axisOperation = axisService.getOperation(new QName("",
+                    SOAPEventAdapterConstants.OPERATION_NAME));
             if (axisOperation == null) {
-                throw new AxisFault("There is no operation with the name " + operationName);
+                throw new AxisFault("There is no operation with the name " + SOAPEventAdapterConstants.OPERATION_NAME);
             }
             SubscriptionMessageReceiver messageReceiver =
                     (SubscriptionMessageReceiver) axisOperation.getMessageReceiver();
             if (messageReceiver == null) {
-                throw new AxisFault("There is no message receiver for operation with name " + operationName);
+                throw new AxisFault("There is no message receiver for operation with name "
+                        + SOAPEventAdapterConstants.OPERATION_NAME);
             }
 
-            axisService.removeOperation(new QName("", operationName));
-
+            axisService.removeOperation(new QName("", SOAPEventAdapterConstants.OPERATION_NAME));
         }
 
     }
@@ -135,7 +138,8 @@ public final class Axis2ServiceManager {
             this.serviceName = serviceName;
             this.operationName = operationName;
             this.tenantId = tenantId;
-            id = tenantId + SOAPEventAdapterConstants.SEPARATOR + serviceName + SOAPEventAdapterConstants.SEPARATOR + operationName;
+            id = tenantId + SOAPEventAdapterConstants.SEPARATOR + serviceName + SOAPEventAdapterConstants.SEPARATOR
+                    + operationName;
         }
 
         protected void invokeBusinessLogic(MessageContext messageContext) throws AxisFault {
@@ -158,7 +162,8 @@ public final class Axis2ServiceManager {
                     log.error("Can not process the received event ", e);
                 }
             } else {
-                log.warn("Dropping the empty/null event received through soap adaptor service " + serviceName + " for the operation " + operationName + " & tenant " + tenantId);
+                log.warn("Dropping the empty/null event received through soap adaptor service " + serviceName
+                        + " for the operation " + operationName + " & tenant " + tenantId);
             }
         }
     }

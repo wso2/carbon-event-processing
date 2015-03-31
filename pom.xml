@@ -321,6 +321,11 @@
                 <artifactId>antlr4-runtime</artifactId>
                 <version>${antlr.version}</version>
             </dependency>
+            <dependency>
+                <groupId>com.sun.jersey</groupId>
+                <artifactId>jersey-server</artifactId>
+                <version>${jersey.version}</version>
+            </dependency>
             <!--third party dependencies stop-->
 
             <!--carbon event processing dependencies start-->
@@ -344,6 +349,12 @@
             </dependency>
             <dependency>
                 <artifactId>org.wso2.carbon.event.input.adapter.websocket.local</artifactId>
+                <groupId>org.wso2.carbon.event-processing</groupId>
+                <version>${carbon.event.processing.version}</version>
+                <scope>provided</scope>
+            </dependency>
+            <dependency>
+                <artifactId>org.wso2.carbon.event.output.adapter.ui</artifactId>
                 <groupId>org.wso2.carbon.event-processing</groupId>
                 <version>${carbon.event.processing.version}</version>
                 <scope>provided</scope>
@@ -1263,6 +1274,7 @@
         <javax.websocket.version>1.0</javax.websocket.version>
         <snakeyaml.version>1.11</snakeyaml.version>
         <antlr.version>4.5</antlr.version>
+        <jersey.version>1.8</jersey.version>
 
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.scm.id>my-scm-server</project.scm.id>
