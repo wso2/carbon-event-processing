@@ -501,7 +501,7 @@ public class CarbonEventPublisherService implements EventPublisherService {
         undeployActiveEventPublisherConfiguration(eventPublisherName);
         OMElement omElement = EventPublisherConfigurationBuilder.eventPublisherConfigurationToOM(eventPublisherConfiguration);
         EventPublisherConfigurationFilesystemInvoker.delete(fileName);
-        EventPublisherConfigurationFilesystemInvoker.save(omElement, fileName);
+        EventPublisherConfigurationFilesystemInvoker.encryptAndSave(omElement, fileName);
     }
 
     private String getFileName(int tenantId, String eventPublisherName) {

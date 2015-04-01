@@ -14,6 +14,7 @@
  */
 package org.wso2.carbon.event.receiver.core.internal.util.helper;
 
+import org.apache.axiom.om.OMAttribute;
 import org.apache.axiom.om.OMElement;
 import org.apache.axis2.deployment.DeploymentException;
 import org.apache.axis2.deployment.repository.util.DeploymentFileData;
@@ -21,18 +22,58 @@ import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.wso2.carbon.context.PrivilegedCarbonContext;
+import org.wso2.carbon.core.util.CryptoUtil;
 import org.wso2.carbon.event.input.adapter.core.EventAdapterUtil;
 import org.wso2.carbon.event.receiver.core.EventReceiverDeployer;
 import org.wso2.carbon.event.receiver.core.config.EventReceiverConfigurationFile;
 import org.wso2.carbon.event.receiver.core.config.EventReceiverConstants;
 import org.wso2.carbon.event.receiver.core.exception.EventReceiverConfigurationException;
+import org.wso2.carbon.event.receiver.core.internal.ds.EventReceiverServiceValueHolder;
 import org.wso2.carbon.event.receiver.core.internal.util.XmlFormatter;
 import org.wso2.carbon.utils.multitenancy.MultitenantUtils;
 
+import javax.xml.namespace.QName;
 import java.io.*;
+import java.util.Iterator;
+import java.util.List;
 
 public class EventReceiverConfigurationFileSystemInvoker {
     private static final Log log = LogFactory.getLog(EventReceiverConfigurationFileSystemInvoker.class);
+
+    public static void encryptAndSave(OMElement eventAdaptorElement, String fileName)
+            throws EventReceiverConfigurationException {
+
+        String adaptorType = eventAdaptorElement.getFirstChildWithName(new QName(EventReceiverConstants.ER_CONF_NS, EventReceiverConstants.ER_ELEMENT_FROM)).getAttributeValue(new QName(EventReceiverConstants.ER_ATTR_TA_TYPE));
+
+        //get Static and Dynamic PropertyLists
+        List<String> encryptedProperties = EventReceiverServiceValueHolder.getCarbonEventReceiverService().getEncryptedProperties(adaptorType);
+        Iterator propertyIter = eventAdaptorElement.getFirstChildWithName(new QName(EventReceiverConstants.ER_CONF_NS, EventReceiverConstants.ER_ELEMENT_FROM)).getChildrenWithName(new QName(EventReceiverConstants.ER_ELEMENT_PROPERTY));
+        if (propertyIter.hasNext()) {
+            while (propertyIter.hasNext()) {
+                OMElement propertyOMElement = (OMElement) propertyIter.next();
+                String name = propertyOMElement.getAttributeValue(
+                        new QName(EventReceiverConstants.ER_ATTR_NAME));
+
+                if (encryptedProperties.contains(name.trim())) {
+                    OMAttribute encryptedAttribute = propertyOMElement.getAttribute(new QName(EventReceiverConstants.ER_ATTR_ENCRYPTED));
+
+                    if (encryptedAttribute == null || (!"true".equals(encryptedAttribute.getAttributeValue()))) {
+                        String value = propertyOMElement.getText();
+
+                        try {
+                            value = new String(CryptoUtil.getDefaultCryptoUtil().encryptAndBase64Encode(value.getBytes()));
+                            propertyOMElement.setText(value);
+                            propertyOMElement.addAttribute(EventReceiverConstants.ER_ATTR_ENCRYPTED, "true", null);
+                        } catch (Exception e) {
+                            log.error("Unable to decrypt the encrypted field: " + name + " for adaptor type: " + adaptorType);
+                            propertyOMElement.setText("");
+                        }
+                    }
+                }
+            }
+        }
+        EventReceiverConfigurationFileSystemInvoker.save(eventAdaptorElement, fileName);
+    }
 
     public static void save(OMElement eventReceiverConfigOMElement, String fileName)
             throws EventReceiverConfigurationException {
