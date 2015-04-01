@@ -41,18 +41,7 @@ public class SOAPEventAdapterFactory extends InputEventAdapterFactory {
 
     @Override
     public List<Property> getPropertyList() {
-        List<Property> propertyList = new ArrayList<Property>();
-
-        // set receiver url
-        Property operationProperty = new Property(SOAPEventAdapterConstants.ADAPTER_MESSAGE_OPERATION_NAME);
-        operationProperty.setDisplayName(
-                resourceBundle.getString(SOAPEventAdapterConstants.ADAPTER_MESSAGE_OPERATION_NAME));
-        operationProperty.setRequired(true);
-        operationProperty.setHint(resourceBundle.getString(SOAPEventAdapterConstants.ADAPTER_MESSAGE_HINT_OPERATION_NAME));
-
-        propertyList.add(operationProperty);
-
-        return propertyList;
+        return null;
     }
 
     @Override

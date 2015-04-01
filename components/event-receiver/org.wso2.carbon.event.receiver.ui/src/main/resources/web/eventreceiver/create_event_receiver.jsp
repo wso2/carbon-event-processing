@@ -331,7 +331,7 @@
 <tr>
     <td class="buttonRow">
         <input type="button" value="<fmt:message key="add.event.receiver"/>"
-               onclick="addEventReceiverViaPopup(document.getElementById('addEventReceiver') ,'<%=streamId%>')"/>
+               onclick="addEventReceiverViaPopup(document.getElementById('addEventReceiver') ,document.getElementById('streamIdFilter')[document.getElementById('streamIdFilter').selectedIndex].value)"/>
     </td>
 </tr>
 </tbody>
