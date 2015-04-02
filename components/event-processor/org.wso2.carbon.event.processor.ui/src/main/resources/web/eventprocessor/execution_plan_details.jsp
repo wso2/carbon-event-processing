@@ -20,11 +20,9 @@
 
 <%@ page import="org.wso2.carbon.event.processor.stub.EventProcessorAdminServiceStub" %>
 <%@ page import="org.wso2.carbon.event.processor.stub.types.ExecutionPlanConfigurationDto" %>
-<%@ page import="org.wso2.carbon.event.processor.stub.types.SiddhiConfigurationDto" %>
 <%@ page import="org.wso2.carbon.event.processor.stub.types.StreamConfigurationDto" %>
 <%@ page import="org.wso2.carbon.event.processor.ui.EventProcessorUIUtils" %>
 <%@ page import="org.wso2.carbon.event.processor.ui.UIConstants" %>
-<%@ page import="org.wso2.carbon.event.stream.stub.EventStreamAdminServiceStub" %>
 
 
 <fmt:bundle basename="org.wso2.carbon.event.processor.ui.i18n.Resources">
@@ -58,98 +56,9 @@
 
             String execPlanName = request.getParameter("execPlan");
             EventProcessorAdminServiceStub processorAdminServiceStub = EventProcessorUIUtils.getEventProcessorAdminService(config, session, request);
-            EventStreamAdminServiceStub eventStreamAdminServiceStub = EventProcessorUIUtils.getEventStreamAdminService(config, session, request);
             ExecutionPlanConfigurationDto configurationDto = processorAdminServiceStub.getActiveExecutionPlanConfiguration(execPlanName);
         %>
 <table width="100%">
-
-<tr>
-    <td class="leftCol-med">Execution Plan Name<span class="required">*</span></td>
-    <td><input type="text" name="executionPlanName" id="executionPlanId"
-               class="initE"
-               style="width:100%"
-               value=<%= "\"" + execPlanName + "\"" %>
-                       readonly/>
-    </td>
-</tr>
-
-
-<tr>
-    <td class="leftCol-med">
-        Description
-    </td>
-
-    <td>
-        <input type="text" name="executionPlanDescription" id="executionPlanDescId"
-               class="initE"
-               style="width:100%"
-               value=<%= "\"" +((configurationDto.getDescription()!= null)? configurationDto.getDescription().trim():"")+ "\"" %>
-                       readonly/>
-    </td>
-</tr>
-
-
-<tr name="siddhiConfigsHeader">
-    <td colspan="2">
-        <b>Siddhi Configurations</b>
-    </td>
-</tr>
-<tr>
-    <td class="leftCol-med">
-        Snapshot time interval
-    </td>
-
-    <td>
-
-        <%
-            String snapshotTime = "0";
-            if (configurationDto.getSiddhiConfigurations() != null) {
-                for (SiddhiConfigurationDto siddhiConfigurationDto : configurationDto.getSiddhiConfigurations()) {
-                    if (UIConstants.SIDDHI_SNAPSHOT_INTERVAL.equalsIgnoreCase(siddhiConfigurationDto.getKey())) {
-                        snapshotTime = siddhiConfigurationDto.getValue();
-                    }
-                }
-            }
-        %>
-
-        <input type="text" name="siddhiSnapshotTime" id="siddhiSnapshotTime"
-               class="initE"
-               style="width:100%"
-               value=<%= "\"" +snapshotTime + "\"" %>
-                       readonly/>
-
-    </td>
-</tr>
-
-<tr>
-    <td class="leftCol-med">
-        Distributed processing
-    </td>
-    <td>
-        <%
-            String distributedProcessingStatus = "N/A";
-            if (configurationDto.getSiddhiConfigurations() != null) {
-                for (SiddhiConfigurationDto siddhiConfig : configurationDto.getSiddhiConfigurations()) {
-                    if (UIConstants.SIDDHI_DISTRIBUTED_PROCESSING.equalsIgnoreCase(siddhiConfig.getKey())) {
-                        if ("true".equals(siddhiConfig.getValue()) || "Distributed".equals(siddhiConfig.getValue())) {
-                            distributedProcessingStatus = "Distributed";
-                        } else if ("RedundantNode".equals(siddhiConfig.getValue())) {
-                            distributedProcessingStatus = "Redundant Node";
-                        } else {
-                            distributedProcessingStatus = "Disabled";
-                        }
-                    }
-                }
-            }
-        %>
-        <input type="text" name="siddhiDistrProcessing" id="siddhiDistrProcessing"
-               class="initE"
-               style="width:100%"
-               value=<%= "\"" +distributedProcessingStatus + "\"" %>
-                       readonly/>
-
-    </td>
-</tr>
 
     <%--code mirror code--%>
 
@@ -196,7 +105,7 @@
 
 <tr>
     <td colspan="2">
-        <b><fmt:message key="wso2query.expressions"/></b>
+        <b><fmt:message key="execution.plan"/></b>
     </td>
 </tr>
 
@@ -210,62 +119,12 @@
             }
         </style>
         <table width="100%" style="border: 1px solid #cccccc">
-            <tr>
-                <td>
-                    <table id="streamDefinitionsTable" width="100%">
-                        <tbody>
-                        <%
-                            if (configurationDto.getImportedStreams() != null) {
-                                for (StreamConfigurationDto dto : configurationDto.getImportedStreams()) {
-                                    String paramDefinitions = eventStreamAdminServiceStub.getStreamDefinitionAsString(dto.getStreamId());
-                                    String query = "define stream <b>"  + dto.getSiddhiStreamName() + "</b> (" + paramDefinitions+" )";
-
-                        %>
-                        <tr>
-                            <td>
-                                <font color="green"> <i><%="// Imported from " + dto.getStreamId()%>
-                                </i>   </font>
-                                <br>
-                                <%=query %>
-                            </td>
-                        </tr>
-
-                        <%
-                                }
-                            }
-                        %>
-
-                        <%
-                            if (configurationDto.getExportedStreams() != null) {
-                                for (StreamConfigurationDto dto : configurationDto.getExportedStreams()) {
-                                    String paramDefinitions = eventStreamAdminServiceStub.getStreamDefinitionAsString(dto.getStreamId());
-                                    String query = "define stream <b>" + dto.getSiddhiStreamName() + "</b> ( " + paramDefinitions +" )";
-
-                        %>
-                        <tr>
-                            <td>
-                                <font color="blue"> <i><%="// Exported to " + dto.getStreamId()%>
-                                </i> </font>
-                                <br>
-                                <%=query %>
-                            </td>
-                        </tr>
-
-                        <%
-                                }
-                            }
-                        %>
-
-                        </tbody>
-                    </table>
-                </td>
-            </tr>
                 <%--query expressions--%>
             <tr>
                 <td>
                     <textarea class="queryExpressionsTextArea" style="width:100%; height: 150px"
                               id="queryExpressions"
-                              name="queryExpressions" readonly><%= configurationDto.getQueryExpressions() %>
+                              name="queryExpressions" readonly><%= configurationDto.getExecutionPlan() %>
                     </textarea>
                 </td>
             </tr>

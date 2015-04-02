@@ -39,11 +39,11 @@ public class EventProcessorConfigurationFilesystemInvoker {
                             AxisConfiguration axisConfiguration)
             throws ExecutionPlanConfigurationException {
 
-        EventProcessorConfigurationFilesystemInvoker.save(executionPlanOM.toString(), executionPlanName, fileName, axisConfiguration);
+        EventProcessorConfigurationFilesystemInvoker.saveOld(executionPlanOM.toString(), executionPlanName, fileName, axisConfiguration);
     }
 
-    public static void save(String executionPlan, String executionPlanName,
-                            String fileName, AxisConfiguration axisConfiguration)
+    public static void saveOld(String executionPlan, String executionPlanName,
+                               String fileName, AxisConfiguration axisConfiguration)
             throws ExecutionPlanConfigurationException {
         EventProcessorDeployer eventProcessorDeployer = (EventProcessorDeployer) getDeployer(axisConfiguration, EventProcessorConstants.EP_ELE_DIRECTORY);
         String filePath = getFilePathFromFilename(fileName, axisConfiguration);
@@ -59,6 +59,38 @@ public class EventProcessorConfigurationFilesystemInvoker {
                 String xmlContent = EventProcessorUtil.formatXml(executionPlan);
                 eventProcessorDeployer.getDeployedExecutionPlanFilePaths().add(filePath);
                 writer.write(xmlContent);
+                log.info("Execution plan configuration for " + executionPlanName + " saved in the filesystem");
+            } finally {
+                if (writer != null) {
+                    writer.flush();
+                    writer.close();
+                }
+            }
+            eventProcessorDeployer.executeManualDeployment(filePath);
+        } catch (IOException e) {
+            eventProcessorDeployer.getDeployedExecutionPlanFilePaths().remove(filePath);
+            log.error("Error while saving " + executionPlanName, e);
+            throw new ExecutionPlanConfigurationException("Error while saving ", e);
+        }
+    }
+
+    public static void save(String executionPlan, String executionPlanName,
+                               String fileName, AxisConfiguration axisConfiguration)
+            throws ExecutionPlanConfigurationException {
+        EventProcessorDeployer eventProcessorDeployer = (EventProcessorDeployer) getDeployer(axisConfiguration, EventProcessorConstants.EP_ELE_DIRECTORY);
+        String filePath = getFilePathFromFilename(fileName, axisConfiguration);
+        try {
+            OutputStreamWriter writer = null;
+            try {
+                /* save contents to .xml file */
+                File file = new File(filePath);
+
+                writer = new OutputStreamWriter(new FileOutputStream(file), "UTF-8");
+
+                // get the content in bytes
+//                String xmlContent = EventProcessorUtil.formatXml(executionPlan);
+                eventProcessorDeployer.getDeployedExecutionPlanFilePaths().add(filePath);
+                writer.write(executionPlan);
                 log.info("Execution plan configuration for " + executionPlanName + " saved in the filesystem");
             } finally {
                 if (writer != null) {
@@ -109,7 +141,7 @@ public class EventProcessorConfigurationFilesystemInvoker {
 
     public static Deployer getDeployer(AxisConfiguration axisConfig, String endpointDirPath) {
         DeploymentEngine deploymentEngine = (DeploymentEngine) axisConfig.getConfigurator();
-        return deploymentEngine.getDeployer(endpointDirPath, "xml");
+        return deploymentEngine.getDeployer(endpointDirPath, "siddhiql");
     }
 
 

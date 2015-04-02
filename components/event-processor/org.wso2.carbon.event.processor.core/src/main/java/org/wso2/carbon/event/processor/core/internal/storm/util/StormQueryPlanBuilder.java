@@ -78,7 +78,7 @@ public class StormQueryPlanBuilder {
 
             receiverElement = constructReceiverElement(document, importStreams);
             publisherElement = constructPublisherElement(document, exportStreams);
-            processorElements = constructProcessorElement(document, configuration.getQueryExpressions(), importStreams,
+            processorElements = constructProcessorElement(document, configuration.getExecutionPlan(), importStreams,
                     exportStreams);
 
             rootElement.appendChild(receiverElement);

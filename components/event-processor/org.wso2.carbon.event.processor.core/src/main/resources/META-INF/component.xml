@@ -19,7 +19,7 @@
     <deployers>
         <deployer>
             <directory>executionplans</directory>
-            <extension>xml</extension>
+            <extension>siddhiql</extension>
             <class>org.wso2.carbon.event.processor.core.EventProcessorDeployer</class>
         </deployer>
     </deployers>

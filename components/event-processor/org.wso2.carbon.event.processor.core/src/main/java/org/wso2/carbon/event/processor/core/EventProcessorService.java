@@ -28,69 +28,60 @@ import java.util.Map;
 
 public interface EventProcessorService {
 
-    /**
-     * Adds a new execution plan to the system.
-     *
-     * @param executionPlanConfiguration new execution plan configuration.
-     */
-    public void deployExecutionPlanConfiguration(
-            ExecutionPlanConfiguration executionPlanConfiguration,
-            AxisConfiguration axisConfiguration)
-            throws ExecutionPlanDependencyValidationException, ExecutionPlanConfigurationException;
 
     /**
-     * Adds a new execution plan to the system using the xml configuration passed in.
+     * Adds a new execution plan to the system using the execution plan given in string format.
      *
-     * @param executionPlanConfigurationXml new execution plan configuration as xml configuration
+     * @param executionPlan new execution plan as a string
      */
-    public void deployExecutionPlanConfiguration(
-            String executionPlanConfigurationXml,
+    public void deployExecutionPlan(
+            String executionPlan,
             AxisConfiguration axisConfiguration)
             throws ExecutionPlanDependencyValidationException, ExecutionPlanConfigurationException;
 
     /**
      * Removes execution plan from the system
      *
-     * @param fileName filename of the configuration for this execution plan
+     * @param fileName name of the file which contains the execution plan
      * @param axisConfiguration the axis configuration associated with the caller
      */
-    public void undeployInactiveExecutionPlanConfiguration(String fileName,
-                                                           AxisConfiguration axisConfiguration) throws
+    public void undeployInactiveExecutionPlan(String fileName,
+                                              AxisConfiguration axisConfiguration) throws
             ExecutionPlanConfigurationException;
 
     /**
      * Removes execution plan from the system
      *
-     * @param name name of the execution plan
+     * @param planName name of the execution plan
      * @param axisConfiguration the axis configuration associated with the caller
      */
-    public void undeployActiveExecutionPlanConfiguration(String name,
-                                                         AxisConfiguration axisConfiguration) throws
+    public void undeployActiveExecutionPlan(String planName,
+                                            AxisConfiguration axisConfiguration) throws
             ExecutionPlanConfigurationException;
 
     /**
      * Edits execution plan from the system
      *
-     * @param executionPlanConfiguration the execution plan configuration as an XML string
+     * @param executionPlan the execution plan configuration as an XML string
      * @param executionPlanName the name of the execution plan
      * @param axisConfiguration the axis configuration associated with the caller
      */
-    public void editActiveExecutionPlanConfiguration(String executionPlanConfiguration,
-                                                     String executionPlanName,
-                                                     AxisConfiguration axisConfiguration)
+    public void editActiveExecutionPlan(String executionPlan,
+                                        String executionPlanName,
+                                        AxisConfiguration axisConfiguration)
             throws ExecutionPlanConfigurationException, ExecutionPlanDependencyValidationException;
 
 
     /**
      * Edits execution plan from the system
      *
-     * @param executionPlanConfiguration the execution plan configuration as an XML string
+     * @param executionPlan the execution plan configuration as an XML string
      * @param fileName filename of the configuration for this execution plan
      * @param axisConfiguration the axis configuration associated with the caller
      */
-    public void editInactiveExecutionPlanConfiguration(String executionPlanConfiguration,
-                                                       String fileName,
-                                                       AxisConfiguration axisConfiguration)
+    public void editInactiveExecutionPlan(String executionPlan,
+                                          String fileName,
+                                          AxisConfiguration axisConfiguration)
             throws ExecutionPlanConfigurationException, ExecutionPlanDependencyValidationException;
 
     /**
@@ -101,7 +92,7 @@ public interface EventProcessorService {
      * @return the content of the exeuction plan configuration
      * @throws ExecutionPlanConfigurationException
      */
-    public String getActiveExecutionPlanConfigurationContent(String name, AxisConfiguration axisConfiguration)
+    public String getActiveExecutionPlan(String name, AxisConfiguration axisConfiguration)
             throws ExecutionPlanConfigurationException;
 
     /**
@@ -112,7 +103,7 @@ public interface EventProcessorService {
      * @return the content of the specified filename
      * @throws ExecutionPlanConfigurationException
      */
-    public String getInactiveExecutionPlanConfigurationContent(String filename, AxisConfiguration axisConfiguration)
+    public String getInactiveExecutionPlan(String filename, AxisConfiguration axisConfiguration)
             throws ExecutionPlanConfigurationException;
 
 
@@ -144,11 +135,11 @@ public interface EventProcessorService {
     /**
      * Gets an active execution plan configuration for the name passed in.
      *
-     * @param name the name of the execution plan
+     * @param planName the name of the execution plan
      * @param tenantId tenant id of the caller
      * @return {@link ExecutionPlanConfiguration} object associated with the passed in name and tenant id
      */
-    public ExecutionPlanConfiguration getActiveExecutionPlanConfiguration(String name, int tenantId);
+    public ExecutionPlanConfiguration getActiveExecutionPlanConfiguration(String planName, int tenantId);
 
 
     /**
@@ -185,31 +176,20 @@ public interface EventProcessorService {
 
 
     /**
-     * Validates a given set of Siddhi query expressions. returns true if valid.
+     * Validates a given execution plan. returns true if valid.
      *
-     * @param inputStreamDefinitions input streams required by queries.
-     * @param queryExpressions Siddhi queries.
+     * @param executionPlan execution plan.
      * @return  true if valid.
      */
-    public boolean validateSiddhiQueries(String[] inputStreamDefinitions, String queryExpressions);
+    public boolean validateExecutionPlan(String executionPlan);
 
     /**
-     * Fetches all the streams imported and exported by the Siddhi engine for the given set of queries.
-     * @param inputStreamDefinitions input streams required by queries
-     * @param queryExpressions siddhi queries.
+     * Fetches all the streams imported and exported by the Siddhi engine for the given execution plan.
+     * @param executionPlan siddhi queries.
      * @return a {@link List} of {@link StreamDefinition} objects that represent all the streams imported and exported by Siddhi queries
      * @throws SiddhiParserException
      */
-    public List<StreamDefinition> getSiddhiStreams(String[] inputStreamDefinitions, String queryExpressions);
-
-    /**
-     * Returns the deployment status and dependency information as a formatted string for execution plan associated
-     * with the filename specified
-     *
-     * @param filename the filename of the execution plan
-     * @return a string description for the status of the execution plan specified
-     */
-    public String getExecutionPlanStatusAsString(String filename);
+    public List<StreamDefinition> getSiddhiStreams(String executionPlan);
 }
 
 

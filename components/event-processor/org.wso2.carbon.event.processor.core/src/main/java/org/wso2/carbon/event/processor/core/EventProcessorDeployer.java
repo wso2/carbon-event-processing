@@ -17,9 +17,6 @@
 */
 package org.wso2.carbon.event.processor.core;
 
-import org.apache.axiom.om.OMElement;
-import org.apache.axiom.om.OMException;
-import org.apache.axiom.om.impl.builder.StAXOMBuilder;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.deployment.AbstractDeployer;
 import org.apache.axis2.deployment.DeploymentException;
@@ -34,13 +31,13 @@ import org.wso2.carbon.event.processor.core.exception.ExecutionPlanDependencyVal
 import org.wso2.carbon.event.processor.core.exception.ServiceDependencyValidationException;
 import org.wso2.carbon.event.processor.core.internal.CarbonEventProcessorService;
 import org.wso2.carbon.event.processor.core.internal.ds.EventProcessorValueHolder;
-import org.wso2.carbon.event.processor.core.internal.util.EventProcessorConstants;
-import org.wso2.carbon.event.processor.core.internal.util.helper.EventProcessorConfigurationHelper;
+import org.wso2.carbon.event.processor.core.internal.util.helper.EventProcessorHelper;
 
-import javax.xml.stream.XMLInputFactory;
-import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.XMLStreamReader;
 import java.io.*;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.Collections;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
@@ -61,7 +58,7 @@ public class EventProcessorDeployer extends AbstractDeployer implements EventPro
     }
 
     /**
-     * Reads the query-plan.xml and deploys it.
+     * Reads the query-plan.siddhiql and deploys it.
      *
      * @param deploymentFileData information about query plan
      * @throws org.apache.axis2.deployment.DeploymentException
@@ -125,30 +122,19 @@ public class EventProcessorDeployer extends AbstractDeployer implements EventPro
         if (!carbonEventProcessorService.isExecutionPlanFileAlreadyExist(executionPlanFile.getName(), tenantId)) {
             String executionPlanName = "";
             try {
-                OMElement executionPlanOMElement = getExecutionPlanOMElement(executionPlanFile);
-                if (!(executionPlanOMElement.getQName().getLocalPart()).equals(EventProcessorConstants.EP_ELE_ROOT_ELEMENT)) {
-                    throw new ExecutionPlanConfigurationException("Wrong event formatter configuration file, Invalid root element " + executionPlanOMElement.getQName() + " in " + executionPlanFile.getName());
-                }
-                ExecutionPlanConfiguration executionPlanConfiguration = EventProcessorConfigurationHelper.fromOM(executionPlanOMElement);
-                executionPlanConfiguration.setEditable(isEditable);
+                String executionPlan = readFile(deploymentFileData.getAbsolutePath(), StandardCharsets.UTF_8);
+                EventProcessorHelper.validateExecutionPlan(executionPlan, tenantId);
 
-                if (executionPlanConfiguration.getName() == null || executionPlanConfiguration.getName().trim().isEmpty()) {
-                    throw new ExecutionPlanConfigurationException(executionPlanFile.getName() + " is not a valid execution plan configuration file, does not contain a valid execution plan name");
-                }
-
-                executionPlanName = executionPlanConfiguration.getName();
-                EventProcessorConfigurationHelper.validateExecutionPlanConfiguration(executionPlanOMElement, tenantId);
-                carbonEventProcessorService.addExecutionPlanConfiguration(executionPlanConfiguration, configurationContext.getAxisConfiguration());
+                executionPlanName = EventProcessorHelper.getExecutionPlanName(executionPlan);   //todo: what if the file name and annotated name are different?
+                carbonEventProcessorService.addExecutionPlan(executionPlan, isEditable, configurationContext.getAxisConfiguration());
                 executionPlanConfigurationFile.setStatus(ExecutionPlanConfigurationFile.Status.DEPLOYED);
-                executionPlanConfigurationFile.setExecutionPlanName(executionPlanConfiguration.getName());
+                executionPlanConfigurationFile.setExecutionPlanName(executionPlanName);
                 executionPlanConfigurationFile.setAxisConfiguration(configurationContext.getAxisConfiguration());
                 executionPlanConfigurationFile.setFileName(deploymentFileData.getName());
                 executionPlanConfigurationFile.setFilePath(deploymentFileData.getAbsolutePath());
                 carbonEventProcessorService.addExecutionPlanConfigurationFile(executionPlanConfigurationFile, PrivilegedCarbonContext.getThreadLocalCarbonContext().getTenantId());
 
-                checkForDuplicatedStreams(executionPlanConfiguration);
-
-                log.info("Execution plan is deployed successfully and in active state  : " + executionPlanConfiguration.getName());
+                log.info("Execution plan is deployed successfully and in active state  : " + executionPlanName);
 
             } catch (ServiceDependencyValidationException ex) {
                 executionPlanConfigurationFile.setDependency(ex.getDependency());
@@ -185,17 +171,6 @@ public class EventProcessorDeployer extends AbstractDeployer implements EventPro
 
                 log.error("Execution plan is not deployed and in inactive state : " + executionPlanFile.getName(), ex);
                 throw new ExecutionPlanConfigurationException(ex.getMessage(), ex);
-            } catch (DeploymentException ex) {
-                executionPlanConfigurationFile.setDeploymentStatusMessage(ex.getMessage());
-                executionPlanConfigurationFile.setStatus(ExecutionPlanConfigurationFile.Status.ERROR);
-                executionPlanConfigurationFile.setExecutionPlanName(executionPlanName);
-                executionPlanConfigurationFile.setAxisConfiguration(configurationContext.getAxisConfiguration());
-                executionPlanConfigurationFile.setFileName(deploymentFileData.getName());
-                executionPlanConfigurationFile.setFilePath(deploymentFileData.getAbsolutePath());
-                carbonEventProcessorService.addExecutionPlanConfigurationFile(executionPlanConfigurationFile, PrivilegedCarbonContext.getThreadLocalCarbonContext().getTenantId());
-
-                log.error("Execution plan is not deployed and in inactive state : " + executionPlanConfigurationFile.getFileName() + ", " + ex.getMessage(), ex);
-                throw new ExecutionPlanConfigurationException(ex.getMessage(), ex);
             }
         } else {
             log.info("Execution plan " + executionPlanFile.getName() + " is already registered with this tenant (" + tenantId + "), hence ignoring redeployment");
@@ -225,43 +200,16 @@ public class EventProcessorDeployer extends AbstractDeployer implements EventPro
         processUndeploy(filePath);
     }
 
-    private OMElement getExecutionPlanOMElement(File executionPlanFile)
-            throws DeploymentException {
-        OMElement executionPlanElement;
-        BufferedInputStream inputStream = null;
+    private String readFile(String path, Charset encoding) throws ExecutionPlanConfigurationException {
+        byte[] encoded = new byte[0];
         try {
-            inputStream = new BufferedInputStream(new FileInputStream(executionPlanFile));
-            XMLInputFactory xif = XMLInputFactory.newInstance();
-            XMLStreamReader parser = xif.createXMLStreamReader(inputStream);
-            xif.setProperty(XMLInputFactory.IS_COALESCING, Boolean.FALSE); //for CDATA
-            StAXOMBuilder builder = new StAXOMBuilder(parser);
-            executionPlanElement = builder.getDocumentElement();
-            executionPlanElement.build();
-
-        } catch (FileNotFoundException e) {
-            String errorMessage = "file cannot be found : " + executionPlanFile.getName();
-            log.error(errorMessage, e);
-            throw new DeploymentException(errorMessage, e);
-        } catch (XMLStreamException e) {
-            String errorMessage = "Invalid XML for " + executionPlanFile.getName();
-            log.error(errorMessage, e);
-            throw new DeploymentException(errorMessage, e);
-        } catch (OMException e) {
-            String errorMessage = "XML tags are not properly closed in " + executionPlanFile.getName();
-            log.error(errorMessage, e);
-            throw new DeploymentException(errorMessage, e);
-        } finally {
-            try {
-                if (inputStream != null) {
-                    inputStream.close();
-                }
-            } catch (IOException e) {
-                String errorMessage = "Can not close the input stream";
-                log.error(errorMessage, e);
-            }
+            encoded = Files.readAllBytes(Paths.get(path));
+        } catch (IOException e) {
+            throw new ExecutionPlanConfigurationException("Could not read from file "+ path +", "+ e.getMessage(), e);
         }
-        return executionPlanElement;
+        return new String(encoded, encoding);
     }
+
 
     public Set<String> getDeployedExecutionPlanFilePaths() {
         return deployedExecutionPlanFilePaths;
@@ -269,16 +217,6 @@ public class EventProcessorDeployer extends AbstractDeployer implements EventPro
 
     public Set<String> getUnDeployedExecutionPlanFilePaths() {
         return unDeployedExecutionPlanFilePaths;
-    }
-
-    private void checkForDuplicatedStreams(ExecutionPlanConfiguration executionPlanConfiguration) {
-        for (StreamConfiguration exportedStreamConfiguration : executionPlanConfiguration.getExportedStreams()) {
-            for (StreamConfiguration importedStreamConfiguration : executionPlanConfiguration.getImportedStreams())
-                if (exportedStreamConfiguration.getStreamId().equals(importedStreamConfiguration.getStreamId())) {
-                    log.warn("'" + exportedStreamConfiguration.getStreamId() + "' is used as both input and a output stream in execution plan '"
-                            + executionPlanConfiguration.getName() + "'");
-                }
-        }
     }
 
     @Override

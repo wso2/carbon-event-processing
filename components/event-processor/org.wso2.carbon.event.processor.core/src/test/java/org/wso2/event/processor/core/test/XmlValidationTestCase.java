@@ -26,7 +26,7 @@ import org.apache.commons.logging.LogFactory;
 import org.junit.Test;
 import org.wso2.carbon.event.processor.core.ExecutionPlanConfiguration;
 import org.wso2.carbon.event.processor.core.exception.ExecutionPlanConfigurationException;
-import org.wso2.carbon.event.processor.core.internal.util.helper.EventProcessorConfigurationHelper;
+import org.wso2.carbon.event.processor.core.internal.util.helper.EventProcessorHelper;
 
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamReader;
@@ -70,16 +70,16 @@ public class XmlValidationTestCase {
 //    @Test
 //    public void testOMElementValidation() throws ExecutionPlanConfigurationException, DeploymentException {
 //        OMElement om = getExecutionPlanOMElement(XML_FILE);
-//        EventProcessorConfigurationHelper.validateExecutionPlanConfiguration(om);
+//        EventProcessorHelper.validateExecutionPlanConfiguration(om);
 //    }
 
     @Test
     public void testOMElementParsing() throws DeploymentException, ExecutionPlanConfigurationException {
         OMElement om = getExecutionPlanOMElement(XML_FILE);
-        ExecutionPlanConfiguration config = EventProcessorConfigurationHelper.fromOM(om);
+        ExecutionPlanConfiguration config = EventProcessorHelper.fromOM(om);
         Assert.assertNotNull("Converting OM element to execution plan configuration failed!", config);
         // converting back to xml
-        OMElement out = EventProcessorConfigurationHelper.toOM(config);
+        OMElement out = EventProcessorHelper.toOM(config);
         Assert.assertNotNull("Converting the exeuction plan to om element failed!", out);
     }
 

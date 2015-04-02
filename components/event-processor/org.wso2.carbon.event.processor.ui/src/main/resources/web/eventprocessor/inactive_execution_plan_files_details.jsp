@@ -45,7 +45,7 @@
         String filePath = request.getParameter("filePath");
         if (filePath != null) {
             EventProcessorAdminServiceStub stub = EventProcessorUIUtils.getEventProcessorAdminService(config, session, request);
-            stub.undeployInactiveExecutionPlanConfiguration(filePath);
+            stub.undeployInactiveExecutionPlan(filePath);
     %>
     <script type="text/javascript">CARBON.showInfoDialog('Execution plan file successfully deleted.');</script>
     <%
@@ -82,7 +82,7 @@
                     <td>
                         <%=executionPlanConfigurationFileDto.getFileName()%>
                     </td>
-                    <td><%=stub.getExecutionPlanStatusAsString(executionPlanConfigurationFileDto.getFileName())%>
+                    <td><%=executionPlanConfigurationFileDto.getDeploymentStatusMessage()%>
                     </td>
                     <td>
                         <a style="background-image: url(../admin/images/delete.gif);"
