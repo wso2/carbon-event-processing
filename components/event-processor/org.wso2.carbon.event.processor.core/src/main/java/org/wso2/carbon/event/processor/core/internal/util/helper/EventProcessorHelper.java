@@ -46,136 +46,6 @@ import java.util.regex.Pattern;
 
 public class EventProcessorHelper {
 
-    public static ExecutionPlanConfiguration fromOM(OMElement executionPlanConfigElement) throws ExecutionPlanConfigurationException {
-        if (!(executionPlanConfigElement.getQName().getLocalPart()).equals(EventProcessorConstants.EP_ELE_ROOT_ELEMENT)) {
-            throw new ExecutionPlanConfigurationException("Wrong execution plan configuration file, Invalid root element " + executionPlanConfigElement.getQName());
-        }
-        ExecutionPlanConfiguration executionPlanConfiguration = new ExecutionPlanConfiguration();
-        executionPlanConfiguration.setName(executionPlanConfigElement.getAttributeValue(new QName(EventProcessorConstants.EP_ATTR_NAME)));
-
-
-        Iterator descIterator = executionPlanConfigElement.getChildrenWithName(new QName(EventProcessorConstants.EP_CONF_NS, EventProcessorConstants.EP_ELE_DESC));
-        if (descIterator.hasNext()) {
-            OMElement descriptionElement = (OMElement) descIterator.next();
-            executionPlanConfiguration.setDescription(descriptionElement.getText());
-        }
-
-        Iterator allImportedStreamsIterator = executionPlanConfigElement.getChildrenWithName(new QName(EventProcessorConstants.EP_CONF_NS, EventProcessorConstants.EP_ELE_IMP_STREAMS));
-        while (allImportedStreamsIterator.hasNext()) {
-            Iterator importedStreamIterator = ((OMElement) allImportedStreamsIterator.next()).getChildrenWithName(new QName(EventProcessorConstants.EP_CONF_NS, EventProcessorConstants.EP_ELE_STREAM));
-            while (importedStreamIterator.hasNext()) {
-                OMElement importedStream = (OMElement) importedStreamIterator.next();
-                String version = importedStream.getAttributeValue(new QName(EventProcessorConstants.EP_ATTR_VERSION));
-                StreamConfiguration streamConfiguration;
-                if (version != null) {
-                    streamConfiguration = new StreamConfiguration(importedStream.getAttributeValue(new QName(EventProcessorConstants.EP_ATTR_NAME)), version);
-                } else {
-                    streamConfiguration = new StreamConfiguration(importedStream.getAttributeValue(new QName(EventProcessorConstants.EP_ATTR_NAME)));
-                }
-                OMAttribute as = importedStream.getAttribute(new QName(EventProcessorConstants.EP_ATTR_AS));
-                if (as != null && as.getAttributeValue() != null && as.getAttributeValue().trim().length() > 0) {
-                    streamConfiguration.setSiddhiStreamName(as.getAttributeValue());
-                }
-
-                executionPlanConfiguration.addImportedStream(streamConfiguration); // todo validate
-            }
-        }
-
-        Iterator allExportedStreamsIterator = executionPlanConfigElement.getChildrenWithName(new QName(EventProcessorConstants.EP_CONF_NS, EventProcessorConstants.EP_ELE_EXP_STREAMS));
-        while (allExportedStreamsIterator.hasNext()) {
-            Iterator exportedStreamIterator = ((OMElement) allExportedStreamsIterator.next()).getChildrenWithName(new QName(EventProcessorConstants.EP_CONF_NS, EventProcessorConstants.EP_ELE_STREAM));
-            while (exportedStreamIterator.hasNext()) {
-                OMElement exportedStream = (OMElement) exportedStreamIterator.next();
-                StreamConfiguration streamConfiguration = new StreamConfiguration(exportedStream.getAttributeValue(new QName(EventProcessorConstants.EP_ATTR_NAME)), exportedStream.getAttributeValue(new QName(EventProcessorConstants.EP_ATTR_VERSION)), exportedStream.getAttributeValue(new QName(EventProcessorConstants.EP_ATTR_VALUEOF)));
-                executionPlanConfiguration.addExportedStream(streamConfiguration);
-                OMAttribute valueOf = exportedStream.getAttribute(new QName(EventProcessorConstants.EP_ATTR_VALUEOF));
-                if (valueOf != null && valueOf.getAttributeValue() != null && valueOf.getAttributeValue().trim().length() > 0) {
-                    streamConfiguration.setSiddhiStreamName(valueOf.getAttributeValue());
-                }
-            }
-        }
-
-        Iterator queryIterator = executionPlanConfigElement.getChildrenWithName(new QName(EventProcessorConstants.EP_CONF_NS, EventProcessorConstants.EP_ELE_QUERIES));
-        if (queryIterator.hasNext()) {
-            executionPlanConfiguration.setExecutionPlan(((OMElement) queryIterator.next()).getText());
-        }
-
-        if (executionPlanConfigElement.getAttributeValue(new QName(EventProcessorConstants.EP_ATTR_STATISTICS)) != null && executionPlanConfigElement.getAttributeValue(new QName(EventProcessorConstants.EP_ATTR_STATISTICS)).equals(EventProcessorConstants.EP_ENABLE)) {
-            executionPlanConfiguration.setStatisticsEnabled(true);
-        }
-
-        if (executionPlanConfigElement.getAttributeValue(new QName(EventProcessorConstants.EP_ATTR_TRACING)) != null && executionPlanConfigElement.getAttributeValue(new QName(EventProcessorConstants.EP_ATTR_TRACING)).equals(EventProcessorConstants.EP_ENABLE)) {
-            executionPlanConfiguration.setTracingEnabled(true);
-        }
-        return executionPlanConfiguration;
-    }
-
-    public static OMElement toOM(ExecutionPlanConfiguration executionPlanConfiguration) {
-        OMFactory factory = OMAbstractFactory.getOMFactory();
-        OMElement executionPlan = factory.createOMElement(new QName(EventProcessorConstants.EP_ELE_ROOT_ELEMENT));
-        executionPlan.declareDefaultNamespace(EventProcessorConstants.EP_CONF_NS);
-        executionPlan.addAttribute(EventProcessorConstants.EP_ATTR_NAME, executionPlanConfiguration.getName(), null);
-
-        OMElement description = factory.createOMElement(new QName(EventProcessorConstants.EP_ELE_DESC));
-        description.setNamespace(executionPlan.getDefaultNamespace());
-        description.setText(executionPlanConfiguration.getDescription());
-        executionPlan.addChild(description);
-
-        OMElement importedStreams = factory.createOMElement(new QName(EventProcessorConstants.EP_ELE_IMP_STREAMS));
-        importedStreams.setNamespace(executionPlan.getDefaultNamespace());
-        for (StreamConfiguration stream : executionPlanConfiguration.getImportedStreams()) {
-            OMElement streamElement = factory.createOMElement(new QName(EventProcessorConstants.EP_ELE_STREAM));
-            streamElement.setNamespace(executionPlan.getDefaultNamespace());
-            streamElement.addAttribute(EventProcessorConstants.EP_ATTR_NAME, stream.getName(), null);
-            if (stream.getSiddhiStreamName() != null) {
-                streamElement.addAttribute(EventProcessorConstants.EP_ATTR_AS, stream.getSiddhiStreamName(), null);
-            }
-            if (stream.getVersion() != null) {
-                streamElement.addAttribute(EventProcessorConstants.EP_ATTR_VERSION, stream.getVersion(), null);
-            }
-
-            importedStreams.addChild(streamElement);
-        }
-        executionPlan.addChild(importedStreams);
-
-        OMElement queries = factory.createOMElement(new QName(EventProcessorConstants.EP_ELE_QUERIES));
-        queries.setNamespace(executionPlan.getDefaultNamespace());
-        factory.createOMText(queries, executionPlanConfiguration.getExecutionPlan(),
-                XMLStreamReader.CDATA);
-        executionPlan.addChild(queries);
-
-        OMElement exportedStreams = factory.createOMElement(new QName(EventProcessorConstants.EP_ELE_EXP_STREAMS));
-        exportedStreams.setNamespace(executionPlan.getDefaultNamespace());
-        for (StreamConfiguration stream : executionPlanConfiguration.getExportedStreams()) {
-            OMElement streamElement = factory.createOMElement(new QName(EventProcessorConstants.EP_ELE_STREAM));
-            streamElement.setNamespace(executionPlan.getDefaultNamespace());
-            streamElement.addAttribute(EventProcessorConstants.EP_ATTR_NAME, stream.getName(), null);
-            if (stream.getSiddhiStreamName() != null) {
-                streamElement.addAttribute(EventProcessorConstants.EP_ATTR_VALUEOF, stream.getSiddhiStreamName(), null);
-            }
-            if (stream.getVersion() != null) {
-                streamElement.addAttribute(EventProcessorConstants.EP_ATTR_VERSION, stream.getVersion(), null);
-            }
-
-            exportedStreams.addChild(streamElement);
-        }
-        executionPlan.addChild(exportedStreams);
-
-        if (executionPlanConfiguration.isStatisticsEnabled()) {
-            executionPlan.addAttribute(EventProcessorConstants.EP_ATTR_STATISTICS, EventProcessorConstants.EP_ENABLE, null);
-        } else {
-            executionPlan.addAttribute(EventProcessorConstants.EP_ATTR_STATISTICS, EventProcessorConstants.EP_DISABLE, null);
-        }
-
-        if (executionPlanConfiguration.isTracingEnabled()) {
-            executionPlan.addAttribute(EventProcessorConstants.EP_ATTR_TRACING, EventProcessorConstants.EP_ENABLE, null);
-        } else {
-            executionPlan.addAttribute(EventProcessorConstants.EP_ATTR_TRACING, EventProcessorConstants.EP_DISABLE, null);
-        }
-
-        return executionPlan;
-    }
-
     /**
      * Returns the execution plan name
      * @param executionPlanAsString executionPlan (taken from code mirror) as a string
@@ -188,7 +58,8 @@ public class EventProcessorHelper {
         return executionPlanName;
     }
 
-    public static void validateExecutionPlan(String executionPlan, int tenantId) throws ExecutionPlanConfigurationException, ExecutionPlanDependencyValidationException {
+    public static void validateExecutionPlan(String executionPlan, int tenantId)
+            throws ExecutionPlanConfigurationException, ExecutionPlanDependencyValidationException {
         String planName;
         int i = 0;      //this is maintained for giving more context info in error messages, when throwing exceptions.
         ArrayList<String> importedStreams = new ArrayList<String>();
