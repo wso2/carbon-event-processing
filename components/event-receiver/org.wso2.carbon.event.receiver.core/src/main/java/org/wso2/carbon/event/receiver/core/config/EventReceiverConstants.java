@@ -121,6 +121,8 @@ public final class EventReceiverConstants {
     public static final String EVENT_CORRELATION_TAG = "correlationData";
     public static final String EVENT_PAYLOAD_TAG = "payloadData";
 
+    public static final String ER_ATTR_ENCRYPTED = "encrypted";
+
     private EventReceiverConstants() {
 
     }

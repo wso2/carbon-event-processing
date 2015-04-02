@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2005 - 2014, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
+ * Copyright (c) 2015, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy
@@ -14,6 +14,7 @@
  */
 package org.wso2.carbon.event.publisher.core.internal.util.helper;
 
+import org.apache.axiom.om.OMAttribute;
 import org.apache.axiom.om.OMElement;
 import org.apache.axis2.deployment.Deployer;
 import org.apache.axis2.deployment.DeploymentEngine;
@@ -22,12 +23,17 @@ import org.apache.axis2.deployment.repository.util.DeploymentFileData;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.wso2.carbon.core.util.CryptoUtil;
 import org.wso2.carbon.event.publisher.core.EventPublisherDeployer;
 import org.wso2.carbon.event.publisher.core.config.EventPublisherConstants;
 import org.wso2.carbon.event.publisher.core.exception.EventPublisherConfigurationException;
+import org.wso2.carbon.event.publisher.core.internal.ds.EventPublisherServiceValueHolder;
 import org.wso2.carbon.event.publisher.core.internal.util.EventPublisherUtil;
 
+import javax.xml.namespace.QName;
 import java.io.*;
+import java.util.Iterator;
+import java.util.List;
 
 /**
  * This class used to do the file system related tasks
@@ -35,6 +41,41 @@ import java.io.*;
 public class EventPublisherConfigurationFilesystemInvoker {
 
     private static final Log log = LogFactory.getLog(EventPublisherConfigurationFilesystemInvoker.class);
+
+    public static void encryptAndSave(OMElement eventAdaptorElement, String fileName)
+            throws EventPublisherConfigurationException {
+
+        String adaptorType = eventAdaptorElement.getFirstChildWithName(new QName(EventPublisherConstants.EF_CONF_NS, EventPublisherConstants.EF_ELEMENT_TO)).getAttributeValue(new QName(EventPublisherConstants.EF_ATTR_TA_TYPE));
+
+        //get Static and Dynamic PropertyLists
+        List<String> encryptedProperties = EventPublisherServiceValueHolder.getCarbonEventPublisherService().getEncryptedProperties(adaptorType);
+        Iterator propertyIter = eventAdaptorElement.getFirstChildWithName(new QName(EventPublisherConstants.EF_CONF_NS, EventPublisherConstants.EF_ELEMENT_TO)).getChildrenWithName(new QName(EventPublisherConstants.EF_ELE_PROPERTY));
+        if (propertyIter.hasNext()) {
+            while (propertyIter.hasNext()) {
+                OMElement propertyOMElement = (OMElement) propertyIter.next();
+                String name = propertyOMElement.getAttributeValue(
+                        new QName(EventPublisherConstants.EF_ATTR_NAME));
+
+                if (encryptedProperties.contains(name.trim())) {
+                    OMAttribute encryptedAttribute = propertyOMElement.getAttribute(new QName(EventPublisherConstants.EF_ATTR_ENCRYPTED));
+
+                    if (encryptedAttribute == null || (!"true".equals(encryptedAttribute.getAttributeValue()))) {
+                        String value = propertyOMElement.getText();
+
+                        try {
+                            value = new String(CryptoUtil.getDefaultCryptoUtil().encryptAndBase64Encode(value.getBytes()));
+                            propertyOMElement.setText(value);
+                            propertyOMElement.addAttribute(EventPublisherConstants.EF_ATTR_ENCRYPTED, "true", null);
+                        } catch (Exception e) {
+                            log.error("Unable to decrypt the encrypted field: " + name + " for adaptor type: " + adaptorType);
+                            propertyOMElement.setText("");
+                        }
+                    }
+                }
+            }
+        }
+        EventPublisherConfigurationFilesystemInvoker.save(eventAdaptorElement, fileName);
+    }
 
     public static void save(OMElement eventPublisherOMElement,
                             String fileName)
