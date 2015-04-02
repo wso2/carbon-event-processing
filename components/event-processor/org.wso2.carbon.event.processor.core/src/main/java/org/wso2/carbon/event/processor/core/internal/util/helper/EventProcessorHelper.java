@@ -297,65 +297,68 @@ public class EventProcessorHelper {
     }
 
     /**
-     *
-     * @param executionPlan Existing execution plan, either having the annotation name set to be true/false, or the annotation name is not present in the execution plan at all.
-     * @param annotationName The annotation name which needs to be set to true/false. For example, in siddhi statement @Plan:name('false'), 'name' will be the annotation name.
-     * @param setAnnotationNameTo Whether the annotation name need to be set to true or false.
+     * Sets an annotation name for a given execution plan to be true or false.
+     * For example, when an execution plan has the statement "@Plan:statistics('false')" and false need to be set to true,
+     * then this helper method can be used.
+     * @param executionPlan Existing execution plan, either having the annotation name set to be true/false,
+     *                      or the annotation name is not present in the execution plan at all.
+     * @param annotationName The annotation name which needs to be set to true/false.
+     *                       For example, in Siddhi statement @Plan:name('false'), 'name' will be the annotation name.
+     * @param isAnnotationNameTrue Whether the annotation name need to be set to true or false.
      * @return New execution plan with the given plan annotation name set to be true.
      */
-    public static String setExecutionPlanAnnotationName(String executionPlan, String annotationName, boolean setAnnotationNameTo){
+    public static String setExecutionPlanAnnotationName(String executionPlan, String annotationName, boolean isAnnotationNameTrue){
         String newExecutionPlan = null;
         String planHeader = "";
         String planBody = "";
-        String planHeaderRegex = "(^\\s*@Plan:.*)|(^\\s*--.*)|(^\\s*\\/\\*.*\\*\\/\\s*)|(^\\s*)";
+        String planHeaderLineRegex = EventProcessorConstants.PLAN_HEADER_LINE_REGEX;
 
-        if(setAnnotationNameTo){
-            String traceFalseRegex = "^\\s*@Plan:"+ annotationName +"\\('false'\\)";
-            String traceTrueStatement = EventProcessorConstants.ANNOTATION_TOKEN_AT + EventProcessorConstants.ANNOTATION_PLAN +
-                    EventProcessorConstants.ANNOTATION_TOKEN_COLON + annotationName +
-                    EventProcessorConstants.ANNOTATION_TOKEN_OPENING_BRACKET + "'true'" + EventProcessorConstants.ANNOTATION_TOKEN_CLOSING_BRACKET;
+        String regexToBeReplaced = "^\\s*"+        //beginning of line with zero or more whitespaces
+                EventProcessorConstants.ANNOTATION_TOKEN_AT +
+                EventProcessorConstants.ANNOTATION_PLAN +
+                EventProcessorConstants.ANNOTATION_TOKEN_COLON +
+                annotationName +
+                "\\" + EventProcessorConstants.ANNOTATION_TOKEN_OPENING_BRACKET +    //bracket is escaped, because the literal is meant.
+                EventProcessorConstants.SIDDHI_SINGLE_QUOTE + !isAnnotationNameTrue + EventProcessorConstants.SIDDHI_SINGLE_QUOTE +
+                "\\" + EventProcessorConstants.ANNOTATION_TOKEN_CLOSING_BRACKET;     //bracket is escaped, because the literal is meant.
 
-            Matcher matcher = Pattern.compile(traceFalseRegex, Pattern.MULTILINE).matcher(executionPlan);
-            if(matcher.find()){                     //stat-false statement is already in the plan; false will be replaced with true.
-                String[] matchSplitArray = matcher.group().split("@");
-                String whitespaces = "";
-                if(matchSplitArray.length > 1){
-                    whitespaces += matchSplitArray[0];
-                }
-                traceTrueStatement = whitespaces + traceTrueStatement;
-                newExecutionPlan = matcher.replaceFirst(traceTrueStatement);
-            } else {                                //no trace-false statement is there in the plan; it'll be inserted.
-                String[] planHeaderArray = executionPlan.split(EventProcessorConstants.SIDDHI_LINE_SEPARATER);
-                for(int i=0; i<planHeaderArray.length; i++){
-                    if(planHeaderArray[i].matches(planHeaderRegex)){
-                        if(planHeaderArray[i].matches("^\\s*\\/\\* define streams and write query here ... \\*\\/\\s*")){
-                            break;
-                        }
-                        planHeader += planHeaderArray[i] + EventProcessorConstants.SIDDHI_LINE_SEPARATER;
-                    } else {
+        String replacement = EventProcessorConstants.ANNOTATION_TOKEN_AT +
+                EventProcessorConstants.ANNOTATION_PLAN +
+                EventProcessorConstants.ANNOTATION_TOKEN_COLON +
+                annotationName +
+                EventProcessorConstants.ANNOTATION_TOKEN_OPENING_BRACKET +
+                EventProcessorConstants.SIDDHI_SINGLE_QUOTE + isAnnotationNameTrue + EventProcessorConstants.SIDDHI_SINGLE_QUOTE +
+                EventProcessorConstants.ANNOTATION_TOKEN_CLOSING_BRACKET;
+
+        Matcher matcher = Pattern.compile(regexToBeReplaced, Pattern.MULTILINE).matcher(executionPlan);
+
+        if(matcher.find()){   //statement with annotation name set to false, is already in the plan; In that case, false will be replaced with true.
+
+            //finding the whitespaces given by the user before "@Plan:name()" statement and prepending those at replacement.
+            String[] matchSplitArray = matcher.group().split(EventProcessorConstants.ANNOTATION_TOKEN_AT);
+            String whitespaces = "";
+            if(matchSplitArray.length > 1){
+                whitespaces += matchSplitArray[0];
+            }
+
+            replacement = whitespaces + replacement;
+            newExecutionPlan = matcher.replaceFirst(replacement);
+
+        } else {       //statement with annotation name is not there in the plan; it'll be inserted.
+            String[] planHeaderArray = executionPlan.split(EventProcessorConstants.SIDDHI_LINE_SEPARATER);
+            for(int i=0; i<planHeaderArray.length; i++){
+                if(planHeaderArray[i].matches(planHeaderLineRegex)){
+                    if(planHeaderArray[i].matches(EventProcessorConstants.END_OF_PLAN_HEADER_COMMENT_REGEX)){
                         break;
                     }
+                    planHeader += planHeaderArray[i] + EventProcessorConstants.SIDDHI_LINE_SEPARATER;
+                } else {
+                    break;
                 }
-                planBody = executionPlan.replace(planHeader, "");
-                newExecutionPlan = planHeader + traceTrueStatement + EventProcessorConstants.SIDDHI_LINE_SEPARATER +
-                        EventProcessorConstants.SIDDHI_LINE_SEPARATER + planBody;
             }
-        } else {
-            //enable trace to be false
-            String traceTrueRegex = "^\\s*@Plan:"+ annotationName +"\\('true'\\)";
-            String traceFalseStatement = EventProcessorConstants.ANNOTATION_TOKEN_AT + EventProcessorConstants.ANNOTATION_PLAN +
-                    EventProcessorConstants.ANNOTATION_TOKEN_COLON + annotationName +
-                    EventProcessorConstants.ANNOTATION_TOKEN_OPENING_BRACKET + "'false'" + EventProcessorConstants.ANNOTATION_TOKEN_CLOSING_BRACKET;
-            Matcher matcher = Pattern.compile(traceTrueRegex, Pattern.MULTILINE).matcher(executionPlan);
-            if(matcher.find()){
-                String[] matchSplitArray = matcher.group().split("@");
-                String whitespaces = "";
-                if(matchSplitArray.length > 1){
-                    whitespaces += matchSplitArray[0];
-                }
-                traceFalseStatement = whitespaces + traceFalseStatement;
-                newExecutionPlan = matcher.replaceFirst(traceFalseStatement);
-            }
+            planBody = executionPlan.replace(planHeader, "");
+            newExecutionPlan = planHeader + replacement + EventProcessorConstants.SIDDHI_LINE_SEPARATER +
+                    EventProcessorConstants.SIDDHI_LINE_SEPARATER + planBody;
         }
         return newExecutionPlan;
     }
