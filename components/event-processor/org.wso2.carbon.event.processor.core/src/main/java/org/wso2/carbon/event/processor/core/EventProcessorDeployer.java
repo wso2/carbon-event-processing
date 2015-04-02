@@ -210,7 +210,7 @@ public class EventProcessorDeployer extends AbstractDeployer implements EventPro
             }
             return sb.toString();
         } catch (FileNotFoundException e) {
-            throw new ExecutionPlanConfigurationException("Could not read from file "+ path +", "+ e.getMessage(), e);
+            throw new ExecutionPlanConfigurationException("File '"+ path +"' not found."+ e.getMessage(), e);
         } catch (IOException e) {
             throw new ExecutionPlanConfigurationException("Could not read from file "+ path +", "+ e.getMessage(), e);
         } finally {
