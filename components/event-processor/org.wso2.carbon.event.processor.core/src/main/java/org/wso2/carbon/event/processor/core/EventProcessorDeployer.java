@@ -17,9 +17,6 @@
 */
 package org.wso2.carbon.event.processor.core;
 
-import org.apache.axiom.om.OMElement;
-import org.apache.axiom.om.OMException;
-import org.apache.axiom.om.impl.builder.StAXOMBuilder;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.deployment.AbstractDeployer;
 import org.apache.axis2.deployment.DeploymentException;
@@ -34,12 +31,8 @@ import org.wso2.carbon.event.processor.core.exception.ExecutionPlanDependencyVal
 import org.wso2.carbon.event.processor.core.exception.ServiceDependencyValidationException;
 import org.wso2.carbon.event.processor.core.internal.CarbonEventProcessorService;
 import org.wso2.carbon.event.processor.core.internal.ds.EventProcessorValueHolder;
-import org.wso2.carbon.event.processor.core.internal.util.EventProcessorConstants;
-import org.wso2.carbon.event.processor.core.internal.util.helper.EventProcessorConfigurationHelper;
+import org.wso2.carbon.event.processor.core.internal.util.helper.EventProcessorHelper;
 
-import javax.xml.stream.XMLInputFactory;
-import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.XMLStreamReader;
 import java.io.*;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
@@ -65,7 +58,7 @@ public class EventProcessorDeployer extends AbstractDeployer implements EventPro
     }
 
     /**
-     * Reads the query-plan.xml and deploys it.
+     * Reads the query-plan.siddhiql and deploys it.
      *
      * @param deploymentFileData information about query plan
      * @throws org.apache.axis2.deployment.DeploymentException
@@ -130,9 +123,9 @@ public class EventProcessorDeployer extends AbstractDeployer implements EventPro
             String executionPlanName = "";
             try {
                 String executionPlan = readFile(deploymentFileData.getAbsolutePath(), StandardCharsets.UTF_8);
-                EventProcessorConfigurationHelper.validateExecutionPlan(executionPlan, tenantId);
+                EventProcessorHelper.validateExecutionPlan(executionPlan, tenantId);
 
-                executionPlanName = EventProcessorConfigurationHelper.getExecutionPlanName(executionPlan);   //todo: what if the file name and annotated name are different?
+                executionPlanName = EventProcessorHelper.getExecutionPlanName(executionPlan);   //todo: what if the file name and annotated name are different?
                 carbonEventProcessorService.addExecutionPlan(executionPlan, isEditable, configurationContext.getAxisConfiguration());
                 executionPlanConfigurationFile.setStatus(ExecutionPlanConfigurationFile.Status.DEPLOYED);
                 executionPlanConfigurationFile.setExecutionPlanName(executionPlanName);

@@ -17,8 +17,6 @@
  */
 package org.wso2.carbon.event.processor.core.internal;
 
-import org.apache.axiom.om.OMElement;
-import org.apache.axiom.om.util.AXIOMUtil;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -26,27 +24,20 @@ import org.wso2.carbon.context.PrivilegedCarbonContext;
 import org.wso2.carbon.databridge.commons.StreamDefinition;
 import org.wso2.carbon.event.processor.common.storm.config.StormDeploymentConfig;
 import org.wso2.carbon.event.processor.core.*;
-import org.wso2.carbon.event.processor.core.internal.persistence.PersistenceManager;
+import org.wso2.carbon.event.processor.core.internal.util.helper.EventProcessorHelper;
 import org.wso2.siddhi.core.ExecutionPlanRuntime;
 import org.wso2.carbon.event.processor.core.exception.ExecutionPlanConfigurationException;
 import org.wso2.carbon.event.processor.core.exception.ExecutionPlanDependencyValidationException;
 import org.wso2.carbon.event.processor.core.exception.ServiceDependencyValidationException;
-import org.wso2.carbon.event.processor.core.exception.StormDeploymentException;
 import org.wso2.carbon.event.processor.core.internal.ds.EventProcessorValueHolder;
 import org.wso2.carbon.event.processor.core.internal.ha.CEPMembership;
-import org.wso2.carbon.event.processor.core.internal.ha.HAManager;
-import org.wso2.carbon.event.processor.core.internal.ha.SiddhiHAInputEventDispatcher;
-import org.wso2.carbon.event.processor.core.internal.ha.SiddhiHAOutputStreamListener;
 import org.wso2.carbon.event.processor.core.internal.listener.AbstractSiddhiInputEventDispatcher;
 import org.wso2.carbon.event.processor.core.internal.listener.SiddhiInputEventDispatcher;
 import org.wso2.carbon.event.processor.core.internal.listener.SiddhiOutputStreamListener;
-import org.wso2.carbon.event.processor.core.internal.storm.SiddhiStormInputEventDispatcher;
-import org.wso2.carbon.event.processor.core.internal.storm.SiddhiStormOutputEventListener;
 import org.wso2.carbon.event.processor.core.internal.storm.TopologyManager;
 import org.wso2.carbon.event.processor.core.internal.util.EventProcessorConfigurationFilesystemInvoker;
 import org.wso2.carbon.event.processor.core.internal.util.EventProcessorConstants;
 import org.wso2.carbon.event.processor.core.internal.util.EventProcessorUtil;
-import org.wso2.carbon.event.processor.core.internal.util.helper.EventProcessorConfigurationHelper;
 import org.wso2.carbon.event.stream.core.EventProducer;
 import org.wso2.carbon.event.stream.core.SiddhiEventConsumer;
 import org.wso2.carbon.event.stream.core.exception.EventStreamConfigurationException;
@@ -61,8 +52,6 @@ import org.wso2.siddhi.query.compiler.exception.SiddhiParserException;
 import java.io.File;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 public class CarbonEventProcessorService implements EventProcessorService {
     private static final Log log = LogFactory.getLog(CarbonEventProcessorService.class);
@@ -148,7 +137,7 @@ public class CarbonEventProcessorService implements EventProcessorService {
                                         AxisConfiguration axisConfiguration)
             throws ExecutionPlanConfigurationException, ExecutionPlanDependencyValidationException {
         int tenantId = PrivilegedCarbonContext.getThreadLocalCarbonContext().getTenantId();
-        EventProcessorConfigurationHelper.validateExecutionPlan(executionPlan, tenantId);
+        EventProcessorHelper.validateExecutionPlan(executionPlan, tenantId);
         org.wso2.siddhi.query.api.ExecutionPlan parsedExecutionPlan = SiddhiCompiler.parse(executionPlan);
         String newExecutionPlanName = AnnotationHelper.getAnnotationElement(EventProcessorConstants.ANNOTATION_NAME_NAME, null, parsedExecutionPlan.getAnnotations()).getValue();
         if (!(newExecutionPlanName.equals(executionPlanName))) {
@@ -178,7 +167,7 @@ public class CarbonEventProcessorService implements EventProcessorService {
             throws ExecutionPlanConfigurationException, ExecutionPlanDependencyValidationException {
 
         int tenantId = PrivilegedCarbonContext.getThreadLocalCarbonContext().getTenantId();
-        EventProcessorConfigurationHelper.validateExecutionPlan(executionPlan, tenantId);
+        EventProcessorHelper.validateExecutionPlan(executionPlan, tenantId);
         org.wso2.siddhi.query.api.ExecutionPlan parsedExecutionPlan = SiddhiCompiler.parse(executionPlan);
         String newExecutionPlanName = AnnotationHelper.getAnnotationElement(EventProcessorConstants.ANNOTATION_NAME_NAME, null, parsedExecutionPlan.getAnnotations()).getValue();
         EventProcessorConfigurationFilesystemInvoker.delete(filename, axisConfiguration);
@@ -475,7 +464,7 @@ public class CarbonEventProcessorService implements EventProcessorService {
     public boolean validateExecutionPlan(String executionPlan) {
         try{
             int tenantId = PrivilegedCarbonContext.getThreadLocalCarbonContext().getTenantId();
-            EventProcessorConfigurationHelper.validateExecutionPlan(executionPlan, tenantId);
+            EventProcessorHelper.validateExecutionPlan(executionPlan, tenantId);
             return true;
         } catch (ExecutionPlanDependencyValidationException e) {
 //            String msg = e.getMessage();     //todo: change the return type to string so msg can be returned to the UI.
@@ -689,60 +678,7 @@ public class CarbonEventProcessorService implements EventProcessorService {
             ExecutionPlanConfiguration executionPlanConfiguration = processorExecutionPlan.getExecutionPlanConfiguration();
             executionPlanConfiguration.setTracingEnabled(isEnabled);
             String executionPlan = executionPlanConfiguration.getExecutionPlan();
-
-            String newExecutionPlan = null;
-            String planHeader = "";
-            String planBody = "";
-            String planHeaderRegex = "(^\\s*@Plan:.*)|(^\\s*--.*)|(^\\s*\\/\\*.*\\*\\/\\s*)|(^\\s*)";
-
-            if(isEnabled){
-                String traceFalseRegex = "^\\s*@Plan:trace\\('false'\\)";
-                String traceTrueStatement = EventProcessorConstants.ANNOTATION_TOKEN_AT + EventProcessorConstants.ANNOTATION_PLAN +
-                        EventProcessorConstants.ANNOTATION_TOKEN_COLON + EventProcessorConstants.ANNOTATION_NAME_TRACE +
-                        EventProcessorConstants.ANNOTATION_TOKEN_OPENING_BRACKET + "'true'" + EventProcessorConstants.ANNOTATION_TOKEN_CLOSING_BRACKET;
-
-                Matcher matcher = Pattern.compile(traceFalseRegex, Pattern.MULTILINE).matcher(executionPlan);
-                if(matcher.find()){                     //stat-false statement is already in the plan; false will be replaced with true.
-                    String[] matchSplitArray = matcher.group().split("@");
-                    String whitespaces = "";
-                    if(matchSplitArray.length > 1){
-                        whitespaces += matchSplitArray[0];
-                    }
-                    traceTrueStatement = whitespaces + traceTrueStatement;
-                    newExecutionPlan = matcher.replaceFirst(traceTrueStatement);
-                } else {                                //no trace-false statement is there in the plan; it'll be inserted.
-                    String[] planHeaderArray = executionPlan.split(EventProcessorConstants.SIDDHI_LINE_SEPARATER);
-                    for(int i=0; i<planHeaderArray.length; i++){
-                        if(planHeaderArray[i].matches(planHeaderRegex)){
-                            if(planHeaderArray[i].matches("^\\s*\\/\\* define streams and write query here ... \\*\\/\\s*")){
-                                break;
-                            }
-                            planHeader += planHeaderArray[i] + EventProcessorConstants.SIDDHI_LINE_SEPARATER;
-                        } else {
-                            break;
-                        }
-                    }
-                    planBody = executionPlan.replace(planHeader, "");
-                    newExecutionPlan = planHeader + traceTrueStatement + EventProcessorConstants.SIDDHI_LINE_SEPARATER +
-                            EventProcessorConstants.SIDDHI_LINE_SEPARATER + planBody;
-                }
-            } else {
-                //enable trace to be false
-                String traceTrueRegex = "^\\s*@Plan:trace\\('true'\\)";
-                String traceFalseStatement = EventProcessorConstants.ANNOTATION_TOKEN_AT + EventProcessorConstants.ANNOTATION_PLAN +
-                        EventProcessorConstants.ANNOTATION_TOKEN_COLON + EventProcessorConstants.ANNOTATION_NAME_TRACE +
-                        EventProcessorConstants.ANNOTATION_TOKEN_OPENING_BRACKET + "'false'" + EventProcessorConstants.ANNOTATION_TOKEN_CLOSING_BRACKET;
-                Matcher matcher = Pattern.compile(traceTrueRegex, Pattern.MULTILINE).matcher(executionPlan);
-                if(matcher.find()){
-                    String[] matchSplitArray = matcher.group().split("@");
-                    String whitespaces = "";
-                    if(matchSplitArray.length > 1){
-                        whitespaces += matchSplitArray[0];
-                    }
-                    traceFalseStatement = whitespaces + traceFalseStatement;
-                    newExecutionPlan = matcher.replaceFirst(traceFalseStatement);
-                }
-            }
+            String newExecutionPlan = EventProcessorHelper.setExecutionPlanAnnotationName(executionPlan, EventProcessorConstants.ANNOTATION_NAME_TRACE, isEnabled);
             executionPlanConfiguration.setExecutionPlan(newExecutionPlan);
             ExecutionPlanConfigurationFile configFile = getExecutionPlanConfigurationFileByPlanName(executionPlanName, tenantId);
             String fileName = configFile.getFileName();
@@ -762,61 +698,8 @@ public class CarbonEventProcessorService implements EventProcessorService {
             ExecutionPlanConfiguration executionPlanConfiguration = processorExecutionPlan.getExecutionPlanConfiguration();
             executionPlanConfiguration.setStatisticsEnabled(isEnabled);
             String executionPlan = executionPlanConfiguration.getExecutionPlan();
-
-            String newExecutionPlan = null;
-            String planHeader = "";
-            String planBody = "";
-            String planHeaderRegex = "(^\\s*@Plan:.*)|(^\\s*--.*)|(^\\s*\\/\\*.*\\*\\/\\s*)|(^\\s*)";
-
-            if(isEnabled){
-                //enable stats to be true
-                String statsFalseRegex = "^\\s*@Plan:statistics\\('false'\\)";
-                String statTrueStatement = EventProcessorConstants.ANNOTATION_TOKEN_AT + EventProcessorConstants.ANNOTATION_PLAN +
-                        EventProcessorConstants.ANNOTATION_TOKEN_COLON + EventProcessorConstants.ANNOTATION_NAME_STATISTICS +
-                        EventProcessorConstants.ANNOTATION_TOKEN_OPENING_BRACKET + "'true'" + EventProcessorConstants.ANNOTATION_TOKEN_CLOSING_BRACKET;
-
-                Matcher matcher = Pattern.compile(statsFalseRegex, Pattern.MULTILINE).matcher(executionPlan);
-                if(matcher.find()){                     //stat-false statement is already in the plan; false will be replaced with true.
-                    String[] matchSplitArray = matcher.group().split("@");
-                    String whitespaces = "";
-                    if(matchSplitArray.length > 1){
-                        whitespaces += matchSplitArray[0];
-                    }
-                    statTrueStatement = whitespaces + statTrueStatement;
-                    newExecutionPlan = matcher.replaceFirst(statTrueStatement);
-                } else {                                //no stat-false statement is there in the plan; it'll be inserted.
-                    String[] planHeaderArray = executionPlan.split(EventProcessorConstants.SIDDHI_LINE_SEPARATER);
-                    for(int i=0; i<planHeaderArray.length; i++){
-                        if(planHeaderArray[i].matches(planHeaderRegex)){
-                            if(planHeaderArray[i].matches("^\\s*\\/\\* define streams and write query here ... \\*\\/\\s*")){
-                                break;
-                            }
-                            planHeader += planHeaderArray[i] + EventProcessorConstants.SIDDHI_LINE_SEPARATER;
-                        } else {
-                            break;
-                        }
-                    }
-                    planBody = executionPlan.replace(planHeader, "");
-                    newExecutionPlan = planHeader + statTrueStatement + EventProcessorConstants.SIDDHI_LINE_SEPARATER +
-                            EventProcessorConstants.SIDDHI_LINE_SEPARATER + planBody;
-                }
-            } else {
-                //enable stats to be false
-                String statsTrueRegex = "^\\s*@Plan:statistics\\('true'\\)";
-                String statFalseStatement = EventProcessorConstants.ANNOTATION_TOKEN_AT + EventProcessorConstants.ANNOTATION_PLAN +
-                        EventProcessorConstants.ANNOTATION_TOKEN_COLON + EventProcessorConstants.ANNOTATION_NAME_STATISTICS +
-                        EventProcessorConstants.ANNOTATION_TOKEN_OPENING_BRACKET + "'false'" + EventProcessorConstants.ANNOTATION_TOKEN_CLOSING_BRACKET;
-                Matcher matcher = Pattern.compile(statsTrueRegex, Pattern.MULTILINE).matcher(executionPlan);
-                if(matcher.find()){
-                    String[] matchSplitArray = matcher.group().split("@");
-                    String whitespaces = "";
-                    if(matchSplitArray.length > 1){
-                        whitespaces += matchSplitArray[0];
-                    }
-                    statFalseStatement = whitespaces + statFalseStatement;
-                    newExecutionPlan = matcher.replaceFirst(statFalseStatement);
-                }
-            }
+            String newExecutionPlan = EventProcessorHelper.setExecutionPlanAnnotationName(executionPlan,
+                    EventProcessorConstants.ANNOTATION_NAME_STATISTICS, isEnabled);
             executionPlanConfiguration.setExecutionPlan(newExecutionPlan);
             ExecutionPlanConfigurationFile configFile = getExecutionPlanConfigurationFileByPlanName(executionPlanName, tenantId);
             String fileName = configFile.getFileName();
