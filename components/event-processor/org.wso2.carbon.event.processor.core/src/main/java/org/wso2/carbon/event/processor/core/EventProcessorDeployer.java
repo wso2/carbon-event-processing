@@ -24,8 +24,8 @@ import org.apache.axis2.deployment.repository.util.DeploymentFileData;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.wso2.carbon.event.processing.application.deployer.EventProcessingDeployer;
 import org.wso2.carbon.context.PrivilegedCarbonContext;
+import org.wso2.carbon.event.processing.application.deployer.EventProcessingDeployer;
 import org.wso2.carbon.event.processor.core.exception.ExecutionPlanConfigurationException;
 import org.wso2.carbon.event.processor.core.exception.ExecutionPlanDependencyValidationException;
 import org.wso2.carbon.event.processor.core.exception.ServiceDependencyValidationException;
@@ -34,10 +34,6 @@ import org.wso2.carbon.event.processor.core.internal.ds.EventProcessorValueHolde
 import org.wso2.carbon.event.processor.core.internal.util.helper.EventProcessorHelper;
 
 import java.io.*;
-import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.Collections;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
@@ -122,7 +118,7 @@ public class EventProcessorDeployer extends AbstractDeployer implements EventPro
         if (!carbonEventProcessorService.isExecutionPlanFileAlreadyExist(executionPlanFile.getName(), tenantId)) {
             String executionPlanName = "";
             try {
-                String executionPlan = readFile(deploymentFileData.getAbsolutePath(), StandardCharsets.UTF_8);
+                String executionPlan = readFile(deploymentFileData.getAbsolutePath());
                 EventProcessorHelper.validateExecutionPlan(executionPlan, tenantId);
 
                 executionPlanName = EventProcessorHelper.getExecutionPlanName(executionPlan);   //todo: what if the file name and annotated name are different?
@@ -200,14 +196,30 @@ public class EventProcessorDeployer extends AbstractDeployer implements EventPro
         processUndeploy(filePath);
     }
 
-    private String readFile(String path, Charset encoding) throws ExecutionPlanConfigurationException {
-        byte[] encoded = new byte[0];
+    private String readFile(String path) throws ExecutionPlanConfigurationException {
+        BufferedReader br = null;
         try {
-            encoded = Files.readAllBytes(Paths.get(path));
+            br = new BufferedReader(new FileReader(path));
+            StringBuilder sb = new StringBuilder();
+            String line = br.readLine();
+
+            while (line != null) {
+                sb.append(line);
+                sb.append(System.lineSeparator());
+                line = br.readLine();
+            }
+            return sb.toString();
+        } catch (FileNotFoundException e) {
+            throw new ExecutionPlanConfigurationException("File '"+ path +"' not found."+ e.getMessage(), e);
         } catch (IOException e) {
             throw new ExecutionPlanConfigurationException("Could not read from file "+ path +", "+ e.getMessage(), e);
+        } finally {
+            try {
+                br.close();
+            } catch (IOException e) {
+                throw new ExecutionPlanConfigurationException("Could not close the file "+ path +", "+ e.getMessage(), e);
+            }
         }
-        return new String(encoded, encoding);
     }
 
 
