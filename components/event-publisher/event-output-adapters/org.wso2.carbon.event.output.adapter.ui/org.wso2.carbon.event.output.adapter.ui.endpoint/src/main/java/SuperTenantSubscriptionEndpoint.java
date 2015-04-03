@@ -45,7 +45,6 @@ public class SuperTenantSubscriptionEndpoint extends SubscriptionEndpoint {
      * @param session - Users registered session.
      * @param streamName - StreamName extracted from the ws url.
      * @param version -  Version extracted from the ws url.
-     * @return
      */
     @OnOpen
     public void onOpen (Session session, @PathParam("streamname") String streamName ,
@@ -54,7 +53,7 @@ public class SuperTenantSubscriptionEndpoint extends SubscriptionEndpoint {
             log.debug("WebSocket opened, for Session id: "+session.getId()+", for the Stream:"+streamName);
         }
         PrivilegedCarbonContext carbonContext = PrivilegedCarbonContext.getThreadLocalCarbonContext();
-        carbonContext.setTenantId(-1234);
+        carbonContext.setTenantId(carbonContext.getTenantId());
         tenantId = carbonContext.getTenantId();
         uiOutputCallbackControllerService.subscribeWebsocket(tenantId, streamName, version, session);
     }
@@ -65,7 +64,6 @@ public class SuperTenantSubscriptionEndpoint extends SubscriptionEndpoint {
      * @param session - Users registered session.
      * @param message  - Status code for web-socket close.
      * @param streamName - StreamName extracted from the ws url.
-     * @return
      */
     @OnMessage
     public void onMessage (Session session, String message, @PathParam("streamname") String streamName) {
@@ -82,7 +80,6 @@ public class SuperTenantSubscriptionEndpoint extends SubscriptionEndpoint {
      * @param reason  - Status code for web-socket close.
      * @param streamName - StreamName extracted from the ws url.
      * @param version - Version extracted from the ws url.
-     * @return
      */
     @OnClose
     public void onClose (Session session, CloseReason reason, @PathParam("streamname") String streamName,
@@ -97,7 +94,6 @@ public class SuperTenantSubscriptionEndpoint extends SubscriptionEndpoint {
      * @param throwable  - Status code for web-socket close.
      * @param streamName - StreamName extracted from the ws url.
      * @param version - Version extracted from the ws url.
-     * @return
      */
     @OnError
     public void onError (Session session, Throwable throwable, @PathParam("streamname") String streamName,

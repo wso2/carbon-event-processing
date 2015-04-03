@@ -39,7 +39,7 @@ import javax.ws.rs.core.Response;
  */
 
 @Path("/t/{tdomain}/")
-public class TenantEventRetrievalEndpoint {
+public class TenantEventRetrievalEndpoint{
 
     private static final Log log = LogFactory.getLog(SuperTenantEventRetrievalEndpoint.class);
     protected UIOutputCallbackControllerService uiOutputCallbackControllerService;
@@ -48,7 +48,7 @@ public class TenantEventRetrievalEndpoint {
     public TenantEventRetrievalEndpoint() {
         uiOutputCallbackControllerService = (UIOutputCallbackControllerService) PrivilegedCarbonContext
                 .getThreadLocalCarbonContext()
-                .getOSGiService(UIOutputCallbackControllerService.class);
+                .getOSGiService(UIOutputCallbackControllerService.class,null);
 
     }
 
@@ -59,7 +59,7 @@ public class TenantEventRetrievalEndpoint {
      * @param version - Version extracted from the http url.
      * @param lastUpdatedTime - Last event's dispatched name.
      * @param tdomain - Tenant domain extracted from http url
-     * @return
+     * @return response
      */
     @GET
     @Path("/{streamname}/{version}")

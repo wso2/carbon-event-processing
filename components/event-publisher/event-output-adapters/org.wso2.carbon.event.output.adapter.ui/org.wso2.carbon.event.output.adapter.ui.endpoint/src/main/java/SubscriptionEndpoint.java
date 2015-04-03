@@ -38,7 +38,7 @@ public class SubscriptionEndpoint {
     public SubscriptionEndpoint() {
         uiOutputCallbackControllerService = (UIOutputCallbackControllerService) PrivilegedCarbonContext
                 .getThreadLocalCarbonContext()
-                .getOSGiService(UIOutputCallbackControllerService.class);
+                .getOSGiService(UIOutputCallbackControllerService.class, null);
     }
 
     /**
@@ -49,7 +49,6 @@ public class SubscriptionEndpoint {
      * @param streamName - StreamName extracted from the ws url.
      * @param version - Version extracted from the ws url.
      * @param tenantId - Users tenantId.
-     * @return
      */
     public void onClose (Session session, CloseReason reason, String streamName, String version, int tenantId) {
         if (log.isDebugEnabled()) {
@@ -66,7 +65,6 @@ public class SubscriptionEndpoint {
      * @param streamName - StreamName extracted from the ws url.
      * @param version - Version extracted from the ws url.
      * @param tenantId - Users tenantId.
-     * @return
      */
     public void onError (Session session, Throwable throwable, String streamName, String version, int tenantId) {
         log.error("Error occurred in session ID: "+session.getId()+", for request URI - "+session.getRequestURI()+", "+throwable.getMessage(),throwable);

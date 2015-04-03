@@ -26,19 +26,16 @@ import org.wso2.carbon.databridge.commons.Event;
 import org.wso2.carbon.event.output.adapter.core.OutputEventAdapter;
 import org.wso2.carbon.event.output.adapter.core.OutputEventAdapterConfiguration;
 import org.wso2.carbon.event.output.adapter.core.exception.OutputEventAdapterException;
-import org.wso2.carbon.event.output.adapter.core.exception.OutputEventAdapterRuntimeException;
 import org.wso2.carbon.event.output.adapter.core.exception.TestConnectionNotSupportedException;
 import org.wso2.carbon.event.output.adapter.ui.internal.UIOutputCallbackControllerServiceImpl;
 import org.wso2.carbon.event.output.adapter.ui.internal.ds.UIEventAdaptorServiceInternalValueHolder;
 import org.wso2.carbon.event.output.adapter.ui.internal.util.UIEventAdapterConstants;
 
 import javax.websocket.Session;
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.LinkedBlockingDeque;
 
 /**
  * Contains the life cycle of executions regarding the UI Adapter
@@ -52,7 +49,7 @@ public class UIEventAdapter implements OutputEventAdapter {
     private Map<String, String> globalProperties;
     private int tenantID;
     private String streamId;
-    private LinkedList<Object> streamSpecificEvents;
+    private LinkedBlockingDeque<Object> streamSpecificEvents;
 
     public UIEventAdapter(OutputEventAdapterConfiguration eventAdapterConfiguration, Map<String,
             String> globalProperties) {
@@ -63,8 +60,6 @@ public class UIEventAdapter implements OutputEventAdapter {
 
     @Override
     public void init() throws OutputEventAdapterException {
-
-        Map<String, String> eventOutputAdapterMap = UIEventAdaptorServiceInternalValueHolder.getOutputEventStreamMap();
 
         if(eventAdapterConfiguration.getStaticProperties().get(UIEventAdapterConstants
                 .ADAPTER_UI_OUTPUT_STREAM_VERSION) == null || " ".equals(eventAdapterConfiguration
@@ -79,20 +74,33 @@ public class UIEventAdapter implements OutputEventAdapter {
                 UIEventAdapterConstants.ADAPTER_UI_OUTPUT_STREAM_NAME) + UIEventAdapterConstants.ADAPTER_UI_COLON +
                 eventAdapterConfiguration.getStaticProperties().get(UIEventAdapterConstants
                         .ADAPTER_UI_OUTPUT_STREAM_VERSION);
-        String adapterName = eventOutputAdapterMap.get(streamId);
+
+        ConcurrentHashMap<Integer,ConcurrentHashMap<String, String>> tenantSpecifcEventOutputAdapterMap =
+                UIEventAdaptorServiceInternalValueHolder.getTenantSpecificOutputEventStreamAdapterMap();
+
+        ConcurrentHashMap<String, String> streamSpecifAdapterMap = tenantSpecifcEventOutputAdapterMap.get(tenantID);
+
+        if(streamSpecifAdapterMap == null){
+            streamSpecifAdapterMap = new ConcurrentHashMap<String, String>();
+            if (null != tenantSpecifcEventOutputAdapterMap.putIfAbsent(tenantID, streamSpecifAdapterMap)){
+                streamSpecifAdapterMap = tenantSpecifcEventOutputAdapterMap.get(tenantID);
+            }
+        }
+
+        String adapterName = streamSpecifAdapterMap.get(streamId);
 
         if(adapterName != null){
-            throw new OutputEventAdapterRuntimeException("An Output ui event adapter \""+ adapterName +"\" is already" +
-                    " exist for stream id \""+ streamId + "\"");
+            throw new OutputEventAdapterException(("An Output ui event adapter \""+ adapterName +"\" is already" +
+                    " exist for stream id \""+ streamId + "\""));
         } else{
-            eventOutputAdapterMap.put(streamId,eventAdapterConfiguration.getName());
+            streamSpecifAdapterMap.put(streamId, eventAdapterConfiguration.getName());
 
-            ConcurrentHashMap<Integer, ConcurrentHashMap<String, LinkedList<Object>>> tenantSpecificStreamMap =
-                    UIEventAdaptorServiceInternalValueHolder.getTenantSpecificStreamMap();
-            ConcurrentHashMap<String, LinkedList<Object>> streamSpecificEventsMap = tenantSpecificStreamMap.get(tenantID);
+            ConcurrentHashMap<Integer, ConcurrentHashMap<String, LinkedBlockingDeque<Object>>> tenantSpecificStreamMap =
+                    UIEventAdaptorServiceInternalValueHolder.getTenantSpecificStreamEventMap();
+            ConcurrentHashMap<String, LinkedBlockingDeque<Object>> streamSpecificEventsMap = tenantSpecificStreamMap.get(tenantID);
 
             if(streamSpecificEventsMap == null){
-                streamSpecificEventsMap = new ConcurrentHashMap<String, LinkedList<Object>>();
+                streamSpecificEventsMap = new ConcurrentHashMap<String, LinkedBlockingDeque<Object>>();
                 if (null != tenantSpecificStreamMap.putIfAbsent(tenantID, streamSpecificEventsMap)){
                     streamSpecificEventsMap = tenantSpecificStreamMap.get(tenantID);
                 }
@@ -100,7 +108,7 @@ public class UIEventAdapter implements OutputEventAdapter {
             streamSpecificEvents = streamSpecificEventsMap.get(streamId);
 
             if (streamSpecificEvents == null){
-                streamSpecificEvents = new LinkedList<Object>();
+                streamSpecificEvents = new LinkedBlockingDeque<Object>();
                 if (null != streamSpecificEventsMap.putIfAbsent(streamId,streamSpecificEvents)){
                     streamSpecificEvents = streamSpecificEventsMap.get(streamId);
                 }
@@ -126,199 +134,161 @@ public class UIEventAdapter implements OutputEventAdapter {
                         .getUIOutputCallbackRegisterServiceImpl();
         CopyOnWriteArrayList<Session> sessions = uiOutputCallbackControllerServiceImpl.getSessions(tenantID, streamId);
 
-        populateEventsMap(message);
+        //populateEventsMap(message);
+        StringBuilder allEventsAsString = null;
+        int queueSize;
 
-        if (sessions != null){
-            if (message instanceof Object[]) {
-                //TODO: send message in one send() operation by defining a new events-schema.
-                for (Object object : (Object[])message){
-                    for (Session session : sessions){
-                        synchronized (session){
-                            Event event = (Event) ((Object) object);
-                            StringBuilder allEventsAsString = new StringBuilder("[[");
-                            Boolean eventsExists = false;
-
-                            if(event.getMetaData() != null){
-
-                                Object[] metaData = event.getMetaData();
-                                eventsExists = true;
-                                for(int i=0;i < metaData.length;i++){
-                                    allEventsAsString.append("\"");
-                                    allEventsAsString.append(metaData[i]);
-                                    allEventsAsString.append("\"");
-                                    if(i != (metaData.length-1)){
-                                        allEventsAsString.append(",");
-                                    }
-                                }
-                            }
-
-                            if(event.getCorrelationData() != null){
-                                Object[] correlationData = event.getCorrelationData();
-
-                                if(eventsExists){
-                                    allEventsAsString.append(",");
-                                } else{
-                                    eventsExists = true;
-                                }
-                                for(int i=0;i < correlationData.length;i++){
-                                    allEventsAsString.append("\"");
-                                    allEventsAsString.append(correlationData[i]);
-                                    allEventsAsString.append("\"");
-                                    if(i != (correlationData.length-1)){
-                                        allEventsAsString.append(",");
-                                    }
-                                }
-                            }
-
-                            if(event.getPayloadData() != null){
-
-                                Object[] payloadData = event.getPayloadData();
-                                if(eventsExists){
-                                    allEventsAsString.append(",");
-                                } else{
-                                    eventsExists = true;
-                                }
-                                for(int i=0;i < payloadData.length;i++){
-                                    allEventsAsString.append("\"");
-                                    allEventsAsString.append(payloadData[i]);
-                                    allEventsAsString.append("\"");
-                                    if(i != (payloadData.length-1)){
-                                        allEventsAsString.append(",");
-                                    }
-                                }
-                            }
-                            allEventsAsString.append("]]");
-                            session.getAsyncRemote().sendText(allEventsAsString.toString());  //this method call was
-                            // synchronized to fix CEP-996
-                        }
-                    }
-                }
-            } else {
-                for (Session session : sessions){
-                    synchronized (session){
-                        Event event = (Event) ((Object) message);
-                        StringBuilder allEventsAsString = new StringBuilder("[[");
-                        Boolean eventsExists = false;
-
-                        if(event.getMetaData() != null){
-
-                            Object[] metaData = event.getMetaData();
-                            eventsExists = true;
-                            for(int i=0;i < metaData.length;i++){
-                                allEventsAsString.append("\"");
-                                allEventsAsString.append(metaData[i]);
-                                allEventsAsString.append("\"");
-                                if(i != (metaData.length-1)){
-                                    allEventsAsString.append(",");
-                                }
-                            }
-                        }
-
-                        if(event.getCorrelationData() != null){
-                            Object[] correlationData = event.getCorrelationData();
-
-                            if(eventsExists){
-                                allEventsAsString.append(",");
-                            } else{
-                                eventsExists = true;
-                            }
-                            for(int i=0;i < correlationData.length;i++){
-                                allEventsAsString.append("\"");
-                                allEventsAsString.append(correlationData[i]);
-                                allEventsAsString.append("\"");
-                                if(i != (correlationData.length-1)){
-                                    allEventsAsString.append(",");
-                                }
-                            }
-                        }
-
-                        if(event.getPayloadData() != null){
-
-                            Object[] payloadData = event.getPayloadData();
-                            if(eventsExists){
-                                allEventsAsString.append(",");
-                            } else{
-                                eventsExists = true;
-                            }
-                            for(int i=0;i < payloadData.length;i++){
-                                allEventsAsString.append("\"");
-                                allEventsAsString.append(payloadData[i]);
-                                allEventsAsString.append("\"");
-                                if(i != (payloadData.length-1)){
-                                    allEventsAsString.append(",");
-                                }
-                            }
-                        }
-
-                        allEventsAsString.append("]]");
-                        session.getAsyncRemote().sendText(allEventsAsString.toString());  //this method call was
-                        // synchronized to fix CEP-996
-                    }
-                }
-            }
+        if(globalProperties.get("eventQueueSize") != null){
+            queueSize = Integer.parseInt(globalProperties.get("eventQueueSize"));
         } else {
-            if (log.isDebugEnabled()) {
-                log.debug("Dropping the message: '"+message+"', since no clients have being registered to receive " +
-                        "events from ui adapter: '"+ eventAdapterConfiguration.getName()+ "', " +
-                        "for tenant ID: "+tenantID);
-            }
+            queueSize = UIEventAdapterConstants.EVENTS_QUEUE_SIZE;
         }
-    }
-
-    /**
-     * Used to store all the retrieved events in a LinkList
-     *
-     * @param message - contains the event message.
-     * @return
-     */
-    public void populateEventsMap(Object message){
 
         if (message instanceof Object[]) {
 
+            Boolean firstFilteredValue = true;
             for (Object object : (Object[])message){
+                allEventsAsString = new StringBuilder("[");
+                Event event = (Event) object;
+                Boolean eventsExists = false;
+                if(!firstFilteredValue){
+                    allEventsAsString.append(",");
+                }
+                firstFilteredValue = false;
 
-                if(streamSpecificEvents.size() == UIEventAdapterConstants.EVENTS_QUEUE_SIZE){
+                if(streamSpecificEvents.size() == queueSize){
                     streamSpecificEvents.removeFirst();
                 }
-                Object[] eventValues = new Object[2];
-                Event event = (Event) ((Object) object);
-                List<Object> eventComponatList = new ArrayList<Object>();
 
                 if(event.getMetaData() != null){
-                    eventComponatList.add(event.getMetaData());
+                    Object[] metaData = event.getMetaData();
+                    eventsExists = true;
+                    for(int i=0;i < metaData.length;i++){
+                        allEventsAsString.append("\"");
+                        allEventsAsString.append(metaData[i]);
+                        allEventsAsString.append("\"");
+                        if(i != (metaData.length-1)){
+                            allEventsAsString.append(",");
+                        }
+                    }
                 }
-                if(event.getCorrelationData() != null) {
-                    eventComponatList.add(event.getCorrelationData());
+                if(event.getCorrelationData() != null){
+                    Object[] correlationData = event.getCorrelationData();
+
+                    if(eventsExists){
+                        allEventsAsString.append(",");
+                    } else{
+                        eventsExists = true;
+                    }
+                    for(int i=0;i < correlationData.length;i++){
+                        allEventsAsString.append("\"");
+                        allEventsAsString.append(correlationData[i]);
+                        allEventsAsString.append("\"");
+                        if(i != (correlationData.length-1)){
+                            allEventsAsString.append(",");
+                        }
+                    }
                 }
-                if(event.getPayloadData() != null) {
-                    eventComponatList.add(event.getPayloadData());
+                if(event.getPayloadData() != null){
+
+                    Object[] payloadData = event.getPayloadData();
+                    if(eventsExists){
+                        allEventsAsString.append(",");
+                    }
+
+                    for(int i=0;i < payloadData.length;i++){
+                        allEventsAsString.append("\"");
+                        allEventsAsString.append(payloadData[i]);
+                        allEventsAsString.append("\"");
+                        if(i != (payloadData.length-1)){
+                            allEventsAsString.append(",");
+                        }
+                    }
                 }
-                eventValues[UIEventAdapterConstants.INDEX_ZERO] = eventComponatList;
+                allEventsAsString.append("]");
+                Object[] eventValues = new Object[UIEventAdapterConstants.INDEX_TWO];
+                eventValues[UIEventAdapterConstants.INDEX_ZERO] = allEventsAsString;
                 eventValues[UIEventAdapterConstants.INDEX_ONE] = System.currentTimeMillis();
                 streamSpecificEvents.add(eventValues);
             }
         } else {
 
-            if(streamSpecificEvents.size() == UIEventAdapterConstants.EVENTS_QUEUE_SIZE){
+            Event event = (Event)(message);
+            allEventsAsString = new StringBuilder("[");
+            Boolean eventsExists = false;
+
+            if(streamSpecificEvents.size() == queueSize){
                 streamSpecificEvents.removeFirst();
             }
-            Object[] eventValues = new Object[2];
-
-            Event event = (Event) ((Object) message);
-            List<Object> eventComponatList = new ArrayList<Object>();
 
             if(event.getMetaData() != null){
-                eventComponatList.add(event.getMetaData());
+
+                Object[] metaData = event.getMetaData();
+                eventsExists = true;
+                for(int i=0;i < metaData.length;i++){
+                    allEventsAsString.append("\"");
+                    allEventsAsString.append(metaData[i]);
+                    allEventsAsString.append("\"");
+                    if(i != (metaData.length-1)){
+                        allEventsAsString.append(",");
+                    }
+                }
             }
-            if(event.getCorrelationData() != null) {
-                eventComponatList.add(event.getCorrelationData());
+
+            if(event.getCorrelationData() != null){
+                Object[] correlationData = event.getCorrelationData();
+
+                if(eventsExists){
+                    allEventsAsString.append(",");
+                } else{
+                    eventsExists = true;
+                }
+                for(int i=0;i < correlationData.length;i++){
+                    allEventsAsString.append("\"");
+                    allEventsAsString.append(correlationData[i]);
+                    allEventsAsString.append("\"");
+                    if(i != (correlationData.length-1)){
+                        allEventsAsString.append(",");
+                    }
+                }
             }
-            if(event.getPayloadData() != null) {
-                eventComponatList.add(event.getPayloadData());
+
+            if(event.getPayloadData() != null){
+
+                Object[] payloadData = event.getPayloadData();
+                if(eventsExists){
+                    allEventsAsString.append(",");
+                }
+                for(int i=0;i < payloadData.length;i++){
+                    allEventsAsString.append("\"");
+                    allEventsAsString.append(payloadData[i]);
+                    allEventsAsString.append("\"");
+                    if(i != (payloadData.length-1)){
+                        allEventsAsString.append(",");
+                    }
+                }
             }
-            eventValues[UIEventAdapterConstants.INDEX_ZERO] = eventComponatList;
+
+            allEventsAsString.append("]");
+            Object[] eventValues = new Object[UIEventAdapterConstants.INDEX_TWO];
+            eventValues[UIEventAdapterConstants.INDEX_ZERO] = allEventsAsString;
             eventValues[UIEventAdapterConstants.INDEX_ONE] = System.currentTimeMillis();
             streamSpecificEvents.add(eventValues);
+        }
+
+        if (sessions != null){
+            for (Session session : sessions) {
+                synchronized (session) {
+                    session.getAsyncRemote().sendText(allEventsAsString.toString());
+                }
+            }
+        } else {
+            if (log.isDebugEnabled()) {
+                log.debug(
+                        "Dropping the message: '" + message + "', since no clients have being registered to receive " +
+                                "events from ui adapter: '" + eventAdapterConfiguration.getName() + "', " +
+                                "for tenant ID: " + tenantID);
+            }
         }
     }
 
@@ -331,11 +301,11 @@ public class UIEventAdapter implements OutputEventAdapter {
     public void destroy() {
 
         //Removing outputadapter and streamId
-        Map<String, String> eventOutputAdapterMap = UIEventAdaptorServiceInternalValueHolder.getOutputEventStreamMap();
-        eventOutputAdapterMap.remove(streamId);
+        UIEventAdaptorServiceInternalValueHolder
+                .getTenantSpecificOutputEventStreamAdapterMap().get(tenantID).remove(streamId);
 
         //Removing the streamId and events registered for the output adapter
-        UIEventAdaptorServiceInternalValueHolder.getTenantSpecificStreamMap().get(tenantID).remove(streamId);
+        UIEventAdaptorServiceInternalValueHolder.getTenantSpecificStreamEventMap().get(tenantID).remove(streamId);
     }
 }
 

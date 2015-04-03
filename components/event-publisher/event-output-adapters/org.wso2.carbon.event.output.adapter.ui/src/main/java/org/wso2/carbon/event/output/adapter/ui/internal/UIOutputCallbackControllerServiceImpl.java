@@ -25,10 +25,9 @@ import org.wso2.carbon.event.output.adapter.ui.internal.ds.UIEventAdaptorService
 import org.wso2.carbon.event.output.adapter.ui.internal.util.UIEventAdapterConstants;
 import javax.websocket.Session;
 import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.LinkedBlockingDeque;
 
 /**
  * Service implementation class which exposes to front end
@@ -103,15 +102,14 @@ public class UIOutputCallbackControllerServiceImpl implements UIOutputCallbackCo
      * @param version - Stream version which user uses.
      * @return the events list.
      */
-    public LinkedList<Object> getEvents(int tenanId, String streamName, String version){
+    public LinkedBlockingDeque<Object> getEvents(int tenanId, String streamName, String version){
 
-        ConcurrentHashMap<String, LinkedList<Object>> tenantSpecificStreamMap =
-                UIEventAdaptorServiceInternalValueHolder.getTenantSpecificStreamMap().get(tenanId);
+        ConcurrentHashMap<String, LinkedBlockingDeque<Object>> tenantSpecificStreamMap =
+                UIEventAdaptorServiceInternalValueHolder.getTenantSpecificStreamEventMap().get(tenanId);
 
         if(tenantSpecificStreamMap != null){
             String streamId = streamName + UIEventAdapterConstants.ADAPTER_UI_COLON + version;
-            LinkedList<Object> streamSpecificEvents = tenantSpecificStreamMap.get(streamId);
-            return streamSpecificEvents;
+            return tenantSpecificStreamMap.get(streamId);
         }
         return null;
     }
@@ -163,7 +161,7 @@ public class UIOutputCallbackControllerServiceImpl implements UIOutputCallbackCo
     @Override
     public JsonObject retrieveEvents(int tenantId, String streamName, String version, String lastUpdatedTime) {
 
-        LinkedList<Object> allEvents = getEvents(tenantId, streamName, version);
+        LinkedBlockingDeque<Object> allEvents = getEvents(tenantId, streamName, version);
         //List<Object> eventsListToBeSent;
         Object lastEventTime;
         JsonObject eventsData;
@@ -191,30 +189,12 @@ public class UIOutputCallbackControllerServiceImpl implements UIOutputCallbackCo
                             allEventsAsString.append(",");
                         }
                         firstFilteredValue = false;
-                        List<Object> listOfEventData = (List<Object>) eventValues[UIEventAdapterConstants.INDEX_ZERO];
-                        allEventsAsString.append("[");
-                        for(int cnt =0;cnt<listOfEventData.size();cnt++){
-
-                            Object[] eventValueComponent = (Object[]) listOfEventData.get(cnt);
-                            for(int i=0;i<eventValueComponent.length;i++){
-
-                                allEventsAsString.append("\"");
-                                allEventsAsString.append(eventValueComponent[i]);
-                                allEventsAsString.append("\"");
-                                if(cnt != (listOfEventData.size()-1)){
-                                    allEventsAsString.append(",");
-                                } else{
-                                    if(i != (eventValueComponent.length-1)){
-                                        allEventsAsString.append(",");
-                                    }
-                                }
-
-                            }
-                        }
-                        allEventsAsString.append("]");
+                        StringBuilder eventString = (StringBuilder) eventValues[UIEventAdapterConstants.INDEX_ZERO];
+                        allEventsAsString.append(eventString);
                     }
                 }
                 allEventsAsString.append("]");
+
                 Object[] lastObj = (Object[]) allEvents.getLast();
                 lastEventTime = lastObj[UIEventAdapterConstants.INDEX_ONE];
                 eventsData.addProperty("eventsExists",eventsExists);

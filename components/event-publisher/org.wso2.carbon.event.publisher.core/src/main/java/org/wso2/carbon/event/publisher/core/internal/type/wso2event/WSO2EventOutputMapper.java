@@ -16,10 +16,8 @@ package org.wso2.carbon.event.publisher.core.internal.type.wso2event;
 
 import org.wso2.carbon.databridge.commons.Event;
 import org.wso2.carbon.databridge.commons.StreamDefinition;
-import org.wso2.carbon.databridge.commons.exception.MalformedStreamDefinitionException;
 import org.wso2.carbon.event.publisher.core.config.EventOutputProperty;
 import org.wso2.carbon.event.publisher.core.config.EventPublisherConfiguration;
-import org.wso2.carbon.event.publisher.core.config.EventPublisherConstants;
 import org.wso2.carbon.event.publisher.core.config.mapping.WSO2EventOutputMapping;
 import org.wso2.carbon.event.publisher.core.exception.EventPublisherConfigurationException;
 import org.wso2.carbon.event.publisher.core.exception.EventPublisherStreamValidationException;
@@ -34,12 +32,12 @@ public class WSO2EventOutputMapper implements OutputMapper {
     private Map<String, Integer> propertyPositionMap = null;
     private final int tenantId;
     private final StreamDefinition inputStreamDefinition;
-    private StreamDefinition outputStreamDefinition = null;
+    //private StreamDefinition outputStreamDefinition = null;
     private int noOfMetaData = 0;
     private int noOfCorrelationData = 0;
     private int noOfPayloadData = 0;
 
-    public WSO2EventOutputMapper(EventPublisherConfiguration eventPublisherConfiguration,
+    /*public WSO2EventOutputMapper(EventPublisherConfiguration eventPublisherConfiguration,
                                  Map<String, Integer> propertyPositionMap,
                                  int tenantId, StreamDefinition inputStreamDefinition) throws
             EventPublisherConfigurationException {
@@ -73,6 +71,40 @@ public class WSO2EventOutputMapper implements OutputMapper {
         } catch (MalformedStreamDefinitionException e) {
             throw new EventPublisherConfigurationException("Error while creating output stream definition : " + outputStreamName + ":" + outputStreamVersion, e);
         }
+
+    }*/
+
+    public WSO2EventOutputMapper(EventPublisherConfiguration eventPublisherConfiguration,
+            Map<String, Integer> propertyPositionMap,
+            int tenantId, StreamDefinition inputStreamDefinition) throws
+            EventPublisherConfigurationException {
+        this.eventPublisherConfiguration = eventPublisherConfiguration;
+        this.propertyPositionMap = propertyPositionMap;
+        this.tenantId = tenantId;
+        this.inputStreamDefinition = inputStreamDefinition;
+
+        //try {
+        wso2EventOutputMapping = (WSO2EventOutputMapping) eventPublisherConfiguration.getOutputMapping();
+        if (!wso2EventOutputMapping.isCustomMappingEnabled()) {
+            //outputStreamDefinition = new StreamDefinition(outputStreamName, outputStreamVersion);
+            //outputStreamDefinition.setMetaData(inputStreamDefinition.getMetaData());
+            //outputStreamDefinition.setCorrelationData(inputStreamDefinition.getCorrelationData());
+            //outputStreamDefinition.setPayloadData(inputStreamDefinition.getPayloadData());
+
+            noOfMetaData = inputStreamDefinition.getMetaData() != null ? inputStreamDefinition.getMetaData().size() : 0;
+            noOfCorrelationData = inputStreamDefinition.getCorrelationData() != null ? inputStreamDefinition.getCorrelationData().size() : 0;
+            noOfPayloadData = inputStreamDefinition.getPayloadData() != null ? inputStreamDefinition.getPayloadData().size() : 0;
+        } else {
+            validateStreamDefinitionWithOutputProperties();
+            //outputStreamDefinition = new StreamDefinition(outputStreamName, outputStreamVersion);
+            //addAttributeToStreamDefinition(outputStreamDefinition, wso2EventOutputMapping.getMetaWSO2EventOutputPropertyConfiguration(), "meta");
+            //addAttributeToStreamDefinition(outputStreamDefinition, wso2EventOutputMapping.getCorrelationWSO2EventOutputPropertyConfiguration(), "correlation");
+            //addAttributeToStreamDefinition(outputStreamDefinition, wso2EventOutputMapping.getPayloadWSO2EventOutputPropertyConfiguration(), "payload");
+        }
+
+        /*} catch (MalformedStreamDefinitionException e) {
+            throw new EventPublisherConfigurationException("Error while creating output stream definition : " + outputStreamName + ":" + outputStreamVersion, e);
+        }*/
 
     }
 
@@ -112,8 +144,8 @@ public class WSO2EventOutputMapper implements OutputMapper {
     }
 
     private void addAttributeToStreamDefinition(StreamDefinition streamDefinition,
-                                                List<EventOutputProperty> wso2EventOutputPropertyList,
-                                                String propertyType) {
+            List<EventOutputProperty> wso2EventOutputPropertyList,
+            String propertyType) {
 
         if (propertyType.equals("meta")) {
             for (EventOutputProperty wso2EventOutputProperty : wso2EventOutputPropertyList) {
@@ -170,7 +202,7 @@ public class WSO2EventOutputMapper implements OutputMapper {
             }
         }
 
-        return new Object[]{eventObject, outputStreamDefinition};
+        return eventObject;
     }
 
     @Override
@@ -196,7 +228,7 @@ public class WSO2EventOutputMapper implements OutputMapper {
             eventObject.setPayloadData(payloadData.toArray());
         }
 
-        return new Object[]{eventObject, outputStreamDefinition};
+        return eventObject;
     }
 
 }
