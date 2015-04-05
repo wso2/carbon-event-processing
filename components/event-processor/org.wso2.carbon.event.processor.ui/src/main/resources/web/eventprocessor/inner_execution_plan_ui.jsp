@@ -19,6 +19,7 @@
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@ page import="org.wso2.carbon.event.processor.stub.EventProcessorAdminServiceStub" %>
 <%@ page import="org.wso2.carbon.event.processor.ui.EventProcessorUIUtils" %>
+<%@ page import="org.wso2.carbon.event.processor.ui.UIConstants" %>
 <%@ page import="org.wso2.carbon.event.stream.stub.EventStreamAdminServiceStub" %>
 
 <fmt:bundle basename="org.wso2.carbon.event.processor.ui.i18n.Resources">
@@ -61,13 +62,6 @@
             autofocus: true
         });
 
-        window.queryEditor.setValue("/* Enter a unique ExecutionPlan */\n" +
-                "@Plan:name('ExecutionPlan')\n\n" +
-                "/* Enter a unique description for ExecutionPlan */\n" +
-                "-- @Plan:description('ExecutionPlan')\n" +
-                "\n" +
-                "/* define streams and write query here ... */\n");
-        window.queryEditor.save();
     };
 </script>
 
@@ -92,15 +86,9 @@
         mode = "UPDATE";
     }
 %>
-
 <%
     if (mode.equals("ADD")) {
-        executionPlan = "/* Enter a unique ExecutionPlan */\n" +
-                "@Plan:name('ExecutionPlan')\n\n" +
-                "/* Enter a unique description for ExecutionPlan */\n" +
-                "-- @Plan:description('ExecutionPlan')\n" +
-                "\n" +
-                "/* define streams and write query here ... */\n";
+        executionPlan = UIConstants.EXECUTION_PLAN_BASIC_TEMPLATE;
 
     } else {
         if (executionPlanName != null) {

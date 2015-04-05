@@ -60,6 +60,7 @@ public class EventProcessorHelper {
 
     public static void validateExecutionPlan(String executionPlan, int tenantId)
             throws ExecutionPlanConfigurationException, ExecutionPlanDependencyValidationException {
+
         String planName;
         int i = 0;      //this is maintained for giving more context info in error messages, when throwing exceptions.
         ArrayList<String> importedStreams = new ArrayList<String>();
@@ -71,7 +72,17 @@ public class EventProcessorHelper {
         Element element = AnnotationHelper.getAnnotationElement(EventProcessorConstants.ANNOTATION_NAME_NAME, null, parsedExecPlan.getAnnotations());
         if (element == null) {                                                                        // check if plan name is given
             throw new ExecutionPlanConfigurationException("Execution plan name is not given. Please specify execution plan name using the annotation " +
-                    "'@Plan:name('executionPlanNameHere')");
+                    "'"+
+                    EventProcessorConstants.ANNOTATION_TOKEN_AT +
+                    EventProcessorConstants.ANNOTATION_PLAN +
+                    EventProcessorConstants.ANNOTATION_TOKEN_COLON +
+                    EventProcessorConstants.ANNOTATION_NAME_NAME +
+                    EventProcessorConstants.ANNOTATION_TOKEN_OPENING_BRACKET +
+                    EventProcessorConstants.SIDDHI_SINGLE_QUOTE +
+                    "executionPlanNameHere" +
+                    EventProcessorConstants.SIDDHI_SINGLE_QUOTE +
+                    EventProcessorConstants.ANNOTATION_TOKEN_CLOSING_BRACKET +
+                    "'");
         }
         planName = element.getValue();
         if (planName.equals("")) {
@@ -84,23 +95,29 @@ public class EventProcessorHelper {
         for (Map.Entry<String, org.wso2.siddhi.query.api.definition.StreamDefinition> entry : parsedExecPlan.getStreamDefinitionMap().entrySet()) {
             Element importElement = AnnotationHelper.getAnnotationElement(EventProcessorConstants.ANNOTATION_IMPORT, null, entry.getValue().getAnnotations());
             Element exportElement = AnnotationHelper.getAnnotationElement(EventProcessorConstants.ANNOTATION_EXPORT, null, entry.getValue().getAnnotations());
-            if (importElement == null && exportElement == null) {                                        // check if each stream definition has either import or export annotation
-                throw new ExecutionPlanConfigurationException("Missing required annotation in " + i + "th of the " + parsedExecPlan.getStreamDefinitionMap().size() +
-                        "stream definition, with stream id '" + entry.getKey() + "'. Stream definition should have" +
-                        " either @Import or @Export annotation.");
-            }
-            if (importElement != null) {                              //Treating import & export cases separately to give more specific error messages.
+            if (importElement != null) {  //Treating import & export cases separately to give more specific error messages.
+                String atImportLiteral = EventProcessorConstants.ANNOTATION_TOKEN_AT + EventProcessorConstants.ANNOTATION_IMPORT;
                 String importElementValue = importElement.getValue();
                 if (importElementValue == "") {
-                    throw new ExecutionPlanConfigurationException("Imported stream cannot be empty as in '@Import('')'. " +
-                            "Please correct " + i + "th of the " + parsedExecPlan.getStreamDefinitionMap().size() +
+                    throw new ExecutionPlanConfigurationException("Imported stream cannot be empty as in '"+
+                            atImportLiteral +
+                            EventProcessorConstants.ANNOTATION_TOKEN_OPENING_BRACKET +
+                            EventProcessorConstants.SIDDHI_SINGLE_QUOTE + EventProcessorConstants.SIDDHI_SINGLE_QUOTE +
+                            EventProcessorConstants.ANNOTATION_TOKEN_CLOSING_BRACKET +
+                            "'. Please correct " + i + "th of the " + parsedExecPlan.getStreamDefinitionMap().size() +
                             "stream definition, with stream id '" + entry.getKey());
                 }
                 String[] streamIdComponents = importElementValue.split(EventProcessorConstants.STREAM_SEPARATOR);
                 if (streamIdComponents.length != 2) {
-                    throw new ExecutionPlanConfigurationException("Found malformed @Import element '" + importElementValue + "'. " +
-                            "@Import annotation should take the form '@Import('streamName:StreamVersion')'. " +
-                            "There should be one colon, separating the streamName and its version");
+                    throw new ExecutionPlanConfigurationException("Found malformed "+ atImportLiteral +
+                            " element '" + importElementValue + "'. " +atImportLiteral +
+                            " annotation should take the form '"+ atImportLiteral +
+                            EventProcessorConstants.ANNOTATION_TOKEN_OPENING_BRACKET +
+                            EventProcessorConstants.SIDDHI_SINGLE_QUOTE +
+                            "streamName"+ EventProcessorConstants.STREAM_SEPARATOR +"StreamVersion"+
+                            EventProcessorConstants.SIDDHI_SINGLE_QUOTE +
+                            EventProcessorConstants.ANNOTATION_TOKEN_CLOSING_BRACKET +
+                            "'. There should be a '"+ EventProcessorConstants.STREAM_SEPARATOR +"' character, separating the streamName and its version");
                 }
                 if ((!databridgeStreamNamePattern.matcher(streamIdComponents[0].trim()).matches())) {
                     throw new ExecutionPlanConfigurationException("Invalid imported stream name[" + streamIdComponents[0] + "] in execution plan:" + planName +
@@ -117,17 +134,28 @@ public class EventProcessorHelper {
                 }
                 importedStreams.add(importElementValue);
             } else {
+                String atExportLiteral = EventProcessorConstants.ANNOTATION_TOKEN_AT + EventProcessorConstants.ANNOTATION_EXPORT;
                 String exportElementValue = exportElement.getValue();
                 if (exportElementValue == "") {
-                    throw new ExecutionPlanConfigurationException("Exported stream cannot be empty as in '@Export('')'. " +
-                            "Please correct " + i + "th of the " + parsedExecPlan.getStreamDefinitionMap().size() +
+                    throw new ExecutionPlanConfigurationException("Exported stream cannot be empty as in '"+
+                            atExportLiteral +
+                            EventProcessorConstants.ANNOTATION_TOKEN_OPENING_BRACKET +
+                            EventProcessorConstants.SIDDHI_SINGLE_QUOTE + EventProcessorConstants.SIDDHI_SINGLE_QUOTE +
+                            EventProcessorConstants.ANNOTATION_TOKEN_CLOSING_BRACKET +
+                            "'. Please correct " + i + "th of the " + parsedExecPlan.getStreamDefinitionMap().size() +
                             "stream definition, with stream id '" + entry.getKey());
                 }
                 String[] streamIdComponents = exportElementValue.split(EventProcessorConstants.STREAM_SEPARATOR);
                 if (streamIdComponents.length != 2) {
-                    throw new ExecutionPlanConfigurationException("Found malformed @Export element '" + exportElementValue + "'. " +
-                            "@Export annotation should take the form '@Export('streamName:StreamVersion')'. " +
-                            "There should be one colon, separating the streamName and its version");
+                    throw new ExecutionPlanConfigurationException("Found malformed "+ atExportLiteral +" element '" + exportElementValue + "'. " + atExportLiteral +
+                            " annotation should take the form '"+
+                            atExportLiteral +
+                            EventProcessorConstants.ANNOTATION_TOKEN_OPENING_BRACKET +
+                            EventProcessorConstants.SIDDHI_SINGLE_QUOTE +
+                            "streamName"+ EventProcessorConstants.STREAM_SEPARATOR +"StreamVersion"+
+                            EventProcessorConstants.SIDDHI_SINGLE_QUOTE +
+                            EventProcessorConstants.ANNOTATION_TOKEN_CLOSING_BRACKET +
+                            "'. There should be a '"+ EventProcessorConstants.STREAM_SEPARATOR +"' character, separating the streamName and its version");
                 }
                 if ((!databridgeStreamNamePattern.matcher(streamIdComponents[0].trim()).matches())) {
                     throw new ExecutionPlanConfigurationException("Invalid exported stream name[" + streamIdComponents[0] + "] in execution plan:" + planName +
@@ -162,7 +190,7 @@ public class EventProcessorHelper {
         } catch (EventStreamConfigurationException e) {
             throw new ExecutionPlanConfigurationException("Error while validating stream definition with store : " + e.getMessage(), e);
         }
-        throw new ExecutionPlanDependencyValidationException(streamName + ":" + streamVersion, "Stream " + streamName + ":" + streamVersion + " does not exist");
+        throw new ExecutionPlanDependencyValidationException(streamName + EventProcessorConstants.STREAM_SEPARATOR + streamVersion, "Stream " + streamName + EventProcessorConstants.STREAM_SEPARATOR + streamVersion + " does not exist");
 
 
     }
