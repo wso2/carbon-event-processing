@@ -40,7 +40,7 @@ public class TenantSubscriptionEndpoint extends SubscriptionEndpoint {
         tenantId = carbonContext.getTenantId();
         PrivilegedCarbonContext.startTenantFlow();
         PrivilegedCarbonContext.getThreadLocalCarbonContext().setTenantId(tenantId);
-        websocketLocalOutputCallbackRegisterService.subscribe(adaptorName, session); //todo: do not send tenantId, instead start a tenant flow here
+        websocketLocalOutputCallbackRegisterService.subscribe(adaptorName, session);
         PrivilegedCarbonContext.endTenantFlow();
     }
 
