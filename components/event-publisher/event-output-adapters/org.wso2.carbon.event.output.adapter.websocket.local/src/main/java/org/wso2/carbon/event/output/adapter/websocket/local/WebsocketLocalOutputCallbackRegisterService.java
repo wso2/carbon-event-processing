@@ -25,7 +25,7 @@ import javax.websocket.Session;
  */
 public interface WebsocketLocalOutputCallbackRegisterService {
 
-    public void subscribe(int tenantId, String adaptorName, Session session);
+    public void subscribe(String adaptorName, Session session);
 
-    public void unsubscribe(int tenantId, String adaptorName, Session session);
+    public void unsubscribe(String adaptorName, Session session);
 }

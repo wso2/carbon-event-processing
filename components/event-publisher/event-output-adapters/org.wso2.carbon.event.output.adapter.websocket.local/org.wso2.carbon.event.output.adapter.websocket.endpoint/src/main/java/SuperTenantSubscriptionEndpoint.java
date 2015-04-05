@@ -19,6 +19,7 @@
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.wso2.carbon.context.PrivilegedCarbonContext;
+import org.wso2.carbon.utils.multitenancy.MultitenantConstants;
 
 import javax.websocket.*;
 import javax.websocket.server.PathParam;
@@ -37,9 +38,11 @@ public class SuperTenantSubscriptionEndpoint extends SubscriptionEndpoint {
             log.debug("WebSocket opened, for Session id: "+session.getId()+", for the Adaptor:"+adaptorName);
         }
         PrivilegedCarbonContext carbonContext = PrivilegedCarbonContext.getThreadLocalCarbonContext();
-        carbonContext.setTenantId(-1234);
-        tenantId = carbonContext.getTenantId();
-        websocketLocalOutputCallbackRegisterService.subscribe(tenantId, adaptorName, session);
+        tenantId = MultitenantConstants.SUPER_TENANT_ID;
+        PrivilegedCarbonContext.startTenantFlow();
+        PrivilegedCarbonContext.getThreadLocalCarbonContext().setTenantId(tenantId);
+        websocketLocalOutputCallbackRegisterService.subscribe(adaptorName, session);    //todo: do not send tenantId, instead start a tenant flow here
+        PrivilegedCarbonContext.endTenantFlow();
     }
 
     @OnMessage
