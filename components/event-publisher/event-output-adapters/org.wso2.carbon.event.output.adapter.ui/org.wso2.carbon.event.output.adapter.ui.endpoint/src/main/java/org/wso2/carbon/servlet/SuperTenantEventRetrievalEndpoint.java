@@ -22,6 +22,7 @@ import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import org.wso2.carbon.context.PrivilegedCarbonContext;
 import org.wso2.carbon.event.output.adapter.ui.UIOutputCallbackControllerService;
+import org.wso2.carbon.utils.multitenancy.MultitenantConstants;
 import util.UIConstants;
 
 import javax.ws.rs.GET;
@@ -39,15 +40,11 @@ import javax.ws.rs.core.Response;
 public class SuperTenantEventRetrievalEndpoint{
 
     protected UIOutputCallbackControllerService uiOutputCallbackControllerService;
-    private int tenantId;
 
     public SuperTenantEventRetrievalEndpoint() {
         uiOutputCallbackControllerService = (UIOutputCallbackControllerService) PrivilegedCarbonContext
                 .getThreadLocalCarbonContext()
                 .getOSGiService(UIOutputCallbackControllerService.class,null);
-        PrivilegedCarbonContext carbonContext = PrivilegedCarbonContext.getThreadLocalCarbonContext();
-        carbonContext.setTenantId(carbonContext.getTenantId());
-        tenantId = carbonContext.getTenantId();
     }
 
     /**
@@ -64,11 +61,15 @@ public class SuperTenantEventRetrievalEndpoint{
             @QueryParam("lastUpdatedTime") String lastUpdatedTime) {
 
 
+        PrivilegedCarbonContext.startTenantFlow();
+        PrivilegedCarbonContext.getThreadLocalCarbonContext().setTenantId(MultitenantConstants.SUPER_TENANT_ID);
         String streamId = streamName + UIConstants.ADAPTER_UI_COLON + version;
 
-        JsonObject eventDetails = uiOutputCallbackControllerService.retrieveEvents(tenantId, streamName, version,
+        JsonObject eventDetails = uiOutputCallbackControllerService.retrieveEvents(streamName, version,
                 lastUpdatedTime);
         String jsonString;
+        PrivilegedCarbonContext.getThreadLocalCarbonContext().endTenantFlow();
+
         if(eventDetails == null){
             JsonObject errorData = new JsonObject();
             errorData.addProperty("error","StreamId: " + streamId + " is not registered to receive events.");

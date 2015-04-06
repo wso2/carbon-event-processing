@@ -19,6 +19,7 @@
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.wso2.carbon.context.PrivilegedCarbonContext;
+import org.wso2.carbon.utils.multitenancy.MultitenantConstants;
 
 import javax.websocket.CloseReason;
 import javax.websocket.OnClose;
@@ -37,7 +38,6 @@ import javax.websocket.server.ServerEndpoint;
 public class SuperTenantSubscriptionEndpoint extends SubscriptionEndpoint {
 
     private static final Log log = LogFactory.getLog(SuperTenantSubscriptionEndpoint.class);
-    private int tenantId;
 
     /**
      * Web socket onOpen - When client sends a message
@@ -52,10 +52,10 @@ public class SuperTenantSubscriptionEndpoint extends SubscriptionEndpoint {
         if (log.isDebugEnabled()) {
             log.debug("WebSocket opened, for Session id: "+session.getId()+", for the Stream:"+streamName);
         }
-        PrivilegedCarbonContext carbonContext = PrivilegedCarbonContext.getThreadLocalCarbonContext();
-        carbonContext.setTenantId(carbonContext.getTenantId());
-        tenantId = carbonContext.getTenantId();
-        uiOutputCallbackControllerService.subscribeWebsocket(tenantId, streamName, version, session);
+        PrivilegedCarbonContext.startTenantFlow();
+        PrivilegedCarbonContext.getThreadLocalCarbonContext().setTenantId(MultitenantConstants.SUPER_TENANT_ID);
+        uiOutputCallbackControllerService.subscribeWebsocket(streamName, version, session);
+        PrivilegedCarbonContext.endTenantFlow();
     }
 
     /**
@@ -84,7 +84,10 @@ public class SuperTenantSubscriptionEndpoint extends SubscriptionEndpoint {
     @OnClose
     public void onClose (Session session, CloseReason reason, @PathParam("streamname") String streamName,
             @PathParam("version") String version) {
-        super.onClose(session, reason, streamName, version ,tenantId);
+        PrivilegedCarbonContext.startTenantFlow();
+        PrivilegedCarbonContext.getThreadLocalCarbonContext().setTenantId(MultitenantConstants.SUPER_TENANT_ID);
+        super.onClose(session, reason, streamName, version);
+        PrivilegedCarbonContext.endTenantFlow();
     }
 
     /**
@@ -98,7 +101,10 @@ public class SuperTenantSubscriptionEndpoint extends SubscriptionEndpoint {
     @OnError
     public void onError (Session session, Throwable throwable, @PathParam("streamname") String streamName,
             @PathParam("version") String version) {
-        super.onError(session, throwable, streamName, version, tenantId);
+        PrivilegedCarbonContext.startTenantFlow();
+        PrivilegedCarbonContext.getThreadLocalCarbonContext().setTenantId(MultitenantConstants.SUPER_TENANT_ID);
+        super.onError(session, throwable, streamName, version);
+        PrivilegedCarbonContext.endTenantFlow();
     }
 
 }

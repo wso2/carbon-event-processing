@@ -20,6 +20,7 @@
 package org.wso2.carbon.event.output.adapter.ui.internal;
 
 import com.google.gson.JsonObject;
+import org.wso2.carbon.context.CarbonContext;
 import org.wso2.carbon.event.output.adapter.ui.UIOutputCallbackControllerService;
 import org.wso2.carbon.event.output.adapter.ui.internal.ds.UIEventAdaptorServiceInternalValueHolder;
 import org.wso2.carbon.event.output.adapter.ui.internal.util.UIEventAdapterConstants;
@@ -47,13 +48,14 @@ public class UIOutputCallbackControllerServiceImpl implements UIOutputCallbackCo
     /**
      * Used to subscribe the session id and stream id for later web socket connectivity
      *
-     * @param tenantId - Tenant id of the user.
      * @param streamName - Stream name which user register to.
      * @param version - Stream version which user uses.
      * @param session - Session which user registered.
      * @return
      */
-    public void subscribeWebsocket(int tenantId, String streamName, String version, Session session) {
+    public void subscribeWebsocket(String streamName, String version, Session session) {
+
+        int tenantId = CarbonContext.getThreadLocalCarbonContext().getTenantId();
 
         if(version == null || " ".equals(version)){
             version = UIEventAdapterConstants.ADAPTER_UI_DEFAULT_OUTPUT_STREAM_VERSION;
@@ -117,19 +119,19 @@ public class UIOutputCallbackControllerServiceImpl implements UIOutputCallbackCo
     /**
      * Used to return events per streamId
      *
-     * @param tenantId - Tenant id of the user.
      * @param streamName - Stream name which user register to.
      * @param version - Stream version which user uses.
      * @param session - Session which user subscribed to.
      * @return the events list.
      */
-    public void unsubscribeWebsocket(int tenantId, String streamName, String version, Session session) {
+    public void unsubscribeWebsocket(String streamName, String version, Session session) {
+
+        int tenantId = CarbonContext.getThreadLocalCarbonContext().getTenantId();
 
         if(version == null || " ".equals(version)){
             version = UIEventAdapterConstants.ADAPTER_UI_DEFAULT_OUTPUT_STREAM_VERSION;
         }
         String id = streamName + UIEventAdapterConstants.ADAPTER_UI_COLON + version;
-
         ConcurrentHashMap<String, CopyOnWriteArrayList<Session>> tenantSpecificAdaptorMap = outputEventAdaptorSessionMap.get(tenantId);
         if (tenantSpecificAdaptorMap != null) {
             CopyOnWriteArrayList<Session> adapterSpecificSessions = tenantSpecificAdaptorMap.get(id);
@@ -152,15 +154,15 @@ public class UIOutputCallbackControllerServiceImpl implements UIOutputCallbackCo
     /**
      * Used to return events per http GET request.
      *
-     * @param tenantId - Tenant id of the user.
      * @param streamName - Stream name which user register to.
      * @param version - Stream version which user uses.
      * @param lastUpdatedTime - Last dispatched events time.
      * @return the events list.
      */
     @Override
-    public JsonObject retrieveEvents(int tenantId, String streamName, String version, String lastUpdatedTime) {
+    public JsonObject retrieveEvents(String streamName, String version, String lastUpdatedTime) {
 
+        int tenantId = CarbonContext.getThreadLocalCarbonContext().getTenantId();
         LinkedBlockingDeque<Object> allEvents = getEvents(tenantId, streamName, version);
         //List<Object> eventsListToBeSent;
         Object lastEventTime;

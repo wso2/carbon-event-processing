@@ -47,7 +47,6 @@ public class UIEventAdapter implements OutputEventAdapter {
     private static final Log log = LogFactory.getLog(UIEventAdapter.class);
     private OutputEventAdapterConfiguration eventAdapterConfiguration;
     private Map<String, String> globalProperties;
-    private int tenantID;
     private String streamId;
     private LinkedBlockingDeque<Object> streamSpecificEvents;
 
@@ -55,11 +54,12 @@ public class UIEventAdapter implements OutputEventAdapter {
             String> globalProperties) {
         this.eventAdapterConfiguration = eventAdapterConfiguration;
         this.globalProperties = globalProperties;
-        this.tenantID = CarbonContext.getThreadLocalCarbonContext().getTenantId();
     }
 
     @Override
     public void init() throws OutputEventAdapterException {
+
+        int tenantId = CarbonContext.getThreadLocalCarbonContext().getTenantId();
 
         if(eventAdapterConfiguration.getStaticProperties().get(UIEventAdapterConstants
                 .ADAPTER_UI_OUTPUT_STREAM_VERSION) == null || " ".equals(eventAdapterConfiguration
@@ -78,12 +78,12 @@ public class UIEventAdapter implements OutputEventAdapter {
         ConcurrentHashMap<Integer,ConcurrentHashMap<String, String>> tenantSpecifcEventOutputAdapterMap =
                 UIEventAdaptorServiceInternalValueHolder.getTenantSpecificOutputEventStreamAdapterMap();
 
-        ConcurrentHashMap<String, String> streamSpecifAdapterMap = tenantSpecifcEventOutputAdapterMap.get(tenantID);
+        ConcurrentHashMap<String, String> streamSpecifAdapterMap = tenantSpecifcEventOutputAdapterMap.get(tenantId);
 
         if(streamSpecifAdapterMap == null){
             streamSpecifAdapterMap = new ConcurrentHashMap<String, String>();
-            if (null != tenantSpecifcEventOutputAdapterMap.putIfAbsent(tenantID, streamSpecifAdapterMap)){
-                streamSpecifAdapterMap = tenantSpecifcEventOutputAdapterMap.get(tenantID);
+            if (null != tenantSpecifcEventOutputAdapterMap.putIfAbsent(tenantId, streamSpecifAdapterMap)){
+                streamSpecifAdapterMap = tenantSpecifcEventOutputAdapterMap.get(tenantId);
             }
         }
 
@@ -97,12 +97,12 @@ public class UIEventAdapter implements OutputEventAdapter {
 
             ConcurrentHashMap<Integer, ConcurrentHashMap<String, LinkedBlockingDeque<Object>>> tenantSpecificStreamMap =
                     UIEventAdaptorServiceInternalValueHolder.getTenantSpecificStreamEventMap();
-            ConcurrentHashMap<String, LinkedBlockingDeque<Object>> streamSpecificEventsMap = tenantSpecificStreamMap.get(tenantID);
+            ConcurrentHashMap<String, LinkedBlockingDeque<Object>> streamSpecificEventsMap = tenantSpecificStreamMap.get(tenantId);
 
             if(streamSpecificEventsMap == null){
                 streamSpecificEventsMap = new ConcurrentHashMap<String, LinkedBlockingDeque<Object>>();
-                if (null != tenantSpecificStreamMap.putIfAbsent(tenantID, streamSpecificEventsMap)){
-                    streamSpecificEventsMap = tenantSpecificStreamMap.get(tenantID);
+                if (null != tenantSpecificStreamMap.putIfAbsent(tenantId, streamSpecificEventsMap)){
+                    streamSpecificEventsMap = tenantSpecificStreamMap.get(tenantId);
                 }
             }
             streamSpecificEvents = streamSpecificEventsMap.get(streamId);
@@ -132,9 +132,9 @@ public class UIEventAdapter implements OutputEventAdapter {
         UIOutputCallbackControllerServiceImpl uiOutputCallbackControllerServiceImpl =
                 UIEventAdaptorServiceInternalValueHolder
                         .getUIOutputCallbackRegisterServiceImpl();
-        CopyOnWriteArrayList<Session> sessions = uiOutputCallbackControllerServiceImpl.getSessions(tenantID, streamId);
+        int tenantId = CarbonContext.getThreadLocalCarbonContext().getTenantId();
+        CopyOnWriteArrayList<Session> sessions = uiOutputCallbackControllerServiceImpl.getSessions(tenantId, streamId);
 
-        //populateEventsMap(message);
         StringBuilder allEventsAsString = null;
         int queueSize;
 
@@ -287,7 +287,7 @@ public class UIEventAdapter implements OutputEventAdapter {
                 log.debug(
                         "Dropping the message: '" + message + "', since no clients have being registered to receive " +
                                 "events from ui adapter: '" + eventAdapterConfiguration.getName() + "', " +
-                                "for tenant ID: " + tenantID);
+                                "for tenant ID: " + tenantId);
             }
         }
     }
@@ -300,12 +300,15 @@ public class UIEventAdapter implements OutputEventAdapter {
     @Override
     public void destroy() {
 
+        int tenantId = CarbonContext.getThreadLocalCarbonContext().getTenantId();
+
         //Removing outputadapter and streamId
         UIEventAdaptorServiceInternalValueHolder
-                .getTenantSpecificOutputEventStreamAdapterMap().get(tenantID).remove(streamId);
+                .getTenantSpecificOutputEventStreamAdapterMap().get(tenantId).remove(streamId);
 
         //Removing the streamId and events registered for the output adapter
-        UIEventAdaptorServiceInternalValueHolder.getTenantSpecificStreamEventMap().get(tenantID).remove(streamId);
+        UIEventAdaptorServiceInternalValueHolder.getTenantSpecificStreamEventMap().get(tenantId).remove(streamId);
+
     }
 }
 

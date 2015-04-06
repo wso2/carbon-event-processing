@@ -48,13 +48,12 @@ public class SubscriptionEndpoint {
      * @param reason  - Status code for web-socket close.
      * @param streamName - StreamName extracted from the ws url.
      * @param version - Version extracted from the ws url.
-     * @param tenantId - Users tenantId.
      */
-    public void onClose (Session session, CloseReason reason, String streamName, String version, int tenantId) {
+    public void onClose (Session session, CloseReason reason, String streamName, String version) {
         if (log.isDebugEnabled()) {
             log.debug("Closing a WebSocket due to "+reason.getReasonPhrase()+", for session ID:"+session.getId()+", for request URI - "+session.getRequestURI());
         }
-        uiOutputCallbackControllerService.unsubscribeWebsocket(tenantId, streamName, version, session);
+        uiOutputCallbackControllerService.unsubscribeWebsocket(streamName, version, session);
     }
 
     /**
@@ -64,10 +63,9 @@ public class SubscriptionEndpoint {
      * @param throwable  - Status code for web-socket close.
      * @param streamName - StreamName extracted from the ws url.
      * @param version - Version extracted from the ws url.
-     * @param tenantId - Users tenantId.
      */
-    public void onError (Session session, Throwable throwable, String streamName, String version, int tenantId) {
+    public void onError (Session session, Throwable throwable, String streamName, String version) {
         log.error("Error occurred in session ID: "+session.getId()+", for request URI - "+session.getRequestURI()+", "+throwable.getMessage(),throwable);
-        uiOutputCallbackControllerService.unsubscribeWebsocket(tenantId, streamName, version, session);
+        uiOutputCallbackControllerService.unsubscribeWebsocket(streamName, version, session);
     }
 }

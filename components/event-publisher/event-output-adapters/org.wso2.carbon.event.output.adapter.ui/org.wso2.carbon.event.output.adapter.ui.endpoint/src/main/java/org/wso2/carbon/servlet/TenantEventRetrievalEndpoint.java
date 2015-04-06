@@ -25,6 +25,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.wso2.carbon.context.PrivilegedCarbonContext;
 import org.wso2.carbon.event.output.adapter.ui.UIOutputCallbackControllerService;
+import org.wso2.carbon.utils.multitenancy.MultitenantConstants;
 import util.UIConstants;
 
 import javax.ws.rs.GET;
@@ -43,7 +44,6 @@ public class TenantEventRetrievalEndpoint{
 
     private static final Log log = LogFactory.getLog(SuperTenantEventRetrievalEndpoint.class);
     protected UIOutputCallbackControllerService uiOutputCallbackControllerService;
-    private int tenantId;
 
     public TenantEventRetrievalEndpoint() {
         uiOutputCallbackControllerService = (UIOutputCallbackControllerService) PrivilegedCarbonContext
@@ -66,14 +66,12 @@ public class TenantEventRetrievalEndpoint{
     public Response retrieveEvents(@PathParam("streamname") String streamName, @PathParam("version") String version,
             @QueryParam("lastUpdatedTime") String lastUpdatedTime, @PathParam("tdomain") String tdomain) {
 
-        PrivilegedCarbonContext carbonContext = PrivilegedCarbonContext.getThreadLocalCarbonContext();
-        carbonContext.setTenantDomain(tdomain,true);
-        tenantId = carbonContext.getTenantId();
-
+        PrivilegedCarbonContext.startTenantFlow();
+        PrivilegedCarbonContext.getThreadLocalCarbonContext().setTenantDomain(tdomain,true);
+        PrivilegedCarbonContext.startTenantFlow();
         String streamId = streamName + UIConstants.ADAPTER_UI_COLON + version;
-
-        JsonObject eventDetails = uiOutputCallbackControllerService.retrieveEvents(tenantId, streamName, version,
-                lastUpdatedTime);
+        JsonObject eventDetails = uiOutputCallbackControllerService.retrieveEvents(streamName, version,lastUpdatedTime);
+        PrivilegedCarbonContext.endTenantFlow();
         String jsonString;
         if(eventDetails == null){
             JsonObject errorData = new JsonObject();
