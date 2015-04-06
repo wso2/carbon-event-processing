@@ -20,53 +20,61 @@ package org.wso2.carbon.event.execution.manager.core;
 import org.wso2.carbon.event.execution.manager.core.structure.config.TemplateConfig;
 import org.wso2.carbon.event.execution.manager.core.structure.domain.TemplateDomain;
 
-import java.util.List;
-
 public interface ExecutionManagerService {
 
-        /**
-         * save template configuration xml files in wso2 carbon registry
-         *
-         * @param configuration configuration object which needs to be saved
-         */
-        public void saveTemplateConfig(TemplateConfig configuration);
-        /**
-         * provide all the loaded domains
-         *
-         * @return Domain list
-         */
-        public List<TemplateDomain> getAllDomains();
+    /**
+     * save template configuration xml files in wso2 carbon registry
+     *
+     * @param configuration configuration object which needs to be saved
+     */
+    public void saveTemplateConfig(TemplateConfig configuration);
 
-        /**
-         * provide all the loaded domains
-         *
-         * @return Domain list
-         */
-        public List<TemplateConfig> getAllConfigurations();
+    /**
+     * provide all the loaded domains
+     *
+     * @return Domain list
+     */
+    public TemplateDomain[] getAllDomains();
 
-        /**
-         * get information of a specific domain
-         *
-         * @param domainName  domain name
-         * @return TemplateDomain object
-         */
-        public TemplateDomain getDomain(String domainName);
+    /**
+     * provide all the loaded configurations
+     *
+     * @return Domain list
+     */
+    public TemplateConfig[] getAllConfigurations();
 
 
-        /**
-         * get information of a specific configuration
-         *
-         * @param configName  configuration name
-         * @return TemplateConfig object
-         */
-        public TemplateConfig getConfiguration(String configName);
+    /**
+     * provide configurations of specified domain
+     *
+     * @param domainName domain template name
+     * @return Domain list
+     */
+    public TemplateConfig[] getConfigurations(String domainName);
 
-        /**
-         * delete template configuration when the name of configuration is given
-         *
-         * @param configName template configuration name
-         */
-        public void deleteConfig(String configName);
+    /**
+     * get information of a specific domain
+     *
+     * @param domainName domain name
+     * @return TemplateDomain object
+     */
+    public TemplateDomain getDomain(String domainName);
+
+
+    /**
+     * get information of a specific configuration
+     *
+     * @param configName configuration name
+     * @return TemplateConfig object
+     */
+    public TemplateConfig getConfiguration(String domainName, String configName);
+
+    /**
+     * delete template configuration when the name of configuration is given
+     *
+     * @param configName template configuration name
+     */
+    public void deleteConfig(String domainName, String configName);
 
 
 }

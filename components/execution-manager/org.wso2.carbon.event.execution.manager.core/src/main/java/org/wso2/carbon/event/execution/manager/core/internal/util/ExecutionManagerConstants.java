@@ -26,6 +26,7 @@ public class ExecutionManagerConstants {
     public static final String TEMPLATE_CONFIG_PATH
             = "/repository/components/org.wso2.carbon.event.execution.manager.core/template-config";
     public static final String PATH_SEPARATOR = "/";
+    public static final String CONFIG_NAME_SEPARATOR = "-";
     public static final String CONFIG_FILE_EXTENSION = ".xml";
     public static final String DEFAULT_CHARSET = "UTF-8";
 }

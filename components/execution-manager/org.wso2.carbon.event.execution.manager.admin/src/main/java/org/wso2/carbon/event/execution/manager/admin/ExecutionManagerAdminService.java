@@ -69,15 +69,29 @@ public class ExecutionManagerAdminService extends AbstractAdmin {
     }
 
     /**
+     * return details for a given template domain name
+     *
+     * @param domainName template domain name
+     * @return template domain configuration details
+     * @throws AxisFault
+     */
+    public  TemplateConfigDTO[] getTemplateConfigurations(String domainName) throws AxisFault {
+
+        return ConfigMapper.mapConfigurations(ExecutionAdminManagerValueHolder.getCarbonExecutorManagerService()
+                .getConfigurations(domainName));
+    }
+
+
+    /**
      * return details for a given template configuration name
      *
      * @param configName template configuration name
      * @return template domain configuration details
      * @throws AxisFault
      */
-    public TemplateConfigDTO getTemplateConfiguration(String configName) throws AxisFault {
+    public TemplateConfigDTO getTemplateConfiguration(String domainName, String configName) throws AxisFault {
         return ConfigMapper.mapConfiguration(ExecutionAdminManagerValueHolder.getCarbonExecutorManagerService()
-                .getConfiguration(configName));
+                .getConfiguration(domainName, configName));
     }
 
     /**
@@ -85,8 +99,8 @@ public class ExecutionManagerAdminService extends AbstractAdmin {
      *
      * @param configName configuration name which needs to be deleted
      */
-    public void deleteTemplateConfig(String configName) {
-        ExecutionAdminManagerValueHolder.getCarbonExecutorManagerService().deleteConfig(configName);
+    public void deleteTemplateConfig(String domainName, String configName) {
+        ExecutionAdminManagerValueHolder.getCarbonExecutorManagerService().deleteConfig(domainName, configName);
     }
 
     /**

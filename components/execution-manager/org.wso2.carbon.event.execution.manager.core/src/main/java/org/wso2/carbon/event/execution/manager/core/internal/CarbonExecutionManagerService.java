@@ -22,6 +22,7 @@ import org.apache.commons.logging.LogFactory;
 import org.wso2.carbon.event.execution.manager.core.ExecutionManagerService;
 import org.wso2.carbon.event.execution.manager.core.internal.ds.ExecutionManagerValueHolder;
 import org.wso2.carbon.event.execution.manager.core.structure.config.TemplateConfig;
+import org.wso2.carbon.event.execution.manager.core.structure.domain.Template;
 import org.wso2.carbon.event.execution.manager.core.structure.domain.TemplateDomain;
 import org.wso2.carbon.event.execution.manager.core.internal.util.ExecutionManagerConstants;
 import org.wso2.carbon.registry.api.RegistryException;
@@ -63,23 +64,27 @@ public class CarbonExecutionManagerService implements ExecutionManagerService {
                     Unmarshaller jaxbUnmarshaller = jaxbContext.createUnmarshaller();
                     TemplateDomain templateDomain = (TemplateDomain) jaxbUnmarshaller.unmarshal(fileEntry);
                     //Load configurations of each domain
-                    for (int i = 0; i < templateDomain.getTemplates().length; i++) {
+                    for (Template template : templateDomain.getTemplates()) {
 
                         String registryPath = ExecutionManagerConstants.TEMPLATE_CONFIG_PATH
                                 + ExecutionManagerConstants.PATH_SEPARATOR
-                                + templateDomain.getTemplates()[i].getName()
+                                + templateDomain.getName()
+                                + ExecutionManagerConstants.CONFIG_NAME_SEPARATOR + template.getName()
                                 + ExecutionManagerConstants.CONFIG_FILE_EXTENSION;
                         try {
                             if (registry.resourceExists(registryPath)) {
                                 Resource configFile = registry.get(registryPath);
 
                                 if (configFile != null) {
-                                    StringReader reader = new StringReader(new String((byte[]) configFile.getContent()));
+                                    StringReader reader = new StringReader(new String(
+                                            (byte[]) configFile.getContent()));
                                     jaxbContext = JAXBContext.newInstance(TemplateConfig.class);
                                     jaxbUnmarshaller = jaxbContext.createUnmarshaller();
                                     TemplateConfig templateConfig =
                                             (TemplateConfig) jaxbUnmarshaller.unmarshal(reader);
-                                    configurations.put(templateConfig.getName(), templateConfig);
+                                    configurations.put(templateDomain.getName()
+                                            + ExecutionManagerConstants.CONFIG_NAME_SEPARATOR
+                                            + templateConfig.getName(), templateConfig);
 
                                 }
                             }
@@ -104,6 +109,8 @@ public class CarbonExecutionManagerService implements ExecutionManagerService {
             JAXBContext jaxbContext = JAXBContext.newInstance(TemplateConfig.class);
             Marshaller jaxbMarshaller = jaxbContext.createMarshaller();
             jaxbMarshaller.setProperty(Marshaller.JAXB_ENCODING, ExecutionManagerConstants.DEFAULT_CHARSET);
+            String configFullName = configuration.getFrom() + ExecutionManagerConstants.CONFIG_NAME_SEPARATOR
+                    + configuration.getName();
 
             jaxbMarshaller.marshal(configuration, fileContent);
             Resource resource = registry.newResource();
@@ -112,11 +119,12 @@ public class CarbonExecutionManagerService implements ExecutionManagerService {
             resource.setProperty("description", configuration.getDescription());
             resource.setProperty("type", "");
             String resourcePath = ExecutionManagerConstants.TEMPLATE_CONFIG_PATH
-                    + ExecutionManagerConstants.PATH_SEPARATOR + configuration.getName()
+                    + ExecutionManagerConstants.PATH_SEPARATOR + configFullName
                     + ExecutionManagerConstants.CONFIG_FILE_EXTENSION;
             registry.put(resourcePath, resource);
 
-            configurations.put(configuration.getName(), configuration);
+            configurations.put(configFullName, configuration);
+
         } catch (RegistryException e) {
             log.error("Registry exception occurred when writing " + configuration.getName() + " configurations", e);
         } catch (JAXBException e) {
@@ -125,35 +133,64 @@ public class CarbonExecutionManagerService implements ExecutionManagerService {
     }
 
     @Override
-    public List<TemplateDomain> getAllDomains() {
+    public TemplateDomain[] getAllDomains() {
         Iterator it = domains.entrySet().iterator();
-        List<TemplateDomain> domainAll = new ArrayList<TemplateDomain>();
+        TemplateDomain[] domainAll = new TemplateDomain[domains.size()];
+        int index = 0;
 
         //Iterate through the hash map
         while (it.hasNext()) {
             Map.Entry pair = (Map.Entry) it.next();
             //null values will be removed
             if (pair.getValue() != null) {
-                domainAll.add((TemplateDomain) pair.getValue());
+                domainAll[index] = (TemplateDomain) pair.getValue();
+                index++;
             }
         }
         return domainAll;
     }
 
     @Override
-    public List<TemplateConfig> getAllConfigurations() {
+    public TemplateConfig[] getAllConfigurations() {
         Iterator it = configurations.entrySet().iterator();
-        List<TemplateConfig> configAll = new ArrayList<TemplateConfig>();
+        TemplateConfig[] configAll = new TemplateConfig[configurations.size()];
+        int index = 0;
 
         //Iterate through the hash map
         while (it.hasNext()) {
             Map.Entry pair = (Map.Entry) it.next();
             //null values will be removed
             if (pair.getValue() != null) {
-                configAll.add((TemplateConfig) pair.getValue());
+                configAll[index] = (TemplateConfig) pair.getValue();
+                index++;
             }
         }
         return configAll;
+    }
+
+    @Override
+    public TemplateConfig[] getConfigurations(String domainName) {
+        Iterator it = configurations.entrySet().iterator();
+        TemplateConfig[] configAll;
+        List<TemplateConfig> configAllList = new ArrayList<TemplateConfig>();
+
+        //Iterate through the hash map
+        while (it.hasNext()) {
+            Map.Entry pair = (Map.Entry) it.next();
+            //null values will be removed
+            if (pair.getValue() != null) {
+
+                TemplateConfig config = (TemplateConfig) pair.getValue();
+
+                //check configuration from same domain
+                if (config.getFrom().equals(domainName)) {
+                    configAllList.add((TemplateConfig) pair.getValue());
+                }
+            }
+        }
+
+        //Convert array list to array and return
+        return configAllList.toArray(new TemplateConfig[configAllList.size()]);
     }
 
     @Override
@@ -163,15 +200,20 @@ public class CarbonExecutionManagerService implements ExecutionManagerService {
 
 
     @Override
-    public TemplateConfig getConfiguration(String configName) {
-        return configurations.get(configName);
+    public TemplateConfig getConfiguration(String domainName, String configName) {
+        return configurations.get(domainName + ExecutionManagerConstants.CONFIG_NAME_SEPARATOR + configName);
     }
 
     @Override
-    public void deleteConfig(String configName) {
+    public void deleteConfig(String domainName, String configName) {
         try {
+
+            String configFullName = domainName + ExecutionManagerConstants.CONFIG_NAME_SEPARATOR + configName;
+
             registry.delete(ExecutionManagerConstants.TEMPLATE_CONFIG_PATH + ExecutionManagerConstants.PATH_SEPARATOR
-                    + configName + ExecutionManagerConstants.CONFIG_FILE_EXTENSION);
+                    + configFullName + ExecutionManagerConstants.CONFIG_FILE_EXTENSION);
+            configurations.remove(configFullName);
+
         } catch (Exception e) {
             log.error("Exception when deleting file at " + configName + " configurations", e);
         }

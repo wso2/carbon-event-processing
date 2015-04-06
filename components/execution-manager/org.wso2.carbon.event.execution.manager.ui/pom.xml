@@ -28,6 +28,27 @@
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>org.wso2.carbon.event.execution.manager.ui</artifactId>
+    <packaging>bundle</packaging>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.wso2.carbon</groupId>
+            <artifactId>org.wso2.carbon.ui</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.wso2.carbon</groupId>
+            <artifactId>org.wso2.carbon.utils</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.wso2.carbon.event-processing</groupId>
+            <artifactId>org.wso2.carbon.event.execution.manager.stub</artifactId>
+            <version>2.0.4-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.axis2.wso2</groupId>
+            <artifactId>axis2</artifactId>
+        </dependency>
+    </dependencies>
 
     <build>
         <plugins>
@@ -43,7 +64,9 @@
                             org.wso2.carbon.event.execution.manager.*
                         </Export-Package>
                         <Import-Package>
-                            *;resolution:=optional
+                            org.wso2.carbon.event.execution.manager.stub.*,
+                            javax.xml.namespace; version=0.0.0,
+                            *;resolution:=optional,
                         </Import-Package>
                         <Carbon-Component>UIBundle</Carbon-Component>
                     </instructions>

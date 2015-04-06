@@ -24,15 +24,13 @@ import org.wso2.carbon.event.execution.manager.core.structure.domain.Parameter;
 import org.wso2.carbon.event.execution.manager.core.structure.domain.Template;
 import org.wso2.carbon.event.execution.manager.core.structure.domain.TemplateDomain;
 
-import java.util.List;
-
 public class DomainMapper {
 
-    public static TemplateDomainDTO[] mapDomains(List<TemplateDomain> templateDomains) {
-        TemplateDomainDTO[] templateDomainDTOs = new TemplateDomainDTO[templateDomains.size()];
+    public static TemplateDomainDTO[] mapDomains(TemplateDomain[] templateDomains) {
+        TemplateDomainDTO[] templateDomainDTOs = new TemplateDomainDTO[templateDomains.length];
 
         for (int i = 0; i < templateDomainDTOs.length; i++) {
-            templateDomainDTOs[i] = mapDomain(templateDomains.get(i));
+            templateDomainDTOs[i] = mapDomain(templateDomains[i]);
         }
         return templateDomainDTOs;
     }

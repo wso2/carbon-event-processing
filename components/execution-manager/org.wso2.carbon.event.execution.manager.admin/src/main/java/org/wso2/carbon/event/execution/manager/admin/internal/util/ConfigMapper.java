@@ -22,15 +22,13 @@ import org.wso2.carbon.event.execution.manager.admin.dto.config.TemplateConfigDT
 import org.wso2.carbon.event.execution.manager.core.structure.config.Parameter;
 import org.wso2.carbon.event.execution.manager.core.structure.config.TemplateConfig;
 
-import java.util.List;
-
 public class ConfigMapper {
 
-    public static TemplateConfigDTO[] mapConfigurations(List<TemplateConfig> templateConfigs) {
-        TemplateConfigDTO[] templateConfigDTOs = new TemplateConfigDTO[templateConfigs.size()];
+    public static TemplateConfigDTO[] mapConfigurations(TemplateConfig[] templateConfigs) {
+        TemplateConfigDTO[] templateConfigDTOs = new TemplateConfigDTO[templateConfigs.length];
 
         for (int i = 0; i < templateConfigDTOs.length; i++) {
-            templateConfigDTOs[i] = mapConfiguration(templateConfigs.get(i));
+            templateConfigDTOs[i] = mapConfiguration(templateConfigs[i]);
         }
         return templateConfigDTOs;
     }
