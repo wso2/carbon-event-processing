@@ -20,6 +20,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.wso2.carbon.context.PrivilegedCarbonContext;
 import org.wso2.carbon.event.input.adapter.core.InputEventAdapterListener;
+import org.wso2.carbon.utils.multitenancy.MultitenantConstants;
 
 import javax.websocket.*;
 import javax.websocket.server.PathParam;
@@ -39,7 +40,7 @@ public class SuperTenantDataReceiverEndpoint extends DataReceiverEndpoint {
             log.debug("WebSocket opened, for Session id: "+session.getId()+", for the adapter:"+adapterName);
         }
         PrivilegedCarbonContext carbonContext = PrivilegedCarbonContext.getThreadLocalCarbonContext();
-        carbonContext.setTenantId(-1234);
+        carbonContext.setTenantId(MultitenantConstants.SUPER_TENANT_ID);
         tenantId = carbonContext.getTenantId();
     }
 

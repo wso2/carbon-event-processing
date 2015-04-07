@@ -16,21 +16,6 @@
  * under the License.
  */
 
-function removeExportedStream(link) {
-    var rowToRemove = link.parentNode.parentNode;
-    rowToRemove.parentNode.removeChild(rowToRemove);
-    CARBON.showInfoDialog("Exported stream removed successfully!!");
-    return;
-}
-
-
-function removeImportedStreamDefinition(link) {
-    var rowToRemove = link.parentNode.parentNode;
-    rowToRemove.parentNode.removeChild(rowToRemove);
-    CARBON.showInfoDialog("Imported stream removed successfully!!");
-    return;
-}
-
 function createEventBuilder(streamNameWithVersion) {
     if (streamNameWithVersion == '' || streamNameWithVersion == null) {
         CARBON.showErrorDialog("No stream definition selected.");

@@ -23,4 +23,49 @@ public interface UIConstants {
 
     String TRUE_LITERAL = "true";
     String FALSE_LITERAL = "false";
+
+    final String ANNOTATION_PLAN = "Plan";
+
+    final String ANNOTATION_NAME_NAME = "name";
+    final String ANNOTATION_NAME_DESCRIPTION = "description";
+
+    final String ANNOTATION_TOKEN_AT = "@";
+    final String ANNOTATION_TOKEN_COLON = ":";
+    final String ANNOTATION_TOKEN_OPENING_BRACKET = "(";
+    final String ANNOTATION_TOKEN_CLOSING_BRACKET = ")";
+
+    final String SIDDHI_LINE_SEPARATER = "\n";
+    final String SIDDHI_SINGLE_QUOTE = "'";
+
+    final String SIDDHI_LITERAL_BEGIN_MULTI_LINE_COMMENT = "/*";
+    final String SIDDHI_LITERAL_END_MULTI_LINE_COMMENT = "*/";
+    final String SIDDHI_LITERAL_DECLARE_SINGLE_LINE_COMMENT = "--";
+
+    final String EXECUTION_PLAN_BASIC_TEMPLATE = SIDDHI_LITERAL_BEGIN_MULTI_LINE_COMMENT +
+            " Enter a unique ExecutionPlan " +
+            SIDDHI_LITERAL_END_MULTI_LINE_COMMENT + SIDDHI_LINE_SEPARATER +
+            ANNOTATION_TOKEN_AT + ANNOTATION_PLAN +
+            ANNOTATION_TOKEN_COLON +
+            ANNOTATION_NAME_NAME +
+            ANNOTATION_TOKEN_OPENING_BRACKET +
+            SIDDHI_SINGLE_QUOTE +
+            "ExecutionPlan"+
+            SIDDHI_SINGLE_QUOTE +
+            ANNOTATION_TOKEN_CLOSING_BRACKET  + SIDDHI_LINE_SEPARATER + SIDDHI_LINE_SEPARATER +
+            SIDDHI_LITERAL_BEGIN_MULTI_LINE_COMMENT +
+            " Enter a unique description for ExecutionPlan " +
+            SIDDHI_LITERAL_END_MULTI_LINE_COMMENT + SIDDHI_LINE_SEPARATER +
+            SIDDHI_LITERAL_DECLARE_SINGLE_LINE_COMMENT + " "+
+            ANNOTATION_TOKEN_AT + ANNOTATION_PLAN +
+            ANNOTATION_TOKEN_COLON +
+            ANNOTATION_NAME_DESCRIPTION +
+            ANNOTATION_TOKEN_OPENING_BRACKET +
+            SIDDHI_SINGLE_QUOTE +"ExecutionPlan"+
+            SIDDHI_SINGLE_QUOTE +
+            ANNOTATION_TOKEN_CLOSING_BRACKET + SIDDHI_LINE_SEPARATER +
+            SIDDHI_LINE_SEPARATER +
+            SIDDHI_LITERAL_BEGIN_MULTI_LINE_COMMENT +
+            " define streams and write query here ... " +
+            SIDDHI_LITERAL_END_MULTI_LINE_COMMENT +
+            SIDDHI_LINE_SEPARATER;
 }

@@ -151,15 +151,15 @@ function addImportedStreamDefinition() {
             var executionPlanBody = "";
 
             if(currentExecutionPlan != "") {
-                var linesArray = currentExecutionPlan.split('\n');
+                var linesArray = currentExecutionPlan.split(SIDDHI_LINE_BREAK_CHARACTER);
                 var bodyBeginIndex = -1;
                 for (var i = 0; i < linesArray.length ; i++){
                     var line = linesArray[i];
-                    if(line.match(/^@Plan.*/g) != null
-                        || line.match(/^--.*/g) != null
-                        || line.match(/^\/\*.*\*\//g) != null
+                    if(line.match(REGEX_STARTING_WITH_PLAN) != null
+                        || line.match(REGEX_LINE_STARTING_WITH_SINGLE_LINE_COMMENT) != null
+                        || line.match(REGEX_LINE_STARTING_WITH_MULTI_LINE_COMMENT) != null
                         || line == ""){
-                        executionPlanHeader += line + "\n";
+                        executionPlanHeader += line + SIDDHI_LINE_BREAK;
                     } else {
                         bodyBeginIndex = i;
                         break;
@@ -168,13 +168,22 @@ function addImportedStreamDefinition() {
                 if(bodyBeginIndex != -1){
                     for (var i = bodyBeginIndex; i < linesArray.length ; i++){
                         var line = linesArray[i];
-                        executionPlanBody += "\n" + line;
+                        executionPlanBody += SIDDHI_LINE_BREAK + line;
                     }
                 }
             }
-            var importStatement = "@Import('" + streamId + "')" +
-                "\n" + "define stream "+ streamAs + " (" + streamDefinition + ");";
-            window.queryEditor.setValue(executionPlanHeader + importStatement + "\n" + executionPlanBody);
+            var importStatement = ANNOTATION_TOKEN_AT +
+                ANNOTATION_IMPORT +
+                ANNOTATION_TOKEN_OPENING_BRACKET +
+                SIDDHI_SINGLE_QUOTE + streamId + SIDDHI_SINGLE_QUOTE +
+                ANNOTATION_TOKEN_CLOSING_BRACKET +
+                SIDDHI_LINE_BREAK +
+                SIDDHI_LITERAL_DEFINE_STREAM + SIDDHI_SPACE_LITERAL + streamAs + SIDDHI_SPACE_LITERAL +
+                ANNOTATION_TOKEN_OPENING_BRACKET +
+                streamDefinition +
+                ANNOTATION_TOKEN_CLOSING_BRACKET +
+                SIDDHI_STATEMENT_DELIMETER;
+            window.queryEditor.setValue(executionPlanHeader + importStatement + SIDDHI_LINE_BREAK + executionPlanBody);
             window.queryEditor.save();
         }
     });
@@ -217,20 +226,20 @@ function addExportedStreamDefinition() {
             var executionPlanBody = "";
 
             if(currentExecutionPlan != "") {
-                var linesArray = currentExecutionPlan.split('\n');
+                var linesArray = currentExecutionPlan.split(SIDDHI_LINE_BREAK_CHARACTER);
                 var bodyBeginIndex = -1;
                 for (var i = 0; i < linesArray.length ; i++){
                     var line = linesArray[i];
-                    if(line.match(/^@Plan.*/g) != null
-                        || line.match(/^--.*/g) != null
-                        || line.match(/^\/\*.*\*\//g) != null
+                    if(line.match(REGEX_LINE_STARTING_WITH_PLAN) != null
+                        || line.match(REGEX_LINE_STARTING_WITH_SINGLE_LINE_COMMENT) != null
+                        || line.match(REGEX_LINE_STARTING_WITH_MULTI_LINE_COMMENT) != null
                         || line == ""
-                        || line.match(/^@Import.*/g) != null){
-                        if(line.match(/^@Import.*/g) != null){
-                            executionPlanHeader += line + "\n";
-                            executionPlanHeader += linesArray[++i] + "\n";
+                        || line.match(REGEX_LINE_STARTING_WITH_IMPORT_STATEMENT) != null){
+                        if(line.match(REGEX_LINE_STARTING_WITH_IMPORT_STATEMENT) != null){
+                            executionPlanHeader += line + SIDDHI_LINE_BREAK;
+                            executionPlanHeader += linesArray[++i] + SIDDHI_LINE_BREAK;
                         } else {
-                            executionPlanHeader += line + "\n";
+                            executionPlanHeader += line + SIDDHI_LINE_BREAK;
                         }
                     } else {
                         bodyBeginIndex = i;
@@ -240,13 +249,15 @@ function addExportedStreamDefinition() {
                 if(bodyBeginIndex != -1){
                     for (var i = bodyBeginIndex; i < linesArray.length ; i++){
                         var line = linesArray[i];
-                        executionPlanBody += "\n" + line;
+                        executionPlanBody += SIDDHI_LINE_BREAK + line;
                     }
                 }
             }
-            var exportStatement = "@Export('" + streamId + "')" +
-                "\n" + "define stream "+ streamAs + " (" + streamDefinition + ");";
-            window.queryEditor.setValue(executionPlanHeader + exportStatement + "\n" + executionPlanBody);
+            var exportStatement = ANNOTATION_TOKEN_AT + ANNOTATION_EXPORT + ANNOTATION_TOKEN_OPENING_BRACKET +
+                SIDDHI_SINGLE_QUOTE + streamId + SIDDHI_SINGLE_QUOTE + ANNOTATION_TOKEN_CLOSING_BRACKET +
+                SIDDHI_LINE_BREAK + SIDDHI_LITERAL_DEFINE_STREAM + SIDDHI_SPACE_LITERAL + streamAs + SIDDHI_SPACE_LITERAL +
+                ANNOTATION_TOKEN_OPENING_BRACKET + streamDefinition + ANNOTATION_TOKEN_CLOSING_BRACKET + SIDDHI_STATEMENT_DELIMETER;
+            window.queryEditor.setValue(executionPlanHeader + exportStatement + SIDDHI_LINE_BREAK + executionPlanBody);
             window.queryEditor.save();
         }
     });

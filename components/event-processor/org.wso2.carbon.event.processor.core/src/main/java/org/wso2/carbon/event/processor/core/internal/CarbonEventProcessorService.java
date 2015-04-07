@@ -80,7 +80,7 @@ public class CarbonEventProcessorService implements EventProcessorService {
             int tenantId = PrivilegedCarbonContext.getThreadLocalCarbonContext().getTenantId();
             String executionPlanName = AnnotationHelper.getAnnotationElement(EventProcessorConstants.ANNOTATION_NAME_NAME, null , parsedExecutionPlan.getAnnotations()).getValue();
 
-            if (!(checkExecutionPlanValidity(executionPlanName, tenantId))) {    //todo: check if executionPlan is added to the map used in 'checkExecutionPlanValidity'
+            if (!(checkExecutionPlanValidity(executionPlanName, tenantId))) {
                 throw new ExecutionPlanConfigurationException(executionPlanName + " already registered as an execution in this tenant");
             }
 
@@ -155,7 +155,7 @@ public class CarbonEventProcessorService implements EventProcessorService {
                 fileName = file.getFileName();
             }
             EventProcessorConfigurationFilesystemInvoker.delete(fileName, axisConfiguration);
-            EventProcessorConfigurationFilesystemInvoker.save(executionPlan, executionPlanName, fileName, axisConfiguration);
+            EventProcessorConfigurationFilesystemInvoker.save(executionPlan, newExecutionPlanName, fileName, axisConfiguration);
         } else {
             throw new ExecutionPlanConfigurationException("Invalid configuration provided, No execution plan name.");
         }
@@ -467,10 +467,8 @@ public class CarbonEventProcessorService implements EventProcessorService {
             EventProcessorHelper.validateExecutionPlan(executionPlan, tenantId);
             return true;
         } catch (ExecutionPlanDependencyValidationException e) {
-//            String msg = e.getMessage();     //todo: change the return type to string so msg can be returned to the UI.
             return false;
         } catch (ExecutionPlanConfigurationException e) {
-//            String msg = e.getMessage();     //todo: change the return type to string so msg can be returned to the UI.
             return false;
         }
     }
