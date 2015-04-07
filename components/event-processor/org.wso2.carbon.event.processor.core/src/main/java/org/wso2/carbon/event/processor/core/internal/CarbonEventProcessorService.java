@@ -461,16 +461,17 @@ public class CarbonEventProcessorService implements EventProcessorService {
     }
 
 
-    public boolean validateExecutionPlan(String executionPlan) {
-        try{
+    public String validateExecutionPlan(String executionPlan) {
             int tenantId = PrivilegedCarbonContext.getThreadLocalCarbonContext().getTenantId();
+        try {
             EventProcessorHelper.validateExecutionPlan(executionPlan, tenantId);
-            return true;
-        } catch (ExecutionPlanDependencyValidationException e) {
-            return false;
         } catch (ExecutionPlanConfigurationException e) {
-            return false;
+            log.error("Execution plan validation failed", e);
+            return e.getMessage();
+        } catch (ExecutionPlanDependencyValidationException e) {
+            return e.getMessage();
         }
+        return "success";
     }
 
     public void notifyServiceAvailability(String serviceId) {

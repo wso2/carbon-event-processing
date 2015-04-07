@@ -181,7 +181,7 @@ public interface EventProcessorService {
      * @param executionPlan execution plan.
      * @return  true if valid.
      */
-    public boolean validateExecutionPlan(String executionPlan);
+    public String validateExecutionPlan(String executionPlan);
 
     /**
      * Fetches all the streams imported and exported by the Siddhi engine for the given execution plan.

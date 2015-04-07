@@ -280,7 +280,7 @@ public class EventProcessorAdminService extends AbstractAdmin {
         }
     }
 
-    public boolean validateExecutionPlan(String executionPlan) throws AxisFault {
+    public String validateExecutionPlan(String executionPlan) throws AxisFault {
         return EventProcessorAdminValueHolder.getEventProcessorService().validateExecutionPlan(executionPlan);
     }
 

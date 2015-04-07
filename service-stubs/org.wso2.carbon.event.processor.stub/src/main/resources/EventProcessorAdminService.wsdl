@@ -27,20 +27,6 @@
                     </xs:sequence>
                 </xs:complexType>
             </xs:element>
-            <xs:element name="getAllExportedStreamSpecificActiveExecutionPlanConfiguration">
-                <xs:complexType>
-                    <xs:sequence>
-                        <xs:element minOccurs="0" name="streamId" nillable="true" type="xs:string"/>
-                    </xs:sequence>
-                </xs:complexType>
-            </xs:element>
-            <xs:element name="getAllExportedStreamSpecificActiveExecutionPlanConfigurationResponse">
-                <xs:complexType>
-                    <xs:sequence>
-                        <xs:element maxOccurs="unbounded" minOccurs="0" name="return" nillable="true" type="ax292:ExecutionPlanConfigurationDto"/>
-                    </xs:sequence>
-                </xs:complexType>
-            </xs:element>
             <xs:element name="getAllImportedStreamSpecificActiveExecutionPlanConfiguration">
                 <xs:complexType>
                     <xs:sequence>
@@ -55,11 +41,17 @@
                     </xs:sequence>
                 </xs:complexType>
             </xs:element>
-            <xs:element name="setStatisticsEnabled">
+            <xs:element name="getAllExportedStreamSpecificActiveExecutionPlanConfiguration">
                 <xs:complexType>
                     <xs:sequence>
-                        <xs:element minOccurs="0" name="executionPlanName" nillable="true" type="xs:string"/>
-                        <xs:element minOccurs="0" name="isEnabled" type="xs:boolean"/>
+                        <xs:element minOccurs="0" name="streamId" nillable="true" type="xs:string"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="getAllExportedStreamSpecificActiveExecutionPlanConfigurationResponse">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element maxOccurs="unbounded" minOccurs="0" name="return" nillable="true" type="ax292:ExecutionPlanConfigurationDto"/>
                     </xs:sequence>
                 </xs:complexType>
             </xs:element>
@@ -124,7 +116,7 @@
             <xs:element name="validateExecutionPlanResponse">
                 <xs:complexType>
                     <xs:sequence>
-                        <xs:element minOccurs="0" name="return" type="xs:boolean"/>
+                        <xs:element minOccurs="0" name="return" nillable="true" type="xs:string"/>
                     </xs:sequence>
                 </xs:complexType>
             </xs:element>
@@ -171,6 +163,14 @@
                 </xs:complexType>
             </xs:element>
             <xs:element name="setTracingEnabled">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element minOccurs="0" name="executionPlanName" nillable="true" type="xs:string"/>
+                        <xs:element minOccurs="0" name="isEnabled" type="xs:boolean"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="setStatisticsEnabled">
                 <xs:complexType>
                     <xs:sequence>
                         <xs:element minOccurs="0" name="executionPlanName" nillable="true" type="xs:string"/>
@@ -807,13 +807,13 @@
     </wsdl:binding>
     <wsdl:service name="EventProcessorAdminService">
         <wsdl:port name="EventProcessorAdminServiceHttpsSoap11Endpoint" binding="ns:EventProcessorAdminServiceSoap11Binding">
-            <soap:address location="https://10.225.64.43:9443/services/EventProcessorAdminService.EventProcessorAdminServiceHttpsSoap11Endpoint/"/>
+            <soap:address location="https://10.100.5.59:9443/services/EventProcessorAdminService.EventProcessorAdminServiceHttpsSoap11Endpoint/"/>
         </wsdl:port>
         <wsdl:port name="EventProcessorAdminServiceHttpsSoap12Endpoint" binding="ns:EventProcessorAdminServiceSoap12Binding">
-            <soap12:address location="https://10.225.64.43:9443/services/EventProcessorAdminService.EventProcessorAdminServiceHttpsSoap12Endpoint/"/>
+            <soap12:address location="https://10.100.5.59:9443/services/EventProcessorAdminService.EventProcessorAdminServiceHttpsSoap12Endpoint/"/>
         </wsdl:port>
         <wsdl:port name="EventProcessorAdminServiceHttpsEndpoint" binding="ns:EventProcessorAdminServiceHttpBinding">
-            <http:address location="https://10.225.64.43:9443/services/EventProcessorAdminService.EventProcessorAdminServiceHttpsEndpoint/"/>
+            <http:address location="https://10.100.5.59:9443/services/EventProcessorAdminService.EventProcessorAdminServiceHttpsEndpoint/"/>
         </wsdl:port>
     </wsdl:service>
 </wsdl:definitions>
