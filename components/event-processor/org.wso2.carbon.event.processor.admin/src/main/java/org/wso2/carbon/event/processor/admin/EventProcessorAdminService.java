@@ -280,8 +280,15 @@ public class EventProcessorAdminService extends AbstractAdmin {
         }
     }
 
-    public boolean validateExecutionPlan(String executionPlan) throws AxisFault {
-        return EventProcessorAdminValueHolder.getEventProcessorService().validateExecutionPlan(executionPlan);
+    public String validateExecutionPlan(String executionPlan) throws AxisFault {
+        try {
+            EventProcessorAdminValueHolder.getEventProcessorService().validateExecutionPlan(executionPlan);
+            return "success";
+        } catch (ExecutionPlanConfigurationException e) {
+            return e.getMessage();
+        } catch (ExecutionPlanDependencyValidationException e) {
+            return e.getMessage();
+        }
     }
 
     public StreamDefinitionDto[] getSiddhiStreams(String executionPlan) throws AxisFault {

@@ -121,7 +121,7 @@ public class EventProcessorDeployer extends AbstractDeployer implements EventPro
                 String executionPlan = readFile(deploymentFileData.getAbsolutePath());
                 EventProcessorHelper.validateExecutionPlan(executionPlan, tenantId);
 
-                executionPlanName = EventProcessorHelper.getExecutionPlanName(executionPlan);   //todo: what if the file name and annotated name are different?
+                executionPlanName = EventProcessorHelper.getExecutionPlanName(executionPlan);
                 carbonEventProcessorService.addExecutionPlan(executionPlan, isEditable, configurationContext.getAxisConfiguration());
                 executionPlanConfigurationFile.setStatus(ExecutionPlanConfigurationFile.Status.DEPLOYED);
                 executionPlanConfigurationFile.setExecutionPlanName(executionPlanName);

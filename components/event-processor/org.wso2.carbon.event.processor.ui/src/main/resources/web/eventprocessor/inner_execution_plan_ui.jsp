@@ -19,6 +19,7 @@
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@ page import="org.wso2.carbon.event.processor.stub.EventProcessorAdminServiceStub" %>
 <%@ page import="org.wso2.carbon.event.processor.ui.EventProcessorUIUtils" %>
+<%@ page import="org.wso2.carbon.event.processor.ui.UIConstants" %>
 <%@ page import="org.wso2.carbon.event.stream.stub.EventStreamAdminServiceStub" %>
 
 <fmt:bundle basename="org.wso2.carbon.event.processor.ui.i18n.Resources">
@@ -26,13 +27,18 @@
 <script type="text/javascript" src="../eventprocessor/js/execution_plans.js"></script>
 <script type="text/javascript"
         src="../eventprocessor/js/create_execution_plan_helper.js"></script>
+<script type="text/javascript"
+        src="../eventprocessor/js/eventprocessor_constants.js"></script>
 <script type="text/javascript" src="../ajax/js/prototype.js"></script>
 
 <%--code mirror code--%>
 
 <link rel="stylesheet" href="../eventprocessor/css/codemirror.css"/>
+<link rel="stylesheet" href="../eventprocessor/css/show-hint.css">
 <link rel="stylesheet" href="../eventprocessor/css/event-processor.css"/>
 <script src="../eventprocessor/js/codemirror.js"></script>
+<script type="text/javascript" src="../eventprocessor/js/show-hint.js"></script>
+<script type="text/javascript" src="../eventprocessor/js/sql-hint.js"></script>
 <script src="../eventprocessor/js/sql.js"></script>
 
 <style>
@@ -45,6 +51,7 @@
 
 <script>
     var init = function () {
+
         var mime = 'text/siddhi-sql-db';
 
         // get mime type
@@ -58,16 +65,16 @@
             smartIndent: true,
             lineNumbers: true,
             matchBrackets: true,
-            autofocus: true
+            autofocus: true,
+            extraKeys: {
+                "Shift-2": function(cm) {
+                    insertStr(cm, cm.getCursor(), '@');
+                    CodeMirror.showHint(cm, getAnnotationHints);
+                },
+                "Ctrl-Space": "autocomplete"
+            }
         });
 
-        window.queryEditor.setValue("/* Enter a unique ExecutionPlan */\n" +
-                "@Plan:name('ExecutionPlan')\n\n" +
-                "/* Enter a unique description for ExecutionPlan */\n" +
-                "-- @Plan:description('ExecutionPlan')\n" +
-                "\n" +
-                "/* define streams and write query here ... */\n");
-        window.queryEditor.save();
     };
 </script>
 
@@ -92,15 +99,9 @@
         mode = "UPDATE";
     }
 %>
-
 <%
     if (mode.equals("ADD")) {
-        executionPlan = "/* Enter a unique ExecutionPlan */\n" +
-                "@Plan:name('ExecutionPlan')\n\n" +
-                "/* Enter a unique description for ExecutionPlan */\n" +
-                "-- @Plan:description('ExecutionPlan')\n" +
-                "\n" +
-                "/* define streams and write query here ... */\n";
+        executionPlan = UIConstants.EXECUTION_PLAN_BASIC_TEMPLATE;
 
     } else {
         if (executionPlanName != null) {

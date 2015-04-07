@@ -31,7 +31,7 @@ public class DataReceiverEndpoint {
 
     public DataReceiverEndpoint() {
         websocketLocalInputCallbackRegisterService = (WebsocketLocalInputCallbackRegisterService) PrivilegedCarbonContext.getThreadLocalCarbonContext()
-                .getOSGiService(WebsocketLocalInputCallbackRegisterService.class);
+                .getOSGiService(WebsocketLocalInputCallbackRegisterService.class, null);
     }
 
     public void onClose (Session session, CloseReason reason) {

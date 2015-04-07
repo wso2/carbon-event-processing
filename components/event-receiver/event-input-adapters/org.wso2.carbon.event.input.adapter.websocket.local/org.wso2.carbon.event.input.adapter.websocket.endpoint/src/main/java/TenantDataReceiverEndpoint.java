@@ -50,7 +50,14 @@ public class TenantDataReceiverEndpoint extends DataReceiverEndpoint {
         PrivilegedCarbonContext.startTenantFlow();
         PrivilegedCarbonContext.getThreadLocalCarbonContext().setTenantId(tenantId);
         InputEventAdapterListener adapterListener = websocketLocalInputCallbackRegisterService.getAdapterListener(adapterName);
-        adapterListener.onEvent(message);
+        if(adapterListener != null){
+            adapterListener.onEvent(message);
+        } else {
+            if (log.isDebugEnabled()) {
+                log.debug("Dropping the message:"+message+" from session id: "+session.getId()+", because no input websocket-local adapter exists" +
+                        "with name '"+adapterName+"', for tenant id: " + tenantId + ", and tenant domain: " + tdomain);
+            }
+        }
         PrivilegedCarbonContext.endTenantFlow();
     }
 
