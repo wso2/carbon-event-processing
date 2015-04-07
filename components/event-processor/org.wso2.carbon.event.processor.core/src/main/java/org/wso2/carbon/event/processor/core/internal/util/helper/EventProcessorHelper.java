@@ -95,6 +95,10 @@ public class EventProcessorHelper {
         for (Map.Entry<String, org.wso2.siddhi.query.api.definition.StreamDefinition> entry : parsedExecPlan.getStreamDefinitionMap().entrySet()) {
             Element importElement = AnnotationHelper.getAnnotationElement(EventProcessorConstants.ANNOTATION_IMPORT, null, entry.getValue().getAnnotations());
             Element exportElement = AnnotationHelper.getAnnotationElement(EventProcessorConstants.ANNOTATION_EXPORT, null, entry.getValue().getAnnotations());
+            if(importElement != null && exportElement != null){
+                throw new ExecutionPlanConfigurationException("Same stream definition has being imported and exported. Please correct " + i +
+                        "th of the " + parsedExecPlan.getStreamDefinitionMap().size() + "stream definition, with stream id '" + entry.getKey() + "'");
+            }
             if (importElement != null) {  //Treating import & export cases separately to give more specific error messages.
                 String atImportLiteral = EventProcessorConstants.ANNOTATION_TOKEN_AT + EventProcessorConstants.ANNOTATION_IMPORT;
                 String importElementValue = importElement.getValue();
@@ -105,7 +109,7 @@ public class EventProcessorHelper {
                             EventProcessorConstants.SIDDHI_SINGLE_QUOTE + EventProcessorConstants.SIDDHI_SINGLE_QUOTE +
                             EventProcessorConstants.ANNOTATION_TOKEN_CLOSING_BRACKET +
                             "'. Please correct " + i + "th of the " + parsedExecPlan.getStreamDefinitionMap().size() +
-                            "stream definition, with stream id '" + entry.getKey());
+                            "stream definition, with stream id '" + entry.getKey() + "'");
                 }
                 String[] streamIdComponents = importElementValue.split(EventProcessorConstants.STREAM_SEPARATOR);
                 if (streamIdComponents.length != 2) {
@@ -133,7 +137,8 @@ public class EventProcessorHelper {
                     throw new ExecutionPlanConfigurationException("Imported stream '" + importElementValue + "' is also among the exported streams. Hence the execution plan is invalid");
                 }
                 importedStreams.add(importElementValue);
-            } else {
+            }
+            if (exportElement != null) {
                 String atExportLiteral = EventProcessorConstants.ANNOTATION_TOKEN_AT + EventProcessorConstants.ANNOTATION_EXPORT;
                 String exportElementValue = exportElement.getValue();
                 if (exportElementValue == "") {
