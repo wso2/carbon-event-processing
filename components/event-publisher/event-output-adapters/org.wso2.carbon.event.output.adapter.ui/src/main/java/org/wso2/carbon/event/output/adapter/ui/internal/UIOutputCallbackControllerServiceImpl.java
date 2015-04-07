@@ -165,14 +165,12 @@ public class UIOutputCallbackControllerServiceImpl implements UIOutputCallbackCo
         int tenantId = CarbonContext.getThreadLocalCarbonContext().getTenantId();
         LinkedBlockingDeque<Object> allEvents = getEvents(tenantId, streamName, version);
         //List<Object> eventsListToBeSent;
-        Object lastEventTime;
+        Object lastEventTime = null;
         JsonObject eventsData;
-        Boolean eventsExists = false;
 
         if(allEvents != null){
             eventsData = new JsonObject();
-            if(allEvents.size() != 0){
-                eventsExists = true;
+
                 Boolean firstFilteredValue = true;
                 long sentTimeStamp = Long.parseLong(lastUpdatedTime);
                 //eventsListToBeSent = new ArrayList<Object>();
@@ -197,14 +195,13 @@ public class UIOutputCallbackControllerServiceImpl implements UIOutputCallbackCo
                 }
                 allEventsAsString.append("]");
 
-                Object[] lastObj = (Object[]) allEvents.getLast();
-                lastEventTime = lastObj[UIEventAdapterConstants.INDEX_ONE];
-                eventsData.addProperty("eventsExists",eventsExists);
-                eventsData.addProperty("lastEventTime",String.valueOf(lastEventTime));
+                if(allEvents.size() != 0){
+                    Object[] lastObj = (Object[]) allEvents.getLast();
+                    lastEventTime = lastObj[UIEventAdapterConstants.INDEX_ONE];
+                    eventsData.addProperty("lastEventTime",String.valueOf(lastEventTime));
+                }
                 eventsData.addProperty("events",allEventsAsString.toString());
-            } else {
-                eventsData.addProperty("eventsExists",eventsExists);
-            }
+
             return eventsData;
         }
         return null;

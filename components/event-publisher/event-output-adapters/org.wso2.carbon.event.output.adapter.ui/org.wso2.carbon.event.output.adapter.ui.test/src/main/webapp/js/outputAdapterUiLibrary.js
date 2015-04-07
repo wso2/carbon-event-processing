@@ -232,10 +232,10 @@ function startPoll(){
                      $("textarea#idConsole").val(data + "Successfully connected to HTTP.");*/
                     firstPollingAttempt = false;
                 }
-                if($.parseJSON(responseText.eventsExists)){
-                    lastUpdatedtime = responseText.lastEventTime;
 
-                    var eventList = (responseText.events);
+                var eventList = $.parseJSON(responseText.events);
+                if(eventList.length != 0){
+                    lastUpdatedtime = responseText.lastEventTime;
                     constructPayload(eventList);
                 }
                 if(pollingContinue){

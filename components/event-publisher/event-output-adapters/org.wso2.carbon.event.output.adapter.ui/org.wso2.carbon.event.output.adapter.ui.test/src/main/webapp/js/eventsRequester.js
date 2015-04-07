@@ -123,10 +123,10 @@ function startPoll(){
                     $("textarea#idConsole").val(data + "Successfully connected to HTTP.");
                     firstPollingAttempt = false;
                 }
-                if($.parseJSON(responseText.eventsExists)){
+                var eventList = $.parseJSON(responseText.events);
+                $("textarea#idRecievedEvents").val("");
+                if(eventList.length != 0){
                     lastUpdatedtime = responseText.lastEventTime;
-                    var eventList = $.parseJSON(responseText.events);
-                    $("textarea#idRecievedEvents").val("")
                     var streamId = stream + ":" + streamVersion + " =";
                     for(var i=0;i<eventList.length;i++){
                         var data = $("textarea#idRecievedEvents").val();
