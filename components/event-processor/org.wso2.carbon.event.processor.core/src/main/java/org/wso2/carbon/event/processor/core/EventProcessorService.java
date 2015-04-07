@@ -181,7 +181,7 @@ public interface EventProcessorService {
      * @param executionPlan execution plan.
      * @return  true if valid.
      */
-    public String validateExecutionPlan(String executionPlan);
+    public void validateExecutionPlan(String executionPlan) throws ExecutionPlanConfigurationException, ExecutionPlanDependencyValidationException;
 
     /**
      * Fetches all the streams imported and exported by the Siddhi engine for the given execution plan.
