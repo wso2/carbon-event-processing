@@ -19,14 +19,11 @@
  */
 package org.wso2.carbon.event.output.adapter.ui.internal.ds;
 
-import org.osgi.service.http.HttpService;
 import org.wso2.carbon.event.output.adapter.ui.internal.UIOutputCallbackControllerServiceImpl;
-import org.wso2.carbon.user.core.service.RealmService;
 
-import java.util.HashMap;
 import java.util.LinkedList;
-import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.LinkedBlockingDeque;
 
 /**
  * Creates a holder of type UIOutputCallbackRegisterServiceImpl.
@@ -34,11 +31,10 @@ import java.util.concurrent.ConcurrentHashMap;
 public final class UIEventAdaptorServiceInternalValueHolder {
 
     private static UIOutputCallbackControllerServiceImpl UIOutputCallbackRegisterServiceImpl;
-    private static Map<String, String> outputEventStreamMap = new HashMap<String, String>();
-    private static ConcurrentHashMap<Integer, ConcurrentHashMap<String, LinkedList<Object>>> tenantSpecificStreamMap
-            = new ConcurrentHashMap<Integer, ConcurrentHashMap<String, LinkedList<Object>>>();
-    private static HttpService httpService;
-    private static RealmService realmService;
+    private static ConcurrentHashMap<Integer,ConcurrentHashMap<String, String>> tenantSpecificOutputEventStreamAdapterMap = new
+            ConcurrentHashMap<Integer,ConcurrentHashMap<String, String>>();
+    private static ConcurrentHashMap<Integer, ConcurrentHashMap<String, LinkedBlockingDeque<Object>>> tenantSpecificStreamEventMap
+            = new ConcurrentHashMap<Integer, ConcurrentHashMap<String, LinkedBlockingDeque<Object>>>();
 
     public static void registerUIOutputCallbackRegisterServiceInternal(
             UIOutputCallbackControllerServiceImpl UIOutputCallbackRegisterServiceImpl) {
@@ -50,30 +46,12 @@ public final class UIEventAdaptorServiceInternalValueHolder {
         return UIEventAdaptorServiceInternalValueHolder.UIOutputCallbackRegisterServiceImpl;
     }
 
-    public static Map<String, String> getOutputEventStreamMap() {
-        return outputEventStreamMap;
+    public static ConcurrentHashMap<Integer,ConcurrentHashMap<String, String>> getTenantSpecificOutputEventStreamAdapterMap() {
+        return tenantSpecificOutputEventStreamAdapterMap;
     }
 
-    public static void registerHTTPService(
-            HttpService httpService) {
-        UIEventAdaptorServiceInternalValueHolder.httpService = httpService;
-    }
-
-    public static HttpService getHTTPService() {
-        return httpService;
-    }
-
-    public static void registerRealmService(
-            RealmService realmService) {
-        UIEventAdaptorServiceInternalValueHolder.realmService = realmService;
-    }
-
-    public static RealmService getRealmService() {
-        return realmService;
-    }
-
-    public static ConcurrentHashMap<Integer, ConcurrentHashMap<String, LinkedList<Object>>>
-    getTenantSpecificStreamMap() {
-        return tenantSpecificStreamMap;
+    public static ConcurrentHashMap<Integer, ConcurrentHashMap<String, LinkedBlockingDeque<Object>>>
+    getTenantSpecificStreamEventMap() {
+        return tenantSpecificStreamEventMap;
     }
 }
