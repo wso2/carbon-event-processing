@@ -25,7 +25,7 @@ import java.util.List;
 /**
  * Contains List of mapping objects
  */
-@XmlRootElement(name="adaptorConfiguration")
+@XmlRootElement(name="rdbmsConfiguration")
 public class Mappings {
 
     private List<Mapping> mapping;

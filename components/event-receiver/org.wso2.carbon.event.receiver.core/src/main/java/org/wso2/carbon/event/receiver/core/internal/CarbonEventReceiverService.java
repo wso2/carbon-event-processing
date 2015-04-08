@@ -22,7 +22,9 @@ import org.apache.commons.logging.LogFactory;
 import org.wso2.carbon.context.PrivilegedCarbonContext;
 import org.wso2.carbon.databridge.commons.StreamDefinition;
 import org.wso2.carbon.event.input.adapter.core.EventAdapterUtil;
+import org.wso2.carbon.event.input.adapter.core.InputEventAdapterSchema;
 import org.wso2.carbon.event.input.adapter.core.InputEventAdapterService;
+import org.wso2.carbon.event.input.adapter.core.Property;
 import org.wso2.carbon.event.receiver.core.EventReceiverService;
 import org.wso2.carbon.event.receiver.core.config.EventReceiverConfiguration;
 import org.wso2.carbon.event.receiver.core.config.EventReceiverConfigurationFile;
@@ -69,7 +71,7 @@ public class CarbonEventReceiverService implements EventReceiverService {
             String repoPath = EventAdapterUtil.getAxisConfiguration().getRepository().getPath();
             EventReceiverUtil.generateFilePath(eventReceiverName, repoPath);
             validateToRemoveInactiveEventReceiverConfiguration(eventReceiverConfiguration.getEventReceiverName());
-            EventReceiverConfigurationFileSystemInvoker.save(omElement, eventReceiverName + EventReceiverConstants.ER_CONFIG_FILE_EXTENSION_WITH_DOT);
+            EventReceiverConfigurationFileSystemInvoker.encryptAndSave(omElement, eventReceiverName + EventReceiverConstants.ER_CONFIG_FILE_EXTENSION_WITH_DOT);
         } else {
             throw new EventReceiverConfigurationException("Mapping type of the Event Receiver " + eventReceiverConfiguration.getEventReceiverName() + " cannot be null");
         }
@@ -92,7 +94,7 @@ public class CarbonEventReceiverService implements EventReceiverService {
             String repoPath = EventAdapterUtil.getAxisConfiguration().getRepository().getPath();
             EventReceiverUtil.generateFilePath(eventReceiverName, repoPath);
             validateToRemoveInactiveEventReceiverConfiguration(eventReceiverName);
-            EventReceiverConfigurationFileSystemInvoker.save(omElement, eventReceiverName + EventReceiverConstants.ER_CONFIG_FILE_EXTENSION_WITH_DOT);
+            EventReceiverConfigurationFileSystemInvoker.encryptAndSave(omElement, eventReceiverName + EventReceiverConstants.ER_CONFIG_FILE_EXTENSION_WITH_DOT);
         } else {
             throw new EventReceiverConfigurationException("Mapping type of the Event Receiver " + eventReceiverName + " cannot be null");
         }
@@ -501,7 +503,7 @@ public class CarbonEventReceiverService implements EventReceiverService {
         undeployActiveEventReceiverConfiguration(eventReceiverName);
         OMElement omElement = EventReceiverConfigurationBuilder.eventReceiverConfigurationToOM(eventReceiverConfiguration);
         EventReceiverConfigurationFileSystemInvoker.delete(fileName);
-        EventReceiverConfigurationFileSystemInvoker.save(omElement, fileName);
+        EventReceiverConfigurationFileSystemInvoker.encryptAndSave(omElement, fileName);
     }
 
     private String getFileName(String eventReceiverName) {
@@ -535,13 +537,13 @@ public class CarbonEventReceiverService implements EventReceiverService {
                 if (!(eventReceiverConfigurationObject.getEventReceiverName().equals(originalEventReceiverName))) {
                     if (!isEventReceiverAlreadyExists(tenantId, eventReceiverConfigurationObject.getEventReceiverName())) {
                         EventReceiverConfigurationFileSystemInvoker.delete(filename);
-                        EventReceiverConfigurationFileSystemInvoker.save(omElement, filename);
+                        EventReceiverConfigurationFileSystemInvoker.encryptAndSave(omElement, filename);
                     } else {
                         throw new EventReceiverConfigurationException("There is already a Event Receiver " + eventReceiverConfigurationObject.getEventReceiverName() + " with the same name");
                     }
                 } else {
                     EventReceiverConfigurationFileSystemInvoker.delete(filename);
-                    EventReceiverConfigurationFileSystemInvoker.save(omElement, filename);
+                    EventReceiverConfigurationFileSystemInvoker.encryptAndSave(omElement, filename);
                 }
             } else {
                 throw new EventReceiverConfigurationException("Mapping type of the Event Receiver " + originalEventReceiverName + " cannot be null");
@@ -582,6 +584,23 @@ public class CarbonEventReceiverService implements EventReceiverService {
             }
         }
 
+    }
+
+    public List<String> getEncryptedProperties(String eventAdaptorType) {
+        List<String> encryptedProperties = new ArrayList<String>(1);
+        //OutputEventAdapterDto dto = OutputEventAdaptorHolder.getInstance().getOutputEventAdaptorService().getEventAdaptorDto(eventAdaptorType);
+        InputEventAdapterSchema inputEventAdapterSchema = EventReceiverServiceValueHolder.getInputEventAdapterService().getInputEventAdapterSchema(eventAdaptorType);
+        if (inputEventAdapterSchema != null) {
+            List<Property> properties = inputEventAdapterSchema.getPropertyList();
+            if (properties != null) {
+                for (Property prop : properties) {
+                    if (prop.isSecured()) {
+                        encryptedProperties.add(prop.getPropertyName());
+                    }
+                }
+            }
+        }
+        return encryptedProperties;
     }
 //
 //    public void removeEventReceiver(String eventReceiverName,

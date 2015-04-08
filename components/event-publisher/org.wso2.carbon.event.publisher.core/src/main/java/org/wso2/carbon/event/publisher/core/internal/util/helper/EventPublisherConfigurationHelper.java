@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2005 - 2014, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
+ * Copyright (c) 2015, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy
@@ -14,6 +14,7 @@
  */
 package org.wso2.carbon.event.publisher.core.internal.util.helper;
 
+import org.apache.axiom.om.OMAttribute;
 import org.apache.axiom.om.OMElement;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -239,5 +240,30 @@ public class EventPublisherConfigurationHelper {
         return eventPublisherOMElement.getAttributeValue(new QName(EventPublisherConstants.EF_ATTR_NAME));
     }
 
+    /*
+        Checks whether all the secure fields are encrypted.
+         */
+    public static boolean validateEncryptedProperties(OMElement eventAdapterConfigOMElement) {
 
+        String adaptorType = eventAdapterConfigOMElement.getFirstChildWithName(new QName(EventPublisherConstants.EF_CONF_NS, EventPublisherConstants.EF_ELEMENT_TO)).getAttributeValue(new QName(EventPublisherConstants.EF_ATTR_TA_TYPE));
+
+        //get Static and Dynamic PropertyLists
+        List<String> encryptedProperties = EventPublisherServiceValueHolder.getCarbonEventPublisherService().getEncryptedProperties(adaptorType);
+        Iterator propertyIter = eventAdapterConfigOMElement.getFirstChildWithName(new QName(EventPublisherConstants.EF_CONF_NS, EventPublisherConstants.EF_ELEMENT_TO)).getChildrenWithName(new QName(EventPublisherConstants.EF_ELE_PROPERTY));
+
+        while (propertyIter.hasNext()) {
+            OMElement propertyOMElement = (OMElement) propertyIter.next();
+            String name = propertyOMElement.getAttributeValue(
+                    new QName(EventPublisherConstants.EF_ATTR_NAME));
+
+            String value = propertyOMElement.getText();
+            if (encryptedProperties.contains(name.trim())) {
+                OMAttribute encryptedAttribute = propertyOMElement.getAttribute(new QName(EventPublisherConstants.EF_ATTR_ENCRYPTED));
+                if ((value != null && value.length() > 0) && (encryptedAttribute == null || (!"true".equals(encryptedAttribute.getAttributeValue())))) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
 }

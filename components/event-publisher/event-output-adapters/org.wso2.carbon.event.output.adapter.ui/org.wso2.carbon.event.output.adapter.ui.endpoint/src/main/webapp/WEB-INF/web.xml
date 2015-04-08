@@ -22,19 +22,22 @@
 <web-app>
     <display-name>Output WebSocket</display-name>
     <servlet>
-        <servlet-name>jersey-serlvet</servlet-name>
+        <servlet-name>JAXServlet</servlet-name>
         <servlet-class>
-            com.sun.jersey.spi.container.servlet.ServletContainer
+            org.apache.cxf.jaxrs.servlet.CXFNonSpringJaxrsServlet
         </servlet-class>
         <init-param>
-            <param-name>com.sun.jersey.config.property.packages</param-name>
-            <param-value>org.wso2.carbon.servlet</param-value>
+            <param-name>jaxrs.serviceClasses</param-name>
+            <param-value>
+                org.wso2.carbon.servlet.SuperTenantEventRetrievalEndpoint
+                org.wso2.carbon.servlet.TenantEventRetrievalEndpoint
+            </param-value>
         </init-param>
         <load-on-startup>1</load-on-startup>
     </servlet>
 
     <servlet-mapping>
-        <servlet-name>jersey-serlvet</servlet-name>
+        <servlet-name>JAXServlet</servlet-name>
         <url-pattern>/*</url-pattern>
     </servlet-mapping>
 </web-app>

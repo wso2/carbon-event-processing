@@ -14,6 +14,7 @@
  */
 package org.wso2.carbon.event.receiver.core.internal.util.helper;
 
+import org.apache.axiom.om.OMAttribute;
 import org.apache.axiom.om.OMElement;
 import org.apache.axis2.deployment.DeploymentEngine;
 import org.apache.axis2.engine.AxisConfiguration;
@@ -296,5 +297,32 @@ public class EventReceiverConfigurationHelper {
                 }
             }
         }
+    }
+
+    /*
+        Checks whether all the secure fields are encrypted.
+         */
+    public static boolean validateEncryptedProperties(OMElement eventAdapterConfigOMElement) {
+
+        String adaptorType = eventAdapterConfigOMElement.getFirstChildWithName(new QName(EventReceiverConstants.ER_CONF_NS, EventReceiverConstants.ER_ELEMENT_FROM)).getAttributeValue(new QName(EventReceiverConstants.ER_ATTR_TA_TYPE));
+
+        //get Static and Dynamic PropertyLists
+        List<String> encryptedProperties = EventReceiverServiceValueHolder.getCarbonEventReceiverService().getEncryptedProperties(adaptorType);
+        Iterator propertyIter = eventAdapterConfigOMElement.getFirstChildWithName(new QName(EventReceiverConstants.ER_CONF_NS, EventReceiverConstants.ER_ELEMENT_FROM)).getChildrenWithName(new QName(EventReceiverConstants.ER_ELEMENT_PROPERTY));
+
+        while (propertyIter.hasNext()) {
+            OMElement propertyOMElement = (OMElement) propertyIter.next();
+            String name = propertyOMElement.getAttributeValue(
+                    new QName(EventReceiverConstants.ER_ATTR_NAME));
+
+            String value = propertyOMElement.getText();
+            if (encryptedProperties.contains(name.trim())) {
+                OMAttribute encryptedAttribute = propertyOMElement.getAttribute(new QName(EventReceiverConstants.ER_ATTR_ENCRYPTED));
+                if ((value != null && value.length() > 0) && (encryptedAttribute == null || (!"true".equals(encryptedAttribute.getAttributeValue())))) {
+                    return false;
+                }
+            }
+        }
+        return true;
     }
 }

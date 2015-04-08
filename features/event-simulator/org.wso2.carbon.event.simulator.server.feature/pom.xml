@@ -47,6 +47,14 @@
     </dependencies>
 
     <build>
+        <resources>
+            <resource>
+                <directory>${project.build.directory}/cep/</directory>
+            </resource>
+            <resource>
+                <directory>src/main/resources</directory>
+            </resource>
+        </resources>
         <plugins>
             <plugin>
                 <artifactId>maven-resources-plugin</artifactId>
@@ -64,8 +72,7 @@
                                     <directory>resources</directory>
                                     <includes>
                                         <include>build.properties</include>
-                                        <!--<include>conf/broker-manager-config.xml</include>-->
-                                        <!--<include>conf/broker-manager-config.xsd</include>-->
+                                        <include>conf/rdbms-configuration.xml</include>
                                         <include>p2.inf</include>
                                     </includes>
                                 </resource>
@@ -106,7 +113,7 @@
                             <importFeatures>
                                 <importFeatureDef>org.wso2.carbon.core.server:${carbon.kernel.version}
                                 </importFeatureDef>
-                                    <importFeatureDef>org.wso2.carbon.event.stream.server:${carbon.analytics.common.version}
+                                <importFeatureDef>org.wso2.carbon.event.stream.server:${carbon.analytics.common.version}
                                 </importFeatureDef>
                             </importFeatures>
                         </configuration>

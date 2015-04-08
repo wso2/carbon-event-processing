@@ -23,13 +23,13 @@ import org.wso2.carbon.databridge.agent.exception.DataEndpointAuthenticationExce
 import org.wso2.carbon.databridge.agent.exception.DataEndpointConfigurationException;
 import org.wso2.carbon.databridge.agent.exception.DataEndpointException;
 import org.wso2.carbon.databridge.commons.Event;
-import org.wso2.carbon.databridge.commons.StreamDefinition;
 import org.wso2.carbon.databridge.commons.exception.TransportException;
 import org.wso2.carbon.event.output.adapter.core.OutputEventAdapter;
 import org.wso2.carbon.event.output.adapter.core.OutputEventAdapterConfiguration;
 import org.wso2.carbon.event.output.adapter.core.exception.ConnectionUnavailableException;
 import org.wso2.carbon.event.output.adapter.core.exception.OutputEventAdapterRuntimeException;
 import org.wso2.carbon.event.output.adapter.core.exception.TestConnectionNotSupportedException;
+import org.wso2.carbon.event.output.adapter.wso2event.internal.util.WSO2EventAdapterConstants;
 
 import java.util.Map;
 
@@ -43,8 +43,10 @@ public final class WSO2EventAdapter implements OutputEventAdapter {
     private DataPublisher dataPublisher = null;
     private boolean isBlockingMode = false;
     private long timeout = 0;
+    private String streamId;
 
-    public WSO2EventAdapter(OutputEventAdapterConfiguration eventAdapterConfiguration, Map<String, String> globalProperties) {
+    public WSO2EventAdapter(OutputEventAdapterConfiguration eventAdapterConfiguration,
+            Map<String, String> globalProperties) {
 
         this.eventAdapterConfiguration = eventAdapterConfiguration;
         this.globalProperties = globalProperties;
@@ -55,6 +57,10 @@ public final class WSO2EventAdapter implements OutputEventAdapter {
      */
     @Override
     public void init() {
+        streamId = eventAdapterConfiguration.getStaticProperties().get(
+                WSO2EventAdapterConstants.ADAPTER_STATIC_CONFIG_STREAM_NAME) + ":" +
+                eventAdapterConfiguration.getStaticProperties().get(WSO2EventAdapterConstants
+                        .ADAPTER_STATIC_CONFIG_STREAM_VERSION);
         String configPath = globalProperties.get(ADAPTOR_CONF_PATH);
         if (configPath != null) {
             AgentHolder.setConfigPath(configPath);
@@ -71,11 +77,15 @@ public final class WSO2EventAdapter implements OutputEventAdapter {
 
         String userName = eventAdapterConfiguration.getStaticProperties().get(ADAPTER_CONF_WSO2EVENT_PROP_USER_NAME);
         String password = eventAdapterConfiguration.getStaticProperties().get(ADAPTER_CONF_WSO2EVENT_PROP_PASSWORD);
-        String authUrl = eventAdapterConfiguration.getStaticProperties().get(ADAPTER_CONF_WSO2EVENT_PROP_AUTHENTICATOR_URL);
-        String receiverUrl = eventAdapterConfiguration.getStaticProperties().get(ADAPTER_CONF_WSO2EVENT_PROP_RECEIVER_URL);
+        String authUrl = eventAdapterConfiguration.getStaticProperties()
+                .get(ADAPTER_CONF_WSO2EVENT_PROP_AUTHENTICATOR_URL);
+        String receiverUrl = eventAdapterConfiguration.getStaticProperties()
+                .get(ADAPTER_CONF_WSO2EVENT_PROP_RECEIVER_URL);
         String protocol = eventAdapterConfiguration.getStaticProperties().get(ADAPTER_CONF_WSO2EVENT_PROP_PROTOCOL);
-        String publishingMode = eventAdapterConfiguration.getStaticProperties().get(ADAPTER_CONF_WSO2EVENT_PROP_PUBLISHING_MODE);
-        String timeoutString = eventAdapterConfiguration.getStaticProperties().get(ADAPTER_CONF_WSO2EVENT_PROP_PUBLISH_TIMEOUT_MS);
+        String publishingMode = eventAdapterConfiguration.getStaticProperties()
+                .get(ADAPTER_CONF_WSO2EVENT_PROP_PUBLISHING_MODE);
+        String timeoutString = eventAdapterConfiguration.getStaticProperties()
+                .get(ADAPTER_CONF_WSO2EVENT_PROP_PUBLISH_TIMEOUT_MS);
 
         if (publishingMode.equalsIgnoreCase(ADAPTER_PUBLISHING_MODE_BLOCKING)) {
             isBlockingMode = true;
@@ -86,28 +96,33 @@ public final class WSO2EventAdapter implements OutputEventAdapter {
                 throwRuntimeException(receiverUrl, authUrl, protocol, userName, e);
             }
         }
-        if (authUrl != null && authUrl.length() > 0) {
-            try {
+
+        try {
+            if (authUrl != null && authUrl.length() > 0) {
                 dataPublisher = new DataPublisher(protocol, receiverUrl, authUrl, userName, password);
-            } catch (DataEndpointAgentConfigurationException e) {
-                throwRuntimeException(receiverUrl, authUrl, protocol, userName, e);
-            } catch (DataEndpointException e) {
-                throwConnectionException(receiverUrl, authUrl, protocol, userName, e);
-            } catch (DataEndpointConfigurationException e) {
-                throwRuntimeException(receiverUrl, authUrl, protocol, userName, e);
-            } catch (DataEndpointAuthenticationException e) {
-                throwConnectionException(receiverUrl, authUrl, protocol, userName, e);
-            } catch (TransportException e) {
-                throwConnectionException(receiverUrl, authUrl, protocol, userName, e);
+
+            } else {
+                dataPublisher = new DataPublisher(protocol, receiverUrl, userName, password);
             }
+        } catch (DataEndpointAgentConfigurationException e) {
+            throwRuntimeException(receiverUrl, authUrl, protocol, userName, e);
+        } catch (DataEndpointException e) {
+            throwConnectionException(receiverUrl, authUrl, protocol, userName, e);
+        } catch (DataEndpointConfigurationException e) {
+            throwRuntimeException(receiverUrl, authUrl, protocol, userName, e);
+        } catch (DataEndpointAuthenticationException e) {
+            throwConnectionException(receiverUrl, authUrl, protocol, userName, e);
+        } catch (TransportException e) {
+            throwConnectionException(receiverUrl, authUrl, protocol, userName, e);
         }
+
     }
 
     @Override
     public void publish(Object message, Map<String, String> dynamicProperties) {
-        Event event = (Event) ((Object[]) message)[0];
-        StreamDefinition streamDefinition = (StreamDefinition) ((Object[]) message)[1];
-        event.setStreamId(streamDefinition.getStreamId());
+        Event event = (Event) (message);
+        //StreamDefinition streamDefinition = (StreamDefinition) ((Object[]) message)[1];
+        event.setStreamId(streamId);
 
         if (isBlockingMode) {
             dataPublisher.publish(event);
@@ -122,10 +137,14 @@ public final class WSO2EventAdapter implements OutputEventAdapter {
             try {
                 dataPublisher.shutdown();
             } catch (DataEndpointException e) {
-                String userName = eventAdapterConfiguration.getStaticProperties().get(ADAPTER_CONF_WSO2EVENT_PROP_USER_NAME);
-                String authUrl = eventAdapterConfiguration.getStaticProperties().get(ADAPTER_CONF_WSO2EVENT_PROP_AUTHENTICATOR_URL);
-                String receiverUrl = eventAdapterConfiguration.getStaticProperties().get(ADAPTER_CONF_WSO2EVENT_PROP_RECEIVER_URL);
-                String protocol = eventAdapterConfiguration.getStaticProperties().get(ADAPTER_CONF_WSO2EVENT_PROP_PROTOCOL);
+                String userName = eventAdapterConfiguration.getStaticProperties()
+                        .get(ADAPTER_CONF_WSO2EVENT_PROP_USER_NAME);
+                String authUrl = eventAdapterConfiguration.getStaticProperties()
+                        .get(ADAPTER_CONF_WSO2EVENT_PROP_AUTHENTICATOR_URL);
+                String receiverUrl = eventAdapterConfiguration.getStaticProperties()
+                        .get(ADAPTER_CONF_WSO2EVENT_PROP_RECEIVER_URL);
+                String protocol = eventAdapterConfiguration.getStaticProperties()
+                        .get(ADAPTER_CONF_WSO2EVENT_PROP_PROTOCOL);
                 logException("Error in shutting down the data publisher", receiverUrl, authUrl, protocol, userName, e);
             }
         }
@@ -136,20 +155,27 @@ public final class WSO2EventAdapter implements OutputEventAdapter {
 
     }
 
-    private void throwRuntimeException(String receiverUrl, String authUrl, String protocol, String userName, Exception e) {
-        throw new OutputEventAdapterRuntimeException("Error in data-bridge config for adaptor " + eventAdapterConfiguration.getName()
-                + " with the receiverUrl:" + receiverUrl + " authUrl:" + authUrl + " protocol:" + protocol + " and userName:" + userName + "," + e.getMessage(), e);
+    private void throwRuntimeException(String receiverUrl, String authUrl, String protocol, String userName,
+            Exception e) {
+        throw new OutputEventAdapterRuntimeException(
+                "Error in data-bridge config for adaptor " + eventAdapterConfiguration.getName()
+                        + " with the receiverUrl:" + receiverUrl + " authUrl:" + authUrl + " protocol:" + protocol
+                        + " and userName:" + userName + "," + e.getMessage(), e);
     }
 
-    private void logException(String message, String receiverUrl, String authUrl, String protocol, String userName, Exception e) {
+    private void logException(String message, String receiverUrl, String authUrl, String protocol, String userName,
+            Exception e) {
         log.error(message + " for adaptor " + eventAdapterConfiguration.getName()
-                + " with the receiverUrl:" + receiverUrl + " authUrl:" + authUrl + " protocol:" + protocol + " and userName:" + userName + "," + e.getMessage(), e);
+                + " with the receiverUrl:" + receiverUrl + " authUrl:" + authUrl + " protocol:" + protocol
+                + " and userName:" + userName + "," + e.getMessage(), e);
     }
 
-    private void throwConnectionException(String receiverUrl, String authUrl, String protocol, String userName, Exception e) {
-        throw new ConnectionUnavailableException("Connection not available for adaptor " + eventAdapterConfiguration.getName()
-                + " with the receiverUrl:" + receiverUrl + " authUrl:" + authUrl + " protocol:" + protocol + " and userName:" + userName + "," + e.getMessage(), e);
+    private void throwConnectionException(String receiverUrl, String authUrl, String protocol, String userName,
+            Exception e) {
+        throw new ConnectionUnavailableException(
+                "Connection not available for adaptor " + eventAdapterConfiguration.getName()
+                        + " with the receiverUrl:" + receiverUrl + " authUrl:" + authUrl + " protocol:" + protocol
+                        + " and userName:" + userName + "," + e.getMessage(), e);
     }
-
 
 }

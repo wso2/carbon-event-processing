@@ -32,33 +32,30 @@ public interface UIOutputCallbackControllerService {
     /**
      * Used to subscribe the session id and stream id for later web socket connectivity
      *
-     * @param tenantId - Tenant id of the user.
-     * @param streamname - Stream name which user register to.
+     * @param streamName - Stream name which user register to.
      * @param version - Stream version which user uses.
      * @param session - Session which user registered.
      * @return
      */
-    public void subscribeWebsocket(int tenantId, String streamname, String version, Session session);
+    public void subscribeWebsocket(String streamName, String version, Session session);
 
     /**
      * Used to return events per streamId
      *
-     * @param tenantId - Tenant id of the user.
-     * @param streamname - Stream name which user register to.
+     * @param streamName - Stream name which user register to.
      * @param version - Stream version which user uses.
      * @param session - Session which user subscribed to.
      * @return the events list.
      */
-    public void unsubscribeWebsocket(int tenantId, String streamname, String version, Session session);
+    public void unsubscribeWebsocket(String streamName, String version, Session session);
 
     /**
      * Used to return events per http GET request.
      *
-     * @param tenantId - Tenant id of the user.
      * @param streamName - Stream name which user register to.
      * @param version - Stream version which user uses.
      * @param lastUpdatedTime - Last dispatched events time.
      * @return the events list.
      */
-    public JsonObject retrieveEvents(int tenantId, String streamName, String version, String lastUpdatedTime);
+    public JsonObject retrieveEvents(String streamName, String version, String lastUpdatedTime);
 }

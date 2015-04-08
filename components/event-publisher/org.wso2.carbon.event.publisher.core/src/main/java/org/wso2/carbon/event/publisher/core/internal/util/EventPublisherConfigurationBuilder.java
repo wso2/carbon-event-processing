@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2005 - 2014, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
+ * Copyright (c) 2015, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy
@@ -15,11 +15,14 @@
 package org.wso2.carbon.event.publisher.core.internal.util;
 
 import org.apache.axiom.om.OMAbstractFactory;
+import org.apache.axiom.om.OMAttribute;
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMFactory;
 import org.apache.axiom.om.util.AXIOMUtil;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.wso2.carbon.core.util.CryptoException;
+import org.wso2.carbon.core.util.CryptoUtil;
 import org.wso2.carbon.databridge.commons.StreamDefinition;
 import org.wso2.carbon.event.output.adapter.core.MessageType;
 import org.wso2.carbon.event.output.adapter.core.OutputEventAdapterConfiguration;
@@ -162,6 +165,19 @@ public class EventPublisherConfigurationBuilder {
             OMElement toElementProperty = (OMElement) toElementPropertyIterator.next();
             String propertyName = toElementProperty.getAttributeValue(new QName(EventPublisherConstants.EF_ATTR_NAME));
             String propertyValue = toElementProperty.getText();
+
+            OMAttribute encryptedAttribute = toElementProperty.getAttribute(new QName(EventPublisherConstants.EF_ATTR_ENCRYPTED));
+            if (encryptedAttribute != null) {
+                if ("true".equals(encryptedAttribute.getAttributeValue())) {
+                    try {
+                        propertyValue = new String(CryptoUtil.getDefaultCryptoUtil().base64DecodeAndDecrypt(propertyValue));
+                    } catch (CryptoException e) {
+                        log.error("Unable to decrypt the encrypted field: " + propertyName + " in adaptor: " + outputEventAdapterConfiguration.getName());
+                        propertyValue = "";   // resetting the password if decryption is not possible.
+                    }
+                }
+            }
+
             if (outputEventAdapterConfiguration.getStaticProperties().containsKey(propertyName)) {
                 outputEventAdapterConfiguration.getStaticProperties().put(propertyName, propertyValue);
             } else if (dynamicProperties.containsKey(propertyName)) {

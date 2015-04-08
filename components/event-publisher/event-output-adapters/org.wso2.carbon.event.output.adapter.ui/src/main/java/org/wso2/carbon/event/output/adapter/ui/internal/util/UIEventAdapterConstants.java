@@ -24,6 +24,9 @@ package org.wso2.carbon.event.output.adapter.ui.internal.util;
  */
 public class UIEventAdapterConstants {
 
+    private UIEventAdapterConstants() {
+    }
+
     public static final String ADAPTER_TYPE_UI = "ui";
     public static final String ADAPTER_UI_OUTPUT_STREAM_NAME = "output.event.stream.name";
     public static final String ADAPTER_UI_OUTPUT_STREAM_VERSION = "output.event.stream.version";
@@ -32,4 +35,5 @@ public class UIEventAdapterConstants {
     public static final int EVENTS_QUEUE_SIZE = 30;
     public static final int INDEX_ZERO = 0;
     public static final int INDEX_ONE = 1;
+    public static final int INDEX_TWO = 2;
 }
