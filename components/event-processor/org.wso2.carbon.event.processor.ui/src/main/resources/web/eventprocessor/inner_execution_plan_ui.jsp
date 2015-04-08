@@ -54,7 +54,7 @@
 <script>
     var init = function () {
 
-        var mime = MIME_TYPE_SIDDHI_SQL;
+        var mime = MIME_TYPE_SIDDHI_QL;
 
         // get mime type
         if (window.location.href.indexOf('mime=') > -1) {

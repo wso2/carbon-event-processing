@@ -37,7 +37,7 @@
 
     function getKeywords(editor) {
         var mode = editor.doc.modeOption;
-        if (mode === "sql") mode = MIME_TYPE_SIDDHI_SQL;
+        if (mode === "sql") mode = MIME_TYPE_SIDDHI_QL;
         return CodeMirror.resolveMode(mode).allSqlSuggestions;
     }
 
@@ -262,11 +262,8 @@
 
         var anyWordSuggestions = getAnyWordSuggestions(editor, options);
 
-        //concatenating sqlSuggestions and anyWordSuggestions, giving both SQL-based and any-word based suggestions.
-        var allSuggestions = sqlSuggestions.concat(anyWordSuggestions);
-        allSuggestions.sort();
-
-        var filteredSuggestions = allSuggestions.filter(function(item, pos, self) {
+        var allSuggestions = anyWordSuggestions.concat(sqlSuggestions);
+        var filteredSuggestions = allSuggestions.filter(function (item, pos, self) {
             return self.indexOf(item) == pos;
         })
 

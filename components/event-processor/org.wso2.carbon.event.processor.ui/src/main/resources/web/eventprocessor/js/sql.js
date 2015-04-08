@@ -236,7 +236,7 @@ CodeMirror.defineMode("sql", function (config, parserConfig) {
     }
 
     // A generic SQL Mode. It's not a standard, it just try to support what is generally supported
-    CodeMirror.defineMIME(MIME_TYPE_SIDDHI_SQL, {
+    CodeMirror.defineMIME(MIME_TYPE_SIDDHI_QL, {
         name:"sql",
         keywords:set(sqlKeywords),
         builtin:set(builtIn),
