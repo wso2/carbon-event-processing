@@ -161,7 +161,7 @@ public class EventSimulatorDataSourceInfo {
                         boolean emptyTable;
 
                         emptyTable = true;
-                        getColumnsDataTypeQuery = executionInfo.getPreparedCheckTableColomnsDataTypeStatement().replace("$tableName",tableName);
+                        getColumnsDataTypeQuery = executionInfo.getPreparedCheckTableColomnsDataTypeStatement();
                         //to check columns and its data type matching
                         ResultSet rs = stmt.executeQuery(getColumnsDataTypeQuery);
                         while(rs.next()){
@@ -186,12 +186,17 @@ public class EventSimulatorDataSourceInfo {
 
                         }
 
+                        rs = stmt.executeQuery(executionInfo.getPreparedSelectStatement());
+                        if(rs.next()){
+                            emptyTable = false;
+                        }
+
                         if(columndataTypeCorrectCount < dataSourceColumnsAndTypes.length()){
                             log.error(tableName + EventSimulatorDataSourceConstants.DATA_TYPES_DOESNT_MATCH);
                             throw new AxisFault(tableName + EventSimulatorDataSourceConstants.DATA_TYPES_DOESNT_MATCH);
                         }
 
-                        if(!emptyTable){
+                        if(emptyTable){
                             log.error(tableName + EventSimulatorDataSourceConstants.NO_DATA_IN_TABLE);
                             throw new AxisFault(tableName + EventSimulatorDataSourceConstants.NO_DATA_IN_TABLE);
                         }
