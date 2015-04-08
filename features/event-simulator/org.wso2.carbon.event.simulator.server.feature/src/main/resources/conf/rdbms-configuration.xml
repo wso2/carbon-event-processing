@@ -36,7 +36,7 @@
 
 -->
 
-<adaptorConfiguration>
+<rdbmsConfiguration>
     <mappings>
         <mapping>
             <elements>
@@ -87,4 +87,4 @@
             </elements>
         </mapping>
     </mappings>
-</adaptorConfiguration>
+</rdbmsConfiguration>

@@ -21,7 +21,7 @@ package org.wso2.carbon.event.simulator.admin.internal.util;
 public final class EventSimulatorDataSourceConstants {
 
     public static final String ADAPTOR_GENERIC_RDBMS_FILE_SPECIFIC_PATH = "cep/";
-    public static final String ADAPTOR_GENERIC_RDBMS_FILE_NAME = "rdbmsConfiguration.xml";
+    public static final String ADAPTOR_GENERIC_RDBMS_FILE_NAME = "rdbms-configuration.xml";
     public static final String ADAPTOR_GENERIC_RDBMS_ATTRIBUTE_TABLE_NAME = "$TABLE_NAME";
     public static final String ADAPTOR_GENERIC_RDBMS_ATTRIBUTE_COLUMNS = "$COLUMNS";
 
