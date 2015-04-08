@@ -1,4 +1,4 @@
 instructions.configure = \
 org.eclipse.equinox.p2.touchpoint.natives.mkdir(path:${installFolder}/../../conf/);\
 org.eclipse.equinox.p2.touchpoint.natives.mkdir(path:${installFolder}/../../conf/cep);\
-org.eclipse.equinox.p2.touchpoint.natives.copy(source:${installFolder}/../features/org.wso2.carbon.event.simulator.server_${feature.version}/conf/rdbms-configuration.xml,target:${installFolder}/../../conf/cep/rdbms-configuration.xml,overwrite:true);
+org.eclipse.equinox.p2.touchpoint.natives.copy(source:${installFolder}/../features/org.wso2.carbon.event.simulator.server_${feature.version}/conf/rdbmsConfiguration.xml,target:${installFolder}/../../conf/cep/rdbmsConfiguration.xml,overwrite:true);
