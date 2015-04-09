@@ -38,6 +38,8 @@
 <link rel="stylesheet" href="../eventprocessor/css/event-processor.css"/>
 <script src="../eventprocessor/js/codemirror.js"></script>
 <script type="text/javascript" src="../eventprocessor/js/show-hint.js"></script>
+<script type="text/javascript" src="../eventprocessor/js/annotation-hint.js"></script>
+<script type="text/javascript" src="js/any-word-hint.js"></script>
 <script type="text/javascript" src="../eventprocessor/js/sql-hint.js"></script>
 <script src="../eventprocessor/js/sql.js"></script>
 
@@ -52,7 +54,7 @@
 <script>
     var init = function () {
 
-        var mime = 'text/siddhi-sql-db';
+        var mime = MIME_TYPE_SIDDHI_QL;
 
         // get mime type
         if (window.location.href.indexOf('mime=') > -1) {

@@ -39,6 +39,7 @@
 <script type="text/javascript" src="../yui/build/yahoo-dom-event/yahoo-dom-event.js"></script>
 <script type="text/javascript" src="../yui/build/connection/connection-min.js"></script>
 <script type="text/javascript" src="../eventprocessor/js/execution_plans.js"></script>
+<script type="text/javascript" src="../eventprocessor/js/eventprocessor_constants.js"></script>
 
 <link type="text/css" href="../resources/css/registry.css" rel="stylesheet"/>
 
@@ -76,7 +77,7 @@
 
 <script>
     var init = function () {
-        var mime = 'text/siddhi-sql-db';
+        var mime = MIME_TYPE_SIDDHI_QL;
 
         // get mime type
         if (window.location.href.indexOf('mime=') > -1) {

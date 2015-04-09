@@ -16,21 +16,6 @@
  * under the License.
  */
 
-function getAnnotationHints(cm, options) {
-    var cur = cm.getCursor();
-    var result = ['Plan:name(\'\')', 'Plan:description(\'\')', 'Plan:trace(\'\')', 'Plan:statistics(\'\')', 'Import(\'\')', 'Export(\'\')'];
-    return {
-        list: result,
-        from: cur,
-        to: cur
-    };
-}
-
-function insertStr(cm, pos, str, option_str) {
-    cm.replaceRange(str, pos, null, option_str);
-    cm.setCursor({line:pos.line, ch:pos.ch + str.length});
-}
-
 (function(mod) {
     if (typeof exports == "object" && typeof module == "object") // CommonJS
         mod(require("codemirror"), require("sql"));
@@ -52,7 +37,7 @@ function insertStr(cm, pos, str, option_str) {
 
     function getKeywords(editor) {
         var mode = editor.doc.modeOption;
-        if (mode === "sql") mode = "text/siddhi-sql-db";
+        if (mode === "sql") mode = MIME_TYPE_SIDDHI_QL;
         return CodeMirror.resolveMode(mode).allSqlSuggestions;
     }
 
@@ -232,8 +217,9 @@ function insertStr(cm, pos, str, option_str) {
         return table;
     }
 
-    var WORD = /[\w$]+/, RANGE = 500;
-
+    /** This helper returns both
+     *      SQL suggestions (as in original sql-hint.js) and
+     *      any-word suggestions (which is a customization)   */
     CodeMirror.registerHelper("hint", "sql", function(editor, options) {
 
         //Making the SQL suggestions list as 'sqlSuggestions'
@@ -274,33 +260,13 @@ function insertStr(cm, pos, str, option_str) {
             addMatches(sqlSuggestions, search, keywords, function(w) {return w;});
         }
 
-        //making the anyword suggestions as 'anyWordSuggestions'
-        var word = options && options.word || WORD;
-        var range = options && options.range || RANGE;
-        var cur = editor.getCursor(), curLine = editor.getLine(cur.line);
-        var end = cur.ch, start = end;
-        while (start && word.test(curLine.charAt(start - 1))) --start;
-        var curWord = start != end && curLine.slice(start, end);
+        var anyWordSuggestions = getAnyWordSuggestions(editor, options);
 
-        var anyWordSuggestions = [], seen = {};
-        var re = new RegExp(word.source, "g");
-        for (var dir = -1; dir <= 1; dir += 2) {
-            var line = cur.line, endLine = Math.min(Math.max(line + dir * range, editor.firstLine()), editor.lastLine()) + dir;
-            for (; line != endLine; line += dir) {
-                var text = editor.getLine(line), m;
-                while (m = re.exec(text)) {
-                    if (line == cur.line && m[0] === curWord) continue;
-                    if ((!curWord || m[0].lastIndexOf(curWord, 0) == 0) && !Object.prototype.hasOwnProperty.call(seen, m[0])) {
-                        seen[m[0]] = true;
-                        anyWordSuggestions.push(m[0]);
-                    }
-                }
-            }
-        }
+        var allSuggestions = anyWordSuggestions.concat(sqlSuggestions);
+        var filteredSuggestions = allSuggestions.filter(function (item, pos, self) {
+            return self.indexOf(item) == pos;
+        })
 
-        //finally concatenating sqlSuggestions and anyWordSuggestions, giving both SQL-based and any-word based suggestions.
-        var allSuggestions = sqlSuggestions.concat(anyWordSuggestions);
-
-        return {list: allSuggestions, from: Pos(cur.line, start), to: Pos(cur.line, end)};
+        return {list: filteredSuggestions, from: Pos(cur.line, start), to: Pos(cur.line, end)};
     });
 });
