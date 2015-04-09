@@ -324,6 +324,7 @@ public class RDBMSEventAdapter implements OutputEventAdapter {
                     stmt = con.prepareStatement(executionInfo.getPreparedUpdateStatement());
                     populateStatement(map, stmt, executionInfo.getUpdateQueryColumnOrder());
                     int updatedRows = stmt.executeUpdate();
+                    con.setAutoCommit(false);
                     con.commit();
 
                     if (stmt != null) {
@@ -339,6 +340,7 @@ public class RDBMSEventAdapter implements OutputEventAdapter {
                     stmt = con.prepareStatement(executionInfo.getPreparedInsertStatement());
                     populateStatement(map, stmt, executionInfo.getInsertQueryColumnOrder());
                     stmt.executeUpdate();
+                    con.setAutoCommit(false);
                     con.commit();
                 }
 
@@ -424,6 +426,7 @@ public class RDBMSEventAdapter implements OutputEventAdapter {
             try {
                 if (!tableExists) {
                     stmt.executeUpdate(executionInfo.getPreparedCreateTableStatement());
+                    con.setAutoCommit(false);
                     con.commit();
                     executionInfo.setTableExist(true);
                 }
