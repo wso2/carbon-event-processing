@@ -32,11 +32,16 @@
         <property key="selectAllColumnsDataTypeInTable">SELECT COLUMN_NAME, DATA_TYPE FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = '$TABLE_NAME'</property>
         <property key="selectFromTable">SELECT $COLUMNS FROM $TABLE_NAME</property>
         <property key="oracle.string">varchar2(255)</property>
-        <property key="oracle.long">CLOB</property>
-        <property key="oracle.double">BINARY_DOUBLE</property>
+        <property key="oracle.integer">NUMBER(10)</property>
+        <property key="oracle.long">NUMBER(19)</property>
+        <property key="oracle.double">NUMBER(19,4)</property>
+        <property key="oracle.float">NUMBER(19,4)</property>
         <property key="oracle.isTableExist">SELECT * FROM $TABLE_NAME WHERE ROWNUM = 1</property>
         <property key="oracle.selectAllColumnsDataTypeInTable">SELECT COLUMN_NAME, DATA_TYPE FROM USER_TAB_COLS WHERE TABLE_NAME = '$TABLE_NAME'</property>
         <property key="mssql.string">varchar2(255)</property>
+        <property key="mssql.long">NUMERIC(19)</property>
+        <property key="mssql.float">FLOAT(16)</property>
+        <property key="mssql.integer">INTEGER</property>
         <property key="mssql.isTableExist">SELECT TOP 1 * FROM $TABLE_NAME</property>
         <property key="mssql.selectAllColumnsDataTypeInTable">SELECT COLUMN_NAME, DATA_TYPE FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = '$TABLE_NAME'</property>
         <property key="h2.integer">varchar2(255)</property>

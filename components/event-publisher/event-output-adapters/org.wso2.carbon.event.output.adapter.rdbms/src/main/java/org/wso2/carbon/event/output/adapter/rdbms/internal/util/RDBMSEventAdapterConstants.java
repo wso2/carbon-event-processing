@@ -23,6 +23,8 @@ package org.wso2.carbon.event.output.adapter.rdbms.internal.util;
 
 public final class RDBMSEventAdapterConstants {
 
+    private RDBMSEventAdapterConstants() {
+    }
     public static final String ADAPTER_TYPE_GENERIC_RDBMS = "rdbms";
     public static final String ADAPTER_GENERIC_RDBMS_DATASOURCE_NAME = "datasource.name";
     public static final String ADAPTER_GENERIC_RDBMS_TABLE_NAME = "table.name";
