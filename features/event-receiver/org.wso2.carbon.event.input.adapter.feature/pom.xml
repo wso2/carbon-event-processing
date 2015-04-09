@@ -133,36 +133,36 @@
                                     org.wso2.carbon.event-processing:org.wso2.carbon.event.input.adapter.server.feature:${carbon.event.processing.version}
                                 </includedFeatureDef>
 
-                                <featureArtifactDef>
+                                <includedFeatureDef>
                                     org.wso2.carbon.event-processing:org.wso2.carbon.event.input.adapter.http.server.feature:${carbon.event.processing.version}
-                                </featureArtifactDef>
-                                <featureArtifactDef>
+                                </includedFeatureDef>
+                                <includedFeatureDef>
                                     org.wso2.carbon.event-processing:org.wso2.carbon.event.input.adapter.soap.server.feature:${carbon.event.processing.version}
-                                </featureArtifactDef>
-                                <featureArtifactDef>
+                                </includedFeatureDef>
+                                <includedFeatureDef>
                                     org.wso2.carbon.event-processing:org.wso2.carbon.event.input.adapter.websocket.server.feature:${carbon.event.processing.version}
-                                </featureArtifactDef>
-                                <featureArtifactDef>
+                                </includedFeatureDef>
+                                <includedFeatureDef>
                                     org.wso2.carbon.event-processing:org.wso2.carbon.event.input.adapter.websocket.local.server.feature:${carbon.event.processing.version}
-                                </featureArtifactDef>
-                                <featureArtifactDef>
+                                </includedFeatureDef>
+                                <includedFeatureDef>
                                     org.wso2.carbon.event-processing:org.wso2.carbon.event.input.adapter.file.server.feature:${carbon.event.processing.version}
-                                </featureArtifactDef>
-                                <featureArtifactDef>
+                                </includedFeatureDef>
+                                <includedFeatureDef>
                                     org.wso2.carbon.event-processing:org.wso2.carbon.event.input.adapter.email.server.feature:${carbon.event.processing.version}
-                                </featureArtifactDef>
-                                <featureArtifactDef>
+                                </includedFeatureDef>
+                                <includedFeatureDef>
                                     org.wso2.carbon.event-processing:org.wso2.carbon.event.input.adapter.jms.server.feature:${carbon.event.processing.version}
-                                </featureArtifactDef>
-                                <featureArtifactDef>
+                                </includedFeatureDef>
+                                <includedFeatureDef>
                                     org.wso2.carbon.event-processing:org.wso2.carbon.event.input.adapter.mqtt.server.feature:${carbon.event.processing.version}
-                                </featureArtifactDef>
-                                <featureArtifactDef>
+                                </includedFeatureDef>
+                                <includedFeatureDef>
                                     org.wso2.carbon.event-processing:org.wso2.carbon.event.input.adapter.kafka.server.feature:${carbon.event.processing.version}
-                                </featureArtifactDef>
-                                <featureArtifactDef>
+                                </includedFeatureDef>
+                                <includedFeatureDef>
                                     org.wso2.carbon.event-processing:org.wso2.carbon.event.input.adapter.wso2event.server.feature:${carbon.event.processing.version}
-                                </featureArtifactDef>
+                                </includedFeatureDef>
 
                             </includedFeatures>
 
