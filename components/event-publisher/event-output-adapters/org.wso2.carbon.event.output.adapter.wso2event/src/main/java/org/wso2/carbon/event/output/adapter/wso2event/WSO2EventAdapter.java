@@ -102,7 +102,7 @@ public final class WSO2EventAdapter implements OutputEventAdapter {
                 dataPublisher = new DataPublisher(protocol, receiverUrl, authUrl, userName, password);
 
             } else {
-                dataPublisher = new DataPublisher(protocol, receiverUrl, userName, password);
+                dataPublisher = new DataPublisher(protocol, receiverUrl, null, userName, password);
             }
         } catch (DataEndpointAgentConfigurationException e) {
             throwRuntimeException(receiverUrl, authUrl, protocol, userName, e);
