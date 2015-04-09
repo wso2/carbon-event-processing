@@ -82,7 +82,7 @@ function createExportedStreamDefinition(element) {
         var valueOf = document.getElementById("exportedStreamValueOf").value;
 
         if (valueOf == "") {
-            CARBON.showErrorDialog("Please fill the 'Value of' field with a valid stream name.");
+            CARBON.showErrorDialog("Please fill the 'Value of' field with a valid stream name. It cannot be empty.");
             return;
         }
 
