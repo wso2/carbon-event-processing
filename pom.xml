@@ -41,7 +41,6 @@
         <module>components/event-simulator</module>
         <module>components/event-flow</module>
         <module>components/event-monitor</module>
-        <module>components/application-deployer</module>
         <!--<module>features/adaptors</module>-->
         <module>features/event-processor</module>
         <module>features/event-publisher</module>
@@ -49,7 +48,6 @@
         <module>features/event-monitor</module>
         <module>features/event-simulator</module>
         <module>features/event-flow</module>
-        <module>features/application-deployer</module>
     </modules>
 
     <dependencyManagement>
@@ -567,6 +565,11 @@
                 <version>${carbon.analytics.common.version}</version>
             </dependency>
             <dependency>
+                <groupId>org.wso2.carbon.analytics-common</groupId>
+                <artifactId>org.wso2.carbon.event.application.deployer</artifactId>
+                <version>${carbon.analytics.common.version}</version>
+            </dependency>
+            <dependency>
                 <groupId>org.wso2.carbon.event-processing</groupId>
                 <artifactId>org.wso2.carbon.event.tracer.stub</artifactId>
                 <version>${carbon.event.processing.version}</version>
@@ -591,12 +594,6 @@
                 <artifactId>org.wso2.carbon.event.processor.storm</artifactId>
                 <version>${carbon.event.processing.version}</version>
             </dependency>
-            <dependency>
-                <groupId>org.wso2.carbon.event-processing</groupId>
-                <artifactId>org.wso2.carbon.event.processing.application.deployer</artifactId>
-                <version>${carbon.event.processing.version}</version>
-            </dependency>
-
             <dependency>
                 <groupId>org.wso2.carbon.event-processing</groupId>
                 <artifactId>org.wso2.carbon.event.output.adapter.core</artifactId>

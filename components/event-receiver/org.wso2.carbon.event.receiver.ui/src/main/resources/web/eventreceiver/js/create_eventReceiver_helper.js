@@ -564,7 +564,6 @@ function addEventReceiverViaPopup(form, toStreamId, redirectPage) {
             CARBON.showErrorDialog("Mapping parameters cannot be empty.");
             return;
         } else {
-            alert("property string1: " + propertyString);
             new Ajax.Request('../eventreceiver/add_event_receiver_ajaxprocessor.jsp', {
                 method: 'POST',
                 asynchronous: false,
@@ -606,7 +605,6 @@ function addEventReceiverViaPopup(form, toStreamId, redirectPage) {
             CARBON.showErrorDialog("Mapping parameters cannot be empty.");
             return;
         } else {
-            alert("property string2: " + propertyString);
             new Ajax.Request('../eventreceiver/add_event_receiver_ajaxprocessor.jsp', {
                 method: 'POST',
                 asynchronous: false,
@@ -660,7 +658,6 @@ function addEventReceiverViaPopup(form, toStreamId, redirectPage) {
             CARBON.showErrorDialog("Mapping parameters cannot be empty.");
             return;
         } else {
-            alert("property string3: " + propertyString);
             new Ajax.Request('../eventreceiver/add_event_receiver_ajaxprocessor.jsp', {
                 method: 'POST',
                 asynchronous: false,
@@ -706,7 +703,6 @@ function addEventReceiverViaPopup(form, toStreamId, redirectPage) {
             return;
         }
         else {
-            alert("property string4: " + propertyString);
             new Ajax.Request('../eventreceiver/add_event_receiver_ajaxprocessor.jsp', {
                 method: 'POST',
                 asynchronous: false,
@@ -749,7 +745,6 @@ function addEventReceiverViaPopup(form, toStreamId, redirectPage) {
             CARBON.showErrorDialog("Mapping parameters cannot be empty.");
             return;
         } else {
-            alert("property string5: " + propertyString);
             new Ajax.Request('../eventreceiver/add_event_receiver_ajaxprocessor.jsp', {
                 method: 'POST',
                 asynchronous: false,
