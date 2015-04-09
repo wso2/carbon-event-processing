@@ -34,8 +34,6 @@ public final class RDBMSEventAdapterConstants {
     public static final String ADAPTER_GENERIC_RDBMS_EXECUTION_MODE_INSERT = "execution.mode.insert";
     public static final String ADAPTER_GENERIC_RDBMS_UPDATE_KEYS = "update.keys";
     public static final String ADAPTER_GENERIC_RDBMS_UPDATE_KEYS_HINT = "update.keys.hint";
-    public static final String ADAPTER_GENERIC_RDBMS_FILE_SPECIFIC_PATH = "adaptor/";
-    public static final String ADAPTER_GENERIC_RDBMS_FILE_NAME = "rdbms-output-adaptor.xml";
     public static final String ADAPTER_GENERIC_RDBMS_ATTRIBUTE_TABLE_NAME = "$TABLE_NAME";
     public static final String ADAPTER_GENERIC_RDBMS_ATTRIBUTE_COLUMN_TYPES = "$COLUMN_TYPES";
     public static final String ADAPTER_GENERIC_RDBMS_ATTRIBUTE_COLUMNS = "$COLUMNS";
