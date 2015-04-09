@@ -110,6 +110,13 @@
 
         <dependency>
             <groupId>org.wso2.carbon.event-processing</groupId>
+            <artifactId>org.wso2.carbon.event.output.adapter.ui.server.feature</artifactId>
+            <type>zip</type>
+            <version>${carbon.event.processing.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.wso2.carbon.event-processing</groupId>
             <artifactId>org.wso2.carbon.event.output.adapter.wso2event.server.feature</artifactId>
             <type>zip</type>
             <version>${carbon.event.processing.version}</version>
@@ -162,45 +169,48 @@
                                 </includedFeatureDef>
 
 
-                                <featureArtifactDef>
+                                <includedFeatureDef>
                                     org.wso2.carbon.event-processing:org.wso2.carbon.event.output.adapter.email.server.feature:${carbon.event.processing.version}
-                                </featureArtifactDef>
-                                <featureArtifactDef>
+                                </includedFeatureDef>
+                                <includedFeatureDef>
                                     org.wso2.carbon.event-processing:org.wso2.carbon.event.output.adapter.http.server.feature:${carbon.event.processing.version}
-                                </featureArtifactDef>
-                                <featureArtifactDef>
+                                </includedFeatureDef>
+                                <includedFeatureDef>
                                     org.wso2.carbon.event-processing:org.wso2.carbon.event.output.adapter.jms.server.feature:${carbon.event.processing.version}
-                                </featureArtifactDef>
-                                <featureArtifactDef>
+                                </includedFeatureDef>
+                                <includedFeatureDef>
                                     org.wso2.carbon.event-processing:org.wso2.carbon.event.output.adapter.kafka.server.feature:${carbon.event.processing.version}
-                                </featureArtifactDef>
-                                <featureArtifactDef>
+                                </includedFeatureDef>
+                                <includedFeatureDef>
                                     org.wso2.carbon.event-processing:org.wso2.carbon.event.output.adapter.logger.server.feature:${carbon.event.processing.version}
-                                </featureArtifactDef>
-                                <featureArtifactDef>
+                                </includedFeatureDef>
+                                <includedFeatureDef>
                                     org.wso2.carbon.event-processing:org.wso2.carbon.event.output.adapter.rdbms.server.feature:${carbon.event.processing.version}
-                                </featureArtifactDef>
-                                <featureArtifactDef>
+                                </includedFeatureDef>
+                                <includedFeatureDef>
                                     org.wso2.carbon.event-processing:org.wso2.carbon.event.output.adapter.soap.server.feature:${carbon.event.processing.version}
-                                </featureArtifactDef>
-                                <featureArtifactDef>
+                                </includedFeatureDef>
+                                <includedFeatureDef>
                                     org.wso2.carbon.event-processing:org.wso2.carbon.event.output.adapter.websocket.server.feature:${carbon.event.processing.version}
-                                </featureArtifactDef>
-                                <featureArtifactDef>
+                                </includedFeatureDef>
+                                <includedFeatureDef>
                                     org.wso2.carbon.event-processing:org.wso2.carbon.event.output.adapter.websocket.local.server.feature:${carbon.event.processing.version}
-                                </featureArtifactDef>
-                                <featureArtifactDef>
+                                </includedFeatureDef>
+                                <includedFeatureDef>
+                                    org.wso2.carbon.event-processing:org.wso2.carbon.event.output.adapter.ui.server.feature:${carbon.event.processing.version}
+                                </includedFeatureDef>
+                                <includedFeatureDef>
                                     org.wso2.carbon.event-processing:org.wso2.carbon.event.output.adapter.wso2event.server.feature:${carbon.event.processing.version}
-                                </featureArtifactDef>
-                                <featureArtifactDef>
+                                </includedFeatureDef>
+                                <includedFeatureDef>
                                     org.wso2.carbon.event-processing:org.wso2.carbon.event.output.adapter.mqtt.server.feature:${carbon.event.processing.version}
-                                </featureArtifactDef>
-                                <featureArtifactDef>
+                                </includedFeatureDef>
+                                <includedFeatureDef>
                                     org.wso2.carbon.event-processing:org.wso2.carbon.event.output.adapter.sms.server.feature:${carbon.event.processing.version}
-                                </featureArtifactDef>
-                                <featureArtifactDef>
+                                </includedFeatureDef>
+                                <includedFeatureDef>
                                     org.wso2.carbon.event-processing:org.wso2.carbon.event.output.adapter.cassandra.server.feature:${carbon.event.processing.version}
-                                </featureArtifactDef>
+                                </includedFeatureDef>
                             </includedFeatures>
 
 

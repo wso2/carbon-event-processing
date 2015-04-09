@@ -16,17 +16,17 @@
  * under the License.
  */
 
-CodeMirror.defineMode("sql", function(config, parserConfig) {
+CodeMirror.defineMode("sql", function (config, parserConfig) {
     "use strict";
 
-    var client         = parserConfig.client || {},
-        atoms          = parserConfig.atoms || {"false": true, "true": true, "null": true},
-        builtin        = parserConfig.builtin || {},
-        keywords       = parserConfig.keywords || {},
-        operatorChars  = parserConfig.operatorChars || /^[*+\-%<>!=&|~^]/,
-        support        = parserConfig.support || {},
-        hooks          = parserConfig.hooks || {},
-        dateSQL        = parserConfig.dateSQL || {"date" : true, "time" : true, "timestamp" : true};
+    var client = parserConfig.client || {},
+        atoms = parserConfig.atoms || {"false":true, "true":true, "null":true},
+        builtin = parserConfig.builtin || {},
+        keywords = parserConfig.keywords || {},
+        operatorChars = parserConfig.operatorChars || /^[*+\-%<>!=&|~^]/,
+        support = parserConfig.support || {},
+        hooks = parserConfig.hooks || {},
+        dateSQL = parserConfig.dateSQL || {"date":true, "time":true, "timestamp":true};
 
     function tokenBase(stream, state) {
         var ch = stream.next();
@@ -37,47 +37,21 @@ CodeMirror.defineMode("sql", function(config, parserConfig) {
             if (result !== false) return result;
         }
 
-        if (support.hexNumber == true &&
-            ((ch == "0" && stream.match(/^[xX][0-9a-fA-F]+/))
-                || (ch == "x" || ch == "X") && stream.match(/^'[0-9a-fA-F]+'/))) {
-            // hex
-            // ref: http://dev.mysql.com/doc/refman/5.5/en/hexadecimal-literals.html
-            return "number";
-        } else if (support.binaryNumber == true &&
-            (((ch == "b" || ch == "B") && stream.match(/^'[01]+'/))
-                || (ch == "0" && stream.match(/^b[01]+/)))) {
-            // bitstring
-            // ref: http://dev.mysql.com/doc/refman/5.5/en/bit-field-literals.html
-            return "number";
-        } else if (ch.charCodeAt(0) > 47 && ch.charCodeAt(0) < 58) {
+        if (ch.charCodeAt(0) > 47 && ch.charCodeAt(0) < 58) {
             // numbers
             // ref: http://dev.mysql.com/doc/refman/5.5/en/number-literals.html
             stream.match(/^[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?/);
             support.decimallessFloat == true && stream.eat('.');
             return "number";
-        } else if (ch == "?" && (stream.eatSpace() || stream.eol() || stream.eat(";"))) {
-            // placeholders
-            return "variable-3";
         } else if (ch == "'" || (ch == '"' && support.doubleQuote)) {
             // strings
             // ref: http://dev.mysql.com/doc/refman/5.5/en/string-literals.html
             state.tokenize = tokenLiteral(ch);
             return state.tokenize(stream, state);
-        } else if ((((support.nCharCast == true && (ch == "n" || ch == "N"))
-            || (support.charsetCast == true && ch == "_" && stream.match(/[a-z][a-z0-9]*/i)))
-            && (stream.peek() == "'" || stream.peek() == '"'))) {
-            // charset casting: _utf8'str', N'str', n'str'
-            // ref: http://dev.mysql.com/doc/refman/5.5/en/string-literals.html
-            return "keyword";
         } else if (/^[\(\),\;\[\]]/.test(ch)) {
             // no highlightning
             return null;
-        } else if (support.commentSlashSlash && ch == "/" && stream.eat("/")) {
-            // 1-line comment
-            stream.skipToEnd();
-            return "comment";
-        } else if ((support.commentHash && ch == "#")
-            || (ch == "-" && stream.eat("-") && (!support.commentSpaceRequired || stream.eat(" ")))) {
+        } else if ((ch == "-" && stream.eat("-") && (!support.commentSpaceRequired || stream.eat(" ")))) {
             // 1-line comments
             // ref: https://kb.askmonty.org/en/comment-syntax/
             stream.skipToEnd();
@@ -92,23 +66,9 @@ CodeMirror.defineMode("sql", function(config, parserConfig) {
             if (support.zerolessFloat == true && stream.match(/^(?:\d+(?:e[+-]?\d+)?)/i)) {
                 return "number";
             }
-            // .table_name (ODBC)
-            // // ref: http://dev.mysql.com/doc/refman/5.6/en/identifier-qualifiers.html
-            if (support.ODBCdotTable == true && stream.match(/^[a-zA-Z_]+/)) {
-                return "variable-2";
-            }
-        } else if (operatorChars.test(ch)) {
-            // operators
-            stream.eatWhile(operatorChars);
-            return null;
-        } else if (ch == '{' &&
-            (stream.match(/^( )*(d|D|t|T|ts|TS)( )*'[^']*'( )*}/) || stream.match(/^( )*(d|D|t|T|ts|TS)( )*"[^"]*"( )*}/))) {
-            // dates (weird ODBC syntax)
-            // ref: http://dev.mysql.com/doc/refman/5.5/en/date-and-time-literals.html
-            return "number";
         } else {
-            stream.eatWhile(/^[_\w\d]/);
-            var word = stream.current();//.toLowerCase();
+            stream.eatWhile(/^[_\-\w\d]/);    /* Character '-' will also be eaten, to prevent the highlight happening in keywords being embedded in non-keyword strings. For example, 'all' in 'all-nonkeyword' */
+            var word = stream.current().toLowerCase();         // Added toLowerCase() to highlight keywords in a case insensitive manner.
             // dates (standard SQL syntax)
             // ref: http://dev.mysql.com/doc/refman/5.5/en/date-and-time-literals.html
             if (dateSQL.hasOwnProperty(word) && (stream.match(/^( )+'[^']*'/) || stream.match(/^( )+"[^"]*"/)))
@@ -123,7 +83,7 @@ CodeMirror.defineMode("sql", function(config, parserConfig) {
 
     // 'string', with char specified in quote escaped by '\'
     function tokenLiteral(quote) {
-        return function(stream, state) {
+        return function (stream, state) {
             var escaped = false, ch;
             while ((ch = stream.next()) != null) {
                 if (ch == quote && !escaped) {
@@ -135,6 +95,7 @@ CodeMirror.defineMode("sql", function(config, parserConfig) {
             return "string";
         };
     }
+
     function tokenComment(stream, state) {
         while (true) {
             if (stream.skipTo("*")) {
@@ -153,10 +114,10 @@ CodeMirror.defineMode("sql", function(config, parserConfig) {
 
     function pushContext(stream, state, type) {
         state.context = {
-            prev: state.context,
-            indent: stream.indentation(),
-            col: stream.column(),
-            type: type
+            prev:state.context,
+            indent:stream.indentation(),
+            col:stream.column(),
+            type:type
         };
     }
 
@@ -166,11 +127,11 @@ CodeMirror.defineMode("sql", function(config, parserConfig) {
     }
 
     return {
-        startState: function() {
-            return {tokenize: tokenBase, context: null};
+        startState:function () {
+            return {tokenize:tokenBase, context:null};
         },
 
-        token: function(stream, state) {
+        token:function (stream, state) {
             if (stream.sol()) {
                 if (state.context && state.context.align == null)
                     state.context.align = false;
@@ -193,16 +154,21 @@ CodeMirror.defineMode("sql", function(config, parserConfig) {
             return style;
         },
 
-        indent: function(state, textAfter) {
+        indent:function (state, textAfter) {
             var cx = state.context;
             if (!cx) return CodeMirror.Pass;
-            if (cx.align) return cx.col + (textAfter.charAt(0) == cx.type ? 0 : 1);
-            else return cx.indent + config.indentUnit;
-        }
+            var closing = textAfter.charAt(0) == cx.type;
+            if (cx.align) return cx.col + (closing ? 0 : 1);
+            else return cx.indent + (closing ? 0 : config.indentUnit);
+        },
+
+        blockCommentStart: "/*",
+        blockCommentEnd: "*/",
+        lineComment: "--"
     };
 });
 
-(function() {
+(function () {
     "use strict";
 
     // `identifier`
@@ -213,7 +179,8 @@ CodeMirror.defineMode("sql", function(config, parserConfig) {
         while ((ch = stream.next()) != null) {
             if (ch == "`" && !stream.eat("`")) return "variable-2";
         }
-        return null;
+        stream.backUp(stream.current().length - 1);
+        return stream.eatWhile(/\w/) ? "variable-2" : null;
     }
 
     // variable token
@@ -241,7 +208,9 @@ CodeMirror.defineMode("sql", function(config, parserConfig) {
             return "variable-2";
         }
         return null;
-    };
+    }
+
+    ;
 
     // short client keyword token
     function hookClient(stream) {
@@ -256,12 +225,14 @@ CodeMirror.defineMode("sql", function(config, parserConfig) {
     }
 
     // these keywords are used by all SQL dialects (however, a mode can still overwrite it)
-    var sqlKeywords = ", : ? # ( ) all all-events and as by contains current-events define delete events every expired-events first for from full group having in inner insert instanceof into join last left not on or outer output partition range return right select snapshot stream table transform unidirectional update window within within ";
-    var builtIn = "bool double float int long string ";
+    var sqlKeywordsWithoutSymbols = "all and as begin by contains define delete end events " +
+        "every first for from full group having inner insert into join last " +
+        "left not of on or outer output partition raw return right select snapshot stream table ";
+    var sqlKeywords = ", : ? # ( ) " + sqlKeywordsWithoutSymbols;
+    var builtIn = "bool double float int long object string ";
     var atoms = "false true null ";
-    var operatorChars = "^ [ * + % < > ! = / ] ";
-    var dateSQL = "day days hour hours millisecond milliseconds min minute minutes month months sec second seconds week weeks year years";
-    var allSqlSuggestions = sqlKeywords + builtIn + atoms + operatorChars + dateSQL;
+    var dateSQL = "days hours milliseconds minutes months seconds ";
+    var allSqlSuggestions = sqlKeywordsWithoutSymbols + builtIn + atoms + dateSQL;
 
     // turn a space-separated list into an array
     function set(str) {
@@ -271,15 +242,15 @@ CodeMirror.defineMode("sql", function(config, parserConfig) {
     }
 
     // A generic SQL Mode. It's not a standard, it just try to support what is generally supported
-    CodeMirror.defineMIME("text/siddhi-sql-db", {
-        name: "sql",
-        keywords: set(sqlKeywords),
-        builtin: set(builtIn),
-        atoms: set(atoms),
-        operatorChars: /^[*+%<>!=/]/,
-        dateSQL: set(dateSQL),
-        support: set("ODBCdotTable doubleQuote binaryNumber hexNumber commentSlashSlash"),
-        allSqlSuggestions: set(allSqlSuggestions)
+    CodeMirror.defineMIME(MIME_TYPE_SIDDHI_QL, {
+        name:"sql",
+        keywords:set(sqlKeywords),
+        builtin:set(builtIn),
+        atoms:set(atoms),
+        operatorChars:/^[*+%<>!=/]/,
+        dateSQL:set(dateSQL),
+        support:set("doubleQuote "),
+        allSqlSuggestions:set(allSqlSuggestions)
     });
 }());
 

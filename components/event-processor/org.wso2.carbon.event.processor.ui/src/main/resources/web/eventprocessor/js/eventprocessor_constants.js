@@ -37,3 +37,5 @@ var SIDDHI_SPACE_LITERAL = " ";
 
 var SIDDHI_LITERAL_DEFINE_STREAM = "define stream";
 
+var MIME_TYPE_SIDDHI_QL = "text/siddhi-ql";
+
