@@ -157,9 +157,14 @@ CodeMirror.defineMode("sql", function (config, parserConfig) {
         indent:function (state, textAfter) {
             var cx = state.context;
             if (!cx) return CodeMirror.Pass;
-            if (cx.align) return cx.col + (textAfter.charAt(0) == cx.type ? 0 : 1);
-            else return cx.indent + config.indentUnit;
-        }
+            var closing = textAfter.charAt(0) == cx.type;
+            if (cx.align) return cx.col + (closing ? 0 : 1);
+            else return cx.indent + (closing ? 0 : config.indentUnit);
+        },
+
+        blockCommentStart: "/*",
+        blockCommentEnd: "*/",
+        lineComment: "--"
     };
 });
 
@@ -174,7 +179,8 @@ CodeMirror.defineMode("sql", function (config, parserConfig) {
         while ((ch = stream.next()) != null) {
             if (ch == "`" && !stream.eat("`")) return "variable-2";
         }
-        return null;
+        stream.backUp(stream.current().length - 1);
+        return stream.eatWhile(/\w/) ? "variable-2" : null;
     }
 
     // variable token
@@ -243,7 +249,7 @@ CodeMirror.defineMode("sql", function (config, parserConfig) {
         atoms:set(atoms),
         operatorChars:/^[*+%<>!=/]/,
         dateSQL:set(dateSQL),
-        support:set("ODBCdotTable doubleQuote binaryNumber hexNumber commentSlashSlash"),
+        support:set("doubleQuote "),
         allSqlSuggestions:set(allSqlSuggestions)
     });
 }());
