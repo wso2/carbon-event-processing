@@ -27,62 +27,81 @@ import org.wso2.carbon.event.execution.manager.core.structure.domain.TemplateDom
 public class DomainMapper {
 
     public static TemplateDomainDTO[] mapDomains(TemplateDomain[] templateDomains) {
-        TemplateDomainDTO[] templateDomainDTOs = new TemplateDomainDTO[templateDomains.length];
+        TemplateDomainDTO[] templateDomainDTOs = null;
 
-        for (int i = 0; i < templateDomainDTOs.length; i++) {
-            templateDomainDTOs[i] = mapDomain(templateDomains[i]);
+        if (templateDomains != null) {
+            templateDomainDTOs = new TemplateDomainDTO[templateDomains.length];
+
+            for (int i = 0; i < templateDomainDTOs.length; i++) {
+                templateDomainDTOs[i] = mapDomain(templateDomains[i]);
+            }
         }
         return templateDomainDTOs;
     }
 
     public static TemplateDomainDTO mapDomain(TemplateDomain templateDomain) {
-        TemplateDomainDTO templateDomainDTO = new TemplateDomainDTO();
+        TemplateDomainDTO templateDomainDTO = null;
 
-        templateDomainDTO.setName(templateDomain.getName());
-        templateDomainDTO.setDescription(templateDomain.getName());
-        templateDomainDTO.setStreams(templateDomain.getStreams());
-        templateDomainDTO.setTemplateDTOs(mapTemplates(templateDomain.getTemplates()));
+        if (templateDomain != null) {
+            templateDomainDTO = new TemplateDomainDTO();
+            templateDomainDTO.setName(templateDomain.getName());
+            templateDomainDTO.setDescription(templateDomain.getName());
+            templateDomainDTO.setStreams(templateDomain.getStreams());
+            templateDomainDTO.setTemplateDTOs(mapTemplates(templateDomain.getTemplates()));
+        }
 
         return templateDomainDTO;
     }
 
     public static TemplateDTO[] mapTemplates(Template[] templates) {
-        TemplateDTO[] templateDTOs = new TemplateDTO[templates.length];
+        TemplateDTO[] templateDTOs = null;
 
-        for (int i = 0; i < templateDTOs.length; i++) {
-            templateDTOs[i] = mapTemplate(templates[i]);
+        if (templates != null) {
+            templateDTOs = new TemplateDTO[templates.length];
+            for (int i = 0; i < templateDTOs.length; i++) {
+                templateDTOs[i] = mapTemplate(templates[i]);
+            }
         }
         return templateDTOs;
     }
 
     public static TemplateDTO mapTemplate(Template template) {
-        TemplateDTO templateDTO = new TemplateDTO();
-        templateDTO.setName(template.getName());
-        templateDTO.setDescription(template.getDescription());
-        templateDTO.setExecutionPlan(template.getExecutionPlan());
-        templateDTO.setParameterDTOs(mapParameters(template.getParameters()));
+        TemplateDTO templateDTO = null;
 
+        if (template != null) {
+            templateDTO = new TemplateDTO();
+            templateDTO.setName(template.getName());
+            templateDTO.setDescription(template.getDescription());
+            templateDTO.setExecutionPlan(template.getExecutionPlan());
+            templateDTO.setParameterDTOs(mapParameters(template.getParameters()));
+        }
         return templateDTO;
     }
 
     public static ParameterDTO[] mapParameters(Parameter[] parameters) {
-        ParameterDTO[] parameterDTOs = new ParameterDTO[parameters.length];
+        ParameterDTO[] parameterDTOs = null;
 
-        for (int i = 0; i < parameterDTOs.length; i++) {
-            parameterDTOs[i] = mapParameter(parameters[i]);
+        if (parameters != null) {
+            parameterDTOs = new ParameterDTO[parameters.length];
+            for (int i = 0; i < parameterDTOs.length; i++) {
+                parameterDTOs[i] = mapParameter(parameters[i]);
+            }
         }
         return parameterDTOs;
     }
 
     public static ParameterDTO mapParameter(Parameter parameter) {
-        ParameterDTO parameterDTO = new ParameterDTO();
-        parameterDTO.setName(parameter.getName());
-        parameterDTO.setDescription(parameter.getDescription());
-        parameterDTO.setDefaultValue(parameter.getDefaultValue());
-        parameterDTO.setDisplayName(parameter.getDisplayName());
-        parameterDTO.setType(parameter.getType());
-        parameterDTO.setOptions(parameter.getOptions());
+        ParameterDTO parameterDTO = null;
 
+        if (parameter != null) {
+            parameterDTO = new ParameterDTO();
+            parameterDTO.setName(parameter.getName());
+            parameterDTO.setDescription(parameter.getDescription());
+            parameterDTO.setDefaultValue(parameter.getDefaultValue());
+            parameterDTO.setDisplayName(parameter.getDisplayName());
+            parameterDTO.setType(parameter.getType());
+            parameterDTO.setOptions(parameter.getOptions());
+        }
         return parameterDTO;
     }
 

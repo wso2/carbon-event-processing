@@ -22,15 +22,24 @@ import org.apache.commons.logging.LogFactory;
 import org.osgi.service.component.ComponentContext;
 import org.wso2.carbon.event.execution.manager.core.ExecutionManagerService;
 import org.wso2.carbon.event.execution.manager.core.internal.CarbonExecutionManagerService;
+import org.wso2.carbon.event.processor.core.EventProcessorService;
+import org.wso2.carbon.event.stream.core.EventStreamService;
 import org.wso2.carbon.registry.core.exceptions.RegistryException;
 import org.wso2.carbon.registry.core.service.RegistryService;
 
 /**
  * This class is used to get the EventProcessor service.
+ *
  * @scr.component name="org.wso2.carbon.event.execution.manager.core.ExecutionManagerService" immediate="true"
  * @scr.reference name="registry.service"
  * interface="org.wso2.carbon.registry.core.service.RegistryService"
  * cardinality="1..1" policy="dynamic" bind="setRegistryService" unbind="unsetRegistryService"
+ * @scr.reference name="eventStreamService.service"
+ * interface="org.wso2.carbon.event.stream.core.EventStreamService" cardinality="1..1"
+ * policy="dynamic" bind="setEventStreamService" unbind="unsetEventStreamService"
+ * @scr.reference name="eventProcessorService.service"
+ * interface="org.wso2.carbon.event.processor.core.EventProcessorService" cardinality="1..1"
+ * policy="dynamic" bind="setEventProcessorService" unbind="unsetEventProcessorService"
  */
 public class ExecutionManagerServiceDS {
 
@@ -40,10 +49,10 @@ public class ExecutionManagerServiceDS {
     protected void activate(ComponentContext context) {
 
         try {
-        executionManagerService = new CarbonExecutionManagerService();
-        context.getBundleContext().registerService(ExecutionManagerService.class.getName(),
-                executionManagerService, null);
-        ExecutionManagerValueHolder.setExecutionManagerService(executionManagerService);
+            executionManagerService = new CarbonExecutionManagerService();
+            context.getBundleContext().registerService(ExecutionManagerService.class.getName(),
+                    executionManagerService, null);
+            ExecutionManagerValueHolder.setExecutionManagerService(executionManagerService);
 
             if (log.isDebugEnabled()) {
                 log.debug("Successfully deployed the execution manager core service");
@@ -60,5 +69,24 @@ public class ExecutionManagerServiceDS {
 
     protected void unsetRegistryService(RegistryService registryService) {
         ExecutionManagerValueHolder.unSetRegistryService();
+    }
+
+    protected void setEventStreamService(
+            EventStreamService eventStreamService) {
+        ExecutionManagerValueHolder.registerEventStreamService(eventStreamService);
+    }
+
+    protected void unsetEventStreamService(
+            EventStreamService eventStreamService) {
+
+    }
+
+    public void setEventProcessorService(EventProcessorService eventProcessorService) {
+        ExecutionManagerValueHolder.registerEventProcessorService(eventProcessorService);
+    }
+
+    public void unsetEventProcessorService(EventProcessorService eventProcessorService) {
+        ExecutionManagerValueHolder.registerEventProcessorService(null);
+
     }
 }

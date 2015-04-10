@@ -17,6 +17,7 @@
  */
 package org.wso2.carbon.event.execution.manager.core;
 
+import org.wso2.carbon.event.execution.manager.core.exception.ExecutionManagerException;
 import org.wso2.carbon.event.execution.manager.core.structure.config.TemplateConfig;
 import org.wso2.carbon.event.execution.manager.core.structure.domain.TemplateDomain;
 
@@ -27,7 +28,7 @@ public interface ExecutionManagerService {
      *
      * @param configuration configuration object which needs to be saved
      */
-    public void saveTemplateConfig(TemplateConfig configuration);
+    public void saveTemplateConfig(TemplateConfig configuration) throws ExecutionManagerException;
 
     /**
      * provide all the loaded domains
@@ -74,7 +75,7 @@ public interface ExecutionManagerService {
      *
      * @param configName template configuration name
      */
-    public void deleteConfig(String domainName, String configName);
+    public void deleteConfig(String domainName, String configName) throws ExecutionManagerException;
 
 
 }

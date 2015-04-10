@@ -55,6 +55,18 @@
                     </xs:sequence>
                 </xs:complexType>
             </xs:element>
+            <xs:element name="getAllTemplateConfigurations">
+                <xs:complexType>
+                    <xs:sequence></xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="getAllTemplateConfigurationsResponse">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element maxOccurs="unbounded" minOccurs="0" name="return" nillable="true" type="ax292:TemplateConfigDTO"></xs:element>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
             <xs:element name="getTemplateDomain">
                 <xs:complexType>
                     <xs:sequence>
@@ -69,14 +81,6 @@
                     </xs:sequence>
                 </xs:complexType>
             </xs:element>
-            <xs:element name="deleteTemplateConfig">
-                <xs:complexType>
-                    <xs:sequence>
-                        <xs:element minOccurs="0" name="domainName" nillable="true" type="xs:string"></xs:element>
-                        <xs:element minOccurs="0" name="configName" nillable="true" type="xs:string"></xs:element>
-                    </xs:sequence>
-                </xs:complexType>
-            </xs:element>
             <xs:element name="getAllTemplateDomains">
                 <xs:complexType>
                     <xs:sequence></xs:sequence>
@@ -86,18 +90,6 @@
                 <xs:complexType>
                     <xs:sequence>
                         <xs:element maxOccurs="unbounded" minOccurs="0" name="return" nillable="true" type="ax294:TemplateDomainDTO"></xs:element>
-                    </xs:sequence>
-                </xs:complexType>
-            </xs:element>
-            <xs:element name="getAllTemplateConfigurations">
-                <xs:complexType>
-                    <xs:sequence></xs:sequence>
-                </xs:complexType>
-            </xs:element>
-            <xs:element name="getAllTemplateConfigurationsResponse">
-                <xs:complexType>
-                    <xs:sequence>
-                        <xs:element maxOccurs="unbounded" minOccurs="0" name="return" nillable="true" type="ax292:TemplateConfigDTO"></xs:element>
                     </xs:sequence>
                 </xs:complexType>
             </xs:element>
@@ -127,6 +119,14 @@
                 <xs:complexType>
                     <xs:sequence>
                         <xs:element minOccurs="0" name="return" nillable="true" type="ax292:TemplateConfigDTO"></xs:element>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="deleteTemplateConfig">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element minOccurs="0" name="domainName" nillable="true" type="xs:string"></xs:element>
+                        <xs:element minOccurs="0" name="configName" nillable="true" type="xs:string"></xs:element>
                     </xs:sequence>
                 </xs:complexType>
             </xs:element>

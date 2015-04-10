@@ -25,61 +25,87 @@ import org.wso2.carbon.event.execution.manager.core.structure.config.TemplateCon
 public class ConfigMapper {
 
     public static TemplateConfigDTO[] mapConfigurations(TemplateConfig[] templateConfigs) {
-        TemplateConfigDTO[] templateConfigDTOs = new TemplateConfigDTO[templateConfigs.length];
+        TemplateConfigDTO[] templateConfigDTOs = null;
 
-        for (int i = 0; i < templateConfigDTOs.length; i++) {
-            templateConfigDTOs[i] = mapConfiguration(templateConfigs[i]);
+        if (templateConfigs != null) {
+            templateConfigDTOs = new TemplateConfigDTO[templateConfigs.length];
+
+            for (int i = 0; i < templateConfigDTOs.length; i++) {
+                templateConfigDTOs[i] = mapConfiguration(templateConfigs[i]);
+            }
         }
         return templateConfigDTOs;
     }
 
     public static TemplateConfigDTO mapConfiguration(TemplateConfig templateConfig) {
-        TemplateConfigDTO templateConfigDTO = new TemplateConfigDTO();
-        templateConfigDTO.setName(templateConfig.getName());
-        templateConfigDTO.setDescription(templateConfig.getDescription());
-        templateConfigDTO.setFrom(templateConfig.getFrom());
-        templateConfigDTO.setParameterDTOs(mapParameters(templateConfig.getParameters()));
+        TemplateConfigDTO templateConfigDTO = null;
+
+        if (templateConfig != null) {
+            templateConfigDTO = new TemplateConfigDTO();
+            templateConfigDTO.setName(templateConfig.getName());
+            templateConfigDTO.setDescription(templateConfig.getDescription());
+            templateConfigDTO.setFrom(templateConfig.getFrom());
+            templateConfigDTO.setParameterDTOs(mapParameters(templateConfig.getParameters()));
+        }
         return templateConfigDTO;
     }
 
     public static TemplateConfig mapConfiguration(TemplateConfigDTO configDTO) {
-        TemplateConfig templateConfig = new TemplateConfig();
-        templateConfig.setName(configDTO.getName());
-        templateConfig.setDescription(configDTO.getDescription());
-        templateConfig.setFrom(configDTO.getFrom());
-        templateConfig.setParameters(mapParameters(configDTO.getParameterDTOs()));
+        TemplateConfig templateConfig = null;
+
+        if (configDTO != null) {
+            templateConfig = new TemplateConfig();
+            templateConfig.setName(configDTO.getName());
+            templateConfig.setDescription(configDTO.getDescription());
+            templateConfig.setFrom(configDTO.getFrom());
+            templateConfig.setParameters(mapParameters(configDTO.getParameterDTOs()));
+        }
         return templateConfig;
     }
 
     public static Parameter[] mapParameters(ParameterDTO[] parameterDTO) {
-        Parameter[] parameters = new Parameter[parameterDTO.length];
+        Parameter[] parameters = null;
 
-        for (int i = 0; i < parameters.length; i++) {
-            parameters[i] = mapParameter(parameterDTO[i]);
+        if (parameterDTO != null) {
+            parameters = new Parameter[parameterDTO.length];
+            for (int i = 0; i < parameters.length; i++) {
+                parameters[i] = mapParameter(parameterDTO[i]);
+            }
         }
 
         return parameters;
     }
 
     public static ParameterDTO[] mapParameters(Parameter[] parameters) {
-        ParameterDTO[] parameterDTOs = new ParameterDTO[parameters.length];
+        ParameterDTO[] parameterDTOs = null;
 
-        for (int i = 0; i < parameterDTOs.length; i++) {
-            parameterDTOs[i] = mapParameter(parameters[i]);
+        if (parameters != null) {
+            parameterDTOs = new ParameterDTO[parameters.length];
+            for (int i = 0; i < parameterDTOs.length; i++) {
+                parameterDTOs[i] = mapParameter(parameters[i]);
+            }
         }
-
         return parameterDTOs;
     }
 
     public static Parameter mapParameter(ParameterDTO parameterDTO) {
-        Parameter parameter = new Parameter();
-        parameter.setValue(parameterDTO.getValue());
+        Parameter parameter = null;
+
+        if (parameterDTO != null) {
+            parameter = new Parameter();
+            parameter.setName(parameterDTO.getName());
+            parameter.setValue(parameterDTO.getValue());
+        }
         return parameter;
     }
 
     public static ParameterDTO mapParameter(Parameter parameter) {
-        ParameterDTO parameterDTO = new ParameterDTO();
-        parameterDTO.setValue(parameter.getValue());
+        ParameterDTO parameterDTO = null;
+        if (parameter != null) {
+            parameterDTO = new ParameterDTO();
+            parameterDTO.setName(parameter.getName());
+            parameterDTO.setValue(parameter.getValue());
+        }
         return parameterDTO;
     }
 

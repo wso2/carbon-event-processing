@@ -24,6 +24,7 @@ import org.wso2.carbon.event.execution.manager.admin.dto.domain.TemplateDomainDT
 import org.wso2.carbon.event.execution.manager.admin.internal.ds.ExecutionAdminManagerValueHolder;
 import org.wso2.carbon.event.execution.manager.admin.internal.util.ConfigMapper;
 import org.wso2.carbon.event.execution.manager.admin.internal.util.DomainMapper;
+import org.wso2.carbon.event.execution.manager.core.exception.ExecutionManagerException;
 
 public class ExecutionManagerAdminService extends AbstractAdmin {
 
@@ -75,8 +76,7 @@ public class ExecutionManagerAdminService extends AbstractAdmin {
      * @return template domain configuration details
      * @throws AxisFault
      */
-    public  TemplateConfigDTO[] getTemplateConfigurations(String domainName) throws AxisFault {
-
+    public TemplateConfigDTO[] getTemplateConfigurations(String domainName) throws AxisFault {
         return ConfigMapper.mapConfigurations(ExecutionAdminManagerValueHolder.getCarbonExecutorManagerService()
                 .getConfigurations(domainName));
     }
@@ -99,8 +99,12 @@ public class ExecutionManagerAdminService extends AbstractAdmin {
      *
      * @param configName configuration name which needs to be deleted
      */
-    public void deleteTemplateConfig(String domainName, String configName) {
-        ExecutionAdminManagerValueHolder.getCarbonExecutorManagerService().deleteConfig(domainName, configName);
+    public void deleteTemplateConfig(String domainName, String configName) throws AxisFault{
+        try {
+            ExecutionAdminManagerValueHolder.getCarbonExecutorManagerService().deleteConfig(domainName, configName);
+        } catch (ExecutionManagerException e) {
+            throw new AxisFault(e.getMessage());
+        }
     }
 
     /**
@@ -108,8 +112,12 @@ public class ExecutionManagerAdminService extends AbstractAdmin {
      *
      * @param configuration configuration data transfer object
      */
-    public void saveTemplateConfig(TemplateConfigDTO configuration) {
-        ExecutionAdminManagerValueHolder.getCarbonExecutorManagerService().saveTemplateConfig(
-                ConfigMapper.mapConfiguration(configuration));
+    public void saveTemplateConfig(TemplateConfigDTO configuration) throws AxisFault{
+        try {
+            ExecutionAdminManagerValueHolder.getCarbonExecutorManagerService().saveTemplateConfig(
+                    ConfigMapper.mapConfiguration(configuration));
+        } catch (ExecutionManagerException e) {
+            throw new AxisFault(e.getMessage());
+        }
     }
 }

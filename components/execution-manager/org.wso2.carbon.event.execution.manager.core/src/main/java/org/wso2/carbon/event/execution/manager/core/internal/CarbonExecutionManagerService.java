@@ -19,12 +19,19 @@ package org.wso2.carbon.event.execution.manager.core.internal;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.wso2.carbon.databridge.commons.StreamDefinition;
+import org.wso2.carbon.databridge.commons.exception.MalformedStreamDefinitionException;
+import org.wso2.carbon.databridge.commons.utils.EventDefinitionConverterUtils;
 import org.wso2.carbon.event.execution.manager.core.ExecutionManagerService;
 import org.wso2.carbon.event.execution.manager.core.internal.ds.ExecutionManagerValueHolder;
+import org.wso2.carbon.event.execution.manager.core.exception.ExecutionManagerException;
 import org.wso2.carbon.event.execution.manager.core.structure.config.TemplateConfig;
 import org.wso2.carbon.event.execution.manager.core.structure.domain.Template;
 import org.wso2.carbon.event.execution.manager.core.structure.domain.TemplateDomain;
 import org.wso2.carbon.event.execution.manager.core.internal.util.ExecutionManagerConstants;
+import org.wso2.carbon.event.processor.core.exception.ExecutionPlanConfigurationException;
+import org.wso2.carbon.event.processor.core.exception.ExecutionPlanDependencyValidationException;
+import org.wso2.carbon.event.stream.core.exception.EventStreamConfigurationException;
 import org.wso2.carbon.registry.api.RegistryException;
 import org.wso2.carbon.registry.core.Registry;
 import org.wso2.carbon.registry.core.Resource;
@@ -44,65 +51,129 @@ public class CarbonExecutionManagerService implements ExecutionManagerService {
     private Registry registry;
 
     public CarbonExecutionManagerService() {
-        //get template domain file path
-        String filePath = ExecutionManagerConstants.TEMPLATE_DOMAIN_PATH;
-        File folder = new File(filePath);
+
         domains = new HashMap<String, TemplateDomain>();
         configurations = new HashMap<String, TemplateConfig>();
 
         try {
             registry = ExecutionManagerValueHolder.getRegistryService().getConfigSystemRegistry();
+
         } catch (RegistryException e) {
             log.error("Registry exception occurred when getting system registry of service ", e);
         }
 
-        //Load domains
+        this.loadDomainConfigurations();
+    }
+
+    /**
+     * Load All domains and configurations
+     */
+    private void loadDomainConfigurations() {
+        //Get domain template folder and load all the domain template files
+        File folder = new File(ExecutionManagerConstants.TEMPLATE_DOMAIN_PATH);
+
         for (final File fileEntry : folder.listFiles()) {
             if (fileEntry.isFile()) {
                 try {
                     JAXBContext jaxbContext = JAXBContext.newInstance(TemplateDomain.class);
                     Unmarshaller jaxbUnmarshaller = jaxbContext.createUnmarshaller();
                     TemplateDomain templateDomain = (TemplateDomain) jaxbUnmarshaller.unmarshal(fileEntry);
-                    //Load configurations of each domain
-                    for (Template template : templateDomain.getTemplates()) {
 
-                        String registryPath = ExecutionManagerConstants.TEMPLATE_CONFIG_PATH
-                                + ExecutionManagerConstants.PATH_SEPARATOR
-                                + templateDomain.getName()
-                                + ExecutionManagerConstants.CONFIG_NAME_SEPARATOR + template.getName()
-                                + ExecutionManagerConstants.CONFIG_FILE_EXTENSION;
-                        try {
-                            if (registry.resourceExists(registryPath)) {
-                                Resource configFile = registry.get(registryPath);
+                    this.deployStreams(templateDomain);
+                    this.loadConfigurations(templateDomain);
 
-                                if (configFile != null) {
-                                    StringReader reader = new StringReader(new String(
-                                            (byte[]) configFile.getContent()));
-                                    jaxbContext = JAXBContext.newInstance(TemplateConfig.class);
-                                    jaxbUnmarshaller = jaxbContext.createUnmarshaller();
-                                    TemplateConfig templateConfig =
-                                            (TemplateConfig) jaxbUnmarshaller.unmarshal(reader);
-                                    configurations.put(templateDomain.getName()
-                                            + ExecutionManagerConstants.CONFIG_NAME_SEPARATOR
-                                            + templateConfig.getName(), templateConfig);
-
-                                }
-                            }
-                        } catch (RegistryException e) {
-                            log.error("Registry exception occurred when accessing file at " + registryPath, e);
-                        }
-                    }
                     domains.put(templateDomain.getName(), templateDomain);
                 } catch (JAXBException e) {
-                    log.error("JAXB Exception when unmarshalling file at " + fileEntry.getPath());
+                    log.error("JAXB Exception when unmarshalling domain template file at " + fileEntry.getPath());
                 }
-
             }
         }
     }
 
+    /**
+     * Load available configurations for given template domain
+     *
+     * @param templateDomain template domain object
+     */
+    private void loadConfigurations(TemplateDomain templateDomain) {
+            for (Template template : templateDomain.getTemplates()) {
+                String registryPath = ExecutionManagerConstants.TEMPLATE_CONFIG_PATH
+                        + ExecutionManagerConstants.PATH_SEPARATOR
+                        + templateDomain.getName()
+                        + ExecutionManagerConstants.CONFIG_NAME_SEPARATOR + template.getName()
+                        + ExecutionManagerConstants.CONFIG_FILE_EXTENSION;
+                try {
+                    if (registry.resourceExists(registryPath)) {
+                        Resource configFile = registry.get(registryPath);
+
+                        if (configFile != null) {
+                            StringReader reader = new StringReader(new String(
+                                    (byte[]) configFile.getContent()));
+                            JAXBContext jaxbContext = JAXBContext.newInstance(TemplateConfig.class);
+                            Unmarshaller jaxbUnmarshaller = jaxbContext.createUnmarshaller();
+                            TemplateConfig templateConfig =
+                                    (TemplateConfig) jaxbUnmarshaller.unmarshal(reader);
+                            configurations.put(templateDomain.getName()
+                                    + ExecutionManagerConstants.CONFIG_NAME_SEPARATOR
+                                    + templateConfig.getName(), templateConfig);
+
+                        }
+                    }
+                } catch (RegistryException e) {
+                    log.error("Registry exception occurred when accessing file at " + registryPath, e);
+                } catch (JAXBException e) {
+                    log.error("JAXB Exception when unmarshalling configuration file at " + registryPath);
+                }
+            }
+    }
+
+
+    /**
+     * Deploy Streams of given template domain
+     *
+     * @param templateDomain template domain object
+     */
+    private void deployStreams(TemplateDomain templateDomain) {
+        for (String stream : templateDomain.getStreams()) {
+            StreamDefinition streamDefinition = null;
+            try {
+                streamDefinition = EventDefinitionConverterUtils.convertFromJson(stream);
+                ExecutionManagerValueHolder.getEventStreamService().addEventStreamDefinition(streamDefinition);
+            } catch (MalformedStreamDefinitionException e) {
+                log.error("Stream definition is incorrect in domain template " + templateDomain.getName(), e);
+            } catch (EventStreamConfigurationException e) {
+                log.error("Exception occurred when configuring stream " + streamDefinition.getName());
+            }
+        }
+    }
+
+    /**
+     * Deploy given configurations template Execution Plan
+     *
+     * @param configuration configuration object
+     */
+    private void deployExecutionPlan(TemplateConfig configuration) {
+//        for (Template template : domains.get(configuration.getFrom()).getTemplates()) {
+//            if (template.getName().equals(configuration.getName())) {
+//                try {
+//                    //Get Template Execution plan, Tenant Id and deploy Execution Plan
+//                    ExecutionManagerValueHolder.getEventProcessorService()
+//                            .deployExecutionPlanConfiguration(template.getExecutionPlan(), new AxisConfiguration());
+//                    break;
+//                } catch (ExecutionPlanConfigurationException e) {
+//                    log.error("Configuration exception when adding Execution Plan of Template "
+//                            + configuration.getName() + " of Domain " + configuration.getFrom(), e);
+//
+//                } catch (ExecutionPlanDependencyValidationException e) {
+//                    log.error("Dependency validation exception when adding Execution Plan of Template "
+//                            + configuration.getName() + " of Domain " + configuration.getFrom(), e);
+//                }
+//            }
+//        }
+    }
+
     @Override
-    public void saveTemplateConfig(TemplateConfig configuration) {
+    public void saveTemplateConfig(TemplateConfig configuration) throws ExecutionManagerException {
 
         try {
             StringWriter fileContent = new StringWriter();
@@ -121,16 +192,23 @@ public class CarbonExecutionManagerService implements ExecutionManagerService {
             String resourcePath = ExecutionManagerConstants.TEMPLATE_CONFIG_PATH
                     + ExecutionManagerConstants.PATH_SEPARATOR + configFullName
                     + ExecutionManagerConstants.CONFIG_FILE_EXTENSION;
-            registry.put(resourcePath, resource);
 
+            this.deployExecutionPlan(configuration);
+            registry.put(resourcePath, resource);
             configurations.put(configFullName, configuration);
 
         } catch (RegistryException e) {
-            log.error("Registry exception occurred when writing " + configuration.getName() + " configurations", e);
+            log.error("Registry exception occurred when creating " + configuration.getName() + " configurations", e);
+            throw new ExecutionManagerException("Exception occurred when creating " + configuration.getName()
+                    + " configurations", e);
+
         } catch (JAXBException e) {
             log.error("JAXB Exception when marshalling file at " + configuration.getName() + " configurations", e);
+            throw new ExecutionManagerException("Exception occurred when creating " + configuration.getName()
+                    + " configurations", e);
         }
     }
+
 
     @Override
     public TemplateDomain[] getAllDomains() {
@@ -171,7 +249,6 @@ public class CarbonExecutionManagerService implements ExecutionManagerService {
     @Override
     public TemplateConfig[] getConfigurations(String domainName) {
         Iterator it = configurations.entrySet().iterator();
-        TemplateConfig[] configAll;
         List<TemplateConfig> configAllList = new ArrayList<TemplateConfig>();
 
         //Iterate through the hash map
@@ -188,7 +265,6 @@ public class CarbonExecutionManagerService implements ExecutionManagerService {
                 }
             }
         }
-
         //Convert array list to array and return
         return configAllList.toArray(new TemplateConfig[configAllList.size()]);
     }
@@ -198,14 +274,13 @@ public class CarbonExecutionManagerService implements ExecutionManagerService {
         return domains.get(domainName);
     }
 
-
     @Override
     public TemplateConfig getConfiguration(String domainName, String configName) {
         return configurations.get(domainName + ExecutionManagerConstants.CONFIG_NAME_SEPARATOR + configName);
     }
 
     @Override
-    public void deleteConfig(String domainName, String configName) {
+    public void deleteConfig(String domainName, String configName) throws ExecutionManagerException {
         try {
 
             String configFullName = domainName + ExecutionManagerConstants.CONFIG_NAME_SEPARATOR + configName;
@@ -216,6 +291,7 @@ public class CarbonExecutionManagerService implements ExecutionManagerService {
 
         } catch (Exception e) {
             log.error("Exception when deleting file at " + configName + " configurations", e);
+            throw new ExecutionManagerException("Exception when deleting file at " + configName + " configurations", e);
         }
     }
 

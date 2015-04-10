@@ -18,12 +18,16 @@
 package org.wso2.carbon.event.execution.manager.core.internal.ds;
 
 import org.wso2.carbon.event.execution.manager.core.ExecutionManagerService;
+import org.wso2.carbon.event.processor.core.EventProcessorService;
+import org.wso2.carbon.event.stream.core.EventStreamService;
 import org.wso2.carbon.registry.core.service.RegistryService;
 
 public class ExecutionManagerValueHolder {
 
     private static RegistryService registryService;
+    private static EventStreamService eventStreamService;
     private static ExecutionManagerService executionManagerService;
+    private static EventProcessorService eventProcessorService;
 
 
     public static void setRegistryService(RegistryService registryService) {
@@ -35,7 +39,7 @@ public class ExecutionManagerValueHolder {
     }
 
     public static RegistryService getRegistryService() {
-        return registryService;
+        return ExecutionManagerValueHolder.registryService;
     }
 
     public static void registerRegistryService(RegistryService registryService) {
@@ -43,10 +47,27 @@ public class ExecutionManagerValueHolder {
     }
 
     public static ExecutionManagerService getExecutionManagerService() {
-        return executionManagerService;
+        return ExecutionManagerValueHolder.executionManagerService;
     }
 
     public static void setExecutionManagerService(ExecutionManagerService executionManagerService) {
         ExecutionManagerValueHolder.executionManagerService = executionManagerService;
     }
+
+    public static void registerEventStreamService(EventStreamService eventBuilderService) {
+        ExecutionManagerValueHolder.eventStreamService = eventBuilderService;
+    }
+
+    public static EventStreamService getEventStreamService() {
+        return ExecutionManagerValueHolder.eventStreamService;
+    }
+
+    public static EventProcessorService getEventProcessorService() {
+        return ExecutionManagerValueHolder.eventProcessorService;
+    }
+
+    public static void registerEventProcessorService(EventProcessorService eventProcessorService) {
+        ExecutionManagerValueHolder.eventProcessorService = eventProcessorService;
+    }
+
 }
