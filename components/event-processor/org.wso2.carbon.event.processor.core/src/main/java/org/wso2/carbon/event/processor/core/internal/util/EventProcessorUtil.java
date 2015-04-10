@@ -17,16 +17,21 @@
  */
 package org.wso2.carbon.event.processor.core.internal.util;
 
+import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.xml.serialize.OutputFormat;
 import org.apache.xml.serialize.XMLSerializer;
 import org.w3c.dom.Document;
+import org.wso2.carbon.context.CarbonContext;
+import org.wso2.carbon.core.multitenancy.utils.TenantAxisUtils;
 import org.wso2.carbon.databridge.commons.AttributeType;
 import org.wso2.carbon.databridge.commons.StreamDefinition;
 import org.wso2.carbon.databridge.commons.exception.MalformedStreamDefinitionException;
 import org.wso2.carbon.event.processor.core.StreamConfiguration;
 import org.wso2.carbon.event.processor.core.exception.ExecutionPlanConfigurationException;
+import org.wso2.carbon.event.processor.core.internal.ds.EventProcessorValueHolder;
+import org.wso2.carbon.utils.multitenancy.MultitenantConstants;
 import org.wso2.siddhi.core.util.SiddhiConstants;
 import org.wso2.siddhi.query.api.definition.Attribute;
 import org.xml.sax.InputSource;
@@ -278,5 +283,19 @@ public class EventProcessorUtil {
         }
         builder.append(queryExpressions);
         return builder.toString();
+    }
+
+    public static AxisConfiguration getAxisConfiguration() {
+        AxisConfiguration axisConfiguration = null;
+        if (CarbonContext.getThreadLocalCarbonContext().getTenantId() == MultitenantConstants.SUPER_TENANT_ID) {
+            axisConfiguration = EventProcessorValueHolder.getConfigurationContext().
+                    getServerConfigContext().getAxisConfiguration();
+        } else {
+            axisConfiguration = TenantAxisUtils.getTenantAxisConfiguration(CarbonContext.
+                            getThreadLocalCarbonContext().getTenantDomain(),
+                    EventProcessorValueHolder.getConfigurationContext().
+                            getServerConfigContext());
+        }
+        return axisConfiguration;
     }
 }

@@ -17,7 +17,6 @@
 */
 package org.wso2.carbon.event.processor.core;
 
-import org.apache.axis2.engine.AxisConfiguration;
 import org.wso2.carbon.databridge.commons.StreamDefinition;
 import org.wso2.carbon.event.processor.core.exception.ExecutionPlanConfigurationException;
 import org.wso2.carbon.event.processor.core.exception.ExecutionPlanDependencyValidationException;
@@ -34,41 +33,33 @@ public interface EventProcessorService {
      *
      * @param executionPlan new execution plan as a string
      */
-    public void deployExecutionPlan(
-            String executionPlan,
-            AxisConfiguration axisConfiguration)
+    public void deployExecutionPlan(String executionPlan)
             throws ExecutionPlanDependencyValidationException, ExecutionPlanConfigurationException;
 
     /**
      * Removes execution plan from the system
      *
      * @param fileName name of the file which contains the execution plan
-     * @param axisConfiguration the axis configuration associated with the caller
      */
-    public void undeployInactiveExecutionPlan(String fileName,
-                                              AxisConfiguration axisConfiguration) throws
+    public void undeployInactiveExecutionPlan(String fileName) throws
             ExecutionPlanConfigurationException;
 
     /**
      * Removes execution plan from the system
      *
      * @param planName name of the execution plan
-     * @param axisConfiguration the axis configuration associated with the caller
      */
-    public void undeployActiveExecutionPlan(String planName,
-                                            AxisConfiguration axisConfiguration) throws
+    public void undeployActiveExecutionPlan(String planName) throws
             ExecutionPlanConfigurationException;
 
     /**
      * Edits execution plan from the system
      *
-     * @param executionPlan the execution plan configuration as an XML string
+     * @param executionPlan     the execution plan configuration as an XML string
      * @param executionPlanName the name of the execution plan
-     * @param axisConfiguration the axis configuration associated with the caller
      */
     public void editActiveExecutionPlan(String executionPlan,
-                                        String executionPlanName,
-                                        AxisConfiguration axisConfiguration)
+                                        String executionPlanName)
             throws ExecutionPlanConfigurationException, ExecutionPlanDependencyValidationException;
 
 
@@ -76,34 +67,30 @@ public interface EventProcessorService {
      * Edits execution plan from the system
      *
      * @param executionPlan the execution plan configuration as an XML string
-     * @param fileName filename of the configuration for this execution plan
-     * @param axisConfiguration the axis configuration associated with the caller
+     * @param fileName      filename of the configuration for this execution plan
      */
     public void editInactiveExecutionPlan(String executionPlan,
-                                          String fileName,
-                                          AxisConfiguration axisConfiguration)
+                                          String fileName)
             throws ExecutionPlanConfigurationException, ExecutionPlanDependencyValidationException;
 
     /**
      * Returns the content of the execution plan identified by the name as an XML string
      *
      * @param name the name of the execution plan
-     * @param axisConfiguration the axis configuration associated with the caller
      * @return the content of the exeuction plan configuration
      * @throws ExecutionPlanConfigurationException
      */
-    public String getActiveExecutionPlan(String name, AxisConfiguration axisConfiguration)
+    public String getActiveExecutionPlan(String name)
             throws ExecutionPlanConfigurationException;
 
     /**
      * Returns the file content for the filename specified as a string
      *
      * @param filename filename of the configuration for this execution plan
-     * @param axisConfiguration the axis configuration associated with the caller
      * @return the content of the specified filename
      * @throws ExecutionPlanConfigurationException
      */
-    public String getInactiveExecutionPlan(String filename, AxisConfiguration axisConfiguration)
+    public String getInactiveExecutionPlan(String filename)
             throws ExecutionPlanConfigurationException;
 
 
@@ -116,20 +103,18 @@ public interface EventProcessorService {
     public Map<String, ExecutionPlanConfiguration> getAllActiveExecutionConfigurations(int tenantId);
 
     /**
-     *
      * @param tenantId tenant id of the caller
      * @param streamId
      * @return
      */
-    public Map<String, ExecutionPlanConfiguration> getAllExportedStreamSpecificActiveExecutionConfigurations(int tenantId,String streamId);
+    public Map<String, ExecutionPlanConfiguration> getAllExportedStreamSpecificActiveExecutionConfigurations(int tenantId, String streamId);
 
     /**
-     *
      * @param tenantId tenant id of the caller
      * @param streamId
      * @return
      */
-    public Map<String, ExecutionPlanConfiguration> getAllImportedStreamSpecificActiveExecutionConfigurations(int tenantId,String streamId);
+    public Map<String, ExecutionPlanConfiguration> getAllImportedStreamSpecificActiveExecutionConfigurations(int tenantId, String streamId);
 
 
     /**
@@ -147,31 +132,25 @@ public interface EventProcessorService {
      *
      * @param tenantId tenant id of the caller
      * @return A {@link List} of {@link ExecutionPlanConfigurationFile} objects for all the inactive execution plans
-     *  for the specified tenant id
+     * for the specified tenant id
      */
     public List<ExecutionPlanConfigurationFile> getAllInactiveExecutionPlanConfiguration(
             int tenantId);
 
     /**
-     *
      * @param executionPlanName the name of the execution plan
-     * @param isEnabled whether tracing is enabled or not
-     * @param axisConfiguration the axis configuration associated with the caller
+     * @param isEnabled         whether tracing is enabled or not
      * @throws ExecutionPlanConfigurationException
      */
-    public void setTracingEnabled(String executionPlanName, boolean isEnabled,
-                           AxisConfiguration axisConfiguration)
+    public void setTracingEnabled(String executionPlanName, boolean isEnabled)
             throws ExecutionPlanConfigurationException;
 
     /**
-     *
      * @param executionPlanName the name of the execution plan
-     * @param isEnabled whether statistics is enabled or not
-     * @param axisConfiguration the axis configuration associated with the caller
+     * @param isEnabled         whether statistics is enabled or not
      * @throws ExecutionPlanConfigurationException
      */
-    public void setStatisticsEnabled(String executionPlanName, boolean isEnabled,
-                              AxisConfiguration axisConfiguration)
+    public void setStatisticsEnabled(String executionPlanName, boolean isEnabled)
             throws ExecutionPlanConfigurationException;
 
 
@@ -179,12 +158,14 @@ public interface EventProcessorService {
      * Validates a given execution plan. returns true if valid.
      *
      * @param executionPlan execution plan.
-     * @return  true if valid.
+     * @return true if valid.
      */
-    public void validateExecutionPlan(String executionPlan) throws ExecutionPlanConfigurationException, ExecutionPlanDependencyValidationException;
+    public void validateExecutionPlan(String executionPlan)
+            throws ExecutionPlanConfigurationException, ExecutionPlanDependencyValidationException;
 
     /**
      * Fetches all the streams imported and exported by the Siddhi engine for the given execution plan.
+     *
      * @param executionPlan siddhi queries.
      * @return a {@link List} of {@link StreamDefinition} objects that represent all the streams imported and exported by Siddhi queries
      * @throws SiddhiParserException
