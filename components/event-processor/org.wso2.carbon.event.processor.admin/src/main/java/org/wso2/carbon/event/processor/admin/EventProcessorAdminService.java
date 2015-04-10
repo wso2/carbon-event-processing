@@ -46,7 +46,7 @@ public class EventProcessorAdminService extends AbstractAdmin {
 
         if (eventProcessorService != null) {
             try {
-                eventProcessorService.deployExecutionPlan(executionPlan, getAxisConfig());
+                eventProcessorService.deployExecutionPlan(executionPlan);
             } catch (ExecutionPlanConfigurationException e) {
                 log.error(e.getMessage(), e);
                 throw new AxisFault(e.getMessage(), e);
@@ -62,9 +62,8 @@ public class EventProcessorAdminService extends AbstractAdmin {
     public void undeployActiveExecutionPlan(String planName) throws AxisFault {
         EventProcessorService eventProcessorService = EventProcessorAdminValueHolder.getEventProcessorService();
         if (eventProcessorService != null) {
-            AxisConfiguration axisConfig = getAxisConfig();
             try {
-                eventProcessorService.undeployActiveExecutionPlan(planName, axisConfig);
+                eventProcessorService.undeployActiveExecutionPlan(planName);
             } catch (ExecutionPlanConfigurationException e) {
                 log.error(e.getMessage(), e);
                 throw new AxisFault(e.getMessage());
@@ -75,9 +74,8 @@ public class EventProcessorAdminService extends AbstractAdmin {
     public void undeployInactiveExecutionPlan(String fileName) throws AxisFault {
         EventProcessorService eventProcessorService = EventProcessorAdminValueHolder.getEventProcessorService();
         if (eventProcessorService != null) {
-            AxisConfiguration axisConfig = getAxisConfig();
             try {
-                eventProcessorService.undeployInactiveExecutionPlan(fileName, axisConfig);
+                eventProcessorService.undeployInactiveExecutionPlan(fileName);
             } catch (ExecutionPlanConfigurationException e) {
                 log.error(e.getMessage(), e);
                 throw new AxisFault(e.getMessage(), e);
@@ -88,9 +86,8 @@ public class EventProcessorAdminService extends AbstractAdmin {
     public void editActiveExecutionPlan(String executionPlan, String name)
             throws AxisFault {
         EventProcessorService eventProcessorService = EventProcessorAdminValueHolder.getEventProcessorService();
-        AxisConfiguration axisConfig = getAxisConfig();
         try {
-            eventProcessorService.editActiveExecutionPlan(executionPlan, name, axisConfig);
+            eventProcessorService.editActiveExecutionPlan(executionPlan, name);
         } catch (ExecutionPlanConfigurationException e) {
             log.error(e.getMessage(), e);
             throw new AxisFault(e.getMessage(), e);
@@ -103,9 +100,8 @@ public class EventProcessorAdminService extends AbstractAdmin {
     public void editInactiveExecutionPlan(String executionPlan, String fileName)
             throws AxisFault {
         EventProcessorService eventProcessorService = EventProcessorAdminValueHolder.getEventProcessorService();
-        AxisConfiguration axisConfig = getAxisConfig();
         try {
-            eventProcessorService.editInactiveExecutionPlan(executionPlan, fileName, axisConfig);
+            eventProcessorService.editInactiveExecutionPlan(executionPlan, fileName);
         } catch (ExecutionPlanConfigurationException e) {
             log.error(e.getMessage(), e);
             throw new AxisFault(e.getMessage(), e);
@@ -130,9 +126,8 @@ public class EventProcessorAdminService extends AbstractAdmin {
 
     public String getActiveExecutionPlan(String planName) throws AxisFault {
         EventProcessorService eventProcessorService = EventProcessorAdminValueHolder.getEventProcessorService();
-        AxisConfiguration axisConfig = getAxisConfig();
         try {
-            return eventProcessorService.getActiveExecutionPlan(planName, axisConfig);
+            return eventProcessorService.getActiveExecutionPlan(planName);
         } catch (ExecutionPlanConfigurationException e) {
             log.error(e.getMessage(), e);
             throw new AxisFault(e.getMessage(), e);
@@ -141,9 +136,8 @@ public class EventProcessorAdminService extends AbstractAdmin {
 
     public String getInactiveExecutionPlan(String filename) throws AxisFault {
         EventProcessorService eventProcessorService = EventProcessorAdminValueHolder.getEventProcessorService();
-        AxisConfiguration axisConfig = getAxisConfig();
         try {
-            return eventProcessorService.getInactiveExecutionPlan(filename, axisConfig);
+            return eventProcessorService.getInactiveExecutionPlan(filename);
         } catch (ExecutionPlanConfigurationException e) {
             log.error(e.getMessage(), e);
             throw new AxisFault(e.getMessage(), e);
@@ -253,9 +247,8 @@ public class EventProcessorAdminService extends AbstractAdmin {
     public void setTracingEnabled(String executionPlanName, boolean isEnabled) throws AxisFault {
         EventProcessorService eventProcessorService = EventProcessorAdminValueHolder.getEventProcessorService();
         if (eventProcessorService != null) {
-            AxisConfiguration axisConfig = getAxisConfig();
             try {
-                eventProcessorService.setTracingEnabled(executionPlanName, isEnabled, axisConfig);
+                eventProcessorService.setTracingEnabled(executionPlanName, isEnabled);
             } catch (ExecutionPlanConfigurationException e) {
                 log.error(e.getMessage(), e);
                 throw new AxisFault(e.getMessage(), e);
@@ -268,9 +261,8 @@ public class EventProcessorAdminService extends AbstractAdmin {
     public void setStatisticsEnabled(String executionPlanName, boolean isEnabled) throws AxisFault {
         EventProcessorService eventProcessorService = EventProcessorAdminValueHolder.getEventProcessorService();
         if (eventProcessorService != null) {
-            AxisConfiguration axisConfig = getAxisConfig();
             try {
-                eventProcessorService.setStatisticsEnabled(executionPlanName, isEnabled, axisConfig);
+                eventProcessorService.setStatisticsEnabled(executionPlanName, isEnabled);
             } catch (ExecutionPlanConfigurationException e) {
                 log.error(e.getMessage(), e);
                 throw new AxisFault(e.getMessage(), e);
