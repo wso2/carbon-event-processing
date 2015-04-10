@@ -100,7 +100,6 @@ public final class WSO2EventAdapter implements OutputEventAdapter {
         try {
             if (authUrl != null && authUrl.length() > 0) {
                 dataPublisher = new DataPublisher(protocol, receiverUrl, authUrl, userName, password);
-
             } else {
                 dataPublisher = new DataPublisher(protocol, receiverUrl, null, userName, password);
             }
