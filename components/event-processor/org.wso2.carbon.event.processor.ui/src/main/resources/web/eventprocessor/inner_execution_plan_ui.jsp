@@ -205,9 +205,8 @@
                                 %>
                                 <option value="createStreamDef">-- Create Stream Definition --</option>
                             </select></td>
-                            <td>
                             <td><input type="button" class="button"
-                                       value="<fmt:message key="add"/>"
+                                       value="<fmt:message key="export"/>"
                                        onclick="addExportedStreamDefinition()"/>
                             </td>
                         </tr>
