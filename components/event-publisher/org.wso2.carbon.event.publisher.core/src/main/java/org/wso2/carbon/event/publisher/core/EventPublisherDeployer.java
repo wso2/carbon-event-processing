@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2005 - 2014, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
+ * Copyright (c) 2015, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy
@@ -24,7 +24,7 @@ import org.apache.axis2.deployment.repository.util.DeploymentFileData;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.wso2.carbon.context.PrivilegedCarbonContext;
-import org.wso2.carbon.event.processing.application.deployer.EventProcessingDeployer;
+import org.wso2.carbon.event.application.deployer.EventProcessingDeployer;
 import org.wso2.carbon.event.publisher.core.config.EventPublisherConfiguration;
 import org.wso2.carbon.event.publisher.core.config.EventPublisherConfigurationFile;
 import org.wso2.carbon.event.publisher.core.config.EventPublisherConstants;
@@ -34,6 +34,7 @@ import org.wso2.carbon.event.publisher.core.exception.EventPublisherValidationEx
 import org.wso2.carbon.event.publisher.core.internal.CarbonEventPublisherService;
 import org.wso2.carbon.event.publisher.core.internal.ds.EventPublisherServiceValueHolder;
 import org.wso2.carbon.event.publisher.core.internal.util.EventPublisherConfigurationBuilder;
+import org.wso2.carbon.event.publisher.core.internal.util.helper.EventPublisherConfigurationFilesystemInvoker;
 import org.wso2.carbon.event.publisher.core.internal.util.helper.EventPublisherConfigurationHelper;
 
 import javax.xml.stream.XMLInputFactory;
@@ -155,6 +156,15 @@ public class EventPublisherDeployer extends AbstractDeployer implements EventPro
                 OMElement eventPublisherOMElement = getEventPublisherOMElement(eventPublisherFile);
                 if (!(eventPublisherOMElement.getQName().getLocalPart()).equals(EventPublisherConstants.EF_ELEMENT_ROOT_ELEMENT)) {
                     throw new EventPublisherConfigurationException("Wrong event publisher configuration file, Invalid root element " + eventPublisherOMElement.getQName() + " in " + eventPublisherFile.getName());
+                }
+
+                boolean isEncrypted = EventPublisherConfigurationHelper.validateEncryptedProperties(eventPublisherOMElement);
+
+                if (isEditable && !isEncrypted) {
+                    String fileName = eventPublisherFile.getName();
+                    EventPublisherConfigurationFilesystemInvoker.delete(fileName);
+                    EventPublisherConfigurationFilesystemInvoker.encryptAndSave(eventPublisherOMElement, fileName);
+                    return;
                 }
 
                 EventPublisherConfigurationHelper.validateEventPublisherConfiguration(eventPublisherOMElement);

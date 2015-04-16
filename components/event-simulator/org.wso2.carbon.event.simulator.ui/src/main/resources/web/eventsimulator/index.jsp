@@ -181,9 +181,9 @@
         </div>
         <div id="dataSourceArea">
 
-            <form name="inputFormDB" action="#" method="post" id="inputFormDB">
-                <table class="styledLeft noBorders" cellspacing="0" cellpadding="0" border="0" style="border-bottom:none">
-                    <thead>
+                <form name="inputFormDB" action="#" method="post" id="inputFormDB">
+                    <table class="styledLeft noBorders" cellspacing="0" cellpadding="0" border="0" style="border-bottom:1px solid #cccccc">
+                        <thead>
 
                     <tr>
                         <th colspan="3" class="middle-header">

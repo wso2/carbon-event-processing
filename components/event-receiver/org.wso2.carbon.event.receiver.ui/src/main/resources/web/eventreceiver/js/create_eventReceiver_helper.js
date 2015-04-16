@@ -534,7 +534,10 @@ function addEventReceiverViaPopup(form, toStreamId, redirectPage) {
             if (notRequiredPropertyValue == "") {
                 notRequiredPropertyValue = "  ";
             }
-            propertyString = propertyString + notRequiredPropertyName + "$=" + notRequiredPropertyValue + "|=";
+            if (propertyString != "") {
+                propertyString = propertyString + "|=";
+            }
+            propertyString = propertyString + notRequiredPropertyName + "$=" + notRequiredPropertyValue;
         }
         propertyCount++;
     }

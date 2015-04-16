@@ -24,17 +24,20 @@ var CONSTANTS = {
     webAppName: 'outputui',
     urlSeperator: '/',
     tenantUrlAttribute: 't',
-    urlTransportHttp : 'http://',
+    urlUnsecureTransportHttp : 'http://',
     urlGetParameter : '?lastUpdatedTime=',
-    urlTransportWebsocket : 'ws://',
+    urlUnsecureTransportWebsocket : 'ws://',
+    urlSecureTransportWebsocket : 'wss://',
+    urlSecureTransportHttp : 'https://',
     colon : ':',
     defaultMode : 'AUTO',
     processModeHTTP : 'HTTP',
     processModeWebSocket : 'WEBSOCKET',
     processModeAuto : 'AUTO',
     superTenantId : 'carbon.super',
-    websocketWaitTime : 1000,
-    websocketTimeAppender : 400
+    numThousand : 1000,
+    websocketTimeAppender : 400,
+    secureMode : 'SECURED'
 };
 
 var websocket = null;
@@ -50,31 +53,48 @@ var streamVersion;
 var firstPollingAttempt;
 var processMode;
 var userDomainUrl = "";
+var terminateWebsocketInstance = false;
+var transportToBeUsedHttp;
+var transportToBeUsedWebsocket;
 
 //select default dropDownValue
 $("#idMode").val("auto");
+$("#idSecureLevel").val("unsecured");
 
 /**
  * Publishing events for data views
  */
-function retrieveEvents(streamName,version,cepHost,cepPort,intervalTime,mode,domain){
+function retrieveEvents(streamName,version,cepHost,cepPort,intervalTime,mode,domain,secureMode){
 
     $("textarea#idRecievedEvents").val("");
     $("textarea#idConsole").val("");
 
+    if(websocket != null){
+        terminateWebsocketInstance = true;
+        websocket.onclose;
+    }
+
     firstPollingAttempt = true;
     stream = streamName;
     streamVersion = version;
-    polingInterval = intervalTime * 1000;
+    polingInterval = intervalTime * CONSTANTS.numThousand;
     cepHostName = cepHost;
     cepPortNumber = cepPort;
     processMode = mode;
+
+    if(secureMode == CONSTANTS.secureMode){
+        transportToBeUsedHttp = CONSTANTS.urlSecureTransportHttp;
+        transportToBeUsedWebsocket = CONSTANTS.urlSecureTransportWebsocket;
+    } else {
+        transportToBeUsedHttp = CONSTANTS.urlUnsecureTransportHttp;
+        transportToBeUsedWebsocket = CONSTANTS.urlUnsecureTransportWebsocket;
+    }
 
     if(domain != CONSTANTS.superTenantId){
         userDomainUrl = CONSTANTS.tenantUrlAttribute + CONSTANTS.urlSeperator + domain + CONSTANTS.urlSeperator;
 
     }
-    webSocketUrl = CONSTANTS.urlTransportWebsocket + cepHostName + CONSTANTS.colon + cepPortNumber +
+    webSocketUrl = transportToBeUsedWebsocket + cepHostName + CONSTANTS.colon + cepPortNumber +
         CONSTANTS.urlSeperator + CONSTANTS.webAppName + CONSTANTS.urlSeperator + userDomainUrl + stream +
         CONSTANTS.urlSeperator + streamVersion;
 
@@ -93,7 +113,7 @@ function startPoll(){
 
     (function poll(){
         setTimeout(function(){
-            httpUrl = CONSTANTS.urlTransportHttp + cepHostName + CONSTANTS.colon + cepPortNumber + CONSTANTS.urlSeperator+
+            httpUrl = transportToBeUsedHttp + cepHostName + CONSTANTS.colon + cepPortNumber + CONSTANTS.urlSeperator+
                 CONSTANTS.webAppName + CONSTANTS.urlSeperator + userDomainUrl + stream + CONSTANTS.urlSeperator +
                 streamVersion + CONSTANTS.urlGetParameter + lastUpdatedtime;
 
@@ -103,10 +123,10 @@ function startPoll(){
                     $("textarea#idConsole").val(data + "Successfully connected to HTTP.");
                     firstPollingAttempt = false;
                 }
-                if($.parseJSON(responseText.eventsExists)){
+                var eventList = $.parseJSON(responseText.events);
+                $("textarea#idRecievedEvents").val("");
+                if(eventList.length != 0){
                     lastUpdatedtime = responseText.lastEventTime;
-                    var eventList = $.parseJSON(responseText.events);
-                    $("textarea#idRecievedEvents").val("")
                     var streamId = stream + ":" + streamVersion + " =";
                     for(var i=0;i<eventList.length;i++){
                         var data = $("textarea#idRecievedEvents").val();
@@ -168,9 +188,16 @@ var webSocketOnClose =function (e) {
     } else{
         var data = $("textarea#idConsole").val();
         $("textarea#idConsole").val(data + "Closing the connection... \n");
-        data = $("textarea#idConsole").val();
-        $("textarea#idConsole").val(data + "Starting to retry connection... \n");
-        waitForSocketConnection(websocket);
+
+        if(!terminateWebsocketInstance){
+            data = $("textarea#idConsole").val();
+            $("textarea#idConsole").val(data + "Starting to retry connection... \n");
+            waitForSocketConnection(websocket);
+        } else{
+            terminateWebsocketInstance = false;
+        }
+
+
     }
 };
 
@@ -188,7 +215,7 @@ var webSocketOnError = function (err) {
 /**
  * Gracefully increments the connection retry
  */
-var waitTime = CONSTANTS.websocketWaitTime;
+var waitTime = CONSTANTS.numThousand;
 function waitForSocketConnection(socket, callback){
     setTimeout(
         function () {
@@ -220,6 +247,7 @@ function connectToSource() {
     var port = $("#idPort").val();
     var timeToPoll = $("#idPollingInterval").val();
     var mode = $( "#idMode option:selected" ).text();
+    var secureLevel = $( "#idSecureLevel option:selected" ).text();
     var tenantDomain = $("#idDomain").val();
 
     if(hostName == ""){
@@ -234,5 +262,5 @@ function connectToSource() {
     if(tenantDomain == ""){
         tenantDomain = $("#idDomain").attr("placeholder");
     }
-    retrieveEvents(streamName,version,hostName,port,timeToPoll,mode,tenantDomain);
+    retrieveEvents(streamName,version,hostName,port,timeToPoll,mode,tenantDomain,secureLevel);
 }

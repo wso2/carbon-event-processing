@@ -25,20 +25,24 @@ var CONSTANTS = {
     urlSeperator: '/',
     urlGetParameter : '?lastUpdatedTime=',
     tenantUrlAttribute: 't',
-    urlTransportHttp : 'http://',
-    urlTransportWebsocket : 'ws://',
+    urlUnsecureTransportHttp : 'http://',
+    urlUnsecureTransportWebsocket : 'ws://',
+    urlSecureTransportWebsocket : 'wss://',
+    urlSecureTransportHttp : 'https://',
     colon : ':',
     defaultIntervalTime : 10 * 1000,
     defaultUserDomain : 'carbon.super',
     defaultHostName : 'localhost',
-    defaultPortNumber : '9763',
+    defaultNonsecurePortNumber : '9763',
+    defaultSecurePortNumber : '9443',
     defaultMode : 'AUTO',
     processModeHTTP : 'HTTP',
     processModeWebSocket : 'WEBSOCKET',
     processModeAuto : 'AUTO',
     superTenantId : 'carbon.super',
-    websocketWaitTime : 1000,
-    websocketTimeAppender : 400
+    numThousand : 1000,
+    websocketTimeAppender : 400,
+    secureMode : 'SECURED'
 };
 
 
@@ -57,19 +61,32 @@ var processMode;
 var onSuccessFunction;
 var onErrorFunction;
 var userDomainUrl = "";
+var terminateWebsocketInstance = false;
+var pollingContinue = true;
+var transportToBeUsedHttp;
+var transportToBeUsedWebsocket;
 
 function subscribe(streamName,version,intervalTime,domain,
-                   listningFuncSuccessData,listningFuncErrorData,cepHost,cepPort,mode){
+                   listningFuncSuccessData,listningFuncErrorData,cepHost,cepPort,mode,secureMode){
 
+    killPollingProcesses();
     stream = streamName;
     streamVersion = version;
     onSuccessFunction = listningFuncSuccessData;
     onErrorFunction = listningFuncErrorData;
 
+    if(secureMode == CONSTANTS.secureMode){
+        transportToBeUsedHttp = CONSTANTS.urlSecureTransportHttp;
+        transportToBeUsedWebsocket = CONSTANTS.urlSecureTransportWebsocket;
+    } else {
+        transportToBeUsedHttp = CONSTANTS.urlUnsecureTransportHttp;
+        transportToBeUsedWebsocket = CONSTANTS.urlUnsecureTransportWebsocket;
+    }
+
     if(intervalTime == null || intervalTime == ""){
         polingInterval = CONSTANTS.defaultIntervalTime;
     } else{
-        polingInterval = intervalTime * 1000;
+        polingInterval = intervalTime * CONSTANTS.numThousand;
     }
 
     if(domain == null || domain == ""){
@@ -83,7 +100,11 @@ function subscribe(streamName,version,intervalTime,domain,
     }
 
     if(cepPort == null || cepPort == ""){
-        cepPortNumber = CONSTANTS.defaultPortNumber;
+        if(secureMode == CONSTANTS.secureMode){
+            cepPortNumber = CONSTANTS.defaultSecurePortNumber;
+        } else{
+            cepPortNumber = CONSTANTS.defaultNonsecurePortNumber;
+        }
     } else{
         cepPortNumber = cepPort;
     }
@@ -98,12 +119,13 @@ function subscribe(streamName,version,intervalTime,domain,
         userDomainUrl = CONSTANTS.tenantUrlAttribute + CONSTANTS.urlSeperator + domain + CONSTANTS.urlSeperator;
 
     }
-    webSocketUrl = CONSTANTS.urlTransportWebsocket + cepHostName + CONSTANTS.colon + cepPortNumber +
+    webSocketUrl = transportToBeUsedWebsocket + cepHostName + CONSTANTS.colon + cepPortNumber +
         CONSTANTS.urlSeperator + CONSTANTS.webAppName+ CONSTANTS.urlSeperator + userDomainUrl + stream +
         CONSTANTS.urlSeperator + streamVersion;
 
     if(processMode == CONSTANTS.processModeHTTP){
         firstPollingAttempt = true;
+        pollingContinue = true;
         startPoll();
     } else{
         initializeWebSocket(webSocketUrl);
@@ -147,10 +169,16 @@ var webSocketOnClose =function (e) {
     if(isErrorOccured){
         if(processMode != CONSTANTS.processModeWebSocket){
             firstPollingAttempt = true;
+            pollingContinue = true;
             startPoll();
         }
     } else{
-        waitForSocketConnection(websocket);
+        if(!terminateWebsocketInstance){
+            waitForSocketConnection(websocket);
+        } else{
+            terminateWebsocketInstance = false;
+        }
+
     }
 };
 
@@ -168,7 +196,7 @@ var webSocketOnError = function (err) {
 /**
  * Gracefully increments the connection retry
  */
-var waitTime = CONSTANTS.websocketWaitTime;
+var waitTime = CONSTANTS.numThousand;
 function waitForSocketConnection(socket, callback){
     setTimeout(
         function () {
@@ -194,7 +222,7 @@ function startPoll(){
 
     (function poll(){
         setTimeout(function(){
-            httpUrl = CONSTANTS.urlTransportHttp + cepHostName + CONSTANTS.colon + cepPortNumber + CONSTANTS.urlSeperator
+            httpUrl = transportToBeUsedHttp + cepHostName + CONSTANTS.colon + cepPortNumber + CONSTANTS.urlSeperator
                 + CONSTANTS.webAppName + CONSTANTS.urlSeperator + userDomainUrl + stream + CONSTANTS.urlSeperator +
                 streamVersion + CONSTANTS.urlGetParameter + lastUpdatedtime;
 
@@ -204,13 +232,15 @@ function startPoll(){
                      $("textarea#idConsole").val(data + "Successfully connected to HTTP.");*/
                     firstPollingAttempt = false;
                 }
-                if($.parseJSON(responseText.eventsExists)){
-                    lastUpdatedtime = responseText.lastEventTime;
 
-                    var eventList = (responseText.events);
+                var eventList = $.parseJSON(responseText.events);
+                if(eventList.length != 0){
+                    lastUpdatedtime = responseText.lastEventTime;
                     constructPayload(eventList);
                 }
-                startPoll();
+                if(pollingContinue){
+                    startPoll();
+                }
             })
                 .fail(function(errorData) {
                     var errorData = JSON.parse(errorData.responseText);
@@ -218,6 +248,18 @@ function startPoll(){
                 });
         }, polingInterval);
     })()
+}
+
+function killPollingProcesses(){
+
+    //stopping the Websocket
+    if(websocket != null){
+        terminateWebsocketInstance = true;
+        websocket.onclose;
+    }
+    //stopping the HTTPS Request
+    pollingContinue = false;
+
 }
 
 function constructPayload(eventsArray){

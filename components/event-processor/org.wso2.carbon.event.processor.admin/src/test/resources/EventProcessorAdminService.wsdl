@@ -188,7 +188,7 @@
                     <xs:element maxOccurs="unbounded" minOccurs="0" name="exportedStreams" nillable="true" type="ax2106:StreamConfigurationDto"></xs:element>
                     <xs:element maxOccurs="unbounded" minOccurs="0" name="importedStreams" nillable="true" type="ax2106:StreamConfigurationDto"></xs:element>
                     <xs:element minOccurs="0" name="name" nillable="true" type="xs:string"></xs:element>
-                    <xs:element minOccurs="0" name="queryExpressions" nillable="true" type="xs:string"></xs:element>
+                    <xs:element minOccurs="0" name="executionPlan" nillable="true" type="xs:string"></xs:element>
                     <xs:element maxOccurs="unbounded" minOccurs="0" name="siddhiConfigurations" nillable="true" type="ax2106:SiddhiConfigurationDto"></xs:element>
                     <xs:element minOccurs="0" name="statisticsEnabled" type="xs:boolean"></xs:element>
                     <xs:element minOccurs="0" name="tracingEnabled" type="xs:boolean"></xs:element>

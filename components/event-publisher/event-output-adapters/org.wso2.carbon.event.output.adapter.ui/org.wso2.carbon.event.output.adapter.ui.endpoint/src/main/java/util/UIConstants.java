@@ -27,5 +27,7 @@ package util;
  */
 public class UIConstants {
 
+    private UIConstants() {
+    }
     public static final String ADAPTER_UI_COLON = ":";
 }

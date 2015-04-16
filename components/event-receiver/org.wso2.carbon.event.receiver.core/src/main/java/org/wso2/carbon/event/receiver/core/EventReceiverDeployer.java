@@ -24,7 +24,7 @@ import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.wso2.carbon.context.PrivilegedCarbonContext;
-import org.wso2.carbon.event.processing.application.deployer.EventProcessingDeployer;
+import org.wso2.carbon.event.application.deployer.EventProcessingDeployer;
 import org.wso2.carbon.event.receiver.core.config.EventReceiverConfiguration;
 import org.wso2.carbon.event.receiver.core.config.EventReceiverConfigurationFile;
 import org.wso2.carbon.event.receiver.core.config.EventReceiverConstants;
@@ -34,6 +34,7 @@ import org.wso2.carbon.event.receiver.core.exception.EventReceiverValidationExce
 import org.wso2.carbon.event.receiver.core.internal.CarbonEventReceiverService;
 import org.wso2.carbon.event.receiver.core.internal.ds.EventReceiverServiceValueHolder;
 import org.wso2.carbon.event.receiver.core.internal.util.EventReceiverConfigurationBuilder;
+import org.wso2.carbon.event.receiver.core.internal.util.helper.EventReceiverConfigurationFileSystemInvoker;
 import org.wso2.carbon.event.receiver.core.internal.util.helper.EventReceiverConfigurationHelper;
 
 import javax.xml.namespace.QName;
@@ -163,6 +164,16 @@ public class EventReceiverDeployer extends AbstractDeployer implements EventProc
                 if (!eventReceiverOMElement.getLocalName().equals(EventReceiverConstants.ER_ELEMENT_ROOT_ELEMENT)) {
                     throw new EventReceiverConfigurationException("Wrong event receiver configuration file, Invalid root element " + eventReceiverOMElement.getQName() + " in " + eventReceiverFile.getName());
                 }
+
+                boolean isEncrypted = EventReceiverConfigurationHelper.validateEncryptedProperties(eventReceiverOMElement);
+
+                if (isEditable && !isEncrypted) {
+                    String fileName = eventReceiverFile.getName();
+                    EventReceiverConfigurationFileSystemInvoker.delete(fileName);
+                    EventReceiverConfigurationFileSystemInvoker.encryptAndSave(eventReceiverOMElement, fileName);
+                    return;
+                }
+
                 EventReceiverConfigurationHelper.validateEventReceiverConfiguration(eventReceiverOMElement);
 
                 eventReceiverName = eventReceiverOMElement.getAttributeValue(new QName(EventReceiverConstants.ER_ATTR_NAME));

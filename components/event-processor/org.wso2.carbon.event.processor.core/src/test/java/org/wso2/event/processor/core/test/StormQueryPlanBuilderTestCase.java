@@ -21,19 +21,13 @@ package org.wso2.event.processor.core.test;
 import junit.framework.Assert;
 import org.apache.axiom.om.OMElement;
 import org.apache.axis2.util.XMLUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.junit.Test;
 import org.w3c.dom.Document;
 import org.wso2.carbon.event.processor.core.ExecutionPlanConfiguration;
 import org.wso2.carbon.event.processor.core.StreamConfiguration;
-import org.wso2.carbon.event.processor.core.exception.StormDeploymentException;
 import org.wso2.carbon.event.processor.core.exception.StormQueryConstructionException;
-import org.wso2.carbon.event.processor.core.internal.ds.EventProcessorValueHolder;
 import org.wso2.carbon.event.processor.core.internal.storm.util.StormQueryPlanBuilder;
 import org.wso2.carbon.event.processor.core.internal.util.EventProcessorConstants;
-import org.wso2.siddhi.query.api.definition.Attribute;
-import org.wso2.siddhi.query.api.definition.StreamDefinition;
 
 import javax.xml.namespace.QName;
 import java.util.ArrayList;
@@ -53,7 +47,7 @@ public class StormQueryPlanBuilderTestCase {
         ExecutionPlanConfiguration configuration = new ExecutionPlanConfiguration();
         configuration.addImportedStream(new StreamConfiguration("test1", "1.0.0", "analyticsStats"));
         configuration.addExportedStream(new StreamConfiguration("test2", "1.0.0", "filteredStatStream"));
-        configuration.setQueryExpressions("@name('query1') @dist(parallel='1') from analyticsStats[meta_ipAdd != '192" +
+        configuration.setExecutionPlan("@name('query1') @dist(parallel='1') from analyticsStats[meta_ipAdd != '192" +
                 ".168.1.1']#window.time(5 min) " +
                 "select meta_ipAdd, meta_index, meta_timestamp, meta_nanoTime, userID " +
                 "insert into filteredStatStream;");
@@ -136,7 +130,7 @@ public class StormQueryPlanBuilderTestCase {
                 "@name('query5') @dist(parallel='5') from countedStream[count>10]   \n" +
                 "select price, symbol, count\n" +
                 "insert into fortuneCompanyStream;\n";
-        configuration.setQueryExpressions(queryExpression);
+        configuration.setExecutionPlan(queryExpression);
 
         String analyticStats = "define stream analyticsStats ( meta_ipAdd string, meta_index long, " +
                 "meta_timestamp long, meta_nanoTime long, userID string, searchTerms string );";
@@ -217,7 +211,7 @@ public class StormQueryPlanBuilderTestCase {
                 "@name('query5') @dist(parallel='5') from countedStream[count>10]   \n" +
                 "select price, symbol, count\n" +
                 "insert into fortuneCompanyStream;\n";
-        configuration.setQueryExpressions(queryExpression);
+        configuration.setExecutionPlan(queryExpression);
 
         String analyticStats = "define stream analyticsStats ( meta_ipAdd string, meta_index long, " +
                 "meta_timestamp long, meta_nanoTime long, userID string, searchTerms string );";
@@ -302,7 +296,7 @@ public class StormQueryPlanBuilderTestCase {
                 "@name('query5') @dist(parallel='5') from countedStream[count>10]   \n" +
                 "select price, symbol, count\n" +
                 "insert into fortuneCompanyStream;\n";
-        configuration.setQueryExpressions(queryExpression);
+        configuration.setExecutionPlan(queryExpression);
 
         String analyticStats = "define stream analyticsStats ( meta_ipAdd string, meta_index long, " +
                 "meta_timestamp long, meta_nanoTime long, userID string, searchTerms string );";
@@ -345,7 +339,7 @@ public class StormQueryPlanBuilderTestCase {
                 "@name('query5') @dist(parallel='5') from countedStream[count>10]   \n" +
                 "select price, symbol, count\n" +
                 "insert into fortuneCompanyStream;\n";
-        configuration.setQueryExpressions(queryExpression);
+        configuration.setExecutionPlan(queryExpression);
 
         String analyticStats = "define stream analyticsStats ( meta_ipAdd string, meta_index long, " +
                 "meta_timestamp long, meta_nanoTime long, userID string, searchTerms string );";
@@ -390,7 +384,7 @@ public class StormQueryPlanBuilderTestCase {
                 "select price, symbol, count\n" +
                 "insert into fortuneCompanyStream;\n"+
                 "end;";
-        configuration.setQueryExpressions(queryExpression);
+        configuration.setExecutionPlan(queryExpression);
 
         String analyticStats = "define stream analyticsStats ( meta_ipAdd string, meta_index long, " +
                 "meta_timestamp long, meta_nanoTime long, userID string, searchTerms string );";
@@ -459,7 +453,7 @@ public class StormQueryPlanBuilderTestCase {
                 "select price, symbol, count\n" +
                 "insert into fortuneCompanyStream;\n"+
                 "end;";
-        configuration.setQueryExpressions(queryExpression);
+        configuration.setExecutionPlan(queryExpression);
 
         String analyticStats = "define stream analyticsStats ( meta_ipAdd string, meta_index long, " +
                 "meta_timestamp long, meta_nanoTime long, userID string, searchTerms string );";
@@ -505,7 +499,7 @@ public class StormQueryPlanBuilderTestCase {
                 "select price, symbol, count\n" +
                 "insert into fortuneCompanyStream;\n"+
                 "end;";
-        configuration.setQueryExpressions(queryExpression);
+        configuration.setExecutionPlan(queryExpression);
 
         String analyticStats = "define stream analyticsStats ( meta_ipAdd string, meta_index long, " +
                 "meta_timestamp long, meta_nanoTime long, userID string, searchTerms string );";

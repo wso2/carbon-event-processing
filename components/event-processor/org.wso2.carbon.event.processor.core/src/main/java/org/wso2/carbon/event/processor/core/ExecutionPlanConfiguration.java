@@ -28,14 +28,12 @@ public class ExecutionPlanConfiguration {
     private String description;
     private boolean isTracingEnabled;
     private boolean isStatisticsEnabled;
-    private Map<String, String> siddhiConfigurationProperties;
     private List<StreamConfiguration> importedStreams;
     private List<StreamConfiguration> exportedStreams;
-    private String queryExpressions;
+    private String executionPlan;
     private boolean editable;
 
     public ExecutionPlanConfiguration() {
-        siddhiConfigurationProperties = new ConcurrentHashMap<String, String>();
         importedStreams = new Vector<StreamConfiguration>();
         exportedStreams = new Vector<StreamConfiguration>();
     }
@@ -56,10 +54,6 @@ public class ExecutionPlanConfiguration {
         this.description = description;
     }
 
-    public Map<String, String> getSiddhiConfigurationProperties() {
-        return siddhiConfigurationProperties;
-    }
-
     public List<StreamConfiguration> getImportedStreams() {
         return importedStreams;
     }
@@ -69,16 +63,12 @@ public class ExecutionPlanConfiguration {
     }
 
 
-    public String getQueryExpressions() {
-        return queryExpressions;
+    public String getExecutionPlan() {
+        return executionPlan;
     }
 
-    public void setQueryExpressions(String queryExpressions) {
-        this.queryExpressions = queryExpressions;
-    }
-
-    public void addSiddhiConfigurationProperty(String name, String value) {
-        this.siddhiConfigurationProperties.put(name, value);
+    public void setExecutionPlan(String executionPlan) {
+        this.executionPlan = executionPlan;
     }
 
     public void addImportedStream(StreamConfiguration stream) {

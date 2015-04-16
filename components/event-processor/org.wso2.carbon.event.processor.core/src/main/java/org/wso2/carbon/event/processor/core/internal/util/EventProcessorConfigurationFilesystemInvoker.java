@@ -35,18 +35,16 @@ public class EventProcessorConfigurationFilesystemInvoker {
 
     public static void save(OMElement executionPlanOM,
                             String executionPlanName,
-                            String fileName,
-                            AxisConfiguration axisConfiguration)
+                            String fileName)
             throws ExecutionPlanConfigurationException {
 
-        EventProcessorConfigurationFilesystemInvoker.save(executionPlanOM.toString(), executionPlanName, fileName, axisConfiguration);
+        EventProcessorConfigurationFilesystemInvoker.saveOld(executionPlanOM.toString(), executionPlanName, fileName);
     }
 
-    public static void save(String executionPlan, String executionPlanName,
-                            String fileName, AxisConfiguration axisConfiguration)
+    public static void saveOld(String executionPlan, String executionPlanName, String fileName)
             throws ExecutionPlanConfigurationException {
-        EventProcessorDeployer eventProcessorDeployer = (EventProcessorDeployer) getDeployer(axisConfiguration, EventProcessorConstants.EP_ELE_DIRECTORY);
-        String filePath = getFilePathFromFilename(fileName, axisConfiguration);
+        EventProcessorDeployer eventProcessorDeployer = (EventProcessorDeployer) getDeployer(EventProcessorConstants.EP_ELE_DIRECTORY);
+        String filePath = getFilePathFromFilename(fileName);
         try {
             OutputStreamWriter writer = null;
             try {
@@ -74,13 +72,44 @@ public class EventProcessorConfigurationFilesystemInvoker {
         }
     }
 
-    public static void delete(String fileName, AxisConfiguration axisConfiguration)
+    public static void save(String executionPlan, String executionPlanName, String fileName)
+            throws ExecutionPlanConfigurationException {
+        EventProcessorDeployer eventProcessorDeployer = (EventProcessorDeployer) getDeployer(EventProcessorConstants.EP_ELE_DIRECTORY);
+        String filePath = getFilePathFromFilename(fileName);
+        try {
+            OutputStreamWriter writer = null;
+            try {
+                /* save contents to .xml file */
+                File file = new File(filePath);
+
+                writer = new OutputStreamWriter(new FileOutputStream(file), "UTF-8");
+
+                // get the content in bytes
+//                String xmlContent = EventProcessorUtil.formatXml(executionPlan);
+                eventProcessorDeployer.getDeployedExecutionPlanFilePaths().add(filePath);
+                writer.write(executionPlan);
+                log.info("Execution plan configuration for " + executionPlanName + " saved in the filesystem");
+            } finally {
+                if (writer != null) {
+                    writer.flush();
+                    writer.close();
+                }
+            }
+            eventProcessorDeployer.executeManualDeployment(filePath);
+        } catch (IOException e) {
+            eventProcessorDeployer.getDeployedExecutionPlanFilePaths().remove(filePath);
+            log.error("Error while saving " + executionPlanName, e);
+            throw new ExecutionPlanConfigurationException("Error while saving ", e);
+        }
+    }
+
+    public static void delete(String fileName)
             throws ExecutionPlanConfigurationException {
         try {
-            String filePath=getFilePathFromFilename(fileName,axisConfiguration);
+            String filePath = getFilePathFromFilename(fileName);
             File file = new File(filePath);
             if (file.exists()) {
-                EventProcessorDeployer deployer = (EventProcessorDeployer) getDeployer(axisConfiguration, EventProcessorConstants.EP_ELE_DIRECTORY);
+                EventProcessorDeployer deployer = (EventProcessorDeployer) getDeployer(EventProcessorConstants.EP_ELE_DIRECTORY);
                 deployer.getUnDeployedExecutionPlanFilePaths().add(filePath);
                 boolean fileDeleted = file.delete();
                 if (!fileDeleted) {
@@ -97,7 +126,7 @@ public class EventProcessorConfigurationFilesystemInvoker {
     }
 
     public static void reload(String filePath, AxisConfiguration axisConfiguration) throws ExecutionPlanConfigurationException {
-        EventProcessorDeployer eventProcessorDeployer = (EventProcessorDeployer) getDeployer(axisConfiguration, EventProcessorConstants.EP_ELE_DIRECTORY);
+        EventProcessorDeployer eventProcessorDeployer = (EventProcessorDeployer) getDeployer(EventProcessorConstants.EP_ELE_DIRECTORY);
         try {
             eventProcessorDeployer.processUndeploy(filePath);
             eventProcessorDeployer.processDeploy(new DeploymentFileData(new File(filePath)));
@@ -107,22 +136,22 @@ public class EventProcessorConfigurationFilesystemInvoker {
 
     }
 
-    public static Deployer getDeployer(AxisConfiguration axisConfig, String endpointDirPath) {
-        DeploymentEngine deploymentEngine = (DeploymentEngine) axisConfig.getConfigurator();
-        return deploymentEngine.getDeployer(endpointDirPath, "xml");
+    public static Deployer getDeployer(String endpointDirPath) {
+        DeploymentEngine deploymentEngine = (DeploymentEngine) EventProcessorUtil.getAxisConfiguration().getConfigurator();
+        return deploymentEngine.getDeployer(endpointDirPath, "siddhiql");
     }
 
 
-    private static String getFilePathFromFilename(String fileName, AxisConfiguration axisConfiguration) {
-        return  new File(axisConfiguration.getRepository().getPath()).getAbsolutePath() + File.separator + EventProcessorConstants.EP_ELE_DIRECTORY + File.separator + fileName;
+    private static String getFilePathFromFilename(String fileName) {
+        return new File(EventProcessorUtil.getAxisConfiguration().getRepository().getPath()).getAbsolutePath() + File.separator + EventProcessorConstants.EP_ELE_DIRECTORY + File.separator + fileName;
     }
 
-    public static String readExecutionPlanConfigFile(String fileName, AxisConfiguration axisConfiguration)
+    public static String readExecutionPlanConfigFile(String fileName)
             throws ExecutionPlanConfigurationException {
         BufferedReader bufferedReader = null;
         StringBuilder stringBuilder = new StringBuilder();
         try {
-            String filePath = getFilePathFromFilename(fileName, axisConfiguration);
+            String filePath = getFilePathFromFilename(fileName);
             bufferedReader = new BufferedReader(new FileReader(filePath));
             String line = null;
             while ((line = bufferedReader.readLine()) != null) {
@@ -143,6 +172,4 @@ public class EventProcessorConfigurationFilesystemInvoker {
         }
         return stringBuilder.toString().trim();
     }
-
-
 }

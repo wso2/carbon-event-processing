@@ -15,14 +15,10 @@
 ~ specific language governing permissions and limitations
 ~ under the License.
 --%>
-<%@ page import="org.wso2.carbon.event.processor.stub.EventProcessorAdminServiceStub" %>
-<%@ page import="org.wso2.carbon.event.processor.ui.EventProcessorUIUtils" %>
 <%@ page import="java.util.ResourceBundle" %>
-
 
 <%@ taglib uri="http://wso2.org/projects/carbon/taglibs/carbontags.jar" prefix="carbon" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
-
 
 <fmt:bundle basename="org.wso2.carbon.event.processor.ui.i18n.Resources">
 
@@ -70,51 +66,25 @@
     }
 %>
 
-
 <%
-    String executionPlanName = request.getParameter("execPlanName");
-    String executionPlanPath = request.getParameter("execPlanPath");
-
-    String executionPlanFile = "";
-    if (executionPlanName != null) {
-        EventProcessorAdminServiceStub stub = EventProcessorUIUtils.getEventProcessorAdminService(config, session, request);
-        executionPlanFile = stub.getActiveExecutionPlanConfigurationContent(executionPlanName);
-
-    } else if (executionPlanPath != null) {
-        EventProcessorAdminServiceStub stub = EventProcessorUIUtils.getEventProcessorAdminService(config, session, request);
-        executionPlanFile = stub.getInactiveExecutionPlanConfigurationContent(executionPlanPath);
-
-    }
-
-    Boolean loadEditArea = true;
-    String executionPlanFileConfiguratoin = executionPlanFile;
-
+    String execPlanName = request.getParameter("execPlanName");
+    String execPlanPath = request.getParameter("execPlanPath");
 %>
-
-<% if (loadEditArea) { %>
-<script type="text/javascript">
-    editAreaLoader.init({
-        id: "rawConfig"        // text area id
-        , syntax: "xml"            // syntax to be uses for highlighting
-        , start_highlight: true  // to display with highlight mode on start-up
-    });
-</script>
-<% } %>
 
 <script type="text/javascript">
     function updateConfiguration(form, executionPlanName) {
-        var newExecutionPlanConfig = "";
+        var newExecutionPlan = "";
 
-        if (document.getElementById("rawConfig") != null) {
-            newExecutionPlanConfig = editAreaLoader.getValue("rawConfig");
+        if (document.getElementById("queryExpressions") != null) {
+            newExecutionPlan =   window.queryEditor.getValue();
         }
 
-        var parameters = "?execPlanName=" + executionPlanName + "&execPlanConfig=" + newExecutionPlanConfig;
+        var parameters = "?execPlanName=" + executionPlanName + "&execPlan=" + newExecutionPlan;
 
         new Ajax.Request('../eventprocessor/edit_execution_plan_ajaxprocessor.jsp', {
             method: 'POST',
             asynchronous: false,
-            parameters: {execPlanName: executionPlanName, execPlanConfig: newExecutionPlanConfig },
+            parameters: {execPlanName: executionPlanName, execPlan: newExecutionPlan },
             onSuccess: function (transport) {
                 if ("true" == transport.responseText.trim()) {
                     form.submit();
@@ -133,16 +103,16 @@
     }
 
     function updateNotDeployedConfiguration(form, executionPlanPath) {
-        var newExecutionPlanConfig = "";
+        var newExecutionPlan = "";
 
-        if (document.getElementById("rawConfig") != null) {
-            newExecutionPlanConfig = editAreaLoader.getValue("rawConfig");
+        if (document.getElementById("queryExpressions") != null) {
+            newExecutionPlan =  window.queryEditor.getValue();
         }
 
         new Ajax.Request('../eventprocessor/edit_execution_plan_ajaxprocessor.jsp', {
             method: 'POST',
             asynchronous: false,
-            parameters: {execPlanPath: executionPlanPath, execPlanConfig: newExecutionPlanConfig },
+            parameters: {execPlanPath: executionPlanPath, execPlan: newExecutionPlan },
             onSuccess: function (transport) {
                 if ("true" == transport.responseText.trim()) {
                     form.submit();
@@ -159,7 +129,6 @@
         });
 
     }
-
 
     function resetConfiguration(form) {
 
@@ -182,50 +151,32 @@
                                 <fmt:message key="save.advice"/>
                             </span>
             </div>
-            <table class="styledLeft" style="width:100%">
+            <table class="styledLeft noBorders spacer-bot" style="width:100%">
                 <thead>
                 <tr>
-                    <th>
+                    <th colspan="2">
                         <fmt:message key="execution.plan.configuration"/>
                     </th>
                 </tr>
                 </thead>
                 <tbody>
-                <tr>
-                    <td class="formRow">
-                        <table class="normal" style="width:100%">
-                            <tr>
-                                <td id="rawConfigTD">
-                                    <textarea name="rawConfig" id="rawConfig"
-                                              style="border:solid 1px #cccccc; width: 99%; height: 400px; margin-top:5px;"><%=executionPlanFileConfiguratoin%>
-                                    </textarea>
-
-                                    <% if (!loadEditArea) { %>
-                                    <div style="padding:10px;color:#444;">
-                                        <fmt:message key="syntax.disabled"/>
-                                    </div>
-                                    <% } %>
-                                </td>
-                            </tr>
-                        </table>
-                    </td>
-                </tr>
+                <%@include file="inner_execution_plan_ui.jsp" %>
                 <tr>
                     <td class="buttonRow">
                         <%
-                            if (executionPlanName != null) {
+                            if (execPlanName != null) {
                         %>
 
                         <button class="button"
-                                onclick="updateConfiguration(document.getElementById('configform'),'<%=executionPlanName%>'); return false;">
+                                onclick="updateConfiguration(document.getElementById('configform'),'<%=execPlanName%>'); return false;">
                             <fmt:message
                                     key="update"/></button>
 
                         <%
-                        } else if (executionPlanPath != null) {
+                        } else if (execPlanPath != null) {
                         %>
                         <button class="button"
-                                onclick="updateNotDeployedConfiguration(document.getElementById('configform'),'<%=executionPlanPath%>'); return false;">
+                                onclick="updateNotDeployedConfiguration(document.getElementById('configform'),'<%=execPlanPath%>'); return false;">
                             <fmt:message
                                     key="update"/></button>
 

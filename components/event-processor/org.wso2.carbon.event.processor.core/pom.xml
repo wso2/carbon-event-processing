@@ -84,8 +84,8 @@
             <artifactId>storm</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.wso2.carbon.event-processing</groupId>
-            <artifactId>org.wso2.carbon.event.processing.application.deployer</artifactId>
+            <groupId>org.wso2.carbon.analytics-common</groupId>
+            <artifactId>org.wso2.carbon.event.application.deployer</artifactId>
         </dependency>
     </dependencies>
 

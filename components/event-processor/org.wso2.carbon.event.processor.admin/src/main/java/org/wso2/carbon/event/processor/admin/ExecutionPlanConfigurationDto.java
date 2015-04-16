@@ -21,21 +21,13 @@ public class ExecutionPlanConfigurationDto {
 
     private String name;
     private String description;
-    private SiddhiConfigurationDto[] siddhiConfigurations;
     private StreamConfigurationDto[] importedStreams;
     private StreamConfigurationDto[] exportedStreams;
-    private String queryExpressions;
+    private String executionPlan;
     private boolean tracingEnabled;
     private boolean statisticsEnabled;
     private boolean editable;
 
-    public SiddhiConfigurationDto[] getSiddhiConfigurations() {
-        return siddhiConfigurations;
-    }
-
-    public void setSiddhiConfigurations(SiddhiConfigurationDto[] siddhiConfigurations) {
-        this.siddhiConfigurations = siddhiConfigurations;
-    }
 
     public StreamConfigurationDto[] getImportedStreams() {
         return importedStreams;
@@ -53,12 +45,12 @@ public class ExecutionPlanConfigurationDto {
         this.exportedStreams = exportedStreams;
     }
 
-    public String getQueryExpressions() {
-        return queryExpressions;
+    public String getExecutionPlan() {
+        return executionPlan;
     }
 
-    public void setQueryExpressions(String queryExpressions) {
-        this.queryExpressions = queryExpressions;
+    public void setExecutionPlan(String executionPlan) {
+        this.executionPlan = executionPlan;
     }
 
     public String getName() {

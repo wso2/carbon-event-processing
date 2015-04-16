@@ -15,11 +15,14 @@
 package org.wso2.carbon.event.receiver.core.internal.util;
 
 import org.apache.axiom.om.OMAbstractFactory;
+import org.apache.axiom.om.OMAttribute;
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMFactory;
 import org.apache.axiom.om.util.AXIOMUtil;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.wso2.carbon.core.util.CryptoException;
+import org.wso2.carbon.core.util.CryptoUtil;
 import org.wso2.carbon.databridge.commons.AttributeType;
 import org.wso2.carbon.databridge.commons.StreamDefinition;
 import org.wso2.carbon.event.input.adapter.core.*;
@@ -145,6 +148,19 @@ public class EventReceiverConfigurationBuilder {
             OMElement toElementProperty = (OMElement) fromElementPropertyIterator.next();
             String propertyName = toElementProperty.getAttributeValue(new QName(EventReceiverConstants.ER_ATTR_NAME));
             String propertyValue = toElementProperty.getText();
+
+            OMAttribute encryptedAttribute = toElementProperty.getAttribute(new QName(EventReceiverConstants.ER_ATTR_ENCRYPTED));
+            if (encryptedAttribute != null) {
+                if ("true".equals(encryptedAttribute.getAttributeValue())) {
+                    try {
+                        propertyValue = new String(CryptoUtil.getDefaultCryptoUtil().base64DecodeAndDecrypt(propertyValue));
+                    } catch (CryptoException e) {
+                        log.error("Unable to decrypt the encrypted field: " + propertyName + " in adaptor: " + inputEventAdapterConfiguration.getName());
+                        propertyValue = "";   // resetting the password if decryption is not possible.
+                    }
+                }
+            }
+
             if (inputEventAdapterConfiguration.getProperties().containsKey(propertyName)) {
                 inputEventAdapterConfiguration.getProperties().put(propertyName, propertyValue);
             } else {

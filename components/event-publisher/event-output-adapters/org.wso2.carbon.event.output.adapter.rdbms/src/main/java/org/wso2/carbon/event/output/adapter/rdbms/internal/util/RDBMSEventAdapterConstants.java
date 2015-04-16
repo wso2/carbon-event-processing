@@ -23,6 +23,8 @@ package org.wso2.carbon.event.output.adapter.rdbms.internal.util;
 
 public final class RDBMSEventAdapterConstants {
 
+    private RDBMSEventAdapterConstants() {
+    }
     public static final String ADAPTER_TYPE_GENERIC_RDBMS = "rdbms";
     public static final String ADAPTER_GENERIC_RDBMS_DATASOURCE_NAME = "datasource.name";
     public static final String ADAPTER_GENERIC_RDBMS_TABLE_NAME = "table.name";
@@ -32,8 +34,6 @@ public final class RDBMSEventAdapterConstants {
     public static final String ADAPTER_GENERIC_RDBMS_EXECUTION_MODE_INSERT = "execution.mode.insert";
     public static final String ADAPTER_GENERIC_RDBMS_UPDATE_KEYS = "update.keys";
     public static final String ADAPTER_GENERIC_RDBMS_UPDATE_KEYS_HINT = "update.keys.hint";
-    public static final String ADAPTER_GENERIC_RDBMS_FILE_SPECIFIC_PATH = "adaptor/";
-    public static final String ADAPTER_GENERIC_RDBMS_FILE_NAME = "rdbms-output-adaptor.xml";
     public static final String ADAPTER_GENERIC_RDBMS_ATTRIBUTE_TABLE_NAME = "$TABLE_NAME";
     public static final String ADAPTER_GENERIC_RDBMS_ATTRIBUTE_COLUMN_TYPES = "$COLUMN_TYPES";
     public static final String ADAPTER_GENERIC_RDBMS_ATTRIBUTE_COLUMNS = "$COLUMNS";

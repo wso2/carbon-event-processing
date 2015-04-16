@@ -38,7 +38,10 @@ public class TenantSubscriptionEndpoint extends SubscriptionEndpoint {
         PrivilegedCarbonContext carbonContext = PrivilegedCarbonContext.getThreadLocalCarbonContext();
         carbonContext.setTenantDomain(tdomain,true);
         tenantId = carbonContext.getTenantId();
-        websocketLocalOutputCallbackRegisterService.subscribe(tenantId, adaptorName, session);
+        PrivilegedCarbonContext.startTenantFlow();
+        PrivilegedCarbonContext.getThreadLocalCarbonContext().setTenantId(tenantId);
+        websocketLocalOutputCallbackRegisterService.subscribe(adaptorName, session);
+        PrivilegedCarbonContext.endTenantFlow();
     }
 
     @OnMessage

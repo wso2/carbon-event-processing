@@ -309,6 +309,7 @@ public class RDBMSEventAdapter implements OutputEventAdapter {
 
         try {
             con = dataSource.getConnection();
+            con.setAutoCommit(false);
         } catch (SQLException e) {
             throw new ConnectionUnavailableException(e);
         }
@@ -404,6 +405,7 @@ public class RDBMSEventAdapter implements OutputEventAdapter {
 
         try {
             con = dataSource.getConnection();
+            con.setAutoCommit(false);
         } catch (SQLException e) {
             throw new ConnectionUnavailableException(e);
         }

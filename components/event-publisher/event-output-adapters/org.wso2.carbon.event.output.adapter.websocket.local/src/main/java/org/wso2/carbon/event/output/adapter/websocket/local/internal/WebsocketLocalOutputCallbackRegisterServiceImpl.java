@@ -17,6 +17,7 @@
  */
 package org.wso2.carbon.event.output.adapter.websocket.local.internal;
 
+import org.wso2.carbon.context.PrivilegedCarbonContext;
 import org.wso2.carbon.event.output.adapter.websocket.local.WebsocketLocalOutputCallbackRegisterService;
 
 import javax.websocket.Session;
@@ -34,7 +35,8 @@ public class WebsocketLocalOutputCallbackRegisterServiceImpl implements Websocke
     }
 
 
-    public void subscribe(int tenantId, String adaptorName, Session session) {
+    public void subscribe(String adaptorName, Session session) {
+        int tenantId = PrivilegedCarbonContext.getThreadLocalCarbonContext().getTenantId();
         ConcurrentHashMap<String, CopyOnWriteArrayList<Session>> tenantSpecificAdaptorMap = outputEventAdaptorSessionMap.get(tenantId);
         if (tenantSpecificAdaptorMap == null) {
             tenantSpecificAdaptorMap = new ConcurrentHashMap<String, CopyOnWriteArrayList<Session>>();
@@ -62,7 +64,8 @@ public class WebsocketLocalOutputCallbackRegisterServiceImpl implements Websocke
         return null;
     }
 
-    public void unsubscribe(int tenantId, String adaptorName, Session session) {
+    public void unsubscribe(String adaptorName, Session session) {
+        int tenantId = PrivilegedCarbonContext.getThreadLocalCarbonContext().getTenantId();
         ConcurrentHashMap<String, CopyOnWriteArrayList<Session>> tenantSpecificAdaptorMap = outputEventAdaptorSessionMap.get(tenantId);
         if (tenantSpecificAdaptorMap != null) {
             CopyOnWriteArrayList<Session> adapterSpecificSessions = tenantSpecificAdaptorMap.get(adaptorName);

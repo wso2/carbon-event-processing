@@ -55,11 +55,12 @@ public interface EventProcessorConstants {
 
     String EP_ELE_DIRECTORY = "executionplans";
     String XML_EXTENSION = ".xml";
+    String SIDDHIQL_EXTENSION = ".siddhiql";
 
     String EVENT_PROCESSOR = "Event Processor";
     String SIDDHI_DISTRIBUTED_PROCESSING = "siddhi.enable.distributed.processing";
     String SIDDHI_SNAPSHOT_INTERVAL = "siddhi.persistence.snapshot.time.interval.minutes";
-    String EP_CONFIG_FILE_EXTENSION_WITH_DOT = ".xml";
+    String EP_CONFIG_FILE_EXTENSION_WITH_DOT = ".siddhiql";
 
     String META = "meta";
     String CORRELATION = "correlation";
@@ -92,4 +93,32 @@ public interface EventProcessorConstants {
     String DIST = "dist";
     String EXEC_GROUP = "execGroup";
     String ENFORCE_PARALLELISM = "enforceParallel";
+
+    /*Annotations, Annotation Names and relevant tokens*/
+    String ANNOTATION_PLAN = "Plan";
+    String ANNOTATION_IMPORT = "Import";
+    String ANNOTATION_EXPORT = "Export";
+
+    String ANNOTATION_NAME_NAME = "name";
+    String ANNOTATION_NAME_DESCRIPTION = "description";
+    String ANNOTATION_NAME_TRACE = "trace";
+    String ANNOTATION_NAME_STATISTICS = "statistics";
+
+    String ANNOTATION_TOKEN_AT = "@";
+    String ANNOTATION_TOKEN_COLON = ":";
+    String ANNOTATION_TOKEN_OPENING_BRACKET = "(";
+    String ANNOTATION_TOKEN_CLOSING_BRACKET = ")";
+
+    String DATABRIDGE_STREAM_REGEX = "[a-zA-Z0-9_\\.]+";
+    String STREAM_VER_REGEX = "([0-9]*)\\.([0-9]*)\\.([0-9]*)";
+
+    //"Execution plan header" is the part above the Import/Export statements.
+
+    //Following regex represents a line in an execution plan header
+    String PLAN_HEADER_LINE_REGEX = "(^\\s*"+ ANNOTATION_TOKEN_AT + ANNOTATION_PLAN + ANNOTATION_TOKEN_COLON + ".*)|(^\\s*--.*)|(^\\s*\\/\\*.*\\*\\/\\s*)|(^\\s*)";
+
+    String END_OF_PLAN_HEADER_COMMENT_REGEX = "^\\s*\\/\\* define streams and write query here ... \\*\\/\\s*";
+
+    String SIDDHI_LINE_SEPARATER = "\n";
+    String SIDDHI_SINGLE_QUOTE = "'";
 }

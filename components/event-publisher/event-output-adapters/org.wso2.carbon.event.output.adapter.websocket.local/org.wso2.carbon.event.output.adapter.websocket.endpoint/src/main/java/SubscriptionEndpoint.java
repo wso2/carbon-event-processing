@@ -33,19 +33,25 @@ public class SubscriptionEndpoint {
 
     public SubscriptionEndpoint() {
         websocketLocalOutputCallbackRegisterService = (WebsocketLocalOutputCallbackRegisterService) PrivilegedCarbonContext.getThreadLocalCarbonContext()
-                .getOSGiService(WebsocketLocalOutputCallbackRegisterService.class);
+                .getOSGiService(WebsocketLocalOutputCallbackRegisterService.class, null);
     }
 
     public void onClose (Session session, CloseReason reason, String adaptorName, int tenantId) {
         if (log.isDebugEnabled()) {
             log.debug("Closing a WebSocket due to "+reason.getReasonPhrase()+", for session ID:"+session.getId()+", for request URI - "+session.getRequestURI());
         }
-        websocketLocalOutputCallbackRegisterService.unsubscribe(tenantId, adaptorName, session);
+        PrivilegedCarbonContext.startTenantFlow();
+        PrivilegedCarbonContext.getThreadLocalCarbonContext().setTenantId(tenantId);
+        websocketLocalOutputCallbackRegisterService.unsubscribe(adaptorName, session);
+        PrivilegedCarbonContext.endTenantFlow();
     }
 
     public void onError (Session session, Throwable throwable, String adaptorName, int tenantId) {
         log.error("Error occurred in session ID: "+session.getId()+", for request URI - "+session.getRequestURI()+", "+throwable.getMessage(),throwable);
-        websocketLocalOutputCallbackRegisterService.unsubscribe(tenantId, adaptorName, session);
+        PrivilegedCarbonContext.startTenantFlow();
+        PrivilegedCarbonContext.getThreadLocalCarbonContext().setTenantId(tenantId);
+        websocketLocalOutputCallbackRegisterService.unsubscribe(adaptorName, session);
+        PrivilegedCarbonContext.endTenantFlow();
     }
 
 }
