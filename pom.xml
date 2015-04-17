@@ -724,39 +724,39 @@
                 <type>zip</type>
             </dependency>
             <dependency>
-                <groupId>org.wso2.carbon.analytics-common</groupId>
-                <artifactId>org.wso2.carbon.event.input.adapter.email.server.feature</artifactId>
-                <version>${carbon.analytics.common.version}</version>
+                <groupId>org.wso2.carbon.event-processing</groupId>
+                <artifactId>org.wso2.carbon.event.input.adaptor.email.server.feature</artifactId>
+                <version>${carbon.event.processing.version}</version>
                 <type>zip</type>
             </dependency>
             <dependency>
-                <groupId>org.wso2.carbon.analytics-common</groupId>
-                <artifactId>org.wso2.carbon.event.input.adapter.file.server.feature</artifactId>
-                <version>${carbon.analytics.common.version}</version>
+                <groupId>org.wso2.carbon.event-processing</groupId>
+                <artifactId>org.wso2.carbon.event.input.adaptor.file.server.feature</artifactId>
+                <version>${carbon.event.processing.version}</version>
                 <type>zip</type>
             </dependency>
             <dependency>
-                <groupId>org.wso2.carbon.analytics-common</groupId>
-                <artifactId>org.wso2.carbon.event.input.adapter.http.server.feature</artifactId>
-                <version>${carbon.analytics.common.version}</version>
+                <groupId>org.wso2.carbon.event-processing</groupId>
+                <artifactId>org.wso2.carbon.event.input.adaptor.http.server.feature</artifactId>
+                <version>${carbon.event.processing.version}</version>
                 <type>zip</type>
             </dependency>
             <dependency>
-                <groupId>org.wso2.carbon.analytics-common</groupId>
-                <artifactId>org.wso2.carbon.event.input.adapter.jms.server.feature</artifactId>
-                <version>${carbon.analytics.common.version}</version>
+                <groupId>org.wso2.carbon.event-processing</groupId>
+                <artifactId>org.wso2.carbon.event.input.adaptor.jms.server.feature</artifactId>
+                <version>${carbon.event.processing.version}</version>
                 <type>zip</type>
             </dependency>
             <dependency>
-                <groupId>org.wso2.carbon.analytics-common</groupId>
-                <artifactId>org.wso2.carbon.event.input.adapter.mqtt.server.feature</artifactId>
-                <version>${carbon.analytics.common.version}</version>
+                <groupId>org.wso2.carbon.event-processing</groupId>
+                <artifactId>org.wso2.carbon.event.input.adaptor.mqtt.server.feature</artifactId>
+                <version>${carbon.event.processing.version}</version>
                 <type>zip</type>
             </dependency>
             <dependency>
-                <groupId>org.wso2.carbon.analytics-common</groupId>
-                <artifactId>org.wso2.carbon.event.input.adapter.kafka.server.feature</artifactId>
-                <version>${carbon.analytics.common.version}</version>
+                <groupId>org.wso2.carbon.event-processing</groupId>
+                <artifactId>org.wso2.carbon.event.input.adaptor.kafka.server.feature</artifactId>
+                <version>${carbon.event.processing.version}</version>
                 <type>zip</type>
             </dependency>
             <dependency>
@@ -772,75 +772,75 @@
                 <type>zip</type>
             </dependency>
             <dependency>
-                <groupId>org.wso2.carbon.analytics-common</groupId>
-                <artifactId>org.wso2.carbon.event.input.adapter.server.feature</artifactId>
-                <version>${carbon.analytics.common.version}</version>
+                <groupId>org.wso2.carbon.event-processing</groupId>
+                <artifactId>org.wso2.carbon.event.input.adaptor.server.feature</artifactId>
+                <version>${carbon.event.processing.version}</version>
                 <type>zip</type>
             </dependency>
             <dependency>
-                <groupId>org.wso2.carbon.analytics-common</groupId>
-                <artifactId>org.wso2.carbon.event.input.adapter.soap.server.feature</artifactId>
-                <version>${carbon.analytics.common.version}</version>
+                <groupId>org.wso2.carbon.event-processing</groupId>
+                <artifactId>org.wso2.carbon.event.input.adaptor.soap.server.feature</artifactId>
+                <version>${carbon.event.processing.version}</version>
                 <type>zip</type>
             </dependency>
             <dependency>
-                <groupId>org.wso2.carbon.analytics-common</groupId>
-                <artifactId>org.wso2.carbon.event.input.adapter.wso2event.server.feature</artifactId>
-                <version>${carbon.analytics.common.version}</version>
+                <groupId>org.wso2.carbon.event-processing</groupId>
+                <artifactId>org.wso2.carbon.event.input.adaptor.wso2event.server.feature</artifactId>
+                <version>${carbon.event.processing.version}</version>
                 <type>zip</type>
             </dependency>
             <dependency>
-                <groupId>org.wso2.carbon.analytics-common</groupId>
-                <artifactId>org.wso2.carbon.event.input.adapter.websocket.server.feature</artifactId>
-                <version>${carbon.analytics.common.version}</version>
+                <groupId>org.wso2.carbon.event-processing</groupId>
+                <artifactId>org.wso2.carbon.event.input.adaptor.websocket.server.feature</artifactId>
+                <version>${carbon.event.processing.version}</version>
                 <type>zip</type>
             </dependency>
             <dependency>
-                <groupId>org.wso2.carbon.analytics-common</groupId>
-                <artifactId>org.wso2.carbon.event.input.adapter.websocket.local.server.feature</artifactId>
-                <version>${carbon.analytics.common.version}</version>
+                <groupId>org.wso2.carbon.event-processing</groupId>
+                <artifactId>org.wso2.carbon.event.input.adaptor.websocket.local.server.feature</artifactId>
+                <version>${carbon.event.processing.version}</version>
                 <type>zip</type>
             </dependency>
             <dependency>
-                <groupId>org.wso2.carbon.analytics-common</groupId>
-                <artifactId>org.wso2.carbon.event.output.adapter.cassandra.server.feature</artifactId>
-                <version>${carbon.analytics.common.version}</version>
+                <groupId>org.wso2.carbon.event-processing</groupId>
+                <artifactId>org.wso2.carbon.event.output.adaptor.cassandra.server.feature</artifactId>
+                <version>${carbon.event.processing.version}</version>
                 <type>zip</type>
             </dependency>
             <dependency>
-                <groupId>org.wso2.carbon.analytics-common</groupId>
-                <artifactId>org.wso2.carbon.event.output.adapter.email.server.feature</artifactId>
-                <version>${carbon.analytics.common.version}</version>
+                <groupId>org.wso2.carbon.event-processing</groupId>
+                <artifactId>org.wso2.carbon.event.output.adaptor.email.server.feature</artifactId>
+                <version>${carbon.event.processing.version}</version>
                 <type>zip</type>
             </dependency>
             <dependency>
-                <groupId>org.wso2.carbon.analytics-common</groupId>
-                <artifactId>org.wso2.carbon.event.output.adapter.http.server.feature</artifactId>
-                <version>${carbon.analytics.common.version}</version>
+                <groupId>org.wso2.carbon.event-processing</groupId>
+                <artifactId>org.wso2.carbon.event.output.adaptor.http.server.feature</artifactId>
+                <version>${carbon.event.processing.version}</version>
                 <type>zip</type>
             </dependency>
             <dependency>
-                <groupId>org.wso2.carbon.analytics-common</groupId>
-                <artifactId>org.wso2.carbon.event.output.adapter.jms.server.feature</artifactId>
-                <version>${carbon.analytics.common.version}</version>
+                <groupId>org.wso2.carbon.event-processing</groupId>
+                <artifactId>org.wso2.carbon.event.output.adaptor.jms.server.feature</artifactId>
+                <version>${carbon.event.processing.version}</version>
                 <type>zip</type>
             </dependency>
             <dependency>
-                <groupId>org.wso2.carbon.analytics-common</groupId>
-                <artifactId>org.wso2.carbon.event.output.adapter.mqtt.server.feature</artifactId>
-                <version>${carbon.analytics.common.version}</version>
+                <groupId>org.wso2.carbon.event-processing</groupId>
+                <artifactId>org.wso2.carbon.event.output.adaptor.mqtt.server.feature</artifactId>
+                <version>${carbon.event.processing.version}</version>
                 <type>zip</type>
             </dependency>
             <dependency>
-                <groupId>org.wso2.carbon.analytics-common</groupId>
-                <artifactId>org.wso2.carbon.event.output.adapter.kafka.server.feature</artifactId>
-                <version>${carbon.analytics.common.version}</version>
+                <groupId>org.wso2.carbon.event-processing</groupId>
+                <artifactId>org.wso2.carbon.event.output.adaptor.kafka.server.feature</artifactId>
+                <version>${carbon.event.processing.version}</version>
                 <type>zip</type>
             </dependency>
             <dependency>
-                <groupId>org.wso2.carbon.analytics-common</groupId>
-                <artifactId>org.wso2.carbon.event.output.adapter.logger.server.feature</artifactId>
-                <version>${carbon.analytics.common.version}</version>
+                <groupId>org.wso2.carbon.event-processing</groupId>
+                <artifactId>org.wso2.carbon.event.output.adaptor.logger.server.feature</artifactId>
+                <version>${carbon.event.processing.version}</version>
                 <type>zip</type>
             </dependency>
             <dependency>
@@ -856,45 +856,45 @@
                 <type>zip</type>
             </dependency>
             <dependency>
-                <groupId>org.wso2.carbon.analytics-common</groupId>
-                <artifactId>org.wso2.carbon.event.output.adaper.rdbms.server.feature</artifactId>
-                <version>${carbon.analytics.common.version}</version>
+                <groupId>org.wso2.carbon.event-processing</groupId>
+                <artifactId>org.wso2.carbon.event.output.adaptor.rdbms.server.feature</artifactId>
+                <version>${carbon.event.processing.version}</version>
                 <type>zip</type>
             </dependency>
             <dependency>
-                <groupId>org.wso2.carbon.analytics-common</groupId>
-                <artifactId>org.wso2.carbon.event.output.adapter.server.feature</artifactId>
-                <version>${carbon.analytics.common.version}</version>
+                <groupId>org.wso2.carbon.event-processing</groupId>
+                <artifactId>org.wso2.carbon.event.output.adaptor.server.feature</artifactId>
+                <version>${carbon.event.processing.version}</version>
                 <type>zip</type>
             </dependency>
             <dependency>
-                <groupId>org.wso2.carbon.analytics-common</groupId>
-                <artifactId>org.wso2.carbon.event.output.adapter.sms.server.feature</artifactId>
-                <version>${carbon.analytics.common.version}</version>
+                <groupId>org.wso2.carbon.event-processing</groupId>
+                <artifactId>org.wso2.carbon.event.output.adaptor.sms.server.feature</artifactId>
+                <version>${carbon.event.processing.version}</version>
                 <type>zip</type>
             </dependency>
             <dependency>
-                <groupId>org.wso2.carbon.analytics-common</groupId>
-                <artifactId>org.wso2.carbon.event.output.adapter.soap.server.feature</artifactId>
-                <version>${carbon.analytics.common.version}</version>
+                <groupId>org.wso2.carbon.event-processing</groupId>
+                <artifactId>org.wso2.carbon.event.output.adaptor.soap.server.feature</artifactId>
+                <version>${carbon.event.processing.version}</version>
                 <type>zip</type>
             </dependency>
             <dependency>
-                <groupId>org.wso2.carbon.analytics-common</groupId>
-                <artifactId>org.wso2.carbon.event.output.adapter.wso2event.server.feature</artifactId>
-                <version>${carbon.analytics.common.version}</version>
+                <groupId>org.wso2.carbon.event-processing</groupId>
+                <artifactId>org.wso2.carbon.event.output.adaptor.wso2event.server.feature</artifactId>
+                <version>${carbon.event.processing.version}</version>
                 <type>zip</type>
             </dependency>
             <dependency>
-                <groupId>org.wso2.carbon.analytics-common</groupId>
-                <artifactId>org.wso2.carbon.event.output.adapter.websocket.server.feature</artifactId>
-                <version>${carbon.analytics.common.version}</version>
+                <groupId>org.wso2.carbon.event-processing</groupId>
+                <artifactId>org.wso2.carbon.event.output.adaptor.websocket.server.feature</artifactId>
+                <version>${carbon.event.processing.version}</version>
                 <type>zip</type>
             </dependency>
             <dependency>
-                <groupId>org.wso2.carbon.analytics-common</groupId>
-                <artifactId>org.wso2.carbon.event.output.adapter.websocket.local.server.feature</artifactId>
-                <version>${carbon.analytics.common.version}</version>
+                <groupId>org.wso2.carbon.event-processing</groupId>
+                <artifactId>org.wso2.carbon.event.output.adaptor.websocket.local.server.feature</artifactId>
+                <version>${carbon.event.processing.version}</version>
                 <type>zip</type>
             </dependency>
             <dependency>
