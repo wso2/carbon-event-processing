@@ -33,6 +33,8 @@ import org.wso2.carbon.event.processor.core.StreamConfiguration;
 import org.wso2.carbon.event.processor.core.exception.ExecutionPlanConfigurationException;
 import org.wso2.carbon.event.processor.core.exception.ExecutionPlanDependencyValidationException;
 
+import java.util.Arrays;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 
@@ -162,6 +164,13 @@ public class EventProcessorAdminService extends AbstractAdmin {
                     configurationDtos[i] = dto;
                     i++;
                 }
+                Arrays.sort(configurationDtos, new Comparator() {
+
+                    @Override
+                    public int compare(Object o1, Object o2) {
+                        return ((ExecutionPlanConfigurationDto) o1).getName().compareTo(((ExecutionPlanConfigurationDto) o2).getName());
+                    }
+                });
                 return configurationDtos;
             }
         }
@@ -190,6 +199,13 @@ public class EventProcessorAdminService extends AbstractAdmin {
                     }
                     fileDtoArray[i].setDeploymentStatusMessage(statusMsg);
                 }
+                Arrays.sort(fileDtoArray, new Comparator() {
+
+                    @Override
+                    public int compare(Object o1, Object o2) {
+                        return ((ExecutionPlanConfigurationDto) o1).getName().compareTo(((ExecutionPlanConfigurationDto) o2).getName());
+                    }
+                });
                 return fileDtoArray;
             }
         }
@@ -214,6 +230,13 @@ public class EventProcessorAdminService extends AbstractAdmin {
                     configurationDtos[i] = dto;
                     i++;
                 }
+                Arrays.sort(configurationDtos, new Comparator() {
+
+                    @Override
+                    public int compare(Object o1, Object o2) {
+                        return ((ExecutionPlanConfigurationDto) o1).getName().compareTo(((ExecutionPlanConfigurationDto) o2).getName());
+                    }
+                });
                 return configurationDtos;
             }
         }
@@ -238,6 +261,13 @@ public class EventProcessorAdminService extends AbstractAdmin {
                     configurationDtos[i] = dto;
                     i++;
                 }
+                Arrays.sort(configurationDtos, new Comparator() {
+
+                    @Override
+                    public int compare(Object o1, Object o2) {
+                        return ((ExecutionPlanConfigurationDto) o1).getName().compareTo(((ExecutionPlanConfigurationDto) o2).getName());
+                    }
+                });
                 return configurationDtos;
             }
         }
