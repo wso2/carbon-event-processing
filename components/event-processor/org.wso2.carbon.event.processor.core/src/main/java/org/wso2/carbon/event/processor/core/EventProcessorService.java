@@ -97,45 +97,38 @@ public interface EventProcessorService {
     /**
      * Gets all available active execution plan configurations.
      *
-     * @param tenantId tenant id of the caller
      * @return a {@link Map} of execution plan name and {@link ExecutionPlanConfiguration} object of active execution plans.
      */
-    public Map<String, ExecutionPlanConfiguration> getAllActiveExecutionConfigurations(int tenantId);
+    public Map<String, ExecutionPlanConfiguration> getAllActiveExecutionConfigurations();
 
     /**
-     * @param tenantId tenant id of the caller
      * @param streamId
      * @return
      */
-    public Map<String, ExecutionPlanConfiguration> getAllExportedStreamSpecificActiveExecutionConfigurations(int tenantId, String streamId);
+    public Map<String, ExecutionPlanConfiguration> getAllExportedStreamSpecificActiveExecutionConfigurations(String streamId);
 
     /**
-     * @param tenantId tenant id of the caller
      * @param streamId
      * @return
      */
-    public Map<String, ExecutionPlanConfiguration> getAllImportedStreamSpecificActiveExecutionConfigurations(int tenantId, String streamId);
+    public Map<String, ExecutionPlanConfiguration> getAllImportedStreamSpecificActiveExecutionConfigurations(String streamId);
 
 
     /**
      * Gets an active execution plan configuration for the name passed in.
      *
      * @param planName the name of the execution plan
-     * @param tenantId tenant id of the caller
-     * @return {@link ExecutionPlanConfiguration} object associated with the passed in name and tenant id
+     * @return {@link ExecutionPlanConfiguration} object associated with the passed in name
      */
-    public ExecutionPlanConfiguration getActiveExecutionPlanConfiguration(String planName, int tenantId);
+    public ExecutionPlanConfiguration getActiveExecutionPlanConfiguration(String planName);
 
 
     /**
      * Gets all available inactive execution plan configurations files.
      *
-     * @param tenantId tenant id of the caller
      * @return A {@link List} of {@link ExecutionPlanConfigurationFile} objects for all the inactive execution plans
-     * for the specified tenant id
      */
-    public List<ExecutionPlanConfigurationFile> getAllInactiveExecutionPlanConfiguration(
-            int tenantId);
+    public List<ExecutionPlanConfigurationFile> getAllInactiveExecutionPlanConfiguration();
 
     /**
      * @param executionPlanName the name of the execution plan
