@@ -1054,8 +1054,8 @@
                 <artifactId>maven-compiler-plugin</artifactId>
                 <configuration>
                     <encoding>UTF-8</encoding>
-                    <source>1.7</source>
-                    <target>1.7</target>
+                    <source>1.6</source>
+                    <target>1.6</target>
                 </configuration>
             </plugin>
         </plugins>
@@ -1228,12 +1228,12 @@
 
     <properties>
         <!-- Carbon kernel version -->
-        <carbon.kernel.version>4.4.0</carbon.kernel.version>
+        <carbon.kernel.version>4.3.0</carbon.kernel.version>
         <!--<carbon.kernel.imp.pkg.version>[4.3.0, 4.4.0)</carbon.kernel.imp.pkg.version>-->
 
         <orbit.version.json>2.0.0.wso2v1</orbit.version.json>
 
-        <carbon.commons.version>4.4.0</carbon.commons.version>
+        <carbon.commons.version>4.3.4</carbon.commons.version>
         <carbon.analytics.common.version>1.0.0-SNAPSHOT</carbon.analytics.common.version>
         <!--<carbon.commons.imp.pkg.version>[4.3.0, 4.4.0)</carbon.commons.imp.pkg.version>-->
 
