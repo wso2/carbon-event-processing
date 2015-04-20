@@ -43,6 +43,7 @@ public class ConfigMapper {
         if (templateConfig != null) {
             templateConfigDTO = new TemplateConfigDTO();
             templateConfigDTO.setName(templateConfig.getName());
+            templateConfigDTO.setType(templateConfig.getType());
             templateConfigDTO.setDescription(templateConfig.getDescription());
             templateConfigDTO.setFrom(templateConfig.getFrom());
             templateConfigDTO.setParameterDTOs(mapParameters(templateConfig.getParameters()));
@@ -56,6 +57,7 @@ public class ConfigMapper {
         if (configDTO != null) {
             templateConfig = new TemplateConfig();
             templateConfig.setName(configDTO.getName());
+            templateConfig.setType(configDTO.getType());
             templateConfig.setDescription(configDTO.getDescription());
             templateConfig.setFrom(configDTO.getFrom());
             templateConfig.setParameters(mapParameters(configDTO.getParameterDTOs()));

@@ -20,6 +20,7 @@ package org.wso2.carbon.event.execution.manager.admin.dto.config;
 public class TemplateConfigDTO {
 
     String name;
+    String type;
     String from;
     String description;
     ParameterDTO[] parameterDTOs;
@@ -31,6 +32,10 @@ public class TemplateConfigDTO {
     public void setName(String name) {
         this.name = name;
     }
+
+    public String getType() { return type; }
+
+    public void setType(String type) { this.type = type; }
 
     public String getFrom() {
         return from;

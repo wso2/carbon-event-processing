@@ -24,6 +24,7 @@
     String saveType = request.getParameter("saveType");
     String description = request.getParameter("description");
     String parametersJson = request.getParameter("parameters");
+    String templateType = request.getParameter("templateType");
 
     ParameterDTO[] parameters;
 
@@ -39,6 +40,7 @@
         templateConfigDTO.setName(configuration);
         templateConfigDTO.setFrom(domainName);
         templateConfigDTO.setDescription(description);
+        templateConfigDTO.setType(templateType);
 
         String[] parameterStrings = parametersJson.split(",");
         parameters = new ParameterDTO[parameterStrings.length];

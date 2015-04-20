@@ -12,38 +12,37 @@
  * CONDITIONS OF ANY KIND, either express or implied.  See the License for the
  * specific language governing permissions and limitations under the License.
  */
-function deleteConfiguration(domainName, configurationName) {
+function deleteConfiguration(domainName, configurationName, row, tableId) {
 
-    var xmlHttp = new XMLHttpRequest();
-    xmlHttp.open("POST", "save_configurations_ajaxprocessor.jsp");
-    xmlHttp.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
-    xmlHttp.send("domainName=" + domainName + "&configurationName=" + configurationName + "&saveType=delete");
-
+    CARBON.showConfirmationDialog(
+        "Are you sure want to delete?", function () {
+            $.ajax({
+                type: "POST",
+                url: "save_configurations_ajaxprocessor.jsp",
+                data: "domainName=" + domainName + "&configurationName=" + configurationName + "&saveType=delete"
+            })
+                .error(function () {
+                    CARBON.showErrorDialog("Error occurred when deleting configurations");
+                })
+                .then(function () {
+                    document.getElementById(tableId).deleteRow(row.parentNode.parentNode.rowIndex);
+                    CARBON.showInfoDialog("Configurations deleted successfully");
+                });
+        }, null, null);
 }
 
-
-function saveConfiguration(domainName, configurationName, description, parameters) {
-
-    /* var xmlHttp = new XMLHttpRequest();
-     xmlHttp.open("POST", "save_configurations_ajaxprocessor.jsp");
-     xmlHttp.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
-     xmlHttp.send("domainName=" + domainName + "&configurationName=" + configurationName
-     + "&description=" + description + "&saveType=save" + "&parameters=" + parameters);
-     */
-
+function saveConfiguration(domainName, templateType, configurationName, description, parameters) {
     $.ajax({
         type: "POST",
         url: "save_configurations_ajaxprocessor.jsp",
-        data: "domainName=" + domainName + "&configurationName=" + configurationName
+        data: "domainName=" + domainName + "&configurationName=" + configurationName + "&templateType=" + templateType
             + "&description=" + description + "&saveType=save" + "&parameters=" + parameters
-        //,
-        //dataType: "application/x-www-form-urlencoded"
     })
-        .error(function (xhr, err, status) {
-            alert("Error Occurred");
+        .error(function () {
+            CARBON.showErrorDialog("Error occurred when saving configurations");
         })
-        .then(function (data) {
-            alert("Success");
+        .then(function () {
+            CARBON.showInfoDialog("Configurations saved successfully");
         });
 
 }

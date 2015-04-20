@@ -26,6 +26,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 public class TemplateConfig {
 
     String name;
+    String type;
     String from;
     String description;
     Parameter[] parameters;
@@ -38,6 +39,11 @@ public class TemplateConfig {
     public void setName(String name) {
         this.name = name;
     }
+
+    public String getType() { return type; }
+
+    @XmlAttribute
+    public void setType(String type) { this.type = type; }
 
     public String getFrom() {
         return from;
@@ -66,4 +72,6 @@ public class TemplateConfig {
     public void setParameters(Parameter[] parameters) {
         this.parameters = parameters;
     }
+
+
 }

@@ -19,22 +19,29 @@ package org.wso2.carbon.event.execution.manager.core.internal;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.wso2.carbon.context.PrivilegedCarbonContext;
 import org.wso2.carbon.databridge.commons.StreamDefinition;
 import org.wso2.carbon.databridge.commons.exception.MalformedStreamDefinitionException;
 import org.wso2.carbon.databridge.commons.utils.EventDefinitionConverterUtils;
 import org.wso2.carbon.event.execution.manager.core.ExecutionManagerService;
 import org.wso2.carbon.event.execution.manager.core.internal.ds.ExecutionManagerValueHolder;
 import org.wso2.carbon.event.execution.manager.core.exception.ExecutionManagerException;
+import org.wso2.carbon.event.execution.manager.core.structure.config.Parameter;
 import org.wso2.carbon.event.execution.manager.core.structure.config.TemplateConfig;
 import org.wso2.carbon.event.execution.manager.core.structure.domain.Template;
 import org.wso2.carbon.event.execution.manager.core.structure.domain.TemplateDomain;
 import org.wso2.carbon.event.execution.manager.core.internal.util.ExecutionManagerConstants;
 import org.wso2.carbon.event.processor.core.exception.ExecutionPlanConfigurationException;
 import org.wso2.carbon.event.processor.core.exception.ExecutionPlanDependencyValidationException;
+import org.wso2.carbon.event.processor.core.internal.util.EventProcessorConstants;
 import org.wso2.carbon.event.stream.core.exception.EventStreamConfigurationException;
 import org.wso2.carbon.registry.api.RegistryException;
 import org.wso2.carbon.registry.core.Registry;
 import org.wso2.carbon.registry.core.Resource;
+import org.wso2.carbon.registry.core.Collection;
+import org.wso2.siddhi.query.api.ExecutionPlan;
+import org.wso2.siddhi.query.api.util.AnnotationHelper;
+import org.wso2.siddhi.query.compiler.SiddhiCompiler;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
@@ -63,6 +70,7 @@ public class CarbonExecutionManagerService implements ExecutionManagerService {
         }
 
         this.loadDomainConfigurations();
+        this.loadConfigurations();
     }
 
     /**
@@ -80,7 +88,7 @@ public class CarbonExecutionManagerService implements ExecutionManagerService {
                     TemplateDomain templateDomain = (TemplateDomain) jaxbUnmarshaller.unmarshal(fileEntry);
 
                     this.deployStreams(templateDomain);
-                    this.loadConfigurations(templateDomain);
+
 
                     domains.put(templateDomain.getName(), templateDomain);
                 } catch (JAXBException e) {
@@ -92,41 +100,41 @@ public class CarbonExecutionManagerService implements ExecutionManagerService {
 
     /**
      * Load available configurations for given template domain
-     *
-     * @param templateDomain template domain object
      */
-    private void loadConfigurations(TemplateDomain templateDomain) {
-            for (Template template : templateDomain.getTemplates()) {
-                String registryPath = ExecutionManagerConstants.TEMPLATE_CONFIG_PATH
-                        + ExecutionManagerConstants.PATH_SEPARATOR
-                        + templateDomain.getName()
-                        + ExecutionManagerConstants.CONFIG_NAME_SEPARATOR + template.getName()
-                        + ExecutionManagerConstants.CONFIG_FILE_EXTENSION;
-                try {
-                    if (registry.resourceExists(registryPath)) {
-                        Resource configFile = registry.get(registryPath);
+    private void loadConfigurations() {
+        try {
+            Resource resource = registry.get(ExecutionManagerConstants.TEMPLATE_CONFIG_PATH);
 
-                        if (configFile != null) {
-                            StringReader reader = new StringReader(new String(
-                                    (byte[]) configFile.getContent()));
+            if (resource instanceof Collection) {
+                Collection collection = (Collection) resource;
+
+                for (String filePath : collection.getChildren()) {
+
+                    Resource configFile = registry.get(filePath);
+
+                    if (configFile != null) {
+
+                        try {
+                            StringReader reader = new StringReader(new String((byte[]) configFile.getContent()));
                             JAXBContext jaxbContext = JAXBContext.newInstance(TemplateConfig.class);
                             Unmarshaller jaxbUnmarshaller = jaxbContext.createUnmarshaller();
-                            TemplateConfig templateConfig =
-                                    (TemplateConfig) jaxbUnmarshaller.unmarshal(reader);
-                            configurations.put(templateDomain.getName()
+                            TemplateConfig templateConfig = (TemplateConfig) jaxbUnmarshaller.unmarshal(reader);
+                            configurations.put(templateConfig.getFrom()
                                     + ExecutionManagerConstants.CONFIG_NAME_SEPARATOR
                                     + templateConfig.getName(), templateConfig);
-
+                        } catch (JAXBException e) {
+                            log.error("JAXB Exception occurred when unmarshalling configuration file at "
+                                    + configFile.getPath(), e);
                         }
                     }
-                } catch (RegistryException e) {
-                    log.error("Registry exception occurred when accessing file at " + registryPath, e);
-                } catch (JAXBException e) {
-                    log.error("JAXB Exception when unmarshalling configuration file at " + registryPath);
                 }
             }
-    }
+        } catch (RegistryException e) {
+            log.error("Registry exception occurred when accessing file at "
+                    + ExecutionManagerConstants.TEMPLATE_CONFIG_PATH, e);
+        }
 
+    }
 
     /**
      * Deploy Streams of given template domain
@@ -153,28 +161,95 @@ public class CarbonExecutionManagerService implements ExecutionManagerService {
      * @param configuration configuration object
      */
     private void deployExecutionPlan(TemplateConfig configuration) {
-//        for (Template template : domains.get(configuration.getFrom()).getTemplates()) {
-//            if (template.getName().equals(configuration.getName())) {
-//                try {
-//                    //Get Template Execution plan, Tenant Id and deploy Execution Plan
-//                    ExecutionManagerValueHolder.getEventProcessorService()
-//                            .deployExecutionPlanConfiguration(template.getExecutionPlan(), new AxisConfiguration());
-//                    break;
-//                } catch (ExecutionPlanConfigurationException e) {
-//                    log.error("Configuration exception when adding Execution Plan of Template "
-//                            + configuration.getName() + " of Domain " + configuration.getFrom(), e);
-//
-//                } catch (ExecutionPlanDependencyValidationException e) {
-//                    log.error("Dependency validation exception when adding Execution Plan of Template "
-//                            + configuration.getName() + " of Domain " + configuration.getFrom(), e);
-//                }
-//            }
-//        }
+        for (Template template : domains.get(configuration.getFrom()).getTemplates()) {
+            if (template.getName().equals(configuration.getType())) {
+                try {
+
+
+                    String executionPlan = this.updateExecutionPlanParameters(configuration,
+                            template.getExecutionPlan());
+
+                    ExecutionPlan parsedExecutionPlan = SiddhiCompiler.parse(executionPlan);
+                    String executionPlanName = AnnotationHelper.getAnnotationElement(
+                            EventProcessorConstants.ANNOTATION_NAME_NAME, null,
+                            parsedExecutionPlan.getAnnotations()).getValue();
+
+                    this.unDeployExistingExecutionPlan(executionPlanName);
+
+                    //Get Template Execution plan, Tenant Id and deploy Execution Plan
+                    ExecutionManagerValueHolder.getEventProcessorService()
+                            .deployExecutionPlan(executionPlan);
+                    break;
+                } catch (ExecutionPlanConfigurationException e) {
+                    log.error("Configuration exception when adding Execution Plan of Template "
+                            + configuration.getName() + " of Domain " + configuration.getFrom(), e);
+
+                } catch (ExecutionPlanDependencyValidationException e) {
+                    log.error("Dependency validation exception when adding Execution Plan of Template "
+                            + configuration.getName() + " of Domain " + configuration.getFrom(), e);
+                }
+            }
+        }
+    }
+
+    /**
+     * Un deploy given configurations template Execution Plan
+     *
+     * @param configuration configuration object
+     */
+    private void unDeployExecutionPlan(TemplateConfig configuration) {
+        for (Template template : domains.get(configuration.getFrom()).getTemplates()) {
+            if (template.getName().equals(configuration.getType())) {
+                try {
+
+                    ExecutionPlan parsedExecutionPlan = SiddhiCompiler.parse(template.getExecutionPlan());
+                    String executionPlanName = AnnotationHelper.getAnnotationElement(
+                            EventProcessorConstants.ANNOTATION_NAME_NAME, null,
+                            parsedExecutionPlan.getAnnotations()).getValue();
+
+                    this.unDeployExistingExecutionPlan(executionPlanName);
+                    break;
+                } catch (ExecutionPlanConfigurationException e) {
+                    log.error("Configuration exception when adding Execution Plan of Template "
+                            + configuration.getName() + " of Domain " + configuration.getFrom(), e);
+                }
+            }
+        }
+    }
+
+
+    /**
+     * Update given execution plan by replacing undefined parameter values with configured parameter values
+     *
+     * @param config        configurations which consists of parameters which will replace
+     * @param executionPlan execution plan which needs to be updated
+     * @return
+     */
+    private String updateExecutionPlanParameters(TemplateConfig config, String executionPlan) {
+        for (Parameter parameter : config.getParameters()) {
+            executionPlan = executionPlan.replaceAll("\\$" + parameter.getName(), parameter.getValue());
+        }
+
+        return executionPlan;
+    }
+
+    /**
+     * Check weather given execution plan is already exists and un deploy it
+     *
+     * @param executionPlanName name of the execution plan
+     * @throws ExecutionPlanConfigurationException
+     */
+    private void unDeployExistingExecutionPlan(String executionPlanName) throws ExecutionPlanConfigurationException {
+        int tenantId = PrivilegedCarbonContext.getThreadLocalCarbonContext().getTenantId();
+
+        if (ExecutionManagerValueHolder.getEventProcessorService()
+                .getAllActiveExecutionConfigurations(tenantId).get(executionPlanName) != null) {
+            ExecutionManagerValueHolder.getEventProcessorService().undeployActiveExecutionPlan(executionPlanName);
+        }
     }
 
     @Override
     public void saveTemplateConfig(TemplateConfig configuration) throws ExecutionManagerException {
-
         try {
             StringWriter fileContent = new StringWriter();
             JAXBContext jaxbContext = JAXBContext.newInstance(TemplateConfig.class);
@@ -194,6 +269,11 @@ public class CarbonExecutionManagerService implements ExecutionManagerService {
                     + ExecutionManagerConstants.CONFIG_FILE_EXTENSION;
 
             this.deployExecutionPlan(configuration);
+
+            if (registry.resourceExists(resourcePath)) {
+                registry.delete(resourcePath);
+            }
+
             registry.put(resourcePath, resource);
             configurations.put(configFullName, configuration);
 
@@ -287,8 +367,8 @@ public class CarbonExecutionManagerService implements ExecutionManagerService {
 
             registry.delete(ExecutionManagerConstants.TEMPLATE_CONFIG_PATH + ExecutionManagerConstants.PATH_SEPARATOR
                     + configFullName + ExecutionManagerConstants.CONFIG_FILE_EXTENSION);
+            this.unDeployExecutionPlan(configurations.get(configFullName));
             configurations.remove(configFullName);
-
         } catch (Exception e) {
             log.error("Exception when deleting file at " + configName + " configurations", e);
             throw new ExecutionManagerException("Exception when deleting file at " + configName + " configurations", e);

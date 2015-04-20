@@ -33,7 +33,7 @@
 
     <div id="middle">
         <div id="workArea">
-            <h2>Domain Manager</h2>
+            <h2>Domains</h2>
             <table class="styledLeft">
                 <thead>
                 <tr>

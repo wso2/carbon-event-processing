@@ -25,22 +25,26 @@
 
 <html>
 <head>
-    <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+    <meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
     <script type="text/javascript" src="../admin/js/jquery-1.6.3.min.js"></script>
+    <script src="../dialog/js/jqueryui/jquery-ui.min.js" type="text/javascript"></script>
     <link href="../admin/css/global.css" rel="stylesheet" type="text/css"/>
     <link rel="stylesheet" href="../admin/css/carbonFormStyles.css">
     <link href="css/execution_manager.css" rel="stylesheet" type="text/css"/>
     <script type="text/javascript" src="js/domain_config_update.js"></script>
+    <script type="text/javascript" src="../dialog/js/dialog.js"></script>
+    <link media="all" type="text/css" rel="stylesheet" href="../dialog/css/dialog.css"/>
+    <link href="../dialog/css/jqueryui/jqueryui-themeroller.css" rel="stylesheet" type="text/css" media="all"/>
 </head>
 <body>
+
 <div id="container">
 <div id="headerArea">
     Execution Manager
 </div>
 
 <div id="middle">
-
-
+<div id="dcontainer"></div>
 <div id="workArea">
 
 <h2>Edit Configurations</h2>
@@ -49,11 +53,24 @@
 <%
     if (request.getParameter("domainName") != null) {
 
-        String domainName = request.getParameter("domainName");
-        String configurationName = request.getParameter("configurationName");
+        String configurationName = "";
+        String templateType = "";
+        String domainName = "";
+        Boolean isExistingConfig = false;
 
+        if (request.getParameter("configurationName") != null) {
+            configurationName = request.getParameter("configurationName");
+        }
+
+        if (request.getParameter("domainName") != null) {
+            domainName = request.getParameter("domainName");
+        }
+
+        if (request.getParameter("templateType") != null) {
+            templateType = request.getParameter("templateType");
+        }
 %>
-<a href="domains_ajaxprocessor.jsp">Execution Manager</a> >> <a
+<a href="domains_ajaxprocessor.jsp"><%out.print(domainName);%></a> > <a
         href="domain_configurations_ajaxprocessor.jsp?domainName=<%out.print(domainName);%>">Edit
     Configurations</a><br/><br/>
 <%
@@ -64,6 +81,14 @@
                 ExecutionManagerUIUtils.getExecutionManagerAdminService(config, session, request);
         TemplateDomainDTO domain =
                 proxy.getTemplateDomain(domainName);
+
+        TemplateConfigDTO configDTO = proxy.getTemplateConfiguration(domainName,
+                configurationName);
+
+        if (configDTO != null)  {
+            isExistingConfig = true;
+        }
+
         TemplateDTO currentTemplate = null;
         String saveButtonText = "Add Configuration";
         String parameterString = "";
@@ -83,57 +108,64 @@
             <table class="styledLeft noBorders spacer-bot" style="width: 100%">
                 <tbody>
                 <%
-                    for (TemplateDTO template : domain.getTemplateDTOs()) {
-                        if (configurationName == null || template.getName().equals(configurationName)) {
-                            currentTemplate = template;
-                            configurationName = template.getName();
-                            break;
+                    if (domain.getTemplateDTOs() != null && !templateType.equals("") ) {
+                        for (TemplateDTO template : domain.getTemplateDTOs()) {
+                            if (configurationName == null || template.getName().equals(templateType)) {
+                                currentTemplate = template;
+                                break;
+                            }
                         }
+                    } else if (domain.getTemplateDTOs() != null && domain.getTemplateDTOs().length > 0) {
+                        currentTemplate = domain.getTemplateDTOs()[0];
                     }
 
                     if (currentTemplate != null) {
-
-                        TemplateConfigDTO configDTO = proxy.getTemplateConfiguration(domainName,
-                                configurationName);
                         String parameterValue = "";
                         String description = "";
                 %>
-
                 <tr>
-                    <td><h6>Template Name</h6></td>
+                    <td><h6>Template</h6></td>
                     <td>
                         <select id="cBoxTemplates"
                                 onchange="document.location.href=document.getElementById('cBoxTemplates').options[document.getElementById('cBoxTemplates').selectedIndex].value">
                             <%
-
                                 for (TemplateDTO templateDTO : domain.getTemplateDTOs()) {
 
                                     String selectedValue = "";
-
-                                    if (description.equals("")
-                                            || templateDTO.getName().trim().equals(configurationName)) {
-                                        description = templateDTO.getDescription().trim();
-                                    }
-
-                                    if (templateDTO.getName().trim().equals(configurationName)) {
+                                    if (templateDTO.getName().trim().equals(currentTemplate.getName())) {
                                         selectedValue = "selected=true";
                                     }
                             %>
                             <option <%out.print(selectedValue);%>
-                                    value="template_configurations_ajaxprocessor.jsp?configurationName=<%out.print(templateDTO.getName());%>&domainName=<%out.print(domainName);%>">
+                                    value="template_configurations_ajaxprocessor.jsp?configurationName=<%out.print(configurationName);%>&domainName=<%out.print(domainName);%>&templateType=<%out.print(templateDTO.getName());%>">
                                 <%out.print(templateDTO.getName());%>
                             </option>
                             <%}%>
                         </select>
+                        <div class="sectionHelp"><%out.print(currentTemplate.getDescription());%></div>
+                    </td>
+                </tr>
+                <tr>
+                    <td><h6>Configuration Name</h6></td>
+                    <td>
+                        <%
+                            if (isExistingConfig) {
+                                configurationName = configDTO.getName().trim();
+                                saveButtonText = "Update Configuration";
+                            }
+                        %>
+
+                        <input type="text" id="txtName"
+                               value="<%out.print(configurationName);%>"
+                            <% if(isExistingConfig) { out.print("readOnly");}%>>
                     </td>
                 </tr>
                 <tr>
                     <td><h6>Description</h6></td>
                     <td>
                         <%
-                            if (configDTO != null) {
+                            if (isExistingConfig) {
                                 description = configDTO.getDescription().trim();
-                                saveButtonText = "Update Configuration";
                             }
                         %>
 
@@ -153,7 +185,7 @@
 
                     for (ParameterDTOE parameter : currentTemplate.getParameterDTOs()) {
 
-                        if (configDTO == null) {
+                        if (!isExistingConfig) {
                             parameterValue = parameter.getDefaultValue().trim();
                         } else if (configDTO.getParameterDTOs() != null) {
 
@@ -235,7 +267,10 @@
     <tr>
         <td class="buttonRow">
             <input type="button" value="<%out.print(saveButtonText);%>"
-                   onclick="saveConfiguration('<%out.print(domainName);%>','<%out.print(configurationName);%>', document.getElementById('txtDescription').value, <% out.print(parameterString);%>)">
+                   onclick="saveConfiguration('<%out.print(domainName);%>',
+                           document.getElementById('cBoxTemplates').options[document.getElementById('cBoxTemplates').selectedIndex].text,
+                           document.getElementById('txtName').value, document.getElementById('txtDescription').value,
+                       <% out.print(parameterString);%>)">
         </td>
     </tr>
     </tbody>
@@ -254,6 +289,7 @@
     <div class="copyright">© 2015 WSO2 Inc. All Rights Reserved.</div>
 </div>
 </div>
+
 
 </body>
 </html>
