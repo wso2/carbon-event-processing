@@ -41,6 +41,8 @@
         <module>components/event-simulator</module>
         <module>components/event-flow</module>
         <!--<module>components/event-monitor</module>-->
+        <module>components/execution-manager</module>
+
         <!--<module>features/adaptors</module>-->
         <module>features/event-processor</module>
         <!--<module>features/event-publisher</module>-->
@@ -48,6 +50,7 @@
         <!--<module>features/event-monitor</module>-->
         <module>features/event-simulator</module>
         <module>features/event-flow</module>
+        <module>features/execution-manager</module>
     </modules>
 
     <dependencyManagement>
