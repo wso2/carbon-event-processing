@@ -56,7 +56,6 @@
 
         templateConfigDTO.setParameterDTOs(parameters);
         proxy.saveTemplateConfig(templateConfigDTO);
-        out.print("Success");
     }
 
 

@@ -269,7 +269,7 @@
             <input type="button" value="<%out.print(saveButtonText);%>"
                    onclick="saveConfiguration('<%out.print(domainName);%>',
                            document.getElementById('cBoxTemplates').options[document.getElementById('cBoxTemplates').selectedIndex].text,
-                           document.getElementById('txtName').value, document.getElementById('txtDescription').value,
+                           document.getElementById('txtName').value, document.getElementById('txtDescription').value,'domain_configurations_ajaxprocessor.jsp?domainName=<%out.print(domainName);%>',
                        <% out.print(parameterString);%>)">
         </td>
     </tr>

@@ -31,7 +31,7 @@ function deleteConfiguration(domainName, configurationName, row, tableId) {
         }, null, null);
 }
 
-function saveConfiguration(domainName, templateType, configurationName, description, parameters) {
+function saveConfiguration(domainName, templateType, configurationName, description, redirectURL, parameters) {
     $.ajax({
         type: "POST",
         url: "save_configurations_ajaxprocessor.jsp",
@@ -42,7 +42,11 @@ function saveConfiguration(domainName, templateType, configurationName, descript
             CARBON.showErrorDialog("Error occurred when saving configurations");
         })
         .then(function () {
-            CARBON.showInfoDialog("Configurations saved successfully");
+            CARBON.showInfoDialog("Configurations saved successfully",
+                function () {
+                    document.location.href = redirectURL;
+                });
+
         });
 
 }

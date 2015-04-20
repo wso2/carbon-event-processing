@@ -19,7 +19,6 @@ package org.wso2.carbon.event.execution.manager.core.internal;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.wso2.carbon.context.PrivilegedCarbonContext;
 import org.wso2.carbon.databridge.commons.StreamDefinition;
 import org.wso2.carbon.databridge.commons.exception.MalformedStreamDefinitionException;
 import org.wso2.carbon.databridge.commons.utils.EventDefinitionConverterUtils;
@@ -103,6 +102,13 @@ public class CarbonExecutionManagerService implements ExecutionManagerService {
      */
     private void loadConfigurations() {
         try {
+
+            //Collection directory will be created if it is not exist in the registry
+            if (!registry.resourceExists(ExecutionManagerConstants.TEMPLATE_CONFIG_PATH)) {
+                Resource resource = registry.newCollection();
+                registry.put(ExecutionManagerConstants.TEMPLATE_CONFIG_PATH, resource);
+            }
+
             Resource resource = registry.get(ExecutionManagerConstants.TEMPLATE_CONFIG_PATH);
 
             if (resource instanceof Collection) {
@@ -111,7 +117,6 @@ public class CarbonExecutionManagerService implements ExecutionManagerService {
                 for (String filePath : collection.getChildren()) {
 
                     Resource configFile = registry.get(filePath);
-
                     if (configFile != null) {
 
                         try {
@@ -201,8 +206,8 @@ public class CarbonExecutionManagerService implements ExecutionManagerService {
         for (Template template : domains.get(configuration.getFrom()).getTemplates()) {
             if (template.getName().equals(configuration.getType())) {
                 try {
-
-                    ExecutionPlan parsedExecutionPlan = SiddhiCompiler.parse(template.getExecutionPlan());
+                    ExecutionPlan parsedExecutionPlan = SiddhiCompiler.parse(this.updateExecutionPlanParameters(
+                            configuration, template.getExecutionPlan()));
                     String executionPlanName = AnnotationHelper.getAnnotationElement(
                             EventProcessorConstants.ANNOTATION_NAME_NAME, null,
                             parsedExecutionPlan.getAnnotations()).getValue();
@@ -240,10 +245,8 @@ public class CarbonExecutionManagerService implements ExecutionManagerService {
      * @throws ExecutionPlanConfigurationException
      */
     private void unDeployExistingExecutionPlan(String executionPlanName) throws ExecutionPlanConfigurationException {
-        int tenantId = PrivilegedCarbonContext.getThreadLocalCarbonContext().getTenantId();
-
         if (ExecutionManagerValueHolder.getEventProcessorService()
-                .getAllActiveExecutionConfigurations(tenantId).get(executionPlanName) != null) {
+                .getAllActiveExecutionConfigurations().get(executionPlanName) != null) {
             ExecutionManagerValueHolder.getEventProcessorService().undeployActiveExecutionPlan(executionPlanName);
         }
     }
@@ -338,7 +341,6 @@ public class CarbonExecutionManagerService implements ExecutionManagerService {
             if (pair.getValue() != null) {
 
                 TemplateConfig config = (TemplateConfig) pair.getValue();
-
                 //check configuration from same domain
                 if (config.getFrom().equals(domainName)) {
                     configAllList.add((TemplateConfig) pair.getValue());
