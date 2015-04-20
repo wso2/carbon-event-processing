@@ -22,7 +22,7 @@ import org.wso2.carbon.utils.CarbonUtils;
 public class ExecutionManagerConstants {
 
     public static String carbon_home = CarbonUtils.getCarbonHome();
-    public static final String TEMPLATE_DOMAIN_PATH = carbon_home + "/repository/conf/cep/template-domain";
+    public static final String TEMPLATE_DOMAIN_PATH = carbon_home + "/repository/conf/cep/domain-template";
     public static final String TEMPLATE_CONFIG_PATH
             = "/repository/components/org.wso2.carbon.event.execution.manager.core/template-config";
     public static final String PATH_SEPARATOR = "/";

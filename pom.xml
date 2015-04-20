@@ -50,6 +50,7 @@
         <!--<module>features/event-monitor</module>-->
         <module>features/event-simulator</module>
         <module>features/event-flow</module>
+        <module>features/execution-manager</module>
     </modules>
 
     <dependencyManagement>
