@@ -76,10 +76,9 @@ public class CarbonEventProcessorService implements EventProcessorService {
         org.wso2.siddhi.query.api.ExecutionPlan parsedExecutionPlan = null;
         try {
             parsedExecutionPlan = SiddhiCompiler.parse(executionPlan);
-            int tenantId = PrivilegedCarbonContext.getThreadLocalCarbonContext().getTenantId();
             String executionPlanName = AnnotationHelper.getAnnotationElement(EventProcessorConstants.ANNOTATION_NAME_NAME, null, parsedExecutionPlan.getAnnotations()).getValue();
 
-            if (!(checkExecutionPlanValidity(executionPlanName, tenantId))) {
+            if (!(checkExecutionPlanValidity(executionPlanName))) {
                 throw new ExecutionPlanConfigurationException(executionPlanName + " already registered as an execution in this tenant");
             }
 
@@ -124,27 +123,24 @@ public class CarbonEventProcessorService implements EventProcessorService {
     @Override
     public void undeployActiveExecutionPlan(String planName) throws
             ExecutionPlanConfigurationException {
-        int tenantId = PrivilegedCarbonContext.getThreadLocalCarbonContext().getTenantId();
-        EventProcessorConfigurationFilesystemInvoker.delete(getExecutionPlanConfigurationFileByPlanName(planName,
-                tenantId).getFileName());
+        EventProcessorConfigurationFilesystemInvoker.delete(getExecutionPlanConfigurationFileByPlanName(planName).getFileName());
     }
 
     public void editActiveExecutionPlan(String executionPlan,
                                         String executionPlanName)
             throws ExecutionPlanConfigurationException, ExecutionPlanDependencyValidationException {
-        int tenantId = PrivilegedCarbonContext.getThreadLocalCarbonContext().getTenantId();
-        EventProcessorHelper.validateExecutionPlan(executionPlan, tenantId);
+        EventProcessorHelper.validateExecutionPlan(executionPlan);
         org.wso2.siddhi.query.api.ExecutionPlan parsedExecutionPlan = SiddhiCompiler.parse(executionPlan);
         String newExecutionPlanName = AnnotationHelper.getAnnotationElement(EventProcessorConstants.ANNOTATION_NAME_NAME, null, parsedExecutionPlan.getAnnotations()).getValue();
         if (!(newExecutionPlanName.equals(executionPlanName))) {
-            if (!(checkExecutionPlanValidity(newExecutionPlanName, tenantId))) {
+            if (!(checkExecutionPlanValidity(newExecutionPlanName))) {
                 throw new ExecutionPlanConfigurationException(newExecutionPlanName + " " +
                         "already registered as an execution in this tenant");
             }
         }
         if (executionPlanName != null && executionPlanName.length() > 0) {
             String fileName;
-            ExecutionPlanConfigurationFile file = getExecutionPlanConfigurationFileByPlanName(executionPlanName, tenantId);
+            ExecutionPlanConfigurationFile file = getExecutionPlanConfigurationFileByPlanName(executionPlanName);
             if (file == null) {
                 fileName = executionPlanName + EventProcessorConstants.EP_CONFIG_FILE_EXTENSION_WITH_DOT;
             } else {
@@ -159,9 +155,7 @@ public class CarbonEventProcessorService implements EventProcessorService {
 
     public void editInactiveExecutionPlan(String executionPlan, String filename)
             throws ExecutionPlanConfigurationException, ExecutionPlanDependencyValidationException {
-
-        int tenantId = PrivilegedCarbonContext.getThreadLocalCarbonContext().getTenantId();
-        EventProcessorHelper.validateExecutionPlan(executionPlan, tenantId);
+        EventProcessorHelper.validateExecutionPlan(executionPlan);
         org.wso2.siddhi.query.api.ExecutionPlan parsedExecutionPlan = SiddhiCompiler.parse(executionPlan);
         String newExecutionPlanName = AnnotationHelper.getAnnotationElement(EventProcessorConstants.ANNOTATION_NAME_NAME, null, parsedExecutionPlan.getAnnotations()).getValue();
         EventProcessorConfigurationFilesystemInvoker.delete(filename);
@@ -457,8 +451,7 @@ public class CarbonEventProcessorService implements EventProcessorService {
 
     public void validateExecutionPlan(String executionPlan)
             throws ExecutionPlanConfigurationException, ExecutionPlanDependencyValidationException {
-        int tenantId = PrivilegedCarbonContext.getThreadLocalCarbonContext().getTenantId();
-        EventProcessorHelper.validateExecutionPlan(executionPlan, tenantId);
+        EventProcessorHelper.validateExecutionPlan(executionPlan);
     }
 
     public void notifyServiceAvailability(String serviceId) {
@@ -467,7 +460,7 @@ public class CarbonEventProcessorService implements EventProcessorService {
                 PrivilegedCarbonContext.startTenantFlow();
                 PrivilegedCarbonContext.getThreadLocalCarbonContext().setTenantId(tenantId);
                 PrivilegedCarbonContext.getThreadLocalCarbonContext().getTenantDomain(true);
-                activateInactiveExecutionPlanConfigurations(ExecutionPlanConfigurationFile.Status.WAITING_FOR_OSGI_SERVICE, serviceId, tenantId);
+                activateInactiveExecutionPlanConfigurations(ExecutionPlanConfigurationFile.Status.WAITING_FOR_OSGI_SERVICE, serviceId);
             } catch (ExecutionPlanConfigurationException e) {
                 log.error("Error while redeploying distributed execution plans.", e);
             } finally {
@@ -476,7 +469,8 @@ public class CarbonEventProcessorService implements EventProcessorService {
         }
     }
 
-    private void removeExecutionPlanConfiguration(String name, int tenantId) {
+    private void removeExecutionPlanConfiguration(String name) {
+        int tenantId = PrivilegedCarbonContext.getThreadLocalCarbonContext().getTenantId();
         Map<String, ExecutionPlan> executionPlanMap = tenantSpecificExecutionPlans.get(tenantId);
         if (executionPlanMap != null && executionPlanMap.containsKey(name)) {
             ExecutionPlan executionPlan = executionPlanMap.remove(name);
@@ -515,8 +509,8 @@ public class CarbonEventProcessorService implements EventProcessorService {
 
     }
 
-    public void addExecutionPlanConfigurationFile(ExecutionPlanConfigurationFile configurationFile,
-                                                  int tenantId) {
+    public void addExecutionPlanConfigurationFile(ExecutionPlanConfigurationFile configurationFile) {
+        int tenantId = PrivilegedCarbonContext.getThreadLocalCarbonContext().getTenantId();
         List<ExecutionPlanConfigurationFile> executionPlanConfigurationFiles = tenantSpecificExecutionPlanFiles.get(tenantId);
         if (executionPlanConfigurationFiles == null) {
             executionPlanConfigurationFiles = new ArrayList<ExecutionPlanConfigurationFile>();
@@ -529,15 +523,15 @@ public class CarbonEventProcessorService implements EventProcessorService {
      * Just removes the configuration file
      *
      * @param fileName the filename of the {@link ExecutionPlanConfigurationFile} to be removed
-     * @param tenantId the tenantId of the tenant to which this configuration file belongs
      */
-    public void removeExecutionPlanConfigurationFile(String fileName, int tenantId) {
-        List<ExecutionPlanConfigurationFile> executionPlanConfigurationFiles = tenantSpecificExecutionPlanFiles.get(tenantId);
+    public void removeExecutionPlanConfigurationFile(String fileName) {
+        List<ExecutionPlanConfigurationFile> executionPlanConfigurationFiles = tenantSpecificExecutionPlanFiles
+                .get(PrivilegedCarbonContext.getThreadLocalCarbonContext().getTenantId());
         for (Iterator<ExecutionPlanConfigurationFile> iterator = executionPlanConfigurationFiles.iterator(); iterator.hasNext(); ) {
             ExecutionPlanConfigurationFile configurationFile = iterator.next();
             if (new File(configurationFile.getFileName()).getName().equals(fileName)) {
                 if (configurationFile.getStatus().equals(ExecutionPlanConfigurationFile.Status.DEPLOYED)) {
-                    removeExecutionPlanConfiguration(configurationFile.getExecutionPlanName(), tenantId);
+                    removeExecutionPlanConfiguration(configurationFile.getExecutionPlanName());
                 }
                 iterator.remove();
                 break;
@@ -547,8 +541,7 @@ public class CarbonEventProcessorService implements EventProcessorService {
 
     public String getActiveExecutionPlan(String planName)
             throws ExecutionPlanConfigurationException {
-        int tenantId = PrivilegedCarbonContext.getThreadLocalCarbonContext().getTenantId();
-        ExecutionPlanConfigurationFile configFile = getExecutionPlanConfigurationFileByPlanName(planName, tenantId);
+        ExecutionPlanConfigurationFile configFile = getExecutionPlanConfigurationFileByPlanName(planName);
         if (configFile == null) {
             throw new ExecutionPlanConfigurationException("Configuration file for " + planName + "doesn't exist.");
         }
@@ -561,9 +554,10 @@ public class CarbonEventProcessorService implements EventProcessorService {
     }
 
     @Override
-    public Map<String, ExecutionPlanConfiguration> getAllActiveExecutionConfigurations(int tenantId) {
+    public Map<String, ExecutionPlanConfiguration> getAllActiveExecutionConfigurations() {
         Map<String, ExecutionPlanConfiguration> configurationMap = new HashMap<String, ExecutionPlanConfiguration>();
-        Map<String, ExecutionPlan> executionPlanMap = tenantSpecificExecutionPlans.get(tenantId);
+        Map<String, ExecutionPlan> executionPlanMap = tenantSpecificExecutionPlans
+                .get(PrivilegedCarbonContext.getThreadLocalCarbonContext().getTenantId());
         if (executionPlanMap != null) {
             for (Map.Entry<String, ExecutionPlan> entry : executionPlanMap.entrySet()) {
                 configurationMap.put(entry.getKey(), entry.getValue().getExecutionPlanConfiguration());
@@ -573,10 +567,10 @@ public class CarbonEventProcessorService implements EventProcessorService {
     }
 
     @Override
-    public Map<String, ExecutionPlanConfiguration> getAllExportedStreamSpecificActiveExecutionConfigurations(
-            int tenantId, String streamId) {
+    public Map<String, ExecutionPlanConfiguration> getAllExportedStreamSpecificActiveExecutionConfigurations(String streamId) {
         Map<String, ExecutionPlanConfiguration> configurationMap = new HashMap<String, ExecutionPlanConfiguration>();
-        Map<String, ExecutionPlan> executionPlanMap = tenantSpecificExecutionPlans.get(tenantId);
+        Map<String, ExecutionPlan> executionPlanMap = tenantSpecificExecutionPlans
+                .get(PrivilegedCarbonContext.getThreadLocalCarbonContext().getTenantId());
         if (executionPlanMap != null) {
             for (Map.Entry<String, ExecutionPlan> entry : executionPlanMap.entrySet()) {
 
@@ -593,10 +587,10 @@ public class CarbonEventProcessorService implements EventProcessorService {
     }
 
     @Override
-    public Map<String, ExecutionPlanConfiguration> getAllImportedStreamSpecificActiveExecutionConfigurations(
-            int tenantId, String streamId) {
+    public Map<String, ExecutionPlanConfiguration> getAllImportedStreamSpecificActiveExecutionConfigurations(String streamId) {
         Map<String, ExecutionPlanConfiguration> configurationMap = new HashMap<String, ExecutionPlanConfiguration>();
-        Map<String, ExecutionPlan> executionPlanMap = tenantSpecificExecutionPlans.get(tenantId);
+        Map<String, ExecutionPlan> executionPlanMap = tenantSpecificExecutionPlans
+                .get(PrivilegedCarbonContext.getThreadLocalCarbonContext().getTenantId());
         if (executionPlanMap != null) {
             for (Map.Entry<String, ExecutionPlan> entry : executionPlanMap.entrySet()) {
 
@@ -614,8 +608,9 @@ public class CarbonEventProcessorService implements EventProcessorService {
     }
 
     @Override
-    public ExecutionPlanConfiguration getActiveExecutionPlanConfiguration(String planName, int tenantId) {
-        Map<String, ExecutionPlan> executionPlanMap = tenantSpecificExecutionPlans.get(tenantId);
+    public ExecutionPlanConfiguration getActiveExecutionPlanConfiguration(String planName) {
+        Map<String, ExecutionPlan> executionPlanMap = tenantSpecificExecutionPlans
+                .get(PrivilegedCarbonContext.getThreadLocalCarbonContext().getTenantId());
         if (executionPlanMap != null) {
             ExecutionPlan executionPlan = executionPlanMap.get(planName);
             if (executionPlan != null) {
@@ -635,9 +630,9 @@ public class CarbonEventProcessorService implements EventProcessorService {
     }
 
     @Override
-    public List<ExecutionPlanConfigurationFile> getAllInactiveExecutionPlanConfiguration(
-            int tenantId) {
-        List<ExecutionPlanConfigurationFile> executionPlanConfigurationFiles = this.tenantSpecificExecutionPlanFiles.get(tenantId);
+    public List<ExecutionPlanConfigurationFile> getAllInactiveExecutionPlanConfiguration() {
+        List<ExecutionPlanConfigurationFile> executionPlanConfigurationFiles = this.tenantSpecificExecutionPlanFiles
+                .get(PrivilegedCarbonContext.getThreadLocalCarbonContext().getTenantId());
 
         List<ExecutionPlanConfigurationFile> files = new ArrayList<ExecutionPlanConfigurationFile>();
         if (executionPlanConfigurationFiles != null) {
@@ -655,8 +650,8 @@ public class CarbonEventProcessorService implements EventProcessorService {
     @Override
     public void setTracingEnabled(String executionPlanName, boolean isEnabled)
             throws ExecutionPlanConfigurationException {
-        int tenantId = PrivilegedCarbonContext.getThreadLocalCarbonContext().getTenantId();
-        Map<String, ExecutionPlan> executionPlans = tenantSpecificExecutionPlans.get(tenantId);
+        Map<String, ExecutionPlan> executionPlans = tenantSpecificExecutionPlans
+                .get(PrivilegedCarbonContext.getThreadLocalCarbonContext().getTenantId());
         if (executionPlans != null) {
             ExecutionPlan processorExecutionPlan = executionPlans.get(executionPlanName);
             ExecutionPlanConfiguration executionPlanConfiguration = processorExecutionPlan.getExecutionPlanConfiguration();
@@ -664,7 +659,7 @@ public class CarbonEventProcessorService implements EventProcessorService {
             String executionPlan = executionPlanConfiguration.getExecutionPlan();
             String newExecutionPlan = EventProcessorHelper.setExecutionPlanAnnotationName(executionPlan, EventProcessorConstants.ANNOTATION_NAME_TRACE, isEnabled);
             executionPlanConfiguration.setExecutionPlan(newExecutionPlan);
-            ExecutionPlanConfigurationFile configFile = getExecutionPlanConfigurationFileByPlanName(executionPlanName, tenantId);
+            ExecutionPlanConfigurationFile configFile = getExecutionPlanConfigurationFileByPlanName(executionPlanName);
             String fileName = configFile.getFileName();
             EventProcessorConfigurationFilesystemInvoker.delete(fileName);
             EventProcessorConfigurationFilesystemInvoker.save(newExecutionPlan, executionPlanName, fileName);
@@ -674,8 +669,8 @@ public class CarbonEventProcessorService implements EventProcessorService {
     @Override
     public void setStatisticsEnabled(String executionPlanName, boolean isEnabled)
             throws ExecutionPlanConfigurationException {
-        int tenantId = PrivilegedCarbonContext.getThreadLocalCarbonContext().getTenantId();
-        Map<String, ExecutionPlan> processorExecutionPlans = tenantSpecificExecutionPlans.get(tenantId);
+        Map<String, ExecutionPlan> processorExecutionPlans = tenantSpecificExecutionPlans
+                .get(PrivilegedCarbonContext.getThreadLocalCarbonContext().getTenantId());
         if (processorExecutionPlans != null) {
             ExecutionPlan processorExecutionPlan = processorExecutionPlans.get(executionPlanName);
             ExecutionPlanConfiguration executionPlanConfiguration = processorExecutionPlan.getExecutionPlanConfiguration();
@@ -684,7 +679,7 @@ public class CarbonEventProcessorService implements EventProcessorService {
             String newExecutionPlan = EventProcessorHelper.setExecutionPlanAnnotationName(executionPlan,
                     EventProcessorConstants.ANNOTATION_NAME_STATISTICS, isEnabled);
             executionPlanConfiguration.setExecutionPlan(newExecutionPlan);
-            ExecutionPlanConfigurationFile configFile = getExecutionPlanConfigurationFileByPlanName(executionPlanName, tenantId);
+            ExecutionPlanConfigurationFile configFile = getExecutionPlanConfigurationFileByPlanName(executionPlanName);
             String fileName = configFile.getFileName();
             EventProcessorConfigurationFilesystemInvoker.delete(fileName);
             EventProcessorConfigurationFilesystemInvoker.save(newExecutionPlan, executionPlanName, fileName);
@@ -694,17 +689,16 @@ public class CarbonEventProcessorService implements EventProcessorService {
     /**
      * Activate Inactive Execution Plan Configurations
      *
-     * @param tenantId             the tenant id of the tenant which triggered this call
      * @param resolvedDependencyId the id of the dependency that was resolved which resulted in triggering this method call
      */
     public void activateInactiveExecutionPlanConfigurations(
-            ExecutionPlanConfigurationFile.Status status, String resolvedDependencyId, int tenantId)
+            ExecutionPlanConfigurationFile.Status status, String resolvedDependencyId)
             throws ExecutionPlanConfigurationException {
 
         List<ExecutionPlanConfigurationFile> reloadFileList = new ArrayList<ExecutionPlanConfigurationFile>();
-
         if (tenantSpecificExecutionPlanFiles != null && tenantSpecificExecutionPlanFiles.size() > 0) {
-            List<ExecutionPlanConfigurationFile> executionPlanConfigurationFiles = tenantSpecificExecutionPlanFiles.get(tenantId);
+            List<ExecutionPlanConfigurationFile> executionPlanConfigurationFiles = tenantSpecificExecutionPlanFiles
+                    .get(PrivilegedCarbonContext.getThreadLocalCarbonContext().getTenantId());
 
             if (executionPlanConfigurationFiles != null) {
                 for (ExecutionPlanConfigurationFile executionPlanConfigurationFile : executionPlanConfigurationFiles) {
@@ -727,10 +721,11 @@ public class CarbonEventProcessorService implements EventProcessorService {
 
     }
 
-    public void deactivateActiveExecutionPlanConfigurations(String streamId, int tenantId) {
+    public void deactivateActiveExecutionPlanConfigurations(String streamId) {
 
         List<String> toDeactivateExecutionPlan = new ArrayList<String>();
-        Map<String, ExecutionPlan> executionPlanMap = tenantSpecificExecutionPlans.get(tenantId);
+        Map<String, ExecutionPlan> executionPlanMap = tenantSpecificExecutionPlans
+                .get(PrivilegedCarbonContext.getThreadLocalCarbonContext().getTenantId());
         if (executionPlanMap != null) {
             for (ExecutionPlan executionPlan : executionPlanMap.values()) {
                 boolean done = false;
@@ -754,7 +749,7 @@ public class CarbonEventProcessorService implements EventProcessorService {
         }
         if (toDeactivateExecutionPlan.size() > 0) {
             for (String name : toDeactivateExecutionPlan) {
-                ExecutionPlanConfigurationFile executionPlanConfigurationFile = getExecutionPlanConfigurationFileByPlanName(name, tenantId);
+                ExecutionPlanConfigurationFile executionPlanConfigurationFile = getExecutionPlanConfigurationFileByPlanName(name);
                 try {
                     EventProcessorConfigurationFilesystemInvoker.reload(executionPlanConfigurationFile.getFilePath(),
                             executionPlanConfigurationFile.getAxisConfiguration());
@@ -767,9 +762,9 @@ public class CarbonEventProcessorService implements EventProcessorService {
     }
 
     // gets file by name.
-    private ExecutionPlanConfigurationFile getExecutionPlanConfigurationFileByPlanName(String name,
-                                                                                       int tenantId) {
-        List<ExecutionPlanConfigurationFile> executionPlanConfigurationFiles = tenantSpecificExecutionPlanFiles.get(tenantId);
+    private ExecutionPlanConfigurationFile getExecutionPlanConfigurationFileByPlanName(String name) {
+        List<ExecutionPlanConfigurationFile> executionPlanConfigurationFiles = tenantSpecificExecutionPlanFiles
+                .get(PrivilegedCarbonContext.getThreadLocalCarbonContext().getTenantId());
         if (executionPlanConfigurationFiles != null) {
             for (ExecutionPlanConfigurationFile file : executionPlanConfigurationFiles) {
                 if (name.equals(file.getExecutionPlanName()) && file.getStatus().equals(ExecutionPlanConfigurationFile.Status.DEPLOYED)) {
@@ -782,10 +777,9 @@ public class CarbonEventProcessorService implements EventProcessorService {
 
     private void validateToRemoveInactiveExecutionPlanConfiguration(String executionPlanName)
             throws ExecutionPlanConfigurationException {
-        int tenantId = PrivilegedCarbonContext.getThreadLocalCarbonContext().getTenantId();
-
         String fileName = executionPlanName + EventProcessorConstants.EP_CONFIG_FILE_EXTENSION_WITH_DOT;
-        List<ExecutionPlanConfigurationFile> executionPlanConfigurationFiles = tenantSpecificExecutionPlanFiles.get(tenantId);
+        List<ExecutionPlanConfigurationFile> executionPlanConfigurationFiles = tenantSpecificExecutionPlanFiles
+                .get(PrivilegedCarbonContext.getThreadLocalCarbonContext().getTenantId());
         if (executionPlanConfigurationFiles != null) {
             for (ExecutionPlanConfigurationFile executionPlanConfigurationFile : executionPlanConfigurationFiles) {
                 if ((executionPlanConfigurationFile.getFileName().equals(fileName))) {
@@ -798,11 +792,11 @@ public class CarbonEventProcessorService implements EventProcessorService {
         }
     }
 
-    private boolean checkExecutionPlanValidity(String executionPlanName, int tenantId)
+    private boolean checkExecutionPlanValidity(String executionPlanName)
             throws ExecutionPlanConfigurationException {
 
         Map<String, ExecutionPlanConfiguration> executionPlanConfigurationMap;
-        executionPlanConfigurationMap = getAllActiveExecutionConfigurations(tenantId);
+        executionPlanConfigurationMap = getAllActiveExecutionConfigurations();
         if (executionPlanConfigurationMap != null) {
             for (String existingExecutionPlanName : executionPlanConfigurationMap.keySet()) {
                 if (executionPlanName.equalsIgnoreCase(existingExecutionPlanName)) {
@@ -813,11 +807,12 @@ public class CarbonEventProcessorService implements EventProcessorService {
         return true;
     }
 
-    public boolean isExecutionPlanFileAlreadyExist(String executionPlanFileName, int tenantId)
+    public boolean isExecutionPlanFileAlreadyExist(String executionPlanFileName)
             throws ExecutionPlanConfigurationException {
 
         if (tenantSpecificExecutionPlanFiles.size() > 0) {
-            List<ExecutionPlanConfigurationFile> executionPlanConfigurationFileList = tenantSpecificExecutionPlanFiles.get(tenantId);
+            List<ExecutionPlanConfigurationFile> executionPlanConfigurationFileList = tenantSpecificExecutionPlanFiles
+                    .get(PrivilegedCarbonContext.getThreadLocalCarbonContext().getTenantId());
             if (executionPlanConfigurationFileList != null) {
                 for (ExecutionPlanConfigurationFile executionPlanConfigurationFile : executionPlanConfigurationFileList) {
                     if ((executionPlanConfigurationFile.getExecutionPlanName().equals(executionPlanFileName))) {
