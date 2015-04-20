@@ -117,8 +117,7 @@ public class EventProcessorAdminService extends AbstractAdmin {
             throws AxisFault {
         EventProcessorService eventProcessorService = EventProcessorAdminValueHolder.getEventProcessorService();
         if (eventProcessorService != null) {
-            ExecutionPlanConfiguration executionConfiguration = eventProcessorService.getActiveExecutionPlanConfiguration(planName,
-                    PrivilegedCarbonContext.getThreadLocalCarbonContext().getTenantId());
+            ExecutionPlanConfiguration executionConfiguration = eventProcessorService.getActiveExecutionPlanConfiguration(planName);
             ExecutionPlanConfigurationDto dto = new ExecutionPlanConfigurationDto();
             copyConfigurationsToDto(executionConfiguration, dto);
             return dto;
@@ -152,8 +151,7 @@ public class EventProcessorAdminService extends AbstractAdmin {
         EventProcessorService eventProcessorService = EventProcessorAdminValueHolder.getEventProcessorService();
         if (eventProcessorService != null) {
 
-            Map<String, ExecutionPlanConfiguration> executionPlanConfigurations = eventProcessorService.getAllActiveExecutionConfigurations(
-                    PrivilegedCarbonContext.getThreadLocalCarbonContext().getTenantId());
+            Map<String, ExecutionPlanConfiguration> executionPlanConfigurations = eventProcessorService.getAllActiveExecutionConfigurations();
             if (executionPlanConfigurations != null) {
                 ExecutionPlanConfigurationDto[] configurationDtos = new ExecutionPlanConfigurationDto[executionPlanConfigurations.size()];
 
@@ -182,7 +180,7 @@ public class EventProcessorAdminService extends AbstractAdmin {
         EventProcessorService eventProcessorService = EventProcessorAdminValueHolder.getEventProcessorService();
         if (eventProcessorService != null) {
             int tenantId = PrivilegedCarbonContext.getThreadLocalCarbonContext().getTenantId();
-            List<ExecutionPlanConfigurationFile> files = eventProcessorService.getAllInactiveExecutionPlanConfiguration(tenantId);
+            List<ExecutionPlanConfigurationFile> files = eventProcessorService.getAllInactiveExecutionPlanConfiguration();
             if (files != null) {
                 ExecutionPlanConfigurationFileDto[] fileDtoArray = new ExecutionPlanConfigurationFileDto[files.size()];
                 for (int i = 0; i < files.size(); i++) {
@@ -219,7 +217,7 @@ public class EventProcessorAdminService extends AbstractAdmin {
         if (eventProcessorService != null) {
 
             Map<String, ExecutionPlanConfiguration> executionPlanConfigurations = eventProcessorService.
-                    getAllExportedStreamSpecificActiveExecutionConfigurations(PrivilegedCarbonContext.getThreadLocalCarbonContext().getTenantId(), streamId);
+                    getAllExportedStreamSpecificActiveExecutionConfigurations(streamId);
             if (executionPlanConfigurations != null) {
                 ExecutionPlanConfigurationDto[] configurationDtos = new ExecutionPlanConfigurationDto[executionPlanConfigurations.size()];
 
@@ -250,7 +248,7 @@ public class EventProcessorAdminService extends AbstractAdmin {
         if (eventProcessorService != null) {
 
             Map<String, ExecutionPlanConfiguration> executionPlanConfigurations = eventProcessorService.
-                    getAllImportedStreamSpecificActiveExecutionConfigurations(PrivilegedCarbonContext.getThreadLocalCarbonContext().getTenantId(), streamId);
+                    getAllImportedStreamSpecificActiveExecutionConfigurations(streamId);
             if (executionPlanConfigurations != null) {
                 ExecutionPlanConfigurationDto[] configurationDtos = new ExecutionPlanConfigurationDto[executionPlanConfigurations.size()];
 

@@ -29,12 +29,13 @@ import org.wso2.carbon.event.stream.core.EventStreamListener;
 public class EventStreamListenerImpl implements EventStreamListener {
 
     private static final Log log = LogFactory.getLog(EventStreamListenerImpl.class);
+
     @Override
     public void removedEventStream(int tenantId, String streamName, String streamVersion) {
 
         CarbonEventProcessorService carbonEventProcessorService = EventProcessorValueHolder.getEventProcessorService();
         String streamNameWithVersion = DataBridgeCommonsUtils.generateStreamId(streamName, streamVersion);
-        carbonEventProcessorService.deactivateActiveExecutionPlanConfigurations(streamNameWithVersion, tenantId);
+        carbonEventProcessorService.deactivateActiveExecutionPlanConfigurations(streamNameWithVersion);
     }
 
     /**
@@ -47,7 +48,7 @@ public class EventStreamListenerImpl implements EventStreamListener {
         CarbonEventProcessorService carbonEventProcessorService = EventProcessorValueHolder.getEventProcessorService();
         String streamNameWithVersion = DataBridgeCommonsUtils.generateStreamId(streamName, streamVersion);
         try {
-            carbonEventProcessorService.activateInactiveExecutionPlanConfigurations(ExecutionPlanConfigurationFile.Status.WAITING_FOR_DEPENDENCY, streamNameWithVersion, tenantId);
+            carbonEventProcessorService.activateInactiveExecutionPlanConfigurations(ExecutionPlanConfigurationFile.Status.WAITING_FOR_DEPENDENCY, streamNameWithVersion);
         } catch (ExecutionPlanConfigurationException e) {
             log.error("Exception occurred while re-deploying the Event processor configuration files");
         }
