@@ -1,0 +1,391 @@
+<wsdl:definitions xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:ns1="http://org.apache.axis2/xsd" xmlns:ns="http://admin.manager.execution.event.carbon.wso2.org" xmlns:wsaw="http://www.w3.org/2006/05/addressing/wsdl" xmlns:http="http://schemas.xmlsoap.org/wsdl/http/" xmlns:ax292="http://config.dto.admin.manager.execution.event.carbon.wso2.org/xsd" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:ax294="http://domain.dto.admin.manager.execution.event.carbon.wso2.org/xsd" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" targetNamespace="http://admin.manager.execution.event.carbon.wso2.org">
+    <wsdl:documentation>ExecutionManagerAdminService</wsdl:documentation>
+    <wsdl:types>
+        <xs:schema attributeFormDefault="qualified" elementFormDefault="qualified" targetNamespace="http://domain.dto.admin.manager.execution.event.carbon.wso2.org/xsd">
+            <xs:complexType name="TemplateDomainDTO">
+                <xs:sequence>
+                    <xs:element minOccurs="0" name="description" nillable="true" type="xs:string"></xs:element>
+                    <xs:element minOccurs="0" name="name" nillable="true" type="xs:string"></xs:element>
+                    <xs:element maxOccurs="unbounded" minOccurs="0" name="streams" nillable="true" type="xs:string"></xs:element>
+                    <xs:element maxOccurs="unbounded" minOccurs="0" name="templateDTOs" nillable="true" type="ax294:TemplateDTO"></xs:element>
+                </xs:sequence>
+            </xs:complexType>
+            <xs:complexType name="TemplateDTO">
+                <xs:sequence>
+                    <xs:element minOccurs="0" name="description" nillable="true" type="xs:string"></xs:element>
+                    <xs:element minOccurs="0" name="executionPlan" nillable="true" type="xs:string"></xs:element>
+                    <xs:element minOccurs="0" name="name" nillable="true" type="xs:string"></xs:element>
+                    <xs:element maxOccurs="unbounded" minOccurs="0" name="parameterDTOs" nillable="true" type="ax294:ParameterDTO"></xs:element>
+                </xs:sequence>
+            </xs:complexType>
+            <xs:complexType name="ParameterDTO">
+                <xs:sequence>
+                    <xs:element minOccurs="0" name="defaultValue" nillable="true" type="xs:string"></xs:element>
+                    <xs:element minOccurs="0" name="description" nillable="true" type="xs:string"></xs:element>
+                    <xs:element minOccurs="0" name="displayName" nillable="true" type="xs:string"></xs:element>
+                    <xs:element minOccurs="0" name="name" nillable="true" type="xs:string"></xs:element>
+                    <xs:element minOccurs="0" name="options" nillable="true" type="xs:string"></xs:element>
+                    <xs:element minOccurs="0" name="type" nillable="true" type="xs:string"></xs:element>
+                </xs:sequence>
+            </xs:complexType>
+        </xs:schema>
+        <xs:schema attributeFormDefault="qualified" elementFormDefault="qualified" targetNamespace="http://config.dto.admin.manager.execution.event.carbon.wso2.org/xsd">
+            <xs:complexType name="TemplateConfigDTO">
+                <xs:sequence>
+                    <xs:element minOccurs="0" name="description" nillable="true" type="xs:string"></xs:element>
+                    <xs:element minOccurs="0" name="from" nillable="true" type="xs:string"></xs:element>
+                    <xs:element minOccurs="0" name="name" nillable="true" type="xs:string"></xs:element>
+                    <xs:element maxOccurs="unbounded" minOccurs="0" name="parameterDTOs" nillable="true" type="ax292:ParameterDTO"></xs:element>
+                    <xs:element minOccurs="0" name="type" nillable="true" type="xs:string"></xs:element>
+                </xs:sequence>
+            </xs:complexType>
+            <xs:complexType name="ParameterDTO">
+                <xs:sequence>
+                    <xs:element minOccurs="0" name="name" nillable="true" type="xs:string"></xs:element>
+                    <xs:element minOccurs="0" name="value" nillable="true" type="xs:string"></xs:element>
+                </xs:sequence>
+            </xs:complexType>
+        </xs:schema>
+        <xs:schema xmlns:ax293="http://config.dto.admin.manager.execution.event.carbon.wso2.org/xsd" xmlns:ax295="http://domain.dto.admin.manager.execution.event.carbon.wso2.org/xsd" attributeFormDefault="qualified" elementFormDefault="qualified" targetNamespace="http://admin.manager.execution.event.carbon.wso2.org">
+            <xs:import namespace="http://config.dto.admin.manager.execution.event.carbon.wso2.org/xsd"></xs:import>
+            <xs:import namespace="http://domain.dto.admin.manager.execution.event.carbon.wso2.org/xsd"></xs:import>
+            <xs:element name="getTemplateConfiguration">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element minOccurs="0" name="domainName" nillable="true" type="xs:string"></xs:element>
+                        <xs:element minOccurs="0" name="configName" nillable="true" type="xs:string"></xs:element>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="getTemplateConfigurationResponse">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element minOccurs="0" name="return" nillable="true" type="ax292:TemplateConfigDTO"></xs:element>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="getAllTemplateDomains">
+                <xs:complexType>
+                    <xs:sequence></xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="getAllTemplateDomainsResponse">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element maxOccurs="unbounded" minOccurs="0" name="return" nillable="true" type="ax294:TemplateDomainDTO"></xs:element>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="deleteTemplateConfig">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element minOccurs="0" name="domainName" nillable="true" type="xs:string"></xs:element>
+                        <xs:element minOccurs="0" name="configName" nillable="true" type="xs:string"></xs:element>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="getAllTemplateConfigurations">
+                <xs:complexType>
+                    <xs:sequence></xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="getAllTemplateConfigurationsResponse">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element maxOccurs="unbounded" minOccurs="0" name="return" nillable="true" type="ax292:TemplateConfigDTO"></xs:element>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="getTemplateConfigurations">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element minOccurs="0" name="domainName" nillable="true" type="xs:string"></xs:element>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="getTemplateConfigurationsResponse">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element maxOccurs="unbounded" minOccurs="0" name="return" nillable="true" type="ax292:TemplateConfigDTO"></xs:element>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="saveTemplateConfig">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element minOccurs="0" name="configuration" nillable="true" type="ax292:TemplateConfigDTO"></xs:element>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="getTemplateDomain">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element minOccurs="0" name="domainName" nillable="true" type="xs:string"></xs:element>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="getTemplateDomainResponse">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element minOccurs="0" name="return" nillable="true" type="ax294:TemplateDomainDTO"></xs:element>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+        </xs:schema>
+    </wsdl:types>
+    <wsdl:message name="saveTemplateConfigRequest">
+        <wsdl:part name="parameters" element="ns:saveTemplateConfig"></wsdl:part>
+    </wsdl:message>
+    <wsdl:message name="getAllTemplateConfigurationsRequest">
+        <wsdl:part name="parameters" element="ns:getAllTemplateConfigurations"></wsdl:part>
+    </wsdl:message>
+    <wsdl:message name="getAllTemplateConfigurationsResponse">
+        <wsdl:part name="parameters" element="ns:getAllTemplateConfigurationsResponse"></wsdl:part>
+    </wsdl:message>
+    <wsdl:message name="getTemplateConfigurationsRequest">
+        <wsdl:part name="parameters" element="ns:getTemplateConfigurations"></wsdl:part>
+    </wsdl:message>
+    <wsdl:message name="getTemplateConfigurationsResponse">
+        <wsdl:part name="parameters" element="ns:getTemplateConfigurationsResponse"></wsdl:part>
+    </wsdl:message>
+    <wsdl:message name="getTemplateDomainRequest">
+        <wsdl:part name="parameters" element="ns:getTemplateDomain"></wsdl:part>
+    </wsdl:message>
+    <wsdl:message name="getTemplateDomainResponse">
+        <wsdl:part name="parameters" element="ns:getTemplateDomainResponse"></wsdl:part>
+    </wsdl:message>
+    <wsdl:message name="deleteTemplateConfigRequest">
+        <wsdl:part name="parameters" element="ns:deleteTemplateConfig"></wsdl:part>
+    </wsdl:message>
+    <wsdl:message name="getAllTemplateDomainsRequest">
+        <wsdl:part name="parameters" element="ns:getAllTemplateDomains"></wsdl:part>
+    </wsdl:message>
+    <wsdl:message name="getAllTemplateDomainsResponse">
+        <wsdl:part name="parameters" element="ns:getAllTemplateDomainsResponse"></wsdl:part>
+    </wsdl:message>
+    <wsdl:message name="getTemplateConfigurationRequest">
+        <wsdl:part name="parameters" element="ns:getTemplateConfiguration"></wsdl:part>
+    </wsdl:message>
+    <wsdl:message name="getTemplateConfigurationResponse">
+        <wsdl:part name="parameters" element="ns:getTemplateConfigurationResponse"></wsdl:part>
+    </wsdl:message>
+    <wsdl:portType name="ExecutionManagerAdminServicePortType">
+        <wsdl:operation name="saveTemplateConfig">
+            <wsdl:input message="ns:saveTemplateConfigRequest" wsaw:Action="urn:saveTemplateConfig"></wsdl:input>
+        </wsdl:operation>
+        <wsdl:operation name="getAllTemplateConfigurations">
+            <wsdl:input message="ns:getAllTemplateConfigurationsRequest" wsaw:Action="urn:getAllTemplateConfigurations"></wsdl:input>
+            <wsdl:output message="ns:getAllTemplateConfigurationsResponse" wsaw:Action="urn:getAllTemplateConfigurationsResponse"></wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="getTemplateConfigurations">
+            <wsdl:input message="ns:getTemplateConfigurationsRequest" wsaw:Action="urn:getTemplateConfigurations"></wsdl:input>
+            <wsdl:output message="ns:getTemplateConfigurationsResponse" wsaw:Action="urn:getTemplateConfigurationsResponse"></wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="getTemplateDomain">
+            <wsdl:input message="ns:getTemplateDomainRequest" wsaw:Action="urn:getTemplateDomain"></wsdl:input>
+            <wsdl:output message="ns:getTemplateDomainResponse" wsaw:Action="urn:getTemplateDomainResponse"></wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="deleteTemplateConfig">
+            <wsdl:input message="ns:deleteTemplateConfigRequest" wsaw:Action="urn:deleteTemplateConfig"></wsdl:input>
+        </wsdl:operation>
+        <wsdl:operation name="getAllTemplateDomains">
+            <wsdl:input message="ns:getAllTemplateDomainsRequest" wsaw:Action="urn:getAllTemplateDomains"></wsdl:input>
+            <wsdl:output message="ns:getAllTemplateDomainsResponse" wsaw:Action="urn:getAllTemplateDomainsResponse"></wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="getTemplateConfiguration">
+            <wsdl:input message="ns:getTemplateConfigurationRequest" wsaw:Action="urn:getTemplateConfiguration"></wsdl:input>
+            <wsdl:output message="ns:getTemplateConfigurationResponse" wsaw:Action="urn:getTemplateConfigurationResponse"></wsdl:output>
+        </wsdl:operation>
+    </wsdl:portType>
+    <wsdl:binding name="ExecutionManagerAdminServiceSoap11Binding" type="ns:ExecutionManagerAdminServicePortType">
+        <soap:binding transport="http://schemas.xmlsoap.org/soap/http" style="document"></soap:binding>
+        <wsdl:operation name="saveTemplateConfig">
+            <soap:operation soapAction="urn:saveTemplateConfig" style="document"></soap:operation>
+            <wsdl:input>
+                <soap:body use="literal"></soap:body>
+            </wsdl:input>
+        </wsdl:operation>
+        <wsdl:operation name="getAllTemplateConfigurations">
+            <soap:operation soapAction="urn:getAllTemplateConfigurations" style="document"></soap:operation>
+            <wsdl:input>
+                <soap:body use="literal"></soap:body>
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal"></soap:body>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="getTemplateConfigurations">
+            <soap:operation soapAction="urn:getTemplateConfigurations" style="document"></soap:operation>
+            <wsdl:input>
+                <soap:body use="literal"></soap:body>
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal"></soap:body>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="getTemplateDomain">
+            <soap:operation soapAction="urn:getTemplateDomain" style="document"></soap:operation>
+            <wsdl:input>
+                <soap:body use="literal"></soap:body>
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal"></soap:body>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="deleteTemplateConfig">
+            <soap:operation soapAction="urn:deleteTemplateConfig" style="document"></soap:operation>
+            <wsdl:input>
+                <soap:body use="literal"></soap:body>
+            </wsdl:input>
+        </wsdl:operation>
+        <wsdl:operation name="getAllTemplateDomains">
+            <soap:operation soapAction="urn:getAllTemplateDomains" style="document"></soap:operation>
+            <wsdl:input>
+                <soap:body use="literal"></soap:body>
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal"></soap:body>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="getTemplateConfiguration">
+            <soap:operation soapAction="urn:getTemplateConfiguration" style="document"></soap:operation>
+            <wsdl:input>
+                <soap:body use="literal"></soap:body>
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal"></soap:body>
+            </wsdl:output>
+        </wsdl:operation>
+    </wsdl:binding>
+    <wsdl:binding name="ExecutionManagerAdminServiceSoap12Binding" type="ns:ExecutionManagerAdminServicePortType">
+        <soap12:binding transport="http://schemas.xmlsoap.org/soap/http" style="document"></soap12:binding>
+        <wsdl:operation name="saveTemplateConfig">
+            <soap12:operation soapAction="urn:saveTemplateConfig" style="document"></soap12:operation>
+            <wsdl:input>
+                <soap12:body use="literal"></soap12:body>
+            </wsdl:input>
+        </wsdl:operation>
+        <wsdl:operation name="getAllTemplateConfigurations">
+            <soap12:operation soapAction="urn:getAllTemplateConfigurations" style="document"></soap12:operation>
+            <wsdl:input>
+                <soap12:body use="literal"></soap12:body>
+            </wsdl:input>
+            <wsdl:output>
+                <soap12:body use="literal"></soap12:body>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="getTemplateConfigurations">
+            <soap12:operation soapAction="urn:getTemplateConfigurations" style="document"></soap12:operation>
+            <wsdl:input>
+                <soap12:body use="literal"></soap12:body>
+            </wsdl:input>
+            <wsdl:output>
+                <soap12:body use="literal"></soap12:body>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="getTemplateDomain">
+            <soap12:operation soapAction="urn:getTemplateDomain" style="document"></soap12:operation>
+            <wsdl:input>
+                <soap12:body use="literal"></soap12:body>
+            </wsdl:input>
+            <wsdl:output>
+                <soap12:body use="literal"></soap12:body>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="deleteTemplateConfig">
+            <soap12:operation soapAction="urn:deleteTemplateConfig" style="document"></soap12:operation>
+            <wsdl:input>
+                <soap12:body use="literal"></soap12:body>
+            </wsdl:input>
+        </wsdl:operation>
+        <wsdl:operation name="getAllTemplateDomains">
+            <soap12:operation soapAction="urn:getAllTemplateDomains" style="document"></soap12:operation>
+            <wsdl:input>
+                <soap12:body use="literal"></soap12:body>
+            </wsdl:input>
+            <wsdl:output>
+                <soap12:body use="literal"></soap12:body>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="getTemplateConfiguration">
+            <soap12:operation soapAction="urn:getTemplateConfiguration" style="document"></soap12:operation>
+            <wsdl:input>
+                <soap12:body use="literal"></soap12:body>
+            </wsdl:input>
+            <wsdl:output>
+                <soap12:body use="literal"></soap12:body>
+            </wsdl:output>
+        </wsdl:operation>
+    </wsdl:binding>
+    <wsdl:binding name="ExecutionManagerAdminServiceHttpBinding" type="ns:ExecutionManagerAdminServicePortType">
+        <http:binding verb="POST"></http:binding>
+        <wsdl:operation name="saveTemplateConfig">
+            <http:operation location="saveTemplateConfig"></http:operation>
+            <wsdl:input>
+                <mime:content type="text/xml" part="parameters"></mime:content>
+            </wsdl:input>
+        </wsdl:operation>
+        <wsdl:operation name="getAllTemplateConfigurations">
+            <http:operation location="getAllTemplateConfigurations"></http:operation>
+            <wsdl:input>
+                <mime:content type="text/xml" part="parameters"></mime:content>
+            </wsdl:input>
+            <wsdl:output>
+                <mime:content type="text/xml" part="parameters"></mime:content>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="getTemplateConfigurations">
+            <http:operation location="getTemplateConfigurations"></http:operation>
+            <wsdl:input>
+                <mime:content type="text/xml" part="parameters"></mime:content>
+            </wsdl:input>
+            <wsdl:output>
+                <mime:content type="text/xml" part="parameters"></mime:content>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="getTemplateDomain">
+            <http:operation location="getTemplateDomain"></http:operation>
+            <wsdl:input>
+                <mime:content type="text/xml" part="parameters"></mime:content>
+            </wsdl:input>
+            <wsdl:output>
+                <mime:content type="text/xml" part="parameters"></mime:content>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="deleteTemplateConfig">
+            <http:operation location="deleteTemplateConfig"></http:operation>
+            <wsdl:input>
+                <mime:content type="text/xml" part="parameters"></mime:content>
+            </wsdl:input>
+        </wsdl:operation>
+        <wsdl:operation name="getAllTemplateDomains">
+            <http:operation location="getAllTemplateDomains"></http:operation>
+            <wsdl:input>
+                <mime:content type="text/xml" part="parameters"></mime:content>
+            </wsdl:input>
+            <wsdl:output>
+                <mime:content type="text/xml" part="parameters"></mime:content>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="getTemplateConfiguration">
+            <http:operation location="getTemplateConfiguration"></http:operation>
+            <wsdl:input>
+                <mime:content type="text/xml" part="parameters"></mime:content>
+            </wsdl:input>
+            <wsdl:output>
+                <mime:content type="text/xml" part="parameters"></mime:content>
+            </wsdl:output>
+        </wsdl:operation>
+    </wsdl:binding>
+    <wsdl:service name="ExecutionManagerAdminService">
+        <wsdl:port name="ExecutionManagerAdminServiceHttpsSoap11Endpoint" binding="ns:ExecutionManagerAdminServiceSoap11Binding">
+            <soap:address location="https://10.100.5.159:9443/services/ExecutionManagerAdminService.ExecutionManagerAdminServiceHttpsSoap11Endpoint/"></soap:address>
+        </wsdl:port>
+        <wsdl:port name="ExecutionManagerAdminServiceHttpsSoap12Endpoint" binding="ns:ExecutionManagerAdminServiceSoap12Binding">
+            <soap12:address location="https://10.100.5.159:9443/services/ExecutionManagerAdminService.ExecutionManagerAdminServiceHttpsSoap12Endpoint/"></soap12:address>
+        </wsdl:port>
+        <wsdl:port name="ExecutionManagerAdminServiceHttpsEndpoint" binding="ns:ExecutionManagerAdminServiceHttpBinding">
+            <http:address location="https://10.100.5.159:9443/services/ExecutionManagerAdminService.ExecutionManagerAdminServiceHttpsEndpoint/"></http:address>
+        </wsdl:port>
+    </wsdl:service>
+</wsdl:definitions>

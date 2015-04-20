@@ -1,0 +1,16 @@
+<component xmlns="http://products.wso2.org/carbon" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xsi:schemaLocation="http://products.wso2.org/carbon ">
+    <menus>
+        <menu>
+            <id>executionmgt_menu</id>
+            <i18n-key>execution.menu</i18n-key>
+            <i18n-bundle>org.wso2.carbon.event.execution.manager.ui.i18n.Resources</i18n-bundle>
+            <parent-menu>manage_menu</parent-menu>
+            <link>../execution-manager/domains_ajaxprocessor.jsp</link>
+            <region>region1</region>
+            <order>50</order>
+            <style-class>manage</style-class>
+            <require-permission>/permission/protected/manage</require-permission>
+        </menu>
+    </menus>
+</component>
