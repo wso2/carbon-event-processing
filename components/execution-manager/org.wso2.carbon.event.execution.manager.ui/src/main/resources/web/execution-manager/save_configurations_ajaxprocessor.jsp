@@ -2,6 +2,7 @@
 <%@ page import="org.wso2.carbon.event.execution.manager.ui.ExecutionManagerUIUtils" %>
 <%@ page import="org.wso2.carbon.event.execution.manager.admin.dto.config.xsd.TemplateConfigDTO" %>
 <%@ page import="org.wso2.carbon.event.execution.manager.admin.dto.config.xsd.ParameterDTO" %>
+<%@ page import="org.apache.axis2.AxisFault" %>
 <%--
   ~ Copyright (c) 2015, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
   ~
@@ -30,32 +31,36 @@
 
     ExecutionManagerAdminServiceStub proxy = ExecutionManagerUIUtils.getExecutionManagerAdminService(config, session,
             request);
+    try {
+        if (saveType.equals("delete")) {
+            proxy.deleteTemplateConfig(domainName, configuration);
+        } else {
 
-    if (saveType.equals("delete")) {
-        proxy.deleteTemplateConfig(domainName, configuration);
-    } else {
+            TemplateConfigDTO templateConfigDTO = new TemplateConfigDTO();
 
-        TemplateConfigDTO templateConfigDTO = new TemplateConfigDTO();
+            templateConfigDTO.setName(configuration);
+            templateConfigDTO.setFrom(domainName);
+            templateConfigDTO.setDescription(description);
+            templateConfigDTO.setType(templateType);
 
-        templateConfigDTO.setName(configuration);
-        templateConfigDTO.setFrom(domainName);
-        templateConfigDTO.setDescription(description);
-        templateConfigDTO.setType(templateType);
+            String[] parameterStrings = parametersJson.split(",");
+            parameters = new ParameterDTO[parameterStrings.length];
+            int index = 0;
 
-        String[] parameterStrings = parametersJson.split(",");
-        parameters = new ParameterDTO[parameterStrings.length];
-        int index = 0;
+            for (String parameterString : parameterStrings) {
+                ParameterDTO parameterDTO = new ParameterDTO();
+                parameterDTO.setName(parameterString.split(":")[0]);
+                parameterDTO.setValue(parameterString.split(":")[1]);
+                parameters[index] = parameterDTO;
+                index++;
+            }
 
-        for (String parameterString : parameterStrings) {
-            ParameterDTO parameterDTO = new ParameterDTO();
-            parameterDTO.setName(parameterString.split(":")[0]);
-            parameterDTO.setValue(parameterString.split(":")[1]);
-            parameters[index] = parameterDTO;
-            index++;
+            templateConfigDTO.setParameterDTOs(parameters);
+            proxy.saveTemplateConfig(templateConfigDTO);
         }
 
-        templateConfigDTO.setParameterDTOs(parameters);
-        proxy.saveTemplateConfig(templateConfigDTO);
+    } catch (AxisFault e) {
+        response.sendError(500);
     }
 
 

@@ -18,6 +18,8 @@
 package org.wso2.carbon.event.execution.manager.admin;
 
 import org.apache.axis2.AxisFault;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.wso2.carbon.core.AbstractAdmin;
 import org.wso2.carbon.event.execution.manager.admin.dto.config.TemplateConfigDTO;
 import org.wso2.carbon.event.execution.manager.admin.dto.domain.TemplateDomainDTO;
@@ -27,6 +29,8 @@ import org.wso2.carbon.event.execution.manager.admin.internal.util.DomainMapper;
 import org.wso2.carbon.event.execution.manager.core.exception.ExecutionManagerException;
 
 public class ExecutionManagerAdminService extends AbstractAdmin {
+
+    private static final Log log = LogFactory.getLog(ExecutionManagerAdminService.class);
 
     /**
      * Default Constructor
@@ -99,10 +103,11 @@ public class ExecutionManagerAdminService extends AbstractAdmin {
      *
      * @param configName configuration name which needs to be deleted
      */
-    public void deleteTemplateConfig(String domainName, String configName) throws AxisFault{
+    public void deleteTemplateConfig(String domainName, String configName) throws AxisFault {
         try {
             ExecutionAdminManagerValueHolder.getCarbonExecutorManagerService().deleteConfig(domainName, configName);
         } catch (ExecutionManagerException e) {
+            log.error("Error occurred when deleting configuration " + configName, e);
             throw new AxisFault(e.getMessage());
         }
     }
@@ -112,11 +117,13 @@ public class ExecutionManagerAdminService extends AbstractAdmin {
      *
      * @param configuration configuration data transfer object
      */
-    public void saveTemplateConfig(TemplateConfigDTO configuration) throws AxisFault{
+    public boolean saveTemplateConfig(TemplateConfigDTO configuration) throws AxisFault {
         try {
             ExecutionAdminManagerValueHolder.getCarbonExecutorManagerService().saveTemplateConfig(
                     ConfigMapper.mapConfiguration(configuration));
+            return true;
         } catch (ExecutionManagerException e) {
+            log.error("Error occurred when saving configuration " + configuration.getName(), e);
             throw new AxisFault(e.getMessage());
         }
     }
