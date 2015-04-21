@@ -377,7 +377,7 @@
         </div>
 
 
-
+        <br/>
         <h4 style="color: #0D4d79"><fmt:message key="send.single.event"/> </h4>
 
         <div id="workArea">

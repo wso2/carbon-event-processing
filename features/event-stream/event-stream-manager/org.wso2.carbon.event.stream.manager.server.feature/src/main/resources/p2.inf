@@ -1,8 +1,0 @@
-instructions.configure = \
-org.eclipse.equinox.p2.touchpoint.natives.mkdir(path:${installFolder}/../../conf/);\
-org.eclipse.equinox.p2.touchpoint.natives.mkdir(path:${installFolder}/../../conf/cep/);\
-org.eclipse.equinox.p2.touchpoint.natives.mkdir(path:${installFolder}/../../conf/cep/default-artifacts/);\
-org.eclipse.equinox.p2.touchpoint.natives.mkdir(path:${installFolder}/../../conf/cep/default-artifacts/inputeventadaptors/);\
-org.eclipse.equinox.p2.touchpoint.natives.mkdir(path:${installFolder}/../../conf/cep/default-artifacts/outputeventadaptors/);\
-org.eclipse.equinox.p2.touchpoint.natives.copy(source:${installFolder}/../features/org.wso2.carbon.event.stream.server_${feature.version}/conf/DefaultLoggerOutputAdaptor.xml,target:${installFolder}/../../conf/cep/default-artifacts/outputeventadaptors/DefaultLoggerOutputAdaptor.xml,overwrite:true);\
-org.eclipse.equinox.p2.touchpoint.natives.copy(source:${installFolder}/../features/org.wso2.carbon.event.stream.server_${feature.version}/conf/DefaultWSO2EventInputAdaptor.xml,target:${installFolder}/../../conf/cep/default-artifacts/inputeventadaptors/DefaultWSO2EventInputAdaptor.xml,overwrite:true);\

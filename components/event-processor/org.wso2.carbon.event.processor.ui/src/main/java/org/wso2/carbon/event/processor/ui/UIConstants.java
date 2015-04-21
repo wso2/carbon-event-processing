@@ -65,7 +65,7 @@ public interface UIConstants {
             ANNOTATION_TOKEN_CLOSING_BRACKET + SIDDHI_LINE_SEPARATER +
             SIDDHI_LINE_SEPARATER +
             SIDDHI_LITERAL_BEGIN_MULTI_LINE_COMMENT +
-            " define streams and write query here ... " +
+            " define streams/tables and write queries here ... " +
             SIDDHI_LITERAL_END_MULTI_LINE_COMMENT +
             SIDDHI_LINE_SEPARATER;
 }

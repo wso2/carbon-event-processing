@@ -55,7 +55,7 @@ import java.util.concurrent.ConcurrentHashMap;
 public class CarbonEventProcessorService implements EventProcessorService {
     private static final Log log = LogFactory.getLog(CarbonEventProcessorService.class);
     // deployed query plans
-    private Map<Integer, TreeMap<String, ExecutionPlan>> tenantSpecificExecutionPlans;
+    private Map<Integer, ConcurrentHashMap<String, ExecutionPlan>> tenantSpecificExecutionPlans;
     // not distinguishing between deployed vs failed here.
     private Map<Integer, List<ExecutionPlanConfigurationFile>> tenantSpecificExecutionPlanFiles;
     private CEPMembership currentCepMembershipInfo;
@@ -64,7 +64,7 @@ public class CarbonEventProcessorService implements EventProcessorService {
 //    private List<String> exportDefinitions;              //old code block kept for reference
 
     public CarbonEventProcessorService() {
-        tenantSpecificExecutionPlans = new ConcurrentHashMap<Integer, TreeMap<String, ExecutionPlan>>();
+        tenantSpecificExecutionPlans = new ConcurrentHashMap<Integer, ConcurrentHashMap<String, ExecutionPlan>>();
         tenantSpecificExecutionPlanFiles = new ConcurrentHashMap<Integer, List<ExecutionPlanConfigurationFile>>();
     }
 
@@ -211,9 +211,9 @@ public class CarbonEventProcessorService implements EventProcessorService {
         }
         executionPlanConfiguration.setEditable(isEditable);
 
-        TreeMap<String, ExecutionPlan> tenantExecutionPlans = tenantSpecificExecutionPlans.get(tenantId);
+        ConcurrentHashMap<String, ExecutionPlan> tenantExecutionPlans = tenantSpecificExecutionPlans.get(tenantId);
         if (tenantExecutionPlans == null) {
-            tenantExecutionPlans = new TreeMap<String, ExecutionPlan>();
+            tenantExecutionPlans = new ConcurrentHashMap<String, ExecutionPlan>();
             tenantSpecificExecutionPlans.put(tenantId, tenantExecutionPlans);
         } else if (tenantExecutionPlans.get(executionPlanName) != null) {
             // if an execution plan with the same name already exists, we are not going to override it with this plan.

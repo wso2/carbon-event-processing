@@ -34,20 +34,13 @@
 
     <modules>
         <module>service-stubs</module>
-        <!--<module>components/adaptors</module>-->
-        <!--<module>components/event-publisher</module>-->
-        <!--<module>components/event-receiver</module>-->
+
         <module>components/event-processor</module>
         <module>components/event-simulator</module>
         <module>components/event-flow</module>
-        <!--<module>components/event-monitor</module>-->
         <module>components/execution-manager</module>
 
-        <!--<module>features/adaptors</module>-->
         <module>features/event-processor</module>
-        <!--<module>features/event-publisher</module>-->
-        <!--<module>features/event-receiver</module>-->
-        <!--<module>features/event-monitor</module>-->
         <module>features/event-simulator</module>
         <module>features/event-flow</module>
         <module>features/execution-manager</module>
@@ -673,13 +666,13 @@
             <dependency>
                 <groupId>org.wso2.carbon.analytics-common</groupId>
                 <artifactId>org.wso2.carbon.databridge.datareceiver.feature</artifactId>
-                <version>${carbon.analytics-common.version}</version>
+                <version>${carbon.analytics.common.version}</version>
                 <type>zip</type>
             </dependency>
             <dependency>
                 <groupId>org.wso2.carbon.analytics-common</groupId>
                 <artifactId>org.wso2.carbon.databridge.datapublisher.feature</artifactId>
-                <version>${carbon.analytics-common.version}</version>
+                <version>${carbon.analytics.common.version}</version>
                 <type>zip</type>
             </dependency>
             <!--carbon analytics common features end-->
@@ -1121,10 +1114,10 @@
                 </property>
             </activation>
             <modules>
-                <module>components/adaptors</module>
+                <module>components/event-flow</module>
                 <module>components/event-processor</module>
-                <module>components/event-stream</module>
-                <module>components/event-monitor</module>
+                <module>components/event-simulator</module>
+                <module>components/execution-manager</module>
             </modules>
         </profile>
         <profile>
@@ -1136,10 +1129,10 @@
                 </property>
             </activation>
             <modules>
-                <module>components/adaptors</module>
+                <module>components/event-flow</module>
                 <module>components/event-processor</module>
-                <module>components/event-stream</module>
-                <module>components/event-monitor</module>
+                <module>components/event-simulator</module>
+                <module>components/execution-manager</module>
             </modules>
         </profile>
     </profiles>
@@ -1237,7 +1230,6 @@
         <orbit.version.json>2.0.0.wso2v1</orbit.version.json>
 
         <carbon.commons.version>4.3.4</carbon.commons.version>
-        <carbon.analytics-common.version>1.0.0-SNAPSHOT</carbon.analytics-common.version>
         <carbon.analytics.common.version>1.0.0-SNAPSHOT</carbon.analytics.common.version>
         <!--<carbon.commons.imp.pkg.version>[4.3.0, 4.4.0)</carbon.commons.imp.pkg.version>-->
 
