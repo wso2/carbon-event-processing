@@ -34,20 +34,13 @@
 
     <modules>
         <module>service-stubs</module>
-        <!--<module>components/adaptors</module>-->
-        <!--<module>components/event-publisher</module>-->
-        <!--<module>components/event-receiver</module>-->
+
         <module>components/event-processor</module>
         <module>components/event-simulator</module>
         <module>components/event-flow</module>
-        <!--<module>components/event-monitor</module>-->
         <module>components/execution-manager</module>
 
-        <!--<module>features/adaptors</module>-->
         <module>features/event-processor</module>
-        <!--<module>features/event-publisher</module>-->
-        <!--<module>features/event-receiver</module>-->
-        <!--<module>features/event-monitor</module>-->
         <module>features/event-simulator</module>
         <module>features/event-flow</module>
         <module>features/execution-manager</module>
@@ -1121,10 +1114,10 @@
                 </property>
             </activation>
             <modules>
-                <module>components/adaptors</module>
+                <module>components/event-flow</module>
                 <module>components/event-processor</module>
-                <module>components/event-stream</module>
-                <module>components/event-monitor</module>
+                <module>components/event-simulator</module>
+                <module>components/execution-manager</module>
             </modules>
         </profile>
         <profile>
@@ -1136,10 +1129,10 @@
                 </property>
             </activation>
             <modules>
-                <module>components/adaptors</module>
+                <module>components/event-flow</module>
                 <module>components/event-processor</module>
-                <module>components/event-stream</module>
-                <module>components/event-monitor</module>
+                <module>components/event-simulator</module>
+                <module>components/execution-manager</module>
             </modules>
         </profile>
     </profiles>

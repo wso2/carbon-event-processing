@@ -1,4 +1,0 @@
-instructions.configure = \
-org.eclipse.equinox.p2.touchpoint.natives.mkdir(path:${installFolder}/../../conf/);\
-org.eclipse.equinox.p2.touchpoint.natives.mkdir(path:${installFolder}/../../conf/adaptor);\
-org.eclipse.equinox.p2.touchpoint.natives.copy(source:${installFolder}/../features/org.wso2.carbon.event.output.adaptor.rdbms.server_${feature.version}/conf/rdbms-output-adaptor.xml,target:${installFolder}/../../conf/adaptor/rdbms-output-adaptor.xml,overwrite:true);
