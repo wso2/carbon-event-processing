@@ -11,21 +11,18 @@
         <relativePath>../../pom.xml</relativePath>
     </parent>
 
-
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>execution-manager-feature</artifactId>
     <packaging>pom</packaging>
+    <name>WSO2 Carbon - Execution Manager Aggregate Feature</name>
+    <description>This is a Carbon bundle that represent all the execution manager feature modules.</description>
+    <url>http://wso2.org</url>
 
     <modules>
         <module>org.wso2.carbon.event.execution.manager.server.feature</module>
         <module>org.wso2.carbon.event.execution.manager.ui.feature</module>
         <module>org.wso2.carbon.event.execution.manager.feature</module>
     </modules>
-
-    <name>WSO2 Carbon - Execution Manager Aggregate Feature</name>
-    <description>This is a Carbon bundle that represent all the execution manager feature modules.</description>
-    <url>http://wso2.org</url>
-
 
 </project>

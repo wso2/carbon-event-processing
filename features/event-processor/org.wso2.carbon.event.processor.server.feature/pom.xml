@@ -30,7 +30,6 @@
     <artifactId>org.wso2.carbon.event.processor.server.feature</artifactId>
     <packaging>pom</packaging>
     <name>WSO2 Carbon - Event Processor Server Feature</name>
-    <version>2.0.4-SNAPSHOT</version>
     <url>http://wso2.org</url>
     <description>This feature contains the core bundles required for Back-end Event Processor functionality
     </description>

@@ -28,7 +28,6 @@
     <modelVersion>4.0.0</modelVersion>
     <artifactId>org.wso2.carbon.event.processor.ui</artifactId>
     <packaging>bundle</packaging>
-    <version>2.0.4-SNAPSHOT</version>
     <name>WSO2 Carbon - Event Processor UI</name>
     <description>This is a Carbon bundle that represent the event processor UI module.
     </description>
@@ -64,7 +63,6 @@
             <plugin>
                 <groupId>org.apache.felix</groupId>
                 <artifactId>maven-bundle-plugin</artifactId>
-
                 <extensions>true</extensions>
                 <configuration>
                     <instructions>

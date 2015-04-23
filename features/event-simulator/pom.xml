@@ -32,12 +32,10 @@
     <name>WSO2 Carbon - Event Simulator Feature</name>
     <url>http://maven.apache.org</url>
 
-
     <modules>
         <module>org.wso2.carbon.event.simulator.feature</module>
         <module>org.wso2.carbon.event.simulator.server.feature</module>
         <module>org.wso2.carbon.event.simulator.ui.feature</module>
     </modules>
 
-   
 </project>

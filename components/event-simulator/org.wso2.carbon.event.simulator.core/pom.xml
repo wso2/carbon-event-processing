@@ -24,7 +24,6 @@
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
-    <version>2.0.4-SNAPSHOT</version>
     <artifactId>org.wso2.carbon.event.simulator.core</artifactId>
     <packaging>bundle</packaging>
     <name>WSO2 Carbon - Event Simulator Core</name>
@@ -50,7 +49,6 @@
 
     <build>
         <plugins>
-
             <plugin>
                 <groupId>org.apache.felix</groupId>
                 <artifactId>maven-scr-plugin</artifactId>
@@ -75,9 +73,13 @@
                     <instructions>
                         <Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
                         <Bundle-Name>${project.artifactId}</Bundle-Name>
-                        <Private-Package>org.wso2.carbon.event.simulator.core.internal.*</Private-Package>
+                        <Private-Package>
+                            org.wso2.carbon.event.simulator.core.internal,
+                            org.wso2.carbon.event.simulator.core.internal.*
+                        </Private-Package>
                         <Export-Package>
                             !org.wso2.carbon.event.simulator.core.internal,
+                            !org.wso2.carbon.event.simulator.core.internal.*,
                             org.wso2.carbon.event.simulator.core.*
                         </Export-Package>
                         <Import-Package />

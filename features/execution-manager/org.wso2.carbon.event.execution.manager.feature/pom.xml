@@ -16,13 +16,11 @@
         <dependency>
             <groupId>org.wso2.carbon.event-processing</groupId>
             <artifactId>org.wso2.carbon.event.execution.manager.server.feature</artifactId>
-            <version>${carbon.event.processing.version}</version>
             <type>zip</type>
         </dependency>
         <dependency>
             <groupId>org.wso2.carbon.event-processing</groupId>
             <artifactId>org.wso2.carbon.event.execution.manager.ui.feature</artifactId>
-            <version>${carbon.event.processing.version}</version>
             <type>zip</type>
         </dependency>
     </dependencies>
@@ -61,6 +59,5 @@
             </plugin>
         </plugins>
     </build>
-
 
 </project>
