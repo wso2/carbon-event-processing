@@ -32,21 +32,29 @@ function deleteConfiguration(domainName, configurationName, row, tableId) {
 }
 
 function saveConfiguration(domainName, templateType, configurationName, description, redirectURL, parameters) {
-    $.ajax({
-        type: "POST",
-        url: "manage_configurations_ajaxprocessor.jsp",
-        data: "domainName=" + domainName + "&configurationName=" + configurationName + "&templateType=" + templateType
-            + "&description=" + description + "&saveType=save" + "&parameters=" + parameters
-    })
-        .error(function () {
-            CARBON.showErrorDialog("Error occurred when saving configurations");
+
+    if (hasWhiteSpace(configurationName) | configurationName == "") {
+        CARBON.showWarningDialog("Configuration name cannot be empty or consist of white spaces");
+    } else {
+
+        $.ajax({
+            type: "POST",
+            url: "manage_configurations_ajaxprocessor.jsp",
+            data: "domainName=" + domainName + "&configurationName=" + configurationName + "&templateType="
+                + templateType + "&description=" + description + "&saveType=save" + "&parameters=" + parameters
         })
-        .then(function () {
-            CARBON.showInfoDialog("Configurations saved successfully",
-                function () {
-                    document.location.href = redirectURL;
-                });
+            .error(function () {
+                CARBON.showErrorDialog("Error occurred when saving configurations");
+            })
+            .then(function () {
+                CARBON.showInfoDialog("Configurations saved successfully",
+                    function () {
+                        document.location.href = redirectURL;
+                    });
+            });
+    }
+}
 
-        });
-
+function hasWhiteSpace(s) {
+    return s.indexOf(' ') >= 0;
 }

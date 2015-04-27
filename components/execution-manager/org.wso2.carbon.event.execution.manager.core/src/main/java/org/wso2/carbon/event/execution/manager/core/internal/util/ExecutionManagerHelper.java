@@ -203,7 +203,7 @@ public class ExecutionManagerHelper {
             executionPlan = executionPlanNameDefinition + executionPlan;
         } else {
             //@Plan:name will be updated with given configuration name and uncomment in case if it is commented
-            executionPlan = executionPlan.replaceAll(executionPlanNameDefinition + "\\(.*?\\)",
+            executionPlan = executionPlan.replaceAll(executionPlanNameAnnotation + "\\(.*?\\)",
                     executionPlanNameDefinition);
         }
 

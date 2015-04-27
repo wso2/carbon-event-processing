@@ -33,52 +33,52 @@
     </messageReceivers>
     <operation name="getDomains">
         <parameter name="AuthorizationAction" locked="true">
-            /permission/admin/manage/event-processor
+            /permission/admin/manage/execution-manager
         </parameter>
     </operation>
     <operation name="getDomain">
         <parameter name="AuthorizationAction" locked="true">
-            /permission/admin/manage/event-processor
+            /permission/admin/manage/execution-manager
         </parameter>
     </operation>
     <operation name="getDomainsInfo">
         <parameter name="AuthorizationAction" locked="true">
-            /permission/admin/manage/event-processor
+            /permission/admin/manage/execution-manager
         </parameter>
     </operation>
     <operation name="getDomainInfo">
         <parameter name="AuthorizationAction" locked="true">
-            /permission/admin/manage/event-processor
+            /permission/admin/manage/execution-manager
         </parameter>
     </operation>
     <operation name="getConfigurations">
         <parameter name="AuthorizationAction" locked="true">
-            /permission/admin/manage/event-processor
+            /permission/admin/manage/execution-manager
         </parameter>
     </operation>
     <operation name="getConfiguration">
         <parameter name="AuthorizationAction" locked="true">
-            /permission/admin/manage/event-processor
+            /permission/admin/manage/execution-manager
         </parameter>
     </operation>
     <operation name="getConfigurationsInfo">
         <parameter name="AuthorizationAction" locked="true">
-            /permission/admin/manage/event-processor
+            /permission/admin/manage/execution-manager
         </parameter>
     </operation>
     <operation name="getConfigurationInfo">
         <parameter name="AuthorizationAction" locked="true">
-            /permission/admin/manage/event-processor
+            /permission/admin/manage/execution-manager
         </parameter>
     </operation>
     <operation name="deleteConfiguration">
         <parameter name="AuthorizationAction" locked="true">
-            /permission/admin/manage/event-processor
+            /permission/admin/manage/execution-manager
         </parameter>
     </operation>
     <operation name="saveConfiguration">
         <parameter name="AuthorizationAction" locked="true">
-            /permission/admin/manage/event-processor
+            /permission/admin/manage/execution-manager
         </parameter>
     </operation>
 
