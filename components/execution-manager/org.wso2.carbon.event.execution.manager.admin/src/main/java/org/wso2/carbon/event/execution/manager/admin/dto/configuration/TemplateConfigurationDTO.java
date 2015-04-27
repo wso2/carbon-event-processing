@@ -15,17 +15,22 @@
  *  specific language governing permissions and limitations
  *  under the License.
  */
-package org.wso2.carbon.event.execution.manager.admin.dto.domain;
+package org.wso2.carbon.event.execution.manager.admin.dto.configuration;
 
 /**
- * DTO class of TemplateDomain for ExecutionManagerAdminService
+ * DTO class of TemplateConfiguration for ExecutionManagerAdminService
  */
-public class TemplateDomainDTO {
+public class TemplateConfigurationDTO {
 
     String name;
+
+    String type;
+
+    String from;
+
     String description;
-    TemplateDTO[] templateDTOs;
-    String[] streams;
+
+    ParameterDTO[] parameterDTOs;
 
     public String getName() {
         return name;
@@ -33,6 +38,18 @@ public class TemplateDomainDTO {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public String getType() { return type; }
+
+    public void setType(String type) { this.type = type; }
+
+    public String getFrom() {
+        return from;
+    }
+
+    public void setFrom(String from) {
+        this.from = from;
     }
 
     public String getDescription() {
@@ -43,19 +60,11 @@ public class TemplateDomainDTO {
         this.description = description;
     }
 
-    public TemplateDTO[] getTemplateDTOs() {
-        return templateDTOs;
+    public ParameterDTO[] getParameterDTOs() {
+        return parameterDTOs;
     }
 
-    public void setTemplateDTOs(TemplateDTO[] templateDTOs) {
-        this.templateDTOs = templateDTOs;
-    }
-
-    public String[] getStreams() {
-        return streams;
-    }
-
-    public void setStreams(String[] streams) {
-        this.streams = streams;
+    public void setParameterDTOs(ParameterDTO[] parameterDTOs) {
+        this.parameterDTOs = parameterDTOs;
     }
 }

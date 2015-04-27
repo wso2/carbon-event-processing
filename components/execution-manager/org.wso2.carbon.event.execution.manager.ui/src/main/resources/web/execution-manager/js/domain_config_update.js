@@ -18,7 +18,7 @@ function deleteConfiguration(domainName, configurationName, row, tableId) {
         "Are you sure want to delete?", function () {
             $.ajax({
                 type: "POST",
-                url: "save_configurations_ajaxprocessor.jsp",
+                url: "manage_configurations_ajaxprocessor.jsp",
                 data: "domainName=" + domainName + "&configurationName=" + configurationName + "&saveType=delete"
             })
                 .error(function () {
@@ -34,7 +34,7 @@ function deleteConfiguration(domainName, configurationName, row, tableId) {
 function saveConfiguration(domainName, templateType, configurationName, description, redirectURL, parameters) {
     $.ajax({
         type: "POST",
-        url: "save_configurations_ajaxprocessor.jsp",
+        url: "manage_configurations_ajaxprocessor.jsp",
         data: "domainName=" + domainName + "&configurationName=" + configurationName + "&templateType=" + templateType
             + "&description=" + description + "&saveType=save" + "&parameters=" + parameters
     })

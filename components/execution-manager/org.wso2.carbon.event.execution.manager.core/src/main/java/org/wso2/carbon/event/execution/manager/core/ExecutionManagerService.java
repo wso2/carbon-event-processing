@@ -18,9 +18,14 @@
 package org.wso2.carbon.event.execution.manager.core;
 
 import org.wso2.carbon.event.execution.manager.core.exception.ExecutionManagerException;
-import org.wso2.carbon.event.execution.manager.core.structure.config.TemplateConfig;
+import org.wso2.carbon.event.execution.manager.core.structure.configuration.TemplateConfiguration;
 import org.wso2.carbon.event.execution.manager.core.structure.domain.TemplateDomain;
 
+import java.util.Collection;
+
+/**
+ * Interface consist of service methods which will be exposed by the ExecutionManagerService
+ */
 public interface ExecutionManagerService {
 
     /**
@@ -28,22 +33,14 @@ public interface ExecutionManagerService {
      *
      * @param configuration configuration object which needs to be saved
      */
-    public void saveTemplateConfig(TemplateConfig configuration) throws ExecutionManagerException;
+    public void saveConfiguration(TemplateConfiguration configuration) throws ExecutionManagerException;
 
     /**
      * provide all the loaded domains
      *
      * @return Domain list
      */
-    public TemplateDomain[] getAllDomains();
-
-    /**
-     * provide all the loaded configurations
-     *
-     * @return Domain list
-     */
-    public TemplateConfig[] getAllConfigurations();
-
+    public Collection<TemplateDomain> getAllDomains();
 
     /**
      * provide configurations of specified domain
@@ -51,7 +48,7 @@ public interface ExecutionManagerService {
      * @param domainName domain template name
      * @return Domain list
      */
-    public TemplateConfig[] getConfigurations(String domainName);
+    public Collection<TemplateConfiguration> getConfigurations(String domainName);
 
     /**
      * get information of a specific domain
@@ -68,14 +65,14 @@ public interface ExecutionManagerService {
      * @param configName configuration name
      * @return TemplateConfig object
      */
-    public TemplateConfig getConfiguration(String domainName, String configName);
+    public TemplateConfiguration getConfiguration(String domainName, String configName);
 
     /**
      * delete template configuration when the name of configuration is given
      *
      * @param configName template configuration name
      */
-    public void deleteConfig(String domainName, String configName) throws ExecutionManagerException;
+    public void deleteConfiguration(String domainName, String configName) throws ExecutionManagerException;
 
 
 }

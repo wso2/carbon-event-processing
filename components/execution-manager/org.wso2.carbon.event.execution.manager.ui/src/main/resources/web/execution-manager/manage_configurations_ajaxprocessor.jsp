@@ -1,7 +1,7 @@
 <%@ page import="org.wso2.carbon.event.execution.manager.stub.ExecutionManagerAdminServiceStub" %>
 <%@ page import="org.wso2.carbon.event.execution.manager.ui.ExecutionManagerUIUtils" %>
-<%@ page import="org.wso2.carbon.event.execution.manager.admin.dto.config.xsd.TemplateConfigDTO" %>
-<%@ page import="org.wso2.carbon.event.execution.manager.admin.dto.config.xsd.ParameterDTO" %>
+<%@ page import="org.wso2.carbon.event.execution.manager.admin.dto.configuration.xsd.TemplateConfigurationDTO" %>
+<%@ page import="org.wso2.carbon.event.execution.manager.admin.dto.configuration.xsd.ParameterDTOE" %>
 <%@ page import="org.apache.axis2.AxisFault" %>
 <%--
   ~ Copyright (c) 2015, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
@@ -19,7 +19,6 @@
   --%>
 
 <%
-
     String domainName = request.getParameter("domainName");
     String configuration = request.getParameter("configurationName");
     String saveType = request.getParameter("saveType");
@@ -27,36 +26,36 @@
     String parametersJson = request.getParameter("parameters");
     String templateType = request.getParameter("templateType");
 
-    ParameterDTO[] parameters;
+    ParameterDTOE[] parameters;
 
     ExecutionManagerAdminServiceStub proxy = ExecutionManagerUIUtils.getExecutionManagerAdminService(config, session,
             request);
     try {
         if (saveType.equals("delete")) {
-            proxy.deleteTemplateConfig(domainName, configuration);
+            proxy.deleteConfiguration(domainName, configuration);
         } else {
 
-            TemplateConfigDTO templateConfigDTO = new TemplateConfigDTO();
+            TemplateConfigurationDTO templateConfigurationDTO = new TemplateConfigurationDTO();
 
-            templateConfigDTO.setName(configuration);
-            templateConfigDTO.setFrom(domainName);
-            templateConfigDTO.setDescription(description);
-            templateConfigDTO.setType(templateType);
+            templateConfigurationDTO.setName(configuration);
+            templateConfigurationDTO.setFrom(domainName);
+            templateConfigurationDTO.setDescription(description);
+            templateConfigurationDTO.setType(templateType);
 
             String[] parameterStrings = parametersJson.split(",");
-            parameters = new ParameterDTO[parameterStrings.length];
+            parameters = new ParameterDTOE[parameterStrings.length];
             int index = 0;
 
             for (String parameterString : parameterStrings) {
-                ParameterDTO parameterDTO = new ParameterDTO();
+                ParameterDTOE parameterDTO = new ParameterDTOE();
                 parameterDTO.setName(parameterString.split(":")[0]);
                 parameterDTO.setValue(parameterString.split(":")[1]);
                 parameters[index] = parameterDTO;
                 index++;
             }
 
-            templateConfigDTO.setParameterDTOs(parameters);
-            proxy.saveTemplateConfig(templateConfigDTO);
+            templateConfigurationDTO.setParameterDTOs(parameters);
+            proxy.saveConfiguration(templateConfigurationDTO);
         }
 
     } catch (AxisFault e) {

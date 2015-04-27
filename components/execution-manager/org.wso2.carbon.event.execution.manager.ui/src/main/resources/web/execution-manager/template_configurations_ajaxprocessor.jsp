@@ -16,12 +16,14 @@
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@ page import="org.wso2.carbon.event.execution.manager.ui.ExecutionManagerUIUtils" %>
 <%@ page import="org.wso2.carbon.event.execution.manager.stub.ExecutionManagerAdminServiceStub" %>
-<%@ page import="org.wso2.carbon.event.execution.manager.admin.dto.config.xsd.TemplateConfigDTO" %>
+<%@ page import="org.wso2.carbon.event.execution.manager.admin.dto.configuration.xsd.TemplateConfigurationDTO" %>
 <%@ page import="org.wso2.carbon.event.execution.manager.admin.dto.domain.xsd.TemplateDTO" %>
-<%@ page import="org.wso2.carbon.event.execution.manager.admin.dto.domain.xsd.ParameterDTOE" %>
+<%@ page import="org.wso2.carbon.event.execution.manager.admin.dto.domain.xsd.ParameterDTO" %>
 <%@ page import="org.wso2.carbon.event.execution.manager.admin.dto.domain.xsd.TemplateDomainDTO" %>
-<%@ page import="org.wso2.carbon.event.execution.manager.admin.dto.config.xsd.ParameterDTO" %>
+<%@ page import="org.wso2.carbon.event.execution.manager.admin.dto.configuration.xsd.ParameterDTOE" %>
 <%@ page import="org.apache.axis2.AxisFault" %>
+
+<fmt:bundle basename="org.wso2.carbon.event.execution.manager.ui.i18n.Resources">
 
 <html>
 <head>
@@ -40,14 +42,14 @@
 
 <div id="container">
 <div id="headerArea">
-    Execution Manager
+    <fmt:message key='application.name'/>
 </div>
 
 <div id="middle">
 <div id="dcontainer"></div>
 <div id="workArea">
 
-<h2>Edit Configurations</h2>
+<h2><fmt:message key='template.header.text'/></h2>
 
 
 <%
@@ -70,9 +72,13 @@
             templateType = request.getParameter("templateType");
         }
 %>
-<a href="domains_ajaxprocessor.jsp"><%out.print(domainName);%></a> > <a
-        href="domain_configurations_ajaxprocessor.jsp?domainName=<%out.print(domainName);%>">Edit
-    Configurations</a><br/><br/>
+
+
+<a href="domains_ajaxprocessor.jsp"><fmt:message key='application.name'/></a>
+<fmt:message key='common.navigation.seperator'/>
+<a href="domain_configurations_ajaxprocessor.jsp?domainName=<%=domainName%>"><%=domainName%>
+</a> <fmt:message key='common.navigation.seperator'/> <fmt:message key='domain.navigation.text'/>
+<br/><br/>
 <%
 
     try {
@@ -80,17 +86,17 @@
         ExecutionManagerAdminServiceStub proxy =
                 ExecutionManagerUIUtils.getExecutionManagerAdminService(config, session, request);
         TemplateDomainDTO domain =
-                proxy.getTemplateDomain(domainName);
+                proxy.getDomain(domainName);
 
-        TemplateConfigDTO configDTO = proxy.getTemplateConfiguration(domainName,
+        TemplateConfigurationDTO configurationDTO = proxy.getConfiguration(domainName,
                 configurationName);
 
-        if (configDTO != null)  {
+        if (configurationDTO != null) {
             isExistingConfig = true;
         }
 
         TemplateDTO currentTemplate = null;
-        String saveButtonText = "Add Configuration";
+        String saveButtonText = "template.add.button.text";
         String parameterString = "";
 
 %>
@@ -99,7 +105,7 @@
 <table style="width:100%" id="configParameters" class="styledLeft">
     <thead>
     <tr>
-        <th>Configuration Parameters</th>
+        <th><fmt:message key='template.content.header.text'/></th>
     </tr>
     </thead>
     <tbody>
@@ -108,7 +114,7 @@
             <table class="styledLeft noBorders spacer-bot" style="width: 100%">
                 <tbody>
                 <%
-                    if (domain.getTemplateDTOs() != null && !templateType.equals("") ) {
+                    if (domain.getTemplateDTOs() != null && !templateType.equals("")) {
                         for (TemplateDTO template : domain.getTemplateDTOs()) {
                             if (configurationName == null || template.getName().equals(templateType)) {
                                 currentTemplate = template;
@@ -124,7 +130,7 @@
                         String description = "";
                 %>
                 <tr>
-                    <td><h6>Template</h6></td>
+                    <td><h6><fmt:message key='template.label.text'/></h6></td>
                     <td>
                         <select id="cBoxTemplates"
                                 onchange="document.location.href=document.getElementById('cBoxTemplates').options[document.getElementById('cBoxTemplates').selectedIndex].value">
@@ -136,46 +142,48 @@
                                         selectedValue = "selected=true";
                                     }
                             %>
-                            <option <%out.print(selectedValue);%>
-                                    value="template_configurations_ajaxprocessor.jsp?configurationName=<%out.print(configurationName);%>&domainName=<%out.print(domainName);%>&templateType=<%out.print(templateDTO.getName());%>">
-                                <%out.print(templateDTO.getName());%>
+                            <option <%=selectedValue%>
+                                    value="template_configurations_ajaxprocessor.jsp?configurationName=<%=configurationName%>&domainName=<%=domainName%>&templateType=<%=templateDTO.getName()%>">
+                                <%=templateDTO.getName()%>
                             </option>
                             <%}%>
                         </select>
-                        <div class="sectionHelp"><%out.print(currentTemplate.getDescription());%></div>
+
+                        <div class="sectionHelp"><%=currentTemplate.getDescription()%>
+                        </div>
                     </td>
                 </tr>
                 <tr>
-                    <td><h6>Configuration Name</h6></td>
+                    <td><h6><fmt:message key='template.label.configuration.name'/></h6></td>
                     <td>
                         <%
                             if (isExistingConfig) {
-                                configurationName = configDTO.getName().trim();
-                                saveButtonText = "Update Configuration";
+                                configurationName = configurationDTO.getName().trim();
+                                saveButtonText = "template.update.button.text";
                             }
                         %>
 
                         <input type="text" id="txtName"
-                               value="<%out.print(configurationName);%>"
-                            <% if(isExistingConfig) { out.print("readOnly");}%>>
+                               value="<%=configurationName%>"
+                                <% if(isExistingConfig) { out.print("readOnly");}%>>
                     </td>
                 </tr>
                 <tr>
-                    <td><h6>Description</h6></td>
+                    <td><h6><fmt:message key='template.label.configuration.description'/></h6></td>
                     <td>
                         <%
                             if (isExistingConfig) {
-                                description = configDTO.getDescription().trim();
+                                description = configurationDTO.getDescription().trim();
                             }
                         %>
 
                         <input type="text" id="txtDescription"
-                               value="<%out.print(description);%>">
+                               value="<%=description%>">
                     </td>
                 </tr>
                 <tr>
                     <td colspan="2">
-                        <b>Parameter Configurations</b>
+                        <b><fmt:message key='template.parameter.header.text'/></b>
                     </td>
                 </tr>
 
@@ -183,13 +191,13 @@
                 <%
                     int indexParam = 0;
 
-                    for (ParameterDTOE parameter : currentTemplate.getParameterDTOs()) {
+                    for (ParameterDTO parameter : currentTemplate.getParameterDTOs()) {
 
                         if (!isExistingConfig) {
                             parameterValue = parameter.getDefaultValue().trim();
-                        } else if (configDTO.getParameterDTOs() != null) {
+                        } else if (configurationDTO.getParameterDTOs() != null) {
 
-                            for (ParameterDTO param : configDTO.getParameterDTOs()) {
+                            for (ParameterDTOE param : configurationDTO.getParameterDTOs()) {
                                 if (param.getName().equals(parameter.getName())) {
                                     parameterValue = param.getValue().trim();
                                     break;
@@ -215,7 +223,7 @@
                             if (parameter.getOptions() != null && !parameter.getOptions().trim().equals("")) {
                         %>
 
-                        <select id="<% out.print(parameter.getName());%>">
+                        <select id="<%=parameter.getName()%>">
                             <%
                                 String[] options = parameter.getOptions().split(",");
                                 for (String option : options) {
@@ -226,8 +234,8 @@
                                         selectedValue = "selected=true";
                                     }
                             %>
-                            <option <%out.print(selectedValue);%> value=<%out.print(option);%>>
-                                <%out.print(option);%>
+                            <option <%=selectedValue%> value=<%=option%>>
+                                <%=option%>
                             </option>
                             <%}%>
                         </select>
@@ -235,14 +243,15 @@
                         <%
                         } else {
                         %>
-                        <input type="text" id="<% out.print(parameter.getName());%>"
-                               value="<%out.print(parameterValue);%>">
+                        <input type="text" id="<%=parameter.getName()%>"
+                               value="<%=parameterValue%>">
                         <%
                             }
 
                             if (!parameter.getDescription().equals("")) {
                         %>
-                        <div class="sectionHelp"><%out.print(parameter.getDescription());%></div>
+                        <div class="sectionHelp"><%=parameter.getDescription()%>
+                        </div>
                         <%}%>
                     </td>
                 </tr>
@@ -266,11 +275,13 @@
     </tr>
     <tr>
         <td class="buttonRow">
-            <input type="button" value="<%out.print(saveButtonText);%>"
-                   onclick="saveConfiguration('<%out.print(domainName);%>',
-                           document.getElementById('cBoxTemplates').options[document.getElementById('cBoxTemplates').selectedIndex].text,
-                           document.getElementById('txtName').value, document.getElementById('txtDescription').value,'domain_configurations_ajaxprocessor.jsp?domainName=<%out.print(domainName);%>',
-                       <% out.print(parameterString);%>)">
+            <button type="button"
+                    onclick="saveConfiguration('<%=domainName%>',
+                            document.getElementById('cBoxTemplates').options[document.getElementById('cBoxTemplates').selectedIndex].text,
+                            document.getElementById('txtName').value, document.getElementById('txtDescription').value,'domain_configurations_ajaxprocessor.jsp?domainName=<%=domainName%>',
+                            <%=parameterString%>)">
+                <fmt:message key='<%=saveButtonText%>'/>
+            </button>
         </td>
     </tr>
     </tbody>
@@ -294,3 +305,4 @@
 </body>
 </html>
 
+</fmt:bundle>

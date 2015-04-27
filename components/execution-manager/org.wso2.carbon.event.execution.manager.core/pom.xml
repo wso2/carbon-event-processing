@@ -92,6 +92,7 @@
                           <Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
                           <Bundle-Name>${project.artifactId}</Bundle-Name>
                           <Private-Package>
+                              org.wso2.carbon.event.execution.manager.core.internal,
                               org.wso2.carbon.event.execution.manager.core.internal.*
                           </Private-Package>
                           <Export-Package>

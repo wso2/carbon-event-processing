@@ -26,8 +26,20 @@ import javax.servlet.ServletConfig;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
+/**
+ * Consist of the required UI utility methods
+ */
 public class ExecutionManagerUIUtils {
 
+    /**
+     * Provides created  ExecutionManagerAdminServiceStub object
+     *
+     * @param config  Servlet Configuration
+     * @param session Http Session
+     * @param request Http Servlet Request
+     * @return Created ExecutionManagerAdminServiceStub object
+     * @throws AxisFault
+     */
     public static ExecutionManagerAdminServiceStub getExecutionManagerAdminService(
             ServletConfig config, HttpSession session,
             HttpServletRequest request)
