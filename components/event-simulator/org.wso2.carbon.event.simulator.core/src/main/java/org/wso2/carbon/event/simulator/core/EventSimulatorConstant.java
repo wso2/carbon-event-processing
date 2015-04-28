@@ -26,7 +26,7 @@ public class EventSimulatorConstant {
     public static final String LONG="LONG";
     public static final String FLOAT="FLOAT";
     public static final String DOUBLE="DOUBLE";
-    public static final String BOOLEAN="BOOLEAN";
+    public static final String BOOLEAN="BOOL";
 
     public static final String DEPLOY_DIRECTORY_PATH= "eventsimulatorfiles";
     public static final String ROOT_ELEMENT_NAME="streamConfiguration";
