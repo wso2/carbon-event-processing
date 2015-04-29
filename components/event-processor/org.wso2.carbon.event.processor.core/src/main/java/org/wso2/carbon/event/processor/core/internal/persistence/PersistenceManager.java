@@ -31,12 +31,12 @@ public class PersistenceManager implements Runnable {
     private static final Log log = LogFactory.getLog(PersistenceManager.class);
     private final ExecutionPlanRuntime executionPlanRuntime;
     private final ScheduledExecutorService scheduledExecutorService;
-    private final int interval;
+    private final long interval;
     private final int tenantId;
     private ScheduledFuture<?> scheduledFuture = null;
 
     public PersistenceManager(ExecutionPlanRuntime executionPlanRuntime, ScheduledExecutorService scheduledExecutorService,
-                              int interval, int tenantId) {
+                              long interval, int tenantId) {
         this.executionPlanRuntime = executionPlanRuntime;
         this.scheduledExecutorService = scheduledExecutorService;
         this.interval = interval;
@@ -45,7 +45,7 @@ public class PersistenceManager implements Runnable {
 
     public void init() {
         if (interval > 0) {
-            scheduledFuture = scheduledExecutorService.scheduleAtFixedRate(this, interval, interval, TimeUnit.MINUTES);
+            scheduledFuture = scheduledExecutorService.scheduleAtFixedRate(this, interval, interval, TimeUnit.MILLISECONDS);
         }
     }
 

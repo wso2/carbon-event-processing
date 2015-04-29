@@ -16,9 +16,13 @@
 <eventProcessingConfig>
 
     <processing mode="SingleNode">
-        <persistnace class="">
-            <property key="">value</property>
-        </persistnace>
+        <persistence enable="true">
+            <persistenceIntervalInMillis>10000</persistenceIntervalInMillis>
+            <persisterSchedulerPoolSize>10</persisterSchedulerPoolSize>
+            <persister class="org.wso2.carbon.event.processor.core.internal.persistence.FileSystemPersistenceStore">
+                <property key="">value</property>
+            </persister>
+        </persistence>
     </processing>
 
     <processing mode="HA">
@@ -28,6 +32,10 @@
             <port>11224</port>
             <reconnectionInterval>20000</reconnectionInterval>
         </transport>
+        <management>
+            <!--<hostName>localhost</hostName>-->
+            <port>10000</port>
+        </management>
     </processing>
 
     <processing mode="Distributed" class="">
@@ -37,7 +45,7 @@
             <receiver enable="true"/>
             <publisher enable="false"/>
             <manager enable="true">
-                <hostName>localhost</hostName>
+                <hostName>192.168.1.5</hostName>
                 <port>8904</port>
             </manager>
         </nodeType>
@@ -46,11 +54,11 @@
         <management>
             <managers>
                 <manager>
-                    <hostName>localhost</hostName>
+                    <hostName>192.168.1.5</hostName>
                     <port>8904</port>
                 </manager>
                 <manager>
-                    <hostName>localhost</hostName>
+                    <hostName>192.168.1.5</hostName>
                     <port>8905</port>
                 </manager>
             </managers>
@@ -71,14 +79,12 @@
         <!-- Siddhi-Storm Jar that will be deployed in Storm -->
         <stormJar>org.wso2.carbon.event.processor.storm.jar</stormJar>
 
-        <defaultParallelism>
-            <receiver>1</receiver>
-            <publisher>1</publisher>
-        </defaultParallelism>
+        <defaultParalalisum>
+            <receiver></receiver>
+            <publishr></publishr>
+        </defaultParalalisum>
 
-        <jar>org.wso2.carbon.event.processor.storm.jar</jar>
-
-        <distributedUIUrl>http://localhost:8080/index.html</distributedUIUrl>
+        <distributedUIUrl></distributedUIUrl>
 
     </processing>
 </eventProcessingConfig>

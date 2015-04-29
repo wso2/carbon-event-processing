@@ -18,7 +18,7 @@
 
 package org.wso2.carbon.event.processor.storm.common.test.server;
 
-import org.wso2.carbon.event.processor.common.transport.client.TCPEventPublisher;
+import org.wso2.carbon.event.processor.manager.commons.transport.client.TCPEventPublisher;
 import org.wso2.siddhi.query.api.definition.Attribute;
 import org.wso2.siddhi.query.api.definition.StreamDefinition;
 

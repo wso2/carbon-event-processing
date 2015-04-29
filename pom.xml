@@ -91,11 +91,11 @@
                 <artifactId>snakeyaml</artifactId>
                 <version>${snakeyaml.version}</version>
             </dependency>
-            <dependency>
-                <groupId>org.hectorclient.wso2</groupId>
-                <artifactId>hector-core</artifactId>
-                <version>${hector.wso2.version}</version>
-            </dependency>
+            <!--<dependency>-->
+                <!--<groupId>org.hectorclient.wso2</groupId>-->
+                <!--<artifactId>hector-core</artifactId>-->
+                <!--<version>${hector.wso2.version}</version>-->
+            <!--</dependency>-->
             <dependency>
                 <groupId>com.lmax.wso2</groupId>
                 <artifactId>disruptor</artifactId>
@@ -165,6 +165,16 @@
             <dependency>
                 <groupId>org.wso2.carbon.analytics-common</groupId>
                 <artifactId>org.wso2.carbon.event.application.deployer</artifactId>
+                <version>${carbon.analytics.common.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.wso2.carbon.analytics-common</groupId>
+                <artifactId>org.wso2.carbon.event.processor.manager.core</artifactId>
+                <version>${carbon.analytics.common.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.wso2.carbon.analytics-common</groupId>
+                <artifactId>org.wso2.carbon.event.processor.manager.commons</artifactId>
                 <version>${carbon.analytics.common.version}</version>
             </dependency>
             <!--analytics-common dependencies end-->
@@ -446,7 +456,7 @@
                 <plugin>
                     <groupId>org.apache.felix</groupId>
                     <artifactId>maven-bundle-plugin</artifactId>
-                    <version>2.3.5</version>
+                    <version>2.5.0</version>
                     <extensions>true</extensions>
                     <configuration>
                         <obrRepository>NONE</obrRepository>
@@ -617,7 +627,7 @@
         <libthrift.wso2.version>0.8.0.wso2v1</libthrift.wso2.version>
         <orbit.version.commons.lang>2.6.0.wso2v1</orbit.version.commons.lang>
         <gson.version>2.1</gson.version>
-        <hector.wso2.version>1.1.4.wso2v1</hector.wso2.version>
+        <!--<hector.wso2.version>1.1.4.wso2v1</hector.wso2.version>-->
         <junit.version>4.10</junit.version>
         <disruptor.version>3.2.1</disruptor.version>
         <disruptor.orbit.version>${disruptor.version}.wso2v1</disruptor.orbit.version>

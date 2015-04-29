@@ -27,13 +27,14 @@ import org.apache.thrift.protocol.TBinaryProtocol;
 import org.apache.thrift.protocol.TProtocol;
 import org.apache.thrift.transport.TSocket;
 import org.apache.thrift.transport.TTransport;
-import org.wso2.carbon.event.processor.common.storm.config.StormDeploymentConfig;
 import org.wso2.carbon.event.processor.common.storm.event.Event;
 import org.wso2.carbon.event.processor.common.storm.manager.service.StormManagerService;
-import org.wso2.carbon.event.processor.common.transport.server.StreamCallback;
-import org.wso2.carbon.event.processor.common.transport.server.TCPEventServer;
-import org.wso2.carbon.event.processor.common.transport.server.TCPEventServerConfig;
-import org.wso2.carbon.event.processor.common.util.Utils;
+import org.wso2.carbon.event.processor.manager.commons.transport.server.StreamCallback;
+import org.wso2.carbon.event.processor.manager.commons.transport.server.TCPEventServer;
+import org.wso2.carbon.event.processor.manager.commons.transport.server.TCPEventServerConfig;
+import org.wso2.carbon.event.processor.manager.commons.utils.HostAndPort;
+import org.wso2.carbon.event.processor.manager.commons.utils.Utils;
+import org.wso2.carbon.event.processor.manager.core.config.DistributedConfiguration;
 import org.wso2.siddhi.query.api.definition.StreamDefinition;
 import org.wso2.siddhi.query.compiler.SiddhiCompiler;
 
@@ -55,7 +56,7 @@ public class EventReceiverSpout extends BaseRichSpout implements StreamCallback 
     private int listeningPort;
     private String thisHostIp;
 
-    private StormDeploymentConfig stormDeploymentConfig;
+    private DistributedConfiguration stormDeploymentConfig;
     /**
      * Siddhi stream definitions of all incoming streams. Required to declare output fields
      */
@@ -92,7 +93,7 @@ public class EventReceiverSpout extends BaseRichSpout implements StreamCallback 
      * @param executionPlanName
      * @param tenantId
      */
-    public EventReceiverSpout(StormDeploymentConfig stormDeploymentConfig, List<String> incomingStreamDefinitions,
+    public EventReceiverSpout(DistributedConfiguration stormDeploymentConfig, List<String> incomingStreamDefinitions,
                               String executionPlanName, int tenantId, int heartbeatInterval) {
         this.incomingStreamDefinitions = new ArrayList<StreamDefinition>(incomingStreamDefinitions.size());
         this.stormDeploymentConfig = stormDeploymentConfig;
@@ -239,7 +240,7 @@ public class EventReceiverSpout extends BaseRichSpout implements StreamCallback 
 
         private boolean registerStormReceiverWithStormMangerService() {
             TTransport transport = null;
-            for (StormDeploymentConfig.HostAndPort endpoint : stormDeploymentConfig.getManagers()) {
+            for (HostAndPort endpoint : stormDeploymentConfig.getManagers()) {
                 try {
                     transport = new TSocket(endpoint.getHostName(), endpoint.getPort());
                     TProtocol protocol = new TBinaryProtocol(transport);

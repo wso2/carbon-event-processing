@@ -19,9 +19,11 @@ package org.wso2.carbon.event.processor.core.internal.ds;
 
 import com.hazelcast.core.HazelcastInstance;
 import org.wso2.carbon.base.api.ServerConfigurationService;
-import org.wso2.carbon.event.processor.common.storm.config.StormDeploymentConfig;
+import org.wso2.carbon.event.processor.core.internal.CarbonEventProcessorManagementService;
 import org.wso2.carbon.event.processor.core.internal.CarbonEventProcessorService;
 import org.wso2.carbon.event.processor.core.internal.storm.manager.StormManagerServer;
+import org.wso2.carbon.event.processor.manager.core.EventManagementService;
+import org.wso2.carbon.event.processor.manager.core.config.DistributedConfiguration;
 import org.wso2.carbon.event.statistics.EventStatisticsService;
 import org.wso2.carbon.event.stream.core.EventStreamService;
 import org.wso2.carbon.ndatasource.core.DataSourceService;
@@ -35,6 +37,7 @@ import java.util.concurrent.ScheduledExecutorService;
 public class EventProcessorValueHolder {
     private static CarbonEventProcessorService eventProcessorService;
     private static EventStatisticsService eventStatisticsService;
+    private static EventManagementService eventManagementService;
     private static EventStreamService eventStreamService;
     private static HazelcastInstance hazelcastInstance;
     private static PersistenceStore persistenceStore;
@@ -44,7 +47,8 @@ public class EventProcessorValueHolder {
     private static ServerConfigurationService serverConfiguration;
     private static ConfigurationContextService configurationContext;
     private static StormManagerServer stormManagerServer;
-    private static StormDeploymentConfig stormDeploymentConfig;
+    private static DistributedConfiguration stormDeploymentConfig;
+    private static CarbonEventProcessorManagementService carbonEventProcessorManagementService;
 
     public static SiddhiManager getSiddhiManager() {
         return siddhiManager;
@@ -162,11 +166,31 @@ public class EventProcessorValueHolder {
         return stormManagerServer;
     }
 
-    public static void registerStormDeploymentConfig(StormDeploymentConfig stormDeploymentConfig) {
+    public static void registerStormDeploymentConfig(DistributedConfiguration stormDeploymentConfig) {
         EventProcessorValueHolder.stormDeploymentConfig = stormDeploymentConfig;
     }
 
-    public static StormDeploymentConfig getStormDeploymentConfig() {
+    public static DistributedConfiguration getStormDeploymentConfig() {
         return stormDeploymentConfig;
+    }
+
+    public static CarbonEventProcessorManagementService getCarbonEventReceiverManagementService() {
+        return carbonEventProcessorManagementService;
+    }
+
+    public static void registerEventManagementService(EventManagementService eventManagementService) {
+        EventProcessorValueHolder.eventManagementService = eventManagementService;
+    }
+
+    public static CarbonEventProcessorManagementService getCarbonEventProcessorManagementService() {
+        return carbonEventProcessorManagementService;
+    }
+
+    public static EventManagementService getEventManagementService() {
+        return eventManagementService;
+    }
+
+    public static void registerProcessorManagementService(CarbonEventProcessorManagementService eventProcessorManagementService) {
+        EventProcessorValueHolder.carbonEventProcessorManagementService = eventProcessorManagementService;
     }
 }

@@ -76,10 +76,10 @@
             <groupId>com.lmax.wso2</groupId>
             <artifactId>disruptor</artifactId>
         </dependency>
-        <dependency>
-            <groupId>org.hectorclient.wso2</groupId>
-            <artifactId>hector-core</artifactId>
-        </dependency>
+        <!--<dependency>-->
+            <!--<groupId>org.hectorclient.wso2</groupId>-->
+            <!--<artifactId>hector-core</artifactId>-->
+        <!--</dependency>-->
         <dependency>
             <groupId>org.yaml</groupId>
             <artifactId>snakeyaml</artifactId>
@@ -176,9 +176,9 @@
                                 <bundleDef>
                                     com.lmax.wso2:disruptor:${disruptor.orbit.version}
                                 </bundleDef>
-                                <bundleDef>
-                                    org.hectorclient.wso2:hector-core:${hector.wso2.version}
-                                </bundleDef>
+                                <!--<bundleDef>-->
+                                    <!--org.hectorclient.wso2:hector-core:${hector.wso2.version}-->
+                                <!--</bundleDef>-->
                                 <bundleDef>
                                     org.yaml:snakeyaml:${snakeyaml.version}
                                 </bundleDef>

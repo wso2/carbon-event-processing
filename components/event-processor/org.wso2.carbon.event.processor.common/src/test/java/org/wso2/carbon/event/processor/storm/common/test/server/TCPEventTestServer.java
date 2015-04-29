@@ -18,9 +18,9 @@
 
 package org.wso2.carbon.event.processor.storm.common.test.server;
 
-import org.wso2.carbon.event.processor.common.transport.server.StreamCallback;
-import org.wso2.carbon.event.processor.common.transport.server.TCPEventServer;
-import org.wso2.carbon.event.processor.common.transport.server.TCPEventServerConfig;
+import org.wso2.carbon.event.processor.manager.commons.transport.server.StreamCallback;
+import org.wso2.carbon.event.processor.manager.commons.transport.server.TCPEventServer;
+import org.wso2.carbon.event.processor.manager.commons.transport.server.TCPEventServerConfig;
 import org.wso2.siddhi.query.api.definition.Attribute;
 import org.wso2.siddhi.query.api.definition.StreamDefinition;
 

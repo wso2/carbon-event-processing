@@ -23,14 +23,15 @@ import org.apache.thrift.protocol.TProtocol;
 import org.apache.thrift.transport.TSocket;
 import org.apache.thrift.transport.TTransport;
 import org.wso2.carbon.databridge.commons.thrift.utils.HostAddressFinder;
+import org.wso2.carbon.event.processor.common.storm.manager.service.StormManagerService;
 import org.wso2.carbon.event.processor.core.ExecutionPlanConfiguration;
 import org.wso2.carbon.event.processor.core.internal.listener.SiddhiOutputStreamListener;
-import org.wso2.carbon.event.processor.common.storm.config.StormDeploymentConfig;
-import org.wso2.carbon.event.processor.common.storm.manager.service.StormManagerService;
-import org.wso2.carbon.event.processor.common.transport.server.StreamCallback;
-import org.wso2.carbon.event.processor.common.transport.server.TCPEventServer;
-import org.wso2.carbon.event.processor.common.transport.server.TCPEventServerConfig;
-import org.wso2.carbon.event.processor.common.util.Utils;
+import org.wso2.carbon.event.processor.manager.commons.transport.server.StreamCallback;
+import org.wso2.carbon.event.processor.manager.commons.transport.server.TCPEventServer;
+import org.wso2.carbon.event.processor.manager.commons.transport.server.TCPEventServerConfig;
+import org.wso2.carbon.event.processor.manager.commons.utils.HostAndPort;
+import org.wso2.carbon.event.processor.manager.commons.utils.Utils;
+import org.wso2.carbon.event.processor.manager.core.config.DistributedConfiguration;
 import org.wso2.siddhi.query.api.definition.StreamDefinition;
 
 import java.util.Arrays;
@@ -49,7 +50,7 @@ public class SiddhiStormOutputEventListener implements StreamCallback {
     private ExecutionPlanConfiguration executionPlanConfiguration;
     private int listeningPort;
     private int tenantId;
-    private final StormDeploymentConfig stormDeploymentConfig;
+    private final DistributedConfiguration stormDeploymentConfig;
     private String thisHostIp;
     private HashMap<String, SiddhiOutputStreamListener> streamNameToOutputStreamListenerMap = new HashMap<String, SiddhiOutputStreamListener>();
     private TCPEventServer tcpEventServer;
@@ -58,7 +59,7 @@ public class SiddhiStormOutputEventListener implements StreamCallback {
     private int heartbeatInterval;
 
     public SiddhiStormOutputEventListener(ExecutionPlanConfiguration executionPlanConfiguration, int tenantId,
-                                          StormDeploymentConfig stormDeploymentConfig) {
+                                          DistributedConfiguration stormDeploymentConfig) {
         this.executionPlanConfiguration = executionPlanConfiguration;
         this.tenantId = tenantId;
         this.stormDeploymentConfig = stormDeploymentConfig;
@@ -170,7 +171,7 @@ public class SiddhiStormOutputEventListener implements StreamCallback {
 
         private boolean registerCEPPublisherWithStormMangerService() {
             TTransport transport = null;
-            for(StormDeploymentConfig.HostAndPort endpoint:stormDeploymentConfig.getManagers()) {
+            for(HostAndPort endpoint:stormDeploymentConfig.getManagers()) {
                 try {
                     transport = new TSocket(endpoint.getHostName(), endpoint.getPort());
                     TProtocol protocol = new TBinaryProtocol(transport);
