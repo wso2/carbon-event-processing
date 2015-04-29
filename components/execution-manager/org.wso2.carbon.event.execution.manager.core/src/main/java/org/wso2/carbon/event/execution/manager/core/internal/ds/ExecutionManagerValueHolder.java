@@ -22,6 +22,10 @@ import org.wso2.carbon.event.processor.core.EventProcessorService;
 import org.wso2.carbon.event.stream.core.EventStreamService;
 import org.wso2.carbon.registry.core.service.RegistryService;
 
+/**
+ * Class consist of the values holders of RegistryService, EventStreamService, ExecutionManagerService
+ * and EventProcessorService which are required for the service operations
+ */
 public class ExecutionManagerValueHolder {
 
     private static RegistryService registryService;
@@ -34,16 +38,8 @@ public class ExecutionManagerValueHolder {
         ExecutionManagerValueHolder.registryService = registryService;
     }
 
-    public static void unSetRegistryService() {
-        ExecutionManagerValueHolder.registryService = null;
-    }
-
     public static RegistryService getRegistryService() {
         return ExecutionManagerValueHolder.registryService;
-    }
-
-    public static void registerRegistryService(RegistryService registryService) {
-        ExecutionManagerValueHolder.registryService = registryService;
     }
 
     public static ExecutionManagerService getExecutionManagerService() {
@@ -54,7 +50,7 @@ public class ExecutionManagerValueHolder {
         ExecutionManagerValueHolder.executionManagerService = executionManagerService;
     }
 
-    public static void registerEventStreamService(EventStreamService eventBuilderService) {
+    public static void setEventStreamService(EventStreamService eventBuilderService) {
         ExecutionManagerValueHolder.eventStreamService = eventBuilderService;
     }
 
@@ -66,7 +62,7 @@ public class ExecutionManagerValueHolder {
         return ExecutionManagerValueHolder.eventProcessorService;
     }
 
-    public static void registerEventProcessorService(EventProcessorService eventProcessorService) {
+    public static void setEventProcessorService(EventProcessorService eventProcessorService) {
         ExecutionManagerValueHolder.eventProcessorService = eventProcessorService;
     }
 

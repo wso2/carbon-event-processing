@@ -21,6 +21,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.osgi.service.component.ComponentContext;
 import org.wso2.carbon.event.execution.manager.core.ExecutionManagerService;
+import org.wso2.carbon.event.execution.manager.core.exception.ExecutionManagerException;
 import org.wso2.carbon.event.execution.manager.core.internal.CarbonExecutionManagerService;
 import org.wso2.carbon.event.processor.core.EventProcessorService;
 import org.wso2.carbon.event.stream.core.EventStreamService;
@@ -42,23 +43,23 @@ import org.wso2.carbon.registry.core.service.RegistryService;
  * policy="dynamic" bind="setEventProcessorService" unbind="unsetEventProcessorService"
  */
 public class ExecutionManagerServiceDS {
-
-    public static ExecutionManagerService executionManagerService;
     private static final Log log = LogFactory.getLog(ExecutionManagerServiceDS.class);
 
     protected void activate(ComponentContext context) {
 
         try {
-            executionManagerService = new CarbonExecutionManagerService();
+            ExecutionManagerService executionManagerService = new CarbonExecutionManagerService();
             context.getBundleContext().registerService(ExecutionManagerService.class.getName(),
                     executionManagerService, null);
             ExecutionManagerValueHolder.setExecutionManagerService(executionManagerService);
 
             if (log.isDebugEnabled()) {
-                log.debug("Successfully deployed the execution manager core service");
+                log.debug("Execution manager core service deployed successfully");
             }
         } catch (RuntimeException e) {
-            log.error("Can not create the input execution manager core service ", e);
+            log.error("Execution manager core service cannot be deployed ", e);
+        } catch (ExecutionManagerException e) {
+            log.error("Execution manager core service cannot be deployed", e);
         }
     }
 
@@ -68,25 +69,25 @@ public class ExecutionManagerServiceDS {
     }
 
     protected void unsetRegistryService(RegistryService registryService) {
-        ExecutionManagerValueHolder.unSetRegistryService();
+        ExecutionManagerValueHolder.setRegistryService(null);
     }
 
     protected void setEventStreamService(
             EventStreamService eventStreamService) {
-        ExecutionManagerValueHolder.registerEventStreamService(eventStreamService);
+        ExecutionManagerValueHolder.setEventStreamService(eventStreamService);
     }
 
     protected void unsetEventStreamService(
             EventStreamService eventStreamService) {
-
+        ExecutionManagerValueHolder.setEventStreamService(null);
     }
 
     public void setEventProcessorService(EventProcessorService eventProcessorService) {
-        ExecutionManagerValueHolder.registerEventProcessorService(eventProcessorService);
+        ExecutionManagerValueHolder.setEventProcessorService(eventProcessorService);
     }
 
     public void unsetEventProcessorService(EventProcessorService eventProcessorService) {
-        ExecutionManagerValueHolder.registerEventProcessorService(null);
+        ExecutionManagerValueHolder.setEventProcessorService(null);
 
     }
 }

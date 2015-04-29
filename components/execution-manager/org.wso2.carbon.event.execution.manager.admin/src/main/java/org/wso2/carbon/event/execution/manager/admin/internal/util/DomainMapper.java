@@ -20,25 +20,81 @@ package org.wso2.carbon.event.execution.manager.admin.internal.util;
 import org.wso2.carbon.event.execution.manager.admin.dto.domain.ParameterDTO;
 import org.wso2.carbon.event.execution.manager.admin.dto.domain.TemplateDTO;
 import org.wso2.carbon.event.execution.manager.admin.dto.domain.TemplateDomainDTO;
+import org.wso2.carbon.event.execution.manager.admin.dto.domain.TemplateDomainInfoDTO;
 import org.wso2.carbon.event.execution.manager.core.structure.domain.Parameter;
 import org.wso2.carbon.event.execution.manager.core.structure.domain.Template;
 import org.wso2.carbon.event.execution.manager.core.structure.domain.TemplateDomain;
 
+import java.util.ArrayList;
+import java.util.Collection;
+
+/**
+ * Consist of require mapping methods of Domains
+ */
 public class DomainMapper {
 
-    public static TemplateDomainDTO[] mapDomains(TemplateDomain[] templateDomains) {
+    /**
+     * Maps given list of TemplateDomain objects to array of TemplateDomainInfoDTO objects
+     *
+     * @param templateDomains List of TemplateDomain objects needs to be mapped
+     * @return Mapped array of TemplateDomainInfoDTO objects
+     */
+    public static TemplateDomainInfoDTO[] mapDomainsInfo(ArrayList<TemplateDomain> templateDomains) {
+        TemplateDomainInfoDTO[] templateDomainInfoDTO = null;
+
+        if (templateDomains != null) {
+            templateDomainInfoDTO = new TemplateDomainInfoDTO[templateDomains.size()];
+
+            for (int i = 0; i < templateDomainInfoDTO.length; i++) {
+                templateDomainInfoDTO[i] = mapDomainInfo(templateDomains.get(i));
+            }
+        }
+        return templateDomainInfoDTO;
+    }
+
+    /**
+     * Maps given TemplateDomain object to TemplateDomainInfoDTO object
+     *
+     * @param templateDomain TemplateDomain object needs to be mapped
+     * @return Mapped TemplateDomainInfoDTO object
+     */
+    public static TemplateDomainInfoDTO mapDomainInfo(TemplateDomain templateDomain) {
+        TemplateDomainInfoDTO templateDomainInfoDTO = null;
+
+        if (templateDomain != null) {
+            templateDomainInfoDTO = new TemplateDomainInfoDTO();
+            templateDomainInfoDTO.setName(templateDomain.getName());
+            templateDomainInfoDTO.setDescription(templateDomain.getName());
+        }
+
+        return templateDomainInfoDTO;
+    }
+
+    /**
+     * Maps given list of TemplateDomain objects to array of TemplateDomainDTO objects
+     *
+     * @param templateDomains List of TemplateDomain objects needs to be mapped
+     * @return Mapped array of TemplateDomainDTO objects
+     */
+    public static TemplateDomainDTO[] mapDomains(ArrayList<TemplateDomain> templateDomains) {
         TemplateDomainDTO[] templateDomainDTOs = null;
 
         if (templateDomains != null) {
-            templateDomainDTOs = new TemplateDomainDTO[templateDomains.length];
+            templateDomainDTOs = new TemplateDomainDTO[templateDomains.size()];
 
             for (int i = 0; i < templateDomainDTOs.length; i++) {
-                templateDomainDTOs[i] = mapDomain(templateDomains[i]);
+                templateDomainDTOs[i] = mapDomain(templateDomains.get(i));
             }
         }
         return templateDomainDTOs;
     }
 
+    /**
+     * Maps given TemplateDomain object to TemplateDomainDTO object
+     *
+     * @param templateDomain TemplateDomain object needs to be mapped
+     * @return Mapped TemplateDomainDTO object
+     */
     public static TemplateDomainDTO mapDomain(TemplateDomain templateDomain) {
         TemplateDomainDTO templateDomainDTO = null;
 
@@ -53,6 +109,12 @@ public class DomainMapper {
         return templateDomainDTO;
     }
 
+    /**
+     * Maps given array of Template objects to array of TemplateDTO objects
+     *
+     * @param templates Template objects array needs to mapped
+     * @return Mapped array of TemplateDTO objects
+     */
     public static TemplateDTO[] mapTemplates(Template[] templates) {
         TemplateDTO[] templateDTOs = null;
 
@@ -65,6 +127,12 @@ public class DomainMapper {
         return templateDTOs;
     }
 
+    /**
+     * Maps given Template object to TemplateDTO object
+     *
+     * @param template Template object needs to be mapped
+     * @return Mapped TemplateDTO object
+     */
     public static TemplateDTO mapTemplate(Template template) {
         TemplateDTO templateDTO = null;
 
@@ -78,6 +146,12 @@ public class DomainMapper {
         return templateDTO;
     }
 
+    /**
+     * Maps given array of Parameter objects to array of ParameterDTO objects
+     *
+     * @param parameters Parameter objects array needs to be mapped
+     * @return Mapped array of ParameterDTO objects
+     */
     public static ParameterDTO[] mapParameters(Parameter[] parameters) {
         ParameterDTO[] parameterDTOs = null;
 
@@ -90,6 +164,12 @@ public class DomainMapper {
         return parameterDTOs;
     }
 
+    /**
+     * Maps given Parameter object to ParameterDTO object
+     *
+     * @param parameter Parameter object needs to be mapped
+     * @return Mapped ParameterDTO object
+     */
     public static ParameterDTO mapParameter(Parameter parameter) {
         ParameterDTO parameterDTO = null;
 
