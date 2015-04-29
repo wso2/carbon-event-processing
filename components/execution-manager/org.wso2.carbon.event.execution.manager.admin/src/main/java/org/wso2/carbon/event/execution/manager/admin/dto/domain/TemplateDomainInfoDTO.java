@@ -15,28 +15,21 @@
  *  specific language governing permissions and limitations
  *  under the License.
  */
-package org.wso2.carbon.event.execution.manager.core.structure.domain;
-
-import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlElementWrapper;
-import javax.xml.bind.annotation.XmlRootElement;
+package org.wso2.carbon.event.execution.manager.admin.dto.domain;
 
 /**
- * JAXB Class of Template element
+ * DTO class of TemplateDomainInfo for ExecutionManagerAdminService. This only consists required information to display
  */
-@XmlRootElement
-public class Template {
-    String name;
-    String description;
-    String executionPlan;
-    Parameter[] parameters;
+public class TemplateDomainInfoDTO {
+
+    private String name;
+
+    private String description;
 
     public String getName() {
         return name;
     }
 
-    @XmlAttribute
     public void setName(String name) {
         this.name = name;
     }
@@ -45,27 +38,7 @@ public class Template {
         return description;
     }
 
-    @XmlElement
     public void setDescription(String description) {
         this.description = description;
-    }
-
-    public String getExecutionPlan() {
-        return executionPlan;
-    }
-
-    @XmlElement
-    public void setExecutionPlan(String executionPlan) {
-        this.executionPlan = executionPlan;
-    }
-
-    public Parameter[] getParameters() {
-        return parameters;
-    }
-
-    @XmlElementWrapper(name = "parameters")
-    @XmlElement(name = "parameter")
-    public void setParameters(Parameter[] parameters) {
-        this.parameters = parameters;
     }
 }

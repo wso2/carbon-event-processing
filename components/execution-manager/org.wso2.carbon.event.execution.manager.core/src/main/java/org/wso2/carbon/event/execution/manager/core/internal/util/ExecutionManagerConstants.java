@@ -19,14 +19,30 @@ package org.wso2.carbon.event.execution.manager.core.internal.util;
 
 import org.wso2.carbon.utils.CarbonUtils;
 
+import java.io.File;
+
+/**
+ * Consist of the constants required for EventManagerService
+ */
 public class ExecutionManagerConstants {
 
-    public static String carbon_home = CarbonUtils.getCarbonHome();
-    public static final String TEMPLATE_DOMAIN_PATH = carbon_home + "/repository/conf/cep/domain-template";
-    public static final String TEMPLATE_CONFIG_PATH
-            = "/repository/components/org.wso2.carbon.event.execution.manager.core/template-config";
+    private ExecutionManagerConstants() {
+
+    }
+
+    public static final String TEMPLATE_DOMAIN_PATH = CarbonUtils.getCarbonConfigDirPath()
+            + File.separator + "cep" + File.separator + "domain-template";
+
+    public static final String TEMPLATE_CONFIG_PATH = ExecutionManagerConstants.PATH_SEPARATOR + "repository"
+            + ExecutionManagerConstants.PATH_SEPARATOR + "components"
+            + ExecutionManagerConstants.PATH_SEPARATOR + "org.wso2.carbon.event.execution.manager.core"
+            + ExecutionManagerConstants.PATH_SEPARATOR + "template-config";
+
     public static final String PATH_SEPARATOR = "/";
+
     public static final String CONFIG_NAME_SEPARATOR = "-";
+
     public static final String CONFIG_FILE_EXTENSION = ".xml";
+
     public static final String DEFAULT_CHARSET = "UTF-8";
 }

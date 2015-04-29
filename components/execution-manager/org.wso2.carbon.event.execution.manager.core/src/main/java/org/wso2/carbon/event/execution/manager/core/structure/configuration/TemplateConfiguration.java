@@ -15,17 +15,24 @@
  *  specific language governing permissions and limitations
  *  under the License.
  */
-package org.wso2.carbon.event.execution.manager.core.structure.config;
+package org.wso2.carbon.event.execution.manager.core.structure.configuration;
 
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 
+/**
+ * JAXB Class of TemplateConfiguration element
+ */
 @XmlRootElement
-public class Parameter {
+public class TemplateConfiguration {
 
     String name;
-    String value;
+    String type;
+    String from;
+    String description;
+    Parameter[] parameters;
 
     public String getName() {
         return name;
@@ -36,12 +43,42 @@ public class Parameter {
         this.name = name;
     }
 
-    public String getValue() {
-        return value;
+    public String getType() {
+        return type;
+    }
+
+    @XmlAttribute
+    public void setType(String type) {
+        this.type = type;
+    }
+
+    public String getFrom() {
+        return from;
+    }
+
+    @XmlAttribute
+    public void setFrom(String from) {
+        this.from = from;
+    }
+
+    public String getDescription() {
+        return description;
     }
 
     @XmlElement
-    public void setValue(String value) {
-        this.value = value;
+    public void setDescription(String description) {
+        this.description = description;
     }
+
+    public Parameter[] getParameters() {
+        return parameters;
+    }
+
+    @XmlElementWrapper(name = "parameters")
+    @XmlElement(name = "parameter")
+    public void setParameters(Parameter[] parameters) {
+        this.parameters = parameters;
+    }
+
+
 }

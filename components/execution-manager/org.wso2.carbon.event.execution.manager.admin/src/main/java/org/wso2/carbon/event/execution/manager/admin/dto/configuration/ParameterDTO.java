@@ -15,15 +15,16 @@
  *  specific language governing permissions and limitations
  *  under the License.
  */
-package org.wso2.carbon.event.execution.manager.admin.dto.config;
+package org.wso2.carbon.event.execution.manager.admin.dto.configuration;
 
-public class TemplateConfigDTO {
+/**
+ * DTO class of Parameter for ExecutionManagerAdminService
+ */
+public class ParameterDTO {
 
-    String name;
-    String type;
-    String from;
-    String description;
-    ParameterDTO[] parameterDTOs;
+    private String name;
+
+    private String value;
 
     public String getName() {
         return name;
@@ -33,31 +34,11 @@ public class TemplateConfigDTO {
         this.name = name;
     }
 
-    public String getType() { return type; }
-
-    public void setType(String type) { this.type = type; }
-
-    public String getFrom() {
-        return from;
+    public String getValue() {
+        return value;
     }
 
-    public void setFrom(String from) {
-        this.from = from;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public ParameterDTO[] getParameterDTOs() {
-        return parameterDTOs;
-    }
-
-    public void setParameterDTOs(ParameterDTO[] parameterDTOs) {
-        this.parameterDTOs = parameterDTOs;
+    public void setValue(String value) {
+        this.value = value;
     }
 }

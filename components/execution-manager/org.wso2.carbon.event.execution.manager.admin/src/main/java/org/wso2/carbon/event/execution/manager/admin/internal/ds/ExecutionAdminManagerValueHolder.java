@@ -19,6 +19,9 @@ package org.wso2.carbon.event.execution.manager.admin.internal.ds;
 
 import org.wso2.carbon.event.execution.manager.core.ExecutionManagerService;
 
+/**
+ * Consist of ExecutionManagerService which requires by ExecutionAdminService
+ */
 public class ExecutionAdminManagerValueHolder {
 
     private static ExecutionManagerService executorManagerService;
