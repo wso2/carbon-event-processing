@@ -18,7 +18,6 @@
 package org.wso2.carbon.event.processor.core.internal.storm.util;
 
 import backtype.storm.topology.BoltDeclarer;
-import backtype.storm.topology.SpoutDeclarer;
 import backtype.storm.topology.TopologyBuilder;
 import backtype.storm.tuple.Fields;
 import org.apache.axiom.om.OMAttribute;
@@ -28,14 +27,11 @@ import org.apache.log4j.Logger;
 import org.wso2.carbon.event.processor.common.storm.component.EventPublisherBolt;
 import org.wso2.carbon.event.processor.common.storm.component.EventReceiverSpout;
 import org.wso2.carbon.event.processor.common.storm.component.SiddhiBolt;
-import org.wso2.carbon.event.processor.common.storm.config.StormDeploymentConfig;
-import org.wso2.carbon.event.processor.core.exception.StormDeploymentException;
 import org.wso2.carbon.event.processor.core.exception.StormQueryConstructionException;
 import org.wso2.carbon.event.processor.core.internal.util.EventProcessorConstants;
-import org.wso2.siddhi.query.api.ExecutionPlan;
+import org.wso2.carbon.event.processor.manager.core.config.DistributedConfiguration;
 import org.wso2.siddhi.query.api.definition.StreamDefinition;
 import org.wso2.siddhi.query.compiler.SiddhiCompiler;
-import org.wso2.siddhi.query.compiler.exception.SiddhiParserException;
 
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;
@@ -52,7 +48,7 @@ public class StormTopologyConstructor {
     private static Logger log = Logger.getLogger(StormTopologyConstructor.class);
 
     public static TopologyBuilder constructTopologyBuilder(String queryPlanString, String executionPlanName,
-                                                           int tenantId, StormDeploymentConfig stormDeploymentConfig)
+                                                           int tenantId, DistributedConfiguration stormDeploymentConfig)
             throws XMLStreamException, StormQueryConstructionException {
 
         OMElement queryPlanElement = AXIOMUtil.stringToOM(queryPlanString);

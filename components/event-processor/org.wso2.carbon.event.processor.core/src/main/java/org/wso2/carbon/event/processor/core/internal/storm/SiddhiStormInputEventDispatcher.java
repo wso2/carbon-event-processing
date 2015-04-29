@@ -20,12 +20,11 @@ package org.wso2.carbon.event.processor.core.internal.storm;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.wso2.carbon.databridge.commons.StreamDefinition;
-import org.wso2.carbon.event.processor.common.storm.config.StormDeploymentConfig;
 import org.wso2.carbon.event.processor.common.util.AsyncEventPublisher;
 import org.wso2.carbon.event.processor.core.ExecutionPlanConfiguration;
-import org.wso2.carbon.event.processor.core.StreamConfiguration;
 import org.wso2.carbon.event.processor.core.internal.listener.AbstractSiddhiInputEventDispatcher;
 import org.wso2.carbon.event.processor.core.internal.util.EventProcessorUtil;
+import org.wso2.carbon.event.processor.manager.core.config.DistributedConfiguration;
 import org.wso2.siddhi.core.event.Event;
 
 import java.util.HashSet;
@@ -39,7 +38,7 @@ import java.util.concurrent.Executors;
  */
 public class SiddhiStormInputEventDispatcher extends AbstractSiddhiInputEventDispatcher {
     private static final Log log = LogFactory.getLog(SiddhiStormInputEventDispatcher.class);
-    private final StormDeploymentConfig stormDeploymentConfig;
+    private final DistributedConfiguration stormDeploymentConfig;
     private final ExecutionPlanConfiguration executionPlanConfiguration;
 
     private org.wso2.siddhi.query.api.definition.StreamDefinition siddhiStreamDefinition;
@@ -49,7 +48,7 @@ public class SiddhiStormInputEventDispatcher extends AbstractSiddhiInputEventDis
 
     public SiddhiStormInputEventDispatcher(StreamDefinition streamDefinition, String siddhiStreamId,
                                            ExecutionPlanConfiguration executionPlanConfiguration, int tenantId,
-                                           StormDeploymentConfig stormDeploymentConfig) {
+                                           DistributedConfiguration stormDeploymentConfig) {
         super(streamDefinition.getStreamId(), siddhiStreamId, executionPlanConfiguration, tenantId);
         this.executionPlanConfiguration = executionPlanConfiguration;
         this.stormDeploymentConfig = stormDeploymentConfig;
