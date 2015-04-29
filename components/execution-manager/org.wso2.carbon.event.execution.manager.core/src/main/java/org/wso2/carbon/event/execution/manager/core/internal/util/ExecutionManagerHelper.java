@@ -68,7 +68,6 @@ public class ExecutionManagerHelper {
                         JAXBContext jaxbContext = JAXBContext.newInstance(TemplateDomain.class);
                         Unmarshaller jaxbUnmarshaller = jaxbContext.createUnmarshaller();
                         TemplateDomain templateDomain = (TemplateDomain) jaxbUnmarshaller.unmarshal(fileEntry);
-                        ExecutionManagerHelper.deployStreams(templateDomain);
                         domains.put(templateDomain.getName(), templateDomain);
                     } catch (JAXBException e) {
                         log.error("JAXB Exception when unmarshalling domain template file at "
@@ -118,7 +117,7 @@ public class ExecutionManagerHelper {
      *
      * @param templateDomain template domain object
      */
-    private static void deployStreams(TemplateDomain templateDomain) {
+    public static void deployStreams(TemplateDomain templateDomain) {
         for (String stream : templateDomain.getStreams()) {
             StreamDefinition streamDefinition = null;
             try {

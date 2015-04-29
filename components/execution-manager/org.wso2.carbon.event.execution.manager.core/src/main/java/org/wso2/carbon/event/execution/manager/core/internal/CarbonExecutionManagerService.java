@@ -30,6 +30,7 @@ import org.wso2.carbon.event.processor.core.exception.ExecutionPlanConfiguration
 import org.wso2.carbon.registry.api.RegistryException;
 import org.wso2.carbon.registry.core.Registry;
 import org.wso2.carbon.registry.core.Resource;
+
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
@@ -84,6 +85,7 @@ public class CarbonExecutionManagerService implements ExecutionManagerService {
             }
 
             ExecutionManagerHelper.deployExecutionPlan(configuration, domains);
+            ExecutionManagerHelper.deployStreams(domains.get(configuration.getFrom()));
 
             if (registry.resourceExists(resourcePath)) {
                 registry.delete(resourcePath);
@@ -154,8 +156,6 @@ public class CarbonExecutionManagerService implements ExecutionManagerService {
 
     @Override
     public void deleteConfiguration(String domainName, String configName) throws ExecutionManagerException {
-        String configFullName = domainName + ExecutionManagerConstants.CONFIG_NAME_SEPARATOR + configName;
-
         /*
             First try to delete from registry if any exception occur, it will be logged.
             Then try to un deploy execution plan and log errors occur.
@@ -164,14 +164,16 @@ public class CarbonExecutionManagerService implements ExecutionManagerService {
         try {
 
             registry.delete(ExecutionManagerConstants.TEMPLATE_CONFIG_PATH + ExecutionManagerConstants.PATH_SEPARATOR
-                    + configFullName + ExecutionManagerConstants.CONFIG_FILE_EXTENSION);
+                    + domainName + ExecutionManagerConstants.PATH_SEPARATOR
+                    + configName + ExecutionManagerConstants.CONFIG_FILE_EXTENSION);
         } catch (RegistryException e) {
             log.error("Configuration exception when deleting registry configuration file "
                     + configName + " of Domain " + domainName, e);
         }
 
         try {
-            ExecutionManagerHelper.unDeployExistingExecutionPlan(configFullName);
+            ExecutionManagerHelper.unDeployExistingExecutionPlan(domainName
+                    + ExecutionManagerConstants.CONFIG_NAME_SEPARATOR + configName);
         } catch (ExecutionPlanConfigurationException e) {
             log.error("Configuration exception when un deploying Execution Plan "
                     + configName + " of Domain " + domainName, e);
