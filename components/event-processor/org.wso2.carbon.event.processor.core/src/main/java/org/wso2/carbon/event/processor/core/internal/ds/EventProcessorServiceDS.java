@@ -25,21 +25,20 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.osgi.service.component.ComponentContext;
 import org.wso2.carbon.base.api.ServerConfigurationService;
-import org.wso2.carbon.event.processor.common.storm.config.StormDeploymentConfig;
-import org.wso2.carbon.event.processor.common.storm.config.StormDeploymentConfigReader;
 import org.wso2.carbon.event.processor.core.EventProcessorService;
+import org.wso2.carbon.event.processor.core.internal.CarbonEventProcessorManagementService;
 import org.wso2.carbon.event.processor.core.internal.CarbonEventProcessorService;
-import org.wso2.carbon.event.processor.core.internal.ha.server.HAManagementServer;
 import org.wso2.carbon.event.processor.core.internal.listener.EventStreamListenerImpl;
-import org.wso2.carbon.event.processor.core.internal.persistence.FileSystemPersistenceStore;
 import org.wso2.carbon.event.processor.core.internal.storm.manager.StormManagerServer;
 import org.wso2.carbon.event.processor.core.internal.util.EventProcessorConstants;
+import org.wso2.carbon.event.processor.manager.core.EventManagementService;
+import org.wso2.carbon.event.processor.manager.core.config.DistributedConfiguration;
+import org.wso2.carbon.event.processor.manager.core.config.PersistenceConfiguration;
 import org.wso2.carbon.event.statistics.EventStatisticsService;
 import org.wso2.carbon.event.stream.core.EventStreamListener;
 import org.wso2.carbon.event.stream.core.EventStreamService;
 import org.wso2.carbon.ndatasource.core.DataSourceService;
 import org.wso2.carbon.user.core.UserRealm;
-import org.wso2.carbon.utils.CarbonUtils;
 import org.wso2.carbon.utils.ConfigurationContextService;
 import org.wso2.siddhi.core.SiddhiManager;
 import org.wso2.siddhi.core.util.persistence.PersistenceStore;
@@ -55,6 +54,9 @@ import java.util.concurrent.ScheduledExecutorService;
  * @scr.reference name="eventStreamManager.service"
  * interface="org.wso2.carbon.event.stream.core.EventStreamService" cardinality="1..1"
  * policy="dynamic" bind="setEventStreamService" unbind="unsetEventStreamService"
+ * @scr.reference name="eventManagement.service"
+ * interface="org.wso2.carbon.event.processor.manager.core.EventManagementService" cardinality="1..1"
+ * policy="dynamic" bind="setEventManagementService" unbind="unsetEventManagementService"
  * @scr.reference name="hazelcast.instance.service"
  * interface="com.hazelcast.core.HazelcastInstance" cardinality="0..1"
  * policy="dynamic" bind="setHazelcastInstance" unbind="unsetHazelcastInstance"
@@ -78,10 +80,10 @@ public class EventProcessorServiceDS {
             CarbonEventProcessorService carbonEventProcessorService = new CarbonEventProcessorService();
             EventProcessorValueHolder.registerEventProcessorService(carbonEventProcessorService);
 
-            new HAManagementServer(carbonEventProcessorService);
+            CarbonEventProcessorManagementService carbonEventReceiverManagementService = new CarbonEventProcessorManagementService();
+            EventProcessorValueHolder.registerProcessorManagementService(carbonEventReceiverManagementService);
 
-            String stormConfigDirPath = CarbonUtils.getCarbonConfigDirPath();
-            StormDeploymentConfig stormDeploymentConfig = StormDeploymentConfigReader.loadConfigurations(stormConfigDirPath);
+            DistributedConfiguration stormDeploymentConfig = carbonEventProcessorService.getManagementInfo().getDistributedConfiguration();
             if (stormDeploymentConfig != null) {
                 EventProcessorValueHolder.registerStormDeploymentConfig(stormDeploymentConfig);
                 if (stormDeploymentConfig.isManagerNode()) {
@@ -98,14 +100,16 @@ public class EventProcessorServiceDS {
             SiddhiManager siddhiManager = new SiddhiManager();
             EventProcessorValueHolder.registerSiddhiManager(siddhiManager);
 
-            // TODO: Get the class of the PersistenceStore from a configuration file
-            PersistenceStore persistenceStore = new FileSystemPersistenceStore();
-            EventProcessorValueHolder.setPersistenceStore(persistenceStore);
-            siddhiManager.setPersistenceStore(persistenceStore);
-            // TODO: Get the pool size from a configuration file
-            ScheduledExecutorService scheduledExecutorService = Executors.newScheduledThreadPool(1);
-            EventProcessorValueHolder.setScheduledExecutorService(scheduledExecutorService);
+            PersistenceConfiguration persistConfig = carbonEventProcessorService.getManagementInfo().getPersistenceConfiguration();
+            if(persistConfig != null) {
+                Class clazz = Class.forName(persistConfig.getPersistenceClass());
+                PersistenceStore persistenceStore = (PersistenceStore) clazz.newInstance();
+                EventProcessorValueHolder.setPersistenceStore(persistenceStore);
+                siddhiManager.setPersistenceStore(persistenceStore);
+                ScheduledExecutorService scheduledExecutorService = Executors.newScheduledThreadPool(persistConfig.getThreadPoolSize());
+                EventProcessorValueHolder.setScheduledExecutorService(scheduledExecutorService);
 
+            }
             if (log.isDebugEnabled()) {
                 log.debug("Successfully deployed EventProcessorService");
             }
@@ -123,7 +127,10 @@ public class EventProcessorServiceDS {
             if (stormManagerServer != null) {
                 stormManagerServer.stop();
             }
-            EventProcessorValueHolder.getScheduledExecutorService().shutdownNow();
+            ScheduledExecutorService executorService = EventProcessorValueHolder.getScheduledExecutorService();
+            if(executorService != null){
+                executorService.shutdownNow();
+            }
             EventProcessorValueHolder.getEventProcessorService().shutdown();
         } catch (RuntimeException e) {
             log.error("Error in stopping Storm Manager Service : " + e.getMessage(), e);
@@ -214,5 +221,14 @@ public class EventProcessorServiceDS {
 
     protected void unsetConfigurationContext(ConfigurationContextService configurationContext) {
         EventProcessorValueHolder.setConfigurationContext(null);
+    }
+
+    protected void setEventManagementService(EventManagementService eventManagementService) {
+        EventProcessorValueHolder.registerEventManagementService(eventManagementService);
+
+    }
+
+    protected void unsetEventManagementService(EventManagementService eventManagementService) {
+        EventProcessorValueHolder.registerEventManagementService(null);
     }
 }

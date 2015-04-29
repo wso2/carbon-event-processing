@@ -17,7 +17,6 @@
 */
 package org.wso2.carbon.event.processor.core;
 
-import org.wso2.carbon.event.processor.core.internal.ha.HAManager;
 import org.wso2.carbon.event.processor.core.internal.persistence.PersistenceManager;
 import org.wso2.carbon.event.processor.core.internal.storm.SiddhiStormOutputEventListener;
 import org.wso2.carbon.event.stream.core.EventProducer;
@@ -32,7 +31,6 @@ public class ExecutionPlan {
     private ExecutionPlanRuntime executionPlanRuntime;
     private ExecutionPlanConfiguration executionPlanConfiguration;
     private String name;
-    private HAManager haManager;
     private PersistenceManager persistenceManager;
     private List<EventProducer> eventProducers = new ArrayList<EventProducer>();
     private List<SiddhiEventConsumer> siddhiEventConsumers = new ArrayList<SiddhiEventConsumer>();
@@ -40,12 +38,11 @@ public class ExecutionPlan {
 
 
     public ExecutionPlan(String name, ExecutionPlanRuntime executionPlanRuntime,
-                         ExecutionPlanConfiguration executionPlanConfiguration, HAManager haManager,
+                         ExecutionPlanConfiguration executionPlanConfiguration,
                          PersistenceManager persistenceManager) {
         this.executionPlanRuntime = executionPlanRuntime;
         this.executionPlanConfiguration = executionPlanConfiguration;
         this.name = name;
-        this.haManager = haManager;
         this.persistenceManager = persistenceManager;
     }
 
@@ -74,14 +71,6 @@ public class ExecutionPlan {
         this.executionPlanConfiguration = executionPlanConfiguration;
     }
 
-    public HAManager getHaManager() {
-        return haManager;
-    }
-
-    public void setHaManager(HAManager haManager) {
-        this.haManager = haManager;
-    }
-
     public PersistenceManager getPersistenceManager() {
         return persistenceManager;
     }
@@ -91,9 +80,6 @@ public class ExecutionPlan {
     }
 
     public void shutdown() {
-        if (haManager != null) {
-            haManager.shutdown();
-        }
         if (stormOutputListener != null) {
             stormOutputListener.shutdown();
         }
