@@ -21,7 +21,6 @@ import org.apache.axiom.om.OMElement;
 import org.apache.axis2.deployment.Deployer;
 import org.apache.axis2.deployment.DeploymentEngine;
 import org.apache.axis2.deployment.repository.util.DeploymentFileData;
-import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.wso2.carbon.event.processor.core.EventProcessorDeployer;
@@ -125,7 +124,7 @@ public class EventProcessorConfigurationFilesystemInvoker {
         }
     }
 
-    public static void reload(String filePath, AxisConfiguration axisConfiguration) throws ExecutionPlanConfigurationException {
+    public static void reload(String filePath) throws ExecutionPlanConfigurationException {
         EventProcessorDeployer eventProcessorDeployer = (EventProcessorDeployer) getDeployer(EventProcessorConstants.EP_ELE_DIRECTORY);
         try {
             eventProcessorDeployer.processUndeploy(filePath);

@@ -75,7 +75,7 @@ public class CarbonEventProcessorService implements EventProcessorService {
         try {
             managementInfo = ManagementModeInfo.getInstance();
         } catch (ManagementConfigurationException e) {
-            log.error("error retrieving management configuration information ",e);
+            log.error("error retrieving management configuration information ", e);
         }
     }
 
@@ -262,7 +262,6 @@ public class CarbonEventProcessorService implements EventProcessorService {
                 InputHandler>(importsMap.size());
 
 
-
         List<String> importDefinitions;
         List<String> exportDefinitions;
 
@@ -327,7 +326,7 @@ public class CarbonEventProcessorService implements EventProcessorService {
 
         PersistenceManager persistenceManager = null;
 
-        if (managementInfo.getMode()  == Mode.SingleNode && managementInfo.getPersistenceConfiguration()!=null) {
+        if (managementInfo.getMode() == Mode.SingleNode && managementInfo.getPersistenceConfiguration() != null) {
 
             long persistenceTimeInterval = managementInfo.getPersistenceConfiguration().getPersistenceTimeInterval();
             if (persistenceTimeInterval > 0) {
@@ -399,22 +398,22 @@ public class CarbonEventProcessorService implements EventProcessorService {
             } else {
                 eventDispatcher = new SiddhiInputEventDispatcher(entry.getValue(),
                         inputHandler, executionPlanConfiguration, tenantId);
-           }
-                try {
-                    EventProcessorValueHolder.getEventStreamService().subscribe(eventDispatcher);
-                    processorExecutionPlan.addConsumer(eventDispatcher);
-                } catch (EventStreamConfigurationException e) {
-                    //ignored as this will never happen
-                }
             }
-            if (executionPlanRuntime != null) {
-                executionPlanRuntime.start();
+            try {
+                EventProcessorValueHolder.getEventStreamService().subscribe(eventDispatcher);
+                processorExecutionPlan.addConsumer(eventDispatcher);
+            } catch (EventStreamConfigurationException e) {
+                //ignored as this will never happen
             }
+        }
+        if (executionPlanRuntime != null) {
+            executionPlanRuntime.start();
+        }
 
-            if (persistenceManager != null) {
-                executionPlanRuntime.restoreLastRevision();
-                persistenceManager.init();
-            }
+        if (persistenceManager != null) {
+            executionPlanRuntime.restoreLastRevision();
+            persistenceManager.init();
+        }
 
 
     }
@@ -693,11 +692,10 @@ public class CarbonEventProcessorService implements EventProcessorService {
         }
         for (ExecutionPlanConfigurationFile executionPlanConfigurationFile : reloadFileList) {
             try {
-                EventProcessorConfigurationFilesystemInvoker.reload(executionPlanConfigurationFile.getFilePath(),
-                        executionPlanConfigurationFile.getAxisConfiguration());
-            } catch (Exception e) {
+                EventProcessorConfigurationFilesystemInvoker.reload(executionPlanConfigurationFile.getFilePath());
+            } catch (ExecutionPlanConfigurationException e) {
                 log.error("Exception occurred while trying to deploy the Execution Plan configuration file : " + new
-                        File(executionPlanConfigurationFile.getFileName()).getName());
+                        File(executionPlanConfigurationFile.getFileName()).getName()+","+e.getMessage(), e);
             }
         }
 
@@ -733,8 +731,7 @@ public class CarbonEventProcessorService implements EventProcessorService {
             for (String name : toDeactivateExecutionPlan) {
                 ExecutionPlanConfigurationFile executionPlanConfigurationFile = getExecutionPlanConfigurationFileByPlanName(name);
                 try {
-                    EventProcessorConfigurationFilesystemInvoker.reload(executionPlanConfigurationFile.getFilePath(),
-                            executionPlanConfigurationFile.getAxisConfiguration());
+                    EventProcessorConfigurationFilesystemInvoker.reload(executionPlanConfigurationFile.getFilePath());
                 } catch (Exception e) {
                     log.error("Exception occurred while trying to deploy the Execution Plan configuration file : " +
                             new File(executionPlanConfigurationFile.getFileName()).getName());
