@@ -409,10 +409,10 @@ public class CarbonEventProcessorService implements EventProcessorService {
             }
             if (executionPlanRuntime != null) {
                 executionPlanRuntime.start();
-//                executionPlanRuntime.restoreLastRevision();   Todo:review
             }
 
             if (persistenceManager != null) {
+                executionPlanRuntime.restoreLastRevision();
                 persistenceManager.init();
             }
 
