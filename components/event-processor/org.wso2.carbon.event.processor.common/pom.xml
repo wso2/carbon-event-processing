@@ -27,7 +27,6 @@
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
-    <version>2.0.4-SNAPSHOT</version>
     <artifactId>org.wso2.carbon.event.processor.common</artifactId>
     <name>WSO2 Carbon - Storm Common Modules</name>
     <packaging>bundle</packaging>
@@ -44,6 +43,7 @@
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
+            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.wso2.carbon</groupId>

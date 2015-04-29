@@ -17,7 +17,8 @@
  ~ under the License.
 -->
 
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
     <parent>
         <groupId>org.wso2.carbon.event-processing</groupId>
@@ -27,7 +28,6 @@
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
-    <version>2.0.4-SNAPSHOT</version>
     <artifactId>org.wso2.carbon.event.processor.admin</artifactId>
     <packaging>bundle</packaging>
     <name>WSO2 Carbon - Event Processor Admin</name>
@@ -86,23 +86,23 @@
                     <instructions>
                         <Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
                         <Bundle-Name>${project.artifactId}</Bundle-Name>
-                        <!-- <Private-Package>
-                            org.wso2.carbon.transport.adaptor.manager.core.internal,
-                            org.wso2.carbon.transport.adaptor.manager.core.internal.*
-                        </Private-Package>-->
-                        <!--<Export-Package>-->
-                        <!--!org.wso2.carbon.eventprocessor.core.internal,-->
-                        <!--!org.wso2.carbon.eventprocessor.core.internal.*,-->
-                        <!--org.wso2.carbon.event.processor.admin.*-->
-                        <!--</Export-Package>-->
+                        <Private-Package>
+                            org.wso2.carbon.event.processor.admin.internal,
+                            org.wso2.carbon.event.processor.admin.internal.*
+                        </Private-Package>
+                        <Export-Package>
+                            !org.wso2.carbon.event.processor.admin.internal,
+                            !org.wso2.carbon.event.processor.admin.internal.*
+                            org.wso2.carbon.event.processor.admin.*,
+                            org.wso2.carbon.event.processor.admin
+                        </Export-Package>
                         <Import-Package>
                             <!--!javax.xml.namespace,-->
                             org.wso2.carbon.event.processor.core.*,
                             javax.xml.namespace; version=0.0.0,
-                            *;resolution:=optional,
+                            *;resolution:=optional
                         </Import-Package>
                         <DynamicImport-Package>*</DynamicImport-Package>
-                        <!--<Axis2Deployer>TransportAdaptorDeployer</Axis2Deployer>-->
                     </instructions>
                 </configuration>
             </plugin>

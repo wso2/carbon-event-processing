@@ -28,7 +28,6 @@
 
     <modelVersion>4.0.0</modelVersion>
     <artifactId>event-processor-feature</artifactId>
-    <version>2.0.4-SNAPSHOT</version>
     <packaging>pom</packaging>
     <name>WSO2 Carbon - Event Processor Aggregate Feature</name>
     <url>http://maven.apache.org</url>

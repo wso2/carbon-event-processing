@@ -38,6 +38,7 @@
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
+            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.wso2.siddhi</groupId>
@@ -91,7 +92,6 @@
 
     <build>
         <plugins>
-
             <plugin>
                 <groupId>org.apache.felix</groupId>
                 <artifactId>maven-scr-plugin</artifactId>
@@ -111,16 +111,17 @@
             <plugin>
                 <groupId>org.apache.felix</groupId>
                 <artifactId>maven-bundle-plugin</artifactId>
-
                 <extensions>true</extensions>
                 <configuration>
                     <instructions>
                         <Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
                         <Bundle-Name>${project.artifactId}</Bundle-Name>
                         <Private-Package>
+                            org.wso2.carbon.event.processor.core.internal,
                             org.wso2.carbon.event.processor.core.internal.*
                         </Private-Package>
                         <Export-Package>
+                            !org.wso2.carbon.event.processor.core.internal,
                             !org.wso2.carbon.event.processor.core.internal.*,
                             org.wso2.carbon.event.processor.core.*
                         </Export-Package>
