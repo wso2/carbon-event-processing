@@ -71,6 +71,14 @@
             <artifactId>siddhi-query-api</artifactId>
             <version>3.0.0-SNAPSHOT</version>
         </dependency>
+        <dependency>
+            <groupId>org.wso2.carbon.analytics-common</groupId>
+            <artifactId>org.wso2.carbon.event.processor.manager.commons</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.wso2.carbon.analytics-common</groupId>
+            <artifactId>org.wso2.carbon.event.processor.manager.core</artifactId>
+        </dependency>
     </dependencies>
 
     <build>
