@@ -319,9 +319,8 @@ public class CarbonEventProcessorService implements EventProcessorService {
             }
         }
 
-        for (StreamConfiguration configuration : executionPlanConfiguration.getImportedStreams()) {
-            inputHandlerMap.put(configuration.getStreamId(), executionPlanRuntime.getInputHandler
-                    (configuration.getSiddhiStreamName()));
+        for (Map.Entry<String, String> entry : importsMap.entrySet()) {
+            inputHandlerMap.put(entry.getValue(), executionPlanRuntime.getInputHandler(entry.getKey()));
         }
 
         PersistenceManager persistenceManager = null;
