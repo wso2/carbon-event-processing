@@ -17,8 +17,6 @@
 */
 package org.wso2.carbon.event.processor.core;
 
-import org.apache.axis2.engine.AxisConfiguration;
-
 public class ExecutionPlanConfigurationFile {
     private String fileName;
 
@@ -41,9 +39,6 @@ public class ExecutionPlanConfigurationFile {
     private String dependency;
 
     private String deploymentStatusMessage="";
-
-    private AxisConfiguration axisConfiguration;
-
 
     public ExecutionPlanConfigurationFile() {
     }
@@ -88,11 +83,4 @@ public class ExecutionPlanConfigurationFile {
         this.deploymentStatusMessage = deploymentStatusMessage;
     }
 
-    public AxisConfiguration getAxisConfiguration() {
-        return axisConfiguration;
-    }
-
-    public void setAxisConfiguration(AxisConfiguration axisConfiguration) {
-        this.axisConfiguration = axisConfiguration;
-    }
 }

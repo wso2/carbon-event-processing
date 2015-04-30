@@ -123,7 +123,6 @@ public class EventProcessorDeployer extends AbstractDeployer implements EventPro
                 carbonEventProcessorService.addExecutionPlan(executionPlan, isEditable);
                 executionPlanConfigurationFile.setStatus(ExecutionPlanConfigurationFile.Status.DEPLOYED);
                 executionPlanConfigurationFile.setExecutionPlanName(executionPlanName);
-                executionPlanConfigurationFile.setAxisConfiguration(configurationContext.getAxisConfiguration());
                 executionPlanConfigurationFile.setFileName(deploymentFileData.getName());
                 executionPlanConfigurationFile.setFilePath(deploymentFileData.getAbsolutePath());
                 carbonEventProcessorService.addExecutionPlanConfigurationFile(executionPlanConfigurationFile);
@@ -135,7 +134,6 @@ public class EventProcessorDeployer extends AbstractDeployer implements EventPro
                 executionPlanConfigurationFile.setDeploymentStatusMessage(ex.getMessage());
                 executionPlanConfigurationFile.setStatus(ExecutionPlanConfigurationFile.Status.WAITING_FOR_OSGI_SERVICE);
                 executionPlanConfigurationFile.setExecutionPlanName(executionPlanName);
-                executionPlanConfigurationFile.setAxisConfiguration(configurationContext.getAxisConfiguration());
                 executionPlanConfigurationFile.setFileName(deploymentFileData.getName());
                 executionPlanConfigurationFile.setFilePath(deploymentFileData.getAbsolutePath());
                 carbonEventProcessorService.addExecutionPlanConfigurationFile(executionPlanConfigurationFile);
@@ -147,7 +145,6 @@ public class EventProcessorDeployer extends AbstractDeployer implements EventPro
                 executionPlanConfigurationFile.setDeploymentStatusMessage(ex.getMessage());
                 executionPlanConfigurationFile.setStatus(ExecutionPlanConfigurationFile.Status.WAITING_FOR_DEPENDENCY);
                 executionPlanConfigurationFile.setExecutionPlanName(executionPlanName);
-                executionPlanConfigurationFile.setAxisConfiguration(configurationContext.getAxisConfiguration());
                 executionPlanConfigurationFile.setFileName(deploymentFileData.getName());
                 executionPlanConfigurationFile.setFilePath(deploymentFileData.getAbsolutePath());
                 carbonEventProcessorService.addExecutionPlanConfigurationFile(executionPlanConfigurationFile);
@@ -158,7 +155,6 @@ public class EventProcessorDeployer extends AbstractDeployer implements EventPro
                 executionPlanConfigurationFile.setDeploymentStatusMessage(ex.getMessage());
                 executionPlanConfigurationFile.setStatus(ExecutionPlanConfigurationFile.Status.ERROR);
                 executionPlanConfigurationFile.setExecutionPlanName(executionPlanName);
-                executionPlanConfigurationFile.setAxisConfiguration(configurationContext.getAxisConfiguration());
                 executionPlanConfigurationFile.setFileName(deploymentFileData.getName());
                 executionPlanConfigurationFile.setFilePath(deploymentFileData.getAbsolutePath());
                 carbonEventProcessorService.addExecutionPlanConfigurationFile(executionPlanConfigurationFile);
