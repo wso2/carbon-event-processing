@@ -246,7 +246,7 @@ public class CarbonEventProcessorService implements EventProcessorService {
                 String[] streamIdComponents = streamId.split(EventProcessorConstants.STREAM_SEPARATOR);
                 String streamName = streamIdComponents[0];
                 String streamVersion = streamIdComponents[1];
-                executionPlanConfiguration.addImportedStream(new StreamConfiguration(streamName, streamVersion));
+                executionPlanConfiguration.addImportedStream(new StreamConfiguration(streamName, streamVersion,siddhiStreamName));
             }
             if (exportElement != null) {
                 String streamId = exportElement.getValue();
@@ -254,7 +254,7 @@ public class CarbonEventProcessorService implements EventProcessorService {
                 String[] streamIdComponents = streamId.split(EventProcessorConstants.STREAM_SEPARATOR);
                 String streamName = streamIdComponents[0];
                 String streamVersion = streamIdComponents[1];
-                executionPlanConfiguration.addExportedStream(new StreamConfiguration(streamName, streamVersion));
+                executionPlanConfiguration.addExportedStream(new StreamConfiguration(streamName, streamVersion,siddhiStreamName));
             }
         }
 
@@ -319,9 +319,8 @@ public class CarbonEventProcessorService implements EventProcessorService {
             }
         }
 
-        for (StreamConfiguration configuration : executionPlanConfiguration.getImportedStreams()) {
-            inputHandlerMap.put(configuration.getStreamId(), executionPlanRuntime.getInputHandler
-                    (configuration.getSiddhiStreamName()));
+        for (Map.Entry<String, String> entry : importsMap.entrySet()) {
+            inputHandlerMap.put(entry.getValue(), executionPlanRuntime.getInputHandler(entry.getKey()));
         }
 
         PersistenceManager persistenceManager = null;
