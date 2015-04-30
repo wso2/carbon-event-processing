@@ -26,7 +26,7 @@ import java.util.Map;
 public interface EventProcessorConstants {
 
     public static final Map<AttributeType,String> STRING_ATTRIBUTE_TYPE_MAP = Collections.unmodifiableMap(new HashMap<AttributeType,String>() {{
-        put(AttributeType.BOOL,"boolean");
+        put(AttributeType.BOOL,"bool");
         put(AttributeType.STRING,"string");
         put(AttributeType.DOUBLE,"double");
         put(AttributeType.FLOAT,"float");
