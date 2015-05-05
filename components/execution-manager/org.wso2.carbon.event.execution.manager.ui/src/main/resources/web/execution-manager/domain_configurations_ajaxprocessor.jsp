@@ -145,7 +145,7 @@
                                 <i class="glyphicon glyphicon-remove"></i>
                                 <fmt:message key='common.button.delete'/></a></td>
                         <td class="tcenter">
-                            <a href="template_configurations_ajaxprocessor.jsp?configurationName=<%=templateConfigurationDTO.getName()%>&domainName=<%=templateConfigurationDTO.getFrom()%>">
+                            <a href="template_configurations_ajaxprocessor.jsp?configurationName=<%=templateConfigurationDTO.getName()%>&domainName=<%=templateConfigurationDTO.getFrom()%>&templateType=<%=templateConfigurationDTO.getType()%>">
                                 <i class="glyphicon glyphicon-cog"></i>
                                 <fmt:message key='common.button.edit'/></a></td>
                     </tr>
