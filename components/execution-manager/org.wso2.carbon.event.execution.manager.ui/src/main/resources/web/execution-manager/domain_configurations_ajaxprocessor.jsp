@@ -20,68 +20,112 @@
 <%@ page import="org.apache.axis2.AxisFault" %>
 
 <fmt:bundle basename="org.wso2.carbon.event.execution.manager.ui.i18n.Resources">
-    <html>
-    <head>
-        <meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
-        <script type="text/javascript" src="../admin/js/jquery-1.6.3.min.js"></script>
-        <script src="../dialog/js/jqueryui/jquery-ui.min.js" type="text/javascript"></script>
-        <link href="../admin/css/global.css" rel="stylesheet" type="text/css" media="all"/>
-        <link href="css/execution_manager.css" rel="stylesheet" type="text/css" media="all"/>
-        <script type="text/javascript" src="js/domain_config_update.js"></script>
-        <script type="text/javascript" src="../dialog/js/dialog.js"></script>
-        <link media="all" type="text/css" rel="stylesheet" href="../dialog/css/dialog.css"/>
-        <link href="../dialog/css/jqueryui/jqueryui-themeroller.css" rel="stylesheet" type="text/css" media="all"/>
-        <meta charset="UTF-8">
-    </head>
-    <body>
-    <div id="container">
-        <div id="headerArea">
-            <fmt:message key='application.name'/>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CEP - Execution Manager</title>
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+    <link href="css/common.css" rel="stylesheet">
+    <link href="css/custom.css" rel="stylesheet">
+    <script src="js/jquery.min.js"></script>
+    <script src="js/domain_config_update.js"></script>
+
+    <!--[if lt IE 9]>
+    <script src="js/html5shiv.min.js"></script>
+    <script src="js/respond.min.js"></script>
+    <![endif]-->
+</head>
+<body>
+
+<div class="container col-lg-12 col-md-12 col-sm-12">
+
+    <!-- header -->
+    <header>
+        <div class="row wr-global-header">
+            <div class="col-sm-8 app-logo"><img src="images/logo.png"/>
+
+                <h2 class="app-title">
+                    <fmt:message key='application.name'/></h2>
+            </div>
+            <div class="col-sm-4 wr-auth-container">
+                <div class="wr-auth pull-right">
+                    <a href="#" data-toggle="dropdown" class="" aria-expanded="false">
+                        <div class="auth-img">
+                            <span>username@user.com</span>&nbsp;&nbsp;<i class="glyphicon glyphicon-user"></i>
+                        </div>
+                    </a>
+
+                    <div class="dropdown-menu">
+                        <div class="cu-arrow"></div>
+                        <div class="dropdown-menu-content">
+                            <a class="filter-item" href="#">View profile</a>
+                            <a class="filter-item" href="#">Sign out</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
+    </header>
+    <!-- /header -->
 
 
-        <div id="middle">
-            <div id="dcontainer"></div>
-            <div id="workArea">
-                <h2><fmt:message key='domain.header.text'/></h2>
+    <!-- content/body -->
+    <div class="container c-both">
 
+        <div class="row">
+            <div class="container col-md-12">
 
                 <%
                     if (request.getParameter("domainName") != null) {
 
-                %>
-                <a href="domains_ajaxprocessor.jsp"><fmt:message key='application.name'/></a>
-                <fmt:message key='common.navigation.seperator'/> <%=(request.getParameter("domainName"))%> <br/><br/>
-                <%
+                        ExecutionManagerAdminServiceStub proxy = ExecutionManagerUIUtils
+                                .getExecutionManagerAdminService(config, session, request);
 
-                    ExecutionManagerAdminServiceStub proxy = ExecutionManagerUIUtils
-                            .getExecutionManagerAdminService(config, session, request);
+                        try {
 
-                    try {
-
-                        TemplateConfigurationInfoDTO[] configurations = proxy
-                                .getConfigurationsInfo(request.getParameter("domainName"));
+                            TemplateConfigurationInfoDTO[] configurations = proxy
+                                    .getConfigurationsInfo(request.getParameter("domainName"));
 
 
                 %>
 
-                <a href="template_configurations_ajaxprocessor.jsp?ordinal=1&domainName=<%=request.getParameter("domainName")%>"
-                   style="background-image:url(images/add.gif);" class="icon-link">
-                    Add Configuration
-                </a>
+
+                <div class="wr-head"><h2><fmt:message key='domain.header.text'/></h2></div>
+            </div>
+            <div class="container col-md-12">
+                <ol class="breadcrumb">
+                    <li><a href="domains_ajaxprocessor.jsp"> <fmt:message key='application.name'/></a></li>
+                    <li class="active"><%=(request.getParameter("domainName"))%>
+                    </li>
+                </ol>
+            </div>
+        </div>
+        <div class="row">
+            <div class="container col-md-12 marg-top-20">
+                <div class="action-container">
+                    <button id="" type="button"
+                            onclick="location.href = 'template_configurations_ajaxprocessor.jsp?ordinal=1&domainName=<%=request.getParameter("domainName")%>';"
+                            class="btn btn-default btn-add col-md-2 col-xs-12 pull-left">Add Configuration
+                    </button>
+                </div>
+                <br class="c-both"/>
+                <br class="c-both"/>
+
 
                 <%
                     if (configurations != null && configurations.length > 0) {
                 %>
 
-                <table class="styledLeft" id="tblConfigs">
+                <table class="table table-bordered" id="tblConfigs">
 
                     <thead>
                     <tr>
                         <th><fmt:message key='domain.table.column.name'/></th>
                         <th><fmt:message key='domain.table.column.description'/></th>
                         <th><fmt:message key='domain.table.column.type'/></th>
-                        <th width="420px"><fmt:message key='common.table.column.action'/></th>
+                        <th colspan="2" class="tcenter"><fmt:message key='common.table.column.action'/></th>
+
                     </tr>
                     </thead>
                     <tbody>
@@ -96,17 +140,14 @@
                         <td><%=templateConfigurationDTO.getDescription()%>
                         </td>
                         <td><%=templateConfigurationDTO.getType()%>
-                        </td>
-                        <td>
-
-                            <a onclick="deleteConfiguration('<%=templateConfigurationDTO.getFrom()%>','<%=templateConfigurationDTO.getName()%>',this, 'tblConfigs')"
-                               style="background-image: url(images/delete.gif);" class="icon-link">
-                                <font color="#4682b4"><fmt:message key='common.button.delete'/></font></a>
-
-                            <a style="background-image: url(images/edit.gif);" class="icon-link"
-                               href="template_configurations_ajaxprocessor.jsp?configurationName=<%=templateConfigurationDTO.getName()%>&domainName=<%=templateConfigurationDTO.getFrom()%>">
-                                <font color="#4682b4"><fmt:message key='common.button.edit'/></font></a>
-                        </td>
+                        <td class="tcenter">
+                            <a onclick="deleteConfiguration('<%=templateConfigurationDTO.getFrom()%>','<%=templateConfigurationDTO.getName()%>',this, 'tblConfigs')">
+                                <i class="glyphicon glyphicon-remove"></i>
+                                <fmt:message key='common.button.delete'/></a></td>
+                        <td class="tcenter">
+                            <a href="template_configurations_ajaxprocessor.jsp?configurationName=<%=templateConfigurationDTO.getName()%>&domainName=<%=templateConfigurationDTO.getFrom()%>">
+                                <i class="glyphicon glyphicon-cog"></i>
+                                <fmt:message key='common.button.edit'/></a></td>
                     </tr>
                     <%
                         }
@@ -143,16 +184,64 @@
                     %>
                     </tbody>
                 </table>
+
             </div>
         </div>
-
-
-        <div id="footerArea">
-            <div class="copyright">© 2015 WSO2 Inc. All Rights Reserved.</div>
+        <div class="row pad-bot-50">
+            <div class="container col-md-8">
+                &nbsp;
+            </div>
+            <div class="container col-md-4">
+                &nbsp;
+            </div>
+            <br class="c-both "/>
         </div>
+
     </div>
+    <!-- /content/body -->
+
+</div>
+
+<div id="dialogBox"></div>
+
+<footer class="footer">
+    <p>&copy; 2015 WSO2 Inc. All Rights Reserved</p>
+</footer>
 
 
-    </body>
-    </html>
+<script src="js/bootstrap.min.js"></script>
+
+
+<script type="text/javascript">
+
+    $(document).ready(function () {
+
+        $('[data-toggle="tooltip"]').tooltip();
+
+        $("[data-toggle=popover]").popover();
+
+        $(".ctrl-asset-type-switcher").popover({
+            html: true,
+            content: function () {
+                return $('#content-asset-types').html();
+            }
+        });
+
+        $(".ctrl-filter-type-switcher").popover({
+            html: true,
+            content: function () {
+                return $('#content-filter-types').html();
+            }
+        });
+
+        $('#nav').affix({
+            offset: {
+                top: $('header').height()
+            }
+        });
+    });
+
+</script>
+</body>
+</html>
 </fmt:bundle>

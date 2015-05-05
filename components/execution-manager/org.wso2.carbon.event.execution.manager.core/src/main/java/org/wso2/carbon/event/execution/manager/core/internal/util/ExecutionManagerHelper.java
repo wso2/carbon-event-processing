@@ -37,6 +37,7 @@ import org.wso2.carbon.registry.core.Registry;
 import org.wso2.carbon.registry.core.Resource;
 import org.wso2.siddhi.query.api.util.AnnotationHelper;
 import org.wso2.siddhi.query.compiler.SiddhiCompiler;
+import org.wso2.siddhi.query.compiler.exception.SiddhiParserException;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
@@ -169,6 +170,10 @@ public class ExecutionManagerHelper {
                     } catch (ExecutionPlanDependencyValidationException e) {
                         throw new ExecutionManagerException(
                                 "Validation exception occurred when adding Execution Plan of Template "
+                                        + configuration.getName() + " of Domain " + configuration.getFrom(), e);
+                    } catch (SiddhiParserException e) {
+                        throw new ExecutionManagerException(
+                                "Validation exception occurred when parsing Execution Plan of Template "
                                         + configuration.getName() + " of Domain " + configuration.getFrom(), e);
                     }
                 }
