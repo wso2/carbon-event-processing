@@ -1,3 +1,8 @@
+/*!
+ * Bootstrap v3.3.1 (http://getbootstrap.com)
+ * Copyright 2011-2014 Twitter, Inc.
+ * Licensed under MIT (https://github.com/twbs/bootstrap/blob/master/LICENSE)
+ */
 !function($){var methods={_init:function(options,popover){if(typeof(options.backgroundColor)!=='undefined'){Popover.setBackgroundColor(options.backgroundColor);}
 if(typeof(options.fontColor)!=='undefined'){Popover.setFontColor(options.fontColor);}
 if(typeof(options.borderColor)!=='undefined'){Popover.setBorderColor(options.borderColor);}
