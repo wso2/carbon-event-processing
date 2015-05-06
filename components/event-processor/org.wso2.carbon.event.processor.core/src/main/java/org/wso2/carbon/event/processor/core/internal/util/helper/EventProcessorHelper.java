@@ -102,7 +102,7 @@ public class EventProcessorHelper {
             if (importElement != null) {  //Treating import & export cases separately to give more specific error messages.
                 String atImportLiteral = EventProcessorConstants.ANNOTATION_TOKEN_AT + EventProcessorConstants.ANNOTATION_IMPORT;
                 String importElementValue = importElement.getValue();
-                if (importElementValue == "") {
+                if (importElementValue == null || importElementValue.trim().isEmpty()) {
                     throw new ExecutionPlanConfigurationException("Imported stream cannot be empty as in '"+
                             atImportLiteral +
                             EventProcessorConstants.ANNOTATION_TOKEN_OPENING_BRACKET +
@@ -141,7 +141,7 @@ public class EventProcessorHelper {
             if (exportElement != null) {
                 String atExportLiteral = EventProcessorConstants.ANNOTATION_TOKEN_AT + EventProcessorConstants.ANNOTATION_EXPORT;
                 String exportElementValue = exportElement.getValue();
-                if (exportElementValue == "") {
+                if (exportElementValue == null || exportElementValue.trim().isEmpty()) {
                     throw new ExecutionPlanConfigurationException("Exported stream cannot be empty as in '"+
                             atExportLiteral +
                             EventProcessorConstants.ANNOTATION_TOKEN_OPENING_BRACKET +

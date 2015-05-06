@@ -45,6 +45,9 @@ import org.wso2.carbon.event.processor.manager.core.config.Mode;
 import org.wso2.carbon.event.stream.core.EventProducer;
 import org.wso2.carbon.event.stream.core.SiddhiEventConsumer;
 import org.wso2.carbon.event.stream.core.exception.EventStreamConfigurationException;
+import org.wso2.carbon.ndatasource.common.DataSourceException;
+import org.wso2.carbon.ndatasource.core.CarbonDataSource;
+import org.wso2.carbon.ndatasource.core.DataSourceManager;
 import org.wso2.siddhi.core.ExecutionPlanRuntime;
 import org.wso2.siddhi.core.SiddhiManager;
 import org.wso2.siddhi.core.stream.input.InputHandler;
@@ -54,6 +57,7 @@ import org.wso2.siddhi.query.api.util.AnnotationHelper;
 import org.wso2.siddhi.query.compiler.SiddhiCompiler;
 import org.wso2.siddhi.query.compiler.exception.SiddhiParserException;
 
+import javax.sql.DataSource;
 import java.io.File;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
@@ -173,6 +177,29 @@ public class CarbonEventProcessorService implements EventProcessorService {
         EventProcessorConfigurationFilesystemInvoker.save(executionPlan, newExecutionPlanName, filename);
     }
 
+
+    private void loadDataSourceConfiguration(SiddhiManager siddhiManager){
+        try {
+            int tenantId = PrivilegedCarbonContext.getThreadLocalCarbonContext().getTenantId();
+            if (tenantId > -1) {
+                DataSourceManager.getInstance().initTenant(tenantId);
+            }
+            List<CarbonDataSource> dataSources = EventProcessorValueHolder.getDataSourceService().getAllDataSources();
+            for (CarbonDataSource cds : dataSources) {
+                try {
+                    if (cds.getDSObject() instanceof DataSource) {
+                        siddhiManager.getSiddhiContext().addSiddhiDataSource(cds.getDSMInfo().getName(), (DataSource) cds.getDSObject());
+                    }
+                } catch (Exception e) {
+                    log.error("Unable to add the datasource" + cds.getDSMInfo().getName(), e);
+                }
+            }
+        } catch (DataSourceException e) {
+            log.error("Unable to populate the data sources in Siddhi engine.", e);
+        }
+    }
+
+
     /**
      * Starts an execution plan runtime for the given (valid) execution plan.
      *
@@ -188,6 +215,7 @@ public class CarbonEventProcessorService implements EventProcessorService {
         int tenantId = PrivilegedCarbonContext.getThreadLocalCarbonContext().getTenantId();
 
         SiddhiManager siddhiManager = EventProcessorValueHolder.getSiddhiManager();
+        loadDataSourceConfiguration(siddhiManager);
         ExecutionPlanRuntime executionPlanRuntime = null;
         org.wso2.siddhi.query.api.ExecutionPlan parsedExecutionPlan = SiddhiCompiler.parse(executionPlan);
 
