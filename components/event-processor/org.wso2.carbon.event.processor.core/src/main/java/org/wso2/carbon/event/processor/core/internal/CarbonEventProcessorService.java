@@ -392,7 +392,7 @@ public class CarbonEventProcessorService implements EventProcessorService {
                     // Ignore as this would never happen
                 }
                 eventDispatcher = new SiddhiStormInputEventDispatcher(streamDefinition,
-                        entry.getValue(), executionPlanConfiguration, tenantId,
+                        entry.getKey(), executionPlanConfiguration, tenantId,
                         stormDeploymentConfig);
             } else {
                 eventDispatcher = new SiddhiInputEventDispatcher(entry.getValue(),

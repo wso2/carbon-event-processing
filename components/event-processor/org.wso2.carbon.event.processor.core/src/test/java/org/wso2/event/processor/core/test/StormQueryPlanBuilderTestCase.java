@@ -44,17 +44,18 @@ public class StormQueryPlanBuilderTestCase {
 
         List<String> importedDefinition = new ArrayList<String>(1);
         List<String> exportedDefinition = new ArrayList<String>(1);
-        ExecutionPlanConfiguration configuration = new ExecutionPlanConfiguration();
-        configuration.addImportedStream(new StreamConfiguration("test1", "1.0.0", "analyticsStats"));
-        configuration.addExportedStream(new StreamConfiguration("test2", "1.0.0", "filteredStatStream"));
-        configuration.setExecutionPlan("@name('query1') @dist(parallel='1') from analyticsStats[meta_ipAdd != '192" +
-                ".168.1.1']#window.time(5 min) " +
-                "select meta_ipAdd, meta_index, meta_timestamp, meta_nanoTime, userID " +
-                "insert into filteredStatStream;");
         String analyticStats = "define stream analyticsStats ( meta_ipAdd string, meta_index long, " +
                 "meta_timestamp long, meta_nanoTime long, userID string, searchTerms string );";
         String filteredAnalyticStats = "define stream filteredStatStream ( meta_ipAdd string, meta_index long, " +
                 "meta_timestamp long, meta_nanoTime long, userID string );";
+        ExecutionPlanConfiguration configuration = new ExecutionPlanConfiguration();
+        configuration.addImportedStream(new StreamConfiguration("test1", "1.0.0", "analyticsStats"));
+        configuration.addExportedStream(new StreamConfiguration("test2", "1.0.0", "filteredStatStream"));
+        configuration.setExecutionPlan("@Plan:name('ExecutionPlan')  " + analyticStats + filteredAnalyticStats +
+                "@name('query1') @dist(parallel='1') from analyticsStats[meta_ipAdd != '192" +
+                ".168.1.1']#window.time(5 min) " +
+                "select meta_ipAdd, meta_index, meta_timestamp, meta_nanoTime, userID " +
+                "insert into filteredStatStream;");
         importedDefinition.add(analyticStats);
         exportedDefinition.add(filteredAnalyticStats);
         Document document = StormQueryPlanBuilder.constructStormQueryPlanXML(configuration, importedDefinition,
@@ -103,6 +104,12 @@ public class StormQueryPlanBuilderTestCase {
     public void testMultipleQueryWithAnnotations() throws Exception {
         List<String> importedDefinition = new ArrayList<String>(2);
         List<String> exportedDefinition = new ArrayList<String>(1);
+
+        String analyticStats = "define stream analyticsStats ( meta_ipAdd string, meta_index long, " +
+                "meta_timestamp long, meta_nanoTime long, userID string, searchTerms string );";
+        String stockQuotes = "define stream stockQuote ( price int, symbol string );";
+        String filteredAnalyticStats = "define stream fortuneCompanyStream ( price int, symbol string, count long );";
+
         ExecutionPlanConfiguration configuration = new ExecutionPlanConfiguration();
         configuration.addImportedStream(new StreamConfiguration("test1", "1.0.0", "analyticsStats"));
         configuration.addImportedStream(new StreamConfiguration("test2", "1.0.0", "stockQuote"));
@@ -130,12 +137,8 @@ public class StormQueryPlanBuilderTestCase {
                 "@name('query5') @dist(parallel='5') from countedStream[count>10]   \n" +
                 "select price, symbol, count\n" +
                 "insert into fortuneCompanyStream;\n";
-        configuration.setExecutionPlan(queryExpression);
+        configuration.setExecutionPlan(analyticStats + stockQuotes + filteredAnalyticStats + queryExpression);
 
-        String analyticStats = "define stream analyticsStats ( meta_ipAdd string, meta_index long, " +
-                "meta_timestamp long, meta_nanoTime long, userID string, searchTerms string );";
-        String stockQuotes = "define stream stockQuote ( price int, symbol string );";
-        String filteredAnalyticStats = "define stream fortuneCompanyStream ( price int, symbol string, count long );";
         importedDefinition.add(analyticStats);
         importedDefinition.add(stockQuotes);
         exportedDefinition.add(filteredAnalyticStats);
@@ -184,6 +187,12 @@ public class StormQueryPlanBuilderTestCase {
     public void testQueryGrouping() throws Exception {
         List<String> importedDefinition = new ArrayList<String>(2);
         List<String> exportedDefinition = new ArrayList<String>(1);
+
+        String analyticStats = "define stream analyticsStats ( meta_ipAdd string, meta_index long, " +
+                "meta_timestamp long, meta_nanoTime long, userID string, searchTerms string );";
+        String stockQuotes = "define stream stockQuote ( price int, symbol string );";
+        String filteredAnalyticStats = "define stream fortuneCompanyStream ( price int, symbol string, count long );";
+
         ExecutionPlanConfiguration configuration = new ExecutionPlanConfiguration();
         configuration.addImportedStream(new StreamConfiguration("test1", "1.0.0", "analyticsStats"));
         configuration.addImportedStream(new StreamConfiguration("test2", "1.0.0", "stockQuote"));
@@ -211,12 +220,8 @@ public class StormQueryPlanBuilderTestCase {
                 "@name('query5') @dist(parallel='5') from countedStream[count>10]   \n" +
                 "select price, symbol, count\n" +
                 "insert into fortuneCompanyStream;\n";
-        configuration.setExecutionPlan(queryExpression);
+        configuration.setExecutionPlan(analyticStats + stockQuotes + filteredAnalyticStats + queryExpression);
 
-        String analyticStats = "define stream analyticsStats ( meta_ipAdd string, meta_index long, " +
-                "meta_timestamp long, meta_nanoTime long, userID string, searchTerms string );";
-        String stockQuotes = "define stream stockQuote ( price int, symbol string );";
-        String filteredAnalyticStats = "define stream fortuneCompanyStream ( price int, symbol string, count long );";
         importedDefinition.add(analyticStats);
         importedDefinition.add(stockQuotes);
         exportedDefinition.add(filteredAnalyticStats);
@@ -254,7 +259,7 @@ public class StormQueryPlanBuilderTestCase {
         while (iterator.hasNext()) {
             OMElement eventProcessorElement = iterator.next();
             String name = eventProcessorElement.getAttributeValue(new QName(EventProcessorConstants.NAME));
-            if(name.equals("1")){
+            if (name.equals("1")) {
                 String isEnforced = eventProcessorElement.getAttributeValue(new QName(EventProcessorConstants
                         .ENFORCE_PARALLELISM));
                 Assert.assertEquals("true", isEnforced);
@@ -269,6 +274,12 @@ public class StormQueryPlanBuilderTestCase {
     public void testMultipleParallelismInSingleGroup() throws Exception {
         List<String> importedDefinition = new ArrayList<String>(2);
         List<String> exportedDefinition = new ArrayList<String>(1);
+
+        String analyticStats = "define stream analyticsStats ( meta_ipAdd string, meta_index long, " +
+                "meta_timestamp long, meta_nanoTime long, userID string, searchTerms string );";
+        String stockQuotes = "define stream stockQuote ( price int, symbol string );";
+        String filteredAnalyticStats = "define stream fortuneCompanyStream ( price int, symbol string, count long );";
+
         ExecutionPlanConfiguration configuration = new ExecutionPlanConfiguration();
         configuration.addImportedStream(new StreamConfiguration("test1", "1.0.0", "analyticsStats"));
         configuration.addImportedStream(new StreamConfiguration("test2", "1.0.0", "stockQuote"));
@@ -296,12 +307,8 @@ public class StormQueryPlanBuilderTestCase {
                 "@name('query5') @dist(parallel='5') from countedStream[count>10]   \n" +
                 "select price, symbol, count\n" +
                 "insert into fortuneCompanyStream;\n";
-        configuration.setExecutionPlan(queryExpression);
+        configuration.setExecutionPlan(analyticStats + stockQuotes + filteredAnalyticStats + queryExpression);
 
-        String analyticStats = "define stream analyticsStats ( meta_ipAdd string, meta_index long, " +
-                "meta_timestamp long, meta_nanoTime long, userID string, searchTerms string );";
-        String stockQuotes = "define stream stockQuote ( price int, symbol string );";
-        String filteredAnalyticStats = "define stream fortuneCompanyStream ( price int, symbol string, count long );";
         importedDefinition.add(analyticStats);
         importedDefinition.add(stockQuotes);
         exportedDefinition.add(filteredAnalyticStats);
@@ -312,6 +319,12 @@ public class StormQueryPlanBuilderTestCase {
     public void testMultipleParallelismInStateQueries() throws Exception {
         List<String> importedDefinition = new ArrayList<String>(2);
         List<String> exportedDefinition = new ArrayList<String>(1);
+
+        String analyticStats = "define stream analyticsStats ( meta_ipAdd string, meta_index long, " +
+                "meta_timestamp long, meta_nanoTime long, userID string, searchTerms string );";
+        String stockQuotes = "define stream stockQuote ( price int, symbol string );";
+        String filteredAnalyticStats = "define stream fortuneCompanyStream ( price int, symbol string, count long );";
+
         ExecutionPlanConfiguration configuration = new ExecutionPlanConfiguration();
         configuration.addImportedStream(new StreamConfiguration("test1", "1.0.0", "analyticsStats"));
         configuration.addImportedStream(new StreamConfiguration("test2", "1.0.0", "stockQuote"));
@@ -339,12 +352,8 @@ public class StormQueryPlanBuilderTestCase {
                 "@name('query5') @dist(parallel='5') from countedStream[count>10]   \n" +
                 "select price, symbol, count\n" +
                 "insert into fortuneCompanyStream;\n";
-        configuration.setExecutionPlan(queryExpression);
+        configuration.setExecutionPlan(analyticStats + stockQuotes + filteredAnalyticStats + queryExpression);
 
-        String analyticStats = "define stream analyticsStats ( meta_ipAdd string, meta_index long, " +
-                "meta_timestamp long, meta_nanoTime long, userID string, searchTerms string );";
-        String stockQuotes = "define stream stockQuote ( price int, symbol string );";
-        String filteredAnalyticStats = "define stream fortuneCompanyStream ( price int, symbol string, count long );";
         importedDefinition.add(analyticStats);
         importedDefinition.add(stockQuotes);
         exportedDefinition.add(filteredAnalyticStats);
@@ -355,6 +364,12 @@ public class StormQueryPlanBuilderTestCase {
     public void testPartitioningQuery() throws Exception {
         List<String> importedDefinition = new ArrayList<String>(2);
         List<String> exportedDefinition = new ArrayList<String>(1);
+
+        String analyticStats = "define stream analyticsStats ( meta_ipAdd string, meta_index long, " +
+                "meta_timestamp long, meta_nanoTime long, userID string, searchTerms string );";
+        String stockQuotes = "define stream stockQuote ( price int, symbol string );";
+        String filteredAnalyticStats = "define stream fortuneCompanyStream ( price int, symbol string, count long );";
+
         ExecutionPlanConfiguration configuration = new ExecutionPlanConfiguration();
         configuration.addImportedStream(new StreamConfiguration("test1", "1.0.0", "analyticsStats"));
         configuration.addImportedStream(new StreamConfiguration("test2", "1.0.0", "stockQuote"));
@@ -375,21 +390,17 @@ public class StormQueryPlanBuilderTestCase {
                 "select h.price as price, h.symbol as symbol, f.userID as userid\n" +
                 "insert into joinStream;\n" +
                 "\n" +
-                "partition with (symbol of joinStream) begin "+
+                "partition with (symbol of joinStream) begin " +
                 "@name('query4') from joinStream#window.time(5 min)\n" +
                 "select price, symbol, count(userid) as count\n" +
                 "insert into countedStream;\n" +
                 "\n" +
                 "@name('query5') from countedStream[count>10]   \n" +
                 "select price, symbol, count\n" +
-                "insert into fortuneCompanyStream;\n"+
+                "insert into fortuneCompanyStream;\n" +
                 "end;";
-        configuration.setExecutionPlan(queryExpression);
+        configuration.setExecutionPlan(analyticStats + stockQuotes + filteredAnalyticStats + queryExpression);
 
-        String analyticStats = "define stream analyticsStats ( meta_ipAdd string, meta_index long, " +
-                "meta_timestamp long, meta_nanoTime long, userID string, searchTerms string );";
-        String stockQuotes = "define stream stockQuote ( price int, symbol string );";
-        String filteredAnalyticStats = "define stream fortuneCompanyStream ( price int, symbol string, count long );";
         importedDefinition.add(analyticStats);
         importedDefinition.add(stockQuotes);
         exportedDefinition.add(filteredAnalyticStats);
@@ -404,10 +415,10 @@ public class StormQueryPlanBuilderTestCase {
             count++;
             OMElement eventProcessorElement = iterator.next();
             OMElement inputStreams = eventProcessorElement.getFirstChildWithName(new QName(EventProcessorConstants.INPUT_STREAMS));
-            Iterator<OMElement> iterator2 = inputStreams.getChildrenWithName(new QName (EventProcessorConstants.STREAM));
-            while(iterator2.hasNext()){
+            Iterator<OMElement> iterator2 = inputStreams.getChildrenWithName(new QName(EventProcessorConstants.STREAM));
+            while (iterator2.hasNext()) {
                 OMElement streamElement = iterator2.next();
-                if (streamElement.getAttribute(new QName(EventProcessorConstants.PARTITION)) != null){
+                if (streamElement.getAttribute(new QName(EventProcessorConstants.PARTITION)) != null) {
                     partitionCount++;
                     partitionAttribute = streamElement.getAttribute(new QName(EventProcessorConstants.PARTITION))
                             .getAttributeValue();
@@ -424,6 +435,12 @@ public class StormQueryPlanBuilderTestCase {
     public void testPartitioningWithDistAnnotationsQuery() throws Exception {
         List<String> importedDefinition = new ArrayList<String>(2);
         List<String> exportedDefinition = new ArrayList<String>(1);
+
+        String analyticStats = "define stream analyticsStats ( meta_ipAdd string, meta_index long, " +
+                "meta_timestamp long, meta_nanoTime long, userID string, searchTerms string );";
+        String stockQuotes = "define stream stockQuote ( price int, symbol string );";
+        String filteredAnalyticStats = "define stream fortuneCompanyStream ( price int, symbol string, count long );";
+
         ExecutionPlanConfiguration configuration = new ExecutionPlanConfiguration();
         configuration.addImportedStream(new StreamConfiguration("test1", "1.0.0", "analyticsStats"));
         configuration.addImportedStream(new StreamConfiguration("test2", "1.0.0", "stockQuote"));
@@ -444,21 +461,17 @@ public class StormQueryPlanBuilderTestCase {
                 "select h.price as price, h.symbol as symbol, f.userID as userid\n" +
                 "insert into joinStream;\n" +
                 "\n" +
-                "partition with (symbol of joinStream) begin "+
+                "partition with (symbol of joinStream) begin " +
                 "@name('query4') @dist(parallel='2') from joinStream#window.time(5 min)\n" +
                 "select price, symbol, count(userid) as count\n" +
                 "insert into countedStream;\n" +
                 "\n" +
                 "@name('query5') @dist(parallel='5') from countedStream[count>10]   \n" +
                 "select price, symbol, count\n" +
-                "insert into fortuneCompanyStream;\n"+
+                "insert into fortuneCompanyStream;\n" +
                 "end;";
-        configuration.setExecutionPlan(queryExpression);
+        configuration.setExecutionPlan(analyticStats + stockQuotes + filteredAnalyticStats + queryExpression);
 
-        String analyticStats = "define stream analyticsStats ( meta_ipAdd string, meta_index long, " +
-                "meta_timestamp long, meta_nanoTime long, userID string, searchTerms string );";
-        String stockQuotes = "define stream stockQuote ( price int, symbol string );";
-        String filteredAnalyticStats = "define stream fortuneCompanyStream ( price int, symbol string, count long );";
         importedDefinition.add(analyticStats);
         importedDefinition.add(stockQuotes);
         exportedDefinition.add(filteredAnalyticStats);
@@ -470,6 +483,12 @@ public class StormQueryPlanBuilderTestCase {
     public void testPartitioningWithGroupingQuery() throws Exception {
         List<String> importedDefinition = new ArrayList<String>(2);
         List<String> exportedDefinition = new ArrayList<String>(1);
+
+        String analyticStats = "define stream analyticsStats ( meta_ipAdd string, meta_index long, " +
+                "meta_timestamp long, meta_nanoTime long, userID string, searchTerms string );";
+        String stockQuotes = "define stream stockQuote ( price int, symbol string );";
+        String filteredAnalyticStats = "define stream fortuneCompanyStream ( price int, symbol string, count long );";
+
         ExecutionPlanConfiguration configuration = new ExecutionPlanConfiguration();
         configuration.addImportedStream(new StreamConfiguration("test1", "1.0.0", "analyticsStats"));
         configuration.addImportedStream(new StreamConfiguration("test2", "1.0.0", "stockQuote"));
@@ -490,21 +509,17 @@ public class StormQueryPlanBuilderTestCase {
                 "select h.price as price, h.symbol as symbol, f.userID as userid\n" +
                 "insert into joinStream;\n" +
                 "\n" +
-                "@dist(execGroup='1') partition with (symbol of joinStream) begin "+
+                "@dist(execGroup='1') partition with (symbol of joinStream) begin " +
                 "@name('query4') from joinStream#window.time(5 min)\n" +
                 "select price, symbol, count(userid) as count\n" +
                 "insert into countedStream;\n" +
                 "\n" +
                 "@name('query5') from countedStream[count>10]   \n" +
                 "select price, symbol, count\n" +
-                "insert into fortuneCompanyStream;\n"+
+                "insert into fortuneCompanyStream;\n" +
                 "end;";
-        configuration.setExecutionPlan(queryExpression);
+        configuration.setExecutionPlan(analyticStats + stockQuotes + filteredAnalyticStats + queryExpression);
 
-        String analyticStats = "define stream analyticsStats ( meta_ipAdd string, meta_index long, " +
-                "meta_timestamp long, meta_nanoTime long, userID string, searchTerms string );";
-        String stockQuotes = "define stream stockQuote ( price int, symbol string );";
-        String filteredAnalyticStats = "define stream fortuneCompanyStream ( price int, symbol string, count long );";
         importedDefinition.add(analyticStats);
         importedDefinition.add(stockQuotes);
         exportedDefinition.add(filteredAnalyticStats);

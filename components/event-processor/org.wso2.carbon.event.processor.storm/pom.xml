@@ -49,6 +49,10 @@
             <artifactId>org.wso2.carbon.event.processor.manager.commons</artifactId>
         </dependency>
         <dependency>
+            <groupId>org.wso2.carbon.analytics-common</groupId>
+            <artifactId>org.wso2.carbon.event.processor.manager.core</artifactId>
+        </dependency>
+        <dependency>
             <groupId>org.wso2.carbon.event-processing</groupId>
             <artifactId>org.wso2.carbon.event.processor.common</artifactId>
         </dependency>
@@ -59,6 +63,14 @@
         <dependency>
             <groupId>com.lmax.wso2</groupId>
             <artifactId>disruptor</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.antlr</groupId>
+            <artifactId>antlr4-runtime</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
         </dependency>
     </dependencies>
 
@@ -77,7 +89,7 @@
                             * ; -split-package:=merge-first
                         </Export-Package>
                         <Embed-Dependency>
-                            siddhi-core|siddhi-query-api|siddhi-query-compiler|org.wso2.carbon.event.processor.manager.commons|org.wso2.carbon.event.processor.common|libthrift|disruptor;scope=compile|runtime;inline=true
+                            siddhi-core|siddhi-query-api|siddhi-query-compiler|antlr4-runtime|guava|org.wso2.carbon.event.processor.manager.commons|org.wso2.carbon.event.processor.manager.core|org.wso2.carbon.event.processor.common|libthrift|disruptor;scope=compile|runtime;inline=true
                         </Embed-Dependency>
                         <Embed-Transitive>true</Embed-Transitive>
                         <DynamicImport-Package>*</DynamicImport-Package>

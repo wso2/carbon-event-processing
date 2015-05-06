@@ -23,88 +23,169 @@
 
     <html>
     <head>
-        <meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
-        <link href="../admin/css/global.css" rel="stylesheet" type="text/css" media="all"/>
-        <link href="css/execution_manager.css" rel="stylesheet" type="text/css" media="all"/>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>CEP - Execution Manager</title>
+        <link href="css/bootstrap.min.css" rel="stylesheet">
+        <link href="css/common.css" rel="stylesheet">
+        <link href="css/custom.css" rel="stylesheet">
+        <script src="js/jquery.min.js"></script>
+        <!--[if lt IE 9]>
+        <script src="js/html5shiv.min.js"></script>
+        <script src="js/respond.min.js"></script>
+        <![endif]-->
     </head>
     <body>
-    <div id="container">
-        <div id="headerArea">
-            <fmt:message key='application.name'/>
-        </div>
 
-        <div id="middle">
-            <div id="workArea">
-                <h2><fmt:message key='main.header.text'/></h2>
-                <table class="styledLeft">
-                    <thead>
-                    <tr>
-                        <th><fmt:message key='main.table.column.domain'/></th>
-                        <th><fmt:message key='main.table.column.description'/></th>
-                        <th width="420px"><fmt:message key='common.table.column.action'/></th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    <%
-                        ExecutionManagerAdminServiceStub proxy = ExecutionManagerUIUtils.getExecutionManagerAdminService(config, session, request);
-                        try {
-                            TemplateDomainInfoDTO[] domainDTOs = proxy.getAllDomainsInfo();
+    <div class="container col-lg-12 col-md-12 col-sm-12">
 
-                            if (domainDTOs != null && domainDTOs.length > 0) {
+        <!-- header -->
+        <header>
+            <div class="row wr-global-header">
+                <div class="col-sm-8 app-logo"><img src="images/logo.png"/>
 
-                                for (TemplateDomainInfoDTO domainDTO : domainDTOs) {
-                    %>
-                    <tr>
-                        <td>
-                            <%=domainDTO.getName()%>
-                        </td>
-                        <td><%=domainDTO.getDescription()%>
-                        </td>
-                        <td>
-                            <a style="background-image: url(images/edit.gif);" class="icon-link"
-                               href="domain_configurations_ajaxprocessor.jsp?ordinal=1&domainName=<%=domainDTO.getName()%>">
-                                <font color="#4682b4"><fmt:message key='common.button.edit'/></font></a>
-                        </td>
-                    </tr>
-                    <%
-                        }
-                    } else {
-                    %>
-                    <table class="styledLeft">
-                        <tbody>
-                        <tr>
-                            <td class="formRaw">
-                                <table id="noEventReceiverInputTable" class="normal-nopadding" style="width:100%">
-                                    <tbody>
-                                    <tr>
-                                        <td class="leftCol-med" colspan="2"><fmt:message key='main.empty.text'/>
-                                        </td>
-                                    </tr>
-                                    </tbody>
-                                </table>
-                            </td>
-                        </tr>
-                        </tbody>
+                    <h2 class="app-title">
+                        <fmt:message key='application.name'/></h2>
+                </div>
+                <div class="col-sm-4 wr-auth-container">
+                    <div class="wr-auth pull-right">
+                        <a href="#" data-toggle="dropdown" class="" aria-expanded="false">
+                            <div class="auth-img">
+                                <span>username@user.com</span>&nbsp;&nbsp;<i class="glyphicon glyphicon-user"></i>
+                            </div>
+                        </a>
 
-
-                    </table>
-                    <%
-                            }
-                        } catch (AxisFault e) {
-                            response.sendRedirect("../admin/login.jsp");
-                        }
-                    %>
-                    </tbody>
-                </table>
+                        <div class="dropdown-menu">
+                            <div class="cu-arrow"></div>
+                            <div class="dropdown-menu-content">
+                                <a class="filter-item" href="#">View profile</a>
+                                <a class="filter-item" href="#">Sign out</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
-        </div>
+        </header>
+        <!-- /header -->
 
-        <div id="footerArea">
-            <div class="copyright">© 2015 WSO2 Inc. All Rights Reserved.</div>
+
+        <!-- content/body -->
+        <div class="container c-both">
+
+            <div class="row">
+                <div class="container col-md-12">
+                    <div class="wr-head"><h2>Domains</h2></div>
+                </div>
+            </div>
+
+
+            <%
+                ExecutionManagerAdminServiceStub proxy = ExecutionManagerUIUtils.getExecutionManagerAdminService(config, session, request);
+                try {
+                    TemplateDomainInfoDTO[] domainDTOs = proxy.getAllDomainsInfo();
+
+                    if (domainDTOs != null && domainDTOs.length > 0) {
+
+                        for (TemplateDomainInfoDTO domainDTO : domainDTOs) {
+            %>
+
+
+            <div class="row">
+                <div class="col-sm-6">
+                    <a href="domain_configurations_ajaxprocessor.jsp?ordinal=1&domainName=<%=domainDTO.getName()%>">
+                        <div class="tile green">
+                            <h3 class="title"><%=domainDTO.getName()%>
+                            </h3>
+
+                            <p><%=domainDTO.getDescription()%>
+                            </p>
+                            <!--   <div class="edit-domain tright"><i class="glyphicon glyphicon-cog"></i> Edit</div>-->
+                        </div>
+                    </a>
+                </div>
+                <%
+                    }
+                } else {
+                %>
+                <table class="styledLeft">
+                    <tbody>
+                    <tr>
+                        <td class="formRaw">
+                            <table id="noEventReceiverInputTable" class="normal-nopadding" style="width:100%">
+                                <tbody>
+                                <tr>
+                                    <td class="leftCol-med" colspan="2"><fmt:message key='main.empty.text'/>
+                                    </td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </td>
+                    </tr>
+                    </tbody>
+
+
+                </table>
+                <%
+                        }
+                    } catch (AxisFault e) {
+                        response.sendRedirect("../admin/login.jsp");
+                    }
+                %>
+
+
+            </div>
+            <div class="row pad-bot-50">
+                <div class="container col-md-8">
+                    &nbsp;
+                </div>
+                <div class="container col-md-4">
+                    &nbsp;
+                </div>
+                <br class="c-both "/>
+            </div>
+
         </div>
+        <!-- /content/body -->
+
     </div>
 
+    <footer class="footer">
+        <p>&copy; 2015 WSO2 Inc. All Rights Reserved</p>
+    </footer>
 
+    <script src="js/bootstrap.min.js"></script>
+
+
+    <script type="text/javascript">
+
+        $(document).ready(function () {
+
+            $('[data-toggle="tooltip"]').tooltip();
+
+            $("[data-toggle=popover]").popover();
+
+            $(".ctrl-asset-type-switcher").popover({
+                html: true,
+                content: function () {
+                    return $('#content-asset-types').html();
+                }
+            });
+
+            $(".ctrl-filter-type-switcher").popover({
+                html: true,
+                content: function () {
+                    return $('#content-filter-types').html();
+                }
+            });
+
+            $('#nav').affix({
+                offset: {
+                    top: $('header').height()
+                }
+            });
+        });
+
+    </script>
     </body>
     </html>
 </fmt:bundle>
