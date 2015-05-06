@@ -101,6 +101,11 @@
                 <artifactId>disruptor</artifactId>
                 <version>${disruptor.orbit.version}</version>
             </dependency>
+            <dependency>
+                <groupId>com.google.guava</groupId>
+                <artifactId>guava</artifactId>
+                <version>${guava.version}</version>
+            </dependency>
             <!--orbit dependencies end-->
 
             <!--carbon-kernel dependencies start-->
@@ -632,6 +637,7 @@
         <disruptor.version>3.2.1</disruptor.version>
         <disruptor.orbit.version>${disruptor.version}.wso2v1</disruptor.orbit.version>
         <antlr.version>4.5</antlr.version>
+        <guava.version>13.0.1</guava.version>
         <snakeyaml.version>1.11</snakeyaml.version>
 
 
