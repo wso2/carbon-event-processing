@@ -103,6 +103,9 @@ function createExportedStreamDefinition(element) {
                 CARBON.showErrorDialog("No matching stream definition can be found for: " + valueOf + ". " +
                                        "Please fill the 'Value of' field with a valid stream name.");
                 return;
+            }else if(jsonStreamDefinition.trim().startsWith("exception")){
+                CARBON.showErrorDialog("Exception when validating the stream, "+jsonStreamDefinition);
+                return;
             }
         } else {
             CARBON.showErrorDialog("No matching stream definition can be found for: " + valueOf + ". " +
