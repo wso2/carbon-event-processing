@@ -21,8 +21,6 @@ import org.apache.axis2.AxisFault;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.wso2.carbon.context.PrivilegedCarbonContext;
-import org.wso2.carbon.event.simulator.admin.exception.RDBMSConnectionException;
 import org.wso2.carbon.event.simulator.admin.internal.ExecutionInfo;
 import org.wso2.carbon.event.simulator.core.EventSimulatorConstant;
 import org.wso2.carbon.ndatasource.common.DataSourceException;
@@ -104,7 +102,7 @@ public class EventSimulatorDataSourceInfo {
         }
     }
 
-    public static ExecutionInfo getInitializedDatabaseExecutionInfo(JSONObject jsonDBConfigAndColumnStreamAttributeIngo) throws AxisFault {
+    public static ExecutionInfo getInitializedDatabaseExecutionInfo(JSONObject jsonDBConfigAndColumnStreamAttributeInfo) throws AxisFault {
         Connection con;
         String dbName;
         Statement stmt;
@@ -114,8 +112,8 @@ public class EventSimulatorDataSourceInfo {
         ExecutionInfo executionInfo = new ExecutionInfo();
         String dataSourceName;
         try {
-            dataSourceName = jsonDBConfigAndColumnStreamAttributeIngo.getString(EventSimulatorConstant.DATA_SOURCE_NAME);
-            String tableName = jsonDBConfigAndColumnStreamAttributeIngo.getString(EventSimulatorConstant.TABLE_NAME);
+            dataSourceName = jsonDBConfigAndColumnStreamAttributeInfo.getString(EventSimulatorConstant.DATA_SOURCE_NAME);
+            String tableName = jsonDBConfigAndColumnStreamAttributeInfo.getString(EventSimulatorConstant.TABLE_NAME);
             try {
                 CarbonDataSource carbonDataSource = EventSimulatorAdminvalueHolder.getDataSourceService().getDataSource(dataSourceName);
                 if (carbonDataSource != null) {
@@ -138,7 +136,7 @@ public class EventSimulatorDataSourceInfo {
                         String getColumnsQuery = "";
 
                         boolean addedFirstColumn = false;
-                        JSONArray dataSourceColumnsAndTypes = jsonDBConfigAndColumnStreamAttributeIngo.getJSONArray(EventSimulatorConstant.DATABASE_COLUMNS_AND_STREAM_ATTRIBUTE_INFO);
+                        JSONArray dataSourceColumnsAndTypes = jsonDBConfigAndColumnStreamAttributeInfo.getJSONArray(EventSimulatorConstant.DATABASE_COLUMNS_AND_STREAM_ATTRIBUTE_INFO);
                         for (int i=0; i<dataSourceColumnsAndTypes.length();i++){
                             JSONObject temp = dataSourceColumnsAndTypes.getJSONObject(i);
                             if(!getColumnsQuery.contains(temp.getString(EventSimulatorConstant.COLUMN_NAME))){
@@ -166,19 +164,19 @@ public class EventSimulatorDataSourceInfo {
                         ResultSet rs = stmt.executeQuery(getColumnsDataTypeQuery);
                         while(rs.next()){
 
-                            String temp2 = rs.getString(1);
-                            String temp3 = rs.getString(2);
+                            String tableVariable = rs.getString(1);
+                            String tableVariableType = rs.getString(2);
 
                             for(int j=0; j<dataSourceColumnsAndTypes.length();j++){
                                 JSONObject temp = dataSourceColumnsAndTypes.getJSONObject(j);
-                                String temp4;
+                                String eventStreamDataType;
                                 if (temp.getString(EventSimulatorConstant.COLUMN_TYPE).equalsIgnoreCase("int")) {
-                                    temp4 = elementMappings.get("integer");
+                                    eventStreamDataType = elementMappings.get("integer");
                                 } else{
-                                    temp4 = elementMappings.get(temp.getString(EventSimulatorConstant.COLUMN_TYPE).toLowerCase());
-                                    temp4 = temp4.replaceAll("[^a-zA-Z]", "");
+                                    eventStreamDataType = elementMappings.get(temp.getString(EventSimulatorConstant.COLUMN_TYPE).toLowerCase());
+                                    eventStreamDataType = eventStreamDataType.replaceAll("[^a-zA-Z]", "");
                                 }
-                                if(temp.getString(EventSimulatorConstant.COLUMN_NAME).equalsIgnoreCase(temp2) && temp4.equalsIgnoreCase(temp3)){
+                                if(temp.getString(EventSimulatorConstant.COLUMN_NAME).equalsIgnoreCase(tableVariable) && eventStreamDataType.equalsIgnoreCase(tableVariableType)){
                                     columndataTypeCorrectCount++;
                                 }
                             }
