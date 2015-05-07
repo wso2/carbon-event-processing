@@ -72,6 +72,38 @@
             <groupId>com.google.guava</groupId>
             <artifactId>guava</artifactId>
         </dependency>
+
+        <!--siddhi extension-->
+        <dependency>
+            <groupId>org.wso2.siddhi</groupId>
+            <artifactId>math</artifactId>
+            <version>${siddhi.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.wso2.siddhi</groupId>
+            <artifactId>regex</artifactId>
+            <version>${siddhi.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.wso2.siddhi</groupId>
+            <artifactId>string</artifactId>
+            <version>${siddhi.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.wso2.siddhi</groupId>
+            <artifactId>event-table</artifactId>
+            <version>${siddhi.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.wso2.siddhi</groupId>
+            <artifactId>eval-script</artifactId>
+            <version>${siddhi.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.wso2.siddhi</groupId>
+            <artifactId>time</artifactId>
+            <version>${siddhi.version}</version>
+        </dependency>
     </dependencies>
 
     <build>
@@ -89,7 +121,7 @@
                             * ; -split-package:=merge-first
                         </Export-Package>
                         <Embed-Dependency>
-                            siddhi-core|siddhi-query-api|siddhi-query-compiler|antlr4-runtime|guava|org.wso2.carbon.event.processor.manager.commons|org.wso2.carbon.event.processor.manager.core|org.wso2.carbon.event.processor.common|libthrift|disruptor;scope=compile|runtime;inline=true
+                            siddhi-core|siddhi-query-api|siddhi-query-compiler|antlr4-runtime|guava|org.wso2.carbon.event.processor.manager.commons|org.wso2.carbon.event.processor.manager.core|org.wso2.carbon.event.processor.common|libthrift|disruptor|math|regex|string|event-table|eval-script|time;scope=compile|runtime;inline=true
                         </Embed-Dependency>
                         <Embed-Transitive>true</Embed-Transitive>
                         <DynamicImport-Package>*</DynamicImport-Package>
