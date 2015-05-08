@@ -40,6 +40,7 @@
         <module>components/event-processor</module>
         <module>components/event-simulator</module>
         <module>components/event-flow</module>
+        <module>components/siddhi-tryit</module>
         <!--<module>components/event-monitor</module>-->
         <!--<module>features/adaptors</module>-->
         <module>features/event-processor</module>
@@ -643,6 +644,11 @@
             <dependency>
                 <groupId>org.wso2.carbon.event-processing</groupId>
                 <artifactId>org.wso2.carbon.event.receiver.ui</artifactId>
+                <version>${carbon.event.processing.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.wso2.carbon.event-processing</groupId>
+                <artifactId>org.wso2.carbon.siddhi.tryit.ui</artifactId>
                 <version>${carbon.event.processing.version}</version>
             </dependency>
             <!--carbon event processing dependencies stop-->
