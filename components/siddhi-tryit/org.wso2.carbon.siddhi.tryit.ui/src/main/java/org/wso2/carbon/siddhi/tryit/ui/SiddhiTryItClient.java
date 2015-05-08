@@ -18,174 +18,199 @@ package org.wso2.carbon.siddhi.tryit.ui;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.wso2.siddhi.core.ExecutionPlanRuntime;
 import org.wso2.siddhi.core.SiddhiManager;
 import org.wso2.siddhi.core.event.Event;
 import org.wso2.siddhi.core.query.output.callback.QueryCallback;
 import org.wso2.siddhi.core.stream.input.InputHandler;
 import org.wso2.siddhi.core.stream.output.StreamCallback;
-//import org.wso2.siddhi.core.util.EventPrinter;
 
 import org.wso2.siddhi.query.api.ExecutionPlan;
 import org.wso2.siddhi.query.api.definition.Attribute;
 import org.wso2.siddhi.query.api.execution.query.Query;
 import org.wso2.siddhi.query.compiler.SiddhiCompiler;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class SiddhiTryItClient {
 
+    private static Log log = LogFactory.getLog(SiddhiTryItClient.class);
     private static Gson gson = new GsonBuilder()
             .setPrettyPrinting()
             .disableHtmlEscaping()
             .create();
 
-    //Map
-    private Map<String, StringBuilder> map = new LinkedHashMap<String, StringBuilder>();
+    private String errMsg;
 
-    //processData method
-    public Map<String, StringBuilder> processData(String executionPlan, String eventStream) throws InterruptedException {
+    /**
+     * Event stream will be processed according to the specified execution plan
+     *
+     * @param executionPlan execution plan for siddhi query processing
+     * @param eventStream   event stream
+     * @param dateTime      date and time to begin the process
+     */
+    public Map<String, StringBuilder> processData(String executionPlan, String eventStream, String dateTime) throws ParseException {
+
+        Map<String, StringBuilder> map = new LinkedHashMap<String, StringBuilder>();
+        long beginSetTime = createTimeStamp(dateTime);
+        long beginSystemTime = System.currentTimeMillis();
+        String queryName = "";
 
         // Create Siddhi Manager
         SiddhiManager siddhiManager = new SiddhiManager();
         ExecutionPlan newExecutionPlan = SiddhiCompiler.parse(executionPlan);
         ExecutionPlanRuntime executionPlanRuntime = siddhiManager.createExecutionPlanRuntime(executionPlan);
 
-        //variables
-        String queryName;
-        Pattern pattern;
-        Matcher matcher;
-        int eventStreamAttributeListSize;
-        String eventStreamAttributeArray[];
-
-        //query call back
+        //Query Callback
         for (int i = 0; i < newExecutionPlan.getExecutionElementList().size(); i++) {
-            System.out.println("i: " + i);
             Query query = (Query) (newExecutionPlan.getExecutionElementList().get(i));
 
-            //extract query name
             if (query.getAnnotations().size() > 0) {
                 queryName = query.getAnnotations().get(0).getElement("name");
             } else {
                 queryName = "";
             }
 
-
             if (!queryName.equals("")) {
                 final StringBuilder stringBuilder = new StringBuilder();
                 map.put(queryName, stringBuilder);
-                stringBuilder.append(queryName);
 
                 executionPlanRuntime.addCallback(queryName, new QueryCallback() {
                     @Override
                     public void receive(long timeStamp, Event[] inEvents, Event[] removeEvents) {
-                        //EventPrinter.print(timeStamp, inEvents, removeEvents);
                         stringBuilder.append(gson.toJson(inEvents));
                     }
                 });
             } else {
-                System.out.println("No query name defined!");
-
-
+                System.out.println("No query name defined!"); //todo
             }
-
-
         }
 
-        //stream call bak
+        //Stream Callback
         for (int j = 0; j < newExecutionPlan.getExecutionElementList().size(); j++) {
-            System.out.println("j: " + j);
             Query query = (Query) (newExecutionPlan.getExecutionElementList().get(j));
-            //extract stream name
             String outputStreamName = query.getOutputStream().getId();
 
             final StringBuilder stringBuilder = new StringBuilder();
             map.put(outputStreamName, stringBuilder);
-            stringBuilder.append(outputStreamName);
+
             executionPlanRuntime.addCallback(outputStreamName, new StreamCallback() {
                 @Override
                 public void receive(Event[] events) {
-                    //EventPrinter.print(events);
                     stringBuilder.append(gson.toJson(events));
                 }
             });
         }
 
-        //extracting input stream name
+        Pattern pattern1, patter2;
+        Matcher matcher1, matcher2;
+        int eventStreamAttributeListSize;
+        String[] eventStreamAttributeArray;
         String inputStreamName;
-        //inputStreamEventArray holds
-        String inputStreamEventArray[] = eventStream.split("\\r?\\n");
 
-        //loops for each event in a stream
+        //Send event stream
+        String[] inputStreamEventArray = eventStream.split("\\r?\\n");
         for (int k = 0; k < inputStreamEventArray.length; k++) {
-            System.out.println("k: " + k);
-            pattern = Pattern.compile("(\\S+)=\\[(.*)\\]");
-            matcher = pattern.matcher(inputStreamEventArray[k]);
-            if (matcher.find()) {
-                inputStreamName = matcher.group(1);
+
+            pattern1 = Pattern.compile("(\\S+)=\\[(.*)\\]");
+            matcher1 = pattern1.matcher(inputStreamEventArray[k]);
+            patter2 = Pattern.compile("\\d\\w+");
+            matcher2 = patter2.matcher(inputStreamEventArray[k]);
+
+            if (matcher1.find()) {
+                inputStreamName = matcher1.group(1);
                 InputHandler inputHandler = executionPlanRuntime.getInputHandler(inputStreamName);
 
-                eventStreamAttributeArray = matcher.group(2).split(",");
-
+                eventStreamAttributeArray = matcher1.group(2).split(",");
                 eventStreamAttributeListSize = eventStreamAttributeArray.length;
                 Object object[] = new Object[eventStreamAttributeListSize];
                 for (int l = 0; l < eventStreamAttributeListSize; l++) {
-                    //get attribute type from the execution plan
                     Attribute.Type attributeType = executionPlanRuntime.getStreamDefinitionMap().get(inputStreamName).getAttributeList().get(l).getType();
-                    //getting the type of plan definition. hav to cast the stream attribute to the enum type and then create the object array and send
-
                     switch (attributeType) {
                         case STRING:
                             object[l] = eventStreamAttributeArray[l];
-                            System.out.println("object string: " + object[l]);
                             break;
                         case INT:
                             object[l] = Integer.parseInt(eventStreamAttributeArray[l]);
-                            System.out.println("object integer: " + object[l]);
                             break;
                         case LONG:
                             object[l] = Long.parseLong(eventStreamAttributeArray[l]);
-                            System.out.println("object long: " + object[l]);
                             break;
                         case FLOAT:
                             object[l] = Float.parseFloat(eventStreamAttributeArray[l]);
-                            System.out.println("object float: " + object[l]);
                             break;
                         case DOUBLE:
                             object[l] = Double.parseDouble(eventStreamAttributeArray[l]);
-                            System.out.println("objectdouble: " + object[l]);
                             break;
                         case BOOL:
                             object[l] = Boolean.parseBoolean(eventStreamAttributeArray[l]);
-                            System.out.println("object boolean: " + object[l]);
                             break;
                         case OBJECT:
                             object[l] = (Object) eventStreamAttributeArray[l];
-                            System.out.println("object object: " + object[l]);
                             break;
                         default:
-                            System.out.println("No matching attribute type");
+                            System.out.println("No matching attribute type"); //todo
                     }
-
                 }
-                if(k==0)
-                {
+                if (k == 0) {
                     executionPlanRuntime.start();
+                    try {
+                        inputHandler.send(beginSetTime, object);
+                    } catch (InterruptedException e) {
+                        errMsg = "Internal error occured while sending events to Siddhi" + e.getMessage();
+                        log.error(errMsg, e);
+                    }
+                } else {
+                    try {
+                        inputHandler.send((beginSetTime + (System.currentTimeMillis() - beginSystemTime)), object);
+                    } catch (InterruptedException e) {
+                        errMsg = "Internal error occured while sending events to Siddhi" + e.getMessage();
+                        log.error(errMsg, e);
+                    }
                 }
-                inputHandler.send(object);
-                Thread.sleep(500);
+            } else if (matcher2.find()) {
+                try {
+                    Thread.sleep(Long.parseLong(matcher2.group(0)));
+                } catch (InterruptedException e) {
+                    log.error(e);
+                }
 
             } else
-                System.out.println("Please define the event stream in correct format");
-
+                System.out.println("No match"); //todo
         }
 
+        //To pause till all the events are passed //todo
+        try {
+            Thread.sleep(500);
+        } catch (InterruptedException e) {
+            log.error(e);
+        }
         return map;
-
     }
 
+    /**
+     * Create time stamp for the given date and time
+     *
+     * @param dateTime date and time to begin the process
+     */
+    private long createTimeStamp(String dateTime) {
+        SimpleDateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
+        Date date = null;
+        try {
+            date = dateFormatter.parse(dateTime);
+        } catch (ParseException e) {
+            errMsg = "Error occured while parsing data" + e.getMessage();
+            log.error(errMsg, e);
+        }
+        long timeStamp = date.getTime();
+        return timeStamp;
+    }
 
 }
 
