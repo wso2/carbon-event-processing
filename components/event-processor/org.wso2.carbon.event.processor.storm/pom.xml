@@ -76,33 +76,27 @@
         <!--siddhi extension-->
         <dependency>
             <groupId>org.wso2.siddhi</groupId>
-            <artifactId>math</artifactId>
-            <version>${siddhi.version}</version>
+            <artifactId>siddhi-extension-math</artifactId>
         </dependency>
         <dependency>
             <groupId>org.wso2.siddhi</groupId>
-            <artifactId>regex</artifactId>
-            <version>${siddhi.version}</version>
+            <artifactId>siddhi-extension-regex</artifactId>
         </dependency>
         <dependency>
             <groupId>org.wso2.siddhi</groupId>
-            <artifactId>string</artifactId>
-            <version>${siddhi.version}</version>
+            <artifactId>siddhi-extension-string</artifactId>
         </dependency>
         <dependency>
             <groupId>org.wso2.siddhi</groupId>
-            <artifactId>event-table</artifactId>
-            <version>${siddhi.version}</version>
+            <artifactId>siddhi-extension-event-table</artifactId>
         </dependency>
         <dependency>
             <groupId>org.wso2.siddhi</groupId>
-            <artifactId>eval-script</artifactId>
-            <version>${siddhi.version}</version>
+            <artifactId>siddhi-extension-eval-script</artifactId>
         </dependency>
         <dependency>
             <groupId>org.wso2.siddhi</groupId>
-            <artifactId>time</artifactId>
-            <version>${siddhi.version}</version>
+            <artifactId>siddhi-extension-time</artifactId>
         </dependency>
     </dependencies>
 
@@ -121,7 +115,7 @@
                             * ; -split-package:=merge-first
                         </Export-Package>
                         <Embed-Dependency>
-                            siddhi-core|siddhi-query-api|siddhi-query-compiler|antlr4-runtime|guava|org.wso2.carbon.event.processor.manager.commons|org.wso2.carbon.event.processor.manager.core|org.wso2.carbon.event.processor.common|libthrift|disruptor|math|regex|string|event-table|eval-script|time;scope=compile|runtime;inline=true
+                            siddhi-core|siddhi-query-api|siddhi-query-compiler|antlr4-runtime|guava|org.wso2.carbon.event.processor.manager.commons|org.wso2.carbon.event.processor.manager.core|org.wso2.carbon.event.processor.common|libthrift|disruptor|siddhi-extension-math|siddhi-extension-regex|siddhi-extension-string|siddhi-extension-event-table|siddhi-extension-eval-script|siddhi-extension-time;scope=compile|runtime;inline=true
                         </Embed-Dependency>
                         <Embed-Transitive>true</Embed-Transitive>
                         <DynamicImport-Package>*</DynamicImport-Package>
