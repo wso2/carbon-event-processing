@@ -88,6 +88,36 @@
             <groupId>org.antlr</groupId>
             <artifactId>antlr4-runtime</artifactId>
         </dependency>
+
+        <!--siddhi extension-->
+        <dependency>
+            <groupId>org.wso2.siddhi</groupId>
+            <artifactId>siddhi-extension-math</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.wso2.siddhi</groupId>
+            <artifactId>siddhi-extension-regex</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.wso2.siddhi</groupId>
+            <artifactId>siddhi-extension-string</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.wso2.siddhi</groupId>
+            <artifactId>siddhi-extension-event-table</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.wso2.siddhi</groupId>
+            <artifactId>siddhi-extension-eval-script</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.wso2.siddhi</groupId>
+            <artifactId>siddhi-extension-time</artifactId>
+        </dependency>
+        <!--<dependency>-->
+            <!--<groupId>org.wso2.siddhi</groupId>-->
+            <!--<artifactId>siddhi-extension-geo</artifactId>-->
+        <!--</dependency>-->
         <dependency>
             <groupId>org.quartz-scheduler.wso2</groupId>
             <artifactId>quartz</artifactId>
@@ -192,6 +222,29 @@
                                 <bundleDef>
                                     org.quartz-scheduler.wso2:quartz:${quartz.version}
                                 </bundleDef>
+
+                                <!--siddhi extensions-->
+                                <bundleDef>
+                                    org.wso2.siddhi:siddhi-extension-math:${siddhi.version}
+                                </bundleDef>
+                                <bundleDef>
+                                    org.wso2.siddhi:siddhi-extension-regex:${siddhi.version}
+                                </bundleDef>
+                                <bundleDef>
+                                    org.wso2.siddhi:siddhi-extension-string:${siddhi.version}
+                                </bundleDef>
+                                <bundleDef>
+                                    org.wso2.siddhi:siddhi-extension-event-table:${siddhi.version}
+                                </bundleDef>
+                                <bundleDef>
+                                    org.wso2.siddhi:siddhi-extension-eval-script:${siddhi.version}
+                                </bundleDef>
+                                <bundleDef>
+                                    org.wso2.siddhi:siddhi-extension-time:${siddhi.version}
+                                </bundleDef>
+                                <!--<bundleDef>-->
+                                    <!--org.wso2.siddhi:siddhi-extension-geo:${siddhi.version}-->
+                                <!--</bundleDef>-->
                             </bundles>
                             <importFeatures>
                                 <importFeatureDef>org.wso2.carbon.core.server:${carbon.kernel.version}</importFeatureDef>

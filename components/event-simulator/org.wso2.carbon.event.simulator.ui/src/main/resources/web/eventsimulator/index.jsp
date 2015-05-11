@@ -1,20 +1,18 @@
 <%--
-~ Copyright (c) 2005-2014, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
-~
-~ WSO2 Inc. licenses this file to you under the Apache License,
-~ Version 2.0 (the "License"); you may not use this file except
-~ in compliance with the License.
-~ You may obtain a copy of the License at
-~
-~    http://www.apache.org/licenses/LICENSE-2.0
-~
-~ Unless required by applicable law or agreed to in writing,
-~ software distributed under the License is distributed on an
-~ "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
-~ KIND, either express or implied.  See the License for the
-~ specific language governing permissions and limitations
-~ under the License.
---%>
+  ~ Copyright (c) 2015, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~     http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  --%>
 <%@ page import="org.wso2.carbon.event.simulator.stub.EventSimulatorAdminServiceStub" %>
 <%@ page import="org.wso2.carbon.event.simulator.ui.EventSimulatorUIUtils" %>
 
@@ -198,7 +196,6 @@
                     </tr>
                     </thead>
                     <tbody>
-                    <br>
                     <tr>
                         <td colspan="3">
                             <table class="styledLeft" id = "dataSourceConfigInfoTableID" cellspacing="0" cellpadding="0" style="border-bottom:none">
@@ -380,13 +377,12 @@
         <br/>
         <h4 style="color: #0D4d79"><fmt:message key="send.single.event"/> </h4>
 
-        <div id="workArea">
+        <div id="dataArea" style="display: inline;">
             <form name="eventStreams" id="eventStreams" method="post" >
                 <table id="eventStreamtable" class="styledLeft">
                     <thead>
                     <tr>
-                        <th></th>
-
+                        <th> </th>
                     </tr>
                     </thead>
                     <tbody>
