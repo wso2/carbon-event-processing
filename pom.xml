@@ -91,6 +91,12 @@
                 <artifactId>snakeyaml</artifactId>
                 <version>${snakeyaml.version}</version>
             </dependency>
+            <dependency>
+                <groupId>org.quartz-scheduler.wso2</groupId>
+                <artifactId>quartz</artifactId>
+                <version>${quartz.version}</version>
+            </dependency>
+
             <!--<dependency>-->
                 <!--<groupId>org.hectorclient.wso2</groupId>-->
                 <!--<artifactId>hector-core</artifactId>-->
@@ -639,6 +645,7 @@
         <antlr.version>4.5</antlr.version>
         <guava.version>13.0.1</guava.version>
         <snakeyaml.version>1.11</snakeyaml.version>
+        <quartz.version>2.1.1.wso2v1</quartz.version>
 
 
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>

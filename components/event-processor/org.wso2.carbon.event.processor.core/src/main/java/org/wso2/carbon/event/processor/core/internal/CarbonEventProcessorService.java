@@ -447,6 +447,7 @@ public class CarbonEventProcessorService implements EventProcessorService {
 
     public List<StreamDefinition> getSiddhiStreams(String executionPlan) {
         SiddhiManager siddhiManager = EventProcessorValueHolder.getSiddhiManager();
+        loadDataSourceConfiguration(siddhiManager);
         ExecutionPlanRuntime executionPlanRuntime = siddhiManager.createExecutionPlanRuntime(executionPlan);
         Collection<AbstractDefinition> streamDefinitions = executionPlanRuntime.getStreamDefinitionMap().values();
         List<StreamDefinition> databridgeStreamDefinitions = new ArrayList<StreamDefinition>(streamDefinitions.size());
