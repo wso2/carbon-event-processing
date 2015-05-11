@@ -28,9 +28,8 @@ function sendAjaxRequestToSiddhiProcessor(sendInputData) {
                 var jsonObject = JSON.parse(data.responseText);
                 if (jsonObject != undefined) {
                     jQuery('.js_resultCol').show();
-
-                    var tabContent = document.getElementById('tabTable');
-                    tabContent.innerHTML ='<div id="tabs"><ul id="tabHeaders"></ul></div>';
+                    var tabContent = document.getElementById('resultsId');
+                    tabContent.innerHTML = '<div id="tabs"><ul id="tabHeaders"></ul></div>';
 
                     for (i = 0; i < jsonObject.length; i++) {
                         var tabHeader = document.getElementById('tabHeaders');
@@ -44,4 +43,4 @@ function sendAjaxRequestToSiddhiProcessor(sendInputData) {
         }
     });
 }
-//todo refresh?
+

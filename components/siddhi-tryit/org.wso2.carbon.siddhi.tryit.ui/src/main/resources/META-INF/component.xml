@@ -26,7 +26,7 @@
             <region>region5</region>
             <order>40</order>
             <style-class>home</style-class>
-            <icon>../siddhitryit/images/event-flow.png</icon>
+            <icon>../siddhitryit/images/siddhi-tryit.png</icon>
             <require-permission>/permission/admin/login</require-permission>
         </menu>
 

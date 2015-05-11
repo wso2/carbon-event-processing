@@ -44,7 +44,7 @@
             <tr>
                 <td>
                     <textarea rows="50" cols="50" name="eventstream"
-                              id="eventStreamId" style="margin-top:29px;">Enter stream</textarea>
+                              id="eventStreamId" style="margin-top:29px;"></textarea>
                 </td>
                 <td>
                     Begin Time: <input type="text" name="datetime" id="dateTimeID" value="<%=dataFormat.format(date)%>">
@@ -54,7 +54,7 @@
                               id="executionPlanId"
                               style="margin-top:10px;"><%=EXECUTION_PLAN_BASIC_TEMPLATE%></textarea>
                 </td>
-                <td id="tabTable" class="js_resultCol" style="display:none;">
+                <td id="resultsId" class="js_resultCol" style="display:none;">
                 </td>
             </tr>
             </tbody>

@@ -45,8 +45,7 @@ public class SiddhiTryItClient {
             .setPrettyPrinting()
             .disableHtmlEscaping()
             .create();
-
-    private String errMsg;
+    private String errMsg = "";
 
     /**
      * Event stream will be processed according to the specified execution plan
@@ -88,7 +87,7 @@ public class SiddhiTryItClient {
                     }
                 });
             } else {
-                System.out.println("No query name defined!"); //todo
+                System.out.println("No query name defined!"); // add a info dialog box
             }
         }
 
@@ -116,19 +115,20 @@ public class SiddhiTryItClient {
 
         //Send event stream
         String[] inputStreamEventArray = eventStream.split("\\r?\\n");
-        for (int k = 0; k < inputStreamEventArray.length; k++) {
 
+        for (int k = 0; k < inputStreamEventArray.length; k++) {
             pattern1 = Pattern.compile("(\\S+)=\\[(.*)\\]");
-            matcher1 = pattern1.matcher(inputStreamEventArray[k]);
-            patter2 = Pattern.compile("\\d\\w+");
+            matcher1 = pattern1.matcher(inputStreamEventArray[k].replaceAll("\\s", ""));
+            patter2 = Pattern.compile("(delay\\()(\\d)+");
             matcher2 = patter2.matcher(inputStreamEventArray[k]);
 
             if (matcher1.find()) {
                 inputStreamName = matcher1.group(1);
-                InputHandler inputHandler = executionPlanRuntime.getInputHandler(inputStreamName);
+                InputHandler inputHandler = executionPlanRuntime.getInputHandler(inputStreamName); //exception stream id wrong org.wso2.siddhi.core.exception.DefinitionNotExistException: Stream with stream ID cseEventStream has not been defined
 
                 eventStreamAttributeArray = matcher1.group(2).split(",");
                 eventStreamAttributeListSize = eventStreamAttributeArray.length;
+
                 Object object[] = new Object[eventStreamAttributeListSize];
                 for (int l = 0; l < eventStreamAttributeListSize; l++) {
                     Attribute.Type attributeType = executionPlanRuntime.getStreamDefinitionMap().get(inputStreamName).getAttributeList().get(l).getType();
@@ -152,10 +152,8 @@ public class SiddhiTryItClient {
                             object[l] = Boolean.parseBoolean(eventStreamAttributeArray[l]);
                             break;
                         case OBJECT:
-                            object[l] = (Object) eventStreamAttributeArray[l];
+                            object[l] = eventStreamAttributeArray[l];
                             break;
-                        default:
-                            System.out.println("No matching attribute type"); //todo
                     }
                 }
                 if (k == 0) {
@@ -176,16 +174,15 @@ public class SiddhiTryItClient {
                 }
             } else if (matcher2.find()) {
                 try {
-                    Thread.sleep(Long.parseLong(matcher2.group(0)));
+                    Thread.sleep(Long.parseLong(matcher2.group(2)));
                 } catch (InterruptedException e) {
                     log.error(e);
                 }
-
-            } else
-                System.out.println("No match"); //todo
+            } else if (!inputStreamEventArray[k].equals("")) {
+                System.out.println("No match : "+ inputStreamEventArray[1]);
+            }                                          // add error query wrong dialog box
         }
 
-        //To pause till all the events are passed //todo
         try {
             Thread.sleep(500);
         } catch (InterruptedException e) {
@@ -211,6 +208,5 @@ public class SiddhiTryItClient {
         long timeStamp = date.getTime();
         return timeStamp;
     }
-
 }
 
