@@ -31,7 +31,6 @@
     <packaging>pom</packaging>
     <name>WSO2 Carbon - Event Simulator Feature</name>
     <url>http://wso2.org</url>
-    <version>2.0.4-SNAPSHOT</version>
     <description>
         This feature contains the bundles required for Event Simulator feature.
     </description>

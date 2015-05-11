@@ -198,7 +198,6 @@
                     </tr>
                     </thead>
                     <tbody>
-                    <br>
                     <tr>
                         <td colspan="3">
                             <table class="styledLeft" id = "dataSourceConfigInfoTableID" cellspacing="0" cellpadding="0" style="border-bottom:none">
@@ -377,16 +376,15 @@
         </div>
 
 
-
+        <br/>
         <h4 style="color: #0D4d79"><fmt:message key="send.single.event"/> </h4>
 
-        <div id="workArea">
+        <div id="dataArea" style="display: inline;">
             <form name="eventStreams" id="eventStreams" method="post" >
                 <table id="eventStreamtable" class="styledLeft">
                     <thead>
                     <tr>
-                        <th></th>
-
+                        <th> </th>
                     </tr>
                     </thead>
                     <tbody>

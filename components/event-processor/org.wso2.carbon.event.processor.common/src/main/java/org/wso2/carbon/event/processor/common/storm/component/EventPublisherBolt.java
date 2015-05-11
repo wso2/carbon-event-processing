@@ -23,9 +23,9 @@ import backtype.storm.topology.OutputFieldsDeclarer;
 import backtype.storm.topology.base.BaseBasicBolt;
 import backtype.storm.tuple.Tuple;
 import org.apache.log4j.Logger;
-import org.wso2.carbon.event.processor.common.storm.config.StormDeploymentConfig;
 import org.wso2.carbon.event.processor.common.util.AsyncEventPublisher;
-import org.wso2.carbon.event.processor.common.util.Utils;
+import org.wso2.carbon.event.processor.manager.commons.utils.Utils;
+import org.wso2.carbon.event.processor.manager.core.config.DistributedConfiguration;
 import org.wso2.siddhi.core.ExecutionPlanRuntime;
 import org.wso2.siddhi.core.SiddhiManager;
 import org.wso2.siddhi.core.event.Event;
@@ -59,7 +59,7 @@ public class EventPublisherBolt extends BaseBasicBolt {
     private String logPrefix;
 
     private int tenantId = -1234;
-    private StormDeploymentConfig stormDeploymentConfig;
+    private DistributedConfiguration stormDeploymentConfig;
     private Boolean initialized = false;
 
     private transient SiddhiManager siddhiManager;
@@ -68,7 +68,7 @@ public class EventPublisherBolt extends BaseBasicBolt {
     private int eventCount;
     private long batchStartTime;
 
-    public EventPublisherBolt(StormDeploymentConfig stormDeploymentConfig, List<String> inputStreamDefinitions,
+    public EventPublisherBolt(DistributedConfiguration stormDeploymentConfig, List<String> inputStreamDefinitions,
                               List<String> outputStreamDefinitions, String query, String executionPlanName, int tenantId) {
         this.stormDeploymentConfig = stormDeploymentConfig;
         this.inputStreamDefinitions = inputStreamDefinitions;

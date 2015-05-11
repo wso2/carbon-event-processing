@@ -58,7 +58,7 @@ public class EventProcessorHelper {
         return executionPlanName;
     }
 
-    public static void validateExecutionPlan(String executionPlan, int tenantId)
+    public static void validateExecutionPlan(String executionPlan)
             throws ExecutionPlanConfigurationException, ExecutionPlanDependencyValidationException {
 
         String planName;
@@ -102,7 +102,7 @@ public class EventProcessorHelper {
             if (importElement != null) {  //Treating import & export cases separately to give more specific error messages.
                 String atImportLiteral = EventProcessorConstants.ANNOTATION_TOKEN_AT + EventProcessorConstants.ANNOTATION_IMPORT;
                 String importElementValue = importElement.getValue();
-                if (importElementValue == "") {
+                if (importElementValue == null || importElementValue.trim().isEmpty()) {
                     throw new ExecutionPlanConfigurationException("Imported stream cannot be empty as in '"+
                             atImportLiteral +
                             EventProcessorConstants.ANNOTATION_TOKEN_OPENING_BRACKET +
@@ -132,7 +132,7 @@ public class EventProcessorHelper {
                     throw new ExecutionPlanConfigurationException("Invalid stream version [" + streamIdComponents[1] + "] for stream name " + streamIdComponents[0] + " in execution plan: " + planName +
                             ". Stream version should match the regex '" + EventProcessorConstants.STREAM_VER_REGEX + "'");
                 }
-                validateIfStreamExists(streamIdComponents[0], streamIdComponents[1], tenantId);     // check if each Imported/Exported stream has actually being defined
+                validateIfStreamExists(streamIdComponents[0], streamIdComponents[1]);     // check if each Imported/Exported stream has actually being defined
                 if (exportedStreams.contains(importElementValue)) {                                   // check if same stream has been imported and exported.
                     throw new ExecutionPlanConfigurationException("Imported stream '" + importElementValue + "' is also among the exported streams. Hence the execution plan is invalid");
                 }
@@ -141,7 +141,7 @@ public class EventProcessorHelper {
             if (exportElement != null) {
                 String atExportLiteral = EventProcessorConstants.ANNOTATION_TOKEN_AT + EventProcessorConstants.ANNOTATION_EXPORT;
                 String exportElementValue = exportElement.getValue();
-                if (exportElementValue == "") {
+                if (exportElementValue == null || exportElementValue.trim().isEmpty()) {
                     throw new ExecutionPlanConfigurationException("Exported stream cannot be empty as in '"+
                             atExportLiteral +
                             EventProcessorConstants.ANNOTATION_TOKEN_OPENING_BRACKET +
@@ -171,7 +171,7 @@ public class EventProcessorHelper {
                     throw new ExecutionPlanConfigurationException("Invalid stream version [" + streamIdComponents[1] + "] for stream name " + streamIdComponents[0] + " in execution plan: " + planName +
                             ". Stream version should match the regex '" + EventProcessorConstants.STREAM_VER_REGEX + "'");
                 }
-                validateIfStreamExists(streamIdComponents[0], streamIdComponents[1], tenantId);
+                validateIfStreamExists(streamIdComponents[0], streamIdComponents[1]);
                 if (importedStreams.contains(exportElementValue)) {
                     throw new ExecutionPlanConfigurationException("Exported stream '" + exportElementValue + "' is also among the imported streams. Hence the execution plan is invalid");
                 }
@@ -182,8 +182,7 @@ public class EventProcessorHelper {
     }
 
 
-    private static boolean validateIfStreamExists(String streamName, String streamVersion,
-                                                  int tenantId)
+    private static boolean validateIfStreamExists(String streamName, String streamVersion)
             throws ExecutionPlanConfigurationException, ExecutionPlanDependencyValidationException {
 
         EventStreamService eventStreamService = EventProcessorValueHolder.getEventStreamService();

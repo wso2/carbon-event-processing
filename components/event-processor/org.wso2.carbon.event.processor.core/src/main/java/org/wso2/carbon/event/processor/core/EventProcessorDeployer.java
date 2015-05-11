@@ -113,20 +113,19 @@ public class EventProcessorDeployer extends AbstractDeployer implements EventPro
         boolean isEditable = !executionPlanFile.getAbsolutePath().contains(File.separator + "carbonapps" + File.separator);
         int tenantId = PrivilegedCarbonContext.getThreadLocalCarbonContext().getTenantId();
         ExecutionPlanConfigurationFile executionPlanConfigurationFile = new ExecutionPlanConfigurationFile();
-        if (!carbonEventProcessorService.isExecutionPlanFileAlreadyExist(executionPlanFile.getName(), tenantId)) {
+        if (!carbonEventProcessorService.isExecutionPlanFileAlreadyExist(executionPlanFile.getName())) {
             String executionPlanName = "";
             try {
                 String executionPlan = readFile(deploymentFileData.getAbsolutePath());
-                EventProcessorHelper.validateExecutionPlan(executionPlan, tenantId);
+                EventProcessorHelper.validateExecutionPlan(executionPlan);
 
                 executionPlanName = EventProcessorHelper.getExecutionPlanName(executionPlan);
                 carbonEventProcessorService.addExecutionPlan(executionPlan, isEditable);
                 executionPlanConfigurationFile.setStatus(ExecutionPlanConfigurationFile.Status.DEPLOYED);
                 executionPlanConfigurationFile.setExecutionPlanName(executionPlanName);
-                executionPlanConfigurationFile.setAxisConfiguration(configurationContext.getAxisConfiguration());
                 executionPlanConfigurationFile.setFileName(deploymentFileData.getName());
                 executionPlanConfigurationFile.setFilePath(deploymentFileData.getAbsolutePath());
-                carbonEventProcessorService.addExecutionPlanConfigurationFile(executionPlanConfigurationFile, PrivilegedCarbonContext.getThreadLocalCarbonContext().getTenantId());
+                carbonEventProcessorService.addExecutionPlanConfigurationFile(executionPlanConfigurationFile);
 
                 log.info("Execution plan is deployed successfully and in active state  : " + executionPlanName);
 
@@ -135,10 +134,9 @@ public class EventProcessorDeployer extends AbstractDeployer implements EventPro
                 executionPlanConfigurationFile.setDeploymentStatusMessage(ex.getMessage());
                 executionPlanConfigurationFile.setStatus(ExecutionPlanConfigurationFile.Status.WAITING_FOR_OSGI_SERVICE);
                 executionPlanConfigurationFile.setExecutionPlanName(executionPlanName);
-                executionPlanConfigurationFile.setAxisConfiguration(configurationContext.getAxisConfiguration());
                 executionPlanConfigurationFile.setFileName(deploymentFileData.getName());
                 executionPlanConfigurationFile.setFilePath(deploymentFileData.getAbsolutePath());
-                carbonEventProcessorService.addExecutionPlanConfigurationFile(executionPlanConfigurationFile, PrivilegedCarbonContext.getThreadLocalCarbonContext().getTenantId());
+                carbonEventProcessorService.addExecutionPlanConfigurationFile(executionPlanConfigurationFile);
 
                 log.info("Execution plan deployment held back and in inactive state : " + executionPlanName + ", waiting for dependency : " + ex.getDependency());
 
@@ -147,10 +145,9 @@ public class EventProcessorDeployer extends AbstractDeployer implements EventPro
                 executionPlanConfigurationFile.setDeploymentStatusMessage(ex.getMessage());
                 executionPlanConfigurationFile.setStatus(ExecutionPlanConfigurationFile.Status.WAITING_FOR_DEPENDENCY);
                 executionPlanConfigurationFile.setExecutionPlanName(executionPlanName);
-                executionPlanConfigurationFile.setAxisConfiguration(configurationContext.getAxisConfiguration());
                 executionPlanConfigurationFile.setFileName(deploymentFileData.getName());
                 executionPlanConfigurationFile.setFilePath(deploymentFileData.getAbsolutePath());
-                carbonEventProcessorService.addExecutionPlanConfigurationFile(executionPlanConfigurationFile, PrivilegedCarbonContext.getThreadLocalCarbonContext().getTenantId());
+                carbonEventProcessorService.addExecutionPlanConfigurationFile(executionPlanConfigurationFile);
 
                 log.info("Execution plan deployment held back and in inactive state : " + executionPlanName + ", waiting for dependency : " + ex.getDependency());
 
@@ -158,10 +155,9 @@ public class EventProcessorDeployer extends AbstractDeployer implements EventPro
                 executionPlanConfigurationFile.setDeploymentStatusMessage(ex.getMessage());
                 executionPlanConfigurationFile.setStatus(ExecutionPlanConfigurationFile.Status.ERROR);
                 executionPlanConfigurationFile.setExecutionPlanName(executionPlanName);
-                executionPlanConfigurationFile.setAxisConfiguration(configurationContext.getAxisConfiguration());
                 executionPlanConfigurationFile.setFileName(deploymentFileData.getName());
                 executionPlanConfigurationFile.setFilePath(deploymentFileData.getAbsolutePath());
-                carbonEventProcessorService.addExecutionPlanConfigurationFile(executionPlanConfigurationFile, PrivilegedCarbonContext.getThreadLocalCarbonContext().getTenantId());
+                carbonEventProcessorService.addExecutionPlanConfigurationFile(executionPlanConfigurationFile);
 
                 log.error("Execution plan is not deployed and in inactive state : " + executionPlanFile.getName(), ex);
                 throw new ExecutionPlanConfigurationException(ex.getMessage(), ex);
@@ -179,7 +175,7 @@ public class EventProcessorDeployer extends AbstractDeployer implements EventPro
         int tenantId = PrivilegedCarbonContext.getThreadLocalCarbonContext().getTenantId();
         CarbonEventProcessorService carbonEventProcessorService = EventProcessorValueHolder.getEventProcessorService();
         AxisConfiguration axisConfiguration = configurationContext.getAxisConfiguration();
-        carbonEventProcessorService.removeExecutionPlanConfigurationFile(fileName, tenantId);
+        carbonEventProcessorService.removeExecutionPlanConfigurationFile(fileName);
     }
 
     public void setDirectory(String directory) {

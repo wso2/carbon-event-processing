@@ -26,7 +26,6 @@
         <relativePath>../pom.xml</relativePath>
     </parent>
 
-    <version>2.0.4-SNAPSHOT</version>
     <modelVersion>4.0.0</modelVersion>
     <artifactId>org.wso2.carbon.event.flow</artifactId>
     <packaging>bundle</packaging>
@@ -101,11 +100,11 @@
             <artifactId>org.wso2.carbon.event.stream.core</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.wso2.carbon.event-processing</groupId>
+            <groupId>org.wso2.carbon.analytics-common</groupId>
             <artifactId>org.wso2.carbon.event.receiver.core</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.wso2.carbon.event-processing</groupId>
+            <groupId>org.wso2.carbon.analytics-common</groupId>
             <artifactId>org.wso2.carbon.event.publisher.core</artifactId>
         </dependency>
     </dependencies>

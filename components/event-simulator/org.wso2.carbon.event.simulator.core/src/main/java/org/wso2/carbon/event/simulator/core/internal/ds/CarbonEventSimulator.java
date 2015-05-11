@@ -139,11 +139,11 @@ public class CarbonEventSimulator implements EventSimulator {
                         throw new AxisFault("Incorrect value types for the attribute - " + attribute.getName() + ", expected  " + attribute.getType().toString() + " : " + e.getMessage(), e);
                     }
                 } else if (attributeType.equals(EventSimulatorConstant.BOOLEAN)) {
-                    if (!Boolean.parseBoolean(attributeValues[i])) {
-                        throw new AxisFault("Incorrect value types for the attribute - " + attribute.getName() + ", expected " + attribute.getType().toString());
-                    } else {
+                    if(attributeValues[i].equalsIgnoreCase("true") || attributeValues[i].equalsIgnoreCase("false")){
                         boolean val = Boolean.parseBoolean(attributeValues[i]);
                         dataObjects[i] = val;
+                    }else{
+                        throw new AxisFault("Incorrect value types for the attribute - " + attribute.getName() + ", expected " + attribute.getType().toString());
                     }
                 }
 

@@ -18,9 +18,7 @@
 package org.wso2.carbon.event.processor.core;
 
 import java.util.List;
-import java.util.Map;
 import java.util.Vector;
-import java.util.concurrent.ConcurrentHashMap;
 
 
 public class ExecutionPlanConfiguration {
@@ -62,7 +60,6 @@ public class ExecutionPlanConfiguration {
         return exportedStreams;
     }
 
-
     public String getExecutionPlan() {
         return executionPlan;
     }
@@ -82,7 +79,6 @@ public class ExecutionPlanConfiguration {
     public void removeExportedStream(String stream) {
         this.exportedStreams.remove(stream);
     }
-
 
     public void removeImportedStream(String stream) {
         this.importedStreams.remove(stream);

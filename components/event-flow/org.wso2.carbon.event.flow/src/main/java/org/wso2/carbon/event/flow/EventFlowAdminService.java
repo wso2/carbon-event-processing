@@ -43,7 +43,7 @@ public class EventFlowAdminService extends AbstractAdmin {
             List<EventReceiverConfiguration> eventReceiverConfigurations = EventFlowServiceValueHolder.getEventReceiverService().getAllActiveEventReceiverConfigurations();
             List<EventPublisherConfiguration> eventPublisherConfigurations = EventFlowServiceValueHolder.getEventPublisherService().getAllActiveEventPublisherConfigurations();
             List<String> streamIds = EventFlowServiceValueHolder.getEventStreamService().getStreamIds();
-            Map<String, ExecutionPlanConfiguration> executionPlanConfigurations = EventFlowServiceValueHolder.getEventProcessorService().getAllActiveExecutionConfigurations(tenantId);
+            Map<String, ExecutionPlanConfiguration> executionPlanConfigurations = EventFlowServiceValueHolder.getEventProcessorService().getAllActiveExecutionConfigurations();
 
             StringBuilder eventFlow = new StringBuilder(" '{ \"nodes\": [ ");
             for (EventReceiverConfiguration receiverConfiguration : eventReceiverConfigurations) {

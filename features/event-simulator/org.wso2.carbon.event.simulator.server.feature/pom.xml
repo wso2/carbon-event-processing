@@ -30,10 +30,8 @@
     <artifactId>org.wso2.carbon.event.simulator.server.feature</artifactId>
     <packaging>pom</packaging>
     <name>WSO2 Carbon - Event Simulator Server Feature</name>
-    <version>2.0.4-SNAPSHOT</version>
     <url>http://wso2.org</url>
     <description>This feature contains the core bundles required for Back-end Event Simulator functionality</description>
-
 
     <dependencies>
         <dependency>
@@ -49,38 +47,10 @@
     <build>
         <resources>
             <resource>
-                <directory>${project.build.directory}/cep/</directory>
-            </resource>
-            <resource>
                 <directory>src/main/resources</directory>
             </resource>
         </resources>
         <plugins>
-            <plugin>
-                <artifactId>maven-resources-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <id>copy-resources</id>
-                        <phase>generate-resources</phase>
-                        <goals>
-                            <goal>copy-resources</goal>
-                        </goals>
-                        <configuration>
-                            <outputDirectory>src/main/resources</outputDirectory>
-                            <resources>
-                                <resource>
-                                    <directory>resources</directory>
-                                    <includes>
-                                        <include>build.properties</include>
-                                        <include>conf/rdbms-configuration.xml</include>
-                                        <include>p2.inf</include>
-                                    </includes>
-                                </resource>
-                            </resources>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
             <plugin>
                 <groupId>org.wso2.maven</groupId>
                 <artifactId>carbon-p2-plugin</artifactId>

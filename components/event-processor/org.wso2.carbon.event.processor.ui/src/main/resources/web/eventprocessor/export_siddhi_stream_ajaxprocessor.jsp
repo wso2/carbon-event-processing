@@ -39,7 +39,7 @@
         resultString = EventProcessorUIUtils.getJsonStreamDefinition(targetDto);
 
     } catch (Exception e) {
-        e.printStackTrace();
+        resultString = "exception : " + e.getMessage();
     }
 
 %>

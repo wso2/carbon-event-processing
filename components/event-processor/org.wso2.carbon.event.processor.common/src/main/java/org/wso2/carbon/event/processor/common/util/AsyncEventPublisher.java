@@ -9,9 +9,11 @@ import org.apache.thrift.protocol.TBinaryProtocol;
 import org.apache.thrift.protocol.TProtocol;
 import org.apache.thrift.transport.TSocket;
 import org.apache.thrift.transport.TTransport;
-import org.wso2.carbon.event.processor.common.storm.config.StormDeploymentConfig;
 import org.wso2.carbon.event.processor.common.storm.manager.service.StormManagerService;
-import org.wso2.carbon.event.processor.common.transport.client.TCPEventPublisher;
+import org.wso2.carbon.event.processor.manager.commons.transport.client.TCPEventPublisher;
+import org.wso2.carbon.event.processor.manager.commons.utils.HostAndPort;
+import org.wso2.carbon.event.processor.manager.commons.utils.Utils;
+import org.wso2.carbon.event.processor.manager.core.config.DistributedConfiguration;
 import org.wso2.siddhi.query.api.definition.StreamDefinition;
 
 import java.io.IOException;
@@ -37,8 +39,8 @@ public class AsyncEventPublisher implements EventHandler<AsynchronousEventBuffer
     private String executionPlanName;
     private int tenantId;
     private String thisHostIp;
-    private List<StormDeploymentConfig.HostAndPort> managerServiceEndpoints;
-    private StormDeploymentConfig stormDeploymentConfig;
+    private List<HostAndPort> managerServiceEndpoints;
+    private DistributedConfiguration stormDeploymentConfig;
 
     private TCPEventPublisher tcpEventPublisher = null;
     private EndpointConnectionCreator endpointConnectionCreator;
@@ -47,8 +49,8 @@ public class AsyncEventPublisher implements EventHandler<AsynchronousEventBuffer
     private boolean shutdown = false;
 
     public AsyncEventPublisher(DestinationType destinationType, Set<StreamDefinition> streams,
-                               List<StormDeploymentConfig.HostAndPort> managerServiceEndpoints,
-                               String executionPlanName, int tenantId, StormDeploymentConfig stormDeploymentConfig){
+                               List<HostAndPort> managerServiceEndpoints,
+                               String executionPlanName, int tenantId, DistributedConfiguration stormDeploymentConfig){
         this.destinationType = destinationType;
         this.streams = streams;
         this.executionPlanName = executionPlanName;
@@ -175,7 +177,7 @@ public class AsyncEventPublisher implements EventHandler<AsynchronousEventBuffer
         public String getEndpointFromManagerService() {
             String endpointHostPort = null;
             do {
-                for (StormDeploymentConfig.HostAndPort endpoint : managerServiceEndpoints) {
+                for (HostAndPort endpoint : managerServiceEndpoints) {
                     TTransport transport = null;
                     try {
                         transport = new TSocket(endpoint.getHostName(), endpoint.getPort());
