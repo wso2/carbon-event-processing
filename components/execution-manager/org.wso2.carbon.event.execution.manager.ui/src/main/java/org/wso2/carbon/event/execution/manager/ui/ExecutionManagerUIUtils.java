@@ -18,6 +18,7 @@ import org.apache.axis2.client.Options;
 import org.apache.axis2.client.ServiceClient;
 import org.apache.axis2.context.ConfigurationContext;
 import org.wso2.carbon.CarbonConstants;
+import org.wso2.carbon.authenticator.stub.AuthenticationAdminStub;
 import org.wso2.carbon.event.execution.manager.stub.ExecutionManagerAdminServiceStub;
 import org.apache.axis2.AxisFault;
 import org.wso2.carbon.ui.CarbonUIUtil;
@@ -50,6 +51,37 @@ public class ExecutionManagerUIUtils {
         String serverURL = CarbonUIUtil.getServerURL(config.getServletContext(),
                 session) + "ExecutionManagerAdminService.ExecutionManagerAdminServiceHttpsSoap12Endpoint";
         ExecutionManagerAdminServiceStub stub = new ExecutionManagerAdminServiceStub(configContext, serverURL);
+
+        String cookie = (String) session.getAttribute(org.wso2.carbon.utils.ServerConstants.ADMIN_SERVICE_COOKIE);
+
+        ServiceClient client = stub._getServiceClient();
+        Options option = client.getOptions();
+        option.setManageSession(true);
+        option.setProperty(org.apache.axis2.transport.http.HTTPConstants.COOKIE_STRING, cookie);
+
+        return stub;
+    }
+
+
+    /**
+     * Provides created  AuthenticationAdminStub object
+     *
+     * @param config  Servlet Configuration
+     * @param session Http Session
+     * @param request Http Servlet Request
+     * @return Created ExecutionManagerAdminServiceStub object
+     * @throws AxisFault
+     */
+    public static AuthenticationAdminStub getAuthenticationAdminService(
+            ServletConfig config, HttpSession session,
+            HttpServletRequest request)
+            throws AxisFault {
+        ConfigurationContext configContext = (ConfigurationContext) config.getServletContext()
+                .getAttribute(CarbonConstants.CONFIGURATION_CONTEXT);
+        //Server URL which is defined in the server.xml
+        String serverURL = CarbonUIUtil.getServerURL(config.getServletContext(),
+                session) + "AuthenticationAdmin.AuthenticationAdminHttpsSoap12Endpoint";
+        AuthenticationAdminStub stub = new AuthenticationAdminStub(configContext, serverURL);
 
         String cookie = (String) session.getAttribute(org.wso2.carbon.utils.ServerConstants.ADMIN_SERVICE_COOKIE);
 
