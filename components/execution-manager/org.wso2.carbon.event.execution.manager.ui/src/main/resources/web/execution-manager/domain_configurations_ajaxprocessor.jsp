@@ -182,7 +182,7 @@
                                 }
 
                             } catch (AxisFault e) {
-                                response.sendRedirect("../admin/login.jsp");
+                                response.sendRedirect("domain_session_handler_ajaxprocessor.jsp");
                             }
 
                         }
