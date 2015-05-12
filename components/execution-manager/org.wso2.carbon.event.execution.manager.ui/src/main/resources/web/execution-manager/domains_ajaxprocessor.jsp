@@ -84,7 +84,7 @@
                 </div>
             </div>
 
-
+            <div class="row">
             <%
                 ExecutionManagerAdminServiceStub proxy = ExecutionManagerUIUtils.getExecutionManagerAdminService(config, session, request);
                 try {
@@ -96,7 +96,7 @@
             %>
 
 
-            <div class="row">
+
                 <div class="col-sm-6">
                     <a href="domain_configurations_ajaxprocessor.jsp?ordinal=1&domainName=<%=domainDTO.getName()%>">
                         <div class="tile green">
