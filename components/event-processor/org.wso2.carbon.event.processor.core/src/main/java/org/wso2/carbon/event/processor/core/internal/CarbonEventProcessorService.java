@@ -186,7 +186,7 @@ public class CarbonEventProcessorService implements EventProcessorService {
             for (CarbonDataSource cds : dataSources) {
                 try {
                     if (cds.getDSObject() instanceof DataSource) {
-                        siddhiManager.getSiddhiContext().addSiddhiDataSource(cds.getDSMInfo().getName(), (DataSource) cds.getDSObject());
+                        siddhiManager.setDataSource(cds.getDSMInfo().getName(), (DataSource) cds.getDSObject());
                     }
                 } catch (Exception e) {
                     log.error("Unable to add the datasource" + cds.getDSMInfo().getName(), e);

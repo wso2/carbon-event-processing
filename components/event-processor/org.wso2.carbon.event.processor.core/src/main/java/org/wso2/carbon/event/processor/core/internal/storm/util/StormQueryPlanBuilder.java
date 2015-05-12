@@ -24,7 +24,8 @@ import org.wso2.carbon.event.processor.core.internal.util.EventProcessorConstant
 import org.wso2.carbon.event.processor.core.internal.util.EventProcessorUtil;
 import org.wso2.carbon.event.stream.core.exception.EventStreamConfigurationException;
 import org.wso2.siddhi.core.ExecutionPlanRuntime;
-import org.wso2.siddhi.core.SiddhiManager;
+import org.wso2.siddhi.core.config.SiddhiContext;
+import org.wso2.siddhi.core.util.parser.ExecutionPlanParser;
 import org.wso2.siddhi.query.api.ExecutionPlan;
 import org.wso2.siddhi.query.api.annotation.Annotation;
 import org.wso2.siddhi.query.api.definition.StreamDefinition;
@@ -38,14 +39,7 @@ import org.wso2.siddhi.query.compiler.exception.SiddhiParserException;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Iterator;
-import java.util.UUID;
-import java.util.Set;
-import java.util.HashSet;
+import java.util.*;
 
 public class StormQueryPlanBuilder {
 
@@ -153,8 +147,7 @@ public class StormQueryPlanBuilder {
     private static List<Element> constructProcessorElement(Document document, String queryExpressions,
                                                            List<String> importedStreams, List<String> exportedStreams)
             throws SiddhiParserException, StormQueryConstructionException {
-        SiddhiManager mockSiddhiManager = new SiddhiManager();
-        ExecutionPlanRuntime executionPlanRuntime = mockSiddhiManager.createExecutionPlanRuntime(queryExpressions);
+        ExecutionPlanRuntime executionPlanRuntime = ExecutionPlanParser.parse(SiddhiCompiler.parse(queryExpressions), new SiddhiContext()).build();
 
         List<Element> processorElementList = new ArrayList<Element>();
         List<String> stringQueryList = SiddhiQLStormQuerySplitter.split(queryExpressions);
@@ -405,7 +398,7 @@ public class StormQueryPlanBuilder {
     private static String getQueryString(List<String> stringQueries) {
         StringBuilder builder = new StringBuilder();
         for (String query : stringQueries) {
-            builder.append(query.trim() + ";");
+            builder.append(query.trim()).append(";");
         }
         return builder.toString();
     }
