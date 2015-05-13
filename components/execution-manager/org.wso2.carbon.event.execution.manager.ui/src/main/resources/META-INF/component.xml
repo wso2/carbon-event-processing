@@ -26,6 +26,7 @@
             <region>region1</region>
             <order>2</order>
             <style-class>manage</style-class>
+            <icon>../execution-manager/images/icon.png</icon>
             <require-permission>/permission/protected/manage</require-permission>
         </menu>
     </menus>
