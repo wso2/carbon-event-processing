@@ -15,30 +15,8 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-.ui-tabs .ui-tabs-panel.ui-tabs-hide{
-    display:none;
-}
-#userTable textarea{
-    width:100%;
-}
-#userTable tr > td{
-    width:33%;
-}
-.ui-widget-header {
-    border: none;
-    background: transparent;
-    color: #222222;
-    font-weight: bold;
-    width: 100%;
-    padding-left: 18px !important;
-    margin-bottom: -11px !important;
-}
-.ui-tabs .ui-tabs-panel {
-    display: block;
-    border-width: 0;
-    padding: 1em 1.4em;
-    background: none;
-}
-#tabs ul li a {
-    color: #750045 !important;
-}
+
+/*Annotations, Annotation Names and relevant tokens*/
+
+var MIME_TYPE_SIDDHI_QL = "text/siddhi-ql";
+

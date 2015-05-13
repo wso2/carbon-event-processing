@@ -15,30 +15,18 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-.ui-tabs .ui-tabs-panel.ui-tabs-hide{
-    display:none;
+
+function getAnnotationHints(cm, options) {
+    var cur = cm.getCursor();
+    var result = ['Plan:name(\'\')', 'Plan:description(\'\')', 'Plan:trace(\'\')', 'Plan:statistics(\'\')', 'Import(\'\')', 'Export(\'\')'];
+    return {
+        list: result,
+        from: cur,
+        to: cur
+    };
 }
-#userTable textarea{
-    width:100%;
-}
-#userTable tr > td{
-    width:33%;
-}
-.ui-widget-header {
-    border: none;
-    background: transparent;
-    color: #222222;
-    font-weight: bold;
-    width: 100%;
-    padding-left: 18px !important;
-    margin-bottom: -11px !important;
-}
-.ui-tabs .ui-tabs-panel {
-    display: block;
-    border-width: 0;
-    padding: 1em 1.4em;
-    background: none;
-}
-#tabs ul li a {
-    color: #750045 !important;
+
+function insertStr(cm, pos, str, option_str) {
+    cm.replaceRange(str, pos, null, option_str);
+    cm.setCursor({line:pos.line, ch:pos.ch + str.length});
 }

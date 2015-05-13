@@ -16,54 +16,34 @@
 package org.wso2.carbon.siddhi.tryit.ui;
 
 public interface UIConstants {
-    String SIDDHI_DISTRIBUTED_PROCESSING = "siddhi.enable.distributed.processing";
-    String SIDDHI_SNAPSHOT_INTERVAL = "siddhi.persistence.snapshot.time.interval.minutes";
+	String ANNOTATION_PLAN = "Plan";
 
-    String TRUE_LITERAL = "true";
-    String FALSE_LITERAL = "false";
+	String ANNOTATION_NAME_NAME = "name";
+	String ANNOTATION_TOKEN_AT = "@";
+	String ANNOTATION_TOKEN_COLON = ":";
+	String ANNOTATION_TOKEN_OPENING_BRACKET = "(";
+	String ANNOTATION_TOKEN_CLOSING_BRACKET = ")";
 
-    final String ANNOTATION_PLAN = "Plan";
+	String SIDDHI_LINE_SEPARATER = "\n";
+	String SIDDHI_SINGLE_QUOTE = "'";
 
-    final String ANNOTATION_NAME_NAME = "name";
-    final String ANNOTATION_NAME_DESCRIPTION = "description";
-
-    final String ANNOTATION_TOKEN_AT = "@";
-    final String ANNOTATION_TOKEN_COLON = ":";
-    final String ANNOTATION_TOKEN_OPENING_BRACKET = "(";
-    final String ANNOTATION_TOKEN_CLOSING_BRACKET = ")";
-
-    final String SIDDHI_LINE_SEPARATER = "\n";
-    final String SIDDHI_SINGLE_QUOTE = "'";
-
-    final String SIDDHI_LITERAL_BEGIN_MULTI_LINE_COMMENT = "/*";
-    final String SIDDHI_LITERAL_END_MULTI_LINE_COMMENT = "*/";
-    final String SIDDHI_LITERAL_DECLARE_SINGLE_LINE_COMMENT = "--";
-
-    final String EXECUTION_PLAN_BASIC_TEMPLATE = SIDDHI_LITERAL_BEGIN_MULTI_LINE_COMMENT +
-            " Enter a unique ExecutionPlan " +
-            SIDDHI_LITERAL_END_MULTI_LINE_COMMENT + SIDDHI_LINE_SEPARATER +
-            ANNOTATION_TOKEN_AT + ANNOTATION_PLAN +
-            ANNOTATION_TOKEN_COLON +
-            ANNOTATION_NAME_NAME +
-            ANNOTATION_TOKEN_OPENING_BRACKET +
-            SIDDHI_SINGLE_QUOTE +
-            "ExecutionPlan"+
-            SIDDHI_SINGLE_QUOTE +
-            ANNOTATION_TOKEN_CLOSING_BRACKET  + SIDDHI_LINE_SEPARATER + SIDDHI_LINE_SEPARATER +
-            SIDDHI_LITERAL_BEGIN_MULTI_LINE_COMMENT +
-            " Enter a unique description for ExecutionPlan " +
-            SIDDHI_LITERAL_END_MULTI_LINE_COMMENT + SIDDHI_LINE_SEPARATER +
-            SIDDHI_LITERAL_DECLARE_SINGLE_LINE_COMMENT + " "+
-            ANNOTATION_TOKEN_AT + ANNOTATION_PLAN +
-            ANNOTATION_TOKEN_COLON +
-            ANNOTATION_NAME_DESCRIPTION +
-            ANNOTATION_TOKEN_OPENING_BRACKET +
-            SIDDHI_SINGLE_QUOTE +"ExecutionPlan"+
-            SIDDHI_SINGLE_QUOTE +
-            ANNOTATION_TOKEN_CLOSING_BRACKET + SIDDHI_LINE_SEPARATER +
-            SIDDHI_LINE_SEPARATER +
-            SIDDHI_LITERAL_BEGIN_MULTI_LINE_COMMENT +
-            " define streams and write query here ... " +
-            SIDDHI_LITERAL_END_MULTI_LINE_COMMENT +
-            SIDDHI_LINE_SEPARATER;
+	String EXECUTION_PLAN_BASIC_TEMPLATE = ANNOTATION_TOKEN_AT + ANNOTATION_PLAN +
+	                                       ANNOTATION_TOKEN_COLON +
+	                                       ANNOTATION_NAME_NAME +
+	                                       ANNOTATION_TOKEN_OPENING_BRACKET +
+	                                       SIDDHI_SINGLE_QUOTE +
+	                                       "TestExecutionPlan" +
+	                                       SIDDHI_SINGLE_QUOTE +
+	                                       ANNOTATION_TOKEN_CLOSING_BRACKET +
+	                                       SIDDHI_LINE_SEPARATER + SIDDHI_LINE_SEPARATER;
+	String EXECUTION_PLAN_SAMPLE =
+			"define stream sensorStream (sensorId string, temperature float);\n" +
+			"\n" +
+			"@info(name = 'query1') \n" +
+			"from sensorStream[temperature>98.6] \n" +
+			"select sensorId \n" +
+			"insert into outputStream;";
+	String EVENT_STREAM_SAMPLE = "sensorStream=[tempID1,99.8]\n" +
+	                             "delay(100)\n" +
+	                             "sensorStream=[tempID2,80.6]";
 }

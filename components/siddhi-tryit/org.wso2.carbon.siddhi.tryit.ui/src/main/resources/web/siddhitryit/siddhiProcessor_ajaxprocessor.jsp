@@ -15,39 +15,44 @@
 
 <%@ page import="org.wso2.carbon.siddhi.tryit.ui.SiddhiTryItClient" %>
 <%@ page import="java.util.Map" %>
-<%@ page import="java.util.LinkedHashMap" %>
+
 <%@ page import="com.google.gson.Gson" %>
-<%@ page import="com.google.gson.GsonBuilder" %>
 <%@ page import="com.google.gson.JsonArray" %>
 <%@ page import="com.google.gson.JsonObject" %>
-<%@ page import="java.util.Objects" %>
 
 <%
-    Gson gson = new GsonBuilder()
-            .setPrettyPrinting()
-            .disableHtmlEscaping()
-            .create();
     String executionplan = request.getParameter("executionplan");
     String eventStream = request.getParameter("eventstream");
     String dateTime = request.getParameter("datetime");
 
     SiddhiTryItClient siddhiTryItClientObject = new SiddhiTryItClient();
+    JsonObject jsonObject = new JsonObject();
 
-    Map<String, StringBuilder> map = siddhiTryItClientObject.processData(executionplan, eventStream, dateTime);
+    try {
+        Map<String, StringBuilder> map =
+                siddhiTryItClientObject.processData(executionplan, eventStream, dateTime);
+        Object[] resultMapKeysArray = map.keySet().toArray();
+        Object[] resultMapValuesArray = map.values().toArray();
 
-    Object[] resultMapKeysArray = map.keySet().toArray();
-    Object[] resultMapValuesArray = map.values().toArray();
-
-    //Create json array
-    JsonArray jsonArray = new JsonArray();
-    for (int i = 0; i < map.size(); i++) {
-        JsonObject object = new JsonObject();
-        object.addProperty("key", resultMapKeysArray[i].toString());
-        object.addProperty("jsonValue", resultMapValuesArray[i].toString());
-        jsonArray.add(object);
+        //Create JSON array
+        JsonArray jsonArray = new JsonArray();
+        for (int i = 0; i < map.size(); i++) {
+            JsonObject object = new JsonObject();
+            object.addProperty("key", resultMapKeysArray[i].toString());
+            object.addProperty("jsonValue", resultMapValuesArray[i].toString());
+            jsonArray.add(object);
+        }
+        //Ad to json object
+        String toStringJsonArray = new Gson().toJson(jsonArray);
+        jsonObject.addProperty("success", "true");
+        jsonObject.addProperty("jsonValue", toStringJsonArray);
+    } catch (Exception e) {
+        //Ad to json object
+        jsonObject.addProperty("success", "false");
+        jsonObject.addProperty("jsonValue", e.getMessage());
     }
 %>
-<%=jsonArray%>
+<%=jsonObject%>
 
 
 

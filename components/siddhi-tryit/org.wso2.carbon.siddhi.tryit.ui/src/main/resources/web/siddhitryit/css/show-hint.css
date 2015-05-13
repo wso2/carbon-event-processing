@@ -15,30 +15,42 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-.ui-tabs .ui-tabs-panel.ui-tabs-hide{
-    display:none;
+
+.CodeMirror-hints {
+  position: absolute;
+  z-index: 10;
+  overflow: hidden;
+  list-style: none;
+
+  margin: 0;
+  padding: 2px;
+
+  -webkit-box-shadow: 2px 3px 5px rgba(0,0,0,.2);
+  -moz-box-shadow: 2px 3px 5px rgba(0,0,0,.2);
+  box-shadow: 2px 3px 5px rgba(0,0,0,.2);
+  border-radius: 3px;
+  border: 1px solid silver;
+
+  background: white;
+  font-size: 90%;
+  font-family: monospace;
+
+  max-height: 20em;
+  overflow-y: auto;
 }
-#userTable textarea{
-    width:100%;
+
+.CodeMirror-hint {
+  margin: 0;
+  padding: 0 4px;
+  border-radius: 2px;
+  max-width: 19em;
+  overflow: hidden;
+  white-space: pre;
+  color: black;
+  cursor: pointer;
 }
-#userTable tr > td{
-    width:33%;
-}
-.ui-widget-header {
-    border: none;
-    background: transparent;
-    color: #222222;
-    font-weight: bold;
-    width: 100%;
-    padding-left: 18px !important;
-    margin-bottom: -11px !important;
-}
-.ui-tabs .ui-tabs-panel {
-    display: block;
-    border-width: 0;
-    padding: 1em 1.4em;
-    background: none;
-}
-#tabs ul li a {
-    color: #750045 !important;
+
+li.CodeMirror-hint-active {
+  background: #08f;
+  color: white;
 }

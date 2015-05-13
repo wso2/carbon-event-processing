@@ -14,33 +14,38 @@
  */
 
 function sendAjaxRequestToSiddhiProcessor(sendInputData) {
-
     new Ajax.Request("../siddhitryit/siddhiProcessor_ajaxprocessor.jsp", {
         method: 'POST',
         asynchronous: false,
         parameters: {
             eventstream: document.getElementById("eventStreamId").value,
-            executionplan: document.getElementById("executionPlanId").value,
+            executionplan: window.queryEditor.getValue(),
             datetime: document.getElementById("dateTimeID").value
         },
         onSuccess: function (data) {
             if (data != null) {
                 var jsonObject = JSON.parse(data.responseText);
                 if (jsonObject != undefined) {
-                    jQuery('.js_resultCol').show();
-                    var tabContent = document.getElementById('resultsId');
-                    tabContent.innerHTML = '<div id="tabs"><ul id="tabHeaders"></ul></div>';
-
-                    for (i = 0; i < jsonObject.length; i++) {
-                        var tabHeader = document.getElementById('tabHeaders');
-                        tabHeader.innerHTML = tabHeader.innerHTML + '<li><a href="#tabs-' + i + '">' + jsonObject[i].key + '</a></li>';
-                        tabContent = document.getElementById('tabs');
-                        tabContent.innerHTML = tabContent.innerHTML + '<div id="tabs-' + i + '"><textarea rows="50" cols="50" >' + jsonObject[i].jsonValue + '</textarea></div>';
+                    if (jsonObject.success.localeCompare("true") == 0) {
+                        var jsonArray = JSON.parse(jsonObject.jsonValue);
+                        jQuery('.js_resultCol').show();
+                        var tabContent = document.getElementById('resultsId');
+                        tabContent.innerHTML = '<div id="tabs"><ul id="tabHeaders"></ul></div>';
+                        for (i = 0; i < jsonArray.length; i++) {
+                            var tabHeader = document.getElementById('tabHeaders');
+                            tabHeader.innerHTML = tabHeader.innerHTML + '<li><a href="#tabs-' + i + '">' + jsonArray[i].key + '</a></li>';
+                            tabContent = document.getElementById('tabs');
+                            tabContent.innerHTML = tabContent.innerHTML + '<div id="tabs-' + i + '"><textarea rows="50" cols="50" >' + jsonArray[i].jsonValue + '</textarea></div>';
+                        }
+                        jQuery("#tabs").tabs();
                     }
-                    jQuery("#tabs").tabs();
+                    else if (jsonObject.success.localeCompare("false") == 0) {
+                        CARBON.showErrorDialog(jsonObject.jsonValue);
+                    }
                 }
             }
         }
+
     });
 }
 
