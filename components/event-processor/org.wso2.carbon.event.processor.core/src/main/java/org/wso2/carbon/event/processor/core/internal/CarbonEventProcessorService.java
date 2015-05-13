@@ -176,28 +176,6 @@ public class CarbonEventProcessorService implements EventProcessorService {
     }
 
 
-    private void loadDataSourceConfiguration(SiddhiManager siddhiManager){
-        try {
-            int tenantId = PrivilegedCarbonContext.getThreadLocalCarbonContext().getTenantId();
-            if (tenantId > -1) {
-                DataSourceManager.getInstance().initTenant(tenantId);
-            }
-            List<CarbonDataSource> dataSources = EventProcessorValueHolder.getDataSourceService().getAllDataSources();
-            for (CarbonDataSource cds : dataSources) {
-                try {
-                    if (cds.getDSObject() instanceof DataSource) {
-                        siddhiManager.setDataSource(cds.getDSMInfo().getName(), (DataSource) cds.getDSObject());
-                    }
-                } catch (Exception e) {
-                    log.error("Unable to add the datasource" + cds.getDSMInfo().getName(), e);
-                }
-            }
-        } catch (DataSourceException e) {
-            log.error("Unable to populate the data sources in Siddhi engine.", e);
-        }
-    }
-
-
     /**
      * Starts an execution plan runtime for the given (valid) execution plan.
      *
@@ -213,7 +191,7 @@ public class CarbonEventProcessorService implements EventProcessorService {
         int tenantId = PrivilegedCarbonContext.getThreadLocalCarbonContext().getTenantId();
 
         SiddhiManager siddhiManager = EventProcessorValueHolder.getSiddhiManager();
-        loadDataSourceConfiguration(siddhiManager);
+        EventProcessorHelper.loadDataSourceConfiguration(siddhiManager);
         ExecutionPlanRuntime executionPlanRuntime = null;
         org.wso2.siddhi.query.api.ExecutionPlan parsedExecutionPlan = SiddhiCompiler.parse(executionPlan);
 
@@ -445,7 +423,7 @@ public class CarbonEventProcessorService implements EventProcessorService {
 
     public List<StreamDefinition> getSiddhiStreams(String executionPlan) {
         SiddhiManager siddhiManager = EventProcessorValueHolder.getSiddhiManager();
-        loadDataSourceConfiguration(siddhiManager);
+        EventProcessorHelper.loadDataSourceConfiguration(siddhiManager);
         ExecutionPlanRuntime executionPlanRuntime = siddhiManager.createExecutionPlanRuntime(executionPlan);
         Collection<AbstractDefinition> streamDefinitions = executionPlanRuntime.getStreamDefinitionMap().values();
         List<StreamDefinition> databridgeStreamDefinitions = new ArrayList<StreamDefinition>(streamDefinitions.size());
