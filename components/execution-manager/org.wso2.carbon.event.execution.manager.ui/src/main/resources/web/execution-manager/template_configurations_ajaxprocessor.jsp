@@ -40,6 +40,11 @@
     <script src="js/html5shiv.min.js"></script>
     <script src="js/respond.min.js"></script>
     <![endif]-->
+
+    <script type="application/javascript">
+        //create redirect URL to dashboard in session log outs
+        createCookie("requestedURI", "../../carbon/execution-manager/domains_ajaxprocessor.jsp", 1);
+    </script>
 </head>
 <body>
 
@@ -57,15 +62,15 @@
             <div class="wr-auth pull-right">
                 <a href="#" data-toggle="dropdown" class="" aria-expanded="false">
                     <div class="auth-img">
-                        <span>username@user.com</span>&nbsp;&nbsp;<i class="glyphicon glyphicon-user"></i>
+                        <span><%=session.getAttribute("logged-user") + "@" + session.getAttribute("tenantDomain") %>
+                        </span>&nbsp;&nbsp;<i class="glyphicon glyphicon-user"></i>
                     </div>
                 </a>
 
                 <div class="dropdown-menu">
                     <div class="cu-arrow"></div>
                     <div class="dropdown-menu-content">
-                        <a class="filter-item" href="#">View profile</a>
-                        <a class="filter-item" href="#">Sign out</a>
+                        <a class="filter-item" href="logout_ajaxprocessor.jsp"> Sign out</a>
                     </div>
                 </div>
             </div>
@@ -362,7 +367,7 @@
 
 <%
         } catch (AxisFault e) {
-            response.sendRedirect("../admin/login.jsp");
+            response.sendRedirect("domain_session_handler_ajaxprocessor.jsp");
         }
     }
 
