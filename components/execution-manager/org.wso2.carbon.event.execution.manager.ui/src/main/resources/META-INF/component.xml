@@ -24,7 +24,7 @@
             <parent-menu>manage_menu</parent-menu>
             <link>../execution-manager/domains_ajaxprocessor.jsp</link>
             <region>region1</region>
-            <order>50</order>
+            <order>2</order>
             <style-class>manage</style-class>
             <require-permission>/permission/protected/manage</require-permission>
         </menu>
