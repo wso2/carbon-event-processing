@@ -23,9 +23,6 @@ import org.wso2.carbon.event.processor.core.internal.storm.compiler.SiddhiQLStor
 import org.wso2.carbon.event.processor.core.internal.util.EventProcessorConstants;
 import org.wso2.carbon.event.processor.core.internal.util.EventProcessorUtil;
 import org.wso2.carbon.event.stream.core.exception.EventStreamConfigurationException;
-import org.wso2.siddhi.core.ExecutionPlanRuntime;
-import org.wso2.siddhi.core.config.SiddhiContext;
-import org.wso2.siddhi.core.util.parser.ExecutionPlanParser;
 import org.wso2.siddhi.query.api.ExecutionPlan;
 import org.wso2.siddhi.query.api.annotation.Annotation;
 import org.wso2.siddhi.query.api.definition.StreamDefinition;
@@ -48,7 +45,7 @@ public class StormQueryPlanBuilder {
      * query plan essentially comprise of three main elements. Receiver element, event processor element and
      * publisher element. Each of that will be constructed in separate methods and integrated here.
      *
-     * @param configuration     Execution plan configuration
+     * @param configuration Execution plan configuration
      * @return
      * @throws StormQueryConstructionException
      */
@@ -139,7 +136,6 @@ public class StormQueryPlanBuilder {
      * Construct and return a list of event-processor elements. Method can handle even if there are definitions
      * in the query string. queryList is used to get the map between query object and query string.
      *
-     *
      * @param document
      * @param queryExpressions user provided query string
      * @return
@@ -147,7 +143,8 @@ public class StormQueryPlanBuilder {
     private static List<Element> constructProcessorElement(Document document, String queryExpressions,
                                                            List<String> importedStreams, List<String> exportedStreams)
             throws SiddhiParserException, StormQueryConstructionException {
-        ExecutionPlanRuntime executionPlanRuntime = ExecutionPlanParser.parse(SiddhiCompiler.parse(queryExpressions), new SiddhiContext()).build();
+
+        Map<String, StreamDefinition> streamDefinitionMap = SiddhiCompiler.parse(queryExpressions).getStreamDefinitionMap();
 
         List<Element> processorElementList = new ArrayList<Element>();
         List<String> stringQueryList = SiddhiQLStormQuerySplitter.split(queryExpressions);
@@ -164,14 +161,14 @@ public class StormQueryPlanBuilder {
             Element processor = document.createElement(EventProcessorConstants.EVENT_PROCESSOR_TAG);
             setAttributes(processor, name, holder);
             Element inputStream = getProcessorInputStream(document, new ArrayList<String>(infoHolder
-                    .getInputDefinitionIds()), executionPlanRuntime, infoHolder.getPartitionFieldMap());
+                    .getInputDefinitionIds()), streamDefinitionMap, infoHolder.getPartitionFieldMap());
             processor.appendChild(inputStream);
             Element queries = document.createElement(EventProcessorConstants.QUERIES);
             String stringQueries = getQueryString(((QueryGroupInfoHolder) entry.getValue()).getStringQueries());
             queries.setTextContent(stringQueries);
             processor.appendChild(queries);
             Element outputStream = getProcessorOutputStream(document, new ArrayList<String>(((QueryGroupInfoHolder)
-                    entry.getValue()).getOutputDefinitionIds()), executionPlanRuntime);
+                    entry.getValue()).getOutputDefinitionIds()), streamDefinitionMap);
             processor.appendChild(outputStream);
             processorElementList.add(processor);
         }
@@ -433,15 +430,15 @@ public class StormQueryPlanBuilder {
      * Create output stream element for event processor element
      *
      * @param streamIds
-     * @param executionPlanRuntime
+     * @param streamDefinitionMap
      * @return
      */
     private static Element getProcessorOutputStream(Document document, List<String> streamIds,
-                                                    ExecutionPlanRuntime executionPlanRuntime) {
+                                                    Map<String, StreamDefinition> streamDefinitionMap) {
         Element outputStream = document.createElement(EventProcessorConstants.OUTPUT_STREAMS);
         for (String streamId : streamIds) {
-            Element stream = getStreamElement(document, EventProcessorUtil.getDefinitionString(executionPlanRuntime
-                    .getStreamDefinitionMap().get(streamId)));
+            Element stream = getStreamElement(document, EventProcessorUtil.getDefinitionString(streamDefinitionMap
+                    .get(streamId)));
             outputStream.appendChild(stream);
         }
         return outputStream;
@@ -449,17 +446,17 @@ public class StormQueryPlanBuilder {
 
     /**
      * Create input stream element for event processor element
+     *
      * @param streamIds
-     * @param executionPlanRuntime
+     * @param streamDefinitionMap
      * @param partitionFieldMap
      */
     private static Element getProcessorInputStream(Document document, List<String> streamIds,
-                                                   ExecutionPlanRuntime executionPlanRuntime, Map<String,
+                                                   Map<String, StreamDefinition> streamDefinitionMap, Map<String,
             String> partitionFieldMap) {
         Element inputStream = document.createElement(EventProcessorConstants.INPUT_STREAMS);
         for (String streamId : streamIds) {
-            Element stream = getStreamElement(document, EventProcessorUtil.getDefinitionString(executionPlanRuntime
-                    .getStreamDefinitionMap().get(streamId)));
+            Element stream = getStreamElement(document, EventProcessorUtil.getDefinitionString(streamDefinitionMap.get(streamId)));
             if (partitionFieldMap != null) {
                 String attribute = partitionFieldMap.get(streamId);
                 if (attribute != null) {
