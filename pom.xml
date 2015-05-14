@@ -677,7 +677,7 @@
         <disruptor.version>3.2.1</disruptor.version>
         <disruptor.orbit.version>${disruptor.version}.wso2v1</disruptor.orbit.version>
         <antlr.version>4.5</antlr.version>
-        <guava.version>13.0.1</guava.version>
+        <guava.version>14.0.1</guava.version>
         <snakeyaml.version>1.11</snakeyaml.version>
         <quartz.version>2.1.1.wso2v1</quartz.version>
 
