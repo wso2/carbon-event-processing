@@ -95,6 +95,12 @@
                 <version>${quartz.version}</version>
             </dependency>
 
+            <dependency>
+                <groupId>org.wso2.orbit.org.apache.hadoop</groupId>
+                <artifactId>hadoop-client</artifactId>
+                <version>${hadoop.client.version}</version>
+            </dependency>
+
             <!--<dependency>-->
                 <!--<groupId>org.hectorclient.wso2</groupId>-->
                 <!--<artifactId>hector-core</artifactId>-->
@@ -680,6 +686,7 @@
         <guava.version>14.0.1</guava.version>
         <snakeyaml.version>1.11</snakeyaml.version>
         <quartz.version>2.1.1.wso2v1</quartz.version>
+        <hadoop.client.version>2.6.0.wso2v1</hadoop.client.version>
 
 
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
