@@ -18,13 +18,16 @@ package org.wso2.event.processor.core.test;
 import junit.framework.Assert;
 import org.apache.axiom.om.OMElement;
 import org.apache.axis2.util.XMLUtils;
+import org.junit.Before;
 import org.junit.Test;
 import org.w3c.dom.Document;
 import org.wso2.carbon.event.processor.core.ExecutionPlanConfiguration;
 import org.wso2.carbon.event.processor.core.StreamConfiguration;
 import org.wso2.carbon.event.processor.core.exception.StormQueryConstructionException;
+import org.wso2.carbon.event.processor.core.internal.ds.EventProcessorValueHolder;
 import org.wso2.carbon.event.processor.core.internal.storm.util.StormQueryPlanBuilder;
 import org.wso2.carbon.event.processor.core.internal.util.EventProcessorConstants;
+import org.wso2.siddhi.core.SiddhiManager;
 
 import javax.xml.namespace.QName;
 import java.util.ArrayList;
@@ -35,6 +38,11 @@ import java.util.List;
 public class StormQueryPlanBuilderTestCase {
 
     //private static final String singleQuery =
+
+    @Before
+    public void init() {
+        EventProcessorValueHolder.registerSiddhiManager(new SiddhiManager());
+    }
 
     @Test
     public void testSingleQuery() throws Exception {
