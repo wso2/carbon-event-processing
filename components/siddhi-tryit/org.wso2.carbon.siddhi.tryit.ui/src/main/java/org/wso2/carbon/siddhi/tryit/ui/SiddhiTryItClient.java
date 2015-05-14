@@ -28,7 +28,9 @@ import org.wso2.siddhi.core.stream.input.InputHandler;
 import org.wso2.siddhi.core.stream.output.StreamCallback;
 
 import org.wso2.siddhi.query.api.ExecutionPlan;
+import org.wso2.siddhi.query.api.definition.AbstractDefinition;
 import org.wso2.siddhi.query.api.definition.Attribute;
+import org.wso2.siddhi.query.api.execution.ExecutionElement;
 import org.wso2.siddhi.query.api.execution.query.Query;
 import org.wso2.siddhi.query.compiler.SiddhiCompiler;
 
@@ -56,7 +58,6 @@ public class SiddhiTryItClient {
 		Map<String, StringBuilder> map = new LinkedHashMap<String, StringBuilder>();
 		long beginSetTime = createTimeStamp(dateTime);
 		long beginSystemTime = System.currentTimeMillis();
-		String queryName;
 
 		// Create Siddhi Manager
 		SiddhiManager siddhiManager = new SiddhiManager();
@@ -66,44 +67,40 @@ public class SiddhiTryItClient {
 
 		//Query Callback
 		for (int i = 0; i < newExecutionPlan.getExecutionElementList().size(); i++) {
-			Query query = (Query) (newExecutionPlan.getExecutionElementList().get(i));
+			String queryName = "";
+			ExecutionElement executionElement = newExecutionPlan.getExecutionElementList().get(i);
 
-			if (query.getAnnotations().size() > 0) {
-				queryName = query.getAnnotations().get(0).getElement("name");
-			} else {
-				queryName = "";
-			}
-
-			if (!queryName.equals("")) {
-				final StringBuilder stringBuilder = new StringBuilder();
-				map.put(queryName, stringBuilder);
-
-				executionPlanRuntime.addCallback(queryName, new QueryCallback() {
-					@Override public void receive(long timeStamp, Event[] inEvents,
-					                              Event[] removeEvents) {
-						stringBuilder.append(gson.toJson(inEvents));
+			if(executionElement instanceof Query)   {
+				Query query = (Query) executionElement;
+				if (query.getAnnotations().size() > 0) {
+					queryName = query.getAnnotations().get(0).getElement("name");
+					if (!queryName.equals("")) {
+						final StringBuilder stringBuilder = new StringBuilder();
+						map.put(queryName, stringBuilder);
+						executionPlanRuntime.addCallback(queryName, new QueryCallback() {
+							@Override public void receive(long timeStamp, Event[] inEvents,
+							                              Event[] removeEvents) {
+								stringBuilder.append(gson.toJson(inEvents));
+							}
+						});
 					}
-				});
+				}
 			}
 		}
-
 		//Stream Callback
-		for (int j = 0; j < newExecutionPlan.getExecutionElementList().size(); j++) {
-			Query query = (Query) (newExecutionPlan.getExecutionElementList().get(j));
-			String outputStreamName = query.getOutputStream().getId();
-
+		for(AbstractDefinition abstractDefinition:executionPlanRuntime.getStreamDefinitionMap().values()){
+			String streamName=abstractDefinition.getId();
 			final StringBuilder stringBuilder = new StringBuilder();
-			map.put(outputStreamName, stringBuilder);
-
-			executionPlanRuntime.addCallback(outputStreamName, new StreamCallback() {
+			map.put(streamName, stringBuilder);
+			executionPlanRuntime.addCallback(streamName, new StreamCallback() {
 				@Override public void receive(Event[] events) {
 					stringBuilder.append(gson.toJson(events));
 				}
 			});
 		}
 
-		Pattern pattern1, patter2;
-		Matcher matcher1, matcher2;
+		Pattern eventPattern, delayPattern;
+		Matcher eventPatternMatcher, delayPatternMatcher;
 		int eventStreamAttributeListSize;
 		String[] eventStreamAttributeArray;
 		String inputStreamName;
@@ -113,17 +110,18 @@ public class SiddhiTryItClient {
 			String[] inputStreamEventArray = eventStream.split("\\r?\\n");
 
 			for (int k = 0; k < inputStreamEventArray.length; k++) {
-				pattern1 = Pattern.compile("(\\S+)=\\[(.*)\\]");
-				matcher1 = pattern1.matcher(inputStreamEventArray[k].replaceAll("\\s", ""));
-				patter2 = Pattern.compile("(delay\\()(\\d)+");
-				matcher2 = patter2.matcher(inputStreamEventArray[k]);
+				eventPattern = Pattern.compile("(\\S+)=\\[(.*)\\]");
+				eventPatternMatcher = eventPattern.matcher(
+						inputStreamEventArray[k].replaceAll("\\s", ""));
+				delayPattern = Pattern.compile("(delay\\()(\\d)+");
+				delayPatternMatcher = delayPattern.matcher(inputStreamEventArray[k]);
 
-				if (matcher1.find()) {
-					inputStreamName = matcher1.group(1);
+				if (eventPatternMatcher.find()) {
+					inputStreamName = eventPatternMatcher.group(1);
 					InputHandler inputHandler =
 							executionPlanRuntime.getInputHandler(inputStreamName);
 
-					eventStreamAttributeArray = matcher1.group(2).split(",");
+					eventStreamAttributeArray = eventPatternMatcher.group(2).split(",");
 					eventStreamAttributeListSize = eventStreamAttributeArray.length;
 
 					Object object[] = new Object[eventStreamAttributeListSize];
@@ -162,13 +160,15 @@ public class SiddhiTryItClient {
 						inputHandler.send((beginSetTime +
 						                   (System.currentTimeMillis() - beginSystemTime)), object);
 					}
-				} else if (matcher2.find()) {
-					Thread.sleep(Long.parseLong(matcher2.group(2)));
+				} else if (delayPatternMatcher.find()) {
+					Thread.sleep(Long.parseLong(delayPatternMatcher.group(2)));
 				} else {
 					if (!inputStreamEventArray[k].equals("")) {
 						executionPlanRuntime.shutdown();
-						errMsg = "You have an error in your event stream \"  " + inputStreamEventArray[k] +
-						         "\n\"." + " Expected format: &lt;eventStreamName&gt;=[&lt;attribute1&gt;,&lt;attribute2&gt;]";
+						errMsg = "You have an error in your event stream \"  " +
+						         inputStreamEventArray[k] +
+						         "\n\"." +
+						         " Expected format: &lt;eventStreamName&gt;=[&lt;attribute1&gt;,&lt;attribute2&gt;]";
 						throw new Exception(errMsg);
 					}
 				}

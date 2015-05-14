@@ -57,8 +57,7 @@
         <dependency>
             <groupId>com.google.code.gson</groupId>
             <artifactId>gson</artifactId>
-            <version>2.2.4</version>
-        </dependency>
+            </dependency>
     </dependencies>
 
     <build>
@@ -77,8 +76,9 @@
                             org.wso2.carbon.siddhi.tryit.ui.*,
                         </Export-Package>
                         <Import-Package>
+                            org.wso2.siddhi.*,
+                            *;resolution:=optional
                         </Import-Package>
-                        <DynamicImport-Package>*</DynamicImport-Package>
                     </instructions>
                 </configuration>
             </plugin>

@@ -17,89 +17,100 @@
 <%@ page import="java.text.SimpleDateFormat" %>
 <%@ page import="org.wso2.carbon.siddhi.tryit.ui.UIConstants" %>
 
-<%
-    Date date = new Date();
-    SimpleDateFormat dataFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
-    String EXECUTION_PLAN_BASIC_TEMPLATE = UIConstants.EXECUTION_PLAN_BASIC_TEMPLATE;
-    String EXECUTION_PLAN_SAMPLE = UIConstants.EXECUTION_PLAN_SAMPLE;
-    String EVENT_STREAM_SAMPLE = UIConstants.EVENT_STREAM_SAMPLE;
-%>
+<%@ taglib uri="http://wso2.org/projects/carbon/taglibs/carbontags.jar" prefix="carbon" %>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 
-<meta charset="utf-8">
-<link rel="stylesheet" href="../siddhitryit/css/siddhi-tryit.css">
-<script type="text/javascript" src="js/sendInputData.js"></script>
-<script type="text/javascript" src="../siddhitryit/js/siddhitryit_constants.js"></script>
-<script type="text/javascript" src="../ajax/js/prototype.js"></script>
+<fmt:bundle basename="org.wso2.carbon.siddhi.tryit.ui.i18n.Resources">
+    <carbon:breadcrumb
+            label="siddhi.tryit.breadcrumb"
+            resourceBundle="org.wso2.carbon.siddhi.tryit.ui.i18n.Resources"
+            topPage="false"
+            request="<%=request%>"/>
 
-<%--code mirror css and script files--%>
-<link rel="stylesheet" href="../siddhitryit/css/codemirror.css"/>
-<link rel="stylesheet" href="../siddhitryit/css/show-hint.css">
-<script src="../siddhitryit/js/codemirror.js"></script>
-<script type="text/javascript" src="../siddhitryit/js/show-hint.js"></script>
-<script type="text/javascript" src="../siddhitryit/js/annotation-hint.js"></script>
-<script type="text/javascript" src="js/any-word-hint.js"></script>
-<script type="text/javascript" src="../siddhitryit/js/sql-hint.js"></script>
-<script src="../siddhitryit/js/sql.js"></script>
+    <%
+        Date date = new Date();
+        SimpleDateFormat dataFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
+        String EXECUTION_PLAN_BASIC_TEMPLATE = UIConstants.EXECUTION_PLAN_BASIC_TEMPLATE;
+        String EXECUTION_PLAN_SAMPLE = UIConstants.EXECUTION_PLAN_SAMPLE;
+        String EVENT_STREAM_SAMPLE = UIConstants.EVENT_STREAM_SAMPLE;
+    %>
 
-<div id="middle">
-    <h2>Siddhi Try It</h2>
+    <meta charset="utf-8">
+    <link rel="stylesheet" href="../siddhitryit/css/siddhi-tryit.css">
+    <script type="text/javascript" src="js/sendInputData.js"></script>
+    <script type="text/javascript" src="../siddhitryit/js/siddhitryit_constants.js"></script>
+    <script type="text/javascript" src="../ajax/js/prototype.js"></script>
 
-    <div id="workArea">
-        <table class="styledLeft" id="userTable">
-            <thead>
-            <tr>
-                <th>Execution Plan</th>
-                <th>Event Stream</th>
-                <th class="js_resultCol" style="display:none">Result</th>
-            </tr>
-            </thead>
-            <tbody>
-            <tr>
-                <td>
+    <%--code mirror css and script files--%>
+    <link rel="stylesheet" href="../siddhitryit/css/codemirror.css"/>
+    <link rel="stylesheet" href="../siddhitryit/css/show-hint.css">
+    <script src="../siddhitryit/js/codemirror.js"></script>
+    <script type="text/javascript" src="../siddhitryit/js/show-hint.js"></script>
+    <script type="text/javascript" src="../siddhitryit/js/annotation-hint.js"></script>
+    <script type="text/javascript" src="js/any-word-hint.js"></script>
+    <script type="text/javascript" src="../siddhitryit/js/sql-hint.js"></script>
+    <script src="../siddhitryit/js/sql.js"></script>
+
+    <div id="middle">
+        <h2>Siddhi Try It</h2>
+
+        <div id="workArea">
+            <table class="styledLeft" id="userTable">
+                <thead>
+                <tr>
+                    <th><fmt:message key="execution.plan"/></th>
+                    <th><fmt:message key="event.stream"/></th>
+                    <th class="js_resultCol" style="display:none"><fmt:message key="result"/></th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                    <td>
                     <textarea rows="50" cols="50" name="executionplan"
                               id="executionPlanId"
                               style="margin-top:10px;"
                               onblur="window.queryEditor.save()"><%=EXECUTION_PLAN_BASIC_TEMPLATE +
                                                                     EXECUTION_PLAN_SAMPLE%></textarea>
-                </td>
-                <td>
-                    Begin Time: <input type="text" name="datetime" id="dateTimeID"
-                                       value="<%=dataFormat.format(date)%>">
-                    <input type="button" value="Submit"
-                           onclick="sendAjaxRequestToSiddhiProcessor()"/>
-                    <br>
+                    </td>
+                    <td>
+                        Begin Time: <input type="text" name="datetime" id="dateTimeID"
+                                           value="<%=dataFormat.format(date)%>">
+                        <input type="button" value="Submit"
+                               onclick="sendAjaxRequestToSiddhiProcessor()"/>
+                        <br>
                     <textarea rows="50" cols="50" name="eventstream" id="eventStreamId"
                               style="margin-top:29px;"><%=EVENT_STREAM_SAMPLE%></textarea>
-                </td>
-                <td id="resultsId" class="js_resultCol" style="display:none;">
-                </td>
-            </tr>
-            </tbody>
-        </table>
+                    </td>
+                    <td id="resultsId" class="js_resultCol" style="display:none;">
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
     </div>
-</div>
 
-<%--code mirror script--%>
-<script>
-    var mime = MIME_TYPE_SIDDHI_QL;
-    // get mime type
-    if (window.location.href.indexOf('mime=') > -1) {
-        mime = window.location.href.substr(window.location.href.indexOf('mime=') + 5);
-    }
-    window.queryEditor = CodeMirror.fromTextArea(document.getElementById('executionPlanId'), {
-        mode: mime,
-        indentWithTabs: true,
-        smartIndent: true,
-        lineNumbers: true,
-        matchBrackets: true,
-        autofocus: true,
-        extraKeys: {
-            "Shift-2": function (cm) {
-                insertStr(cm, cm.getCursor(), '@');
-                CodeMirror.showHint(cm, getAnnotationHints);
-            },
-            "Ctrl-Space": "autocomplete"
+    <%--code mirror script--%>
+    <script>
+        var mime = MIME_TYPE_SIDDHI_QL;
+        // get mime type
+        if (window.location.href.indexOf('mime=') > -1) {
+            mime = window.location.href.substr(window.location.href.indexOf('mime=') + 5);
         }
-    });
-</script>
+        window.queryEditor = CodeMirror.fromTextArea(document.getElementById('executionPlanId'), {
+            mode: mime,
+            indentWithTabs: true,
+            smartIndent: true,
+            lineNumbers: true,
+            matchBrackets: true,
+            autofocus: true,
+            extraKeys: {
+                "Shift-2": function (cm) {
+                    insertStr(cm, cm.getCursor(), '@');
+                    CodeMirror.showHint(cm, getAnnotationHints);
+                },
+                "Ctrl-Space": "autocomplete"
+            }
+        });
+    </script>
 
+</fmt:bundle>
