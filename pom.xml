@@ -38,10 +38,12 @@
         <module>components/event-flow</module>
         <module>components/execution-manager</module>
 
+        <module>components/siddhi-tryit</module>
         <module>features/event-processor</module>
         <module>features/event-simulator</module>
         <module>features/event-flow</module>
         <module>features/execution-manager</module>
+        <module>features/siddhi-tryit</module>
     </modules>
 
     <dependencyManagement>
@@ -102,9 +104,9 @@
             </dependency>
 
             <!--<dependency>-->
-                <!--<groupId>org.hectorclient.wso2</groupId>-->
-                <!--<artifactId>hector-core</artifactId>-->
-                <!--<version>${hector.wso2.version}</version>-->
+            <!--<groupId>org.hectorclient.wso2</groupId>-->
+            <!--<artifactId>hector-core</artifactId>-->
+            <!--<version>${hector.wso2.version}</version>-->
             <!--</dependency>-->
             <dependency>
                 <groupId>com.lmax.wso2</groupId>
@@ -313,6 +315,11 @@
             <dependency>
                 <groupId>org.wso2.carbon.event-processing</groupId>
                 <artifactId>org.wso2.carbon.event.execution.manager.stub</artifactId>
+                <version>${carbon.event.processing.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.wso2.carbon.event-processing</groupId>
+                <artifactId>org.wso2.carbon.siddhi.tryit.ui</artifactId>
                 <version>${carbon.event.processing.version}</version>
             </dependency>
             <!--carbon event processing dependencies stop-->

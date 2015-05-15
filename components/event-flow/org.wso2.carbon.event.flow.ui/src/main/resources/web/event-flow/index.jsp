@@ -254,21 +254,21 @@ function removeMargins() {
 </script>
 
 <div id="middle">
-    <h2><fmt:message key="event.flow"/></h2>
+          <h2><fmt:message key="event.flow"/></h2>
 
-    <div id="workArea">
-        <div id="flowdivInfo">
-            <svg id="flowInfo" width=100% height=100%>
-                <g transform="translate(0,0)scale(0.75)"></g>
-            </svg>
+          <div id="workArea">
+              <div id="flowdivInfo">
+                  <svg id="flowInfo" width=100% height=100%>
+                      <g transform="translate(0,0)scale(0.75)"></g>
+                  </svg>
 
-        </div>
-       <h2></h2>
-        <div id="flowdiv">
-            <svg id="flowData" width=100% height=100% style="border: 1px solid #999;">
-                <g transform="translate(20, 20)"></g>
-            </svg>
-        </div>
-    </div>
-</div>
+              </div>
+             <h2></h2>
+              <div id="flowdiv">
+                  <svg id="flowData" width=100% height=100% style="border: 1px solid #999;">
+                      <g transform="translate(20, 20)"></g>
+                  </svg>
+              </div>
+          </div>
+      </div>
 </fmt:bundle>
