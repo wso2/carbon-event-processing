@@ -92,39 +92,42 @@
         <!--siddhi extension-->
         <dependency>
             <groupId>org.wso2.siddhi</groupId>
-            <artifactId>math</artifactId>
-            <version>${siddhi.version}</version>
+            <artifactId>siddhi-extension-math</artifactId>
         </dependency>
         <dependency>
             <groupId>org.wso2.siddhi</groupId>
-            <artifactId>regex</artifactId>
-            <version>${siddhi.version}</version>
+            <artifactId>siddhi-extension-regex</artifactId>
         </dependency>
         <dependency>
             <groupId>org.wso2.siddhi</groupId>
-            <artifactId>string</artifactId>
-            <version>${siddhi.version}</version>
+            <artifactId>siddhi-extension-string</artifactId>
         </dependency>
         <dependency>
             <groupId>org.wso2.siddhi</groupId>
-            <artifactId>event-table</artifactId>
-            <version>${siddhi.version}</version>
+            <artifactId>siddhi-extension-event-table</artifactId>
         </dependency>
         <dependency>
             <groupId>org.wso2.siddhi</groupId>
-            <artifactId>eval-script</artifactId>
-            <version>${siddhi.version}</version>
+            <artifactId>siddhi-extension-eval-script</artifactId>
         </dependency>
         <dependency>
             <groupId>org.wso2.siddhi</groupId>
-            <artifactId>time</artifactId>
-            <version>${siddhi.version}</version>
+            <artifactId>siddhi-extension-time</artifactId>
         </dependency>
         <!--<dependency>-->
             <!--<groupId>org.wso2.siddhi</groupId>-->
-            <!--<artifactId>geo</artifactId>-->
-            <!--<version>${siddhi.version}</version>-->
+            <!--<artifactId>siddhi-extension-geo</artifactId>-->
         <!--</dependency>-->
+        <dependency>
+            <groupId>org.quartz-scheduler.wso2</groupId>
+            <artifactId>quartz</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.wso2.orbit.org.apache.hadoop</groupId>
+            <artifactId>hadoop-client</artifactId>
+        </dependency>
+
     </dependencies>
 
 
@@ -222,28 +225,34 @@
                                 <bundleDef>
                                     org.antlr:antlr4-runtime:${antlr.version}
                                 </bundleDef>
+                                <bundleDef>
+                                    org.quartz-scheduler.wso2:quartz:${quartz.version}
+                                </bundleDef>
 
                                 <!--siddhi extensions-->
                                 <bundleDef>
-                                    org.wso2.siddhi:math:${siddhi.version}
+                                    org.wso2.siddhi:siddhi-extension-math:${siddhi.version}
                                 </bundleDef>
                                 <bundleDef>
-                                    org.wso2.siddhi:regex:${siddhi.version}
+                                    org.wso2.siddhi:siddhi-extension-regex:${siddhi.version}
                                 </bundleDef>
                                 <bundleDef>
-                                    org.wso2.siddhi:string:${siddhi.version}
+                                    org.wso2.siddhi:siddhi-extension-string:${siddhi.version}
                                 </bundleDef>
                                 <bundleDef>
-                                    org.wso2.siddhi:event-table:${siddhi.version}
+                                    org.wso2.siddhi:siddhi-extension-event-table:${siddhi.version}
                                 </bundleDef>
                                 <bundleDef>
-                                    org.wso2.siddhi:eval-script:${siddhi.version}
+                                    org.wso2.siddhi:siddhi-extension-eval-script:${siddhi.version}
                                 </bundleDef>
                                 <bundleDef>
-                                    org.wso2.siddhi:time:${siddhi.version}
+                                    org.wso2.siddhi:siddhi-extension-time:${siddhi.version}
+                                </bundleDef>
+                                <bundleDef>
+                                    org.wso2.orbit.org.apache.hadoop:hadoop-client:${hadoop.client.version}
                                 </bundleDef>
                                 <!--<bundleDef>-->
-                                    <!--org.wso2.siddhi:geo:${siddhi.version}-->
+                                    <!--org.wso2.siddhi:siddhi-extension-geo:${siddhi.version}-->
                                 <!--</bundleDef>-->
                             </bundles>
                             <importFeatures>

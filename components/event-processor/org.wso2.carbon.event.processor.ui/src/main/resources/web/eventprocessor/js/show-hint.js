@@ -438,7 +438,7 @@ THE SOFTWARE.*/
 
     CodeMirror.commands.autocomplete = CodeMirror.showHint;
 
-    var default7Options = {
+    var defaultOptions = {
         hint: CodeMirror.hint.auto,
         completeSingle: true,
         alignWithWord: true,
