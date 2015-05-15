@@ -73,8 +73,9 @@
                                                                     EXECUTION_PLAN_SAMPLE%></textarea>
                     </td>
                     <td>
-                        Begin Time: <input type="text" name="datetime" id="dateTimeID"
-                                           value="<%=dataFormat.format(date)%>">
+                        <fmt:message key="begin.time"/>&nbsp<input type="text" name="datetime"
+                                                              id="dateTimeID"
+                                                              value="<%=dataFormat.format(date)%>">
                         <input type="button" value="Submit"
                                onclick="sendAjaxRequestToSiddhiProcessor()"/>
                         <br>

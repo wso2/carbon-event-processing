@@ -87,6 +87,7 @@ public class SiddhiTryItClient {
 				}
 			}
 		}
+
 		//Stream Callback
 		for(AbstractDefinition abstractDefinition:executionPlanRuntime.getStreamDefinitionMap().values()){
 			String streamName=abstractDefinition.getId();
@@ -99,7 +100,8 @@ public class SiddhiTryItClient {
 			});
 		}
 
-		Pattern eventPattern, delayPattern;
+		Pattern eventPattern = Pattern.compile("(\\S+)=\\[(.*)\\]");
+		Pattern delayPattern = Pattern.compile("(delay\\()(\\d)+");
 		Matcher eventPatternMatcher, delayPatternMatcher;
 		int eventStreamAttributeListSize;
 		String[] eventStreamAttributeArray;
@@ -109,12 +111,9 @@ public class SiddhiTryItClient {
 		try {
 			String[] inputStreamEventArray = eventStream.split("\\r?\\n");
 
-			for (int k = 0; k < inputStreamEventArray.length; k++) {
-				eventPattern = Pattern.compile("(\\S+)=\\[(.*)\\]");
-				eventPatternMatcher = eventPattern.matcher(
-						inputStreamEventArray[k].replaceAll("\\s", ""));
-				delayPattern = Pattern.compile("(delay\\()(\\d)+");
-				delayPatternMatcher = delayPattern.matcher(inputStreamEventArray[k]);
+			for (int i = 0; i < inputStreamEventArray.length; i++) {
+				eventPatternMatcher = eventPattern.matcher(inputStreamEventArray[i].replaceAll("\\s", ""));
+				delayPatternMatcher = delayPattern.matcher(inputStreamEventArray[i]);
 
 				if (eventPatternMatcher.find()) {
 					inputStreamName = eventPatternMatcher.group(1);
@@ -125,35 +124,35 @@ public class SiddhiTryItClient {
 					eventStreamAttributeListSize = eventStreamAttributeArray.length;
 
 					Object object[] = new Object[eventStreamAttributeListSize];
-					for (int l = 0; l < eventStreamAttributeListSize; l++) {
+					for (int j = 0; j < eventStreamAttributeListSize; j++) {
 						Attribute.Type attributeType =
 								executionPlanRuntime.getStreamDefinitionMap().get(inputStreamName)
-								                    .getAttributeList().get(l).getType();
+								                    .getAttributeList().get(j).getType();
 						switch (attributeType) {
 							case STRING:
-								object[l] = eventStreamAttributeArray[l];
+								object[j] = eventStreamAttributeArray[j];
 								break;
 							case INT:
-								object[l] = Integer.parseInt(eventStreamAttributeArray[l]);
+								object[j] = Integer.parseInt(eventStreamAttributeArray[j]);
 								break;
 							case LONG:
-								object[l] = Long.parseLong(eventStreamAttributeArray[l]);
+								object[j] = Long.parseLong(eventStreamAttributeArray[j]);
 								break;
 							case FLOAT:
-								object[l] = Float.parseFloat(eventStreamAttributeArray[l]);
+								object[j] = Float.parseFloat(eventStreamAttributeArray[j]);
 								break;
 							case DOUBLE:
-								object[l] = Double.parseDouble(eventStreamAttributeArray[l]);
+								object[j] = Double.parseDouble(eventStreamAttributeArray[j]);
 								break;
 							case BOOL:
-								object[l] = Boolean.parseBoolean(eventStreamAttributeArray[l]);
+								object[j] = Boolean.parseBoolean(eventStreamAttributeArray[j]);
 								break;
 							case OBJECT:
-								object[l] = eventStreamAttributeArray[l];
+								object[j] = eventStreamAttributeArray[j];
 								break;
 						}
 					}
-					if (k == 0) {
+					if (i == 0) {
 						executionPlanRuntime.start();
 						inputHandler.send(beginSetTime, object);
 					} else {
@@ -163,16 +162,17 @@ public class SiddhiTryItClient {
 				} else if (delayPatternMatcher.find()) {
 					Thread.sleep(Long.parseLong(delayPatternMatcher.group(2)));
 				} else {
-					if (!inputStreamEventArray[k].equals("")) {
+					if (!inputStreamEventArray[i].equals("")) {
 						executionPlanRuntime.shutdown();
 						errMsg = "You have an error in your event stream \"  " +
-						         inputStreamEventArray[k] +
+						         inputStreamEventArray[i] +
 						         "\n\"." +
 						         " Expected format: &lt;eventStreamName&gt;=[&lt;attribute1&gt;,&lt;attribute2&gt;]";
 						throw new Exception(errMsg);
 					}
 				}
 			}
+
 			Thread.sleep(500);
 			return map;
 		} catch (Exception e) {
