@@ -31,100 +31,9 @@
 <script type="text/javascript" src="js/d3.v3.min.js"></script>
 <script type="text/javascript" src="js/dagre-d3.min.js"></script>
 <script type="text/javascript" src="js/graphlib-dot.min.js"></script>
+<link rel="stylesheet" href="css/eventflow.css"/>
 
-<style>
-
-    .type-ER {
-        background-color: #3d35d5;
-    }
-
-    .type-ES {
-        background-color: #FF8A3C;
-    }
-
-    .type-EXP  {
-        background-color: #a33c74;
-    }
-
-    .type-EP {
-        background-color: #54c082;
-    }
-
-    .type-ER-info  {
-        background-image: url(images/event-receiver.png);
-    }
-
-    .type-ES-info {
-        background-image: url(images/event_stream.png);
-    }
-
-    .type-EXP-info   {
-        background-image: url(images/execution_plan.gif);
-    }
-
-    .type-EP-info  {
-        background-image:url(../event-flow/images/event-publisher.png);
-    }
-
-    .node g div {
-        height: 30px;
-        line-height: 30px;
-    }
-
-    .name-info{
-        white-space:nowrap;
-        font-weight: bold;
-    }
-
-    .name{
-        white-space:nowrap;
-    }
-
-    .type {
-        height: 30px;
-        width: 10px;
-        display: block;
-        float: left;
-        border-top-left-radius: 5px;
-        border-bottom-left-radius: 5px;
-        margin-right: 4px;
-    }
-
-    .infoType {
-        background-repeat: no-repeat;
-        background-position: 5px 50%;
-        width: 25px;
-    }
-
-    svg {
-        overflow: hidden;
-    }
-
-    text {
-        font-weight: 300;
-        font-family: "Helvetica Neue", Helvetica, Arial, sans-serf;
-    }
-
-    .node rect {
-        stroke-width: 1px;
-        stroke: #707070;
-        fill: #F0F0F0 ;
-    }
-
-    .edgeLabel rect {
-        fill: #fff;
-    }
-
-    .edgePath path {
-        stroke: #333;
-        stroke-width: 1.5px;
-        fill: none;
-    }
-
-</style>
-
-
-<%
+    <%
     String backendServerURL = CarbonUIUtil.getServerURL(config.getServletContext(), session);
     ConfigurationContext configContext =
             (ConfigurationContext) config.getServletContext()
@@ -167,15 +76,10 @@ function tryDrawProcessingFlowInfo() {
 
     var g = new dagreD3.Digraph();
 
-    g.addNode("EventPublishers", { label: '<div onclick="location.href = \'../eventpublisher/index.jsp \';" onmouseover="" style="cursor: pointer;"><span class="infoType type type-EP  type-EP-info"></span><span name="nameElement" style="margin-right: 25px;" class="name-info" ><fmt:message key="event.publishers"/></span></div>' });
-    g.addNode("EventStreams", { label: '<div onclick="location.href = \'../eventstream/index.jsp \';" onmouseover="" style="cursor: pointer;"><span class="infoType type type-ES  type-ES-info"></span><span name="nameElement" style="margin-right: 25px;" class="name-info" ><fmt:message key="event.streams"/></span></div>' });
     g.addNode("EventReceivers", { label: '<div onclick="location.href = \'../eventreceiver/index.jsp \';" onmouseover="" style="cursor: pointer;"><span class="infoType type type-ER  type-ER-info"></span><span name="nameElement" style="margin-right: 25px;" class="name-info" ><fmt:message key="event.receivers"/></span></div>' });
+    g.addNode("EventStreams", { label: '<div onclick="location.href = \'../eventstream/index.jsp \';" onmouseover="" style="cursor: pointer;"><span class="infoType type type-ES  type-ES-info"></span><span name="nameElement" style="margin-right: 25px;" class="name-info" ><fmt:message key="event.streams"/></span></div>' });
     g.addNode("ExecutionPlans", { label: '<div onclick="location.href = \'../eventprocessor/index.jsp \';" onmouseover="" style="cursor: pointer;"><span class="infoType type type-EXP type-EXP-info"></span><span name="nameElement" style="margin-right: 25px;" class="name-info" ><fmt:message key="execution.plans"/></span></div>' });
-
-    g.addEdge(null, "EventReceivers", "EventStreams", { style: 'stroke: #7a0177; stroke-width: 2px;' });
-    g.addEdge(null, "EventStreams", "EventPublishers", { style: 'stroke: #7a0177; stroke-width: 2px;' });
-    g.addEdge(null, "EventStreams", "ExecutionPlans", { style: 'stroke: #7a0177; stroke-width: 2px;' });
-    g.addEdge(null, "ExecutionPlans", "EventStreams", { style: 'stroke: #7a0177; stroke-width: 2px;' });
+    g.addNode("EventPublishers", { label: '<div onclick="location.href = \'../eventpublisher/index.jsp \';" onmouseover="" style="cursor: pointer;"><span class="infoType type type-EP  type-EP-info"></span><span name="nameElement" style="margin-right: 25px;" class="name-info" ><fmt:message key="event.publishers"/></span></div>' });
 
     var renderer = new dagreD3.Renderer();
 
@@ -185,10 +89,10 @@ function tryDrawProcessingFlowInfo() {
     renderer.zoom(false);
 
     var layout = dagreD3.layout()
-            .nodeSep(5)
+            .nodeSep(30)
             .edgeSep(30)
-            .rankSep(40)
-            .rankDir("LR");
+            .rankSep(40);
+//            .rankDir("LR");
     renderer.layout(layout);
 
     layout = renderer.run(g, svgGroup);
@@ -263,9 +167,9 @@ function removeMargins() {
                   </svg>
 
               </div>
-             <h2></h2>
+             <h2 style="border-bottom:solid 1px #d2d2d2"></h2>
               <div id="flowdiv">
-                  <svg id="flowData" width=100% height=100% style="border: 1px solid #999;">
+                  <svg id="flowData" width=100% height=100% style="border: 1px solid #d2d2d2;">
                       <g transform="translate(20, 20)"></g>
                   </svg>
               </div>
