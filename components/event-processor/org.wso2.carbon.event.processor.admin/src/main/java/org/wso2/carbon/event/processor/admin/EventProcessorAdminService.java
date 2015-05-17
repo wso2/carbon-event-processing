@@ -30,6 +30,8 @@ import org.wso2.carbon.event.processor.core.ExecutionPlanConfigurationFile;
 import org.wso2.carbon.event.processor.core.StreamConfiguration;
 import org.wso2.carbon.event.processor.core.exception.ExecutionPlanConfigurationException;
 import org.wso2.carbon.event.processor.core.exception.ExecutionPlanDependencyValidationException;
+import org.wso2.siddhi.query.api.exception.ExecutionPlanValidationException;
+import org.wso2.siddhi.query.compiler.exception.SiddhiParserException;
 
 import java.util.Arrays;
 import java.util.Comparator;
@@ -303,26 +305,39 @@ public class EventProcessorAdminService extends AbstractAdmin {
             EventProcessorAdminValueHolder.getEventProcessorService().validateExecutionPlan(executionPlan);
             return "success";
         } catch (ExecutionPlanConfigurationException e) {
+            log.error("Exception when validating execution plan", e);
             return e.getMessage();
         } catch (ExecutionPlanDependencyValidationException e) {
+            log.error("Exception when validating execution plan", e);
             return e.getMessage();
+        } catch (ExecutionPlanValidationException e) {
+            log.error("Exception when validating execution plan", e);
+            return e.getMessage();
+        } catch (Throwable t) {
+            log.error("Exception when validating execution plan", t);
+            return t.getMessage();
         }
     }
 
     public StreamDefinitionDto[] getSiddhiStreams(String executionPlan) throws AxisFault {
-        List<StreamDefinition> streamdefinitions = EventProcessorAdminValueHolder.getEventProcessorService().getSiddhiStreams(executionPlan);
-        StreamDefinitionDto[] streamDefinitionDtos = new StreamDefinitionDto[streamdefinitions.size()];
-        int i = 0;
-        for (StreamDefinition databridgeStreamDef : streamdefinitions) {
-            StreamDefinitionDto dto = new StreamDefinitionDto();
-            dto.setName(databridgeStreamDef.getName());
-            dto.setMetaData(convertAttributeList(databridgeStreamDef.getMetaData()));
-            dto.setCorrelationData(convertAttributeList(databridgeStreamDef.getCorrelationData()));
-            dto.setPayloadData(convertAttributeList(databridgeStreamDef.getPayloadData()));
-            streamDefinitionDtos[i] = dto;
-            i++;
+        try {
+            List<StreamDefinition> streamdefinitions = EventProcessorAdminValueHolder.getEventProcessorService().getSiddhiStreams(executionPlan);
+            StreamDefinitionDto[] streamDefinitionDtos = new StreamDefinitionDto[streamdefinitions.size()];
+            int i = 0;
+            for (StreamDefinition databridgeStreamDef : streamdefinitions) {
+                StreamDefinitionDto dto = new StreamDefinitionDto();
+                dto.setName(databridgeStreamDef.getName());
+                dto.setMetaData(convertAttributeList(databridgeStreamDef.getMetaData()));
+                dto.setCorrelationData(convertAttributeList(databridgeStreamDef.getCorrelationData()));
+                dto.setPayloadData(convertAttributeList(databridgeStreamDef.getPayloadData()));
+                streamDefinitionDtos[i] = dto;
+                i++;
+            }
+            return streamDefinitionDtos;
+        } catch (Throwable t) {
+            log.error("Exception when generating siddhi streams", t);
+            throw new AxisFault(t.getMessage(), t);
         }
-        return streamDefinitionDtos;
     }
 
     private String[] convertAttributeList(List<org.wso2.carbon.databridge.commons.Attribute> attributeList) {
