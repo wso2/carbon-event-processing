@@ -27,6 +27,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>org.wso2.carbon.event.execution.manager.feature</artifactId>
+    <name>WSO2 Carbon - Execution Manager Feature</name>
 
     <dependencies>
         <dependency>

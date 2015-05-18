@@ -27,6 +27,7 @@
 
     <modelVersion>4.0.0</modelVersion>
     <artifactId>siddhi-tryit</artifactId>
+    <name>WSO2 Carbon - Siddhi Tryit Aggregator Module</name>
     <packaging>pom</packaging>
 
     <modules>
