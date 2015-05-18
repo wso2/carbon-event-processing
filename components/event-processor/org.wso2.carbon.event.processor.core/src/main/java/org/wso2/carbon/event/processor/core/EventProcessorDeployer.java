@@ -136,7 +136,7 @@ public class EventProcessorDeployer extends AbstractDeployer implements EventPro
                 executionPlanConfigurationFile.setFilePath(deploymentFileData.getAbsolutePath());
                 carbonEventProcessorService.addExecutionPlanConfigurationFile(executionPlanConfigurationFile);
 
-                log.info("Execution plan deployment held back and in inactive state : " + executionPlanName + ", waiting for dependency : " + ex.getDependency());
+                log.info("Execution plan deployment held back and in inactive state : " + executionPlanName + ", waiting for dependency : " + ex.getDependency(),ex);
 
             } catch (ExecutionPlanDependencyValidationException ex) {
                 executionPlanConfigurationFile.setDependency(ex.getDependency());
@@ -147,7 +147,7 @@ public class EventProcessorDeployer extends AbstractDeployer implements EventPro
                 executionPlanConfigurationFile.setFilePath(deploymentFileData.getAbsolutePath());
                 carbonEventProcessorService.addExecutionPlanConfigurationFile(executionPlanConfigurationFile);
 
-                log.info("Execution plan deployment held back and in inactive state : " + executionPlanName + ", waiting for dependency : " + ex.getDependency());
+                log.info("Execution plan deployment held back and in inactive state : " + executionPlanName + ", waiting for dependency : " + ex.getDependency(),ex);
 
             } catch (ExecutionPlanConfigurationException ex) {
                 executionPlanConfigurationFile.setDeploymentStatusMessage(ex.getMessage());
