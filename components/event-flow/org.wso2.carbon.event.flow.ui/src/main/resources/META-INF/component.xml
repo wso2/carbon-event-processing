@@ -19,7 +19,7 @@
             <id>event_flow_menu</id>
             <i18n-key>event.flow.menu.text</i18n-key>
             <i18n-bundle>org.wso2.carbon.event.flow.ui.i18n.Resources</i18n-bundle>
-            <parent-menu>event_processor_menu</parent-menu>
+            <parent-menu>streaming_analytics_menu</parent-menu>
             <link>../event-flow/index.jsp</link>
             <region>region1</region>
             <order>5</order>

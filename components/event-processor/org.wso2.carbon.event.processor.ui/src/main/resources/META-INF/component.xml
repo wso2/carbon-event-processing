@@ -18,8 +18,8 @@
 <component xmlns="http://products.wso2.org/carbon">
     <menus>
         <menu>
-            <id>event_processor_menu</id>
-            <i18n-key>event.processor</i18n-key>
+            <id>streaming_analytics_menu</id>
+            <i18n-key>streaming.analytics</i18n-key>
             <i18n-bundle>org.wso2.carbon.event.processor.ui.i18n.Resources</i18n-bundle>
             <parent-menu>manage_menu</parent-menu>
             <link>#</link>
@@ -33,7 +33,7 @@
             <id>execution_plan_menu</id>
             <i18n-key>execution.plans</i18n-key>
             <i18n-bundle>org.wso2.carbon.event.processor.ui.i18n.Resources</i18n-bundle>
-            <parent-menu>event_processor_menu</parent-menu>
+            <parent-menu>streaming_analytics_menu</parent-menu>
             <link>../eventprocessor/index.jsp</link>
             <region>region1</region>
             <order>15</order>
