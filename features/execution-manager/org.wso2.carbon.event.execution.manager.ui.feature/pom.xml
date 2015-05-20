@@ -26,6 +26,7 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
     <artifactId>org.wso2.carbon.event.execution.manager.ui.feature</artifactId>
+    <name>WSO2 Carbon - Execution Manager UI Feature</name>
 
     <dependencies>
         <dependency>

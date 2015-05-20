@@ -121,7 +121,7 @@ public class EventSimulatorAdminService extends AbstractAdmin {
         return new StreamDefinitionInfoDto[0];
     }
 
-    public void sendEvent(EventDto eventDto) throws AxisFault {
+    public boolean sendEvent(EventDto eventDto) throws AxisFault {
 
         EventSimulator eventSimulator = EventSimulatorAdminvalueHolder.getEventSimulator();
         StreamDefinition streamDefinition = null;
@@ -156,10 +156,10 @@ public class EventSimulatorAdminService extends AbstractAdmin {
             log.error(e);
             throw new AxisFault(e.getMessage(), e);
         }
-
+        return true;
     }
 
-    public void uploadService(UploadedFileItemDto[] fileItems) throws AxisFault {
+    public boolean uploadService(UploadedFileItemDto[] fileItems) throws AxisFault {
 
         EventSimulator eventSimulator = EventSimulatorAdminvalueHolder.getEventSimulator();
 
@@ -181,6 +181,7 @@ public class EventSimulatorAdminService extends AbstractAdmin {
 
         eventSimulator.uploadService(uploadedFileItems, axisConfiguration);
 
+        return true;
     }
 
 
@@ -230,22 +231,23 @@ public class EventSimulatorAdminService extends AbstractAdmin {
         return new CSVFileInfoDto[0];
     }
 
-    public void sendEventsViaFile(String fileName) throws AxisFault {
+    public boolean sendEventsViaFile(String fileName) throws AxisFault {
 
         EventSimulator eventSimulator = EventSimulatorAdminvalueHolder.getEventSimulator();
-
         eventSimulator.sendEvents(fileName);
+        return true;
     }
 
-    public void deleteFile(String fileName) throws AxisFault {
+    public boolean deleteFile(String fileName) throws AxisFault {
         EventSimulator eventSimulator = EventSimulatorAdminvalueHolder.getEventSimulator();
 
         ConfigurationContext configurationContext = getConfigContext();
         AxisConfiguration axisConfiguration = configurationContext.getAxisConfiguration();
         eventSimulator.deleteFile(fileName, axisConfiguration);
+        return true;
     }
 
-    public void sendDBConfigFileNameToSimulate(String fileName) throws AxisFault {
+    public boolean sendDBConfigFileNameToSimulate(String fileName) throws AxisFault {
 
         EventSimulator eventSimulator = EventSimulatorAdminvalueHolder.getEventSimulator();
         String jsonFormattedDBConfigAndColumnAndStreamAttributeDetails = eventSimulator.getEventStreamInfo(fileName);
@@ -258,13 +260,15 @@ public class EventSimulatorAdminService extends AbstractAdmin {
             throw new AxisFault("JSON exception when converting result of information retrieved by file name.");
         }
         eventSimulator.sendEventsViaDB(jsonConvertedInfo, executionInfo.getPreparedSelectStatement());
+        return true;
     }
 
-    public void deleteDBConfigFile(String fileName) throws AxisFault {
+    public boolean deleteDBConfigFile(String fileName) throws AxisFault {
         EventSimulator eventSimulator = EventSimulatorAdminvalueHolder.getEventSimulator();
         ConfigurationContext configurationContext = getConfigContext();
         AxisConfiguration axisConfiguration = configurationContext.getAxisConfiguration();
         eventSimulator.deleteDBConfigFile(fileName, axisConfiguration);
+        return true;
     }
 
     public String testSimulateRDBMSDataSourceConnection(String eventStreamDataSourceColumnNamesAndTypeInfo) throws AxisFault{
@@ -295,7 +299,7 @@ public class EventSimulatorAdminService extends AbstractAdmin {
         return "failed";
     }
 
-    public void saveDataSourceConfigDetails(String dataSourceConfigAndEventStreamInfo) throws AxisFault {
+    public boolean saveDataSourceConfigDetails(String dataSourceConfigAndEventStreamInfo) throws AxisFault {
 
         EventSimulator eventSimulator = EventSimulatorAdminvalueHolder.getEventSimulator();
 
@@ -303,7 +307,7 @@ public class EventSimulatorAdminService extends AbstractAdmin {
         AxisConfiguration axisConfiguration = configurationContext.getAxisConfiguration();
 
         eventSimulator.createConfigurationXMLForDataSource(dataSourceConfigAndEventStreamInfo, axisConfiguration);
-
+        return true;
     }
 
     public DataSourceTableAndStreamInfoDto[] getAllDataSourceTableAndStreamInfo() {
