@@ -39,6 +39,10 @@
     padding: 1em 1.4em;
     background: none;
 }
-#tabs ul li a {
-    color: #750045 !important;
+.query-tab{
+    color: #69003E !important;
+}
+
+.stream-tab{
+    color: #3195EF !important;
 }

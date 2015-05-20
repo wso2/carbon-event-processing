@@ -40,7 +40,20 @@
             <groupId>org.wso2.carbon.event-processing</groupId>
             <artifactId>org.wso2.carbon.siddhi.tryit.ui</artifactId>
         </dependency>
+        <dependency>
+            <groupId>org.wso2.siddhi</groupId>
+            <artifactId>siddhi-core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.wso2.siddhi</groupId>
+            <artifactId>siddhi-query-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.wso2.siddhi</groupId>
+            <artifactId>siddhi-query-compiler</artifactId>
+        </dependency>
     </dependencies>
+
 
     <build>
         <plugins>
