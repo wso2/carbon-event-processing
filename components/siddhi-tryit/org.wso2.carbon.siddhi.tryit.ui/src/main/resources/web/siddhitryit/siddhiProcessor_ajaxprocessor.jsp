@@ -29,8 +29,7 @@
     JsonObject jsonObject = new JsonObject();
 
     try {
-        Map<String, StringBuilder> map =
-                siddhiTryItClientObject.processData(executionplan, eventStream, dateTime);
+        Map<String, StringBuilder> map = siddhiTryItClientObject.processData(executionplan, eventStream, dateTime);
         Object[] resultMapKeysArray = map.keySet().toArray();
         Object[] resultMapValuesArray = map.values().toArray();
 
@@ -42,12 +41,12 @@
             object.addProperty("jsonValue", resultMapValuesArray[i].toString());
             jsonArray.add(object);
         }
-        //Ad to json object
+
         String toStringJsonArray = new Gson().toJson(jsonArray);
         jsonObject.addProperty("success", "true");
         jsonObject.addProperty("jsonValue", toStringJsonArray);
     } catch (Exception e) {
-        //Ad to json object
+
         jsonObject.addProperty("success", "false");
         jsonObject.addProperty("jsonValue", e.getMessage());
     }

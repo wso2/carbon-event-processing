@@ -27,7 +27,7 @@
             <order>40</order>
             <style-class>home</style-class>
             <icon>../siddhitryit/images/siddhi-tryit.png</icon>
-            <require-permission>/permission/admin/login</require-permission>
+            <require-permission>/permission/admin/manage/siddhi-tryit</require-permission>
         </menu>
 
     </menus>

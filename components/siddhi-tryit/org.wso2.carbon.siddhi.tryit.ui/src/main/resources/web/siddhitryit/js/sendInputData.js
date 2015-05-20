@@ -27,15 +27,28 @@ function sendAjaxRequestToSiddhiProcessor(sendInputData) {
                 var jsonObject = JSON.parse(data.responseText);
                 if (jsonObject != undefined) {
                     if (jsonObject.success.localeCompare("true") == 0) {
-                        var jsonArray = JSON.parse(jsonObject.jsonValue);
                         jQuery('.js_resultCol').show();
+                        var jsonArray = JSON.parse(jsonObject.jsonValue);
                         var tabContent = document.getElementById('resultsId');
                         tabContent.innerHTML = '<div id="tabs"><ul id="tabHeaders"></ul></div>';
                         for (i = 0; i < jsonArray.length; i++) {
                             var tabHeader = document.getElementById('tabHeaders');
-                            tabHeader.innerHTML = tabHeader.innerHTML + '<li><a href="#tabs-' + i + '">' + jsonArray[i].key + '</a></li>';
+                            var jsonArrayKey=jsonArray[i].key;
+                            var jsonArrayValue=jsonArray[i].jsonValue;
+                            if(jsonArrayKey.indexOf(':')==0){
+                                jsonArrayKey=jsonArrayKey.replace(':',' ');
+                                tabHeader.innerHTML = tabHeader.innerHTML + '<li><a class="query-tab" href="#tabs-' + i + '">' + jsonArrayKey + '</a></li>';
+                            }
+                            else{
+                                tabHeader.innerHTML = tabHeader.innerHTML + '<li><a class="stream-tab" href="#tabs-' + i + '">' + jsonArrayKey + '</a></li>';
+                            }
                             tabContent = document.getElementById('tabs');
-                            tabContent.innerHTML = tabContent.innerHTML + '<div id="tabs-' + i + '"><textarea rows="50" cols="50" >' + jsonArray[i].jsonValue + '</textarea></div>';
+                            if(jsonArrayValue!=null){
+                                tabContent.innerHTML = tabContent.innerHTML + '<div id="tabs-' + i + '"><textarea rows="50" cols="50" readonly>' + jsonArrayValue + '</textarea></div>';
+                            }else
+                            {
+                                tabContent.innerHTML = tabContent.innerHTML + '<div id="tabs-' + i + '"><textarea rows="50" cols="50" readonly></textarea></div>';
+                            }
                         }
                         jQuery("#tabs").tabs();
                     }

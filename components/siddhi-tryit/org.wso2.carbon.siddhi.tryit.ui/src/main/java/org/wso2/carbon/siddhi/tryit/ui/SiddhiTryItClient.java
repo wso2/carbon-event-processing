@@ -20,6 +20,11 @@ import com.google.gson.GsonBuilder;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.wso2.carbon.context.PrivilegedCarbonContext;
+import org.wso2.carbon.ndatasource.common.DataSourceException;
+import org.wso2.carbon.ndatasource.core.CarbonDataSource;
+import org.wso2.carbon.ndatasource.core.DataSourceManager;
+import org.wso2.carbon.siddhi.tryit.ui.internal.ds.SiddhiTryItValueHolder;
 import org.wso2.siddhi.core.ExecutionPlanRuntime;
 import org.wso2.siddhi.core.SiddhiManager;
 import org.wso2.siddhi.core.event.Event;
@@ -28,12 +33,15 @@ import org.wso2.siddhi.core.stream.input.InputHandler;
 import org.wso2.siddhi.core.stream.output.StreamCallback;
 
 import org.wso2.siddhi.query.api.ExecutionPlan;
+import org.wso2.siddhi.query.api.annotation.Element;
 import org.wso2.siddhi.query.api.definition.AbstractDefinition;
 import org.wso2.siddhi.query.api.definition.Attribute;
 import org.wso2.siddhi.query.api.execution.ExecutionElement;
 import org.wso2.siddhi.query.api.execution.query.Query;
+import org.wso2.siddhi.query.api.util.AnnotationHelper;
 import org.wso2.siddhi.query.compiler.SiddhiCompiler;
 
+import javax.sql.DataSource;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.regex.Matcher;
@@ -55,79 +63,80 @@ public class SiddhiTryItClient {
 	public Map<String, StringBuilder> processData(String executionPlan, String eventStream,
 	                                              String dateTime) throws Exception {
 
-		Map<String, StringBuilder> map = new LinkedHashMap<String, StringBuilder>();
-		long beginSetTime = createTimeStamp(dateTime);
-		long beginSystemTime = System.currentTimeMillis();
+		Map<String, StringBuilder> map = new LinkedHashMap<>();
+		Map<String, InputHandler> inputHandlerMap = new LinkedHashMap<>();
+		long startSetTime = createTimeStamp(dateTime);
+		long startSystemTime = System.currentTimeMillis();
 
-		// Create Siddhi Manager
+		// Create Siddhi Manager and load data sources
 		SiddhiManager siddhiManager = new SiddhiManager();
+		loadDataSourceConfiguration(siddhiManager);
 		ExecutionPlan newExecutionPlan = SiddhiCompiler.parse(executionPlan);
 		ExecutionPlanRuntime executionPlanRuntime =
 				siddhiManager.createExecutionPlanRuntime(executionPlan);
 
 		//Query Callback
 		for (int i = 0; i < newExecutionPlan.getExecutionElementList().size(); i++) {
-			String queryName = "";
 			ExecutionElement executionElement = newExecutionPlan.getExecutionElementList().get(i);
-
-			if(executionElement instanceof Query)   {
+			if (executionElement instanceof Query) {
 				Query query = (Query) executionElement;
-				if (query.getAnnotations().size() > 0) {
-					queryName = query.getAnnotations().get(0).getElement("name");
-					if (!queryName.equals("")) {
-						final StringBuilder stringBuilder = new StringBuilder();
-						map.put(queryName, stringBuilder);
-						executionPlanRuntime.addCallback(queryName, new QueryCallback() {
-							@Override public void receive(long timeStamp, Event[] inEvents,
-							                              Event[] removeEvents) {
+				Element element = AnnotationHelper
+						.getAnnotationElement("info", "name", query.getAnnotations());
+				if (element != null) {
+					String queryName = element.getValue();
+					final StringBuilder stringBuilder = new StringBuilder();
+					map.put(":".concat(queryName), stringBuilder);
+					executionPlanRuntime.addCallback(queryName, new QueryCallback() {
+						@Override public void receive(long timeStamp, Event[] inEvents,
+						                              Event[] removeEvents) {
+							if(inEvents!=null) {
 								stringBuilder.append(gson.toJson(inEvents));
 							}
-						});
-					}
+						}
+					});
 				}
 			}
 		}
 
 		//Stream Callback
-		for(AbstractDefinition abstractDefinition:executionPlanRuntime.getStreamDefinitionMap().values()){
-			String streamName=abstractDefinition.getId();
+		for (AbstractDefinition abstractDefinition : executionPlanRuntime.getStreamDefinitionMap().values()) {
+			String streamId = abstractDefinition.getId();
+
+			//create input handler
+			InputHandler inputHandler = executionPlanRuntime.getInputHandler(streamId);
+			if (!inputHandlerMap.containsKey(streamId)) {
+				inputHandlerMap.put(streamId, inputHandler);
+			}
 			final StringBuilder stringBuilder = new StringBuilder();
-			map.put(streamName, stringBuilder);
-			executionPlanRuntime.addCallback(streamName, new StreamCallback() {
+			map.put(streamId, stringBuilder);
+			executionPlanRuntime.addCallback(streamId, new StreamCallback() {
 				@Override public void receive(Event[] events) {
 					stringBuilder.append(gson.toJson(events));
 				}
 			});
 		}
 
-		Pattern eventPattern = Pattern.compile("(\\S+)=\\[(.*)\\]");
-		Pattern delayPattern = Pattern.compile("(delay\\()(\\d)+");
-		Matcher eventPatternMatcher, delayPatternMatcher;
-		int eventStreamAttributeListSize;
-		String[] eventStreamAttributeArray;
-		String inputStreamName;
-
-		//Send event stream
+		//event stream processing
 		try {
+			Pattern eventPattern = Pattern.compile("(\\S+)=\\[(.*)\\]");
+			Pattern delayPattern = Pattern.compile("(delay\\()(\\d)+");
 			String[] inputStreamEventArray = eventStream.split("\\r?\\n");
+			executionPlanRuntime.start();
 
 			for (int i = 0; i < inputStreamEventArray.length; i++) {
-				eventPatternMatcher = eventPattern.matcher(inputStreamEventArray[i].replaceAll("\\s", ""));
-				delayPatternMatcher = delayPattern.matcher(inputStreamEventArray[i]);
+				Matcher eventPatternMatcher =
+						eventPattern.matcher(inputStreamEventArray[i].replaceAll("\\s", ""));
+				Matcher delayPatternMatcher = delayPattern.matcher(inputStreamEventArray[i]);
 
 				if (eventPatternMatcher.find()) {
-					inputStreamName = eventPatternMatcher.group(1);
-					InputHandler inputHandler =
-							executionPlanRuntime.getInputHandler(inputStreamName);
-
-					eventStreamAttributeArray = eventPatternMatcher.group(2).split(",");
-					eventStreamAttributeListSize = eventStreamAttributeArray.length;
-
-					Object object[] = new Object[eventStreamAttributeListSize];
+					String inputStreamId = eventPatternMatcher.group(1);
+					//create event object
+					String[] eventStreamAttributeArray = eventPatternMatcher.group(2).split(",");
+					int eventStreamAttributeListSize = eventStreamAttributeArray.length;
+					Object[] object = new Object[eventStreamAttributeListSize];
 					for (int j = 0; j < eventStreamAttributeListSize; j++) {
-						Attribute.Type attributeType =
-								executionPlanRuntime.getStreamDefinitionMap().get(inputStreamName)
-								                    .getAttributeList().get(j).getType();
+						Attribute.Type attributeType = executionPlanRuntime.getStreamDefinitionMap().get(inputStreamId)
+						                                                   .getAttributeList().get(j).getType();
 						switch (attributeType) {
 							case STRING:
 								object[j] = eventStreamAttributeArray[j];
@@ -152,19 +161,19 @@ public class SiddhiTryItClient {
 								break;
 						}
 					}
-					if (i == 0) {
-						executionPlanRuntime.start();
-						inputHandler.send(beginSetTime, object);
-					} else {
-						inputHandler.send((beginSetTime +
-						                   (System.currentTimeMillis() - beginSystemTime)), object);
+					//send events
+					for (String key : inputHandlerMap.keySet()) {
+						if (key.equals(inputStreamId)) {
+							inputHandlerMap.get(key).send((startSetTime +
+							                               (System.currentTimeMillis() -
+							                                startSystemTime)), object);
+						}
 					}
 				} else if (delayPatternMatcher.find()) {
 					Thread.sleep(Long.parseLong(delayPatternMatcher.group(2)));
 				} else {
 					if (!inputStreamEventArray[i].equals("")) {
-						executionPlanRuntime.shutdown();
-						errMsg = "You have an error in your event stream \"  " +
+						errMsg = "Error in event \"  " +
 						         inputStreamEventArray[i] +
 						         "\n\"." +
 						         " Expected format: &lt;eventStreamName&gt;=[&lt;attribute1&gt;,&lt;attribute2&gt;]";
@@ -172,15 +181,17 @@ public class SiddhiTryItClient {
 					}
 				}
 			}
-
 			Thread.sleep(500);
 			return map;
-		} catch (Exception e) {
+		} catch (Throwable e) {
+			//catch throwable since there could be execution plan validation exceptions
 			errMsg = "Error occurred while processing. " + e.getMessage();
 			log.error(errMsg, e);
 			throw new Exception(errMsg, e);
 		} finally {
-			executionPlanRuntime.shutdown();
+			if (!executionPlanRuntime.equals(null)) {
+				executionPlanRuntime.shutdown();
+			}
 		}
 	}
 
@@ -201,6 +212,32 @@ public class SiddhiTryItClient {
 		}
 		long timeStamp = date.getTime();
 		return timeStamp;
+	}
+
+	/**
+	 * Load data sources configuration
+	 *
+	 * @param siddhiManager SiddhiManager object
+	 */
+	public static void loadDataSourceConfiguration(SiddhiManager siddhiManager){
+		try {
+			int tenantId = PrivilegedCarbonContext.getThreadLocalCarbonContext().getTenantId();
+			if (tenantId > -1) {
+				DataSourceManager.getInstance().initTenant(tenantId);
+			}
+			List<CarbonDataSource> dataSources = SiddhiTryItValueHolder.getDataSourceService().getAllDataSources();
+			for (CarbonDataSource cds : dataSources) {
+				try {
+					if (cds.getDSObject() instanceof DataSource) {
+						siddhiManager.setDataSource(cds.getDSMInfo().getName(), (DataSource) cds.getDSObject());
+					}
+				} catch (Exception e) {
+					log.error("Unable to add the datasource" + cds.getDSMInfo().getName(), e);
+				}
+			}
+		} catch (DataSourceException e) {
+			log.error("Unable to populate the data sources in Siddhi engine.", e);
+		}
 	}
 }
 
