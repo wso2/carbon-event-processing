@@ -23,12 +23,12 @@ import org.wso2.siddhi.core.util.persistence.PersistenceStore;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Map;
 
 public class FileSystemPersistenceStore implements PersistenceStore {
     private static final Log log = LogFactory.getLog(FileSystemPersistenceStore.class);
     private static final String folderSeparator = File.separator;
-    private static final String folder = "repository" + folderSeparator + "cep_persistence";
-    private static final String fileNameSeparator = "_";
+    private static String folder = "repository" + folderSeparator + "cep_persistence";
 
     @Override
     public void save(String queryPlanIdentifier, String revision, byte[] bytes) {
@@ -90,5 +90,11 @@ public class FileSystemPersistenceStore implements PersistenceStore {
     private String getTenantId() {
         return String.valueOf(PrivilegedCarbonContext.getThreadLocalCarbonContext().getTenantId()).replaceAll("-", "M");
     }
+
+    @Override
+    public void setProperties(Map properties) {
+        folder = (String) properties.get("persistenceLocation");
+    }
+
 }
 
