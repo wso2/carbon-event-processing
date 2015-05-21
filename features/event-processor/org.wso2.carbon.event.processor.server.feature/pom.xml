@@ -44,10 +44,10 @@
             <groupId>org.wso2.carbon.event-processing</groupId>
             <artifactId>org.wso2.carbon.event.processor.admin</artifactId>
         </dependency>
-        <dependency>
-            <groupId>org.wso2.carbon.event-processing</groupId>
-            <artifactId>org.wso2.carbon.event.processor.siddhi.extension</artifactId>
-        </dependency>
+        <!--<dependency>-->
+            <!--<groupId>org.wso2.carbon.event-processing</groupId>-->
+            <!--<artifactId>org.wso2.carbon.event.processor.siddhi.extension</artifactId>-->
+        <!--</dependency>-->
         <dependency>
             <groupId>org.wso2.siddhi</groupId>
             <artifactId>siddhi-core</artifactId>
@@ -239,9 +239,9 @@
                                 <bundleDef>
                                     org.wso2.carbon.event-processing:org.wso2.carbon.event.processor.admin:${carbon.event.processing.version}
                                 </bundleDef>
-                                <bundleDef>
-                                    org.wso2.carbon.event-processing:org.wso2.carbon.event.processor.siddhi.extension:${carbon.event.processing.version}
-                                </bundleDef>
+                                <!--<bundleDef>-->
+                                    <!--org.wso2.carbon.event-processing:org.wso2.carbon.event.processor.siddhi.extension:${carbon.event.processing.version}-->
+                                <!--</bundleDef>-->
                                 <bundleDef>
                                     org.wso2.siddhi:siddhi-core:${siddhi.version}
                                 </bundleDef>
