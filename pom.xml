@@ -96,11 +96,30 @@
                 <artifactId>quartz</artifactId>
                 <version>${quartz.version}</version>
             </dependency>
-
             <dependency>
                 <groupId>org.wso2.orbit.org.apache.hadoop</groupId>
                 <artifactId>hadoop-client</artifactId>
                 <version>${hadoop.client.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.commons</groupId>
+                <artifactId>commons-math3</artifactId>
+                <version>${commons-math3.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.wso2.carbon.ml</groupId>
+                <artifactId>org.wso2.carbon.ml.core</artifactId>
+                <version>${ml.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.wso2.carbon.ml</groupId>
+                <artifactId>org.wso2.carbon.ml.commons</artifactId>
+                <version>${ml.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.wso2.carbon.ml</groupId>
+                <artifactId>org.wso2.carbon.ml.database</artifactId>
+                <version>${ml.version}</version>
             </dependency>
 
             <!--<dependency>-->
@@ -371,6 +390,17 @@
                 <artifactId>siddhi-extension-time</artifactId>
                 <version>${siddhi.version}</version>
             </dependency>
+            <dependency>
+                <groupId>org.wso2.siddhi</groupId>
+                <artifactId>siddhi-extension-timeseries</artifactId>
+                <version>${siddhi.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.wso2.siddhi</groupId>
+                <artifactId>siddhi-extension-ml</artifactId>
+                <version>${siddhi.version}</version>
+            </dependency>
+
             <!--<dependency>-->
             <!--<groupId>org.wso2.siddhi</groupId>-->
             <!--<artifactId>siddhi-extension-geo</artifactId>-->
@@ -694,8 +724,8 @@
         <snakeyaml.version>1.11</snakeyaml.version>
         <quartz.version>2.1.1.wso2v1</quartz.version>
         <hadoop.client.version>2.6.0.wso2v1</hadoop.client.version>
-
-
+        <ml.version>1.0.0</ml.version>
+        <commons-math3.version>3.2</commons-math3.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.scm.id>my-scm-server</project.scm.id>
     </properties>
