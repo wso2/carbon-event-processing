@@ -291,11 +291,11 @@
                 <artifactId>org.wso2.carbon.event.processor.core</artifactId>
                 <version>${carbon.event.processing.version}</version>
             </dependency>
-            <dependency>
-                <groupId>org.wso2.carbon.event-processing</groupId>
-                <artifactId>org.wso2.carbon.event.processor.siddhi.extension</artifactId>
-                <version>${carbon.event.processing.version}</version>
-            </dependency>
+            <!--<dependency>-->
+                <!--<groupId>org.wso2.carbon.event-processing</groupId>-->
+                <!--<artifactId>org.wso2.carbon.event.processor.siddhi.extension</artifactId>-->
+                <!--<version>${carbon.event.processing.version}</version>-->
+            <!--</dependency>-->
             <dependency>
                 <groupId>org.wso2.carbon.event-processing</groupId>
                 <artifactId>org.wso2.carbon.event.processor.stub</artifactId>
@@ -327,9 +327,9 @@
                 <version>${carbon.event.processing.version}</version>
             </dependency>
             <dependency>
-                <groupId>org.wso2.carbon.event-processing</groupId>
+                <groupId>org.wso2.carbon.analytics-common</groupId>
                 <artifactId>org.wso2.carbon.event.statistics</artifactId>
-                <version>${carbon.event.processing.version}</version>
+                <version>${carbon.analytics.common.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.wso2.carbon.event-processing</groupId>
