@@ -15,7 +15,6 @@
  */
 package org.wso2.carbon.event.processor.core;
 
-import org.wso2.carbon.event.processor.core.internal.persistence.PersistenceManager;
 import org.wso2.carbon.event.processor.core.internal.storm.SiddhiStormOutputEventListener;
 import org.wso2.carbon.event.stream.core.EventProducer;
 import org.wso2.carbon.event.stream.core.SiddhiEventConsumer;
@@ -29,19 +28,16 @@ public class ExecutionPlan {
     private ExecutionPlanRuntime executionPlanRuntime;
     private ExecutionPlanConfiguration executionPlanConfiguration;
     private String name;
-    private PersistenceManager persistenceManager;
     private List<EventProducer> eventProducers = new ArrayList<EventProducer>();
     private List<SiddhiEventConsumer> siddhiEventConsumers = new ArrayList<SiddhiEventConsumer>();
     private SiddhiStormOutputEventListener stormOutputListener;
 
 
     public ExecutionPlan(String name, ExecutionPlanRuntime executionPlanRuntime,
-                         ExecutionPlanConfiguration executionPlanConfiguration,
-                         PersistenceManager persistenceManager) {
+                         ExecutionPlanConfiguration executionPlanConfiguration) {
         this.executionPlanRuntime = executionPlanRuntime;
         this.executionPlanConfiguration = executionPlanConfiguration;
         this.name = name;
-        this.persistenceManager = persistenceManager;
     }
 
     public String getName() {
@@ -69,23 +65,12 @@ public class ExecutionPlan {
         this.executionPlanConfiguration = executionPlanConfiguration;
     }
 
-    public PersistenceManager getPersistenceManager() {
-        return persistenceManager;
-    }
-
-    public void setPersistenceManager(PersistenceManager persistenceManager) {
-        this.persistenceManager = persistenceManager;
-    }
-
     public void shutdown() {
         if (stormOutputListener != null) {
             stormOutputListener.shutdown();
         }
         for (SiddhiEventConsumer siddhiEventConsumer : siddhiEventConsumers) {
             siddhiEventConsumer.shutdown();
-        }
-        if (persistenceManager != null) {
-            persistenceManager.shutdown();
         }
         executionPlanRuntime.shutdown();
     }

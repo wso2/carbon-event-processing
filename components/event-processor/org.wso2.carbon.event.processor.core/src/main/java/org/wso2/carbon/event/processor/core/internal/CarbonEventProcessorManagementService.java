@@ -34,6 +34,8 @@ public class CarbonEventProcessorManagementService extends EventProcessorManagem
 
     public CarbonEventProcessorManagementService() {
         EventProcessorValueHolder.getEventManagementService().subscribe(this);
+        EventProcessorValueHolder.getEventProcessorService().setManagementInfo(EventProcessorValueHolder.getEventManagementService().getManagementModeInfo());
+
     }
 
     public byte[] getState() {

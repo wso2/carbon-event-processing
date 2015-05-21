@@ -72,7 +72,7 @@ public class TopologyManager {
         }
 
         client = NimbusClient.getConfiguredClient(stormConfig).getClient();
-        jarLocation = stormConfigDirPath + File.separator + EventProcessorValueHolder.getStormDeploymentConfig().getJar();
+        jarLocation = stormConfigDirPath + File.separator + EventProcessorValueHolder.getStormDeploymentConfiguration().getJar();
     }
 
     public static List<TopologySummary> getTopologies() throws StormDeploymentException {
@@ -137,7 +137,7 @@ public class TopologyManager {
                 log.debug("Following is the generated Storm query plan for execution plan: " + configuration.getName() +
                         "\n" + stormQueryPlan);
             }
-            builder = StormTopologyConstructor.constructTopologyBuilder(stormQueryPlan, executionPlanName, tenantId, EventProcessorValueHolder.getStormDeploymentConfig());
+            builder = StormTopologyConstructor.constructTopologyBuilder(stormQueryPlan, executionPlanName, tenantId, EventProcessorValueHolder.getStormDeploymentConfiguration());
         } catch (XMLStreamException e) {
             throw new StormDeploymentException("Invalid Config for Execution Plan " + executionPlanName + " for tenant " + tenantId, e);
         } catch (TransformerException e) {

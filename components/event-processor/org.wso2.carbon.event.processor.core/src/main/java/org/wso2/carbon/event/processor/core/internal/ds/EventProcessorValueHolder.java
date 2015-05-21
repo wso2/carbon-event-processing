@@ -21,6 +21,7 @@ import org.wso2.carbon.event.processor.core.internal.CarbonEventProcessorManagem
 import org.wso2.carbon.event.processor.core.internal.CarbonEventProcessorService;
 import org.wso2.carbon.event.processor.core.internal.storm.manager.StormManagerServer;
 import org.wso2.carbon.event.processor.manager.core.EventManagementService;
+import org.wso2.carbon.event.processor.manager.core.PersistenceManager;
 import org.wso2.carbon.event.processor.manager.core.config.DistributedConfiguration;
 import org.wso2.carbon.event.statistics.EventStatisticsService;
 import org.wso2.carbon.event.stream.core.EventStreamService;
@@ -28,7 +29,6 @@ import org.wso2.carbon.ndatasource.core.DataSourceService;
 import org.wso2.carbon.user.core.UserRealm;
 import org.wso2.carbon.utils.ConfigurationContextService;
 import org.wso2.siddhi.core.SiddhiManager;
-import org.wso2.siddhi.core.util.persistence.PersistenceStore;
 
 import java.util.concurrent.ScheduledExecutorService;
 
@@ -38,7 +38,7 @@ public class EventProcessorValueHolder {
     private static EventManagementService eventManagementService;
     private static EventStreamService eventStreamService;
     private static HazelcastInstance hazelcastInstance;
-    private static PersistenceStore persistenceStore;
+    private static PersistenceManager persistenceManager;
     private static ScheduledExecutorService scheduledExecutorService;
     private static UserRealm userRealm;
     private static DataSourceService dataSourceService;
@@ -83,12 +83,12 @@ public class EventProcessorValueHolder {
         return hazelcastInstance;
     }
 
-    public static PersistenceStore getPersistenceStore() {
-        return persistenceStore;
+    public static PersistenceManager getPersistenceManager() {
+        return persistenceManager;
     }
 
-    public static void setPersistenceStore(PersistenceStore persistenceStore) {
-        EventProcessorValueHolder.persistenceStore = persistenceStore;
+    public static void setPersistenceManager(PersistenceManager persistenceManager) {
+        EventProcessorValueHolder.persistenceManager = persistenceManager;
     }
 
     public static ScheduledExecutorService getScheduledExecutorService() {
@@ -168,7 +168,7 @@ public class EventProcessorValueHolder {
         EventProcessorValueHolder.stormDeploymentConfig = stormDeploymentConfig;
     }
 
-    public static DistributedConfiguration getStormDeploymentConfig() {
+    public static DistributedConfiguration getStormDeploymentConfiguration() {
         return stormDeploymentConfig;
     }
 

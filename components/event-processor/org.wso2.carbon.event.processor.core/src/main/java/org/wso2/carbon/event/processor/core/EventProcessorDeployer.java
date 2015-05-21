@@ -26,7 +26,6 @@ import org.wso2.carbon.context.PrivilegedCarbonContext;
 import org.wso2.carbon.event.application.deployer.EventProcessingDeployer;
 import org.wso2.carbon.event.processor.core.exception.ExecutionPlanConfigurationException;
 import org.wso2.carbon.event.processor.core.exception.ExecutionPlanDependencyValidationException;
-import org.wso2.carbon.event.processor.core.exception.ServiceDependencyValidationException;
 import org.wso2.carbon.event.processor.core.internal.CarbonEventProcessorService;
 import org.wso2.carbon.event.processor.core.internal.ds.EventProcessorValueHolder;
 import org.wso2.carbon.event.processor.core.internal.util.helper.EventProcessorHelper;
@@ -127,18 +126,7 @@ public class EventProcessorDeployer extends AbstractDeployer implements EventPro
 
                 log.info("Execution plan is deployed successfully and in active state  : " + executionPlanName);
 
-            } catch (ServiceDependencyValidationException ex) {
-                executionPlanConfigurationFile.setDependency(ex.getDependency());
-                executionPlanConfigurationFile.setDeploymentStatusMessage(ex.getMessage());
-                executionPlanConfigurationFile.setStatus(ExecutionPlanConfigurationFile.Status.WAITING_FOR_OSGI_SERVICE);
-                executionPlanConfigurationFile.setExecutionPlanName(executionPlanName);
-                executionPlanConfigurationFile.setFileName(deploymentFileData.getName());
-                executionPlanConfigurationFile.setFilePath(deploymentFileData.getAbsolutePath());
-                carbonEventProcessorService.addExecutionPlanConfigurationFile(executionPlanConfigurationFile);
-
-                log.info("Execution plan deployment held back and in inactive state : " + executionPlanName + ", waiting for dependency : " + ex.getDependency(),ex);
-
-            } catch (ExecutionPlanDependencyValidationException ex) {
+            }  catch (ExecutionPlanDependencyValidationException ex) {
                 executionPlanConfigurationFile.setDependency(ex.getDependency());
                 executionPlanConfigurationFile.setDeploymentStatusMessage(ex.getMessage());
                 executionPlanConfigurationFile.setStatus(ExecutionPlanConfigurationFile.Status.WAITING_FOR_DEPENDENCY);
@@ -196,7 +184,7 @@ public class EventProcessorDeployer extends AbstractDeployer implements EventPro
             String line = br.readLine();
 
             while (line != null) {
-                sb.append(line + "\n");
+                sb.append(line).append("\n");
                 line = br.readLine();
             }
             return sb.toString();
@@ -206,7 +194,9 @@ public class EventProcessorDeployer extends AbstractDeployer implements EventPro
             throw new ExecutionPlanConfigurationException("Could not read from file " + path + ", " + e.getMessage(), e);
         } finally {
             try {
-                br.close();
+                if(br != null) {
+                    br.close();
+                }
             } catch (IOException e) {
                 throw new ExecutionPlanConfigurationException("Could not close the file " + path + ", " + e.getMessage(), e);
             }

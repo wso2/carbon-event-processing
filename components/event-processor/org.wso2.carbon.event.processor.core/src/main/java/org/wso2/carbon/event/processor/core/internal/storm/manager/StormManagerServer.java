@@ -80,7 +80,7 @@ public class StormManagerServer {
         }
     }
 
-
+    //todo: this should happen only if this is a manager node
     public void tryBecomeCoordinator() {
         HazelcastInstance hazelcastInstance = EventProcessorValueHolder.getHazelcastInstance();
         if (hazelcastInstance != null) {

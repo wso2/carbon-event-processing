@@ -23,6 +23,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.osgi.service.component.ComponentContext;
 import org.wso2.carbon.base.api.ServerConfigurationService;
+import org.wso2.carbon.context.PrivilegedCarbonContext;
 import org.wso2.carbon.event.processor.core.EventProcessorService;
 import org.wso2.carbon.event.processor.core.internal.CarbonEventProcessorManagementService;
 import org.wso2.carbon.event.processor.core.internal.CarbonEventProcessorService;
@@ -30,6 +31,7 @@ import org.wso2.carbon.event.processor.core.internal.listener.EventStreamListene
 import org.wso2.carbon.event.processor.core.internal.storm.manager.StormManagerServer;
 import org.wso2.carbon.event.processor.core.internal.util.EventProcessorConstants;
 import org.wso2.carbon.event.processor.manager.core.EventManagementService;
+import org.wso2.carbon.event.processor.manager.core.PersistenceManager;
 import org.wso2.carbon.event.processor.manager.core.config.DistributedConfiguration;
 import org.wso2.carbon.event.processor.manager.core.config.PersistenceConfiguration;
 import org.wso2.carbon.event.statistics.EventStatisticsService;
@@ -102,10 +104,17 @@ public class EventProcessorServiceDS {
             if(persistConfig != null) {
                 Class clazz = Class.forName(persistConfig.getPersistenceClass());
                 PersistenceStore persistenceStore = (PersistenceStore) clazz.newInstance();
-                EventProcessorValueHolder.setPersistenceStore(persistenceStore);
                 siddhiManager.setPersistenceStore(persistenceStore);
+                persistenceStore.setProperties(persistConfig.getPropertiesMap());
                 ScheduledExecutorService scheduledExecutorService = Executors.newScheduledThreadPool(persistConfig.getThreadPoolSize());
                 EventProcessorValueHolder.setScheduledExecutorService(scheduledExecutorService);
+                long persistenceTimeInterval = persistConfig.getPersistenceTimeInterval();
+                if (persistenceTimeInterval > 0) {
+                    PersistenceManager persistenceManager = new PersistenceManager(siddhiManager, EventProcessorValueHolder.getScheduledExecutorService(),
+                            persistenceTimeInterval, PrivilegedCarbonContext.getThreadLocalCarbonContext().getTenantId());
+                    EventProcessorValueHolder.setPersistenceManager(persistenceManager);
+                    persistenceManager.init();
+                }
 
             }
             if (log.isDebugEnabled()) {
@@ -124,6 +133,10 @@ public class EventProcessorServiceDS {
             StormManagerServer stormManagerServer = EventProcessorValueHolder.getStormManagerServer();
             if (stormManagerServer != null) {
                 stormManagerServer.stop();
+            }
+            PersistenceManager persistenceManager = EventProcessorValueHolder.getPersistenceManager();
+            if(persistenceManager != null){
+                persistenceManager.shutdown();
             }
             ScheduledExecutorService executorService = EventProcessorValueHolder.getScheduledExecutorService();
             if(executorService != null){
