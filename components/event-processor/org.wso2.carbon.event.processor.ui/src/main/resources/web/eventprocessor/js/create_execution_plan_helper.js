@@ -47,7 +47,8 @@ function createImportedStreamDefinition(element) {
             asynchronous:false,
             parameters:{callback:"inflow"},
             onSuccess:function (data) {
-                showCustomPopupDialog(data.responseText, "Create Stream Definition", "80%", "", onSuccessCreateInflowStreamDefinition, "90%");
+                //showCustomPopupDialog(data.responseText, "Create Stream Definition", "80%", "", onSuccessCreateInflowStreamDefinition, "90%");
+                showCustomPopupDialog(data.responseText, "Create Stream Definition", "80%", "", "", "90%");
             }
         });
     }
@@ -117,7 +118,8 @@ function createExportedStreamDefinition(element) {
             asynchronous:false,
             parameters:{streamDef:jsonStreamDefinition, callback:"outflow"},
             onSuccess:function (data) {
-                showCustomPopupDialog(data.responseText, "Create Stream Definition", "80%", "", onSuccessCreateOutflowStreamDefinition, "90%");
+                //showCustomPopupDialog(data.responseText, "Create Stream Definition", "80%", "", onSuccessCreateOutflowStreamDefinition, "90%");
+                showCustomPopupDialog(data.responseText, "Create Stream Definition", "80%", "", "", "90%");
             }
         });
     }
