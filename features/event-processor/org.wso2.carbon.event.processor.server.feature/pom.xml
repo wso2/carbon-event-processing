@@ -132,18 +132,18 @@
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-math3</artifactId>
         </dependency>
-        <dependency>
-            <groupId>org.wso2.carbon.ml</groupId>
-            <artifactId>org.wso2.carbon.ml.core</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.wso2.carbon.ml</groupId>
-            <artifactId>org.wso2.carbon.ml.commons</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.wso2.carbon.ml</groupId>
-            <artifactId>org.wso2.carbon.ml.database</artifactId>
-        </dependency>
+        <!--<dependency>-->
+            <!--<groupId>org.wso2.carbon.ml</groupId>-->
+            <!--<artifactId>org.wso2.carbon.ml.core</artifactId>-->
+        <!--</dependency>-->
+        <!--<dependency>-->
+            <!--<groupId>org.wso2.carbon.ml</groupId>-->
+            <!--<artifactId>org.wso2.carbon.ml.commons</artifactId>-->
+        <!--</dependency>-->
+        <!--<dependency>-->
+            <!--<groupId>org.wso2.carbon.ml</groupId>-->
+            <!--<artifactId>org.wso2.carbon.ml.database</artifactId>-->
+        <!--</dependency>-->
         <dependency>
             <groupId>org.quartz-scheduler.wso2</groupId>
             <artifactId>quartz</artifactId>
@@ -152,7 +152,26 @@
             <groupId>org.wso2.orbit.org.apache.hadoop</groupId>
             <artifactId>hadoop-client</artifactId>
         </dependency>
-
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-lang3</artifactId>
+        </dependency>
+        <!--<dependency>-->
+            <!--<groupId>com.google.code.geocoder-java</groupId>-->
+            <!--<artifactId>geocoder-java</artifactId>-->
+        <!--</dependency>-->
+        <!--<dependency>-->
+            <!--<groupId>com.googlecode.scalascriptengine</groupId>-->
+            <!--<artifactId>scalascriptengine_2.11</artifactId>-->
+        <!--</dependency>-->
+        <!--<dependency>-->
+            <!--<groupId>org.scala-lang</groupId>-->
+            <!--<artifactId>scala-compiler</artifactId>-->
+        <!--</dependency>-->
+        <!--<dependency>-->
+            <!--<groupId>org.scala-lang</groupId>-->
+            <!--<artifactId>scala-reflect</artifactId>-->
+        <!--</dependency>-->
     </dependencies>
 
 
@@ -285,15 +304,30 @@
                                 <bundleDef>
                                     org.apache.commons:commons-math3:${commons-math3.version}
                                 </bundleDef>
+                                <!--<bundleDef>-->
+                                    <!--org.wso2.carbon.ml:org.wso2.carbon.ml.core:${ml.version}-->
+                                <!--</bundleDef>-->
+                                <!--<bundleDef>-->
+                                    <!--org.wso2.carbon.ml:org.wso2.carbon.ml.commons:${ml.version}-->
+                                <!--</bundleDef>-->
+                                <!--<bundleDef>-->
+                                    <!--org.wso2.carbon.ml:org.wso2.carbon.ml.database:${ml.version}-->
+                                <!--</bundleDef>-->
                                 <bundleDef>
-                                    org.wso2.carbon.ml:org.wso2.carbon.ml.core:${ml.version}
+                                    org.apache.commons:commons-lang3:${commons-lang3.version}
                                 </bundleDef>
-                                <bundleDef>
-                                    org.wso2.carbon.ml:org.wso2.carbon.ml.commons:${ml.version}
-                                </bundleDef>
-                                <bundleDef>
-                                    org.wso2.carbon.ml:org.wso2.carbon.ml.database:${ml.version}
-                                </bundleDef>
+                                <!--<bundleDef>-->
+                                    <!--com.google.code.geocoder-java:geocoder-java:${geocoder.version}-->
+                                <!--</bundleDef>-->
+                                <!--<bundleDef>-->
+                                    <!--com.googlecode.scalascriptengine:scalascriptengine_2.11:${scalascriptengine.version}-->
+                                <!--</bundleDef>-->
+                                <!--<bundleDef>-->
+                                    <!--org.scala-lang:scala-compiler:${scala.version}-->
+                                <!--</bundleDef>-->
+                                <!--<bundleDef>-->
+                                    <!--org.scala-lang:scala-reflect:${scala.version}-->
+                                <!--</bundleDef>-->
                             </bundles>
                             <importFeatures>
                                 <importFeatureDef>org.wso2.carbon.core.server:${carbon.kernel.version}</importFeatureDef>
