@@ -152,26 +152,6 @@ function onSuccessCreateInflowStreamDefinition(streamId) {
 function onSuccessCreateOutflowStreamDefinition(streamId) {
     refreshStreamDefInfo("importedStreamId");
     refreshStreamDefInfo("exportedStreamId");
-
-    CARBON.customConfirmDialogBox("Defined event streams can publish out flow of events using event formatter.\nDo you want to  create an event formatter now? ", "Default LoggerAdaptor Event Formatter", "Custom Event Formatter", function (option) {
-        if (option == "custom") {
-            createEventFormatter(streamId);
-        } else {
-            new Ajax.Request('../eventformatter/add_default_event_formatter_ajaxprocessor.jsp', {
-                method:'POST',
-                asynchronous:false,
-                parameters:{eventStreamId:streamId},
-                onSuccess:function (response) {
-                    if ("true" == response.responseText.trim()) {
-                        CARBON.showInfoDialog("Default Event formatter added successfully!!");
-                    } else {
-                        CARBON.showErrorDialog("Failed to add event formatter, Exception: " + response.responseText.trim());
-                    }
-                }
-            });
-        }
-
-    }, null);
 }
 
 
