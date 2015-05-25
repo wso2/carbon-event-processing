@@ -24,6 +24,12 @@ public class ExecutionAdminManagerValueHolder {
 
     private static ExecutionManagerService executorManagerService;
 
+    /**
+     * To avoid instantiating
+     */
+    private ExecutionAdminManagerValueHolder() {
+    }
+
     public static ExecutionManagerService getCarbonExecutorManagerService() {
         return executorManagerService;
     }

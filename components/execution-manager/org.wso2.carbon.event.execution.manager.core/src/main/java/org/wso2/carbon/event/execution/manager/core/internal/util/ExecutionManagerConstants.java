@@ -24,10 +24,6 @@ import java.io.File;
  */
 public class ExecutionManagerConstants {
 
-    private ExecutionManagerConstants() {
-
-    }
-
     public static final String TEMPLATE_DOMAIN_PATH = CarbonUtils.getCarbonConfigDirPath()
             + File.separator + "cep" + File.separator + "domain-template";
 
@@ -43,4 +39,10 @@ public class ExecutionManagerConstants {
     public static final String CONFIG_FILE_EXTENSION = ".xml";
 
     public static final String DEFAULT_CHARSET = "UTF-8";
+
+    /**
+     * To avoid instantiating
+     */
+    private ExecutionManagerConstants() {
+    }
 }

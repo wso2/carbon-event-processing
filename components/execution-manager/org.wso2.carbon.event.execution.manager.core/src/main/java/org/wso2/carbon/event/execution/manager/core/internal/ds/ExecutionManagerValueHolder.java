@@ -32,6 +32,13 @@ public class ExecutionManagerValueHolder {
     private static EventProcessorService eventProcessorService;
 
 
+    /**
+     * To avoid instantiating
+     */
+    private ExecutionManagerValueHolder() {
+
+    }
+
     public static void setRegistryService(RegistryService registryService) {
         ExecutionManagerValueHolder.registryService = registryService;
     }

@@ -87,7 +87,7 @@
 
             <div class="row">
             <%
-                ExecutionManagerAdminServiceStub proxy = ExecutionManagerUIUtils.getExecutionManagerAdminService(config, session, request);
+                ExecutionManagerAdminServiceStub proxy = ExecutionManagerUIUtils.getExecutionManagerAdminService(config, session);
                 try {
                     TemplateDomainInfoDTO[] domainDTOs = proxy.getAllDomainsInfo();
 

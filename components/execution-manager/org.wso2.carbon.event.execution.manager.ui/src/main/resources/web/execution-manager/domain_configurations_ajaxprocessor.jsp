@@ -86,7 +86,7 @@
                     if (request.getParameter("domainName") != null) {
 
                         ExecutionManagerAdminServiceStub proxy = ExecutionManagerUIUtils
-                                .getExecutionManagerAdminService(config, session, request);
+                                .getExecutionManagerAdminService(config, session);
 
                         try {
 

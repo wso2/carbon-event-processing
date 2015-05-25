@@ -21,12 +21,18 @@ import org.wso2.carbon.event.execution.manager.admin.dto.configuration.TemplateC
 import org.wso2.carbon.event.execution.manager.core.structure.configuration.Parameter;
 import org.wso2.carbon.event.execution.manager.core.structure.configuration.TemplateConfiguration;
 
-import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Consist of the necessary mapping methods of Configurations
  */
 public class ConfigurationMapper {
+
+    /**
+     * To avoid instantiating
+     */
+    private ConfigurationMapper() {
+    }
 
 
     /**
@@ -36,7 +42,7 @@ public class ConfigurationMapper {
      * @return Mapped array of TemplateConfigurationInfoDTO
      */
     public static TemplateConfigurationInfoDTO[] mapConfigurationsInfo(
-            ArrayList<TemplateConfiguration> templateConfigurations) {
+            List<TemplateConfiguration> templateConfigurations) {
         TemplateConfigurationInfoDTO[] templateConfigurationInfoDTO = null;
 
         if (templateConfigurations != null) {
@@ -75,7 +81,7 @@ public class ConfigurationMapper {
      * @return Mapped TemplateConfigurationDTO object
      */
     public static TemplateConfigurationDTO[] mapConfigurations(
-            ArrayList<TemplateConfiguration> templateConfigurations) {
+            List<TemplateConfiguration> templateConfigurations) {
         TemplateConfigurationDTO[] templateConfigurationDTOs = null;
 
         if (templateConfigurations != null) {

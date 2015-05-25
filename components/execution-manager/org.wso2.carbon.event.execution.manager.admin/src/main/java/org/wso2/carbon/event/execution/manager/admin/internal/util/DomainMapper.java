@@ -23,8 +23,7 @@ import org.wso2.carbon.event.execution.manager.core.structure.domain.Parameter;
 import org.wso2.carbon.event.execution.manager.core.structure.domain.Template;
 import org.wso2.carbon.event.execution.manager.core.structure.domain.TemplateDomain;
 
-import java.util.ArrayList;
-import java.util.Collection;
+import java.util.List;
 
 /**
  * Consist of require mapping methods of Domains
@@ -32,12 +31,18 @@ import java.util.Collection;
 public class DomainMapper {
 
     /**
+     * To avoid instantiating
+     */
+    private DomainMapper() {
+    }
+
+    /**
      * Maps given list of TemplateDomain objects to array of TemplateDomainInfoDTO objects
      *
      * @param templateDomains List of TemplateDomain objects needs to be mapped
      * @return Mapped array of TemplateDomainInfoDTO objects
      */
-    public static TemplateDomainInfoDTO[] mapDomainsInfo(ArrayList<TemplateDomain> templateDomains) {
+    public static TemplateDomainInfoDTO[] mapDomainsInfo(List<TemplateDomain> templateDomains) {
         TemplateDomainInfoDTO[] templateDomainInfoDTO = null;
 
         if (templateDomains != null) {
@@ -74,7 +79,7 @@ public class DomainMapper {
      * @param templateDomains List of TemplateDomain objects needs to be mapped
      * @return Mapped array of TemplateDomainDTO objects
      */
-    public static TemplateDomainDTO[] mapDomains(ArrayList<TemplateDomain> templateDomains) {
+    public static TemplateDomainDTO[] mapDomains(List<TemplateDomain> templateDomains) {
         TemplateDomainDTO[] templateDomainDTOs = null;
 
         if (templateDomains != null) {

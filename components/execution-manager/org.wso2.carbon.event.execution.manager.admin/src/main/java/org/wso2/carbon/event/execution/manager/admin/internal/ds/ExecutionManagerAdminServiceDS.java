@@ -29,6 +29,11 @@ import org.wso2.carbon.event.execution.manager.core.ExecutionManagerService;
 
 public class ExecutionManagerAdminServiceDS {
 
+    /**
+     * Will be invoked when activating the service
+     *
+     * @param context
+     */
     protected void activate(ComponentContext context) {
 
     }
