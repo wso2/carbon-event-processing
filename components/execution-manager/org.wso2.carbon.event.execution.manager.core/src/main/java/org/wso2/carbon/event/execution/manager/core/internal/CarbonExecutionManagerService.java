@@ -82,8 +82,8 @@ public class CarbonExecutionManagerService implements ExecutionManagerService {
                 registry.put(resourceCollectionPath, registry.newCollection());
             }
 
-            ExecutionManagerHelper.deployExecutionPlan(configuration, domains);
             ExecutionManagerHelper.deployStreams(domains.get(configuration.getFrom()));
+            ExecutionManagerHelper.deployExecutionPlan(configuration, domains);
 
             if (registry.resourceExists(resourcePath)) {
                 registry.delete(resourcePath);
