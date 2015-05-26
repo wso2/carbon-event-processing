@@ -281,9 +281,12 @@ var STAT = "statistics";
 var TRACE = "Tracing";
 
 function doDelete(executionPlanName) {
-    var theform = document.getElementById('deleteForm');
-    theform.executionPlan.value = executionPlanName;
-    theform.submit();
+    CARBON.showConfirmationDialog(
+        "Are you sure want to delete execution plan: " + executionPlanName + "?", function () {
+            var theform = document.getElementById('deleteForm');
+            theform.executionPlan.value = executionPlanName;
+            theform.submit();
+        }, null, null);
 }
 
 function disableStat(execPlanName) {
