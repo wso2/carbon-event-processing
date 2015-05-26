@@ -25,7 +25,6 @@ import org.apache.axis2.AxisFault;
 import org.wso2.carbon.ui.CarbonUIUtil;
 
 import javax.servlet.ServletConfig;
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 /**
@@ -34,17 +33,21 @@ import javax.servlet.http.HttpSession;
 public class ExecutionManagerUIUtils {
 
     /**
+     * To avoid instantiating
+     */
+    private ExecutionManagerUIUtils() {
+    }
+
+    /**
      * Provides created  ExecutionManagerAdminServiceStub object
      *
      * @param config  Servlet Configuration
      * @param session Http Session
-     * @param request Http Servlet Request
      * @return Created ExecutionManagerAdminServiceStub object
      * @throws AxisFault
      */
     public static ExecutionManagerAdminServiceStub getExecutionManagerAdminService(
-            ServletConfig config, HttpSession session,
-            HttpServletRequest request)
+            ServletConfig config, HttpSession session)
             throws AxisFault {
         ConfigurationContext configContext = (ConfigurationContext) config.getServletContext()
                 .getAttribute(CarbonConstants.CONFIGURATION_CONTEXT);
@@ -69,13 +72,11 @@ public class ExecutionManagerUIUtils {
      *
      * @param config  Servlet Configuration
      * @param session Http Session
-     * @param request Http Servlet Request
      * @return Created ExecutionManagerAdminServiceStub object
      * @throws AxisFault
      */
     public static AuthenticationAdminStub getAuthenticationAdminService(
-            ServletConfig config, HttpSession session,
-            HttpServletRequest request)
+            ServletConfig config, HttpSession session)
             throws AxisFault {
         ConfigurationContext configContext = (ConfigurationContext) config.getServletContext()
                 .getAttribute(CarbonConstants.CONFIGURATION_CONTEXT);

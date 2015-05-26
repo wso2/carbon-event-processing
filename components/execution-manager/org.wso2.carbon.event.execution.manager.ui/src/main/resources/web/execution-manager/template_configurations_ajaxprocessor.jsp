@@ -106,7 +106,7 @@
     try {
 
         ExecutionManagerAdminServiceStub proxy =
-                ExecutionManagerUIUtils.getExecutionManagerAdminService(config, session, request);
+                ExecutionManagerUIUtils.getExecutionManagerAdminService(config, session);
         TemplateDomainDTO domain =
                 proxy.getDomain(domainName);
 

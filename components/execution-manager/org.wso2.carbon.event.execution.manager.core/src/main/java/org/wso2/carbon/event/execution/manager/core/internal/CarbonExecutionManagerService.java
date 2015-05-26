@@ -42,12 +42,12 @@ import java.util.*;
 public class CarbonExecutionManagerService implements ExecutionManagerService {
     private static final Log log = LogFactory.getLog(CarbonExecutionManagerService.class);
 
-    private HashMap<String, TemplateDomain> domains;
+    private Map<String, TemplateDomain> domains;
     private Registry registry;
 
     public CarbonExecutionManagerService() throws ExecutionManagerException {
 
-        domains = new HashMap<String, TemplateDomain>();
+        domains = new HashMap<>();
 
         try {
             registry = ExecutionManagerValueHolder.getRegistryService().getConfigSystemRegistry();
@@ -83,7 +83,7 @@ public class CarbonExecutionManagerService implements ExecutionManagerService {
             }
 
             ExecutionManagerHelper.deployStreams(domains.get(configuration.getFrom()));
-            ExecutionManagerHelper.deployExecutionPlan(configuration, domains);
+            ExecutionManagerHelper.deployExecutionPlans(configuration, domains);
 
             if (registry.resourceExists(resourcePath)) {
                 registry.delete(resourcePath);
@@ -114,22 +114,11 @@ public class CarbonExecutionManagerService implements ExecutionManagerService {
                 + ExecutionManagerConstants.PATH_SEPARATOR + domainName;
         try {
             if (registry.resourceExists(domainFilePath)) {
-
                 Resource resource = registry.get(domainFilePath);
                 //All the resources of collection will be loaded
                 if (resource instanceof org.wso2.carbon.registry.core.Collection) {
-                    org.wso2.carbon.registry.core.Collection collection =
-                            (org.wso2.carbon.registry.core.Collection) resource;
-
-                    for (String filePath : collection.getChildren()) {
-
-                        TemplateConfiguration templateConfiguration = ExecutionManagerHelper
-                                .getConfiguration(filePath, registry);
-
-                        if (templateConfiguration != null) {
-                            templateConfigurations.add(templateConfiguration);
-                        }
-                    }
+                    loadConfigurations(((org.wso2.carbon.registry.core.Collection) resource).getChildren(),
+                            templateConfigurations);
                 }
             }
         } catch (RegistryException e) {
@@ -137,6 +126,19 @@ public class CarbonExecutionManagerService implements ExecutionManagerService {
                     + ExecutionManagerConstants.TEMPLATE_CONFIG_PATH, e);
         }
         return templateConfigurations;
+
+    }
+
+    /**
+     * Load all the configurations of given list of file paths
+     *
+     * @param filePaths              where configuration files are located
+     * @param templateConfigurations TemplateConfiguration collection which needs to be loaded
+     */
+    private void loadConfigurations(String[] filePaths, Collection<TemplateConfiguration> templateConfigurations) {
+        for (String filePath : filePaths) {
+            templateConfigurations.add(ExecutionManagerHelper.getConfiguration(filePath, registry));
+        }
     }
 
     @Override

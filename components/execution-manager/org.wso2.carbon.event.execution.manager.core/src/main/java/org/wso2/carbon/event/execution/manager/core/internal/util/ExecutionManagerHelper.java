@@ -43,6 +43,7 @@ import javax.xml.bind.Unmarshaller;
 import java.io.File;
 import java.io.StringReader;
 import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Class consist of the helper methods which are required to deal with domain templates stored in the file directory,
@@ -53,30 +54,52 @@ public class ExecutionManagerHelper {
     private static final Log log = LogFactory.getLog(ExecutionManagerHelper.class);
 
     /**
+     * To avoid instantiating
+     */
+    private ExecutionManagerHelper() {
+    }
+
+    /**
      * Load All domains templates available in the file directory
      */
-    public static HashMap<String, TemplateDomain> loadDomains() {
+    public static Map<String, TemplateDomain> loadDomains() {
         //Get domain template folder and load all the domain template files
         File folder = new File(ExecutionManagerConstants.TEMPLATE_DOMAIN_PATH);
-        HashMap<String, TemplateDomain> domains = new HashMap<String, TemplateDomain>();
+        Map<String, TemplateDomain> domains = new HashMap<String, TemplateDomain>();
 
         if (folder != null && folder.listFiles() != null) {
             for (final File fileEntry : folder.listFiles()) {
                 if (fileEntry.isFile()) {
-                    try {
-                        JAXBContext jaxbContext = JAXBContext.newInstance(TemplateDomain.class);
-                        Unmarshaller jaxbUnmarshaller = jaxbContext.createUnmarshaller();
-                        TemplateDomain templateDomain = (TemplateDomain) jaxbUnmarshaller.unmarshal(fileEntry);
-                        domains.put(templateDomain.getName(), templateDomain);
-                    } catch (JAXBException e) {
-                        log.error("JAXB Exception when unmarshalling domain template file at "
-                                + fileEntry.getPath(), e);
-                    }
+                    TemplateDomain templateDomain = unmarshalDomain(fileEntry);
+                    domains.put(templateDomain.getName(), templateDomain);
                 }
             }
         }
 
         return domains;
+    }
+
+    /**
+     * Unmarshalling TemplateDomain object by given file
+     *
+     * @param fileEntry file for unmarshalling
+     * @return templateDomain object
+     */
+    private static TemplateDomain unmarshalDomain(File fileEntry) {
+        TemplateDomain templateDomain = null;
+
+        try {
+            JAXBContext jaxbContext = JAXBContext.newInstance(TemplateDomain.class);
+            Unmarshaller jaxbUnmarshaller = jaxbContext.createUnmarshaller();
+            templateDomain = (TemplateDomain) jaxbUnmarshaller.unmarshal(fileEntry);
+
+        } catch (JAXBException e) {
+            log.error("JAXB Exception when unmarshalling domain template file at "
+                    + fileEntry.getPath(), e);
+        }
+
+        return templateDomain;
+
     }
 
     /**
@@ -92,20 +115,33 @@ public class ExecutionManagerHelper {
             if (registry.resourceExists(path)) {
                 Resource configFile = registry.get(path);
                 if (configFile != null) {
-                    try {
-                        StringReader reader = new StringReader(new String((byte[]) configFile.getContent()));
-                        JAXBContext jaxbContext = JAXBContext.newInstance(TemplateConfiguration.class);
-                        Unmarshaller jaxbUnmarshaller = jaxbContext.createUnmarshaller();
-                        templateConfiguration = (TemplateConfiguration) jaxbUnmarshaller.unmarshal(reader);
-                    } catch (JAXBException e) {
-                        log.error("JAXB Exception occurred when unmarshalling configuration file at "
-                                + configFile.getPath(), e);
-                    }
+                    templateConfiguration = unmarshalConfiguration(configFile.getContent());
                 }
             }
         } catch (RegistryException e) {
             log.error("Registry exception occurred when accessing files at "
                     + ExecutionManagerConstants.TEMPLATE_CONFIG_PATH, e);
+        }
+
+        return templateConfiguration;
+    }
+
+    /**
+     * Unmarshalling TemplateDomain object by given file content object
+     *
+     * @param configFileContent file for unmarshalling
+     * @return templateConfiguration object
+     */
+    private static TemplateConfiguration unmarshalConfiguration(Object configFileContent) {
+        TemplateConfiguration templateConfiguration = null;
+        try {
+
+            StringReader reader = new StringReader(new String((byte[]) configFileContent));
+            JAXBContext jaxbContext = JAXBContext.newInstance(TemplateConfiguration.class);
+            Unmarshaller jaxbUnmarshaller = jaxbContext.createUnmarshaller();
+            templateConfiguration = (TemplateConfiguration) jaxbUnmarshaller.unmarshal(reader);
+        } catch (JAXBException e) {
+            log.error("JAXB Exception occurred when unmarshalling configuration ", e);
         }
 
         return templateConfiguration;
@@ -125,17 +161,17 @@ public class ExecutionManagerHelper {
             } catch (MalformedStreamDefinitionException e) {
                 log.error("Stream definition is incorrect in domain template " + templateDomain.getName(), e);
             } catch (EventStreamConfigurationException e) {
-                log.error("Exception occurred when configuring stream " + streamDefinition.getName());
+                log.error("Exception occurred when configuring stream " + streamDefinition.getName(), e);
             }
         }
     }
 
     /**
-     * Deploy given configurations template Execution Plan
+     * Deploy given configurations template Execution Plans
      *
      * @param configuration configuration object
      */
-    public static void deployExecutionPlan(TemplateConfiguration configuration, HashMap<String, TemplateDomain> domains)
+    public static void deployExecutionPlans(TemplateConfiguration configuration, Map<String, TemplateDomain> domains)
             throws ExecutionManagerException {
 
         if (domains.get(configuration.getFrom()) == null) {
@@ -146,37 +182,45 @@ public class ExecutionManagerHelper {
                     + " of " + configuration.getName() + " configuration");
         } else {
             for (Template template : domains.get(configuration.getFrom()).getTemplates()) {
-                if (template.getName().equals(configuration.getType())) {
-                    try {
-
-                        String executionPlan = ExecutionManagerHelper.updateExecutionPlanParameters(configuration,
-                                template.getExecutionPlan());
-
-                        ExecutionManagerHelper.unDeployExistingExecutionPlan(AnnotationHelper.getAnnotationElement(
-                                EventProcessorConstants.ANNOTATION_NAME_NAME, null,
-                                SiddhiCompiler.parse(executionPlan).getAnnotations()).getValue());
-
-                        //Get Template Execution plan, Tenant Id and deploy Execution Plan
-                        ExecutionManagerValueHolder.getEventProcessorService()
-                                .deployExecutionPlan(executionPlan);
-                        break;
-                    } catch (ExecutionPlanConfigurationException e) {
-                        throw new ExecutionManagerException(
-                                "Configuration exception occurred when adding Execution Plan of Template "
-                                        + configuration.getName() + " of Domain " + configuration.getFrom(), e);
-
-                    } catch (ExecutionPlanDependencyValidationException e) {
-                        throw new ExecutionManagerException(
-                                "Validation exception occurred when adding Execution Plan of Template "
-                                        + configuration.getName() + " of Domain " + configuration.getFrom(), e);
-                    } catch (SiddhiParserException e) {
-                        throw new ExecutionManagerException(
-                                "Validation exception occurred when parsing Execution Plan of Template "
-                                        + configuration.getName() + " of Domain " + configuration.getFrom(), e);
-                    }
+                if (template.getName().equals(configuration.getType())
+                        && deployExecutionPlan(configuration, template.getExecutionPlan())) {
+                    break;
                 }
             }
         }
+    }
+
+    private static boolean deployExecutionPlan(TemplateConfiguration configuration, String templateExecutionPlan)
+            throws ExecutionManagerException {
+        boolean isDeployed;
+        try {
+            String executionPlan = ExecutionManagerHelper.updateExecutionPlanParameters(configuration,
+                    templateExecutionPlan);
+
+            ExecutionManagerHelper.unDeployExistingExecutionPlan(AnnotationHelper.getAnnotationElement(
+                    EventProcessorConstants.ANNOTATION_NAME_NAME, null,
+                    SiddhiCompiler.parse(executionPlan).getAnnotations()).getValue());
+
+            //Get Template Execution plan, Tenant Id and deploy Execution Plan
+            ExecutionManagerValueHolder.getEventProcessorService()
+                    .deployExecutionPlan(executionPlan);
+            isDeployed = true;
+        } catch (ExecutionPlanConfigurationException e) {
+            throw new ExecutionManagerException(
+                    "Configuration exception occurred when adding Execution Plan of Template "
+                            + configuration.getName() + " of Domain " + configuration.getFrom(), e);
+
+        } catch (ExecutionPlanDependencyValidationException e) {
+            throw new ExecutionManagerException(
+                    "Validation exception occurred when adding Execution Plan of Template "
+                            + configuration.getName() + " of Domain " + configuration.getFrom(), e);
+        } catch (SiddhiParserException e) {
+            throw new ExecutionManagerException(
+                    "Validation exception occurred when parsing Execution Plan of Template "
+                            + configuration.getName() + " of Domain " + configuration.getFrom(), e);
+        }
+
+        return isDeployed;
     }
 
 
@@ -189,27 +233,28 @@ public class ExecutionManagerHelper {
      */
     private static String updateExecutionPlanParameters(TemplateConfiguration config, String executionPlan) {
 
+        String updatedExecutionPlan = executionPlan;
         String executionPlanNameAnnotation = "@Plan:name";
         String executionPlanNameDefinition = executionPlanNameAnnotation + "('" + config.getFrom()
                 + ExecutionManagerConstants.CONFIG_NAME_SEPARATOR + config.getName() + "')";
 
         //Execution plan parameters will be replaced with given configuration parameters
         for (Parameter parameter : config.getParameters()) {
-            executionPlan = executionPlan.replaceAll("\\$" + parameter.getName(), parameter.getValue());
+            updatedExecutionPlan = updatedExecutionPlan.replaceAll("\\$" + parameter.getName(), parameter.getValue());
         }
 
         if (AnnotationHelper.getAnnotationElement(
                 EventProcessorConstants.ANNOTATION_NAME_NAME, null,
-                SiddhiCompiler.parse(executionPlan).getAnnotations()) == null
-                || !executionPlan.contains(executionPlanNameAnnotation)) {
-            executionPlan = executionPlanNameDefinition + executionPlan;
+                SiddhiCompiler.parse(updatedExecutionPlan).getAnnotations()) == null
+                || !updatedExecutionPlan.contains(executionPlanNameAnnotation)) {
+            updatedExecutionPlan = executionPlanNameDefinition + updatedExecutionPlan;
         } else {
             //@Plan:name will be updated with given configuration name and uncomment in case if it is commented
-            executionPlan = executionPlan.replaceAll(executionPlanNameAnnotation + "\\(.*?\\)",
+            updatedExecutionPlan = updatedExecutionPlan.replaceAll(executionPlanNameAnnotation + "\\(.*?\\)",
                     executionPlanNameDefinition);
         }
 
-        return executionPlan;
+        return updatedExecutionPlan;
     }
 
     /**

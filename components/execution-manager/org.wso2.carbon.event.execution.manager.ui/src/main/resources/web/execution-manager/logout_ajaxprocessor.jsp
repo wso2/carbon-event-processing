@@ -16,7 +16,7 @@
 <%@ page import="org.wso2.carbon.event.execution.manager.ui.ExecutionManagerUIUtils" %>
 
 <%
-    AuthenticationAdminStub stub = ExecutionManagerUIUtils.getAuthenticationAdminService(config, session, request);
+    AuthenticationAdminStub stub = ExecutionManagerUIUtils.getAuthenticationAdminService(config, session);
     stub.logout();
     response.sendRedirect("../admin/login.jsp");
 %>
