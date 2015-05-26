@@ -44,13 +44,18 @@
 
     org.wso2.carbon.event.simulator.stub.types.CSVFileInfoDto[] csvFileInfoDtosArray=stub.getAllCSVFileInfo();
     org.wso2.carbon.event.simulator.stub.types.DataSourceTableAndStreamInfoDto[] dataSourceTableAndStreamInfoDtoArray = stub.getAllDataSourceTableAndStreamInfo();
+
+    String streamId = "";
+    if(null != request.getParameter("streamId")){
+        streamId = request.getParameter("streamId");
+    }
+
 %>
 
 <script type="text/javascript">
     jQuery(document).ready(function() {
         document.getElementById("fileArea").style.display = "inline";
         document.getElementById("dataSourceArea").style.display = "none";
-        document.getElementById("fileRadioButton").checked = true;
     });
     function changeView(view) {
         var plain = "fileArea";
@@ -102,8 +107,81 @@
     <div id="workArea">
     <h2><fmt:message key="event.stream.simulator"/> </h2>
     <br>
-    <h4 style="color: #0D4d79"><fmt:message key="send.multiple.events"/>
-    </h4>
+
+        <h4 style="color: #0D4d79"><fmt:message key="send.single.event"/> </h4>
+
+        <div id="dataArea" style="display: inline;">
+            <form name="eventStreams" id="eventStreams" method="post" >
+                <table id="eventStreamtable" class="styledLeft">
+                    <thead>
+                    <tr>
+                        <th> </th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr>
+                        <td class="formRow">
+                            <table id="inputEventDetailTable" class="normal-nopadding">
+                                <tbody>
+                                <tr>
+                                    <td class="leftCol-med"><fmt:message key="select.the.event.stream"/> <span class="required">*</span></td>
+                                    <td>
+                                        <select name="EventStreamID" id="EventStreamID" onload="showEventProperties()"
+                                                onchange="showEventProperties()">
+
+                                            <%
+                                                if (eventInfoArray == null) {
+                                            %>
+
+                                            <option value="No Event Stream Definitions"><fmt:message key="no.event.stream.definition"/>
+                                            </option>
+                                            <%
+                                            } else {%>
+
+                                                <option value="select">select event stream
+                                                </option>
+
+                                                <%for (int i = 0; i < eventInfoArray.length; i++) {
+                                                    String streamName = eventInfoArray[i].getStreamName();
+                                                    String streamVersion = eventInfoArray[i].getStreamVersion();
+                                                    if(streamId.equalsIgnoreCase(streamName + ":" + streamVersion)){%>
+                                                        <option value="<%=eventInfoArray[i].getStreamName()%>" selected ><%=streamName+":"+streamVersion%>
+                                                        </option>
+                                                    <%}else{%>
+                                                        <option value="<%=eventInfoArray[i].getStreamName()%>"><%=streamName+":"+streamVersion%>
+                                                        </option>
+                                                    <%}
+                                                }
+                                                if(!streamId.equalsIgnoreCase("")){%>
+                                                    <script>
+                                                        showEventProperties();
+                                                    </script>
+                                                <%}
+                                            }%>
+                                        </select>
+                                    </td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="buttonRow">
+                            <input type="button" value="Send"
+                                   onclick="sendEvent(document.getElementById('eventStreams'))">
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+
+            </form>
+
+        </div>
+
+        <br/>
+        <h4 style="color: #0D4d79"><fmt:message key="send.multiple.events"/>
+        </h4>
+
         <div id="fileArea">
             <form name="csvFileForm" id="csvFileForm" method="post" action="../../fileupload/csv" enctype="multipart/form-data"
                   target="_self"  >
@@ -118,7 +196,7 @@
                                             </span>
                             <a href="#" onclick="changeView('fileArea');" class="icon-link"
                                style="background-image: url(images/design-view.gif); font-weight: normal">
-                                switch to add configuration for simulate by database</a>
+                                switch to configure database for simulation</a>
                         </th>
                     </tr>
                     <tr>
@@ -191,7 +269,7 @@
                                                 </span>
                             <a href="#" onclick="changeView('dataSourceArea');" class="icon-link"
                                style="background-image: url(images/design-view.gif); font-weight: normal">
-                                switch to upload configuration file for simulate</a>
+                                switch to upload file for simulation</a>
                         </th>
                     </tr>
                     </thead>
@@ -330,27 +408,26 @@
                                         <select name="EventStreamID" id="EventStreamID2" onload="showEventPropertiesForSimulator()"
                                                 onchange="showEventPropertiesForSimulator()">
 
-                                            <%
-                                                if (eventInfoArray == null) {
+                                            <%if (eventInfoArray == null) {
                                             %>
-
-                                            <option value="No Event Stream Definitions"><fmt:message key="no.event.stream.definition"/>
-                                            </option>
-                                            <%
-                                            } else {%>
+                                                <option value="No Event Stream Definitions"><fmt:message key="no.event.stream.definition"/>
+                                                </option>
+                                            <%}else {%>
 
                                                 <option value="select">select event stream
                                                 </option>
                                                 <%for (int i = 0; i < eventInfoArray.length; i++) {
-                                            %>
-                                            <option value="<%=eventInfoArray[i].getStreamName()%>"><%=eventInfoArray[i].getStreamName()+":"+eventInfoArray[i].getStreamVersion()%>
-                                            </option>
-
-
-                                            <%
-                                                    }
+                                                    String streamName = eventInfoArray[i].getStreamName();
+                                                    String streamVersion = eventInfoArray[i].getStreamVersion();
+                                                    if(streamId.equalsIgnoreCase(streamName + ":" + streamVersion)){%>
+                                                        <option value="<%=eventInfoArray[i].getStreamName()%>" selected ><%=streamName+":"+streamVersion%>
+                                                        </option>
+                                                    <%}else{%>
+                                                        <option value="<%=eventInfoArray[i].getStreamName()%>"><%=streamName+":"+streamVersion%>
+                                                        </option>
+                                                    <%}
                                                 }
-                                            %>
+                                            }%>
                                         </select>
                                     </td>
                                 </tr>
@@ -374,69 +451,7 @@
         </div>
 
 
-        <br/>
-        <h4 style="color: #0D4d79"><fmt:message key="send.single.event"/> </h4>
 
-        <div id="dataArea" style="display: inline;">
-            <form name="eventStreams" id="eventStreams" method="post" >
-                <table id="eventStreamtable" class="styledLeft">
-                    <thead>
-                    <tr>
-                        <th> </th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    <tr>
-                        <td class="formRow">
-                            <table id="inputEventDetailTable" class="normal-nopadding">
-                                <tbody>
-                                <tr>
-                                    <td class="leftCol-med"><fmt:message key="select.the.event.stream"/> <span class="required">*</span></td>
-                                    <td>
-                                        <select name="EventStreamID" id="EventStreamID" onload="showEventProperties()"
-                                                onchange="showEventProperties()">
-
-                                            <%
-                                                if (eventInfoArray == null) {
-                                            %>
-
-                                            <option value="No Event Stream Definitions"><fmt:message key="no.event.stream.definition"/>
-                                            </option>
-                                            <%
-                                            } else {%>
-
-                                            <option value="select">select event stream
-                                            </option>
-
-                                                <%for (int i = 0; i < eventInfoArray.length; i++) {
-                                            %>
-                                            <option value="<%=eventInfoArray[i].getStreamName()%>"><%=eventInfoArray[i].getStreamName()+":"+eventInfoArray[i].getStreamVersion()%>
-                                            </option>
-
-
-                                            <%
-                                                    }
-                                                }
-                                            %>
-                                        </select>
-                                    </td>
-                                </tr>
-                                </tbody>
-                            </table>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td class="buttonRow">
-                            <input type="button" value="Send"
-                                   onclick="sendEvent(document.getElementById('eventStreams'))">
-                        </td>
-                    </tr>
-                    </tbody>
-                </table>
-
-            </form>
-
-        </div>
 
 
     </div>
