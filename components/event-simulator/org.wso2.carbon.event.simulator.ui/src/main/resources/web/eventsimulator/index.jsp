@@ -43,7 +43,8 @@
     org.wso2.carbon.event.simulator.stub.types.StreamDefinitionInfoDto[] eventInfoArray = stub.getAllEventStreamInfoDto();
 
     org.wso2.carbon.event.simulator.stub.types.CSVFileInfoDto[] csvFileInfoDtosArray=stub.getAllCSVFileInfo();
-    org.wso2.carbon.event.simulator.stub.types.DataSourceTableAndStreamInfoDto[] dataSourceTableAndStreamInfoDtoArray = stub.getAllDataSourceTableAndStreamInfo();
+    org.wso2.carbon.event.simulator.stub.types.DataSourceTableAndStreamInfoDto[] dataSourceTableAndStreamInfoDtoArray
+            = stub.getAllDataSourceTableAndStreamInfo();
 
     String streamId = "";
     if(null != request.getParameter("streamId")){
@@ -124,7 +125,9 @@
                             <table id="inputEventDetailTable" class="normal-nopadding">
                                 <tbody>
                                 <tr>
-                                    <td class="leftCol-med"><fmt:message key="select.the.event.stream"/> <span class="required">*</span></td>
+                                    <td class="leftCol-med"><fmt:message key="select.the.event.stream"/>
+                                        <span class="required">*</span>
+                                    </td>
                                     <td>
                                         <select name="EventStreamID" id="EventStreamID" onload="showEventProperties()"
                                                 onchange="showEventProperties()">
@@ -133,7 +136,8 @@
                                                 if (eventInfoArray == null) {
                                             %>
 
-                                            <option value="No Event Stream Definitions"><fmt:message key="no.event.stream.definition"/>
+                                            <option value="No Event Stream Definitions">
+                                                <fmt:message key="no.event.stream.definition"/>
                                             </option>
                                             <%
                                             } else {%>
@@ -145,10 +149,12 @@
                                                     String streamName = eventInfoArray[i].getStreamName();
                                                     String streamVersion = eventInfoArray[i].getStreamVersion();
                                                     if(streamId.equalsIgnoreCase(streamName + ":" + streamVersion)){%>
-                                                        <option value="<%=eventInfoArray[i].getStreamName()%>" selected ><%=streamName+":"+streamVersion%>
+                                                        <option value="<%=eventInfoArray[i].getStreamName()%>" selected >
+                                                            <%=streamName+":"+streamVersion%>
                                                         </option>
                                                     <%}else{%>
-                                                        <option value="<%=eventInfoArray[i].getStreamName()%>"><%=streamName+":"+streamVersion%>
+                                                        <option value="<%=eventInfoArray[i].getStreamName()%>">
+                                                            <%=streamName+":"+streamVersion%>
                                                         </option>
                                                     <%}
                                                 }
@@ -231,10 +237,13 @@
                         <td>
 
                             <%if(csvFileInfoDtosArray[k].getStreamID()!=null){%>
-                            <input type="button" value="Play" onclick="sendFileDetails('<%=csvFileInfoDtosArray[k].getFileName()%>')">
+                            <input type="button" value="Play" onclick="sendFileDetails(
+                                    '<%=csvFileInfoDtosArray[k].getFileName()%>')">
                             <%}%>
-                            <input type="button" value="Configure" onclick="createPopupStreamConfigUI('<%=csvFileInfoDtosArray[k].getFileName()%>')">
-                            <input type="button" value="Delete" onclick="deleteFile('<%=csvFileInfoDtosArray[k].getFileName()%>')">
+                            <input type="button" value="Configure" onclick="createPopupStreamConfigUI(
+                                    '<%=csvFileInfoDtosArray[k].getFileName()%>')">
+                            <input type="button" value="Delete" onclick="deleteFile(
+                                    '<%=csvFileInfoDtosArray[k].getFileName()%>')">
                         </td>
                     </tr>
                     <%
@@ -276,7 +285,8 @@
                     <tbody>
                     <tr>
                         <td colspan="3">
-                            <table class="styledLeft" id = "dataSourceConfigInfoTableID" cellspacing="0" cellpadding="0" style="border-bottom:none">
+                            <table class="styledLeft" id = "dataSourceConfigInfoTableID" cellspacing="0"
+                                   cellpadding="0" style="border-bottom:none">
                                 <thead>
                                 <tr>
                                     <th><fmt:message key="configuration.name"/> </th>
@@ -337,8 +347,10 @@
 
                                     <td>
 
-                                        <input type="button" value="Play" onclick="sendDBConfigFileNameToSimulate('<%=dataSourceTableAndStreamInfoDtoArray[k].getFileName()%>')">
-                                        <input type="button" value="Delete" onclick="deleteDBConfigFile('<%=dataSourceTableAndStreamInfoDtoArray[k].getFileName()%>')">
+                                        <input type="button" value="Play" onclick="sendDBConfigFileNameToSimulate(
+                                                '<%=dataSourceTableAndStreamInfoDtoArray[k].getFileName()%>')">
+                                        <input type="button" value="Delete" onclick="deleteDBConfigFile(
+                                                '<%=dataSourceTableAndStreamInfoDtoArray[k].getFileName()%>')">
                                     </td>
                                 </tr>
                                 <%}
@@ -358,7 +370,8 @@
                                     <td style="padding-left:10px">Configuration Name<span class="required">*</span></td>
                                     <td colspan="2" style="padding-left:10px">
                                         <div class="outputFields">
-                                            <input style="width:75%" type="text" id="configurationNameId2" name="configuration.name" value="" class="initE">
+                                            <input style="width:75%" type="text" id="configurationNameId2"
+                                                   name="configuration.name" value="" class="initE">
                                         </div>
                                     </td>
                                 </tr>
@@ -377,7 +390,8 @@
                                     <td style="padding-left:10px" >Data Source Name<span class="required">*</span></td>
                                     <td colspan="2" style="padding-left:10px">
                                         <div class="outputFields">
-                                            <input style="width:75%" type="text" id="dataSourceNameId2" name="datasource.name" value="" class="initE">
+                                            <input style="width:75%" type="text" id="dataSourceNameId2"
+                                                   name="datasource.name" value="" class="initE">
                                         </div>
                                     </td>
                                 </tr>
@@ -420,10 +434,12 @@
                                                     String streamName = eventInfoArray[i].getStreamName();
                                                     String streamVersion = eventInfoArray[i].getStreamVersion();
                                                     if(streamId.equalsIgnoreCase(streamName + ":" + streamVersion)){%>
-                                                        <option value="<%=eventInfoArray[i].getStreamName()%>" selected ><%=streamName+":"+streamVersion%>
+                                                        <option value="<%=eventInfoArray[i].getStreamName()%>" selected >
+                                                            <%=streamName+":"+streamVersion%>
                                                         </option>
                                                     <%}else{%>
-                                                        <option value="<%=eventInfoArray[i].getStreamName()%>"><%=streamName+":"+streamVersion%>
+                                                        <option value="<%=eventInfoArray[i].getStreamName()%>">
+                                                            <%=streamName+":"+streamVersion%>
                                                         </option>
                                                     <%}
                                                 }
