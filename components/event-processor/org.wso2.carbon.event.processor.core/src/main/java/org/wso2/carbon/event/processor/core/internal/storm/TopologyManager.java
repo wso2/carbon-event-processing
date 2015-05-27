@@ -85,10 +85,10 @@ public class TopologyManager {
 
     private static void waitForTopologyToBeRemoved(String topologyName) throws TException {
         log.info("Waiting topology '" + topologyName + "' to be removed from Storm cluster");
-        boolean isExisting = false;
         try {
             while (true) {
                 List<TopologySummary> topologies = client.getClusterInfo().get_topologies();
+                boolean isExisting = false;
                 for (TopologySummary topologySummary : topologies) {
                     if (topologySummary.get_name().equals(topologyName)) {
                         isExisting = true;
