@@ -74,6 +74,7 @@ public interface EventProcessorConstants {
     String CLOSING_BRACKETS = ");";
     String STORM_QUERY_PLAN = "storm-query-plan";
     String INPUT_STREAMS = "input-streams";
+    String TABLE_DEFINITIONS = "table-definitions";
     String OUTPUT_STREAMS = "output-streams";
     String EVENT_PROCESSOR_TAG = "event-processor";
     String SIDDHI_BOLT = "SiddhiBolt";

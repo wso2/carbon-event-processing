@@ -70,32 +70,107 @@
             <groupId>com.google.guava</groupId>
             <artifactId>guava</artifactId>
         </dependency>
+        <dependency>
+            <groupId>org.quartz-scheduler.wso2</groupId>
+            <artifactId>quartz</artifactId>
+        </dependency>
 
-        <!--siddhi extension-->
+        <!--siddhi extension with dependencies-->
+
+        <!-- Siddhi Math extension-->
         <dependency>
             <groupId>org.wso2.siddhi</groupId>
             <artifactId>siddhi-extension-math</artifactId>
         </dependency>
+
+        <!-- Siddhi Regex extension -->
         <dependency>
             <groupId>org.wso2.siddhi</groupId>
             <artifactId>siddhi-extension-regex</artifactId>
         </dependency>
+
+        <!-- Siddhi String extension -->
         <dependency>
             <groupId>org.wso2.siddhi</groupId>
             <artifactId>siddhi-extension-string</artifactId>
         </dependency>
+
+        <!-- Siddhi Event Table extension -->
         <dependency>
             <groupId>org.wso2.siddhi</groupId>
             <artifactId>siddhi-extension-event-table</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.wso2.siddhi</groupId>
-            <artifactId>siddhi-extension-eval-script</artifactId>
+            <groupId>org.apache.hadoop</groupId>
+            <artifactId>hadoop-common</artifactId>
         </dependency>
+        <dependency>
+            <groupId>org.apache.tomcat.wso2</groupId>
+            <artifactId>jdbc-pool</artifactId>
+        </dependency>
+
+        <!-- Need to remove this -->
+        <dependency>
+            <groupId>mysql</groupId>
+            <artifactId>mysql-connector-java</artifactId>
+        </dependency>
+
+        <!-- Siddhi Time extension -->
         <dependency>
             <groupId>org.wso2.siddhi</groupId>
             <artifactId>siddhi-extension-time</artifactId>
         </dependency>
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-lang3</artifactId>
+        </dependency>
+
+        <!-- Siddhi Time-Series extension -->
+        <dependency>
+            <groupId>org.wso2.siddhi</groupId>
+            <artifactId>siddhi-extension-timeseries</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-math3</artifactId>
+        </dependency>
+
+        <!-- Siddhi Geo extension -->
+        <dependency>
+            <groupId>org.wso2.siddhi</groupId>
+            <artifactId>siddhi-extension-geo</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.servicemix.bundles</groupId>
+            <artifactId>org.apache.servicemix.bundles.geocoder-java</artifactId>
+            <version>${geocoder.version}</version>
+        </dependency>
+
+        <!-- Siddhi Eval-Script extension -->
+        <dependency>
+            <groupId>org.wso2.siddhi</groupId>
+            <artifactId>siddhi-extension-eval-script</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.googlecode.scalascriptengine</groupId>
+            <artifactId>scalascriptengine_2.11</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.scala-lang</groupId>
+            <artifactId>scala-compiler</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.scala-lang</groupId>
+            <artifactId>scala-reflect</artifactId>
+        </dependency>
+
+
+        <!-- Siddhi ML extension -->
+        <dependency>
+            <groupId>org.wso2.siddhi</groupId>
+            <artifactId>siddhi-extension-ml</artifactId>
+        </dependency>
+
     </dependencies>
 
     <build>
@@ -113,7 +188,7 @@
                             * ; -split-package:=merge-first
                         </Export-Package>
                         <Embed-Dependency>
-                            siddhi-core|siddhi-query-api|siddhi-query-compiler|antlr4-runtime|guava|org.wso2.carbon.event.processor.manager.commons|org.wso2.carbon.event.processor.manager.core|org.wso2.carbon.event.processor.common|libthrift|disruptor|siddhi-extension-math|siddhi-extension-regex|siddhi-extension-string|siddhi-extension-event-table|siddhi-extension-eval-script|siddhi-extension-time;scope=compile|runtime;inline=true
+                            siddhi-core|siddhi-query-api|siddhi-query-compiler|antlr4-runtime|guava|quartz|org.wso2.carbon.event.processor.manager.commons|org.wso2.carbon.event.processor.manager.core|org.wso2.carbon.event.processor.common|libthrift|disruptor|siddhi-extension-math|siddhi-extension-regex|siddhi-extension-string|siddhi-extension-event-table|siddhi-extension-eval-script|siddhi-extension-time|hadoop-common|jdbc-pool|commons-lang3|siddhi-extension-timeseries|commons-math3|siddhi-extension-ml|siddhi-extension-geo|org.apache.servicemix.bundles.geocoder-java|scala-compiler|scala-reflect|scalascriptengine_2.11|mysql-connector-java;scope=compile|runtime;inline=true
                         </Embed-Dependency>
                         <Embed-Transitive>true</Embed-Transitive>
                         <DynamicImport-Package>*</DynamicImport-Package>

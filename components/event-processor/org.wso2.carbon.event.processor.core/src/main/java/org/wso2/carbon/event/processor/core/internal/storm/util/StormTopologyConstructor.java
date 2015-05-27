@@ -72,7 +72,7 @@ public class StormTopologyConstructor {
             }
 
             componentInfoHolder.setDeclarer(builder.setSpout(name, new EventReceiverSpout(stormDeploymentConfig,
-                            streamDefinitions, executionPlanName, tenantId, stormDeploymentConfig.getHeartbeatInterval()),
+                    streamDefinitions, executionPlanName, tenantId, stormDeploymentConfig.getHeartbeatInterval()),
                     Integer.parseInt(parallel)));
             topologyInfoHolder.addComponent(componentInfoHolder);
         }
@@ -98,7 +98,12 @@ public class StormTopologyConstructor {
             addPartitionFields(inputStreamsElement, componentInfoHolder);
 
             OMElement queryElement = eventProcessorElement.getFirstChildWithName(new QName("queries"));
-            componentInfoHolder.addSiddhiQuery(queryElement.getText());
+            OMElement tableDefinitionElement = eventProcessorElement.getFirstChildWithName(new QName("table-definitions"));
+            String queryWithEventTable = "";
+            if (tableDefinitionElement != null) {
+                queryWithEventTable = tableDefinitionElement.getText() + queryElement.getText();
+            }
+            componentInfoHolder.addSiddhiQuery(queryWithEventTable);
 
             List<String> outputStreamDefinitions = getStreamDefinitions(eventProcessorElement.getFirstChildWithName(new
                     QName("output-streams")));
@@ -106,7 +111,7 @@ public class StormTopologyConstructor {
                 componentInfoHolder.addOutputStream(streamDefinition);
             }
             BoltDeclarer declarer = builder.setBolt(name, new SiddhiBolt(name, inputStreamDefinitions,
-                    queryElement.getText(), outputStreamDefinitions, executionPlanName, tenantId),
+                    queryWithEventTable, outputStreamDefinitions, executionPlanName, tenantId),
                     Integer.parseInt(parallel));
             //enforcing parallelism
             if (isEnforced.equals("true")) {
@@ -136,9 +141,13 @@ public class StormTopologyConstructor {
             addPartitionFields(inputStreamsElement, componentInfoHolder);
 
             OMElement queryElement = eventProcessorElement.getFirstChildWithName(new QName("queries"));
-            String query = null;
+            OMElement tableDefinitionElement = eventProcessorElement.getFirstChildWithName(new QName("table-definitions"));
+            String query = "";
+            if (tableDefinitionElement != null) {
+                query = tableDefinitionElement.getText();
+            }
             if (queryElement != null) {
-                query = queryElement.getText();
+                query = query + queryElement.getText();
                 componentInfoHolder.addSiddhiQuery(query);
             }
 
@@ -173,14 +182,14 @@ public class StormTopologyConstructor {
                         if (!pubComponent.getComponentName().equals(componentInfoHolder.getComponentName())) {
                             String partitionedField = componentInfoHolder.getPartionenedField(inputStreamId);
                             String groupingType = "ShuffleGrouping";
-                            if (partitionedField == null){
+                            if (partitionedField == null) {
                                 boltDeclarer.shuffleGrouping(pubComponent.getComponentName(), inputStreamId);
-                            }else{
+                            } else {
                                 groupingType = "FieldGrouping";
                                 boltDeclarer.fieldsGrouping(pubComponent.getComponentName(), inputStreamId, new Fields(partitionedField));
                             }
 
-                            if (log.isDebugEnabled()){
+                            if (log.isDebugEnabled()) {
                                 log.debug("Connecting storm components [Consumer:" + componentInfoHolder.getComponentName()
                                         + ", Stream:" + inputStreamId
                                         + ", Publisher:" + pubComponent.getComponentName()

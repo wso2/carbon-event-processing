@@ -34,6 +34,7 @@ import java.util.List;
  */
 public class SiddhiQLStormQuerySplitter extends SiddhiQLBaseVisitor {
 
+
     public static List<String> split(String source) {
         ANTLRInputStream input = new ANTLRInputStream(source);
         SiddhiQLLexer lexer = new SiddhiQLLexer(input);
@@ -49,6 +50,31 @@ public class SiddhiQLStormQuerySplitter extends SiddhiQLBaseVisitor {
         SiddhiQLVisitor eval = new SiddhiQLStormQuerySplitter();
         List<String> queryList = (List<String>) eval.visit(tree);
         return queryList;
+    }
+
+
+
+    public static List<String> getEventTableList(String source) {
+        ANTLRInputStream input = new ANTLRInputStream(source);
+        SiddhiQLLexer lexer = new SiddhiQLLexer(input);
+        lexer.removeErrorListeners();
+        lexer.addErrorListener(SiddhiErrorListener.INSTANCE);
+
+        CommonTokenStream tokens = new CommonTokenStream(lexer);
+        SiddhiQLParser parser = new SiddhiQLParser(tokens);
+        parser.removeErrorListeners();
+        parser.addErrorListener(SiddhiErrorListener.INSTANCE);
+        ParseTree tree = parser.parse();
+
+        SiddhiQLVisitor eval = new SiddhiQLStormQuerySplitter();
+        List<String> eventTableList = new ArrayList<>();
+        SiddhiQLParser.Execution_planContext ctx = (((SiddhiQLParser.ParseContext)tree).execution_plan());
+
+        for (SiddhiQLParser.Definition_tableContext executionElementContext : ctx.definition_table()) {
+            String query =  (String) eval.visit(executionElementContext);
+            eventTableList.add(query);
+        }
+        return eventTableList;
     }
 
     /**
@@ -110,5 +136,14 @@ public class SiddhiQLStormQuerySplitter extends SiddhiQLBaseVisitor {
         int b = ctx.stop.getStopIndex();
         Interval interval = new Interval(a,b);
         return ctx.start.getInputStream().getText(interval);
+    }
+
+    @Override
+    public String visitDefinition_table(@NotNull SiddhiQLParser.Definition_tableContext ctx){
+        int a = ctx.start.getStartIndex();
+        int b = ctx.stop.getStopIndex();
+        Interval interval = new Interval(a,b);
+        return ctx.start.getInputStream().getText(interval);
+
     }
 }

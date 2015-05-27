@@ -117,7 +117,7 @@ public class EventPublisherBolt extends BaseBasicBolt {
             log = Logger.getLogger(EventPublisherBolt.class);
             initialized = true;
             //Adding functionality to support query execution at publisher level for future use cases.
-            if (query != null) {
+            if (query != null && (! query.isEmpty())) {
                 siddhiManager = new SiddhiManager();
                 eventCount = 0;
                 batchStartTime = System.currentTimeMillis();
@@ -153,8 +153,9 @@ public class EventPublisherBolt extends BaseBasicBolt {
                             }
                         }
                     });
-                    executionPlanRuntime.start();
+
                 }
+                executionPlanRuntime.start();
             }
             streamIdToDefinitionMap = new HashMap<String, StreamDefinition>();
             StreamDefinition siddhiDefinition;

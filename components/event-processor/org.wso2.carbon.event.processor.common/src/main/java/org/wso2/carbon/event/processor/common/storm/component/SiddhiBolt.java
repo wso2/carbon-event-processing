@@ -122,8 +122,8 @@ public class SiddhiBolt extends BaseBasicBolt {
                     }
                 }
             });
-            executionPlanRuntime.start();
         }
+        executionPlanRuntime.start();
     }
 
     @Override

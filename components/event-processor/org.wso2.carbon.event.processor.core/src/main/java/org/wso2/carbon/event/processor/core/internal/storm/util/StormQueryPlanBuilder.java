@@ -153,11 +153,13 @@ public class StormQueryPlanBuilder {
 
         List<Element> processorElementList = new ArrayList<Element>();
         List<String> stringQueryList = SiddhiQLStormQuerySplitter.split(queryExpressions);
-
+        List<String> eventTableDefinitionList = SiddhiQLStormQuerySplitter.getEventTableList(queryExpressions);
         ExecutionPlan executionPlan = SiddhiCompiler.parse(queryExpressions);
         List<ExecutionElement> executionElements = executionPlan.getExecutionElementList();
-        Map<String, QueryGroupInfoHolder> groupIdToQueryMap = getGroupIdToQueryMap(executionElements,
+        Set<String> eventTableIdSet = executionPlan.getTableDefinitionMap().keySet();
+        Map<String, QueryGroupInfoHolder> groupIdToQueryMap = getGroupIdToQueryMap(eventTableIdSet, executionElements,
                 stringQueryList, exportedStreams);
+
         for (Map.Entry entry : groupIdToQueryMap.entrySet()) {
             String name = (String) entry.getKey();
             QueryGroupInfoHolder infoHolder = (QueryGroupInfoHolder) entry.getValue();
@@ -168,8 +170,23 @@ public class StormQueryPlanBuilder {
             Element inputStream = getProcessorInputStream(document, new ArrayList<String>(infoHolder
                     .getInputDefinitionIds()), streamDefinitionMap, infoHolder.getPartitionFieldMap());
             processor.appendChild(inputStream);
-            Element queries = document.createElement(EventProcessorConstants.QUERIES);
+            Element tableDefinitions = document.createElement(EventProcessorConstants.TABLE_DEFINITIONS);
+            List<String> querySpecificEventTableDefinitionList = new ArrayList<>();
             String stringQueries = getQueryString(((QueryGroupInfoHolder) entry.getValue()).getStringQueries());
+            for(String evenTableId : eventTableIdSet){
+                if(stringQueries.contains(evenTableId)){
+                    for(String evenTableDefinition : eventTableDefinitionList){
+                        if(evenTableDefinition.contains(evenTableId)){
+                            querySpecificEventTableDefinitionList.add(evenTableDefinition);
+                        }
+                    }
+                }
+            }
+            String stringTableDefinitions = getEventTableDefinitionString(querySpecificEventTableDefinitionList);
+            tableDefinitions.setTextContent(stringTableDefinitions);
+            processor.appendChild(tableDefinitions);
+
+            Element queries = document.createElement(EventProcessorConstants.QUERIES);
             queries.setTextContent(stringQueries);
             processor.appendChild(queries);
             Element outputStream = getProcessorOutputStream(document, new ArrayList<String>(((QueryGroupInfoHolder)
@@ -205,7 +222,7 @@ public class StormQueryPlanBuilder {
      * @param exportedStreams
      * @return
      */
-    private static Map<String, QueryGroupInfoHolder> getGroupIdToQueryMap(List<ExecutionElement> executionElements,
+    private static Map<String, QueryGroupInfoHolder> getGroupIdToQueryMap(Set<String> eventTableIdSet, List<ExecutionElement> executionElements,
                                                                           List<String> stringQueryList,
                                                                           List<String> exportedStreams) throws
             StormQueryConstructionException {
@@ -231,6 +248,8 @@ public class StormQueryPlanBuilder {
                     infoHolder.addExecutionElement(new ExecutionElementInfoHolder(query, parallel, enforceParallelism));
                     groupIdToQueryMap.put(groupId, infoHolder);
                 }
+                infoHolder.getOutputDefinitionIds().removeAll(eventTableIdSet);
+
             } else {
                 Partition partition = (Partition) executionElements.get(i);
                 for (Query query : partition.getQueryList()) {
@@ -249,6 +268,7 @@ public class StormQueryPlanBuilder {
             }
         }
 
+        exportedStreams.removeAll(eventTableIdSet);
         List<String> exportedStreamIds = new ArrayList<String>(exportedStreams.size());
         for (String definitionString : exportedStreams) {
             StreamDefinition definition = SiddhiCompiler.parseStreamDefinition(definitionString);
@@ -401,6 +421,15 @@ public class StormQueryPlanBuilder {
         StringBuilder builder = new StringBuilder();
         for (String query : stringQueries) {
             builder.append(query.trim()).append(";");
+        }
+        return builder.toString();
+    }
+
+
+    private static String getEventTableDefinitionString(List<String> eventTableDefinitionList) {
+        StringBuilder builder = new StringBuilder();
+        for (String eventTableDefinition : eventTableDefinitionList) {
+            builder.append(eventTableDefinition.trim()).append(";");
         }
         return builder.toString();
     }
