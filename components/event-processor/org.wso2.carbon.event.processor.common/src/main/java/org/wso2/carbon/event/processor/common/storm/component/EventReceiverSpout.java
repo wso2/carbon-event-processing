@@ -127,7 +127,7 @@ public class EventReceiverSpout extends BaseRichSpout implements StreamCallback 
             thisHostIp = Utils.findAddress("localhost");
             tcpEventServer = new TCPEventServer(new TCPEventServerConfig(listeningPort), this);
             for (StreamDefinition siddhiStreamDefinition : incomingStreamDefinitions) {
-                tcpEventServer.subscribe(siddhiStreamDefinition);
+                tcpEventServer.addStreamDefinition(siddhiStreamDefinition);
             }
             tcpEventServer.start();
             log.info(logPrefix + "EventReceiverSpout starting to listen for events on port " + listeningPort);

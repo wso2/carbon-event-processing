@@ -60,7 +60,7 @@ public class TCPEventSendingTestCase {
         TestStreamCallback streamCallback = new TestStreamCallback();
         TCPEventServer TCPEventServer = new TCPEventServer(new TCPEventServerConfig(7612), streamCallback);
         try {
-            TCPEventServer.subscribe(streamDefinition);
+            TCPEventServer.addStreamDefinition(streamDefinition);
             TCPEventServer.start();
             Thread.sleep(1000);
             threadPool.submit(new ClientThread(streamDefinition, new SimpleDataProvider(), 100));
@@ -87,7 +87,7 @@ public class TCPEventSendingTestCase {
         TestStreamCallback streamCallback = new TestStreamCallback();
         TCPEventServer TCPEventServer = new TCPEventServer(new TCPEventServerConfig(7612), streamCallback);
         try {
-            TCPEventServer.subscribe(streamDefinition);
+            TCPEventServer.addStreamDefinition(streamDefinition);
             TCPEventServer.start();
             Thread.sleep(1000);
             for (int i = 0; i < TOTAL_CLIENTS; i++) {

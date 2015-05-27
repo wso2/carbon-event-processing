@@ -84,7 +84,7 @@ public class SiddhiStormOutputEventListener implements StreamCallback {
     public void registerOutputStreamListener(StreamDefinition siddhiStreamDefinition, SiddhiOutputStreamListener outputStreamListener) {
         log.info(logPrefix + "Registering output stream listener for Siddhi stream : " + siddhiStreamDefinition.getId());
         streamNameToOutputStreamListenerMap.put(siddhiStreamDefinition.getId(), outputStreamListener);
-        tcpEventServer.subscribe(siddhiStreamDefinition);
+        tcpEventServer.addStreamDefinition(siddhiStreamDefinition);
     }
 
     @Override

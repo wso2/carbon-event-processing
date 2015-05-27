@@ -20,12 +20,12 @@ import org.wso2.carbon.event.processor.core.ExecutionPlan;
 import org.wso2.carbon.event.processor.core.internal.ds.EventProcessorValueHolder;
 import org.wso2.carbon.event.processor.manager.core.EventProcessorManagementService;
 import org.wso2.carbon.event.processor.manager.core.config.ManagementModeInfo;
+import org.wso2.carbon.event.processor.manager.core.exception.EventManagementException;
 import org.wso2.siddhi.core.util.snapshot.ByteSerializer;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 public class CarbonEventProcessorManagementService extends EventProcessorManagementService {
@@ -56,12 +56,21 @@ public class CarbonEventProcessorManagementService extends EventProcessorManagem
     public void restoreState(byte[] bytes) {
         Map<Integer, ConcurrentHashMap<String, ExecutionPlan>> map
                 = EventProcessorValueHolder.getEventProcessorService().getTenantSpecificExecutionPlans();
-        HashMap<Integer, HashMap<String, byte[]>> snapshotdataList = (HashMap<Integer, HashMap<String, byte[]>>) ByteSerializer.BToO(bytes);
+        HashMap<Integer, HashMap<String, byte[]>> snapshotDataList = (HashMap<Integer, HashMap<String, byte[]>>) ByteSerializer.BToO(bytes);
 
-        for (Map.Entry<Integer, ConcurrentHashMap<String, ExecutionPlan>> tenantEntry : map.entrySet()) {
-            for (Map.Entry<String, ExecutionPlan> executionPlanData : tenantEntry.getValue().entrySet()) {
-                byte[] snapshotData = snapshotdataList.get(tenantEntry.getKey()).get(executionPlanData.getKey());
-                executionPlanData.getValue().getExecutionPlanRuntime().restore(snapshotData);
+        for (Map.Entry<Integer, HashMap<String, byte[]>> tenantEntry : snapshotDataList.entrySet()) {
+            for (Map.Entry<String, byte[]> executionPlanData : tenantEntry.getValue().entrySet()) {
+                ConcurrentHashMap<String, ExecutionPlan> executionPlanMap = map.get(tenantEntry.getKey());
+                if (executionPlanMap != null) {
+                    ExecutionPlan executionPlan = executionPlanMap.get(executionPlanData.getKey());
+                    if (executionPlan != null) {
+                        executionPlan.getExecutionPlanRuntime().restore(executionPlanData.getValue());
+                    } else {
+                        throw new EventManagementException("No execution plans with name '" + executionPlanData.getKey() + "' exist for tenant  " + tenantEntry.getKey());
+                    }
+                } else {
+                    throw new EventManagementException("No execution plans exist for tenant  " + tenantEntry.getKey());
+                }
             }
         }
     }
@@ -79,12 +88,4 @@ public class CarbonEventProcessorManagementService extends EventProcessorManagem
         return EventProcessorValueHolder.getEventProcessorService().getManagementInfo();
     }
 
-    public Lock getReadLock() {
-        return readWriteLock.readLock();
-    }
-
-    @Override
-    public ManagerType getType() {
-        return ManagerType.Processor;
-    }
 }
