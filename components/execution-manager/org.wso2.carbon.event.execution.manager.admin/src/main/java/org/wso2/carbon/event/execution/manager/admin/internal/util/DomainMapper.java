@@ -67,7 +67,7 @@ public class DomainMapper {
         if (templateDomain != null) {
             templateDomainInfoDTO = new TemplateDomainInfoDTO();
             templateDomainInfoDTO.setName(templateDomain.getName());
-            templateDomainInfoDTO.setDescription(templateDomain.getName());
+            templateDomainInfoDTO.setDescription(templateDomain.getDescription());
         }
 
         return templateDomainInfoDTO;
