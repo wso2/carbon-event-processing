@@ -21,8 +21,8 @@ import org.wso2.carbon.event.processor.core.internal.CarbonEventProcessorManagem
 import org.wso2.carbon.event.processor.core.internal.CarbonEventProcessorService;
 import org.wso2.carbon.event.processor.core.internal.storm.manager.StormManagerServer;
 import org.wso2.carbon.event.processor.manager.core.EventManagementService;
-import org.wso2.carbon.event.processor.manager.core.PersistenceManager;
 import org.wso2.carbon.event.processor.manager.core.config.DistributedConfiguration;
+import org.wso2.carbon.event.processor.manager.core.config.PersistenceConfiguration;
 import org.wso2.carbon.event.statistics.EventStatisticsService;
 import org.wso2.carbon.event.stream.core.EventStreamService;
 import org.wso2.carbon.ndatasource.core.DataSourceService;
@@ -30,23 +30,21 @@ import org.wso2.carbon.user.core.UserRealm;
 import org.wso2.carbon.utils.ConfigurationContextService;
 import org.wso2.siddhi.core.SiddhiManager;
 
-import java.util.concurrent.ScheduledExecutorService;
-
 public class EventProcessorValueHolder {
     private static CarbonEventProcessorService eventProcessorService;
     private static EventStatisticsService eventStatisticsService;
     private static EventManagementService eventManagementService;
     private static EventStreamService eventStreamService;
     private static HazelcastInstance hazelcastInstance;
-    private static PersistenceManager persistenceManager;
-    private static ScheduledExecutorService scheduledExecutorService;
     private static UserRealm userRealm;
     private static DataSourceService dataSourceService;
     private static ServerConfigurationService serverConfiguration;
     private static ConfigurationContextService configurationContext;
     private static StormManagerServer stormManagerServer;
     private static DistributedConfiguration stormDeploymentConfig;
+    private static PersistenceConfiguration persistenceConfiguration;
     private static CarbonEventProcessorManagementService carbonEventProcessorManagementService;
+    private static SiddhiManager siddhiManager;
 
     public static SiddhiManager getSiddhiManager() {
         return siddhiManager;
@@ -55,9 +53,6 @@ public class EventProcessorValueHolder {
     public static void registerSiddhiManager(SiddhiManager siddhiManager) {
         EventProcessorValueHolder.siddhiManager = siddhiManager;
     }
-
-    private static SiddhiManager siddhiManager;
-
 
     public static void registerEventProcessorService(CarbonEventProcessorService service) {
         eventProcessorService = service;
@@ -83,22 +78,6 @@ public class EventProcessorValueHolder {
         return hazelcastInstance;
     }
 
-    public static PersistenceManager getPersistenceManager() {
-        return persistenceManager;
-    }
-
-    public static void setPersistenceManager(PersistenceManager persistenceManager) {
-        EventProcessorValueHolder.persistenceManager = persistenceManager;
-    }
-
-    public static ScheduledExecutorService getScheduledExecutorService() {
-        return scheduledExecutorService;
-    }
-
-    public static void setScheduledExecutorService(ScheduledExecutorService scheduledExecutorService) {
-        EventProcessorValueHolder.scheduledExecutorService = scheduledExecutorService;
-    }
-    //
 //    public static DataAccessService getDataAccessService() {
 //        return dataAccessService;
 //    }
@@ -171,6 +150,15 @@ public class EventProcessorValueHolder {
     public static DistributedConfiguration getStormDeploymentConfiguration() {
         return stormDeploymentConfig;
     }
+
+    public static void registerPersistenceConfiguration(PersistenceConfiguration persistenceConfiguration) {
+        EventProcessorValueHolder.persistenceConfiguration = persistenceConfiguration;
+    }
+
+    public static PersistenceConfiguration getPersistenceConfiguration() {
+        return persistenceConfiguration;
+    }
+
 
     public static CarbonEventProcessorManagementService getCarbonEventReceiverManagementService() {
         return carbonEventProcessorManagementService;

@@ -31,7 +31,6 @@ import org.wso2.carbon.event.processor.core.internal.listener.EventStreamListene
 import org.wso2.carbon.event.processor.core.internal.storm.manager.StormManagerServer;
 import org.wso2.carbon.event.processor.core.internal.util.EventProcessorConstants;
 import org.wso2.carbon.event.processor.manager.core.EventManagementService;
-import org.wso2.carbon.event.processor.manager.core.PersistenceManager;
 import org.wso2.carbon.event.processor.manager.core.config.DistributedConfiguration;
 import org.wso2.carbon.event.processor.manager.core.config.PersistenceConfiguration;
 import org.wso2.carbon.event.statistics.EventStatisticsService;
@@ -106,16 +105,7 @@ public class EventProcessorServiceDS {
                 PersistenceStore persistenceStore = (PersistenceStore) clazz.newInstance();
                 siddhiManager.setPersistenceStore(persistenceStore);
                 persistenceStore.setProperties(persistConfig.getPropertiesMap());
-                ScheduledExecutorService scheduledExecutorService = Executors.newScheduledThreadPool(persistConfig.getThreadPoolSize());
-                EventProcessorValueHolder.setScheduledExecutorService(scheduledExecutorService);
-                long persistenceTimeInterval = persistConfig.getPersistenceTimeInterval();
-                if (persistenceTimeInterval > 0) {
-                    PersistenceManager persistenceManager = new PersistenceManager(siddhiManager, EventProcessorValueHolder.getScheduledExecutorService(),
-                            persistenceTimeInterval, PrivilegedCarbonContext.getThreadLocalCarbonContext().getTenantId());
-                    EventProcessorValueHolder.setPersistenceManager(persistenceManager);
-                    persistenceManager.init();
-                }
-
+                EventProcessorValueHolder.registerPersistenceConfiguration(persistConfig);
             }
             if (log.isDebugEnabled()) {
                 log.debug("Successfully deployed EventProcessorService");
@@ -133,14 +123,6 @@ public class EventProcessorServiceDS {
             StormManagerServer stormManagerServer = EventProcessorValueHolder.getStormManagerServer();
             if (stormManagerServer != null) {
                 stormManagerServer.stop();
-            }
-            PersistenceManager persistenceManager = EventProcessorValueHolder.getPersistenceManager();
-            if(persistenceManager != null){
-                persistenceManager.shutdown();
-            }
-            ScheduledExecutorService executorService = EventProcessorValueHolder.getScheduledExecutorService();
-            if(executorService != null){
-                executorService.shutdownNow();
             }
             EventProcessorValueHolder.getEventProcessorService().shutdown();
         } catch (RuntimeException e) {

@@ -67,8 +67,8 @@ public class StormQueryPlanBuilder {
             List<Element> processorElements;
             Element publisherElement;
 
-            receiverElement = constructReceiverElement(document, importStreams);
-            publisherElement = constructPublisherElement(document, exportStreams);
+            receiverElement = constructReceiverElement(document,  configuration.getExecutionPlan(), importStreams);
+            publisherElement = constructPublisherElement(document, configuration.getExecutionPlan(), exportStreams);
             processorElements = constructProcessorElement(document, configuration.getExecutionPlan(), importStreams,
                     exportStreams);
 
@@ -92,15 +92,17 @@ public class StormQueryPlanBuilder {
      * Create receiver element. Assume that imported streams contains all the receiver elements.
      *
      * @param document
-     * @param importedStreams
-     * @return
+     * @param queryExpressions
+     *@param importedStreams  @return
      * @throws EventStreamConfigurationException
      */
-    private static Element constructReceiverElement(Document document, List<String> importedStreams)
+    private static Element constructReceiverElement(Document document, String queryExpressions, List<String> importedStreams)
             throws EventStreamConfigurationException {
         Element receiverElement = document.createElement(EventProcessorConstants.EVENT_RECEIVER);
         receiverElement.setAttribute(EventProcessorConstants.NAME, EventProcessorConstants.EVENT_RECEIVER_SPOUT);
-        receiverElement.setAttribute(EventProcessorConstants.PARALLEL, "1");    //todo configure
+        ExecutionPlan executionPlan = SiddhiCompiler.parse(queryExpressions);
+        receiverElement.setAttribute(EventProcessorConstants.PARALLEL, String.valueOf(getParallelism(executionPlan.getAnnotations(),
+                EventProcessorConstants.RECEIVER_PARALLELISM)));
         Element streams = document.createElement(EventProcessorConstants.STREAMS);
         for (String definition : importedStreams) {
             Element stream = getStreamElement(document, definition);
@@ -117,13 +119,15 @@ public class StormQueryPlanBuilder {
      * @return
      * @throws EventStreamConfigurationException
      */
-    private static Element constructPublisherElement(Document document, List<String> exportedStreams)
+    private static Element constructPublisherElement(Document document,  String queryExpressions, List<String> exportedStreams)
             throws EventStreamConfigurationException {
         Element publisherElement = document.createElement(EventProcessorConstants.EVENT_PUBLISHER);
         Element publisherInputStream = document.createElement(EventProcessorConstants.INPUT_STREAMS);
         Element publisherOutputStream = document.createElement(EventProcessorConstants.OUTPUT_STREAMS);
         publisherElement.setAttribute(EventProcessorConstants.NAME, EventProcessorConstants.EVENT_PUBLISHER_BOLT);
-        publisherElement.setAttribute(EventProcessorConstants.PARALLEL, "1"); //todo load from config
+        ExecutionPlan executionPlan = SiddhiCompiler.parse(queryExpressions);
+        publisherElement.setAttribute(EventProcessorConstants.PARALLEL, String.valueOf(getParallelism(executionPlan.getAnnotations(),
+                EventProcessorConstants.PUBLISHER_PARALLELISM)));
         for (String definition : exportedStreams) {
             Element stream = getStreamElement(document, definition);
             publisherOutputStream.appendChild(stream);
@@ -233,7 +237,7 @@ public class StormQueryPlanBuilder {
             if (groupId == null) {
                 groupId = name;
             }
-            int parallel = getParallelism(executionElements.get(i).getAnnotations());
+            int parallel = getParallelism(executionElements.get(i).getAnnotations(),EventProcessorConstants.PARALLEL);
 
             if (executionElements.get(i) instanceof Query) {
                 Query query = (Query) executionElements.get(i);
@@ -380,16 +384,17 @@ public class StormQueryPlanBuilder {
      * @param annotations
      * @return
      */
-    private static int getParallelism(List<Annotation> annotations) {
+    private static int getParallelism(List<Annotation> annotations,String elementKey) {
         int parallelism = 1;
         if (annotations != null) {
             for (Annotation annotation : annotations) {
                 if (annotation.getName().equals(EventProcessorConstants.DIST)) {
-                    if (annotation.getElement(EventProcessorConstants.PARALLEL) != null) {
-                        parallelism = Integer.parseInt(annotation.getElement(EventProcessorConstants.PARALLEL));
+                    if (annotation.getElement(elementKey) != null) {
+                        parallelism = Integer.parseInt(annotation.getElement(elementKey));
                         if (parallelism == 0) {
                             parallelism = 1;
                         }
+                        return parallelism;
                     }
                 }
             }

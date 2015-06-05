@@ -87,6 +87,8 @@ public interface EventProcessorConstants {
     String EVENT_PUBLISHER = "event-publisher";
     String EVENT_PUBLISHER_BOLT = "EventPublisherBolt";
     String PARALLEL = "parallel";
+    String RECEIVER_PARALLELISM = "receiverParallelism";
+    String PUBLISHER_PARALLELISM = "publisherParallelism";
     String NAME = "name";
     String PARTITION = "partition";
     String DIST = "dist";

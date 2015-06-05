@@ -16,6 +16,9 @@
 
 package org.wso2.carbon.event.processor.core.internal;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.wso2.carbon.context.PrivilegedCarbonContext;
 import org.wso2.carbon.event.processor.core.ExecutionPlan;
 import org.wso2.carbon.event.processor.core.internal.ds.EventProcessorValueHolder;
 import org.wso2.carbon.event.processor.manager.core.EventProcessorManagementService;
@@ -29,13 +32,14 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 public class CarbonEventProcessorManagementService extends EventProcessorManagementService {
-
+    private static final Log log = LogFactory.getLog(CarbonEventProcessorManagementService.class);
+    private int tenantId;
     private ReentrantReadWriteLock readWriteLock = new ReentrantReadWriteLock();
 
     public CarbonEventProcessorManagementService() {
         EventProcessorValueHolder.getEventManagementService().subscribe(this);
         EventProcessorValueHolder.getEventProcessorService().setManagementInfo(EventProcessorValueHolder.getEventManagementService().getManagementModeInfo());
-
+        tenantId = PrivilegedCarbonContext.getThreadLocalCarbonContext().getTenantId();
     }
 
     public byte[] getState() {
@@ -88,4 +92,16 @@ public class CarbonEventProcessorManagementService extends EventProcessorManagem
         return EventProcessorValueHolder.getEventProcessorService().getManagementInfo();
     }
 
+
+    public void persist(){
+        try {
+            PrivilegedCarbonContext.startTenantFlow();
+            PrivilegedCarbonContext.getThreadLocalCarbonContext().setTenantId(tenantId,true);
+            EventProcessorValueHolder.getSiddhiManager().persist();
+        } catch (Throwable e) {
+            log.error("Unable to persist state for tenant :" + tenantId, e);
+        } finally {
+            PrivilegedCarbonContext.endTenantFlow();
+        }
+    }
 }

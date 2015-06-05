@@ -317,7 +317,7 @@ public class CarbonEventProcessorService implements EventProcessorService {
          * Section to configure outputs
          */
         SiddhiStormOutputEventListener stormOutputListener = null;
-        if (managementInfo.getMode() == Mode.Distributed && managementInfo.getDistributedConfiguration().isPublisherNode()) {
+        if (managementInfo.getMode() == Mode.Distributed && managementInfo.getDistributedConfiguration().isWorkerNode()) {
             stormOutputListener = new SiddhiStormOutputEventListener(executionPlanConfiguration, tenantId,
                     stormDeploymentConfiguration);
             processorExecutionPlan.addStormOutputListener(stormOutputListener);
@@ -329,7 +329,7 @@ public class CarbonEventProcessorService implements EventProcessorService {
             streamCallback = new SiddhiOutputStreamListener(entry.getKey(),
                     entry.getValue(), executionPlanConfiguration, tenantId);
 
-            if (managementInfo.getMode() == Mode.Distributed && stormDeploymentConfiguration != null && stormDeploymentConfiguration.isPublisherNode()) {
+            if (managementInfo.getMode() == Mode.Distributed && stormDeploymentConfiguration != null && stormDeploymentConfiguration.isWorkerNode()) {
                 try {
                     StreamDefinition databridgeDefinition = EventProcessorValueHolder.getEventStreamService()
                             .getStreamDefinition(entry.getValue());
@@ -359,7 +359,7 @@ public class CarbonEventProcessorService implements EventProcessorService {
             InputHandler inputHandler = inputHandlerMap.get(entry.getValue());
 
             AbstractSiddhiInputEventDispatcher eventDispatcher;
-            if (managementInfo.getMode() == Mode.Distributed && stormDeploymentConfiguration != null && stormDeploymentConfiguration.isReceiverNode()) {
+            if (managementInfo.getMode() == Mode.Distributed && stormDeploymentConfiguration != null && stormDeploymentConfiguration.isWorkerNode()) {
                 StreamDefinition streamDefinition = null;
                 try {
                     streamDefinition = EventProcessorValueHolder.getEventStreamService().getStreamDefinition
@@ -391,7 +391,7 @@ public class CarbonEventProcessorService implements EventProcessorService {
             }
         }
 
-        if (EventProcessorValueHolder.getPersistenceManager() != null) {
+        if (EventProcessorValueHolder.getPersistenceConfiguration() != null) {
             executionPlanRuntime.restoreLastRevision();
         }
 
