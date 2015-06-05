@@ -119,7 +119,7 @@ public class SiddhiTryItClient {
 		//event stream processing
 		try {
 			Pattern eventPattern = Pattern.compile("(\\S+)=\\[(.*)\\]");
-			Pattern delayPattern = Pattern.compile("(delay\\()(\\d)+");
+			Pattern delayPattern = Pattern.compile("(delay\\()(\\d+)+");
 			String[] inputStreamEventArray = eventStream.split("\\r?\\n");
 			executionPlanRuntime.start();
 
