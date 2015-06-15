@@ -20,10 +20,13 @@ package org.wso2.carbon.event.execution.manager.admin.dto.domain;
  */
 public class TemplateDomainDTO {
 
-    String name;
-    String description;
-    TemplateDTO[] templateDTOs;
-    String[] streams;
+    private String name;
+
+    private String description;
+
+    private TemplateDTO[] templateDTOs;
+
+    private String[] streams;
 
     public String getName() {
         return name;

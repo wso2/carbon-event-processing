@@ -25,12 +25,12 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlRootElement
 public class Parameter {
 
-    String name;
-    String type;
-    String displayName;
-    String description;
-    String defaultValue;
-    String options;
+    private String name;
+    private String type;
+    private String displayName;
+    private String description;
+    private String defaultValue;
+    private String options;
 
     public String getName() {
         return name;

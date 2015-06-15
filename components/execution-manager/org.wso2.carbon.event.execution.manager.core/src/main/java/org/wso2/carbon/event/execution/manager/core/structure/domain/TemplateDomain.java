@@ -26,10 +26,10 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlRootElement
 public class TemplateDomain {
 
-    String name;
-    String description;
-    Template[] templates;
-    String[] streams;
+    private String name;
+    private String description;
+    private Template[] templates;
+    private String[] streams;
 
     public String getName() {
         return name;

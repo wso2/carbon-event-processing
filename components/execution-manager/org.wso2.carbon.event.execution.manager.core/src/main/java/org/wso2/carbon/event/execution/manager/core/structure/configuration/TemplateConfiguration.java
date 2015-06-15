@@ -26,11 +26,11 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlRootElement
 public class TemplateConfiguration {
 
-    String name;
-    String type;
-    String from;
-    String description;
-    Parameter[] parameters;
+    private String name;
+    private String type;
+    private String from;
+    private String description;
+    private Parameter[] parameters;
 
     public String getName() {
         return name;

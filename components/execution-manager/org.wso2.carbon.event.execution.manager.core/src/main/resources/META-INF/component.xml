@@ -17,7 +17,7 @@
 
     <ManagementPermissions>
         <ManagementPermission>
-            <DisplayName>Event Processor</DisplayName>
+            <DisplayName>Execution Manager</DisplayName>
             <ResourceId>/permission/admin/manage/execution-manager</ResourceId>
         </ManagementPermission>
     </ManagementPermissions>

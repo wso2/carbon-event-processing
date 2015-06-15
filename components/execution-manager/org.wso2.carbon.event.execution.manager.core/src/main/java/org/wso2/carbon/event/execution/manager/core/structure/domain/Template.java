@@ -25,10 +25,10 @@ import javax.xml.bind.annotation.XmlRootElement;
  */
 @XmlRootElement
 public class Template {
-    String name;
-    String description;
-    String executionPlan;
-    Parameter[] parameters;
+    private String name;
+    private String description;
+    private String executionPlan;
+    private Parameter[] parameters;
 
     public String getName() {
         return name;

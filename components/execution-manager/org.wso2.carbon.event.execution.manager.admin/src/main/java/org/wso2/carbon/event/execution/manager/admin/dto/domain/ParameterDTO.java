@@ -21,10 +21,15 @@ package org.wso2.carbon.event.execution.manager.admin.dto.domain;
 public class ParameterDTO {
 
     private String name;
+    
     private String type;
+
     private String displayName;
+
     private String description;
+
     private String defaultValue;
+
     private String options;
 
     public String getName() {

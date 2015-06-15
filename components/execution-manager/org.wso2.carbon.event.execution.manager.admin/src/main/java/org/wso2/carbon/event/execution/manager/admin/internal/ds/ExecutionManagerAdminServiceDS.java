@@ -39,11 +39,11 @@ public class ExecutionManagerAdminServiceDS {
     }
 
     protected void setExecutionManagerService(ExecutionManagerService executionManagerService) {
-        ExecutionAdminManagerValueHolder.setExecutorManagerService(executionManagerService);
+        ExecutionManagerAdminServiceValueHolder.setExecutorManagerService(executionManagerService);
     }
 
     protected void unsetExecutionManagerService(ExecutionManagerService executionManagerService) {
-        ExecutionAdminManagerValueHolder.setExecutorManagerService(null);
+        ExecutionManagerAdminServiceValueHolder.setExecutorManagerService(null);
     }
 
 }

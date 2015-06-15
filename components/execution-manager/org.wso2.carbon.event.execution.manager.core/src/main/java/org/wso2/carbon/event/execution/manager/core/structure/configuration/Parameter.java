@@ -25,8 +25,8 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlRootElement
 public class Parameter {
 
-    String name;
-    String value;
+    private String name;
+    private String value;
 
     public String getName() {
         return name;

@@ -68,7 +68,7 @@ public class EventProcessorAdminService extends AbstractAdmin {
                 eventProcessorService.undeployActiveExecutionPlan(planName);
             } catch (ExecutionPlanConfigurationException e) {
                 log.error(e.getMessage(), e);
-                throw new AxisFault(e.getMessage());
+                throw new AxisFault(e.getMessage(), e);
             }
         }
     }
