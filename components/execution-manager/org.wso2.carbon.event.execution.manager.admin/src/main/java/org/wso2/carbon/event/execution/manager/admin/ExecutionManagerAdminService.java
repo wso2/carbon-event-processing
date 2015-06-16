@@ -27,6 +27,7 @@ import org.wso2.carbon.event.execution.manager.admin.internal.ds.ExecutionManage
 import org.wso2.carbon.event.execution.manager.admin.internal.util.ConfigurationMapper;
 import org.wso2.carbon.event.execution.manager.admin.internal.util.DomainMapper;
 import org.wso2.carbon.event.execution.manager.core.exception.ExecutionManagerException;
+import org.wso2.carbon.event.execution.manager.core.structure.domain.TemplateDomain;
 
 
 import java.util.ArrayList;
@@ -80,6 +81,39 @@ public class ExecutionManagerAdminService extends AbstractAdmin {
     }
 
     /**
+     * return all available template domain information
+     *
+     * @return all template domain information
+     * @throws org.apache.axis2.AxisFault
+     */
+    public TemplateDomainInfoDTO[] getAllDomainsInfo() throws AxisFault {
+        try {
+            return DomainMapper.mapDomainsInfo(new ArrayList<TemplateDomain>(ExecutionManagerAdminServiceValueHolder
+                    .getCarbonExecutorManagerService().getAllDomains()));
+        } catch (Exception e) {
+            log.error("Error occurred when getting all domains ", e);
+            throw new AxisFault(e.getMessage(), e);
+        }
+    }
+
+    /**
+     * return all available template domains
+     *
+     * @return all template domain information
+     * @throws org.apache.axis2.AxisFault
+     */
+    public TemplateDomainDTO[] getAllDomains() throws AxisFault {
+        try {
+            return DomainMapper.mapDomains(new ArrayList<TemplateDomain>(ExecutionManagerAdminServiceValueHolder
+                    .getCarbonExecutorManagerService().getAllDomains()));
+        } catch (Exception e) {
+            log.error("Error occurred when getting all domains ", e);
+            throw new AxisFault(e.getMessage(), e);
+        }
+    }
+
+
+    /**
      * return details for a given template domain name
      *
      * @param domainName template domain name
@@ -89,13 +123,13 @@ public class ExecutionManagerAdminService extends AbstractAdmin {
     public TemplateConfigurationDTO[] getConfigurations(String domainName) throws AxisFault {
         try {
             return ConfigurationMapper.mapConfigurations(new ArrayList<>(
-                    ExecutionManagerAdminServiceValueHolder.getCarbonExecutorManagerService().getConfigurations(domainName)));
+                    ExecutionManagerAdminServiceValueHolder.getCarbonExecutorManagerService()
+                            .getConfigurations(domainName)));
         } catch (Exception e) {
             log.error("Error occurred when getting configurations for domain " + domainName, e);
             throw new AxisFault(e.getMessage());
         }
     }
-
 
     /**
      * return details for a given template configuration name
