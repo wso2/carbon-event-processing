@@ -65,10 +65,11 @@ public class ExecutionManagerHelper {
     public static Map<String, TemplateDomain> loadDomains() {
         //Get domain template folder and load all the domain template files
         File folder = new File(ExecutionManagerConstants.TEMPLATE_DOMAIN_PATH);
-        Map<String, TemplateDomain> domains = new HashMap<String, TemplateDomain>();
+        Map<String, TemplateDomain> domains = new HashMap<>();
 
-        if (folder != null && folder.listFiles() != null) {
-            for (final File fileEntry : folder.listFiles()) {
+        File[] files = folder.listFiles();
+        if (files != null) {
+            for (final File fileEntry : files) {
                 if (fileEntry.isFile()) {
                     TemplateDomain templateDomain = unmarshalDomain(fileEntry);
                     domains.put(templateDomain.getName(), templateDomain);
@@ -192,7 +193,6 @@ public class ExecutionManagerHelper {
 
     private static boolean deployExecutionPlan(TemplateConfiguration configuration, String templateExecutionPlan)
             throws ExecutionManagerException {
-        boolean isDeployed;
         try {
             String executionPlan = ExecutionManagerHelper.updateExecutionPlanParameters(configuration,
                     templateExecutionPlan);
@@ -204,7 +204,7 @@ public class ExecutionManagerHelper {
             //Get Template Execution plan, Tenant Id and deploy Execution Plan
             ExecutionManagerValueHolder.getEventProcessorService()
                     .deployExecutionPlan(executionPlan);
-            isDeployed = true;
+            return true;
         } catch (ExecutionPlanConfigurationException e) {
             throw new ExecutionManagerException(
                     "Configuration exception occurred when adding Execution Plan of Template "
@@ -219,8 +219,6 @@ public class ExecutionManagerHelper {
                     "Validation exception occurred when parsing Execution Plan of Template "
                             + configuration.getName() + " of Domain " + configuration.getFrom(), e);
         }
-
-        return isDeployed;
     }
 
 
@@ -234,23 +232,25 @@ public class ExecutionManagerHelper {
     private static String updateExecutionPlanParameters(TemplateConfiguration config, String executionPlan) {
 
         String updatedExecutionPlan = executionPlan;
-        String executionPlanNameAnnotation = "@Plan:name";
-        String executionPlanNameDefinition = executionPlanNameAnnotation + "('" + config.getFrom()
-                + ExecutionManagerConstants.CONFIG_NAME_SEPARATOR + config.getName() + "')";
+        String executionPlanNameDefinition = ExecutionManagerConstants.EXECUTION_PLAN_NAME_ANNOTATION + "('"
+                + config.getFrom() + ExecutionManagerConstants.CONFIG_NAME_SEPARATOR + config.getName() + "')";
 
         //Execution plan parameters will be replaced with given configuration parameters
         for (Parameter parameter : config.getParameters()) {
-            updatedExecutionPlan = updatedExecutionPlan.replaceAll("\\$" + parameter.getName(), parameter.getValue());
+            updatedExecutionPlan = updatedExecutionPlan.replaceAll(ExecutionManagerConstants.REGEX_NAME_VALUE
+                    + parameter.getName(), parameter.getValue());
         }
 
         if (AnnotationHelper.getAnnotationElement(
                 EventProcessorConstants.ANNOTATION_NAME_NAME, null,
                 SiddhiCompiler.parse(updatedExecutionPlan).getAnnotations()) == null
-                || !updatedExecutionPlan.contains(executionPlanNameAnnotation)) {
+                || !updatedExecutionPlan.contains(ExecutionManagerConstants.EXECUTION_PLAN_NAME_ANNOTATION)) {
             updatedExecutionPlan = executionPlanNameDefinition + updatedExecutionPlan;
         } else {
             //@Plan:name will be updated with given configuration name and uncomment in case if it is commented
-            updatedExecutionPlan = updatedExecutionPlan.replaceAll(executionPlanNameAnnotation + "\\(.*?\\)",
+            updatedExecutionPlan = updatedExecutionPlan.replaceAll(
+                    ExecutionManagerConstants.EXECUTION_PLAN_NAME_ANNOTATION
+                            + ExecutionManagerConstants.REGEX_NAME_COMMENTED_VALUE,
                     executionPlanNameDefinition);
         }
 

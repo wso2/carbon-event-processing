@@ -118,7 +118,7 @@ public class DomainMapper {
      * @param templates Template objects array needs to mapped
      * @return Mapped array of TemplateDTO objects
      */
-    public static TemplateDTO[] mapTemplates(Template[] templates) {
+    private static TemplateDTO[] mapTemplates(Template[] templates) {
         TemplateDTO[] templateDTOs = null;
 
         if (templates != null) {
@@ -136,7 +136,7 @@ public class DomainMapper {
      * @param template Template object needs to be mapped
      * @return Mapped TemplateDTO object
      */
-    public static TemplateDTO mapTemplate(Template template) {
+    private static TemplateDTO mapTemplate(Template template) {
         TemplateDTO templateDTO = null;
 
         if (template != null) {
@@ -155,7 +155,7 @@ public class DomainMapper {
      * @param parameters Parameter objects array needs to be mapped
      * @return Mapped array of ParameterDTO objects
      */
-    public static ParameterDTO[] mapParameters(Parameter[] parameters) {
+    private static ParameterDTO[] mapParameters(Parameter[] parameters) {
         ParameterDTO[] parameterDTOs = null;
 
         if (parameters != null) {
@@ -173,7 +173,7 @@ public class DomainMapper {
      * @param parameter Parameter object needs to be mapped
      * @return Mapped ParameterDTO object
      */
-    public static ParameterDTO mapParameter(Parameter parameter) {
+    private static ParameterDTO mapParameter(Parameter parameter) {
         ParameterDTO parameterDTO = null;
 
         if (parameter != null) {

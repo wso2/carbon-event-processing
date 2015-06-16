@@ -20,14 +20,14 @@ import org.wso2.carbon.event.execution.manager.core.ExecutionManagerService;
 /**
  * Consist of ExecutionManagerService which requires by ExecutionAdminService
  */
-public class ExecutionAdminManagerValueHolder {
+public class ExecutionManagerAdminServiceValueHolder {
 
     private static ExecutionManagerService executorManagerService;
 
     /**
      * To avoid instantiating
      */
-    private ExecutionAdminManagerValueHolder() {
+    private ExecutionManagerAdminServiceValueHolder() {
     }
 
     public static ExecutionManagerService getCarbonExecutorManagerService() {
@@ -35,7 +35,7 @@ public class ExecutionAdminManagerValueHolder {
     }
 
     public static void setExecutorManagerService(ExecutionManagerService executorManagerService) {
-        ExecutionAdminManagerValueHolder.executorManagerService = executorManagerService;
+        ExecutionManagerAdminServiceValueHolder.executorManagerService = executorManagerService;
     }
 
 }

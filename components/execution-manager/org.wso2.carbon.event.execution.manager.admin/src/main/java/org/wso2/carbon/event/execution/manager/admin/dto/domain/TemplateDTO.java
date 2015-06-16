@@ -19,10 +19,14 @@ package org.wso2.carbon.event.execution.manager.admin.dto.domain;
  * DTO class of Template for ExecutionManagerAdminService
  */
 public class TemplateDTO {
-    String name;
-    String description;
-    String executionPlan;
-    ParameterDTO[] parameterDTOs;
+
+    private String name;
+
+    private String description;
+
+    private String executionPlan;
+
+    private ParameterDTO[] parameterDTOs;
 
     public String getName() {
         return name;

@@ -60,6 +60,7 @@ public interface ExecutionManagerService {
     /**
      * get information of a specific configuration
      *
+     * @param domainName domain name
      * @param configName configuration name
      * @return TemplateConfig object
      */
@@ -68,6 +69,7 @@ public interface ExecutionManagerService {
     /**
      * delete template configuration when the name of configuration is given
      *
+     * @param domainName domain name
      * @param configName template configuration name
      */
     public void deleteConfiguration(String domainName, String configName) throws ExecutionManagerException;

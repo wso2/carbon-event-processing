@@ -27,18 +27,21 @@ public class ExecutionManagerConstants {
     public static final String TEMPLATE_DOMAIN_PATH = CarbonUtils.getCarbonConfigDirPath()
             + File.separator + "cep" + File.separator + "domain-template";
 
-    public static final String TEMPLATE_CONFIG_PATH = ExecutionManagerConstants.PATH_SEPARATOR + "repository"
-            + ExecutionManagerConstants.PATH_SEPARATOR + "components"
-            + ExecutionManagerConstants.PATH_SEPARATOR + "org.wso2.carbon.event.execution.manager.core"
-            + ExecutionManagerConstants.PATH_SEPARATOR + "template-config";
-
-    public static final String PATH_SEPARATOR = "/";
+    public static final String TEMPLATE_CONFIG_PATH = File.pathSeparator + "repository"
+            + File.pathSeparator + "components" + File.pathSeparator
+            + "org.wso2.carbon.event.execution.manager.core" + File.pathSeparator + "template-config";
 
     public static final String CONFIG_NAME_SEPARATOR = "-";
 
     public static final String CONFIG_FILE_EXTENSION = ".xml";
 
     public static final String DEFAULT_CHARSET = "UTF-8";
+
+    public static final String EXECUTION_PLAN_NAME_ANNOTATION = "@Plan:name";
+
+    public static final String REGEX_NAME_VALUE = "\\$";
+
+    public static final String REGEX_NAME_COMMENTED_VALUE = "\\(.*?\\)";
 
     /**
      * To avoid instantiating

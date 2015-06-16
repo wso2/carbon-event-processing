@@ -72,9 +72,9 @@ public class CarbonExecutionManagerService implements ExecutionManagerService {
             Resource resource = registry.newResource();
             resource.setContent(fileContent.toString());
             String resourceCollectionPath = ExecutionManagerConstants.TEMPLATE_CONFIG_PATH
-                    + ExecutionManagerConstants.PATH_SEPARATOR + configuration.getFrom();
+                    + File.separator + configuration.getFrom();
 
-            String resourcePath = resourceCollectionPath + ExecutionManagerConstants.PATH_SEPARATOR
+            String resourcePath = resourceCollectionPath + File.separator
                     + configuration.getName() + ExecutionManagerConstants.CONFIG_FILE_EXTENSION;
 
             //Collection directory will be created if it is not exist in the registry
@@ -111,7 +111,7 @@ public class CarbonExecutionManagerService implements ExecutionManagerService {
         Collection<TemplateConfiguration> templateConfigurations = new ArrayList<TemplateConfiguration>();
 
         String domainFilePath = ExecutionManagerConstants.TEMPLATE_CONFIG_PATH
-                + ExecutionManagerConstants.PATH_SEPARATOR + domainName;
+                + File.separator + domainName;
         try {
             if (registry.resourceExists(domainFilePath)) {
                 Resource resource = registry.get(domainFilePath);
@@ -149,8 +149,7 @@ public class CarbonExecutionManagerService implements ExecutionManagerService {
     @Override
     public TemplateConfiguration getConfiguration(String domainName, String configName) {
         return ExecutionManagerHelper.getConfiguration(ExecutionManagerConstants.TEMPLATE_CONFIG_PATH
-                + ExecutionManagerConstants.PATH_SEPARATOR + domainName
-                + ExecutionManagerConstants.PATH_SEPARATOR + configName
+                + File.separator + configName
                 + ExecutionManagerConstants.CONFIG_FILE_EXTENSION, registry);
     }
 
@@ -163,9 +162,8 @@ public class CarbonExecutionManagerService implements ExecutionManagerService {
          */
         try {
 
-            registry.delete(ExecutionManagerConstants.TEMPLATE_CONFIG_PATH + ExecutionManagerConstants.PATH_SEPARATOR
-                    + domainName + ExecutionManagerConstants.PATH_SEPARATOR
-                    + configName + ExecutionManagerConstants.CONFIG_FILE_EXTENSION);
+            registry.delete(ExecutionManagerConstants.TEMPLATE_CONFIG_PATH + File.separator
+                    + domainName + File.separator + configName + ExecutionManagerConstants.CONFIG_FILE_EXTENSION);
         } catch (RegistryException e) {
             log.error("Configuration exception when deleting registry configuration file "
                     + configName + " of Domain " + domainName, e);

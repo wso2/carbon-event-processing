@@ -140,7 +140,7 @@ public class ConfigurationMapper {
      * @param parameterDTO ParameterDTO object which needs to mapped
      * @return Mapped array of Parameter objects
      */
-    public static Parameter[] mapParameters(ParameterDTO[] parameterDTO) {
+    private static Parameter[] mapParameters(ParameterDTO[] parameterDTO) {
         Parameter[] parameters = null;
 
         if (parameterDTO != null) {
@@ -159,7 +159,7 @@ public class ConfigurationMapper {
      * @param parameters List of Parameter object needs to be mapped
      * @return Mapped array of ParameterDTO objects
      */
-    public static ParameterDTO[] mapParameters(Parameter[] parameters) {
+    private static ParameterDTO[] mapParameters(Parameter[] parameters) {
         ParameterDTO[] parameterDTOs = null;
 
         if (parameters != null) {
@@ -177,7 +177,7 @@ public class ConfigurationMapper {
      * @param parameterDTO ParameterDTO needs to be mapped
      * @return Converyed ParameterDTO object
      */
-    public static Parameter mapParameter(ParameterDTO parameterDTO) {
+    private static Parameter mapParameter(ParameterDTO parameterDTO) {
         Parameter parameter = null;
 
         if (parameterDTO != null) {
@@ -194,7 +194,7 @@ public class ConfigurationMapper {
      * @param parameter Parameter needs to be mapped
      * @return Mapped ParameterDTO object
      */
-    public static ParameterDTO mapParameter(Parameter parameter) {
+    private static ParameterDTO mapParameter(Parameter parameter) {
         ParameterDTO parameterDTO = null;
         if (parameter != null) {
             parameterDTO = new ParameterDTO();
