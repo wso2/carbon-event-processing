@@ -287,7 +287,7 @@
             </div>
             <%
                         parameterString += "'" + parameter.getName() +
-                                ":' + document.getElementById('"
+                                "::' + document.getElementById('"
                                 + parameter.getName() + "').value";
 
                         indexParam++;

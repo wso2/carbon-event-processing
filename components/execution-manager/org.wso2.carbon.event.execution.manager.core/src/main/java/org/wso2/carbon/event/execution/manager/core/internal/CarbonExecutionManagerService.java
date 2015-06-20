@@ -149,6 +149,7 @@ public class CarbonExecutionManagerService implements ExecutionManagerService {
     @Override
     public TemplateConfiguration getConfiguration(String domainName, String configName) {
         return ExecutionManagerHelper.getConfiguration(ExecutionManagerConstants.TEMPLATE_CONFIG_PATH
+                + File.separator + domainName
                 + File.separator + configName
                 + ExecutionManagerConstants.CONFIG_FILE_EXTENSION, registry);
     }

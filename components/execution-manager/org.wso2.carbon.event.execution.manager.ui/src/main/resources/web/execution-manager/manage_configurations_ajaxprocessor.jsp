@@ -26,6 +26,7 @@
     String description = request.getParameter("description");
     String parametersJson = request.getParameter("parameters");
     String templateType = request.getParameter("templateType");
+    String valueSeparator = "::";
 
     ParameterDTOE[] parameters;
 
@@ -48,8 +49,8 @@
 
             for (String parameterString : parameterStrings) {
                 ParameterDTOE parameterDTO = new ParameterDTOE();
-                parameterDTO.setName(parameterString.split(":")[0]);
-                parameterDTO.setValue(parameterString.split(":")[1]);
+                parameterDTO.setName(parameterString.split(valueSeparator)[0]);
+                parameterDTO.setValue(parameterString.split(valueSeparator)[1]);
                 parameters[index] = parameterDTO;
                 index++;
             }
