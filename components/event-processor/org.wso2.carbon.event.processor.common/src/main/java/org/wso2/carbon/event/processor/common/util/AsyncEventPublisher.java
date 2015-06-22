@@ -21,11 +21,15 @@ import com.lmax.disruptor.EventHandler;
 import com.lmax.disruptor.RingBuffer;
 import com.lmax.disruptor.dsl.Disruptor;
 import org.apache.log4j.Logger;
+import org.apache.thrift.TException;
 import org.apache.thrift.protocol.TBinaryProtocol;
 import org.apache.thrift.protocol.TProtocol;
 import org.apache.thrift.transport.TSocket;
 import org.apache.thrift.transport.TTransport;
+import org.apache.thrift.transport.TTransportException;
 import org.wso2.carbon.event.processor.common.storm.manager.service.StormManagerService;
+import org.wso2.carbon.event.processor.common.storm.manager.service.exception.EndpointNotFoundException;
+import org.wso2.carbon.event.processor.common.storm.manager.service.exception.NotStormManagerException;
 import org.wso2.carbon.event.processor.manager.commons.transport.client.TCPEventPublisher;
 import org.wso2.carbon.event.processor.manager.commons.utils.HostAndPort;
 import org.wso2.carbon.event.processor.manager.commons.utils.Utils;
@@ -42,7 +46,7 @@ import java.util.concurrent.Executors;
  * Sending events to a remote endpoint asynchronously.
  */
 public class AsyncEventPublisher implements EventHandler<AsynchronousEventBuffer.DataHolder> {
-    public enum DestinationType{STORM_RECEIVER, CEP_PUBLISHER}
+    public enum DestinationType {STORM_RECEIVER, CEP_PUBLISHER}
 
     private transient Logger log = Logger.getLogger(AsyncEventPublisher.class);
     private String logPrefix;
@@ -66,7 +70,7 @@ public class AsyncEventPublisher implements EventHandler<AsynchronousEventBuffer
 
     public AsyncEventPublisher(DestinationType destinationType, Set<StreamDefinition> streams,
                                List<HostAndPort> managerServiceEndpoints,
-                               String executionPlanName, int tenantId, DistributedConfiguration stormDeploymentConfig){
+                               String executionPlanName, int tenantId, DistributedConfiguration stormDeploymentConfig) {
         this.destinationType = destinationType;
         this.streams = streams;
         this.executionPlanName = executionPlanName;
@@ -81,16 +85,17 @@ public class AsyncEventPublisher implements EventHandler<AsynchronousEventBuffer
 
     /**
      * Initialize and try to make a connection with remote endpoint
+     *
      * @param sync is this is set to true returns only after obtaining a connection to the remote endpoint. Otherwise initialization happens on a newly spawned
      *             thread and this method returns immediately.
      */
-    public void initializeConnection(boolean sync){
+    public void initializeConnection(boolean sync) {
         try {
             this.thisHostIp = Utils.findAddress("localhost");
 
-            if (sync){
+            if (sync) {
                 endpointConnectionCreator.establishConnection();
-            }else{
+            } else {
                 Thread thread = new Thread(endpointConnectionCreator);
                 thread.start();
             }
@@ -102,10 +107,11 @@ public class AsyncEventPublisher implements EventHandler<AsynchronousEventBuffer
     /**
      * Add event to the outbound event buffer and this call will return. Event will be sent asynchronously by disruptor consumer thread
      * via AsyncEventPublisher#onEvent.
+     *
      * @param eventData
      * @param streamId
      */
-    public void sendEvent(Object[] eventData, String streamId){
+    public void sendEvent(Object[] eventData, String streamId) {
         eventSendBuffer.addEvent(eventData, streamId);
     }
 
@@ -113,18 +119,19 @@ public class AsyncEventPublisher implements EventHandler<AsynchronousEventBuffer
      * Callback from disruptor for the consumer to consume data. This is where events are actually dispatched to the remote end.
      * If an exception occurs when trying send data it will keep trying to send for ever until succeeds. Returns only
      * after sending the event.
+     *
      * @param dataHolder
      * @param sequence
      * @param endOfBatch
      */
     @Override
-    public void onEvent(AsynchronousEventBuffer.DataHolder dataHolder, long sequence, boolean endOfBatch){
-        while (tcpEventPublisher == null){
+    public void onEvent(AsynchronousEventBuffer.DataHolder dataHolder, long sequence, boolean endOfBatch) {
+        while (tcpEventPublisher == null) {
             log.info(logPrefix + "Can't send event. TCP event publisher not initialized. Waiting " + stormDeploymentConfig.getTransportReconnectInterval() + "s");
             try {
-                synchronized (this){
-                    if (shutdown){
-                        log.info(logPrefix + "Aborting retry to send events. AsyncEventPublisher shut down.");
+                synchronized (this) {
+                    if (shutdown) {
+                        log.info(logPrefix + "Aborting retry to send events. AsyncEventPublisher has shutdown.");
                         return;
                     }
                 }
@@ -135,8 +142,8 @@ public class AsyncEventPublisher implements EventHandler<AsynchronousEventBuffer
         }
 
         // TODO : comment on message lost of the last batch
-        try{
-            tcpEventPublisher.sendEvent(dataHolder.getStreamId(), (Object[])dataHolder.getData(), endOfBatch);
+        try {
+            tcpEventPublisher.sendEvent(dataHolder.getStreamId(), (Object[]) dataHolder.getData(), endOfBatch);
         } catch (IOException e) {
             log.error(logPrefix + "Error while trying to send event to " + destinationTypeString + " at " +
                     tcpEventPublisher.getHostUrl(), e);
@@ -148,32 +155,32 @@ public class AsyncEventPublisher implements EventHandler<AsynchronousEventBuffer
     /**
      * First tires to reconnect to the already obtained end point. If failed re-initialize the connection.
      */
-    private void reconnect(){
+    private void reconnect() {
         String destinationHostPort = tcpEventPublisher.getHostUrl();
         resetTCPEventPublisher();
 
         // Retrying to connect to the existing endpoint.
         tcpEventPublisher = endpointConnectionCreator.connectToEndpoint(destinationHostPort, 3);
-        if (tcpEventPublisher == null){
+        if (tcpEventPublisher == null) {
             log.error(logPrefix + "Failed to connect to existing " + destinationTypeString + " at " + destinationHostPort + ". Reinitializing");
             initializeConnection(true);
         }
     }
 
-    private void resetTCPEventPublisher(){
+    private void resetTCPEventPublisher() {
         tcpEventPublisher.terminate();
         tcpEventPublisher = null;
     }
 
     @Override
-    protected void finalize(){
-        if (tcpEventPublisher != null){
+    protected void finalize() {
+        if (tcpEventPublisher != null) {
             tcpEventPublisher.terminate();
         }
     }
 
-    public void shutdown(){
-        synchronized (this){
+    public void shutdown() {
+        synchronized (this) {
             shutdown = true;
         }
         eventSendBuffer.terminate();
@@ -188,6 +195,7 @@ public class AsyncEventPublisher implements EventHandler<AsynchronousEventBuffer
          * Get the IP and the port of CEP Publisher/ Storm Receive by talking to Storm manager service.
          * Returns only after retrieving information from manager service. In case of a failure keep trying
          * to connect to manager service.
+         *
          * @return endpoint Host and port in <ip>:<port> format
          */
         public String getEndpointFromManagerService() {
@@ -209,11 +217,42 @@ public class AsyncEventPublisher implements EventHandler<AsynchronousEventBuffer
                         log.info(logPrefix + "Retrieved " + destinationTypeString + " at " + endpointHostPort + " " +
                                 "from storm manager service at " + endpoint.getHostName() + ":" + endpoint.getPort());
                         break;
-                    } catch (Exception e) {
-                        log.error(logPrefix + "Error while trying retrieve " + destinationType.name() +
+                    } catch (NotStormManagerException e) {
+                        log.info(logPrefix + "Cannot retrieve " + destinationType.name() +
                                 " endpoint information from storm manager service at " +
-                                endpoint.getHostName() + ":" + endpoint.getPort() + " Trying next Storm manager.", e);
-                        continue;
+                                endpoint.getHostName() + ":" + endpoint.getPort() + " as it's not an active Storm manager, Trying next Storm manager.");
+                        if (log.isDebugEnabled()) {
+                            log.debug(logPrefix + "Cannot retrieve " + destinationType.name() +
+                                    " endpoint information from storm manager service at " +
+                                    endpoint.getHostName() + ":" + endpoint.getPort() + " as it's not an active Storm manager", e);
+                        }
+                    } catch (TTransportException e) {
+                        log.info(logPrefix + "Cannot retrieve " + destinationType.name() +
+                                " endpoint information from storm manager service at " +
+                                endpoint.getHostName() + ":" + endpoint.getPort() + " as it's not reachable, " + e.getMessage() + ". Trying next Storm manager.");
+                        if (log.isDebugEnabled()) {
+                            log.debug(logPrefix + "Cannot retrieve " + destinationType.name() +
+                                    " endpoint information from storm manager service at " +
+                                    endpoint.getHostName() + ":" + endpoint.getPort() + " as it's not reachable", e);
+                        }
+                    } catch (TException e) {
+                        log.info(logPrefix + "Cannot retrieve " + destinationType.name() +
+                                " endpoint information from storm manager service at " +
+                                endpoint.getHostName() + ":" + endpoint.getPort() + " as it's not reachable, " + e.getMessage() + ". Trying next Storm manager.");
+                        if (log.isDebugEnabled()) {
+                            log.debug(logPrefix + "Cannot retrieve " + destinationType.name() +
+                                    " endpoint information from storm manager service at " +
+                                    endpoint.getHostName() + ":" + endpoint.getPort() + " as it's not reachable", e);
+                        }
+                    } catch (EndpointNotFoundException e) {
+                        log.info(logPrefix + destinationType.name() +
+                                " endpoint information not available on storm manager service at " +
+                                endpoint.getHostName() + ":" + endpoint.getPort() + ". Trying next Storm manager.");
+                        if (log.isDebugEnabled()) {
+                            log.debug(logPrefix + destinationType.name() +
+                                    " endpoint information not available on storm manager service at " +
+                                    endpoint.getHostName() + ":" + endpoint.getPort() + ".", e);
+                        }
                     } finally {
                         if (transport != null) {
                             transport.close();
@@ -248,11 +287,12 @@ public class AsyncEventPublisher implements EventHandler<AsynchronousEventBuffer
         /**
          * Connect to a given endpoint (i.e. CEP publisher or storm receiver). In case of failure retry to connect. Returns only
          * after connecting to the endpoint or after reaching maximum attempts.
+         *
          * @param endpointHostPort Destination Ip and port in <ip>:<port> format
-         * @param retryAttempts maximum number of retry attempts. 0 means retry for ever.
+         * @param retryAttempts    maximum number of retry attempts. 0 means retry for ever.
          * @return Returns TCPEvent publisher to talk to endpoint or null if reaches maximum number of attempts without succeeding
          */
-        public TCPEventPublisher connectToEndpoint(String endpointHostPort, int retryAttempts){
+        public TCPEventPublisher connectToEndpoint(String endpointHostPort, int retryAttempts) {
             TCPEventPublisher tcpEventPublisher = null;
             int attemptCount = 0;
             String endpoint = endpointHostPort;
@@ -261,26 +301,29 @@ public class AsyncEventPublisher implements EventHandler<AsynchronousEventBuffer
                     tcpEventPublisher = new TCPEventPublisher(endpoint, true);
                     StringBuilder streamsIDs = new StringBuilder();
 
-                    for (StreamDefinition siddhiStreamDefinition : streams){
+                    for (StreamDefinition siddhiStreamDefinition : streams) {
                         tcpEventPublisher.addStreamDefinition(siddhiStreamDefinition);
                         streamsIDs.append(siddhiStreamDefinition.getId() + ",");
                     }
 
                     log.info(logPrefix + "Connected to " + destinationTypeString + " at " + endpoint + " for the Stream(s) " + streamsIDs.toString());
                 } catch (IOException e) {
-                    log.error(logPrefix + "Error while trying to connect to " + destinationTypeString + " at " + endpoint, e);
+                    log.info(logPrefix + "Cannot connect to " + destinationTypeString + " at " + endpoint + ", " + e.getMessage());
+                    if (log.isDebugEnabled()) {
+                        log.debug(logPrefix + "Cannot connect to " + destinationTypeString + " at " + endpoint, e);
+                    }
                 }
 
-                synchronized (AsyncEventPublisher.this){
-                    if (shutdown){
+                synchronized (AsyncEventPublisher.this) {
+                    if (shutdown) {
                         log.info(logPrefix + "Stopping attempting to connect to endpoint " + endpoint + ". Async event publisher is shutdown");
                         return null;
                     }
                 }
 
-                if (tcpEventPublisher == null){
+                if (tcpEventPublisher == null) {
                     ++attemptCount;
-                    if (retryAttempts > 0 &&  (attemptCount > retryAttempts)){
+                    if (retryAttempts > 0 && (attemptCount > retryAttempts)) {
                         return null;
                     }
                     try {
@@ -301,11 +344,11 @@ public class AsyncEventPublisher implements EventHandler<AsynchronousEventBuffer
          * First connect to the manager service and retrieve endpoint ip and port. Then connect to the endpoint.
          * Returns only after completing these tasks. Keeps trying forever until succeeds.
          */
-        public void establishConnection(){
+        public void establishConnection() {
             log.info(logPrefix + "Requesting a " + destinationTypeString + " for " + thisHostIp);
             String endpointHostPort = getEndpointFromManagerService();
 
-            if (endpointHostPort != null){
+            if (endpointHostPort != null) {
                 tcpEventPublisher = connectToEndpoint(endpointHostPort, 0);
             }
         }
@@ -319,6 +362,7 @@ public class AsyncEventPublisher implements EventHandler<AsynchronousEventBuffer
 
 /**
  * Store events in a disruptor
+ *
  * @param <Type> Type of data to be stored in buffer.
  */
 class AsynchronousEventBuffer<Type> {
@@ -327,10 +371,11 @@ class AsynchronousEventBuffer<Type> {
 
     /**
      * Creates a AsynchronousEventBuffer instance
-     * @param bufferSize size of the buffer
+     *
+     * @param bufferSize     size of the buffer
      * @param publishHandler Instance of publish handler which is responsible for consuming events in the buffer
      */
-    public AsynchronousEventBuffer(int bufferSize, EventHandler publishHandler){
+    public AsynchronousEventBuffer(int bufferSize, EventHandler publishHandler) {
         this.disruptor = new Disruptor<DataHolder>(new EventFactory<DataHolder>() {
             @Override
             public DataHolder newInstance() {
@@ -345,7 +390,7 @@ class AsynchronousEventBuffer<Type> {
         disruptor.start();
     }
 
-    public void addEvent(Type data, String streamId){
+    public void addEvent(Type data, String streamId) {
         long sequenceNo = ringBuffer.next();
         try {
             DataHolder existingHolder = ringBuffer.get(sequenceNo);
@@ -356,26 +401,30 @@ class AsynchronousEventBuffer<Type> {
         }
     }
 
-    public void terminate(){
+    public void terminate() {
         disruptor.halt();
     }
 
-    class DataHolder{
+    class DataHolder {
         Type data;
 
         String streamId;
 
-        public void setData(Type data){
+        public void setData(Type data) {
             this.data = data;
         }
 
-        public Type getData(){
+        public Type getData() {
             return data;
         }
 
-        public void setStreamId(String streamId){ this.streamId = streamId; }
+        public void setStreamId(String streamId) {
+            this.streamId = streamId;
+        }
 
-        public String getStreamId(){ return streamId; }
+        public String getStreamId() {
+            return streamId;
+        }
     }
 }
 
