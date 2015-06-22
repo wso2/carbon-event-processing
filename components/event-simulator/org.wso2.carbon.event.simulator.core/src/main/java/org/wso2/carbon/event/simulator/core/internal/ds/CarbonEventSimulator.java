@@ -149,20 +149,14 @@ public class CarbonEventSimulator implements EventSimulator {
         }
 
         if (eventProducerMap.get(streamDefinition.getStreamId()) != null) {
-
             EventStreamProducer eventProducer = eventProducerMap.get(streamDefinition.getStreamId());
             eventProducer.sendData(dataObjects);
-
         } else {
             EventStreamProducer eventStreamProducer = new EventStreamProducer();
-
             eventStreamProducer.setStreamID(streamDefinition.getStreamId());
-
-            int tenantId = PrivilegedCarbonContext.getThreadLocalCarbonContext().getTenantId();
 
             try {
                 eventstreamservice.subscribe(eventStreamProducer);
-
             } catch (EventStreamConfigurationException e) {
                 log.error(e);
             }

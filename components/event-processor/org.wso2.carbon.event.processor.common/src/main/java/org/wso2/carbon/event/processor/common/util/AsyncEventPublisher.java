@@ -111,8 +111,8 @@ public class AsyncEventPublisher implements EventHandler<AsynchronousEventBuffer
      * @param eventData
      * @param streamId
      */
-    public void sendEvent(Object[] eventData, String streamId) {
-        eventSendBuffer.addEvent(eventData, streamId);
+    public void sendEvent(Object[] eventData, long timestamp, String streamId) {
+        eventSendBuffer.addEvent(eventData, timestamp, streamId);
     }
 
     /**
@@ -143,7 +143,7 @@ public class AsyncEventPublisher implements EventHandler<AsynchronousEventBuffer
 
         // TODO : comment on message lost of the last batch
         try {
-            tcpEventPublisher.sendEvent(dataHolder.getStreamId(), (Object[]) dataHolder.getData(), endOfBatch);
+            tcpEventPublisher.sendEvent(dataHolder.getStreamId(), dataHolder.getTimestamp(), (Object[]) dataHolder.getData(), endOfBatch);
         } catch (IOException e) {
             log.error(logPrefix + "Error while trying to send event to " + destinationTypeString + " at " +
                     tcpEventPublisher.getHostUrl(), e);
@@ -390,11 +390,12 @@ class AsynchronousEventBuffer<Type> {
         disruptor.start();
     }
 
-    public void addEvent(Type data, String streamId) {
+    public void addEvent(Type data, long timestamp, String streamId) {
         long sequenceNo = ringBuffer.next();
         try {
             DataHolder existingHolder = ringBuffer.get(sequenceNo);
             existingHolder.setData(data);
+            existingHolder.setTimestamp(timestamp);
             existingHolder.setStreamId(streamId);
         } finally {
             ringBuffer.publish(sequenceNo);
@@ -407,8 +408,8 @@ class AsynchronousEventBuffer<Type> {
 
     class DataHolder {
         Type data;
-
         String streamId;
+        private long timestamp;
 
         public void setData(Type data) {
             this.data = data;
@@ -425,6 +426,16 @@ class AsynchronousEventBuffer<Type> {
         public String getStreamId() {
             return streamId;
         }
+
+        public long getTimestamp() {
+            return timestamp;
+        }
+
+        public void setTimestamp(long timestamp) {
+            this.timestamp = timestamp;
+        }
+
+
     }
 }
 

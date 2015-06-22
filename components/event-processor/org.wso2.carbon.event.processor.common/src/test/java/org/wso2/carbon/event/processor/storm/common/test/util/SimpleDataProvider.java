@@ -21,7 +21,7 @@ public class SimpleDataProvider implements DataProvider {
     private Random random = new Random();
 
     @Override
-    public Object[] getEvent() {
+    public Object[] getData() {
         return new Object[]{random.nextInt(), random.nextFloat(), "Abcdefghijklmnop" + random.nextLong(), random.nextInt()};
     }
 }

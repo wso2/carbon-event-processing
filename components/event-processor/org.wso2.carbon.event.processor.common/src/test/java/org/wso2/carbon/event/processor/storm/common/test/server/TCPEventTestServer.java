@@ -48,19 +48,20 @@ public class TCPEventTestServer {
         TCPEventServer eventServer = new TCPEventServer(new TCPEventServerConfig(7612), new StreamCallback() {
 
             public int count;
-            public long start=System.currentTimeMillis();
-            private Object[] prev=null;
+            public long start = System.currentTimeMillis();
+            private Object[] prev = null;
 
             /**
              * @param streamId the stream id for the incoming event
-             * @param event    the event as an object array of attributes
+             * @param timestamp    the event timestamp
+             * @param eventData    the event as an object array of attributes
              */
             @Override
-            public void receive(String streamId, Object[] event) {
-                if (!event[2].equals("Abcdefghijklmnop")) {
-                    System.out.println(streamId + " prev: "+Arrays.deepToString(prev)+" current :  "+Arrays.deepToString(event));
+            public void receive(String streamId, long timestamp, Object[] eventData) {
+                if (!eventData[2].equals("Abcdefghijklmnop")) {
+                    System.out.println(streamId + " prev: " + Arrays.deepToString(prev) + " current :  " + Arrays.deepToString(eventData));
                 }
-                prev=event;
+                prev = eventData;
 
                 count++;
                 if (count % 2000000 == 0) {

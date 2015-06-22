@@ -42,12 +42,7 @@ public class SiddhiInputEventDispatcher extends AbstractSiddhiInputEventDispatch
 
     @Override
     public void sendEvent(Event event) throws InterruptedException {
-        sendEvent(event.getData());
-    }
-
-    @Override
-    public void sendEvent(Object[] eventData) throws InterruptedException {
-        inputHandler.send(eventData);
+        inputHandler.send(event.getTimestamp(), event.getData());
     }
 
 }

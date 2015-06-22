@@ -144,9 +144,11 @@ public class EventReceiverSpout extends BaseRichSpout implements StreamCallback 
         if (event != null) {
             final String siddhiStreamName = event.getStreamId();
             if (incomingStreamIDs.contains(siddhiStreamName)) {
-                spoutOutputCollector.emit(siddhiStreamName, Arrays.asList(event.getData()));
+                Object[] eventData = Arrays.copyOf(event.getData(), event.getData().length + 1);
+                eventData[event.getData().length] = event.getTimestamp();
+                spoutOutputCollector.emit(siddhiStreamName, Arrays.asList(eventData));
                 if (log.isDebugEnabled()) {
-                    log.debug(logPrefix + "Emitted Event: " + siddhiStreamName + ":" + event.toString());
+                    log.debug(logPrefix + "Emitted Event: " + siddhiStreamName + ":" + Arrays.deepToString(eventData) + "@" + event.getTimestamp());
                     updateThroughputCounter();
                 }
             } else {
@@ -159,7 +161,7 @@ public class EventReceiverSpout extends BaseRichSpout implements StreamCallback 
         if (++eventCount % 10000 == 0) {
             double timeSpentInSecs = (System.currentTimeMillis() - batchStartTime) / 1000.0D;
             double throughput = 10000 / timeSpentInSecs;
-            log.info(logPrefix+"Processed 10000 events in " + timeSpentInSecs + " seconds, throughput : " + throughput + " events/sec");
+            log.info(logPrefix + "Processed 10000 events in " + timeSpentInSecs + " seconds, throughput : " + throughput + " events/sec");
             eventCount = 0;
             batchStartTime = System.currentTimeMillis();
         }
@@ -176,11 +178,11 @@ public class EventReceiverSpout extends BaseRichSpout implements StreamCallback 
 
 
     @Override
-    public void receive(String streamId, Object[] eventData) {
+    public void receive(String streamId, long timestamp, Object[] eventData) {
         if (log.isDebugEnabled()) {
-            log.debug(logPrefix + "Received Event: " + streamId + ":" + Arrays.deepToString(eventData));
+            log.debug(logPrefix + "Received Event: " + streamId + ":" + Arrays.deepToString(eventData) + "@" + timestamp);
         }
-        storedEvents.add(new Event(System.currentTimeMillis(), eventData, streamId));
+        storedEvents.add(new Event(timestamp, eventData, streamId));
     }
 
 
@@ -191,11 +193,11 @@ public class EventReceiverSpout extends BaseRichSpout implements StreamCallback 
         @Override
         public void run() {
             log.info(logPrefix + "Registering Event Receiver Spout for " + thisHostIp + ":" + listeningPort);
-            
+
             // Infinitely call register. Each register call will act as a heartbeat
             while (true) {
                 if (registerStormReceiverWithStormMangerService()) {
-                    while(true) {
+                    while (true) {
                         TTransport transport = null;
                         try {
                             transport = new TSocket(managerHost, managerPort);
@@ -215,7 +217,7 @@ public class EventReceiverSpout extends BaseRichSpout implements StreamCallback 
                             }
                         } catch (Exception e) {
                             log.error(logPrefix + "Error in registering Event Receiver Spout for " + thisHostIp + ":" +
-                                    listeningPort + " with manager " + managerHost + ":" + managerPort +". Trying next " +
+                                    listeningPort + " with manager " + managerHost + ":" + managerPort + ". Trying next " +
                                     "manager after " + heartbeatInterval + "ms", e);
                             break;
                         } finally {
@@ -224,7 +226,7 @@ public class EventReceiverSpout extends BaseRichSpout implements StreamCallback 
                             }
                         }
                     }
-                }else{
+                } else {
                     log.error(logPrefix + "Error registering Event Receiver Spout with given set of manager nodes. " +
                             "Retrying after " + heartbeatInterval + "ms");
                 }
@@ -247,8 +249,8 @@ public class EventReceiverSpout extends BaseRichSpout implements StreamCallback 
                     StormManagerService.Client client = new StormManagerService.Client(protocol);
                     client.registerStormReceiver(tenantId, executionPlanName, thisHostIp, listeningPort);
                     //if (log.isDebugEnabled()) {
-                        log.info(logPrefix + "Successfully registered Event Receiver Spout for " + thisHostIp + ":" +
-                                listeningPort);
+                    log.info(logPrefix + "Successfully registered Event Receiver Spout for " + thisHostIp + ":" +
+                            listeningPort);
                     //}
                     managerHost = endpoint.getHostName();
                     managerPort = endpoint.getPort();

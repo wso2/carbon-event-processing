@@ -108,7 +108,7 @@ public class TCPEventSendingTestCase {
         AtomicInteger eventCount = new AtomicInteger(0);
 
         @Override
-        public void receive(String streamId, Object[] event) {
+        public void receive(String streamId, long timestamp, Object[] event) {
             log.info("Event count:" + eventCount.incrementAndGet() + ", Stream ID: " + streamId + ", Event: " + Arrays.deepToString(event));
         }
 
@@ -132,13 +132,13 @@ public class TCPEventSendingTestCase {
         public void run() {
             TCPEventPublisher TCPEventPublisher = null;
             try {
-                TCPEventPublisher = new TCPEventPublisher("localhost:7612",true);
+                TCPEventPublisher = new TCPEventPublisher("localhost:7612", true);
                 TCPEventPublisher.addStreamDefinition(streamDefinition);
                 Thread.sleep(1000);
                 log.info("Starting event client to send events to localhost:7612");
 
                 for (int i = 0; i < eventsToSend; i++) {
-                    TCPEventPublisher.sendEvent(streamDefinition.getId(), dataProvider.getEvent(),true);
+                    TCPEventPublisher.sendEvent(streamDefinition.getId(), System.currentTimeMillis(), dataProvider.getData(), true);
                 }
             } catch (IOException e) {
                 e.printStackTrace();

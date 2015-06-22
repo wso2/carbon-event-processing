@@ -73,7 +73,7 @@ public abstract class AbstractSiddhiInputEventDispatcher implements SiddhiEventC
                 if (statisticsEnabled) {
                     statisticsMonitor.incrementRequest();
                 }
-                sendEvent(event.getData());
+                sendEvent(event);
             } catch (InterruptedException e) {
                 log.error("Error in dispatching events " + Arrays.deepToString(events) + " to Siddhi stream :" + siddhiStreamId);
             }
@@ -81,39 +81,33 @@ public abstract class AbstractSiddhiInputEventDispatcher implements SiddhiEventC
     }
 
     @Override
-    public void consumeEventData(Object[] eventData) {
+    public void consumeEvent(Event event) {
         try {
             if (traceEnabled) {
-                trace.info(tracerPrefix + Arrays.deepToString(eventData));
+                trace.info(tracerPrefix + event);
             }
             if (statisticsEnabled) {
                 statisticsMonitor.incrementRequest();
             }
-            sendEvent(eventData);
+            sendEvent(event);
         } catch (InterruptedException e) {
-            log.error("Error in dispatching event data " + Arrays.deepToString(eventData) + " to Siddhi stream :" + siddhiStreamId);
+            log.error("Error in dispatching event " + event + " to Siddhi stream :" + siddhiStreamId);
         }
     }
 
-    public String getExecutionPlanName(){
-        return ((ExecutionPlanConfiguration)owner).getName();
+    public String getExecutionPlanName() {
+        return ((ExecutionPlanConfiguration) owner).getName();
     }
 
     /**
      * When an event is received this method will be called. Implement how the event must be dispatched to Siddhi
+     *
      * @param event Event object
      * @throws InterruptedException
      */
     public abstract void sendEvent(Event event) throws InterruptedException;
 
-    /**
-     * When an event is received this method will be called. Implement how the event must be dispatched to Siddhi
-     * @param eventData Event data
-     * @throws InterruptedException
-     */
-    public abstract void sendEvent(Object[] eventData) throws InterruptedException;
-
-    public void shutdown(){
+    public void shutdown() {
 
     }
 }

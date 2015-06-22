@@ -30,6 +30,7 @@ import org.wso2.carbon.event.processor.manager.commons.transport.server.TCPEvent
 import org.wso2.carbon.event.processor.manager.commons.utils.HostAndPort;
 import org.wso2.carbon.event.processor.manager.commons.utils.Utils;
 import org.wso2.carbon.event.processor.manager.core.config.DistributedConfiguration;
+import org.wso2.siddhi.core.event.Event;
 import org.wso2.siddhi.query.api.definition.StreamDefinition;
 
 import java.util.Arrays;
@@ -88,13 +89,14 @@ public class SiddhiStormOutputEventListener implements StreamCallback {
     }
 
     @Override
-    public void receive(String streamId, Object[] event) {
+    public void receive(String streamId, long timestamp, Object[] eventData) {
         SiddhiOutputStreamListener outputStreamListener = streamNameToOutputStreamListenerMap.get(streamId);
         if (outputStreamListener != null) {
-            outputStreamListener.sendEventData(event);
+            outputStreamListener.sendEvent(new Event(timestamp, eventData));
         } else {
             log.warn("Cannot find output event listener for stream " + streamId + " in execution plan " + executionPlanConfiguration.getName()
-                    + " of tenant " + tenantId + ". Discarding event:" + Arrays.deepToString(event));
+                    + " of tenant " + tenantId + ". Discarding Event:" + streamId +
+                    ":" + Arrays.deepToString(eventData) + "@" + timestamp);
         }
     }
 
@@ -124,7 +126,7 @@ public class SiddhiStormOutputEventListener implements StreamCallback {
             // Infinitely call register. Each register call will act as a heartbeat
             while (true) {
                 if (registerCEPPublisherWithStormMangerService()) {
-                    while(true) {
+                    while (true) {
                         TTransport transport = null;
                         try {
                             transport = new TSocket(managerHost, managerPort);
@@ -145,7 +147,7 @@ public class SiddhiStormOutputEventListener implements StreamCallback {
                             }
                         } catch (Exception e) {
                             log.error(logPrefix + "Error in registering CEP publisher for " + thisHostIp + ":" +
-                                    listeningPort + " with manager " + managerHost + ":" + managerPort +". Trying " +
+                                    listeningPort + " with manager " + managerHost + ":" + managerPort + ". Trying " +
                                     "next manager after " + heartbeatInterval + "ms", e);
                             break;
                         } finally {
@@ -154,7 +156,7 @@ public class SiddhiStormOutputEventListener implements StreamCallback {
                             }
                         }
                     }
-                }else{
+                } else {
                     log.error(logPrefix + "Error registering CEP publisher with current manager. Retrying " +
                             "after " + heartbeatInterval + "ms");
                 }
@@ -169,7 +171,7 @@ public class SiddhiStormOutputEventListener implements StreamCallback {
 
         private boolean registerCEPPublisherWithStormMangerService() {
             TTransport transport = null;
-            for(HostAndPort endpoint:stormDeploymentConfig.getManagers()) {
+            for (HostAndPort endpoint : stormDeploymentConfig.getManagers()) {
                 try {
                     transport = new TSocket(endpoint.getHostName(), endpoint.getPort());
                     TProtocol protocol = new TBinaryProtocol(transport);

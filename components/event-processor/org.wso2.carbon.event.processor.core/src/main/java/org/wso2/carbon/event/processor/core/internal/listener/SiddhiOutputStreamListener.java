@@ -80,7 +80,7 @@ public class SiddhiOutputStreamListener extends StreamCallback implements EventP
         }
     }
 
-    public void sendEventData(Object[] eventData){
+    public void sendEvent(Event event) {
         try {
             /**
              * Setting tenant id here because sometimes Siddhi creates its own threads, which does not
@@ -93,12 +93,12 @@ public class SiddhiOutputStreamListener extends StreamCallback implements EventP
             privilegedCarbonContext.setTenantId(this.tenantId);
 
             if (traceEnabled) {
-                trace.info(tracerPrefix + eventData);
+                trace.info(tracerPrefix + event);
             }
             if (statisticsEnabled) {
                 statisticsMonitor.incrementResponse();
             }
-            eventProducerCallback.sendEventData(eventData);
+            eventProducerCallback.sendEvent(event);
         } finally {
             PrivilegedCarbonContext.endTenantFlow();
         }

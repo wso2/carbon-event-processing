@@ -17,5 +17,5 @@
 package org.wso2.carbon.event.processor.storm.common.test.util;
 
 public interface DataProvider {
-    public Object[] getEvent();
+    public Object[] getData();
 }

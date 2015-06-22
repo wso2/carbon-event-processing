@@ -40,7 +40,7 @@ public class EventStreamProducer implements EventProducer {
     }
 
     public void sendData(Object[] data) {
-        eventProducerCallback.sendEventData(data);
+        eventProducerCallback.sendEvent(new org.wso2.siddhi.core.event.Event(System.currentTimeMillis(), data));
     }
 
 

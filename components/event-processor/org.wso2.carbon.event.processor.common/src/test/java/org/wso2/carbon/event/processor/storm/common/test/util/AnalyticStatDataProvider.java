@@ -22,7 +22,7 @@ public class AnalyticStatDataProvider implements DataProvider {
     private AtomicLong eventCount = new AtomicLong(0);
 
     @Override
-    public Object[] getEvent() {
+    public Object[] getData() {
         int ipIndex = Math.round((float) Math.random() * MULTIPLIER);
         int userIndex = Math.round((float) Math.random() * MULTIPLIER);
         int termIndex = Math.round((float) Math.random() * MULTIPLIER);

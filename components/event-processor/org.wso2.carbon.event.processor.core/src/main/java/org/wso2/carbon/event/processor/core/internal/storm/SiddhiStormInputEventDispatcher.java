@@ -76,12 +76,7 @@ public class SiddhiStormInputEventDispatcher extends AbstractSiddhiInputEventDis
 
     @Override
     public void sendEvent(Event event) throws InterruptedException {
-        sendEvent(event.getData());
-    }
-
-    @Override
-    public void sendEvent(Object[] eventData) throws InterruptedException {
-        asyncEventPublisher.sendEvent(eventData, this.siddhiStreamDefinition.getId());
+        asyncEventPublisher.sendEvent(event.getData(),event.getTimestamp(), this.siddhiStreamDefinition.getId());
     }
 
     @Override

@@ -88,16 +88,20 @@ public class EventPublisherBolt extends BaseBasicBolt {
         if (!initialized) {
             init();
         }
+
+        List<Object> data = tuple.getValues();
+        long timestamp = (Long) data.remove(data.size() - 1);
+        Object[] dataArray = data.toArray();
+
         StreamDefinition streamDefinition = streamIdToDefinitionMap.get(tuple.getSourceStreamId());
         if (streamDefinition != null) {
-            asyncEventPublisher.sendEvent(tuple.getValues().toArray(), tuple.getSourceStreamId());
+            asyncEventPublisher.sendEvent(dataArray, timestamp, tuple.getSourceStreamId());
         } else {
             log.warn(logPrefix + "Tuple received for unknown stream " + tuple.getSourceStreamId() + ". Discarding " +
-                    "event : " + Arrays.deepToString(tuple.getValues().toArray()));
+                    "Event: " + tuple.getSourceStreamId() + ":" + Arrays.deepToString(dataArray) + "@" + timestamp);
         }
         if (log.isDebugEnabled()) {
-            log.debug(logPrefix + "Emitted Event: " + tuple.getSourceStreamId() + ":" + Arrays.deepToString(tuple
-                    .getValues().toArray()));
+            log.debug(logPrefix + "Emitted Event: " + tuple.getSourceStreamId() + ":" + Arrays.deepToString(dataArray) + "@" + timestamp);
         }
     }
 
@@ -117,7 +121,7 @@ public class EventPublisherBolt extends BaseBasicBolt {
             log = Logger.getLogger(EventPublisherBolt.class);
             initialized = true;
             //Adding functionality to support query execution at publisher level for future use cases.
-            if (query != null && (! query.isEmpty())) {
+            if (query != null && (!query.isEmpty())) {
                 siddhiManager = new SiddhiManager();
                 eventCount = 0;
                 batchStartTime = System.currentTimeMillis();
@@ -136,7 +140,9 @@ public class EventPublisherBolt extends BaseBasicBolt {
                         @Override
                         public void receive(Event[] events) {
                             for (Event event : events) {
-                                collector.emit(outputSiddhiDefinition.getId(), Arrays.asList(event.getData()));
+                                Object[] eventData = Arrays.copyOf(event.getData(), event.getData().length + 1);
+                                eventData[event.getData().length] = event.getTimestamp();
+                                collector.emit(outputSiddhiDefinition.getId(), Arrays.asList(eventData));
                                 if (log.isDebugEnabled()) {
                                     if (++eventCount % 10000 == 0) {
                                         double timeSpentInSecs = (System.currentTimeMillis() - batchStartTime) / 1000.0D;
@@ -147,8 +153,8 @@ public class EventPublisherBolt extends BaseBasicBolt {
                                         eventCount = 0;
                                         batchStartTime = System.currentTimeMillis();
                                     }
-                                    log.debug(logPrefix + "Emitted event:" + outputSiddhiDefinition.getId() + ":" +
-                                            event.toString());
+                                    log.debug(logPrefix + "Emitted Event:" + outputSiddhiDefinition.getId() +
+                                            ":" + Arrays.deepToString(eventData) + "@" + event.getTimestamp());
                                 }
                             }
                         }

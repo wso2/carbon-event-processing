@@ -97,15 +97,18 @@ public class SiddhiBolt extends BaseBasicBolt {
         executionPlanRuntime = siddhiManager.createExecutionPlanRuntime(fullQueryExpression);
 
         for (String outputStreamDefinition : outputStreamDefinitions) {
-            final StreamDefinition outputSiddhiDefinition = SiddhiCompiler.parseStreamDefinition
-                    (outputStreamDefinition);
-            log.info(logPrefix +" Adding callback for stream: " + outputSiddhiDefinition.getId());
+            final StreamDefinition outputSiddhiDefinition = SiddhiCompiler.parseStreamDefinition(outputStreamDefinition);
+            if (log.isDebugEnabled()) {
+                log.debug(logPrefix + " Adding callback for stream: " + outputSiddhiDefinition.getId());
+            }
             executionPlanRuntime.addCallback(outputSiddhiDefinition.getId(), new StreamCallback() {
 
                 @Override
                 public void receive(Event[] events) {
                     for (Event event : events) {
-                        collector.emit(outputSiddhiDefinition.getId(), Arrays.asList(event.getData()));
+                        Object[] eventData = Arrays.copyOf(event.getData(), event.getData().length + 1);
+                        eventData[event.getData().length] = event.getTimestamp();
+                        collector.emit(outputSiddhiDefinition.getId(), Arrays.asList(eventData));
                         if (log.isDebugEnabled()) {
                             if (++eventCount % 10000 == 0) {
                                 double timeSpentInSecs = (System.currentTimeMillis() - batchStartTime) / 1000.0D;
@@ -117,7 +120,7 @@ public class SiddhiBolt extends BaseBasicBolt {
                                 batchStartTime = System.currentTimeMillis();
                             }
                             log.debug(logPrefix + "Emitted Event:" + outputSiddhiDefinition.getId() +
-                                    ":" + event.toString());
+                                    ":" + Arrays.deepToString(eventData) + "@" + event.getTimestamp());
                         }
                     }
                 }
@@ -140,16 +143,18 @@ public class SiddhiBolt extends BaseBasicBolt {
         try {
             this.collector = collector;
             InputHandler inputHandler = executionPlanRuntime.getInputHandler(tuple.getSourceStreamId());
+            List<Object> data = tuple.getValues();
+            long timestamp = (Long) data.remove(data.size() - 1);
+            Object[] dataArray = data.toArray();
             if (log.isDebugEnabled()) {
-                log.debug(logPrefix + "Received Event: " + tuple.getSourceStreamId() + ":" + Arrays.deepToString
-                        (tuple.getValues().toArray()));
+                log.debug(logPrefix + "Received Event: " + tuple.getSourceStreamId() + ":" + Arrays.deepToString(dataArray) + "@" + timestamp);
             }
 
             if (inputHandler != null) {
-                inputHandler.send(tuple.getValues().toArray());
+                inputHandler.send(timestamp, dataArray);
             } else {
                 log.warn(logPrefix + "Event received for unknown stream " + tuple.getSourceStreamId() + ". Discarding" +
-                        " the event :" + Arrays.deepToString(tuple.getValues().toArray()));
+                        " the Event: " + tuple.getSourceStreamId() + ":" + Arrays.deepToString(dataArray) + "@" + timestamp);
             }
         } catch (InterruptedException e) {
             log.error(e);
@@ -166,8 +171,7 @@ public class SiddhiBolt extends BaseBasicBolt {
         for (String outputStreamDefinition : outputStreamDefinitions) {
             StreamDefinition siddhiOutputDefinition = SiddhiCompiler.parseStreamDefinition(outputStreamDefinition);
             if (outputStreamDefinition == null) {
-                throw new RuntimeException(logPrefix + "Cannot find exported stream : " + siddhiOutputDefinition.getId
-                        ());
+                throw new RuntimeException(logPrefix + "Cannot find exported stream : " + siddhiOutputDefinition.getId());
             }
             List<String> list = new ArrayList<String>();
 
