@@ -66,7 +66,7 @@ public class SiddhiStormOutputEventListener implements StreamCallback {
     }
 
     private void init() {
-        logPrefix = "[" + tenantId + ":" + executionPlanConfiguration.getName() + ":" + "CEP Publisher" + "]";
+        logPrefix = "[" + tenantId + ":" + executionPlanConfiguration.getName() + ":" + "CEP Publisher" + "] ";
         log.info(logPrefix + "Initializing storm output event listener");
 
         try {
