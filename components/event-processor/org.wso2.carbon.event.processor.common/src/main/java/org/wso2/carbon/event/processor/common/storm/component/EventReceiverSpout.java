@@ -101,7 +101,7 @@ public class EventReceiverSpout extends BaseRichSpout implements StreamCallback 
         for (String definition : incomingStreamDefinitions) {
             this.incomingStreamDefinitions.add(SiddhiCompiler.parseStreamDefinition(definition));
         }
-        this.logPrefix = "[" + tenantId + ":" + executionPlanName + ":" + "Event Receiver Spout" + "]";
+        this.logPrefix = "[" + tenantId + ":" + executionPlanName + ":" + "Event Receiver Spout" + "] ";
     }
 
     @Override
@@ -146,7 +146,7 @@ public class EventReceiverSpout extends BaseRichSpout implements StreamCallback 
             if (incomingStreamIDs.contains(siddhiStreamName)) {
                 spoutOutputCollector.emit(siddhiStreamName, Arrays.asList(event.getData()));
                 if (log.isDebugEnabled()) {
-                    log.debug(logPrefix + " Emitted Event: " + siddhiStreamName + ":" + event.toString());
+                    log.debug(logPrefix + "Emitted Event: " + siddhiStreamName + ":" + event.toString());
                     updateThroughputCounter();
                 }
             } else {
@@ -159,7 +159,7 @@ public class EventReceiverSpout extends BaseRichSpout implements StreamCallback 
         if (++eventCount % 10000 == 0) {
             double timeSpentInSecs = (System.currentTimeMillis() - batchStartTime) / 1000.0D;
             double throughput = 10000 / timeSpentInSecs;
-            log.info("Processed 10000 events in " + timeSpentInSecs + " seconds, throughput : " + throughput + " events/sec");
+            log.info(logPrefix+"Processed 10000 events in " + timeSpentInSecs + " seconds, throughput : " + throughput + " events/sec");
             eventCount = 0;
             batchStartTime = System.currentTimeMillis();
         }
@@ -178,7 +178,7 @@ public class EventReceiverSpout extends BaseRichSpout implements StreamCallback 
     @Override
     public void receive(String streamId, Object[] eventData) {
         if (log.isDebugEnabled()) {
-            log.debug(logPrefix + " Received Event: " + streamId + ":" + Arrays.deepToString(eventData));
+            log.debug(logPrefix + "Received Event: " + streamId + ":" + Arrays.deepToString(eventData));
         }
         storedEvents.add(new Event(System.currentTimeMillis(), eventData, streamId));
     }
@@ -215,7 +215,7 @@ public class EventReceiverSpout extends BaseRichSpout implements StreamCallback 
                             }
                         } catch (Exception e) {
                             log.error(logPrefix + "Error in registering Event Receiver Spout for " + thisHostIp + ":" +
-                                    listeningPort + "with manager" + managerHost + ":" + managerPort +". Trying next " +
+                                    listeningPort + " with manager " + managerHost + ":" + managerPort +". Trying next " +
                                     "manager after " + heartbeatInterval + "ms", e);
                             break;
                         } finally {
@@ -256,7 +256,7 @@ public class EventReceiverSpout extends BaseRichSpout implements StreamCallback 
                 } catch (Exception e) {
                     log.error(logPrefix + "Error in registering Event Receiver Spout for " + thisHostIp + ":" +
                             listeningPort + " with manager " + endpoint.getHostName() + ":" + endpoint.getPort() +
-                            "Trying next manager.", e);
+                            ", Trying next manager.", e);
                     continue;
                 } finally {
                     if (transport != null) {

@@ -74,14 +74,14 @@ public class EventPublisherBolt extends BaseBasicBolt {
         this.query = query;
         this.executionPlanName = executionPlanName;
         this.tenantId = tenantId;
-        this.logPrefix = "[" + tenantId + ":" + executionPlanName + ":" + "Event Publisher Bolt" + "]";
+        this.logPrefix = "[" + tenantId + ":" + executionPlanName + ":" + "Event Publisher Bolt" + "] ";
 
     }
 
     @Override
     public void execute(Tuple tuple, BasicOutputCollector basicOutputCollector) {
         if (log.isDebugEnabled()) {
-            log.debug(logPrefix + " Received Event: " + tuple.getSourceStreamId() + ":" + Arrays.deepToString(tuple
+            log.debug(logPrefix + "Received Event: " + tuple.getSourceStreamId() + ":" + Arrays.deepToString(tuple
                     .getValues().toArray()));
         }
         this.collector = basicOutputCollector;
@@ -96,7 +96,7 @@ public class EventPublisherBolt extends BaseBasicBolt {
                     "event : " + Arrays.deepToString(tuple.getValues().toArray()));
         }
         if (log.isDebugEnabled()) {
-            log.debug(logPrefix + " Emitted Event: " + tuple.getSourceStreamId() + ":" + Arrays.deepToString(tuple
+            log.debug(logPrefix + "Emitted Event: " + tuple.getSourceStreamId() + ":" + Arrays.deepToString(tuple
                     .getValues().toArray()));
         }
     }
