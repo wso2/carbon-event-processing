@@ -79,8 +79,8 @@ public class SiddhiBolt extends BaseBasicBolt {
         this.query = query;
         this.outputStreamDefinitions = outputSiddhiDefinitions;
         this.name = name;
+        this.logPrefix = "[" + tenantId + ":" + executionPlanName + ":" + name + "] ";
         init();
-        this.logPrefix = "[" + tenantId + ":" + executionPlanName + ":" + name + "]";
     }
 
     /**

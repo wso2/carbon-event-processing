@@ -23,11 +23,11 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.osgi.service.component.ComponentContext;
 import org.wso2.carbon.base.api.ServerConfigurationService;
-import org.wso2.carbon.context.PrivilegedCarbonContext;
 import org.wso2.carbon.event.processor.core.EventProcessorService;
 import org.wso2.carbon.event.processor.core.internal.CarbonEventProcessorManagementService;
 import org.wso2.carbon.event.processor.core.internal.CarbonEventProcessorService;
 import org.wso2.carbon.event.processor.core.internal.listener.EventStreamListenerImpl;
+import org.wso2.carbon.event.processor.core.internal.storm.StormTopologyManager;
 import org.wso2.carbon.event.processor.core.internal.storm.manager.StormManagerServer;
 import org.wso2.carbon.event.processor.core.internal.util.EventProcessorConstants;
 import org.wso2.carbon.event.processor.manager.core.EventManagementService;
@@ -41,9 +41,6 @@ import org.wso2.carbon.user.core.UserRealm;
 import org.wso2.carbon.utils.ConfigurationContextService;
 import org.wso2.siddhi.core.SiddhiManager;
 import org.wso2.siddhi.core.util.persistence.PersistenceStore;
-
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
 
 /**
  * @scr.component name="eventProcessorService.component" immediate="true"
@@ -84,14 +81,13 @@ public class EventProcessorServiceDS {
 
             DistributedConfiguration stormDeploymentConfig = carbonEventProcessorService.getManagementInfo().getDistributedConfiguration();
             if (stormDeploymentConfig != null) {
-                EventProcessorValueHolder.registerStormDeploymentConfig(stormDeploymentConfig);
+                EventProcessorValueHolder.registerStormDeploymentConfiguration(stormDeploymentConfig);
+                EventProcessorValueHolder.registerStormTopologyManager(new StormTopologyManager());
                 if (stormDeploymentConfig.isManagerNode()) {
                     StormManagerServer stormManagerServer = new StormManagerServer(stormDeploymentConfig.getLocalManagerConfig().getHostName(), stormDeploymentConfig.getLocalManagerConfig().getPort());
                     EventProcessorValueHolder.registerStormManagerServer(stormManagerServer);
                 }
             }
-
-
 
             context.getBundleContext().registerService(EventProcessorService.class.getName(), carbonEventProcessorService, null);
             context.getBundleContext().registerService(EventStreamListener.class.getName(), new EventStreamListenerImpl(), null);

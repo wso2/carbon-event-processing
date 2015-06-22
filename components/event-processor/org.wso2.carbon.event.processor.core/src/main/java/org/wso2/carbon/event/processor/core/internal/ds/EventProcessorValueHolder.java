@@ -19,6 +19,7 @@ import com.hazelcast.core.HazelcastInstance;
 import org.wso2.carbon.base.api.ServerConfigurationService;
 import org.wso2.carbon.event.processor.core.internal.CarbonEventProcessorManagementService;
 import org.wso2.carbon.event.processor.core.internal.CarbonEventProcessorService;
+import org.wso2.carbon.event.processor.core.internal.storm.StormTopologyManager;
 import org.wso2.carbon.event.processor.core.internal.storm.manager.StormManagerServer;
 import org.wso2.carbon.event.processor.manager.core.EventManagementService;
 import org.wso2.carbon.event.processor.manager.core.config.DistributedConfiguration;
@@ -41,10 +42,11 @@ public class EventProcessorValueHolder {
     private static ServerConfigurationService serverConfiguration;
     private static ConfigurationContextService configurationContext;
     private static StormManagerServer stormManagerServer;
-    private static DistributedConfiguration stormDeploymentConfig;
+    private static DistributedConfiguration stormDeploymentConfiguration;
     private static PersistenceConfiguration persistenceConfiguration;
     private static CarbonEventProcessorManagementService carbonEventProcessorManagementService;
     private static SiddhiManager siddhiManager;
+    private static StormTopologyManager stormTopologyManager;
 
     public static SiddhiManager getSiddhiManager() {
         return siddhiManager;
@@ -143,13 +145,22 @@ public class EventProcessorValueHolder {
         return stormManagerServer;
     }
 
-    public static void registerStormDeploymentConfig(DistributedConfiguration stormDeploymentConfig) {
-        EventProcessorValueHolder.stormDeploymentConfig = stormDeploymentConfig;
+    public static void registerStormDeploymentConfiguration(DistributedConfiguration stormDeploymentConfig) {
+        EventProcessorValueHolder.stormDeploymentConfiguration = stormDeploymentConfig;
     }
 
     public static DistributedConfiguration getStormDeploymentConfiguration() {
-        return stormDeploymentConfig;
+        return stormDeploymentConfiguration;
     }
+
+    public static void registerStormTopologyManager(StormTopologyManager stormTopologyManager) {
+        EventProcessorValueHolder.stormTopologyManager = stormTopologyManager;
+    }
+
+    public static StormTopologyManager getStormTopologyManager() {
+        return stormTopologyManager;
+    }
+
 
     public static void registerPersistenceConfiguration(PersistenceConfiguration persistenceConfiguration) {
         EventProcessorValueHolder.persistenceConfiguration = persistenceConfiguration;

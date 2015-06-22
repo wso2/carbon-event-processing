@@ -29,7 +29,6 @@ import org.wso2.carbon.event.processor.core.internal.listener.SiddhiInputEventDi
 import org.wso2.carbon.event.processor.core.internal.listener.SiddhiOutputStreamListener;
 import org.wso2.carbon.event.processor.core.internal.storm.SiddhiStormInputEventDispatcher;
 import org.wso2.carbon.event.processor.core.internal.storm.SiddhiStormOutputEventListener;
-import org.wso2.carbon.event.processor.core.internal.storm.TopologyManager;
 import org.wso2.carbon.event.processor.core.internal.util.EventProcessorConfigurationFilesystemInvoker;
 import org.wso2.carbon.event.processor.core.internal.util.EventProcessorConstants;
 import org.wso2.carbon.event.processor.core.internal.util.EventProcessorUtil;
@@ -297,7 +296,7 @@ public class CarbonEventProcessorService implements EventProcessorService {
             if (stormDeploymentConfiguration != null && stormDeploymentConfiguration.isManagerNode() && EventProcessorValueHolder
                     .getStormManagerServer().isStormManager()) {
                 try {
-                    TopologyManager.submitTopology(executionPlanConfiguration, importDefinitions, exportDefinitions,
+                    EventProcessorValueHolder.getStormTopologyManager().submitTopology(executionPlanConfiguration, importDefinitions, exportDefinitions,
                             tenantId, stormDeploymentConfiguration.getTopologySubmitRetryInterval());
                 } catch (StormDeploymentException e) {
                     throw new ExecutionPlanConfigurationException("Invalid distributed query specified, " + e.getMessage(), e);
@@ -456,7 +455,7 @@ public class CarbonEventProcessorService implements EventProcessorService {
             if (managementInfo.getMode() == Mode.Distributed && stormDeploymentConfig != null && stormDeploymentConfig.isManagerNode() &&
                     EventProcessorValueHolder.getStormManagerServer().isStormManager()) {
                 try {
-                    TopologyManager.killTopology(executionPlanConfiguration.getName(), tenantId);
+                    EventProcessorValueHolder.getStormTopologyManager().killTopology(executionPlanConfiguration.getName(), tenantId);
                 } catch (Exception e) {
                     log.error(e.getMessage(), e);
                 }

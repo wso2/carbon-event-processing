@@ -76,7 +76,7 @@ public class AsyncEventPublisher implements EventHandler<AsynchronousEventBuffer
         this.endpointConnectionCreator = new EndpointConnectionCreator();
         this.destinationTypeString = (destinationType == DestinationType.STORM_RECEIVER) ? "Storm Receiver" : "CEP Publisher";
         this.publisherTypeString = (destinationType == DestinationType.STORM_RECEIVER) ? "CEP Receiver" : "Publisher Bolt";
-        this.logPrefix = "[" + tenantId + ":" + executionPlanName + ":" + publisherTypeString + "]";
+        this.logPrefix = "[" + tenantId + ":" + executionPlanName + ":" + publisherTypeString + "] ";
     }
 
     /**
@@ -120,7 +120,7 @@ public class AsyncEventPublisher implements EventHandler<AsynchronousEventBuffer
     @Override
     public void onEvent(AsynchronousEventBuffer.DataHolder dataHolder, long sequence, boolean endOfBatch){
         while (tcpEventPublisher == null){
-            log.info(logPrefix + "Can't send event.TCP event publisher not initialized. Waiting " + stormDeploymentConfig.getTransportReconnectInterval() + "s");
+            log.info(logPrefix + "Can't send event. TCP event publisher not initialized. Waiting " + stormDeploymentConfig.getTransportReconnectInterval() + "s");
             try {
                 synchronized (this){
                     if (shutdown){
@@ -207,12 +207,12 @@ public class AsyncEventPublisher implements EventHandler<AsynchronousEventBuffer
                             endpointHostPort = client.getStormReceiver(tenantId, executionPlanName, thisHostIp);
                         }
                         log.info(logPrefix + "Retrieved " + destinationTypeString + " at " + endpointHostPort + " " +
-                                "from storm manager service at" + endpoint.getHostName() + ":" + endpoint.getPort());
+                                "from storm manager service at " + endpoint.getHostName() + ":" + endpoint.getPort());
                         break;
                     } catch (Exception e) {
                         log.error(logPrefix + "Error while trying retrieve " + destinationType.name() +
-                                "endpoint information from storm manager service at " +
-                                endpoint.getHostName() + ":" + endpoint.getPort() + "Trying next Storm manager.", e);
+                                " endpoint information from storm manager service at " +
+                                endpoint.getHostName() + ":" + endpoint.getPort() + " Trying next Storm manager.", e);
                         continue;
                     } finally {
                         if (transport != null) {
@@ -223,7 +223,7 @@ public class AsyncEventPublisher implements EventHandler<AsynchronousEventBuffer
 
                 synchronized (AsyncEventPublisher.this) {
                     if (shutdown) {
-                        log.info(logPrefix + "Stopping attempting to connect to Storm manager service.Async event publisher is shutdown");
+                        log.info(logPrefix + "Stopping attempting to connect to Storm manager service. Async event publisher is shutdown");
                         return null;
                     }
                 }
@@ -233,7 +233,7 @@ public class AsyncEventPublisher implements EventHandler<AsynchronousEventBuffer
                         log.info(logPrefix + "Failed to retrieve " + destinationType.name() + " from given " +
                                 "set of Storm Managers. Retrying to retrieve endpoint from manager " +
                                 "service in " + stormDeploymentConfig.getManagementReconnectInterval()
-                                + "ms to get a " + destinationTypeString);
+                                + " ms to get a " + destinationTypeString);
                         Thread.sleep(stormDeploymentConfig.getManagementReconnectInterval());
                     } catch (InterruptedException e1) {
                         Thread.currentThread().interrupt();
