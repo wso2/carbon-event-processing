@@ -108,7 +108,9 @@ public class EventReceiverSpout extends BaseRichSpout implements StreamCallback 
     public void declareOutputFields(OutputFieldsDeclarer outputFieldsDeclarer) {
         // Declaring all incoming streams as output streams because this spouts role is to pass through all the incoming events as tuples.
         for (StreamDefinition siddhiStreamDefinition : incomingStreamDefinitions) {
-            Fields fields = new Fields(siddhiStreamDefinition.getAttributeNameArray());
+            List<String> attributeList = new ArrayList<>(Arrays.asList(siddhiStreamDefinition.getAttributeNameArray()));
+            attributeList.add(0, "_timestamp");
+            Fields fields = new Fields(attributeList);
             outputFieldsDeclarer.declareStream(siddhiStreamDefinition.getId(), fields);
             incomingStreamIDs.add(siddhiStreamDefinition.getId());
             log.info(logPrefix + "Declaring output fields for stream : " + siddhiStreamDefinition.getId());

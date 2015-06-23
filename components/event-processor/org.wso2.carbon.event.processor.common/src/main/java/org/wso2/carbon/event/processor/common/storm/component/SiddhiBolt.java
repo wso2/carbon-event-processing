@@ -21,6 +21,7 @@ import backtype.storm.topology.OutputFieldsDeclarer;
 import backtype.storm.topology.base.BaseBasicBolt;
 import backtype.storm.tuple.Fields;
 import backtype.storm.tuple.Tuple;
+import org.apache.commons.lang.ArrayUtils;
 import org.apache.log4j.Logger;
 import org.wso2.carbon.event.processor.manager.commons.utils.Utils;
 import org.wso2.siddhi.core.ExecutionPlanRuntime;
@@ -143,9 +144,9 @@ public class SiddhiBolt extends BaseBasicBolt {
         try {
             this.collector = collector;
             InputHandler inputHandler = executionPlanRuntime.getInputHandler(tuple.getSourceStreamId());
-            List<Object> data = tuple.getValues();
-            long timestamp = (Long) data.remove(data.size() - 1);
-            Object[] dataArray = data.toArray();
+            Object[] dataArray = tuple.getValues().toArray();
+            long timestamp = (Long) dataArray[dataArray.length - 1];
+            dataArray = ArrayUtils.removeElement(dataArray, timestamp);
             if (log.isDebugEnabled()) {
                 log.debug(logPrefix + "Received Event: " + tuple.getSourceStreamId() + ":" + Arrays.deepToString(dataArray) + "@" + timestamp);
             }
@@ -174,7 +175,7 @@ public class SiddhiBolt extends BaseBasicBolt {
                 throw new RuntimeException(logPrefix + "Cannot find exported stream : " + siddhiOutputDefinition.getId());
             }
             List<String> list = new ArrayList<String>();
-
+            list.add(0,"_timestamp");
             for (Attribute attribute : siddhiOutputDefinition.getAttributeList()) {
                 list.add(attribute.getName());
             }

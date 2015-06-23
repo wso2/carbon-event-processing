@@ -20,6 +20,7 @@ import backtype.storm.topology.BasicOutputCollector;
 import backtype.storm.topology.OutputFieldsDeclarer;
 import backtype.storm.topology.base.BaseBasicBolt;
 import backtype.storm.tuple.Tuple;
+import org.apache.commons.lang.ArrayUtils;
 import org.apache.log4j.Logger;
 import org.wso2.carbon.event.processor.common.util.AsyncEventPublisher;
 import org.wso2.carbon.event.processor.manager.commons.utils.Utils;
@@ -89,9 +90,9 @@ public class EventPublisherBolt extends BaseBasicBolt {
             init();
         }
 
-        List<Object> data = tuple.getValues();
-        long timestamp = (Long) data.remove(data.size() - 1);
-        Object[] dataArray = data.toArray();
+        Object[] dataArray = tuple.getValues().toArray();
+        long timestamp = (Long) dataArray[dataArray.length - 1];
+        dataArray = ArrayUtils.removeElement(dataArray, timestamp);
 
         StreamDefinition streamDefinition = streamIdToDefinitionMap.get(tuple.getSourceStreamId());
         if (streamDefinition != null) {
