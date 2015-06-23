@@ -90,7 +90,7 @@
                         <a style="background-image: url(../admin/images/edit.gif);"
                            class="icon-link"
                            href="edit_execution_plan.jsp?ordinal=1&execPlanPath=<%=executionPlanConfigurationFileDto.getFileName()%>"><font
-                                color="#4682b4">View</font></a>
+                                color="#4682b4">Edit</font></a>
                     </td>
 
                 </tr>

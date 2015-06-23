@@ -48,10 +48,11 @@ public class EventProcessorHelper {
 
     /**
      * Returns the execution plan name
+     *
      * @param executionPlanAsString executionPlan (taken from code mirror) as a string
      * @return execution plan name as given in @Plan:name('MyPlanName'). Returns null in the absence of @Plan:name('MyPlanName')
      */
-    public static String getExecutionPlanName(String executionPlanAsString){
+    public static String getExecutionPlanName(String executionPlanAsString) {
         String executionPlanName = null;
         ExecutionPlan executionPlan = SiddhiCompiler.parse(executionPlanAsString);
         executionPlanName = AnnotationHelper.getAnnotationElement(EventProcessorConstants.ANNOTATION_NAME_NAME, null, executionPlan.getAnnotations()).getValue();
@@ -72,7 +73,7 @@ public class EventProcessorHelper {
         Element element = AnnotationHelper.getAnnotationElement(EventProcessorConstants.ANNOTATION_NAME_NAME, null, parsedExecPlan.getAnnotations());
         if (element == null) {                                                                        // check if plan name is given
             throw new ExecutionPlanConfigurationException("Execution plan name is not given. Please specify execution plan name using the annotation " +
-                    "'"+
+                    "'" +
                     EventProcessorConstants.ANNOTATION_TOKEN_AT +
                     EventProcessorConstants.ANNOTATION_PLAN +
                     EventProcessorConstants.ANNOTATION_TOKEN_COLON +
@@ -95,7 +96,7 @@ public class EventProcessorHelper {
         for (Map.Entry<String, org.wso2.siddhi.query.api.definition.StreamDefinition> entry : parsedExecPlan.getStreamDefinitionMap().entrySet()) {
             Element importElement = AnnotationHelper.getAnnotationElement(EventProcessorConstants.ANNOTATION_IMPORT, null, entry.getValue().getAnnotations());
             Element exportElement = AnnotationHelper.getAnnotationElement(EventProcessorConstants.ANNOTATION_EXPORT, null, entry.getValue().getAnnotations());
-            if(importElement != null && exportElement != null){
+            if (importElement != null && exportElement != null) {
                 throw new ExecutionPlanConfigurationException("Same stream definition has being imported and exported. Please correct " + i +
                         "th of the " + parsedExecPlan.getStreamDefinitionMap().size() + "stream definition, with stream id '" + entry.getKey() + "'");
             }
@@ -103,7 +104,7 @@ public class EventProcessorHelper {
                 String atImportLiteral = EventProcessorConstants.ANNOTATION_TOKEN_AT + EventProcessorConstants.ANNOTATION_IMPORT;
                 String importElementValue = importElement.getValue();
                 if (importElementValue == null || importElementValue.trim().isEmpty()) {
-                    throw new ExecutionPlanConfigurationException("Imported stream cannot be empty as in '"+
+                    throw new ExecutionPlanConfigurationException("Imported stream cannot be empty as in '" +
                             atImportLiteral +
                             EventProcessorConstants.ANNOTATION_TOKEN_OPENING_BRACKET +
                             EventProcessorConstants.SIDDHI_SINGLE_QUOTE + EventProcessorConstants.SIDDHI_SINGLE_QUOTE +
@@ -113,15 +114,15 @@ public class EventProcessorHelper {
                 }
                 String[] streamIdComponents = importElementValue.split(EventProcessorConstants.STREAM_SEPARATOR);
                 if (streamIdComponents.length != 2) {
-                    throw new ExecutionPlanConfigurationException("Found malformed "+ atImportLiteral +
-                            " element '" + importElementValue + "'. " +atImportLiteral +
-                            " annotation should take the form '"+ atImportLiteral +
+                    throw new ExecutionPlanConfigurationException("Found malformed " + atImportLiteral +
+                            " element '" + importElementValue + "'. " + atImportLiteral +
+                            " annotation should take the form '" + atImportLiteral +
                             EventProcessorConstants.ANNOTATION_TOKEN_OPENING_BRACKET +
                             EventProcessorConstants.SIDDHI_SINGLE_QUOTE +
-                            "streamName"+ EventProcessorConstants.STREAM_SEPARATOR +"StreamVersion"+
+                            "streamName" + EventProcessorConstants.STREAM_SEPARATOR + "StreamVersion" +
                             EventProcessorConstants.SIDDHI_SINGLE_QUOTE +
                             EventProcessorConstants.ANNOTATION_TOKEN_CLOSING_BRACKET +
-                            "'. There should be a '"+ EventProcessorConstants.STREAM_SEPARATOR +"' character, separating the streamName and its version");
+                            "'. There should be a '" + EventProcessorConstants.STREAM_SEPARATOR + "' character, separating the streamName and its version");
                 }
                 if ((!databridgeStreamNamePattern.matcher(streamIdComponents[0].trim()).matches())) {
                     throw new ExecutionPlanConfigurationException("Invalid imported stream name[" + streamIdComponents[0] + "] in execution plan:" + planName +
@@ -142,7 +143,7 @@ public class EventProcessorHelper {
                 String atExportLiteral = EventProcessorConstants.ANNOTATION_TOKEN_AT + EventProcessorConstants.ANNOTATION_EXPORT;
                 String exportElementValue = exportElement.getValue();
                 if (exportElementValue == null || exportElementValue.trim().isEmpty()) {
-                    throw new ExecutionPlanConfigurationException("Exported stream cannot be empty as in '"+
+                    throw new ExecutionPlanConfigurationException("Exported stream cannot be empty as in '" +
                             atExportLiteral +
                             EventProcessorConstants.ANNOTATION_TOKEN_OPENING_BRACKET +
                             EventProcessorConstants.SIDDHI_SINGLE_QUOTE + EventProcessorConstants.SIDDHI_SINGLE_QUOTE +
@@ -152,15 +153,15 @@ public class EventProcessorHelper {
                 }
                 String[] streamIdComponents = exportElementValue.split(EventProcessorConstants.STREAM_SEPARATOR);
                 if (streamIdComponents.length != 2) {
-                    throw new ExecutionPlanConfigurationException("Found malformed "+ atExportLiteral +" element '" + exportElementValue + "'. " + atExportLiteral +
-                            " annotation should take the form '"+
+                    throw new ExecutionPlanConfigurationException("Found malformed " + atExportLiteral + " element '" + exportElementValue + "'. " + atExportLiteral +
+                            " annotation should take the form '" +
                             atExportLiteral +
                             EventProcessorConstants.ANNOTATION_TOKEN_OPENING_BRACKET +
                             EventProcessorConstants.SIDDHI_SINGLE_QUOTE +
-                            "streamName"+ EventProcessorConstants.STREAM_SEPARATOR +"StreamVersion"+
+                            "streamName" + EventProcessorConstants.STREAM_SEPARATOR + "StreamVersion" +
                             EventProcessorConstants.SIDDHI_SINGLE_QUOTE +
                             EventProcessorConstants.ANNOTATION_TOKEN_CLOSING_BRACKET +
-                            "'. There should be a '"+ EventProcessorConstants.STREAM_SEPARATOR +"' character, separating the streamName and its version");
+                            "'. There should be a '" + EventProcessorConstants.STREAM_SEPARATOR + "' character, separating the streamName and its version");
                 }
                 if ((!databridgeStreamNamePattern.matcher(streamIdComponents[0].trim()).matches())) {
                     throw new ExecutionPlanConfigurationException("Invalid exported stream name[" + streamIdComponents[0] + "] in execution plan:" + planName +
@@ -182,7 +183,11 @@ public class EventProcessorHelper {
 
         SiddhiManager siddhiManager = EventProcessorValueHolder.getSiddhiManager();
         loadDataSourceConfiguration(siddhiManager);
-        siddhiManager.validateExecutionPlan(executionPlan);
+        try {
+            siddhiManager.validateExecutionPlan(executionPlan);
+        } catch (Throwable t) {
+            throw new ExecutionPlanConfigurationException(t.getMessage(), t);
+        }
     }
 
 
@@ -207,20 +212,21 @@ public class EventProcessorHelper {
      * Sets an annotation name for a given execution plan to be true or false.
      * For example, when an execution plan has the statement "@Plan:statistics('false')" and false need to be set to true,
      * then this helper method can be used.
-     * @param executionPlan Existing execution plan, either having the annotation name set to be true/false,
-     *                      or the annotation name is not present in the execution plan at all.
-     * @param annotationName The annotation name which needs to be set to true/false.
-     *                       For example, in Siddhi statement @Plan:name('false'), 'name' will be the annotation name.
+     *
+     * @param executionPlan        Existing execution plan, either having the annotation name set to be true/false,
+     *                             or the annotation name is not present in the execution plan at all.
+     * @param annotationName       The annotation name which needs to be set to true/false.
+     *                             For example, in Siddhi statement @Plan:name('false'), 'name' will be the annotation name.
      * @param isAnnotationNameTrue Whether the annotation name need to be set to true or false.
      * @return New execution plan with the given plan annotation name set to be true.
      */
-    public static String setExecutionPlanAnnotationName(String executionPlan, String annotationName, boolean isAnnotationNameTrue){
+    public static String setExecutionPlanAnnotationName(String executionPlan, String annotationName, boolean isAnnotationNameTrue) {
         String newExecutionPlan = null;
         String planHeader = "";
         String planBody = "";
         String planHeaderLineRegex = EventProcessorConstants.PLAN_HEADER_LINE_REGEX;
 
-        String regexToBeReplaced = "^\\s*"+        //beginning of line with zero or more whitespaces
+        String regexToBeReplaced = "^\\s*" +        //beginning of line with zero or more whitespaces
                 EventProcessorConstants.ANNOTATION_TOKEN_AT +
                 EventProcessorConstants.ANNOTATION_PLAN +
                 EventProcessorConstants.ANNOTATION_TOKEN_COLON +
@@ -239,12 +245,12 @@ public class EventProcessorHelper {
 
         Matcher matcher = Pattern.compile(regexToBeReplaced, Pattern.MULTILINE).matcher(executionPlan);
 
-        if(matcher.find()){   //statement with annotation name set to false, is already in the plan; In that case, false will be replaced with true.
+        if (matcher.find()) {   //statement with annotation name set to false, is already in the plan; In that case, false will be replaced with true.
 
             //finding the whitespaces given by the user before "@Plan:name()" statement and prepending those at replacement.
             String[] matchSplitArray = matcher.group().split(EventProcessorConstants.ANNOTATION_TOKEN_AT);
             String whitespaces = "";
-            if(matchSplitArray.length > 1){
+            if (matchSplitArray.length > 1) {
                 whitespaces += matchSplitArray[0];
             }
 
@@ -253,9 +259,9 @@ public class EventProcessorHelper {
 
         } else {       //statement with annotation name is not there in the plan; it'll be inserted.
             String[] planHeaderArray = executionPlan.split(EventProcessorConstants.SIDDHI_LINE_SEPARATER);
-            for(int i=0; i<planHeaderArray.length; i++){
-                if(planHeaderArray[i].matches(planHeaderLineRegex)){
-                    if(planHeaderArray[i].matches(EventProcessorConstants.END_OF_PLAN_HEADER_COMMENT_REGEX)){
+            for (int i = 0; i < planHeaderArray.length; i++) {
+                if (planHeaderArray[i].matches(planHeaderLineRegex)) {
+                    if (planHeaderArray[i].matches(EventProcessorConstants.END_OF_PLAN_HEADER_COMMENT_REGEX)) {
                         break;
                     }
                     planHeader += planHeaderArray[i] + EventProcessorConstants.SIDDHI_LINE_SEPARATER;
@@ -270,7 +276,7 @@ public class EventProcessorHelper {
         return newExecutionPlan;
     }
 
-    public static void loadDataSourceConfiguration(SiddhiManager siddhiManager){
+    public static void loadDataSourceConfiguration(SiddhiManager siddhiManager) {
         try {
             int tenantId = PrivilegedCarbonContext.getThreadLocalCarbonContext().getTenantId();
             if (tenantId > -1) {
