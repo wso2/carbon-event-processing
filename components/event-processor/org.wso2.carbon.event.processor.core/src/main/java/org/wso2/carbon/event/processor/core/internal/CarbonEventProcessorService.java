@@ -493,14 +493,13 @@ public class CarbonEventProcessorService implements EventProcessorService {
     public void removeExecutionPlanConfigurationFile(String fileName) {
         List<ExecutionPlanConfigurationFile> executionPlanConfigurationFiles = tenantSpecificExecutionPlanFiles
                 .get(PrivilegedCarbonContext.getThreadLocalCarbonContext().getTenantId());
-        for (Iterator<ExecutionPlanConfigurationFile> iterator = executionPlanConfigurationFiles.iterator(); iterator.hasNext(); ) {
-            ExecutionPlanConfigurationFile configurationFile = iterator.next();
+        for (ExecutionPlanConfigurationFile configurationFile : executionPlanConfigurationFiles) {
             if (new File(configurationFile.getFileName()).getName().equals(fileName)) {
                 if (configurationFile.getStatus().equals(ExecutionPlanConfigurationFile.Status.DEPLOYED)) {
                     removeExecutionPlanConfiguration(configurationFile.getExecutionPlanName());
                 }
-                iterator.remove();
-                break;
+                executionPlanConfigurationFiles.remove(configurationFile);
+                return;
             }
         }
     }
