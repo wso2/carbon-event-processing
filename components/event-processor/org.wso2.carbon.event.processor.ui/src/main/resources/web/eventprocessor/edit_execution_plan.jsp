@@ -138,6 +138,7 @@
     }
 
 </script>
+<div id="custom_dcontainer" style="display:none"></div>
 
 <div id="middle">
     <h2><fmt:message key="edit.execution.plan.configuration"/></h2>
