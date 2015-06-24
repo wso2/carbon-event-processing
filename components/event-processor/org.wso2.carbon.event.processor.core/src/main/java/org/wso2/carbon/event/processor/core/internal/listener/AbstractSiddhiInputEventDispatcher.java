@@ -54,7 +54,7 @@ public abstract class AbstractSiddhiInputEventDispatcher implements SiddhiEventC
             statisticsMonitor = EventProcessorValueHolder.getEventStatisticsService().getEventStatisticMonitor(tenantId, EventProcessorConstants.EVENT_PROCESSOR, executionPlanConfiguration.getName(), streamId + " (" + siddhiStreamId + ")");
         }
         if (traceEnabled) {
-            this.tracerPrefix = "TenantId=" + tenantId + " : " + EventProcessorConstants.EVENT_PROCESSOR + " : " + executionPlanConfiguration.getName() + "," + streamId + " (" + siddhiStreamId + "), before processing " + System.getProperty("line.separator");
+            this.tracerPrefix = "TenantId : " + tenantId + ", " + EventProcessorConstants.EVENT_PROCESSOR + " : " + executionPlanConfiguration.getName() + ", " + EventProcessorConstants.EVENT_STREAM + " : " + streamId + " (" + siddhiStreamId + "), before processing " + System.getProperty("line.separator");
         }
     }
 
