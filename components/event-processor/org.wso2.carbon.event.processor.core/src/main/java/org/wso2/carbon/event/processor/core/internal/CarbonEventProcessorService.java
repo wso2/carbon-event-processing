@@ -51,6 +51,7 @@ import org.wso2.siddhi.query.compiler.exception.SiddhiParserException;
 import java.io.File;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 public class CarbonEventProcessorService implements EventProcessorService {
     private static final Log log = LogFactory.getLog(CarbonEventProcessorService.class);
@@ -478,7 +479,7 @@ public class CarbonEventProcessorService implements EventProcessorService {
         int tenantId = PrivilegedCarbonContext.getThreadLocalCarbonContext().getTenantId();
         List<ExecutionPlanConfigurationFile> executionPlanConfigurationFiles = tenantSpecificExecutionPlanFiles.get(tenantId);
         if (executionPlanConfigurationFiles == null) {
-            executionPlanConfigurationFiles = new ArrayList<ExecutionPlanConfigurationFile>();
+            executionPlanConfigurationFiles = new CopyOnWriteArrayList<>();
             tenantSpecificExecutionPlanFiles.put(tenantId, executionPlanConfigurationFiles);
         }
         executionPlanConfigurationFiles.add(configurationFile);
