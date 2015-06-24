@@ -103,13 +103,15 @@ function sendConfiguration(form){
     var streamName=document.getElementById("eventStreamSelect").options[selectedIndex].text;
     var seperateChar=document.getElementById("seperateChar").value;
     var fileName=document.getElementById("filename").textContent;
+    var delayBetweenEventsInMilies = document.getElementById("eventSendingDelay").value;
 
     if(seperateChar==""){
         CARBON.showErrorDialog("Error - Fill the necessary fields");
         return;
     }
 
-    var jsonString="{\"FileName\":\""+fileName+"\",\"streamID\":\""+streamName+"\",\"seperateChar\":\""+seperateChar+"\"}";
+    var jsonString="{\"FileName\":\""+fileName+"\",\"streamID\":\""+streamName+"\",\"seperateChar\":\""+seperateChar+"\"" +
+        ",\"delayBetweenEventsInMilies\":"+delayBetweenEventsInMilies+"}";
 
     jQuery.ajax({
         type: "POST",

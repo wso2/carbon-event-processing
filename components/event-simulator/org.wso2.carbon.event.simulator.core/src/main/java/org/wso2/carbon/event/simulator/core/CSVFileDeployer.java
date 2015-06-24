@@ -74,12 +74,15 @@ public class CSVFileDeployer extends AbstractDeployer {
         csvFileInfo.setFileName(csvFile.getName());
         csvFileInfo.setFilePath(csvFile.getAbsolutePath());
 
-        String[] streamIdSepChar = getEventMappingConfiguration(csvFile.getName());
-        if (streamIdSepChar[0] != null) {
-            csvFileInfo.setStreamID(streamIdSepChar[0]);
+        String[] streamIdSepCharAndDelay = getEventMappingConfiguration(csvFile.getName());
+        if (streamIdSepCharAndDelay[0] != null) {
+            csvFileInfo.setStreamID(streamIdSepCharAndDelay[0]);
         }
-        if (streamIdSepChar[1] != null) {
-            csvFileInfo.setSeparateCharacter(streamIdSepChar[1]);
+        if (streamIdSepCharAndDelay[1] != null) {
+            csvFileInfo.setSeparateCharacter(streamIdSepCharAndDelay[1]);
+        }
+        if (streamIdSepCharAndDelay[2] != null){
+            csvFileInfo.setDelayBetweenEventsInMilies(Long.valueOf(streamIdSepCharAndDelay[2]));
         }
         eventSimulator.addCSVFileInfo(csvFileInfo);
 
@@ -93,7 +96,8 @@ public class CSVFileDeployer extends AbstractDeployer {
         String absolutePath = dirPath + File.separator + xmlName;
         String streamID = null;
         String separateChar;
-        String[] streamIdSepChar = new String[2];
+        String eventSendingDelay;
+        String[] streamIdSepCharAndDelay = new String[3];
         try {
             File xmlFile = new File(absolutePath);
 
@@ -104,14 +108,16 @@ public class CSVFileDeployer extends AbstractDeployer {
 
                 Element element = doc.getDocumentElement();
                 streamID = element.getElementsByTagName(EventSimulatorConstant.STREAM_ID_ELEMENT).item(0).getTextContent();
+                eventSendingDelay = element.getElementsByTagName(EventSimulatorConstant.DELAY_BETWEEN_EVENTS_IN_MILIES).item(0).getTextContent();
                 separateChar = element.getElementsByTagName(EventSimulatorConstant.SEPARATE_CHAR_ELEMENT).item(0).getTextContent();
 
-                streamIdSepChar[0] = streamID;
-                streamIdSepChar[1] = separateChar;
+                streamIdSepCharAndDelay[0] = streamID;
+                streamIdSepCharAndDelay[1] = separateChar;
+                streamIdSepCharAndDelay[2] = eventSendingDelay;
             }
         } catch (Exception e) {
             log.error(e);
         }
-        return streamIdSepChar;
+        return streamIdSepCharAndDelay;
     }
 }

@@ -37,7 +37,8 @@ public interface EventSimulator {
 
     public String getEventStreamInfo(String fileName)throws AxisFault;
 
-    public void createConfigurationXML(String fileName,String streamId,String separateChar,AxisConfiguration axisConfiguration);
+    public void createConfigurationXML(String fileName,String streamId,String separateChar, long eventSendingDelay,
+                                       AxisConfiguration axisConfiguration);
 
     public void deleteFile(String fileName,AxisConfiguration axisConfiguration)throws AxisFault;
 

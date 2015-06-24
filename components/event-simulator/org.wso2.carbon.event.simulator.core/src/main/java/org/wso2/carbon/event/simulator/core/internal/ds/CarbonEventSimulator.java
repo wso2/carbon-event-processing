@@ -196,8 +196,8 @@ public class CarbonEventSimulator implements EventSimulator {
         }
     }
 
-    public void addEventMappingConfiguration(String fileName, String streamId,
-                                             String separateChar) {
+    public void addEventMappingConfiguration(String fileName, String streamId, String separateChar,
+                                             long delayBetweenEventsInMilies) {
 
         int tenantID = PrivilegedCarbonContext.getThreadLocalCarbonContext().getTenantId();
         HashMap<String, CSVFileInfo> csvFileInfoMap = tenantSpecificCSVFileInfoMap.get(tenantID);
@@ -205,10 +205,11 @@ public class CarbonEventSimulator implements EventSimulator {
         CSVFileInfo csvFileInfo = csvFileInfoMap.get(fileName);
         csvFileInfo.setStreamID(streamId);
         csvFileInfo.setSeparateCharacter(separateChar);
+        csvFileInfo.setDelayBetweenEventsInMilies(delayBetweenEventsInMilies);
     }
 
     @Override
-    public void createConfigurationXML(String fileName, String streamId, String separateChar,
+    public void createConfigurationXML(String fileName, String streamId, String separateChar, long delayBetweenEventsInMilies,
                                        AxisConfiguration axisConfiguration) {
 
         String repo = axisConfiguration.getRepository().getPath();
@@ -235,6 +236,10 @@ public class CarbonEventSimulator implements EventSimulator {
             separateCharacter.appendChild(doc.createTextNode(separateChar));
             rootElement.appendChild(separateCharacter);
 
+            Element eventSendingDelayElement = doc.createElement(EventSimulatorConstant.DELAY_BETWEEN_EVENTS_IN_MILIES);
+            eventSendingDelayElement.appendChild(doc.createTextNode(String.valueOf(delayBetweenEventsInMilies)));
+            rootElement.appendChild(eventSendingDelayElement);
+
             TransformerFactory transformerFactory = TransformerFactory.newInstance();
             Transformer transformer = transformerFactory.newTransformer();
             DOMSource source = new DOMSource(doc);
@@ -243,7 +248,7 @@ public class CarbonEventSimulator implements EventSimulator {
             StreamResult result = new StreamResult(new File(absolutePath));
 
             transformer.transform(source, result);
-            addEventMappingConfiguration(fileName, streamId, separateChar);
+            addEventMappingConfiguration(fileName, streamId, separateChar, delayBetweenEventsInMilies);
 
         } catch (ParserConfigurationException e) {
             log.error(e);
@@ -477,7 +482,7 @@ public class CarbonEventSimulator implements EventSimulator {
 
                 CSVFileInfo fileInfo = csvFileInfoMap.get(fileName);
                 String path = fileInfo.getFilePath();
-
+                long delayBetweenEventsInMilies = fileInfo.getDelayBetweenEventsInMilies();
 
                 File file = new File(path);
                 FileInputStream fis = null;
@@ -504,6 +509,7 @@ public class CarbonEventSimulator implements EventSimulator {
                             event.setAttributeValues(attributeValueList);
 
                             sendEvent(event);
+                            Thread.sleep(delayBetweenEventsInMilies);
                         } catch (Exception e) {
                             log.error("Error in row " + rowNumber + "-failed to create an event " + e);
                             rowNumber++;
@@ -595,6 +601,10 @@ public class CarbonEventSimulator implements EventSimulator {
             Element streamNameID = doc.createElement(EventSimulatorConstant.EVENT_STREAM_ID);
             streamNameID.appendChild(doc.createTextNode(jsonConvertedInfo.getString(EventSimulatorConstant.EVENT_STREAM_ID)));
             rootElement.appendChild(streamNameID);
+
+            Element delayBetweenEventsInMilies = doc.createElement(EventSimulatorConstant.DELAY_BETWEEN_EVENTS_IN_MILIES);
+            delayBetweenEventsInMilies.appendChild(doc.createTextNode(String.valueOf(jsonConvertedInfo.getLong(EventSimulatorConstant.DELAY_BETWEEN_EVENTS_IN_MILIES))));
+            rootElement.appendChild(delayBetweenEventsInMilies);
 
             Element columnMappings = doc.createElement("columnMappings");
 
@@ -720,7 +730,14 @@ public class CarbonEventSimulator implements EventSimulator {
 
         DataSourceTableAndStreamInfo dataSourceTableAndStreamInfo = dataSourceInfoMap.get(fileName);
 
-        String jsonFormattedAllInfo = "{\""+ EventSimulatorConstant.EVENT_STREAM_ID+"\":\"" + dataSourceTableAndStreamInfo.getEventStreamID() + "\",\""+EventSimulatorConstant.DATA_SOURCE_NAME+"\":\"" + dataSourceTableAndStreamInfo.getDataSourceName() + "\",\""+EventSimulatorConstant.TABLE_NAME+"\":\"" + dataSourceTableAndStreamInfo.getTableName() + "\", \""+EventSimulatorConstant.CONFIGURATION_NAME+"\":\"" + dataSourceTableAndStreamInfo.getConfigurationName() + "\",\""+EventSimulatorConstant.DATABASE_COLUMNS_AND_STREAM_ATTRIBUTE_INFO+"\":[";
+        String jsonFormattedAllInfo = "{\""+
+                EventSimulatorConstant.EVENT_STREAM_ID+"\":\"" + dataSourceTableAndStreamInfo.getEventStreamID() +
+                "\",\""+EventSimulatorConstant.DATA_SOURCE_NAME+"\":\"" + dataSourceTableAndStreamInfo.getDataSourceName() +
+                "\",\""+EventSimulatorConstant.TABLE_NAME+"\":\"" + dataSourceTableAndStreamInfo.getTableName() +
+                "\", \""+EventSimulatorConstant.CONFIGURATION_NAME+"\":\"" + dataSourceTableAndStreamInfo.getConfigurationName() +
+                "\", \""+EventSimulatorConstant.DELAY_BETWEEN_EVENTS_IN_MILIES+"\":" + dataSourceTableAndStreamInfo.getDelayBetweenEventsInMilies() +
+                ",\""+EventSimulatorConstant.DATABASE_COLUMNS_AND_STREAM_ATTRIBUTE_INFO+"\":[";
+
         String jsonAttribute = "";
 
         String[][] columnAndStreamAttributeNames = dataSourceTableAndStreamInfo.getDataSourceColumnsAndTypes();
@@ -782,6 +799,7 @@ public class CarbonEventSimulator implements EventSimulator {
         private JSONObject allInfo;
         private DataSource datasource;
         private JSONArray columnAndAttributeMapping;
+        private long delayBetweenEventsInMilies;
 
         public EventCreationForDB(int tenantId, JSONObject allInfo, String getPreparedSelectStatement) throws AxisFault {
             this.tenantId = tenantId;
@@ -791,7 +809,7 @@ public class CarbonEventSimulator implements EventSimulator {
             String dataSourceName;
             try {
                 dataSourceName = allInfo.getString(EventSimulatorConstant.DATA_SOURCE_NAME);
-
+                delayBetweenEventsInMilies = allInfo.getLong(EventSimulatorConstant.DELAY_BETWEEN_EVENTS_IN_MILIES);
                 try {
                     carbonDataSource = EventSimulatorValueHolder.getDataSourceService().getDataSource(dataSourceName);
                     datasource = (DataSource) carbonDataSource.getDSObject();
@@ -926,6 +944,7 @@ public class CarbonEventSimulator implements EventSimulator {
                     }
                     event.setAttributeValues(attributeValues);
                     sendEvent(event);
+                    Thread.sleep(delayBetweenEventsInMilies);
                 }
             } catch (SQLException e) {
                 log.error("database exception occurred: "+ e.getMessage(), e);
@@ -934,6 +953,8 @@ public class CarbonEventSimulator implements EventSimulator {
                 //throw new AxisFault(EventSimulatorConstant.JSON_EXCEPTION, e);
             } catch (AxisFault axisFault) {
                 log.error(axisFault.getMessage(), axisFault);
+            } catch (InterruptedException e) {
+                log.error("Error when delaying sending events: "+ e.getMessage(), e);
             }
         }
     }

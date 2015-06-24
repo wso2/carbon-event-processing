@@ -49,6 +49,8 @@ public class EventSimulatorConstant {
     public static final String COLUMN_NAME = "columnName";
     public static final String COLUMN_TYPE = "columnType";
 
+    public static final String DELAY_BETWEEN_EVENTS_IN_MILIES = "delayBetweenEventsInMilies";
+
     //public static final String TEMP_DIR_PATH=File.separator + "tmp" ;
 
     public static final String DATA_SOURCE_NOT_FOUND_FOR_DATA_SOURCE_NAME = "There is no any data source found named: ";

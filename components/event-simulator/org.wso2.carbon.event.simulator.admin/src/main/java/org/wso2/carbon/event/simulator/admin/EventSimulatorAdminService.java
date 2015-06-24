@@ -185,14 +185,14 @@ public class EventSimulatorAdminService extends AbstractAdmin {
     }
 
 
-    public void sendConfigDetails(String fileName, String streamId, String separateChar) {
+    public void sendConfigDetails(String fileName, String streamId, String separateChar, long delayBetweenEventsInMilies) {
 
         EventSimulator eventSimulator = EventSimulatorAdminvalueHolder.getEventSimulator();
 
         ConfigurationContext configurationContext = getConfigContext();
         AxisConfiguration axisConfiguration = configurationContext.getAxisConfiguration();
 
-        eventSimulator.createConfigurationXML(fileName, streamId, separateChar, axisConfiguration);
+        eventSimulator.createConfigurationXML(fileName, streamId, separateChar, delayBetweenEventsInMilies, axisConfiguration);
 
     }
 
@@ -215,6 +215,9 @@ public class EventSimulatorAdminService extends AbstractAdmin {
                     CSVFileInfoDtoArray[index].setFilePath(csvFileInfo.getFilePath());
                     if (csvFileInfo.getStreamID() != null) {
                         CSVFileInfoDtoArray[index].setStreamID(csvFileInfo.getStreamID());
+                    }
+                    if (csvFileInfo.getDelayBetweenEventsInMilies() != 0){
+                        CSVFileInfoDtoArray[index].setDelayBetweenEventsInMilies(csvFileInfo.getDelayBetweenEventsInMilies());
                     }
                     index++;
                 }
@@ -284,6 +287,7 @@ public class EventSimulatorAdminService extends AbstractAdmin {
                             + "\",\""+EventSimulatorConstant.DATA_SOURCE_NAME+"\":\"" + jsonConvertedInfo.getString(EventSimulatorConstant.DATA_SOURCE_NAME)
                             + "\",\""+EventSimulatorConstant.TABLE_NAME+"\":\"" + jsonConvertedInfo.getString(EventSimulatorConstant.TABLE_NAME)
                             + "\",\""+EventSimulatorConstant.CONFIGURATION_NAME+"\":\"" + jsonConvertedInfo.getString(EventSimulatorConstant.CONFIGURATION_NAME)
+                            + "\",\""+EventSimulatorConstant.DELAY_BETWEEN_EVENTS_IN_MILIES + "\":\"" + jsonConvertedInfo.getLong(EventSimulatorConstant.DELAY_BETWEEN_EVENTS_IN_MILIES)
                             + "\",\""+EventSimulatorConstant.DATABASE_COLUMNS_AND_STREAM_ATTRIBUTE_INFO+"\":" + jsonConvertedInfo.getJSONArray(EventSimulatorConstant.DATABASE_COLUMNS_AND_STREAM_ATTRIBUTE_INFO)
                             + "}";
 
@@ -334,6 +338,7 @@ public class EventSimulatorAdminService extends AbstractAdmin {
                     DataSourceTableAndStreamInfoDtoArray[index].setStreamAtrributeNames(dataSourceTableAndStreamInfo.getDataSourceColumnsAndTypes()[1]);
                     DataSourceTableAndStreamInfoDtoArray[index].setFileName(dataSourceTableAndStreamInfo.getFileName());
                     DataSourceTableAndStreamInfoDtoArray[index].setFilePath(dataSourceTableAndStreamInfo.getFilePath());
+                    DataSourceTableAndStreamInfoDtoArray[index].setDelayBetweenEventsInMilies(dataSourceTableAndStreamInfo.getDelayBetweenEventsInMilies());
 
                     index++;
                 }

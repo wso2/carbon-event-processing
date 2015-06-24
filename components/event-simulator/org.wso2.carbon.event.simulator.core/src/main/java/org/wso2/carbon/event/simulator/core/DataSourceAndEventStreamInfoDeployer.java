@@ -100,7 +100,7 @@ public class DataSourceAndEventStreamInfoDeployer extends AbstractDeployer {
                     dataSourceTableAndStreamInfo.setDataSourceName(element.getElementsByTagName(EventSimulatorConstant.DATA_SOURCE_NAME).item(0).getTextContent());
                     dataSourceTableAndStreamInfo.setTableName(element.getElementsByTagName(EventSimulatorConstant.TABLE_NAME).item(0).getTextContent());
                     dataSourceTableAndStreamInfo.setEventStreamID(element.getElementsByTagName(EventSimulatorConstant.EVENT_STREAM_ID).item(0).getTextContent());
-                    dataSourceTableAndStreamInfo.setEventStreamID(element.getElementsByTagName(EventSimulatorConstant.EVENT_STREAM_ID).item(0).getTextContent());
+                    dataSourceTableAndStreamInfo.setDelayBetweenEventsInMilies(Long.parseLong(element.getElementsByTagName(EventSimulatorConstant.DELAY_BETWEEN_EVENTS_IN_MILIES).item(0).getTextContent()));
                     NodeList columnMappings = element.getElementsByTagName("columnMapping");
                     String dataSourceColumnsAndTypes [][] = new String[2][columnMappings.getLength()];
 

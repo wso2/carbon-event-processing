@@ -23,13 +23,15 @@
 
         JSONObject fileConfigData=new JSONObject(jsonData);
 
-        String fileName=fileConfigData.getString("FileName");
-        String streamID=fileConfigData.getString("streamID");
-        String seperateChar=fileConfigData.getString("seperateChar");
+        String fileName = fileConfigData.getString("FileName");
+        String streamID = fileConfigData.getString("streamID");
+        String seperateChar = fileConfigData.getString("seperateChar");
+        long delayBetweenEventsInMilies = fileConfigData.getLong("delayBetweenEventsInMilies");
 
-        stub.sendConfigDetails(fileName,streamID,seperateChar);
+        stub.sendConfigDetails(fileName, streamID, seperateChar, delayBetweenEventsInMilies);
         msg="Sent";
-    }catch(Exception e){
+    }
+    catch(Exception e){
         msg=e.getMessage();
     }
 %>
