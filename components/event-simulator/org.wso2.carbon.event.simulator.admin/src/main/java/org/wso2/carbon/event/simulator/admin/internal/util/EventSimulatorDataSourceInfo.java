@@ -112,6 +112,8 @@ public class EventSimulatorDataSourceInfo {
         try {
             dataSourceName = jsonDBConfigAndColumnStreamAttributeInfo.getString(EventSimulatorConstant.DATA_SOURCE_NAME);
             String tableName = jsonDBConfigAndColumnStreamAttributeInfo.getString(EventSimulatorConstant.TABLE_NAME);
+            long delayBetweenEventsInMilies =  jsonDBConfigAndColumnStreamAttributeInfo.getLong(EventSimulatorConstant.DELAY_BETWEEN_EVENTS_IN_MILIES);
+
             try {
                 CarbonDataSource carbonDataSource = EventSimulatorAdminvalueHolder.getDataSourceService().getDataSource(dataSourceName);
                 if (carbonDataSource != null) {

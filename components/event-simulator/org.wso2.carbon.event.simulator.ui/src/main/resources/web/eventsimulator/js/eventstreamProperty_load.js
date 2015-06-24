@@ -59,7 +59,10 @@ function showEventProperties() {
                     var streamID = eventName + ":" + eventVersion;
 
 
-                    tableRow1.innerHTML = '<tr><td colspan="2"><div id="innerDiv4"><table class="styledLeft noBorders spacer-bot" id="streamAttributeTable" style="width:100%"><tbody><tr name="streamAttributes"><td colspan="2" class="middle-header">Stream Attributes</td></tr></tbody></table></div></td></tr>';
+                    tableRow1.innerHTML = '<tr><td colspan="2"><div id="innerDiv4">' +
+                    '<table class="styledLeft noBorders spacer-bot" id="streamAttributeTable" style="width:100%">' +
+                    '<tbody><tr name="streamAttributes"><td colspan="2" class="middle-header">Stream Attributes</td>' +
+                    '</tr></tbody></table></div></td></tr>';
 
 
                     var streamAttributeTable = document.getElementById("streamAttributeTable");
@@ -82,7 +85,11 @@ function showEventProperties() {
                             var attributeName = metaData[i].localAttributeName;
 
                             var stringNameTyp = attributeName + " (" + attributeType.toLowerCase() + ")";
-                            tableRow.innerHTML = '<tr><td class="leftCol-med">' + attributeName + '(<span style="color: grey"><i>' + attributeType.toLowerCase() + '</i></span>) <span class="required">*</span> </td><td><input type="text" name="' + metaData[i].localAttributeName + '" id="' + index + '" attributeType="' + metaData[i].localAttributeType + '" class="initE" style="width:75%"> </td></tr>';
+                            tableRow.innerHTML = '<tr><td class="leftCol-med">' + attributeName +
+                            '(<span style="color: grey"><i>' + attributeType.toLowerCase() + '</i></span>) ' +
+                            '<span class="required">*</span> </td><td><input type="text" name="' +
+                            metaData[i].localAttributeName + '" id="' + index + '" attributeType="' +
+                            metaData[i].localAttributeType + '" class="initE" style="width:75%"> </td></tr>';
                             index++;
                         }
                     }
@@ -102,7 +109,11 @@ function showEventProperties() {
                             var attributeType = correlationData[j].localAttributeType;
                             var attributeName = correlationData[j].localAttributeName;
                             var stringNameTyp = attributeName + " (" + attributeType.toLowerCase() + ")";
-                            tableRow.innerHTML = '<tr><td class="leftCol-med">' + attributeName + '(<span style="color: grey"><i>' + attributeType.toLowerCase() + '</i></span>) <span class="required">*</span> </td><td><input type="text" name="' + correlationData[j].localAttributeName + '" id="' + index + '" attributeType="' + correlationData[j].localAttributeType + '" class="initE" style="width:75%"> </td></tr>';
+                            tableRow.innerHTML = '<tr><td class="leftCol-med">' + attributeName +
+                            '(<span style="color: grey"><i>' + attributeType.toLowerCase() + '</i></span>) ' +
+                            '<span class="required">*</span> </td><td><input type="text" name="' +
+                            correlationData[j].localAttributeName + '" id="' + index + '" attributeType="' +
+                            correlationData[j].localAttributeType + '" class="initE" style="width:75%"> </td></tr>';
                             index++;
 
                         }
@@ -123,7 +134,11 @@ function showEventProperties() {
                             var attributeType = payloadData[k].localAttributeType;
                             var attributeName = payloadData[k].localAttributeName;
                             var stringNameTyp = attributeName + " (" + attributeType.toLowerCase() + ")";
-                            tableRow.innerHTML = '<tr><td class="leftCol-med">' + attributeName + '(<span style="color: grey"><i>' + attributeType.toLowerCase() + '</i></span>) <span class="required">*</span>  </td><td><input type="text" name="' + payloadData[k].localAttributeName + '" id="' + index + '" attributeType="' + payloadData[k].localAttributeType + '" class="initE" style="width:75%"> </td></tr>';
+                            tableRow.innerHTML = '<tr><td class="leftCol-med">' + attributeName +
+                            '(<span style="color: grey"><i>' + attributeType.toLowerCase() +
+                            '</i></span>) <span class="required">*</span>  </td><td><input type="text" name="' +
+                            payloadData[k].localAttributeName + '" id="' + index + '" attributeType="' +
+                            payloadData[k].localAttributeType + '" class="initE" style="width:75%"> </td></tr>';
                             index++;
                         }
                     }
@@ -193,7 +208,8 @@ function showEventPropertiesForSimulator() {
                     tableRow1.innerHTML = '<tr><td colspan="2"><div id="innerDiv4">' +
                         '<table class="styledLeft noBorders spacer-bot" id="streamAttributeTable2" style="width:100%">' +
                         '<tbody>' +
-                        '<tr name="streamAttributes"><td colspan="2" class="middle-header">Map Stream Attributes with DataBase Fields</td></tr>' +
+                        '<tr name="streamAttributes"><td colspan="2" class="middle-header">' +
+                    'Map Stream Attributes with DataBase Fields</td></tr>' +
                         '<tr><td><h6></h6></td><td><h6>Table column name</h6></td></tr>' +
                         '</tbody>' +
                         '</table></div></td></tr>';
@@ -220,7 +236,11 @@ function showEventPropertiesForSimulator() {
 
                             var stringNameTyp = attributeName + " (" + attributeType.toLowerCase() + ")";
                             var newIndex = "DB"+index;
-                            tableRow.innerHTML = '<tr><td class="leftCol-med">' + attributeName + '(<span style="color: grey"><i>' + attributeType.toLowerCase() + '</i></span>) <span class="required">*</span> </td><td><input type="text" id = "'+newIndex+'" name="' + metaData[i].localAttributeName + '" attributeType="' + metaData[i].localAttributeType + '" class="initE" style="width:75%"> </td></tr>';
+                            tableRow.innerHTML = '<tr><td class="leftCol-med">' + attributeName +
+                                '(<span style="color: grey"><i>' + attributeType.toLowerCase() + '</i></span>) ' +
+                                '<span class="required">*</span> </td><td><input type="text" id = "'+newIndex+
+                                '" name="' + metaData[i].localAttributeName + '" attributeType="' +
+                                metaData[i].localAttributeType + '" class="initE" style="width:75%"> </td></tr>';
                             index++;
                         }
                     }
@@ -241,7 +261,11 @@ function showEventPropertiesForSimulator() {
                             var attributeName = correlationData[j].localAttributeName;
                             var stringNameTyp = attributeName + " (" + attributeType.toLowerCase() + ")";
                             var newIndex = "DB"+index;
-                            tableRow.innerHTML = '<tr><td class="leftCol-med">' + attributeName + '(<span style="color: grey"><i>' + attributeType.toLowerCase() + '</i></span>) <span class="required">*</span> </td><td><input type="text" id = "'+newIndex+ '"name="' + correlationData[j].localAttributeName + '" attributeType="' + correlationData[j].localAttributeType + '" class="initE" style="width:75%"> </td></tr>';
+                            tableRow.innerHTML = '<tr><td class="leftCol-med">' + attributeName +
+                            '(<span style="color: grey"><i>' + attributeType.toLowerCase() +
+                            '</i></span>) <span class="required">*</span> </td><td><input type="text" ' +
+                            'id = "'+newIndex+ '"name="' + correlationData[j].localAttributeName + '" attributeType="' +
+                            correlationData[j].localAttributeType + '" class="initE" style="width:75%"> </td></tr>';
                             index++;
 
                         }
@@ -263,13 +287,18 @@ function showEventPropertiesForSimulator() {
                             var attributeName = payloadData[k].localAttributeName;
                             var stringNameTyp = attributeName + " (" + attributeType.toLowerCase() + ")";
                             var newIndex = "DB"+index;
-                            tableRow.innerHTML = '<tr><td class="leftCol-med">' + attributeName + '(<span style="color: grey"><i>' + attributeType.toLowerCase() + '</i></span>) <span class="required">*</span>  </td><td><input type="text" id = "'+newIndex+ '"name="' + payloadData[k].localAttributeName + '" attributeType="' + payloadData[k].localAttributeType + '" class="initE" style="width:75%"> </td></tr>';
+                            tableRow.innerHTML = '<tr><td class="leftCol-med">' + attributeName +
+                                '(<span style="color: grey"><i>' + attributeType.toLowerCase() + '</i></span>) ' +
+                                '<span class="required">*</span>  </td><td><input type="text" id = "'+newIndex+ '"name="' +
+                                payloadData[k].localAttributeName + '" attributeType="' + payloadData[k].localAttributeType +
+                                '" class="initE" style="width:75%"> </td></tr>';
                             index++;
                         }
                     }
 
                     var hiddenRow = streamAttributeTable2.insertRow(streamAttributeTable2.rows.length);
-                    hiddenRow.innerHTML = '<tr><td colspan="2"><input type="hidden" id="formFields2" value="' + index + '"> </td></tr>';
+                    hiddenRow.innerHTML = '<tr><td colspan="2"><input type="hidden" id="formFields2" value="' + index +
+                    '"> </td></tr>';
 
 
                 }
@@ -297,12 +326,14 @@ function sendEvent(form) {
             if (i != index - 1) {
                 var fieldInput = document.getElementById(i);
 
-                jsonAttribute = jsonAttribute + "{\"name\":\"" + fieldInput.name + "\",\"value\":\"" + fieldInput.value + "\",\"type\":\"" + fieldInput.getAttribute("attributeType") + "\"},";
+                jsonAttribute = jsonAttribute + "{\"name\":\"" + fieldInput.name + "\",\"value\":\"" + fieldInput.value +
+                "\",\"type\":\"" + fieldInput.getAttribute("attributeType") + "\"},";
             }
             else {
                 var fieldInput = document.getElementById(i);
 
-                jsonAttribute = jsonAttribute + "{\"name\":\"" + fieldInput.name + "\",\"value\":\"" + fieldInput.value + "\",\"type\":\"" + fieldInput.getAttribute("attributeType") + "\"}";
+                jsonAttribute = jsonAttribute + "{\"name\":\"" + fieldInput.name + "\",\"value\":\"" + fieldInput.value +
+                "\",\"type\":\"" + fieldInput.getAttribute("attributeType") + "\"}";
             }
         }
 
@@ -425,21 +456,26 @@ function testRDBMConnection(databaseType){
 function getEventStreamAndDataSourceInfo(){
 
     var dataSourceName = document.getElementById("dataSourceNameId2").value;
-
     var tableName = document.getElementById("tableNameId2").value;
-
     var configurationName = document.getElementById("configurationNameId2").value;
+    var delayBetweenEventsInMilies = document.getElementById("eventSendingDelay2").value;
 
     if (dataSourceName == null || dataSourceName == "") {
         CARBON.showErrorDialog("Data Source name cannot be empty");
         return null;
-    }else if(tableName == null || tableName == ""){
+    } else if(tableName == null || tableName == ""){
         CARBON.showErrorDialog("Table name cannot be empty.");
         return null;
-    }else if(configurationName == null || configurationName == ""){
+    } else if(configurationName == null || configurationName == ""){
         CARBON.showErrorDialog("Configuration name cannot be empty.");
         return null;
-    }else if(!validateForDBSimulator()){
+    } else if(delayBetweenEventsInMilies == null || delayBetweenEventsInMilies == ""){
+        CARBON.showErrorDialog("Delay between events cannot be empty.");
+        return null;
+    } else if(delayBetweenEventsInMilies % 1 != 0){
+        CARBON.showErrorDialog("Delay between events should be a whole number.");
+        return null;
+    } else if(!validateForDBSimulator()){
         return null;
     } else {
         var selectIndex = document.getElementById("EventStreamID2").selectedIndex;
@@ -449,22 +485,29 @@ function getEventStreamAndDataSourceInfo(){
 
         var index = document.getElementById("formFields2").value;
 
-        var jsonString = "{\"streamID\":\"" + eventStreamID + "\",\"eventStreamName\":\"" + eventStreamName + "\",\"dataSource\":\"" + dataSourceName + "\",\"tableName\":\"" + tableName + "\", \"name\":\"" + configurationName + "\",\"dataSourceColumnsAndTypes\":[";
+        var jsonString = "{\"streamID\":\"" + eventStreamID + "\",\"eventStreamName\":\"" + eventStreamName +
+            "\",\"dataSource\":\"" + dataSourceName + "\",\"tableName\":\"" + tableName + "\", \"name\":\"" +
+            configurationName + "\",\"delayBetweenEventsInMilies\":" + delayBetweenEventsInMilies + ",\"dataSourceColumnsAndTypes\":[";
         var jsonAttribute = "";
 
         for (var i = 0; i < index; i++) {
             if (i != index - 1) {
                 var fieldInput = document.getElementById("DB" + i);
 
-                jsonAttribute = jsonAttribute + "{\"streamAttribute\":\"" + fieldInput.name + "\",\"columnName\":\"" + fieldInput.value + "\",\"columnType\":\"" + fieldInput.getAttribute("attributeType") + "\"},";
+                jsonAttribute = jsonAttribute + "{\"streamAttribute\":\"" + fieldInput.name + "\",\"columnName\":\"" +
+                fieldInput.value + "\",\"columnType\":\"" + fieldInput.getAttribute("attributeType") + "\"},";
             }
             else {
                 var fieldInput = document.getElementById("DB" + i);
 
-                jsonAttribute = jsonAttribute + "{\"streamAttribute\":\"" + fieldInput.name + "\",\"columnName\":\"" + fieldInput.value + "\",\"columnType\":\"" + fieldInput.getAttribute("attributeType") + "\"}";
+                jsonAttribute = jsonAttribute + "{\"streamAttribute\":\"" + fieldInput.name + "\",\"columnName\":\"" +
+                fieldInput.value + "\",\"columnType\":\"" + fieldInput.getAttribute("attributeType") + "\"}";
             }
         }
         jsonString = jsonString + jsonAttribute + "]}";
+
+
+
         return jsonString;
     }
 }

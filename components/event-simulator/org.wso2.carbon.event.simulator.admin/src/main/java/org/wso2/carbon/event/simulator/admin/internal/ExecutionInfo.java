@@ -27,6 +27,7 @@ public class ExecutionInfo {
     private String preparedCheckTableColomnsDataTypeStatement;
     private String preparedSelectStatement;
     private DataSource datasource;
+    private long delayBetweenEventsInMilies;
 
     public DataSource getDatasource() {
         return datasource;
@@ -58,5 +59,13 @@ public class ExecutionInfo {
 
     public void setPreparedCheckTableColomnsDataTypeStatement(String preparedCheckTableColomnsDataTypeStatement) {
         this.preparedCheckTableColomnsDataTypeStatement = preparedCheckTableColomnsDataTypeStatement;
+    }
+
+    public long getDelayBetweenEventsInMilies() {
+        return delayBetweenEventsInMilies;
+    }
+
+    public void setDelayBetweenEventsInMilies(long delayBetweenEventsInMilies) {
+        this.delayBetweenEventsInMilies = delayBetweenEventsInMilies;
     }
 }

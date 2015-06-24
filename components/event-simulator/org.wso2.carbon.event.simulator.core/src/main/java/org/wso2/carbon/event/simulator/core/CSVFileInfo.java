@@ -24,6 +24,7 @@ public class CSVFileInfo {
     private String fileName;
     private String streamId;
     private String separateCharacter;
+    private long delayBetweenEventsInMilies;
 
     public String getSeparateCharacter() {
         return separateCharacter;
@@ -39,6 +40,7 @@ public class CSVFileInfo {
         this.streamId =null;
 
         this.separateCharacter =null;
+        this.delayBetweenEventsInMilies = 0;
     }
 
     public String getStreamID() {
@@ -63,5 +65,13 @@ public class CSVFileInfo {
 
     public void setFileName(String fileName) {
         this.fileName = fileName;
+    }
+
+    public long getDelayBetweenEventsInMilies() {
+        return delayBetweenEventsInMilies;
+    }
+
+    public void setDelayBetweenEventsInMilies(long delayBetweenEventsInMilies) {
+        this.delayBetweenEventsInMilies = delayBetweenEventsInMilies;
     }
 }

@@ -25,6 +25,7 @@ public class DataSourceTableAndStreamInfo {
     private String eventStreamID;
     private String dataSourceColumnsAndTypes [][];
     private String eventStreamName;
+    private long delayBetweenEventsInMilies;
 
     private String filePath;
     private String fileName;
@@ -39,6 +40,7 @@ public class DataSourceTableAndStreamInfo {
         eventStreamName = null;
         fileName = null;
         filePath = null;
+        delayBetweenEventsInMilies = 0;
     }
 
     public void setConfigurationName(String configurationName){
@@ -90,7 +92,10 @@ public class DataSourceTableAndStreamInfo {
     public String getFileName(){
         return fileName;
     }
-
-
-
+    public long getDelayBetweenEventsInMilies() {
+        return delayBetweenEventsInMilies;
+    }
+    public void setDelayBetweenEventsInMilies(long delayBetweenEventsInMilies) {
+        this.delayBetweenEventsInMilies = delayBetweenEventsInMilies;
+    }
 }

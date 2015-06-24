@@ -86,6 +86,10 @@
             <td ><input type="text" id="seperateChar" class="initE" style="width:75%"></td>
         </tr>
         <tr>
+            <td class="leftCol-med">Delay between events in milliseconds<span class="required">*</span></td>
+            <td ><input type="text" id="eventSendingDelay" class="initE" style="width:75%" value="1000"></td>
+        </tr>
+        <tr>
             <td class="buttonRow" colspan="2">
                 <input type="button" value="Configure" onclick="sendConfiguration(document.getElementById('configForm'))">
             </td>

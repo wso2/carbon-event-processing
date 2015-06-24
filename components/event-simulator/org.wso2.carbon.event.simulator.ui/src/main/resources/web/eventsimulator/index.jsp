@@ -195,7 +195,7 @@
                 <table class="styledLeft">
                     <thead>
                     <tr>
-                        <th colspan="3" class="middle-header">
+                        <th colspan="4" class="middle-header">
                                             <span
                                                     style="float: left; position: relative; margin-top: 2px;">
                                                     <fmt:message key="input.by.file" />
@@ -208,6 +208,7 @@
                     <tr>
                         <th><fmt:message key="file"/> </th>
                         <th><fmt:message key="stream.configuration"/> </th>
+                        <th><fmt:message key="event.delay"/> </th>
                         <th><fmt:message key="action"/> </th>
                     </tr>
                     </thead>
@@ -217,6 +218,7 @@
                         <td><fmt:message key="no.file.has.been.uploaded"/> </td>
                         <td></td>
                         <td></td>
+                        <td></td>
                     </tr>
                     <%}
                     else{
@@ -224,18 +226,27 @@
                     %>
 
                     <tr>
-                        <td><strong><%=csvFileInfoDtosArray[k].getFileName()%>
-                        </strong></td>
-                        <% if (csvFileInfoDtosArray[k].getStreamID() != null) {%>
-                        <td><%=csvFileInfoDtosArray[k].getStreamID()%></td>
-                        <%} else {
-                        %>
-                        <td>
-                            <fmt:message key="click.configuration"/>
-                        </td>
-                        <%}%>
-                        <td>
+                        <td><strong><%=csvFileInfoDtosArray[k].getFileName()%></strong></td>
 
+                        <% if (csvFileInfoDtosArray[k].getStreamID() != null) {%>
+                            <td><%=csvFileInfoDtosArray[k].getStreamID()%></td>
+                        <%} else {
+                            %>
+                            <td>
+                                <fmt:message key="click.configuration"/>
+                            </td>
+                        <%}%>
+
+                        <% if (csvFileInfoDtosArray[k].getDelayBetweenEventsInMilies() != 0) {%>
+                            <td><%=csvFileInfoDtosArray[k].getDelayBetweenEventsInMilies()%></td>
+                            <%} else {
+                            %>
+                            <td>
+                                <fmt:message key="click.configuration"/>
+                            </td>
+                        <%}%>
+
+                        <td>
                             <%if(csvFileInfoDtosArray[k].getStreamID()!=null){%>
                             <input type="button" value="Play" onclick="sendFileDetails(
                                     '<%=csvFileInfoDtosArray[k].getFileName()%>')">
@@ -255,7 +266,7 @@
                     </tbody>
 
                     <tr>
-                        <td class="buttonRow" colspan="3">
+                        <td class="buttonRow" colspan="4">
                             <input type="file" name="csvFileName" id="csvFile" size="50"/>
                             <input name="upload" class="button registryWriteOperation" type="button"
                                    value="upload" onclick="validateUpload()"/>
@@ -295,6 +306,7 @@
                                     <th><fmt:message key="column.names"/> </th>
                                     <th><fmt:message key="stream.id"/> </th>
                                     <th><fmt:message key="stream.attributes"/> </th>
+                                    <th><fmt:message key="event.delay"/> </th>
                                     <th><fmt:message key="action"/> </th>
                                 </tr>
                                 </thead>
@@ -302,6 +314,7 @@
                                 <%if(dataSourceTableAndStreamInfoDtoArray==null){%>
                                 <tr>
                                     <td><fmt:message key="no.configuration"/> </td>
+                                    <td></td>
                                     <td></td>
                                     <td></td>
                                     <td></td>
@@ -330,9 +343,15 @@
                                         for(int i=0; i<columnArray.length;i++) {
                                             if(addedFirstColumn){
                                                 columns = columns + ",";
+                                                if((i != 0) && (i % 3 == 0)){
+                                                    columns = columns + "\n";
+                                                }
                                             }
                                             if(addedFirstAttribute){
                                                 streamAttributes = streamAttributes + ",";
+                                                if((i != 0) && (i % 3 == 0)){
+                                                    streamAttributes = streamAttributes + "\n";
+                                                }
                                             }
                                             addedFirstColumn = true;
                                             addedFirstAttribute = true;
@@ -343,7 +362,7 @@
                                     <td><%=columns%></td>
                                     <td><%=dataSourceTableAndStreamInfoDtoArray[k].getEventStreamID()%></td>
                                     <td><%=streamAttributes%></td>
-
+                                    <td><%=dataSourceTableAndStreamInfoDtoArray[k].getDelayBetweenEventsInMilies()%></td>
 
                                     <td>
 
@@ -403,6 +422,17 @@
                                     <td style="padding-left:10px">
                                         <div class="outputFields">
                                             <input type="text" name="table.name" id="tableNameId2" class="initE" style="width:75%" value="">
+                                        </div>
+                                    </td>
+                                </tr>
+
+                                <tr>
+                                    <td class="leftCol-med" style="padding-left:10px">Delay between events in milliseconds
+                                        <span class="required">*</span>
+                                    </td>
+                                    <td style="padding-left:10px">
+                                        <div class="outputFields">
+                                            <input type="text" name="table.name" id="eventSendingDelay2" class="initE" style="width:75%" value="1000">
                                         </div>
                                     </td>
                                 </tr>

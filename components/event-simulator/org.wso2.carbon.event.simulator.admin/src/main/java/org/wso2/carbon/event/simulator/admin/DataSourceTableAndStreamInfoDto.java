@@ -26,6 +26,7 @@ public class DataSourceTableAndStreamInfoDto{
     private String[] streamAtrributeNames;
     private String filePath;
     private String fileName;
+    private long delayBetweenEventsInMilies;
 
 
     public DataSourceTableAndStreamInfoDto(){
@@ -39,6 +40,7 @@ public class DataSourceTableAndStreamInfoDto{
         fileName = null;
         filePath = null;
         dataSourceName = null;
+        delayBetweenEventsInMilies = 0;
     }
 
     public void setConfigurationName(String configurationName){
@@ -91,6 +93,10 @@ public class DataSourceTableAndStreamInfoDto{
     public String getFileName(){
         return fileName;
     }
-
-
+    public long getDelayBetweenEventsInMilies() {
+        return delayBetweenEventsInMilies;
+    }
+    public void setDelayBetweenEventsInMilies(long delayBetweenEventsInMilies) {
+        this.delayBetweenEventsInMilies = delayBetweenEventsInMilies;
+    }
 }
