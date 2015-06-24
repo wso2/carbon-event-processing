@@ -235,7 +235,7 @@ public class CarbonEventProcessorService implements EventProcessorService {
                 String[] streamIdComponents = streamId.split(EventProcessorConstants.STREAM_SEPARATOR);
                 String streamName = streamIdComponents[0];
                 String streamVersion = streamIdComponents[1];
-                executionPlanConfiguration.addImportedStream(new StreamConfiguration(streamName, streamVersion,siddhiStreamName));
+                executionPlanConfiguration.addImportedStream(new StreamConfiguration(streamName, streamVersion, siddhiStreamName));
             }
             if (exportElement != null) {
                 String streamId = exportElement.getValue();
@@ -243,7 +243,7 @@ public class CarbonEventProcessorService implements EventProcessorService {
                 String[] streamIdComponents = streamId.split(EventProcessorConstants.STREAM_SEPARATOR);
                 String streamName = streamIdComponents[0];
                 String streamVersion = streamIdComponents[1];
-                executionPlanConfiguration.addExportedStream(new StreamConfiguration(streamName, streamVersion,siddhiStreamName));
+                executionPlanConfiguration.addExportedStream(new StreamConfiguration(streamName, streamVersion, siddhiStreamName));
             }
         }
 
@@ -679,7 +679,7 @@ public class CarbonEventProcessorService implements EventProcessorService {
                 EventProcessorConfigurationFilesystemInvoker.reload(executionPlanConfigurationFile.getFilePath());
             } catch (ExecutionPlanConfigurationException e) {
                 log.error("Exception occurred while trying to deploy the Execution Plan configuration file : " + new
-                        File(executionPlanConfigurationFile.getFileName()).getName()+","+e.getMessage(), e);
+                        File(executionPlanConfigurationFile.getFileName()).getName() + "," + e.getMessage(), e);
             }
         }
 
@@ -792,11 +792,17 @@ public class CarbonEventProcessorService implements EventProcessorService {
     }
 
     public void shutdown() {
-        for (Map<String, ExecutionPlan> executionPlans : tenantSpecificExecutionPlans.values()) {
-            for (ExecutionPlan executionPlan : executionPlans.values()) {
-                executionPlan.shutdown();
+
+        for (Map.Entry<Integer, ConcurrentHashMap<String, ExecutionPlan>> executionPlans : tenantSpecificExecutionPlans.entrySet()) {
+            for (ExecutionPlan executionPlan : executionPlans.getValue().values()) {
+                try {
+                    executionPlan.shutdown();
+                } catch (RuntimeException e) {
+                    log.error("Error in shutting down ExecutionPlan '" + executionPlan.getName() + "' of tenant '" + executionPlans.getKey() + "'," + e.getMessage(), e);
+                }
             }
         }
+        log.info("Successfully shutdown ExecutionPlans");
     }
 
 }

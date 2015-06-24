@@ -15,11 +15,7 @@
  */
 package org.wso2.carbon.event.processor.core.internal.listener;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.apache.log4j.Logger;
 import org.wso2.carbon.event.processor.core.ExecutionPlanConfiguration;
-import org.wso2.carbon.event.processor.core.internal.util.EventProcessorConstants;
 import org.wso2.siddhi.core.event.Event;
 import org.wso2.siddhi.core.stream.input.InputHandler;
 
@@ -27,8 +23,6 @@ import org.wso2.siddhi.core.stream.input.InputHandler;
  * Feed incoming events to Siddhi engine through Siddhi input handler
  */
 public class SiddhiInputEventDispatcher extends AbstractSiddhiInputEventDispatcher {
-    private Logger trace = Logger.getLogger(EventProcessorConstants.EVENT_TRACE_LOGGER);
-    private static Log log = LogFactory.getLog(SiddhiInputEventDispatcher.class);
 
     /**
      * Siddhi Input event handler

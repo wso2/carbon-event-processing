@@ -56,6 +56,8 @@ public interface EventProcessorConstants {
     String SIDDHIQL_EXTENSION = ".siddhiql";
 
     String EVENT_PROCESSOR = "Event Processor";
+    String EVENT_STREAM = "Event Stream";
+
     String SIDDHI_DISTRIBUTED_PROCESSING = "siddhi.enable.distributed.processing";
     String SIDDHI_SNAPSHOT_INTERVAL = "siddhi.persistence.snapshot.time.interval.minutes";
     String EP_CONFIG_FILE_EXTENSION_WITH_DOT = ".siddhiql";

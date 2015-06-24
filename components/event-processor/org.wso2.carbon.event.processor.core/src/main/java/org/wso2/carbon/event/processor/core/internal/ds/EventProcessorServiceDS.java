@@ -120,11 +120,10 @@ public class EventProcessorServiceDS {
             if (stormManagerServer != null) {
                 stormManagerServer.stop();
             }
-            EventProcessorValueHolder.getEventProcessorService().shutdown();
         } catch (RuntimeException e) {
             log.error("Error in stopping Storm Manager Service : " + e.getMessage(), e);
         }
-
+        EventProcessorValueHolder.getEventProcessorService().shutdown();
     }
 
     protected void setEventStatisticsService(EventStatisticsService eventStatisticsService) {
