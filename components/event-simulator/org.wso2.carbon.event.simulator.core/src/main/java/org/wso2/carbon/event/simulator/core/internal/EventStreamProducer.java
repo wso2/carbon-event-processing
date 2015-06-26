@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.wso2.carbon.event.simulator.core.internal.ds;
+package org.wso2.carbon.event.simulator.core.internal;
 
 
 import org.wso2.carbon.event.stream.core.EventProducer;

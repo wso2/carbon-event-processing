@@ -23,7 +23,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
-import org.wso2.carbon.event.simulator.core.internal.ds.CarbonEventSimulator;
+import org.wso2.carbon.event.simulator.core.internal.CarbonEventSimulator;
 import org.wso2.carbon.event.simulator.core.internal.ds.EventSimulatorValueHolder;
 
 import javax.xml.parsers.DocumentBuilder;

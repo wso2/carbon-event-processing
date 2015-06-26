@@ -15,6 +15,7 @@
  */
 package org.wso2.carbon.event.simulator.core.internal.ds;
 
+import org.wso2.carbon.event.simulator.core.internal.CarbonEventSimulator;
 import org.wso2.carbon.event.stream.core.EventStreamService;
 import org.wso2.carbon.ndatasource.core.DataSourceService;
 

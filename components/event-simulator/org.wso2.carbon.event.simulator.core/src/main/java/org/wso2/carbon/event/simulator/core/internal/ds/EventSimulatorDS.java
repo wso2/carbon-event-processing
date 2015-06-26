@@ -19,9 +19,9 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.osgi.service.component.ComponentContext;
 import org.wso2.carbon.event.simulator.core.EventSimulator;
+import org.wso2.carbon.event.simulator.core.internal.CarbonEventSimulator;
 import org.wso2.carbon.event.stream.core.EventStreamService;
 import org.wso2.carbon.ndatasource.core.DataSourceService;
-import org.wso2.carbon.event.simulator.core.internal.ds.EventSimulatorValueHolder;
 
 /**
  * @scr.component name="eventSimulatorService.component" immediate="true"
