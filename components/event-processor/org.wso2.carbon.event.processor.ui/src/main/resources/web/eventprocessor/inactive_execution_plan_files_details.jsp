@@ -34,9 +34,12 @@
 
     <script type="text/javascript">
         function doDelete(filePath) {
-            var theform = document.getElementById('deleteForm');
-            theform.filePath.value = filePath;
-            theform.submit();
+            CARBON.showConfirmationDialog(
+                    "Are you sure want to delete execution plan: " + filePath + "?", function () {
+                        var theform = document.getElementById('deleteForm');
+                        theform.filePath.value = filePath;
+                        theform.submit();
+                    }, null, null);
         }
     </script>
     <%
