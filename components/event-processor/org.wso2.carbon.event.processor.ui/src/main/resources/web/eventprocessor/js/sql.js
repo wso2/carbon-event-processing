@@ -229,7 +229,7 @@ CodeMirror.defineMode("sql", function (config, parserConfig) {
     // these keywords are used by all SQL dialects (however, a mode can still overwrite it)
     var sqlKeywordsWithoutSymbols = "all and as begin by contains define delete end events " +
         "every first for from full group having inner insert into join last " +
-        "left not of on or outer output partition raw return right select snapshot stream table ";
+        "left not of on or outer output partition raw return right select snapshot stream table update ";
     var sqlKeywords = ", : ? # ( ) " + sqlKeywordsWithoutSymbols;
     var builtIn = "bool double float int long object string ";
     var atoms = "false true null ";
