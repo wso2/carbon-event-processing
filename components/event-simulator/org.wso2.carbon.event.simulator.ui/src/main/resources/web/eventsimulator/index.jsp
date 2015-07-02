@@ -174,7 +174,8 @@
                     <tr>
                         <td class="buttonRow">
                             <input type="button" value="Send"
-                                   onclick="sendEvent(document.getElementById('eventStreams'))">
+                                   onclick="sendEvent(document.getElementById('eventStreams'))"/>
+                            <input id="btnClear" type="button" value="Clear"/>
                         </td>
                     </tr>
                     </tbody>
