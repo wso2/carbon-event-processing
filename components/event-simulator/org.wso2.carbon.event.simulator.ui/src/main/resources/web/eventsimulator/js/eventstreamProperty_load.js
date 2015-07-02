@@ -575,3 +575,10 @@ function saveDBConfiguration(databaseType){
         //if cassandra or other database types
     }
 }
+
+jQuery(document).ready(function() {
+    jQuery('#btnReset').click(function() {
+        //search single simulator attribute text boxes by class name initE
+        jQuery('.initE').val('');
+    });
+});
