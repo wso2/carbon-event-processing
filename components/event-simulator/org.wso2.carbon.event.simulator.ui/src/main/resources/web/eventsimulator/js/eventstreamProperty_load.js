@@ -577,7 +577,7 @@ function saveDBConfiguration(databaseType){
 }
 
 jQuery(document).ready(function() {
-    jQuery('#btnReset').click(function() {
+    jQuery('#btnClear').click(function() {
         //search single simulator attribute text boxes by class name initE
         jQuery('.initE').val('');
     });
