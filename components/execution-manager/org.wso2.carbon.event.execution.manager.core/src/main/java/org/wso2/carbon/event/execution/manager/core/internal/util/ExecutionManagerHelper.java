@@ -17,6 +17,7 @@ package org.wso2.carbon.event.execution.manager.core.internal.util;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.wso2.carbon.context.PrivilegedCarbonContext;
 import org.wso2.carbon.databridge.commons.StreamDefinition;
 import org.wso2.carbon.databridge.commons.exception.MalformedStreamDefinitionException;
 import org.wso2.carbon.databridge.commons.utils.EventDefinitionConverterUtils;
@@ -107,12 +108,16 @@ public class ExecutionManagerHelper {
      * Provide template configurations available in the given registry and given path
      *
      * @param path     where configurations are stored
-     * @param registry registry where path is available
      * @return available configurations
      */
-    public static TemplateConfiguration getConfiguration(String path, Registry registry) {
+    public static TemplateConfiguration getConfiguration(String path) {
+
+
         TemplateConfiguration templateConfiguration = null;
         try {
+            Registry registry = ExecutionManagerValueHolder.getRegistryService().getConfigSystemRegistry(PrivilegedCarbonContext
+                    .getThreadLocalCarbonContext().getTenantId());
+
             if (registry.resourceExists(path)) {
                 Resource configFile = registry.get(path);
                 if (configFile != null) {

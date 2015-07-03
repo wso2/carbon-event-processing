@@ -17,6 +17,7 @@ package org.wso2.carbon.event.execution.manager.core.internal;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.wso2.carbon.context.PrivilegedCarbonContext;
 import org.wso2.carbon.event.execution.manager.core.ExecutionManagerService;
 import org.wso2.carbon.event.execution.manager.core.internal.ds.ExecutionManagerValueHolder;
 import org.wso2.carbon.event.execution.manager.core.exception.ExecutionManagerException;
@@ -43,18 +44,10 @@ public class CarbonExecutionManagerService implements ExecutionManagerService {
     private static final Log log = LogFactory.getLog(CarbonExecutionManagerService.class);
 
     private Map<String, TemplateDomain> domains;
-    private Registry registry;
 
     public CarbonExecutionManagerService() throws ExecutionManagerException {
 
         domains = new HashMap<>();
-
-        try {
-            registry = ExecutionManagerValueHolder.getRegistryService().getConfigSystemRegistry();
-
-        } catch (RegistryException e) {
-            throw new ExecutionManagerException("Registry exception occurred when getting system registry ", e);
-        }
 
         domains = ExecutionManagerHelper.loadDomains();
     }
@@ -63,6 +56,9 @@ public class CarbonExecutionManagerService implements ExecutionManagerService {
     @Override
     public void saveConfiguration(TemplateConfiguration configuration) throws ExecutionManagerException {
         try {
+            Registry registry = ExecutionManagerValueHolder.getRegistryService()
+                    .getConfigSystemRegistry(PrivilegedCarbonContext.getThreadLocalCarbonContext().getTenantId());
+
             StringWriter fileContent = new StringWriter();
             JAXBContext jaxbContext = JAXBContext.newInstance(TemplateConfiguration.class);
             Marshaller jaxbMarshaller = jaxbContext.createMarshaller();
@@ -113,6 +109,9 @@ public class CarbonExecutionManagerService implements ExecutionManagerService {
         String domainFilePath = ExecutionManagerConstants.TEMPLATE_CONFIG_PATH
                 + File.separator + domainName;
         try {
+            Registry registry = ExecutionManagerValueHolder.getRegistryService()
+                    .getConfigSystemRegistry(PrivilegedCarbonContext.getThreadLocalCarbonContext().getTenantId());
+
             if (registry.resourceExists(domainFilePath)) {
                 Resource resource = registry.get(domainFilePath);
                 //All the resources of collection will be loaded
@@ -137,7 +136,7 @@ public class CarbonExecutionManagerService implements ExecutionManagerService {
      */
     private void loadConfigurations(String[] filePaths, Collection<TemplateConfiguration> templateConfigurations) {
         for (String filePath : filePaths) {
-            templateConfigurations.add(ExecutionManagerHelper.getConfiguration(filePath, registry));
+            templateConfigurations.add(ExecutionManagerHelper.getConfiguration(filePath));
         }
     }
 
@@ -151,7 +150,7 @@ public class CarbonExecutionManagerService implements ExecutionManagerService {
         return ExecutionManagerHelper.getConfiguration(ExecutionManagerConstants.TEMPLATE_CONFIG_PATH
                 + File.separator + domainName
                 + File.separator + configName
-                + ExecutionManagerConstants.CONFIG_FILE_EXTENSION, registry);
+                + ExecutionManagerConstants.CONFIG_FILE_EXTENSION);
     }
 
     @Override
@@ -162,6 +161,8 @@ public class CarbonExecutionManagerService implements ExecutionManagerService {
             So even one operation failed other operation will be executed
          */
         try {
+            Registry registry = ExecutionManagerValueHolder.getRegistryService()
+                    .getConfigSystemRegistry(PrivilegedCarbonContext.getThreadLocalCarbonContext().getTenantId());
 
             registry.delete(ExecutionManagerConstants.TEMPLATE_CONFIG_PATH + File.separator
                     + domainName + File.separator + configName + ExecutionManagerConstants.CONFIG_FILE_EXTENSION);
