@@ -778,7 +778,7 @@ public class CarbonEventProcessorService implements EventProcessorService {
                     .get(PrivilegedCarbonContext.getThreadLocalCarbonContext().getTenantId());
             if (executionPlanConfigurationFileList != null) {
                 for (ExecutionPlanConfigurationFile executionPlanConfigurationFile : executionPlanConfigurationFileList) {
-                    if ((executionPlanConfigurationFile.getExecutionPlanName().equals(executionPlanFileName))) {
+                    if ((executionPlanConfigurationFile.getFileName().equals(executionPlanFileName))) {
                         return true;
                     }
                 }
