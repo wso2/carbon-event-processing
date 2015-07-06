@@ -126,7 +126,7 @@ public class EventProcessorDeployer extends AbstractDeployer implements EventPro
 
                 log.info("Execution plan is deployed successfully and in active state  : " + executionPlanName);
 
-            }  catch (ExecutionPlanDependencyValidationException ex) {
+            } catch (ExecutionPlanDependencyValidationException ex) {
                 executionPlanConfigurationFile.setDependency(ex.getDependency());
                 executionPlanConfigurationFile.setDeploymentStatusMessage(ex.getMessage());
                 executionPlanConfigurationFile.setStatus(ExecutionPlanConfigurationFile.Status.WAITING_FOR_DEPENDENCY);
@@ -135,8 +135,7 @@ public class EventProcessorDeployer extends AbstractDeployer implements EventPro
                 executionPlanConfigurationFile.setFilePath(deploymentFileData.getAbsolutePath());
                 carbonEventProcessorService.addExecutionPlanConfigurationFile(executionPlanConfigurationFile);
 
-                log.info("Execution plan deployment held back and in inactive state : " + executionPlanName + ", waiting for dependency : " + ex.getDependency(),ex);
-
+                log.info("Execution plan deployment held back and in inactive state : " + executionPlanConfigurationFile.getFileName() + ", Dependency validation exception: " + ex.getMessage());
             } catch (ExecutionPlanConfigurationException ex) {
                 executionPlanConfigurationFile.setDeploymentStatusMessage(ex.getMessage());
                 executionPlanConfigurationFile.setStatus(ExecutionPlanConfigurationFile.Status.ERROR);
@@ -194,7 +193,7 @@ public class EventProcessorDeployer extends AbstractDeployer implements EventPro
             throw new ExecutionPlanConfigurationException("Could not read from file " + path + ", " + e.getMessage(), e);
         } finally {
             try {
-                if(br != null) {
+                if (br != null) {
                     br.close();
                 }
             } catch (IOException e) {
