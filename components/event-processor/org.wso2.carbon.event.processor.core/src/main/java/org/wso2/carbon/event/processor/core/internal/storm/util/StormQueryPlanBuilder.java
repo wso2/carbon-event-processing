@@ -212,7 +212,7 @@ public class StormQueryPlanBuilder {
             StormQueryConstructionException {
         String parallel = String.valueOf(holder.getParallelism());
         Boolean enforceParallelism = holder.getIsEnforced();
-        processor.setAttribute(EventProcessorConstants.NAME, name);
+        processor.setAttribute(EventProcessorConstants.NAME, name.replaceAll("\\s+", ""));
         processor.setAttribute(EventProcessorConstants.PARALLEL, parallel);
         processor.setAttribute(EventProcessorConstants.ENFORCE_PARALLELISM, String.valueOf(enforceParallelism));
     }
