@@ -210,9 +210,15 @@ public class StormQueryPlanBuilder {
      */
     private static void setAttributes(Element processor, String name, ParallelismInfoHolder holder) throws
             StormQueryConstructionException {
+
+        if (name.matches(".*\\s+.*")){
+            // Storm UI gives an error when trying to show information of bolts which contains spaces.
+            throw new StormQueryConstructionException("Query name '" + name + "' is not valid, it must not contain spaces.");
+        }
+
         String parallel = String.valueOf(holder.getParallelism());
         Boolean enforceParallelism = holder.getIsEnforced();
-        processor.setAttribute(EventProcessorConstants.NAME, name.replaceAll("\\s+", ""));
+        processor.setAttribute(EventProcessorConstants.NAME, name);
         processor.setAttribute(EventProcessorConstants.PARALLEL, parallel);
         processor.setAttribute(EventProcessorConstants.ENFORCE_PARALLELISM, String.valueOf(enforceParallelism));
     }
