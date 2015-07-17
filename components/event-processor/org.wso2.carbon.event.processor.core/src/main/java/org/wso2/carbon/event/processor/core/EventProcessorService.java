@@ -53,7 +53,7 @@ public interface EventProcessorService {
     /**
      * Edits execution plan from the system
      *
-     * @param executionPlan     the execution plan configuration as an XML string
+     * @param executionPlan     the execution plan as a string
      * @param executionPlanName the name of the execution plan
      */
     public void editActiveExecutionPlan(String executionPlan,
@@ -64,7 +64,7 @@ public interface EventProcessorService {
     /**
      * Edits execution plan from the system
      *
-     * @param executionPlan the execution plan configuration as an XML string
+     * @param executionPlan the execution plan as a string
      * @param fileName      filename of the configuration for this execution plan
      */
     public void editInactiveExecutionPlan(String executionPlan,
@@ -75,7 +75,7 @@ public interface EventProcessorService {
      * Returns the content of the execution plan identified by the name as an XML string
      *
      * @param name the name of the execution plan
-     * @return the content of the exeuction plan configuration
+     * @return the content of the execution plan configuration
      * @throws ExecutionPlanConfigurationException
      */
     public String getActiveExecutionPlan(String name)
