@@ -92,7 +92,7 @@ public class EventPublisherBolt extends BaseBasicBolt {
 
         Object[] dataArray = tuple.getValues().toArray();
         long timestamp = (Long) dataArray[dataArray.length - 1];
-        dataArray = ArrayUtils.removeElement(dataArray, timestamp);
+        dataArray = ArrayUtils.remove(dataArray, dataArray.length - 1);
 
         StreamDefinition streamDefinition = streamIdToDefinitionMap.get(tuple.getSourceStreamId());
         if (streamDefinition != null) {
