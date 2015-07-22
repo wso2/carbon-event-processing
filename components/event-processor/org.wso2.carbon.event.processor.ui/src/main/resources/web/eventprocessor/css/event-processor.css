@@ -134,3 +134,19 @@ h6 {
 .siddhiStreamDefParams {
     margin-left: 20px;
 }
+
+div.icon-nolink-nofloat {
+    background-image: url(../images/default-menu-icon.gif);
+    background-repeat: no-repeat;
+    background-position: left top;
+    padding-left: 20px !important;
+    padding-bottom: 2px;
+    line-height: 17px;
+    height: 17px;
+    margin-left: 10px;
+    margin-right: 20px !important;
+    margin-top: 5px;
+    margin-bottom: 3px;
+    white-space: nowrap;
+    display: block;
+}
