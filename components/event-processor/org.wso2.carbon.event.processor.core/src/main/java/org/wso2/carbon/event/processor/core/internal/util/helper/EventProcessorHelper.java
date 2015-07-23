@@ -18,6 +18,8 @@ package org.wso2.carbon.event.processor.core.internal.util.helper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.wso2.carbon.context.PrivilegedCarbonContext;
+import org.wso2.carbon.databridge.commons.Attribute;
+import org.wso2.carbon.databridge.commons.AttributeType;
 import org.wso2.carbon.databridge.commons.StreamDefinition;
 import org.wso2.carbon.event.processor.core.exception.ExecutionPlanConfigurationException;
 import org.wso2.carbon.event.processor.core.exception.ExecutionPlanDependencyValidationException;
@@ -31,6 +33,7 @@ import org.wso2.carbon.ndatasource.core.DataSourceManager;
 import org.wso2.siddhi.core.SiddhiManager;
 import org.wso2.siddhi.query.api.ExecutionPlan;
 import org.wso2.siddhi.query.api.annotation.Element;
+import org.wso2.siddhi.query.api.exception.AttributeNotExistException;
 import org.wso2.siddhi.query.api.util.AnnotationHelper;
 import org.wso2.siddhi.query.compiler.SiddhiCompiler;
 
@@ -93,7 +96,8 @@ public class EventProcessorHelper {
             throw new ExecutionPlanConfigurationException("Execution plan name '" + planName + "' contains whitespaces. Please remove whitespaces.");
         }
 
-        for (Map.Entry<String, org.wso2.siddhi.query.api.definition.StreamDefinition> entry : parsedExecPlan.getStreamDefinitionMap().entrySet()) {
+        Map<String, org.wso2.siddhi.query.api.definition.StreamDefinition> streamDefMap = parsedExecPlan.getStreamDefinitionMap();
+        for (Map.Entry<String, org.wso2.siddhi.query.api.definition.StreamDefinition> entry : streamDefMap.entrySet()) {
             Element importElement = AnnotationHelper.getAnnotationElement(EventProcessorConstants.ANNOTATION_IMPORT, null, entry.getValue().getAnnotations());
             Element exportElement = AnnotationHelper.getAnnotationElement(EventProcessorConstants.ANNOTATION_EXPORT, null, entry.getValue().getAnnotations());
             if (importElement != null && exportElement != null) {
@@ -133,7 +137,7 @@ public class EventProcessorHelper {
                     throw new ExecutionPlanConfigurationException("Invalid stream version [" + streamIdComponents[1] + "] for stream name " + streamIdComponents[0] + " in execution plan: " + planName +
                             ". Stream version should match the regex '" + EventProcessorConstants.STREAM_VER_REGEX + "'");
                 }
-                validateIfStreamExists(streamIdComponents[0], streamIdComponents[1]);     // check if each Imported/Exported stream has actually being defined
+                validateSiddhiStreamWithDatabridgeStream(streamIdComponents[0], streamIdComponents[1], entry.getValue());
                 if (exportedStreams.contains(importElementValue)) {                                   // check if same stream has been imported and exported.
                     throw new ExecutionPlanConfigurationException("Imported stream '" + importElementValue + "' is also among the exported streams. Hence the execution plan is invalid");
                 }
@@ -172,7 +176,7 @@ public class EventProcessorHelper {
                     throw new ExecutionPlanConfigurationException("Invalid stream version [" + streamIdComponents[1] + "] for stream name " + streamIdComponents[0] + " in execution plan: " + planName +
                             ". Stream version should match the regex '" + EventProcessorConstants.STREAM_VER_REGEX + "'");
                 }
-                validateIfStreamExists(streamIdComponents[0], streamIdComponents[1]);
+                validateSiddhiStreamWithDatabridgeStream(streamIdComponents[0], streamIdComponents[1], entry.getValue());
                 if (importedStreams.contains(exportElementValue)) {
                     throw new ExecutionPlanConfigurationException("Exported stream '" + exportElementValue + "' is also among the imported streams. Hence the execution plan is invalid");
                 }
@@ -190,22 +194,114 @@ public class EventProcessorHelper {
         }
     }
 
-
-    private static boolean validateIfStreamExists(String streamName, String streamVersion)
+    private static boolean validateSiddhiStreamWithDatabridgeStream(String streamName, String streamVersion,
+                                                                    org.wso2.siddhi.query.api.definition.StreamDefinition siddhiStreamDefinition)
             throws ExecutionPlanConfigurationException, ExecutionPlanDependencyValidationException {
-
+        if (siddhiStreamDefinition == null) {
+            throw new ExecutionPlanDependencyValidationException(streamName + EventProcessorConstants.STREAM_SEPARATOR
+                    + streamVersion, "Cannot validate null Siddhi stream for the stream: " + streamName
+                    + EventProcessorConstants.STREAM_SEPARATOR + streamVersion + " ");
+        }
         EventStreamService eventStreamService = EventProcessorValueHolder.getEventStreamService();
         try {
             StreamDefinition streamDefinition = eventStreamService.getStreamDefinition(streamName, streamVersion);
             if (streamDefinition != null) {
+                String siddhiAttributeName;
+                int attributeCount = 0;
+                int streamSize = (streamDefinition.getMetaData() == null ? 0 : streamDefinition.getMetaData().size())
+                        + (streamDefinition.getCorrelationData() == null ? 0 : streamDefinition.getCorrelationData().size())
+                        + (streamDefinition.getPayloadData() == null ? 0 : streamDefinition.getPayloadData().size());
+                if (siddhiStreamDefinition.getAttributeList().size() != streamSize) {
+                    throw new ExecutionPlanDependencyValidationException(streamName + EventProcessorConstants.STREAM_SEPARATOR
+                            + streamVersion, "No of attributes in stream " + streamName + EventProcessorConstants.STREAM_SEPARATOR + streamVersion
+                            + " do not match the no of attributes in Siddhi stream");
+                }
+                if (streamDefinition.getMetaData() != null) {
+                    for (Attribute attribute : streamDefinition.getMetaData()) {
+                        siddhiAttributeName = EventProcessorConstants.META_PREFIX + attribute.getName();
+                        org.wso2.siddhi.query.api.definition.Attribute.Type type = siddhiStreamDefinition.getAttributeType(
+                                siddhiAttributeName);
+                        // null check for type not required since an exception is thrown by Siddhi
+                        // StreamDefinition.getAttributeType() method for non-existent attributes
+                        if (siddhiStreamDefinition.getAttributePosition(siddhiAttributeName) != attributeCount++) {
+                            throw new ExecutionPlanDependencyValidationException(streamName + EventProcessorConstants.STREAM_SEPARATOR
+                                    + streamVersion, "Stream " + streamName + EventProcessorConstants.STREAM_SEPARATOR + streamVersion
+                                    + "; Attribute positions do not match for attribute: " + attribute.getName());
+                        }
+                        if (!isMatchingType(type, attribute.getType())) {
+                            throw new ExecutionPlanDependencyValidationException(streamName + EventProcessorConstants.STREAM_SEPARATOR
+                                    + streamVersion, "Stream " + streamName + EventProcessorConstants.STREAM_SEPARATOR + streamVersion
+                                    + "; Type mismatch for attribute: " + attribute.getName());
+                        }
+                    }
+                }
+                if (streamDefinition.getCorrelationData() != null) {
+                    for (Attribute attribute : streamDefinition.getCorrelationData()) {
+                        siddhiAttributeName = EventProcessorConstants.CORRELATION_PREFIX + attribute.getName();
+                        org.wso2.siddhi.query.api.definition.Attribute.Type type = siddhiStreamDefinition.getAttributeType(
+                                siddhiAttributeName);
+                        // null check for type not required since an exception is thrown by Siddhi
+                        // StreamDefinition.getAttributeType() method for non-existent attributes
+                        if (siddhiStreamDefinition.getAttributePosition(siddhiAttributeName) != attributeCount++) {
+                            throw new ExecutionPlanDependencyValidationException(streamName + EventProcessorConstants.STREAM_SEPARATOR
+                                    + streamVersion, "Stream " + streamName + EventProcessorConstants.STREAM_SEPARATOR + streamVersion
+                                    + "; Attribute positions do not match for attribute: " + attribute.getName());
+                        }
+                        if (!isMatchingType(type, attribute.getType())) {
+                            throw new ExecutionPlanDependencyValidationException(streamName + EventProcessorConstants.STREAM_SEPARATOR
+                                    + streamVersion, "Stream " + streamName + EventProcessorConstants.STREAM_SEPARATOR + streamVersion
+                                    + "; Type mismatch for attribute: " + attribute.getName());
+                        }
+                    }
+                }
+                if (streamDefinition.getPayloadData() != null) {
+                    for (Attribute attribute : streamDefinition.getPayloadData()) {
+                        siddhiAttributeName = attribute.getName();
+                        org.wso2.siddhi.query.api.definition.Attribute.Type type = siddhiStreamDefinition.getAttributeType(
+                                siddhiAttributeName);
+                        // null check for type not required since an exception is thrown by Siddhi
+                        // StreamDefinition.getAttributeType() method for non-existent attributes
+                        if (siddhiStreamDefinition.getAttributePosition(siddhiAttributeName) != attributeCount++) {
+                            throw new ExecutionPlanDependencyValidationException(streamName + EventProcessorConstants.STREAM_SEPARATOR
+                                    + streamVersion, "Stream " + streamName + EventProcessorConstants.STREAM_SEPARATOR + streamVersion
+                                    + "; Attribute positions do not match for attribute: " + attribute.getName());
+                        }
+                        if (!isMatchingType(type, attribute.getType())) {
+                            throw new ExecutionPlanDependencyValidationException(streamName + EventProcessorConstants.STREAM_SEPARATOR
+                                    + streamVersion, "Stream " + streamName + EventProcessorConstants.STREAM_SEPARATOR + streamVersion
+                                    + "; Type mismatch for attribute: " + attribute.getName());
+                        }
+                    }
+                }
                 return true;
             }
         } catch (EventStreamConfigurationException e) {
             throw new ExecutionPlanConfigurationException("Error while validating stream definition with store : " + e.getMessage(), e);
+        } catch (AttributeNotExistException e) {
+            throw new ExecutionPlanDependencyValidationException(streamName + EventProcessorConstants.STREAM_SEPARATOR + streamVersion,
+                    e.getMessage());
         }
-        throw new ExecutionPlanDependencyValidationException(streamName + EventProcessorConstants.STREAM_SEPARATOR + streamVersion, "Stream " + streamName + EventProcessorConstants.STREAM_SEPARATOR + streamVersion + " does not exist");
+        throw new ExecutionPlanDependencyValidationException(streamName + EventProcessorConstants.STREAM_SEPARATOR + streamVersion,
+                "Stream " + streamName + EventProcessorConstants.STREAM_SEPARATOR + streamVersion + " does not exist");
+    }
 
-
+    private static boolean isMatchingType(org.wso2.siddhi.query.api.definition.Attribute.Type siddhiType, AttributeType databridgeType) {
+        switch (siddhiType) {
+            case BOOL:
+                return databridgeType == AttributeType.BOOL;
+            case STRING:
+                return databridgeType == AttributeType.STRING;
+            case DOUBLE:
+                return databridgeType == AttributeType.DOUBLE;
+            case FLOAT:
+                return databridgeType == AttributeType.FLOAT;
+            case INT:
+                return databridgeType == AttributeType.INT;
+            case LONG:
+                return databridgeType == AttributeType.LONG;
+            default:
+                return false;
+        }
     }
 
     /**

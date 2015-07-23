@@ -64,6 +64,8 @@ public interface EventProcessorConstants {
 
     String META = "meta";
     String CORRELATION = "correlation";
+    String META_PREFIX = "meta_";
+    String CORRELATION_PREFIX = "correlation_";
 
     String HAZELCAST_INSTANCE = "hazelcast.instance";
 
