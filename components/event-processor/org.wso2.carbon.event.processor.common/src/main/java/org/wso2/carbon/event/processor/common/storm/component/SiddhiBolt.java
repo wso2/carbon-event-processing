@@ -74,7 +74,7 @@ public class SiddhiBolt extends BaseBasicBolt {
      *
      * @param inputStreamDefinitions  - All stream and partition inputStreamDefinitions
      * @param query                   - Siddhi query
-     * @param outputSiddhiDefinitions
+     * @param outputSiddhiDefinitions - The names of streams that will be output from this particular bolt
      */
     public SiddhiBolt(String name, List<String> inputStreamDefinitions, String query,
                       List<String> outputSiddhiDefinitions, String executionPlanName, int tenantId) {
