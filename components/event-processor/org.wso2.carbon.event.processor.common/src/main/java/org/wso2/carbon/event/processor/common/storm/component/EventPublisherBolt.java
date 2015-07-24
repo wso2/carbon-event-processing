@@ -75,7 +75,7 @@ public class EventPublisherBolt extends BaseBasicBolt {
         this.query = query;
         this.executionPlanName = executionPlanName;
         this.tenantId = tenantId;
-        this.logPrefix = "[" + tenantId + ":" + executionPlanName + ":" + "Event Publisher Bolt" + "] ";
+        this.logPrefix = "[" + tenantId + ":" + executionPlanName + ":" + "EventPublisherBolt]";
 
     }
 
@@ -85,6 +85,7 @@ public class EventPublisherBolt extends BaseBasicBolt {
             log.debug(logPrefix + "Received Event: " + tuple.getSourceStreamId() + ":" + Arrays.deepToString(tuple
                     .getValues().toArray()));
         }
+
         this.collector = basicOutputCollector;
         if (!initialized) {
             init();
@@ -92,7 +93,7 @@ public class EventPublisherBolt extends BaseBasicBolt {
 
         Object[] dataArray = tuple.getValues().toArray();
         long timestamp = (Long) dataArray[dataArray.length - 1];
-        dataArray = ArrayUtils.removeElement(dataArray, timestamp);
+        dataArray = ArrayUtils.remove(dataArray, dataArray.length - 1);
 
         StreamDefinition streamDefinition = streamIdToDefinitionMap.get(tuple.getSourceStreamId());
         if (streamDefinition != null) {

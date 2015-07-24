@@ -64,9 +64,13 @@ public class AsyncEventPublisher implements EventHandler<AsynchronousEventBuffer
 
     private TCPEventPublisher tcpEventPublisher = null;
     private EndpointConnectionCreator endpointConnectionCreator;
+    // TODO : make the buffer size configurable
     private AsynchronousEventBuffer eventSendBuffer = new AsynchronousEventBuffer<Object[]>(1024, this);
 
     private boolean shutdown = false;
+
+    private ThroughputProbe inputThroughputProbe;
+    private ThroughputProbe publishThroughputProbe;
 
     public AsyncEventPublisher(DestinationType destinationType, Set<StreamDefinition> streams,
                                List<HostAndPort> managerServiceEndpoints,
@@ -78,8 +82,8 @@ public class AsyncEventPublisher implements EventHandler<AsynchronousEventBuffer
         this.managerServiceEndpoints = managerServiceEndpoints;
         this.stormDeploymentConfig = stormDeploymentConfig;
         this.endpointConnectionCreator = new EndpointConnectionCreator();
-        this.destinationTypeString = (destinationType == DestinationType.STORM_RECEIVER) ? "Storm Receiver" : "CEP Publisher";
-        this.publisherTypeString = (destinationType == DestinationType.STORM_RECEIVER) ? "CEP Receiver" : "Publisher Bolt";
+        this.destinationTypeString = (destinationType == DestinationType.STORM_RECEIVER) ? "StormReceiver" : "CEPPublisher";
+        this.publisherTypeString = (destinationType == DestinationType.STORM_RECEIVER) ? "CEPReceiver" : "PublisherBolt";
         this.logPrefix = "[" + tenantId + ":" + executionPlanName + ":" + publisherTypeString + "] ";
     }
 
@@ -99,6 +103,12 @@ public class AsyncEventPublisher implements EventHandler<AsynchronousEventBuffer
                 Thread thread = new Thread(endpointConnectionCreator);
                 thread.start();
             }
+            inputThroughputProbe = new ThroughputProbe(logPrefix + "-In", 10);
+            publishThroughputProbe = new ThroughputProbe(logPrefix + " -Publish", 10);
+
+            inputThroughputProbe.startSampling();
+            publishThroughputProbe.startSampling();
+
         } catch (SocketException e) {
             log.error(logPrefix + "Error while trying to obtain this host IP address", e);
         }
@@ -113,6 +123,7 @@ public class AsyncEventPublisher implements EventHandler<AsynchronousEventBuffer
      */
     public void sendEvent(Object[] eventData, long timestamp, String streamId) {
         eventSendBuffer.addEvent(eventData, timestamp, streamId);
+        inputThroughputProbe.update();
     }
 
     /**
@@ -144,6 +155,8 @@ public class AsyncEventPublisher implements EventHandler<AsynchronousEventBuffer
         // TODO : comment on message lost of the last batch
         try {
             tcpEventPublisher.sendEvent(dataHolder.getStreamId(), dataHolder.getTimestamp(), (Object[]) dataHolder.getData(), endOfBatch);
+            publishThroughputProbe.update();
+
         } catch (IOException e) {
             log.error(logPrefix + "Error while trying to send event to " + destinationTypeString + " at " +
                     tcpEventPublisher.getHostUrl(), e);
@@ -391,6 +404,8 @@ class AsynchronousEventBuffer<Type> {
     }
 
     public void addEvent(Type data, long timestamp, String streamId) {
+        //TODO : Make this non blocking. Otherwise this bolt will get stuck and will cause the storm to restart the worker
+        // due to heart beat miss. Use try next.
         long sequenceNo = ringBuffer.next();
         try {
             DataHolder existingHolder = ringBuffer.get(sequenceNo);

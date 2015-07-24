@@ -50,7 +50,7 @@ public class ThroughputProbe extends TimerTask {
      */
     @Override
     public void run() {
-        if (log.isDebugEnabled()){
+        //if (log.isDebugEnabled()){
             if (totalEventCount > 0){
                 double throughput = count / samplingRateInSeconds;
 
@@ -73,6 +73,6 @@ public class ThroughputProbe extends TimerTask {
 
                 count = 0l;
             }
-        }
+        //}
     }
 }
