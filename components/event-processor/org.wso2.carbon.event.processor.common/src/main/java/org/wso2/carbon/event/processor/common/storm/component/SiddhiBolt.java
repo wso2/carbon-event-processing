@@ -72,7 +72,7 @@ public class SiddhiBolt extends BaseBasicBolt {
      *
      * @param inputStreamDefinitions  - All stream and partition inputStreamDefinitions
      * @param query                   - Siddhi query
-     * @param outputSiddhiDefinitions
+     * @param outputSiddhiDefinitions - The names of streams that will be output from this particular bolt
      */
     public SiddhiBolt(String name, List<String> inputStreamDefinitions, String query,
                       List<String> outputSiddhiDefinitions, String executionPlanName, int tenantId) {
@@ -146,7 +146,7 @@ public class SiddhiBolt extends BaseBasicBolt {
             InputHandler inputHandler = executionPlanRuntime.getInputHandler(tuple.getSourceStreamId());
             Object[] dataArray = tuple.getValues().toArray();
             long timestamp = (Long) dataArray[dataArray.length - 1];
-            dataArray = ArrayUtils.removeElement(dataArray, timestamp);
+            dataArray = ArrayUtils.remove(dataArray, dataArray.length - 1);
             if (log.isDebugEnabled()) {
                 log.debug(logPrefix + "Received Event: " + tuple.getSourceStreamId() + ":" + Arrays.deepToString(dataArray) + "@" + timestamp);
             }
