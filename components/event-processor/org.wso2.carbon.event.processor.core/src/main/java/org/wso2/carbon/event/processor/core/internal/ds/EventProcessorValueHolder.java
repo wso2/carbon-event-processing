@@ -16,6 +16,7 @@
 package org.wso2.carbon.event.processor.core.internal.ds;
 
 import com.hazelcast.core.HazelcastInstance;
+import org.apache.axis2.context.ConfigurationContext;
 import org.wso2.carbon.base.api.ServerConfigurationService;
 import org.wso2.carbon.event.processor.core.internal.CarbonEventProcessorManagementService;
 import org.wso2.carbon.event.processor.core.internal.CarbonEventProcessorService;
@@ -30,6 +31,8 @@ import org.wso2.carbon.ndatasource.core.DataSourceService;
 import org.wso2.carbon.user.core.UserRealm;
 import org.wso2.carbon.utils.ConfigurationContextService;
 import org.wso2.siddhi.core.SiddhiManager;
+
+import java.util.concurrent.ConcurrentHashMap;
 
 public class EventProcessorValueHolder {
     private static CarbonEventProcessorService eventProcessorService;
@@ -47,6 +50,7 @@ public class EventProcessorValueHolder {
     private static CarbonEventProcessorManagementService carbonEventProcessorManagementService;
     private static SiddhiManager siddhiManager;
     private static StormTopologyManager stormTopologyManager;
+    private static ConcurrentHashMap<Integer, ConfigurationContext> tenantConfigs = new ConcurrentHashMap<>();
 
     public static SiddhiManager getSiddhiManager() {
         return siddhiManager;
@@ -189,5 +193,13 @@ public class EventProcessorValueHolder {
 
     public static void registerProcessorManagementService(CarbonEventProcessorManagementService eventProcessorManagementService) {
         EventProcessorValueHolder.carbonEventProcessorManagementService = eventProcessorManagementService;
+    }
+
+    public static void addTenantConfig(int tenantId, ConfigurationContext configurationContext){
+        tenantConfigs.putIfAbsent(tenantId, configurationContext);
+    }
+
+    public static ConfigurationContext getTenantConfig(int tenantId){
+        return tenantConfigs.get(tenantId);
     }
 }
