@@ -15,6 +15,7 @@
  */
 package org.wso2.carbon.event.processor.core.internal.util;
 
+import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -22,6 +23,7 @@ import org.apache.xml.serialize.OutputFormat;
 import org.apache.xml.serialize.XMLSerializer;
 import org.w3c.dom.Document;
 import org.wso2.carbon.context.CarbonContext;
+import org.wso2.carbon.context.PrivilegedCarbonContext;
 import org.wso2.carbon.core.multitenancy.utils.TenantAxisUtils;
 import org.wso2.carbon.databridge.commons.AttributeType;
 import org.wso2.carbon.databridge.commons.StreamDefinition;
@@ -44,9 +46,12 @@ import java.io.StringWriter;
 import java.io.Writer;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class EventProcessorUtil {
     private static Log log = LogFactory.getLog(EventProcessorUtil.class);
+
+    private static ConcurrentHashMap<Integer, ConfigurationContext> tenantConfigs = new ConcurrentHashMap<>();
 
     public static StreamDefinition convertToDatabridgeStreamDefinition(
             org.wso2.siddhi.query.api.definition.StreamDefinition siddhiStreamDefinition,
@@ -289,11 +294,20 @@ public class EventProcessorUtil {
             axisConfiguration = EventProcessorValueHolder.getConfigurationContext().
                     getServerConfigContext().getAxisConfiguration();
         } else {
-            axisConfiguration = TenantAxisUtils.getTenantAxisConfiguration(CarbonContext.
-                            getThreadLocalCarbonContext().getTenantDomain(),
-                    EventProcessorValueHolder.getConfigurationContext().
-                            getServerConfigContext());
+            ConfigurationContext configurationContext = tenantConfigs.get(PrivilegedCarbonContext.getThreadLocalCarbonContext().getTenantId());
+            if(configurationContext != null){
+                axisConfiguration = configurationContext.getAxisConfiguration();
+            }else{
+                axisConfiguration = TenantAxisUtils.getTenantAxisConfiguration(
+                        CarbonContext.getThreadLocalCarbonContext().getTenantDomain(),
+                        EventProcessorValueHolder.getConfigurationContext().getServerConfigContext());
+            }
         }
         return axisConfiguration;
+    }
+
+
+    public static void addTenantConfig(int tenantId, ConfigurationContext configurationContext){
+        tenantConfigs.putIfAbsent(tenantId, configurationContext);
     }
 }
