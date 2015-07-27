@@ -28,7 +28,6 @@ import org.wso2.carbon.event.processor.core.exception.ExecutionPlanConfiguration
 import org.wso2.carbon.event.processor.core.exception.ExecutionPlanDependencyValidationException;
 import org.wso2.carbon.event.processor.core.internal.CarbonEventProcessorService;
 import org.wso2.carbon.event.processor.core.internal.ds.EventProcessorValueHolder;
-import org.wso2.carbon.event.processor.core.internal.util.EventProcessorUtil;
 import org.wso2.carbon.event.processor.core.internal.util.helper.EventProcessorHelper;
 
 import java.io.*;
@@ -61,6 +60,7 @@ public class EventProcessorDeployer extends AbstractDeployer implements EventPro
         try {
             String path = deploymentFileData.getAbsolutePath();
             EventProcessorValueHolder.addTenantConfig(PrivilegedCarbonContext.getThreadLocalCarbonContext().getTenantId(), configurationContext);
+
             if (!deployedExecutionPlanFilePaths.contains(path)) {
                 try {
                     processDeploy(deploymentFileData);
