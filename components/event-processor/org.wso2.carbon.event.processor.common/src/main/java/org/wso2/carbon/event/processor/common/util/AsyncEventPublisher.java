@@ -168,14 +168,14 @@ public class AsyncEventPublisher implements EventHandler<AsynchronousEventBuffer
     }
 
     private void resetTCPEventPublisher() {
-        tcpEventPublisher.terminate();
+        tcpEventPublisher.shutdown();
         tcpEventPublisher = null;
     }
 
     @Override
     protected void finalize() {
         if (tcpEventPublisher != null) {
-            tcpEventPublisher.terminate();
+            tcpEventPublisher.shutdown();
         }
     }
 
