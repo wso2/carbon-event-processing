@@ -29,6 +29,7 @@ import org.wso2.carbon.databridge.commons.AttributeType;
 import org.wso2.carbon.databridge.commons.StreamDefinition;
 import org.wso2.carbon.databridge.commons.exception.MalformedStreamDefinitionException;
 import org.wso2.carbon.event.processor.core.StreamConfiguration;
+import org.wso2.carbon.event.processor.core.exception.ExcecutionPlanRuntimeException;
 import org.wso2.carbon.event.processor.core.exception.ExecutionPlanConfigurationException;
 import org.wso2.carbon.event.processor.core.internal.ds.EventProcessorValueHolder;
 import org.wso2.carbon.utils.multitenancy.MultitenantConstants;
@@ -50,8 +51,6 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public class EventProcessorUtil {
     private static Log log = LogFactory.getLog(EventProcessorUtil.class);
-
-    private static ConcurrentHashMap<Integer, ConfigurationContext> tenantConfigs = new ConcurrentHashMap<>();
 
     public static StreamDefinition convertToDatabridgeStreamDefinition(
             org.wso2.siddhi.query.api.definition.StreamDefinition siddhiStreamDefinition,
@@ -294,20 +293,13 @@ public class EventProcessorUtil {
             axisConfiguration = EventProcessorValueHolder.getConfigurationContext().
                     getServerConfigContext().getAxisConfiguration();
         } else {
-            ConfigurationContext configurationContext = tenantConfigs.get(PrivilegedCarbonContext.getThreadLocalCarbonContext().getTenantId());
+            ConfigurationContext configurationContext = EventProcessorValueHolder.getTenantConfig(PrivilegedCarbonContext.getThreadLocalCarbonContext().getTenantId());
             if(configurationContext != null){
                 axisConfiguration = configurationContext.getAxisConfiguration();
             }else{
-                axisConfiguration = TenantAxisUtils.getTenantAxisConfiguration(
-                        CarbonContext.getThreadLocalCarbonContext().getTenantDomain(),
-                        EventProcessorValueHolder.getConfigurationContext().getServerConfigContext());
+                throw new ExcecutionPlanRuntimeException("Tenant configuration not found");
             }
         }
         return axisConfiguration;
-    }
-
-
-    public static void addTenantConfig(int tenantId, ConfigurationContext configurationContext){
-        tenantConfigs.putIfAbsent(tenantId, configurationContext);
     }
 }
