@@ -31,6 +31,7 @@ import org.wso2.carbon.event.processor.common.storm.manager.service.StormManager
 import org.wso2.carbon.event.processor.common.storm.manager.service.exception.EndpointNotFoundException;
 import org.wso2.carbon.event.processor.common.storm.manager.service.exception.NotStormManagerException;
 import org.wso2.carbon.event.processor.manager.commons.transport.client.TCPEventPublisher;
+import org.wso2.carbon.event.processor.manager.commons.transport.server.ConnectionCallback;
 import org.wso2.carbon.event.processor.manager.commons.utils.HostAndPort;
 import org.wso2.carbon.event.processor.manager.commons.utils.Utils;
 import org.wso2.carbon.event.processor.manager.core.config.DistributedConfiguration;
@@ -62,21 +63,35 @@ public class AsyncEventPublisher implements EventHandler<AsynchronousEventBuffer
     private List<HostAndPort> managerServiceEndpoints;
     private DistributedConfiguration stormDeploymentConfig;
 
+    private ConnectionCallback connectionCallback;
+
     private TCPEventPublisher tcpEventPublisher = null;
     private EndpointConnectionCreator endpointConnectionCreator;
     private AsynchronousEventBuffer eventSendBuffer = new AsynchronousEventBuffer<Object[]>(1024, this);
 
     private boolean shutdown = false;
 
+    /**
+     *
+     * @param destinationType
+     * @param streams
+     * @param managerServiceEndpoints
+     * @param executionPlanName
+     * @param tenantId
+     * @param stormDeploymentConfig
+     * @param connectionCallback is a callback, invoked on connect() and disconnect() methods of TCPEventPublisher. Set to null if the callback is not needed.
+     */
     public AsyncEventPublisher(DestinationType destinationType, Set<StreamDefinition> streams,
                                List<HostAndPort> managerServiceEndpoints,
-                               String executionPlanName, int tenantId, DistributedConfiguration stormDeploymentConfig) {
+                               String executionPlanName, int tenantId, DistributedConfiguration stormDeploymentConfig,
+                               ConnectionCallback connectionCallback) {
         this.destinationType = destinationType;
         this.streams = streams;
         this.executionPlanName = executionPlanName;
         this.tenantId = tenantId;
         this.managerServiceEndpoints = managerServiceEndpoints;
         this.stormDeploymentConfig = stormDeploymentConfig;
+        this.connectionCallback = connectionCallback;
         this.endpointConnectionCreator = new EndpointConnectionCreator();
         this.destinationTypeString = (destinationType == DestinationType.STORM_RECEIVER) ? "Storm Receiver" : "CEP Publisher";
         this.publisherTypeString = (destinationType == DestinationType.STORM_RECEIVER) ? "CEP Receiver" : "Publisher Bolt";
@@ -298,14 +313,13 @@ public class AsyncEventPublisher implements EventHandler<AsynchronousEventBuffer
             String endpoint = endpointHostPort;
             do {
                 try {
-                    tcpEventPublisher = new TCPEventPublisher(endpoint, true);
+                    tcpEventPublisher = new TCPEventPublisher(endpoint, true, connectionCallback);
                     StringBuilder streamsIDs = new StringBuilder();
 
                     for (StreamDefinition siddhiStreamDefinition : streams) {
                         tcpEventPublisher.addStreamDefinition(siddhiStreamDefinition);
                         streamsIDs.append(siddhiStreamDefinition.getId() + ",");
                     }
-
                     log.info(logPrefix + "Connected to " + destinationTypeString + " at " + endpoint + " for the Stream(s) " + streamsIDs.toString());
                 } catch (IOException e) {
                     log.info(logPrefix + "Cannot connect to " + destinationTypeString + " at " + endpoint + ", " + e.getMessage());

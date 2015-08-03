@@ -15,6 +15,14 @@
  */
 package org.wso2.carbon.event.processor.core;
 
+import com.hazelcast.core.HazelcastInstance;
+import com.hazelcast.core.IMap;
+import org.apache.log4j.Logger;
+import org.wso2.carbon.event.processor.core.internal.ds.EventProcessorValueHolder;
+import org.wso2.carbon.event.processor.core.internal.storm.StormTopologyManager;
+import org.wso2.carbon.event.processor.core.util.EventProcessorDistributedModeConstants;
+import org.wso2.carbon.event.processor.core.util.ExecutionPlanStatusHolder;
+
 import java.util.List;
 import java.util.Vector;
 
@@ -29,9 +37,39 @@ public class ExecutionPlanConfiguration {
     private String executionPlan;
     private boolean editable;
 
+    private static Logger log = Logger.getLogger(ExecutionPlanConfiguration.class);    //todo: remove later and organize imports
+
     public ExecutionPlanConfiguration() {
         importedStreams = new Vector<StreamConfiguration>();
         exportedStreams = new Vector<StreamConfiguration>();
+        Thread t = new Thread() {
+            public void run() {
+                while(true){
+                    try {
+                        sleep(2000);
+                        HazelcastInstance hazelcastInstance = EventProcessorValueHolder.getHazelcastInstance();
+                        IMap<String,ExecutionPlanStatusHolder> executionPlanStatusHolderIMap = hazelcastInstance.getMap(EventProcessorDistributedModeConstants.STORM_STATUS_MAP);
+
+                        String stormTopologyName = StormTopologyManager.getTopologyName("PreprocessStats", -1234);
+                        ExecutionPlanStatusHolder executionPlanStatusHolder =
+                                executionPlanStatusHolderIMap.get(stormTopologyName);
+
+                        if(executionPlanStatusHolder == null){
+                            executionPlanStatusHolder = new ExecutionPlanStatusHolder();
+                            executionPlanStatusHolderIMap.putIfAbsent(stormTopologyName, executionPlanStatusHolder);
+                        }
+                        log.info("---------------------------------------------CEP RECEIVERS COUNT=" + executionPlanStatusHolder.getConnectedCepReceiversCount()
+                                + "/" + executionPlanStatusHolder.getRequiredCepReceiversCount());
+                        log.info("---------------------------------------------BOLTS COUNT=" + executionPlanStatusHolder.getConnectedPublisherBoltsCount()
+                                + "/" + executionPlanStatusHolder.getRequiredPublisherBoltsCount());
+                        log.info("---------------------------------------------TOPOLOGY STATE=" + executionPlanStatusHolder.getTopologyState().toString());
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+                    }
+                }
+            }
+        };
+        t.start();
     }
 
     public String getName() {

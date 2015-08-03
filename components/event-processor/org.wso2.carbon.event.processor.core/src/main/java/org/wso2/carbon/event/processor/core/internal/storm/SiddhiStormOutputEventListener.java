@@ -15,6 +15,8 @@
  */
 package org.wso2.carbon.event.processor.core.internal.storm;
 
+import com.hazelcast.core.HazelcastInstance;
+import com.hazelcast.core.IMap;
 import org.apache.log4j.Logger;
 import org.apache.thrift.protocol.TBinaryProtocol;
 import org.apache.thrift.protocol.TProtocol;
@@ -22,8 +24,12 @@ import org.apache.thrift.transport.TSocket;
 import org.apache.thrift.transport.TTransport;
 import org.wso2.carbon.databridge.commons.thrift.utils.HostAddressFinder;
 import org.wso2.carbon.event.processor.common.storm.manager.service.StormManagerService;
+import org.wso2.carbon.event.processor.core.util.EventProcessorDistributedModeConstants;
 import org.wso2.carbon.event.processor.core.ExecutionPlanConfiguration;
+import org.wso2.carbon.event.processor.core.util.ExecutionPlanStatusHolder;
+import org.wso2.carbon.event.processor.core.internal.ds.EventProcessorValueHolder;
 import org.wso2.carbon.event.processor.core.internal.listener.SiddhiOutputStreamListener;
+import org.wso2.carbon.event.processor.manager.commons.transport.server.ConnectionCallback;
 import org.wso2.carbon.event.processor.manager.commons.transport.server.StreamCallback;
 import org.wso2.carbon.event.processor.manager.commons.transport.server.TCPEventServer;
 import org.wso2.carbon.event.processor.manager.commons.transport.server.TCPEventServerConfig;
@@ -37,6 +43,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Receives events from the Event publisher bolt running on storm. There will be one SiddhiStormOutputEventListener instance
@@ -44,7 +51,7 @@ import java.util.concurrent.Executors;
  * received from storm, the event  will be directed to the relevant output stream listener depending on the stream to forward
  * the event to the relevant output adaptor for the stream.
  */
-public class SiddhiStormOutputEventListener implements StreamCallback {
+public class SiddhiStormOutputEventListener implements StreamCallback, ConnectionCallback {
     private static Logger log = Logger.getLogger(SiddhiStormOutputEventListener.class);
     private ExecutionPlanConfiguration executionPlanConfiguration;
     private int listeningPort;
@@ -57,12 +64,17 @@ public class SiddhiStormOutputEventListener implements StreamCallback {
     private ExecutorService executorService = Executors.newSingleThreadExecutor();
     private int heartbeatInterval;
 
+    private final String stormTopologyName;
+    private final String keyExecutionPlanStatusHolder;
+
     public SiddhiStormOutputEventListener(ExecutionPlanConfiguration executionPlanConfiguration, int tenantId,
                                           DistributedConfiguration stormDeploymentConfig) {
         this.executionPlanConfiguration = executionPlanConfiguration;
         this.tenantId = tenantId;
         this.stormDeploymentConfig = stormDeploymentConfig;
         this.heartbeatInterval = stormDeploymentConfig.getHeartbeatInterval();
+        this.stormTopologyName = StormTopologyManager.getTopologyName(executionPlanConfiguration.getName(), tenantId);
+        this.keyExecutionPlanStatusHolder = EventProcessorDistributedModeConstants.STORM_STATUS_MAP + "." + stormTopologyName;
         init();
     }
 
@@ -73,7 +85,7 @@ public class SiddhiStormOutputEventListener implements StreamCallback {
         try {
             listeningPort = findPort();
             thisHostIp = HostAddressFinder.findAddress("localhost");
-            tcpEventServer = new TCPEventServer(new TCPEventServerConfig(listeningPort), this);
+            tcpEventServer = new TCPEventServer(new TCPEventServerConfig(listeningPort), this, this);
             tcpEventServer.start();
             executorService.execute(new Registrar());
         } catch (Exception e) {
@@ -112,6 +124,58 @@ public class SiddhiStormOutputEventListener implements StreamCallback {
     public void shutdown() {
         executorService.shutdown();
         tcpEventServer.shutdown();
+    }
+
+    @Override
+    public void onConnect() {
+        HazelcastInstance hazelcastInstance = EventProcessorValueHolder.getHazelcastInstance();
+        IMap<String,ExecutionPlanStatusHolder> executionPlanStatusHolderIMap = hazelcastInstance.getMap(EventProcessorDistributedModeConstants.STORM_STATUS_MAP);
+        try {
+            if (executionPlanStatusHolderIMap.tryLock(keyExecutionPlanStatusHolder, EventProcessorDistributedModeConstants.LOCK_TIMEOUT, TimeUnit.SECONDS)){
+                try {
+                    ExecutionPlanStatusHolder executionPlanStatusHolder =
+                            executionPlanStatusHolderIMap.get(stormTopologyName);
+                    if(executionPlanStatusHolder == null){
+                        executionPlanStatusHolder = new ExecutionPlanStatusHolder();
+                        executionPlanStatusHolderIMap.putIfAbsent(stormTopologyName, executionPlanStatusHolder);
+                    }
+                    executionPlanStatusHolder.incrementConnectedPublisherBoltsCount();
+                    executionPlanStatusHolderIMap.replace(stormTopologyName, executionPlanStatusHolder);
+                } finally {
+                    executionPlanStatusHolderIMap.unlock(keyExecutionPlanStatusHolder);
+                }
+            } else {
+                log.error(EventProcessorDistributedModeConstants.ERROR_LOCK_ACQUISITION_FAILED_FOR_CONNECTED_PUBLISHING_BOLTS);
+            }
+        } catch (InterruptedException e) {
+            log.error(EventProcessorDistributedModeConstants.ERROR_LOCK_ACQUISITION_FAILED_FOR_CONNECTED_PUBLISHING_BOLTS, e);
+        }
+    }
+
+    @Override
+    public void onClose() {
+        HazelcastInstance hazelcastInstance = EventProcessorValueHolder.getHazelcastInstance();
+        IMap<String,ExecutionPlanStatusHolder> executionPlanStatusHolderIMap = hazelcastInstance.getMap(EventProcessorDistributedModeConstants.STORM_STATUS_MAP);
+        try {
+            if (executionPlanStatusHolderIMap.tryLock(keyExecutionPlanStatusHolder, EventProcessorDistributedModeConstants.LOCK_TIMEOUT, TimeUnit.SECONDS)){
+                try {
+                    ExecutionPlanStatusHolder executionPlanStatusHolder =
+                            executionPlanStatusHolderIMap.get(stormTopologyName);
+                    if(executionPlanStatusHolder == null){
+                        executionPlanStatusHolder = new ExecutionPlanStatusHolder();
+                        executionPlanStatusHolderIMap.putIfAbsent(stormTopologyName, executionPlanStatusHolder);
+                    }
+                    executionPlanStatusHolder.decrementConnectedPublisherBoltsCount();
+                    executionPlanStatusHolderIMap.replace(stormTopologyName, executionPlanStatusHolder);
+                } finally {
+                    executionPlanStatusHolderIMap.unlock(keyExecutionPlanStatusHolder);
+                }
+            } else {
+                log.error(EventProcessorDistributedModeConstants.ERROR_LOCK_ACQUISITION_FAILED_FOR_CONNECTED_PUBLISHING_BOLTS);
+            }
+        } catch (InterruptedException e) {
+            log.error(EventProcessorDistributedModeConstants.ERROR_LOCK_ACQUISITION_FAILED_FOR_CONNECTED_PUBLISHING_BOLTS, e);
+        }
     }
 
 

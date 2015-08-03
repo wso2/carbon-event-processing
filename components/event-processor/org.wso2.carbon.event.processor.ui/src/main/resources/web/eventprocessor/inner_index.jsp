@@ -20,7 +20,10 @@
 <%@ page import="org.wso2.carbon.event.processor.stub.EventProcessorAdminServiceStub" %>
 <%@ page import="org.wso2.carbon.event.processor.stub.types.ExecutionPlanConfigurationDto" %>
 <%@ page import="org.wso2.carbon.event.processor.stub.types.ExecutionPlanConfigurationFileDto" %>
+<%@ page import="org.wso2.carbon.event.processor.stub.types.ExecutionPlanStatusDto" %>
 <%@ page import="org.wso2.carbon.event.processor.ui.EventProcessorUIUtils" %>
+<%@ page import="java.util.HashMap" %>
+<%@ page import="java.util.Map" %>
 
 <fmt:bundle basename="org.wso2.carbon.event.processor.ui.i18n.Resources">
 
@@ -61,10 +64,13 @@
     <%
         }
 
+        Boolean isDistributedProcessingEnabled = stub.isDistributedProcessingEnabled();
+        Map<String, String> executionPlanStatuses = null;
+
         ExecutionPlanConfigurationDto[] executionPlanConfigurationDtos = null;
+
         if (loadingCondition == null) {
             executionPlanConfigurationDtos = stub.getAllActiveExecutionPlanConfigurations();
-
         } else if (loadingCondition.equals("exportedStreams")) {
             executionPlanConfigurationDtos = stub.getAllExportedStreamSpecificActiveExecutionPlanConfiguration(eventStreamWithVersion);
         } else if (loadingCondition.equals("importedStreams")) {
@@ -73,8 +79,15 @@
 
         if (executionPlanConfigurationDtos != null) {
             totalActiveExecutionPlanConfigurations = executionPlanConfigurationDtos.length;
-        }
 
+            if (isDistributedProcessingEnabled) {
+                ExecutionPlanStatusDto[] executionPlanStatusDtos = stub.getAllExecutionPlanStatusesInStorm();
+                executionPlanStatuses = new HashMap<String, String>();
+                for (int i = 0; i < executionPlanStatusDtos.length; i++) {
+                    executionPlanStatuses.put(executionPlanStatusDtos[i].getExecutionPlanName(), executionPlanStatusDtos[i].getStatusInStorm());
+                }
+            }
+        }
     %>
 
     <div>
@@ -90,13 +103,19 @@
             <br/><br/>
             <table class="styledLeft">
                 <%
-
                     if (executionPlanConfigurationDtos != null) {
                 %>
                 <thead>
                 <tr>
                     <th><fmt:message key="event.processor.execution.plan.name"/></th>
                     <th><fmt:message key="event.processor.description"/></th>
+                    <%
+                        if (isDistributedProcessingEnabled) {
+                    %>
+                    <th width="385px"><fmt:message key="event.processor.status.in.storm"/></th>
+                    <%
+                        }
+                    %>
                     <th width="420px"><fmt:message key="event.processor.actions"/></th>
                 </tr>
                 </thead>
@@ -112,6 +131,26 @@
                     </td>
                     <td><%=executionPlanConfigurationDto.getDescription()%>
                     </td>
+                    <%
+
+                        if (isDistributedProcessingEnabled) {
+                            String executionPlanStatus = executionPlanStatuses.get(executionPlanConfigurationDto.getName());
+                            String[] executionPlanStatusLineByLine = executionPlanStatus.split("\n");
+                    %>
+                    <td>
+                        <%
+                            for(String line : executionPlanStatusLineByLine){
+                        %>
+                                <%=line%>
+                                <br/>
+                        <%
+                            }
+                        %>
+                    </td>
+                    <%
+
+                        }
+                    %>
                     <td>
                         <% if (executionPlanConfigurationDto.getEditable()) { %>
                         <% if (executionPlanConfigurationDto.getStatisticsEnabled()) {%>

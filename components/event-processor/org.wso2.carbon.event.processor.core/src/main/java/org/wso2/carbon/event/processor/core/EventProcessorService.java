@@ -25,7 +25,6 @@ import java.util.Map;
 
 public interface EventProcessorService {
 
-
     /**
      * Adds a new execution plan to the system using the execution plan given in string format.
      *
@@ -162,6 +161,20 @@ public interface EventProcessorService {
      * @throws SiddhiParserException
      */
     public List<StreamDefinition> getSiddhiStreams(String executionPlan);
+
+
+    /**
+     * Returns true if this CEP instance is started in Distributed Mode; returns false otherwise.
+     */
+    public boolean isDistributedProcessingEnabled();
+
+
+    /**
+     * The returned status string explains whether the topology is active or not, how many CEP Receivers are connected to a Spout and
+     * how many Storm Publishing Bolts are connected to CEP Publishers.
+     * @return a Map which maps the execution plan name to its status. This status is a string, explaining the status of the execution plan in Storm.
+     */
+    public Map<String, String> getAllExecutionPlanStatusesInStorm();
 }
 
 

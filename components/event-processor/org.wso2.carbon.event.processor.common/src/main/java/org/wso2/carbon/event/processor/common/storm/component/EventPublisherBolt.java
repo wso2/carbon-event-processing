@@ -173,7 +173,7 @@ public class EventPublisherBolt extends BaseBasicBolt {
 
             asyncEventPublisher = new AsyncEventPublisher(AsyncEventPublisher.DestinationType.CEP_PUBLISHER,
                     new HashSet<StreamDefinition>(streamIdToDefinitionMap.values()),
-                    stormDeploymentConfig.getManagers(), executionPlanName, tenantId, stormDeploymentConfig);
+                    stormDeploymentConfig.getManagers(), executionPlanName, tenantId, stormDeploymentConfig, null);
 
             asyncEventPublisher.initializeConnection(false);
         } catch (Throwable e) {

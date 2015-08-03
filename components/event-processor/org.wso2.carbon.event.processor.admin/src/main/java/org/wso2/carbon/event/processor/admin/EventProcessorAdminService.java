@@ -16,7 +16,6 @@
 package org.wso2.carbon.event.processor.admin;
 
 import org.apache.axis2.AxisFault;
-import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.wso2.carbon.context.PrivilegedCarbonContext;
@@ -31,7 +30,6 @@ import org.wso2.carbon.event.processor.core.StreamConfiguration;
 import org.wso2.carbon.event.processor.core.exception.ExecutionPlanConfigurationException;
 import org.wso2.carbon.event.processor.core.exception.ExecutionPlanDependencyValidationException;
 import org.wso2.siddhi.query.api.exception.ExecutionPlanValidationException;
-import org.wso2.siddhi.query.compiler.exception.SiddhiParserException;
 
 import java.util.Arrays;
 import java.util.Comparator;
@@ -42,7 +40,7 @@ public class EventProcessorAdminService extends AbstractAdmin {
 
     private static final Log log = LogFactory.getLog(EventProcessorAdminService.class);
 
-    public void deployExecutionPlan(String executionPlan)
+        public void deployExecutionPlan(String executionPlan)
             throws AxisFault {
         EventProcessorService eventProcessorService = EventProcessorAdminValueHolder.getEventProcessorService();
 
@@ -337,6 +335,38 @@ public class EventProcessorAdminService extends AbstractAdmin {
         } catch (Throwable t) {
             log.error("Exception when generating siddhi streams", t);
             throw new AxisFault(t.getMessage(), t);
+        }
+    }
+
+    public boolean isDistributedProcessingEnabled() throws AxisFault {
+        EventProcessorService eventProcessorService = EventProcessorAdminValueHolder.getEventProcessorService();
+
+        if (eventProcessorService != null) {
+            return eventProcessorService.isDistributedProcessingEnabled();
+        } else {
+            throw new AxisFault("Event processor is not loaded.");
+        }
+    }
+
+    public ExecutionPlanStatusDto[] getAllExecutionPlanStatusesInStorm() throws AxisFault {
+        EventProcessorService eventProcessorService = EventProcessorAdminValueHolder.getEventProcessorService();
+
+        if (eventProcessorService != null) {
+            Map<String, String> executionPlanStatuses = eventProcessorService.getAllExecutionPlanStatusesInStorm();
+            if(executionPlanStatuses != null){
+                ExecutionPlanStatusDto[] executionPlanStatusDtos = new ExecutionPlanStatusDto[executionPlanStatuses.size()];
+                int i = 0;
+                for (Map.Entry<String, String> mapEntry : executionPlanStatuses.entrySet()){
+                    ExecutionPlanStatusDto statusDto = new ExecutionPlanStatusDto(mapEntry.getKey(), mapEntry.getValue());
+                    executionPlanStatusDtos[i] = statusDto;
+                    i++;
+                }
+                return executionPlanStatusDtos;
+            } else {
+                return null;
+            }
+        } else {
+            throw new AxisFault("Event processor is not loaded.");
         }
     }
 

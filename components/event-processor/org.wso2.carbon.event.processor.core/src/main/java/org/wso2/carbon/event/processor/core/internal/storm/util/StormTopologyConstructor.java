@@ -45,8 +45,8 @@ public class StormTopologyConstructor {
 
     private static Logger log = Logger.getLogger(StormTopologyConstructor.class);
 
-    public static TopologyBuilder constructTopologyBuilder(String queryPlanString, String executionPlanName,
-                                                           int tenantId, DistributedConfiguration stormDeploymentConfig)
+    public static TopologyBuilder constructTopologyBuilder(String queryPlanString, String executionPlanName, int tenantId,
+                                                           DistributedConfiguration stormDeploymentConfig, int[] boltsCount)
             throws XMLStreamException, StormQueryConstructionException {
 
         OMElement queryPlanElement = AXIOMUtil.stringToOM(queryPlanString);
@@ -129,7 +129,7 @@ public class StormTopologyConstructor {
         while (iterator.hasNext()) {
             OMElement eventProcessorElement = iterator.next();
             String name = eventProcessorElement.getAttributeValue(new QName("name"));
-            String parallel = eventProcessorElement.getAttributeValue(new QName("parallel"));
+            int parallel = Integer.parseInt(eventProcessorElement.getAttributeValue(new QName("parallel")));
             ComponentInfoHolder componentInfoHolder = new ComponentInfoHolder(name, ComponentInfoHolder.ComponentType.SIDDHI_BOLT);
 
             OMElement inputStreamsElement = eventProcessorElement.getFirstChildWithName(new QName("input-streams"));
@@ -158,8 +158,9 @@ public class StormTopologyConstructor {
             }
             componentInfoHolder.setDeclarer(builder.setBolt(name, new EventPublisherBolt(stormDeploymentConfig,
                     inputStreamDefinitions, outputStreamDefinitions, query, executionPlanName, tenantId),
-                    Integer.parseInt(parallel)));
+                    parallel));
             topologyInfoHolder.addComponent(componentInfoHolder);
+            boltsCount[0] = parallel;
         }
 
         topologyInfoHolder.indexComponents();

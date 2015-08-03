@@ -1,23 +1,7 @@
-<!--
-  ~ Copyright (c) 2015, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
-  ~
-  ~ Licensed under the Apache License, Version 2.0 (the "License");
-  ~ you may not use this file except in compliance with the License.
-  ~ You may obtain a copy of the License at
-  ~
-  ~     http://www.apache.org/licenses/LICENSE-2.0
-  ~
-  ~ Unless required by applicable law or agreed to in writing, software
-  ~ distributed under the License is distributed on an "AS IS" BASIS,
-  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-  ~ See the License for the specific language governing permissions and
-  ~ limitations under the License.
-  -->
-
-<wsdl:definitions xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:ns1="http://org.apache.axis2/xsd" xmlns:ns="http://admin.processor.event.carbon.wso2.org" xmlns:wsaw="http://www.w3.org/2006/05/addressing/wsdl" xmlns:http="http://schemas.xmlsoap.org/wsdl/http/" xmlns:ax292="http://admin.processor.event.carbon.wso2.org/xsd" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" targetNamespace="http://admin.processor.event.carbon.wso2.org">
+<wsdl:definitions xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:ns1="http://org.apache.axis2/xsd" xmlns:ns="http://admin.processor.event.carbon.wso2.org" xmlns:wsaw="http://www.w3.org/2006/05/addressing/wsdl" xmlns:ax296="http://admin.processor.event.carbon.wso2.org/xsd" xmlns:http="http://schemas.xmlsoap.org/wsdl/http/" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" targetNamespace="http://admin.processor.event.carbon.wso2.org">
     <wsdl:documentation>EventProcessorAdminService</wsdl:documentation>
     <wsdl:types>
-        <xs:schema xmlns:ax293="http://admin.processor.event.carbon.wso2.org/xsd" attributeFormDefault="qualified" elementFormDefault="qualified" targetNamespace="http://admin.processor.event.carbon.wso2.org">
+        <xs:schema xmlns:ax297="http://admin.processor.event.carbon.wso2.org/xsd" attributeFormDefault="qualified" elementFormDefault="qualified" targetNamespace="http://admin.processor.event.carbon.wso2.org">
             <xs:import namespace="http://admin.processor.event.carbon.wso2.org/xsd"/>
             <xs:element name="getAllActiveExecutionPlanConfigurations">
                 <xs:complexType>
@@ -27,7 +11,7 @@
             <xs:element name="getAllActiveExecutionPlanConfigurationsResponse">
                 <xs:complexType>
                     <xs:sequence>
-                        <xs:element maxOccurs="unbounded" minOccurs="0" name="return" nillable="true" type="ax292:ExecutionPlanConfigurationDto"/>
+                        <xs:element maxOccurs="unbounded" minOccurs="0" name="return" nillable="true" type="ax296:ExecutionPlanConfigurationDto"/>
                     </xs:sequence>
                 </xs:complexType>
             </xs:element>
@@ -39,7 +23,7 @@
             <xs:element name="getAllInactiveExecutionPlanConigurationsResponse">
                 <xs:complexType>
                     <xs:sequence>
-                        <xs:element maxOccurs="unbounded" minOccurs="0" name="return" nillable="true" type="ax292:ExecutionPlanConfigurationFileDto"/>
+                        <xs:element maxOccurs="unbounded" minOccurs="0" name="return" nillable="true" type="ax296:ExecutionPlanConfigurationFileDto"/>
                     </xs:sequence>
                 </xs:complexType>
             </xs:element>
@@ -53,7 +37,7 @@
             <xs:element name="getAllImportedStreamSpecificActiveExecutionPlanConfigurationResponse">
                 <xs:complexType>
                     <xs:sequence>
-                        <xs:element maxOccurs="unbounded" minOccurs="0" name="return" nillable="true" type="ax292:ExecutionPlanConfigurationDto"/>
+                        <xs:element maxOccurs="unbounded" minOccurs="0" name="return" nillable="true" type="ax296:ExecutionPlanConfigurationDto"/>
                     </xs:sequence>
                 </xs:complexType>
             </xs:element>
@@ -67,44 +51,7 @@
             <xs:element name="getAllExportedStreamSpecificActiveExecutionPlanConfigurationResponse">
                 <xs:complexType>
                     <xs:sequence>
-                        <xs:element maxOccurs="unbounded" minOccurs="0" name="return" nillable="true" type="ax292:ExecutionPlanConfigurationDto"/>
-                    </xs:sequence>
-                </xs:complexType>
-            </xs:element>
-            <xs:element name="deployExecutionPlan">
-                <xs:complexType>
-                    <xs:sequence>
-                        <xs:element minOccurs="0" name="executionPlan" nillable="true" type="xs:string"/>
-                    </xs:sequence>
-                </xs:complexType>
-            </xs:element>
-            <xs:element name="undeployInactiveExecutionPlan">
-                <xs:complexType>
-                    <xs:sequence>
-                        <xs:element minOccurs="0" name="fileName" nillable="true" type="xs:string"/>
-                    </xs:sequence>
-                </xs:complexType>
-            </xs:element>
-            <xs:element name="undeployActiveExecutionPlan">
-                <xs:complexType>
-                    <xs:sequence>
-                        <xs:element minOccurs="0" name="planName" nillable="true" type="xs:string"/>
-                    </xs:sequence>
-                </xs:complexType>
-            </xs:element>
-            <xs:element name="editActiveExecutionPlan">
-                <xs:complexType>
-                    <xs:sequence>
-                        <xs:element minOccurs="0" name="executionPlan" nillable="true" type="xs:string"/>
-                        <xs:element minOccurs="0" name="name" nillable="true" type="xs:string"/>
-                    </xs:sequence>
-                </xs:complexType>
-            </xs:element>
-            <xs:element name="editInactiveExecutionPlan">
-                <xs:complexType>
-                    <xs:sequence>
-                        <xs:element minOccurs="0" name="executionPlan" nillable="true" type="xs:string"/>
-                        <xs:element minOccurs="0" name="fileName" nillable="true" type="xs:string"/>
+                        <xs:element maxOccurs="unbounded" minOccurs="0" name="return" nillable="true" type="ax296:ExecutionPlanConfigurationDto"/>
                     </xs:sequence>
                 </xs:complexType>
             </xs:element>
@@ -118,7 +65,31 @@
             <xs:element name="getSiddhiStreamsResponse">
                 <xs:complexType>
                     <xs:sequence>
-                        <xs:element maxOccurs="unbounded" minOccurs="0" name="return" nillable="true" type="ax292:StreamDefinitionDto"/>
+                        <xs:element maxOccurs="unbounded" minOccurs="0" name="return" nillable="true" type="ax296:StreamDefinitionDto"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="isDistributedProcessingEnabled">
+                <xs:complexType>
+                    <xs:sequence/>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="isDistributedProcessingEnabledResponse">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element minOccurs="0" name="return" type="xs:boolean"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="getAllExecutionPlanStatusesInStorm">
+                <xs:complexType>
+                    <xs:sequence/>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="getAllExecutionPlanStatusesInStormResponse">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element maxOccurs="unbounded" minOccurs="0" name="return" nillable="true" type="ax296:ExecutionPlanStatusDto"/>
                     </xs:sequence>
                 </xs:complexType>
             </xs:element>
@@ -174,7 +145,7 @@
             <xs:element name="getActiveExecutionPlanConfigurationResponse">
                 <xs:complexType>
                     <xs:sequence>
-                        <xs:element minOccurs="0" name="return" nillable="true" type="ax292:ExecutionPlanConfigurationDto"/>
+                        <xs:element minOccurs="0" name="return" nillable="true" type="ax296:ExecutionPlanConfigurationDto"/>
                     </xs:sequence>
                 </xs:complexType>
             </xs:element>
@@ -183,6 +154,43 @@
                     <xs:sequence>
                         <xs:element minOccurs="0" name="executionPlanName" nillable="true" type="xs:string"/>
                         <xs:element minOccurs="0" name="isEnabled" type="xs:boolean"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="deployExecutionPlan">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element minOccurs="0" name="executionPlan" nillable="true" type="xs:string"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="undeployInactiveExecutionPlan">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element minOccurs="0" name="fileName" nillable="true" type="xs:string"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="undeployActiveExecutionPlan">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element minOccurs="0" name="planName" nillable="true" type="xs:string"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="editActiveExecutionPlan">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element minOccurs="0" name="executionPlan" nillable="true" type="xs:string"/>
+                        <xs:element minOccurs="0" name="name" nillable="true" type="xs:string"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="editInactiveExecutionPlan">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element minOccurs="0" name="executionPlan" nillable="true" type="xs:string"/>
+                        <xs:element minOccurs="0" name="fileName" nillable="true" type="xs:string"/>
                     </xs:sequence>
                 </xs:complexType>
             </xs:element>
@@ -201,8 +209,8 @@
                     <xs:element minOccurs="0" name="description" nillable="true" type="xs:string"/>
                     <xs:element minOccurs="0" name="editable" type="xs:boolean"/>
                     <xs:element minOccurs="0" name="executionPlan" nillable="true" type="xs:string"/>
-                    <xs:element maxOccurs="unbounded" minOccurs="0" name="exportedStreams" nillable="true" type="ax292:StreamConfigurationDto"/>
-                    <xs:element maxOccurs="unbounded" minOccurs="0" name="importedStreams" nillable="true" type="ax292:StreamConfigurationDto"/>
+                    <xs:element maxOccurs="unbounded" minOccurs="0" name="exportedStreams" nillable="true" type="ax296:StreamConfigurationDto"/>
+                    <xs:element maxOccurs="unbounded" minOccurs="0" name="importedStreams" nillable="true" type="ax296:StreamConfigurationDto"/>
                     <xs:element minOccurs="0" name="name" nillable="true" type="xs:string"/>
                     <xs:element minOccurs="0" name="statisticsEnabled" type="xs:boolean"/>
                     <xs:element minOccurs="0" name="tracingEnabled" type="xs:boolean"/>
@@ -230,12 +238,24 @@
                     <xs:element maxOccurs="unbounded" minOccurs="0" name="payloadData" nillable="true" type="xs:string"/>
                 </xs:sequence>
             </xs:complexType>
+            <xs:complexType name="ExecutionPlanStatusDto">
+                <xs:sequence>
+                    <xs:element minOccurs="0" name="executionPlanName" nillable="true" type="xs:string"/>
+                    <xs:element minOccurs="0" name="statusInStorm" nillable="true" type="xs:string"/>
+                </xs:sequence>
+            </xs:complexType>
         </xs:schema>
     </wsdl:types>
     <wsdl:message name="editActiveExecutionPlanRequest">
         <wsdl:part name="parameters" element="ns:editActiveExecutionPlan"/>
     </wsdl:message>
     <wsdl:message name="editActiveExecutionPlanResponse"/>
+    <wsdl:message name="getAllExecutionPlanStatusesInStormRequest">
+        <wsdl:part name="parameters" element="ns:getAllExecutionPlanStatusesInStorm"/>
+    </wsdl:message>
+    <wsdl:message name="getAllExecutionPlanStatusesInStormResponse">
+        <wsdl:part name="parameters" element="ns:getAllExecutionPlanStatusesInStormResponse"/>
+    </wsdl:message>
     <wsdl:message name="getAllImportedStreamSpecificActiveExecutionPlanConfigurationRequest">
         <wsdl:part name="parameters" element="ns:getAllImportedStreamSpecificActiveExecutionPlanConfiguration"/>
     </wsdl:message>
@@ -288,6 +308,12 @@
     <wsdl:message name="getAllInactiveExecutionPlanConigurationsResponse">
         <wsdl:part name="parameters" element="ns:getAllInactiveExecutionPlanConigurationsResponse"/>
     </wsdl:message>
+    <wsdl:message name="isDistributedProcessingEnabledRequest">
+        <wsdl:part name="parameters" element="ns:isDistributedProcessingEnabled"/>
+    </wsdl:message>
+    <wsdl:message name="isDistributedProcessingEnabledResponse">
+        <wsdl:part name="parameters" element="ns:isDistributedProcessingEnabledResponse"/>
+    </wsdl:message>
     <wsdl:message name="setTracingEnabledRequest">
         <wsdl:part name="parameters" element="ns:setTracingEnabled"/>
     </wsdl:message>
@@ -318,6 +344,10 @@
         <wsdl:operation name="editActiveExecutionPlan">
             <wsdl:input message="ns:editActiveExecutionPlanRequest" wsaw:Action="urn:editActiveExecutionPlan"/>
             <wsdl:output message="ns:editActiveExecutionPlanResponse" wsaw:Action="urn:editActiveExecutionPlanResponse"/>
+        </wsdl:operation>
+        <wsdl:operation name="getAllExecutionPlanStatusesInStorm">
+            <wsdl:input message="ns:getAllExecutionPlanStatusesInStormRequest" wsaw:Action="urn:getAllExecutionPlanStatusesInStorm"/>
+            <wsdl:output message="ns:getAllExecutionPlanStatusesInStormResponse" wsaw:Action="urn:getAllExecutionPlanStatusesInStormResponse"/>
         </wsdl:operation>
         <wsdl:operation name="getAllImportedStreamSpecificActiveExecutionPlanConfiguration">
             <wsdl:input message="ns:getAllImportedStreamSpecificActiveExecutionPlanConfigurationRequest" wsaw:Action="urn:getAllImportedStreamSpecificActiveExecutionPlanConfiguration"/>
@@ -359,6 +389,10 @@
             <wsdl:input message="ns:getAllInactiveExecutionPlanConigurationsRequest" wsaw:Action="urn:getAllInactiveExecutionPlanConigurations"/>
             <wsdl:output message="ns:getAllInactiveExecutionPlanConigurationsResponse" wsaw:Action="urn:getAllInactiveExecutionPlanConigurationsResponse"/>
         </wsdl:operation>
+        <wsdl:operation name="isDistributedProcessingEnabled">
+            <wsdl:input message="ns:isDistributedProcessingEnabledRequest" wsaw:Action="urn:isDistributedProcessingEnabled"/>
+            <wsdl:output message="ns:isDistributedProcessingEnabledResponse" wsaw:Action="urn:isDistributedProcessingEnabledResponse"/>
+        </wsdl:operation>
         <wsdl:operation name="setTracingEnabled">
             <wsdl:input message="ns:setTracingEnabledRequest" wsaw:Action="urn:setTracingEnabled"/>
             <wsdl:output message="ns:setTracingEnabledResponse" wsaw:Action="urn:setTracingEnabledResponse"/>
@@ -384,6 +418,15 @@
         <soap:binding transport="http://schemas.xmlsoap.org/soap/http" style="document"/>
         <wsdl:operation name="editActiveExecutionPlan">
             <soap:operation soapAction="urn:editActiveExecutionPlan" style="document"/>
+            <wsdl:input>
+                <soap:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal"/>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="getAllExecutionPlanStatusesInStorm">
+            <soap:operation soapAction="urn:getAllExecutionPlanStatusesInStorm" style="document"/>
             <wsdl:input>
                 <soap:body use="literal"/>
             </wsdl:input>
@@ -490,6 +533,15 @@
                 <soap:body use="literal"/>
             </wsdl:output>
         </wsdl:operation>
+        <wsdl:operation name="isDistributedProcessingEnabled">
+            <soap:operation soapAction="urn:isDistributedProcessingEnabled" style="document"/>
+            <wsdl:input>
+                <soap:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal"/>
+            </wsdl:output>
+        </wsdl:operation>
         <wsdl:operation name="getInactiveExecutionPlan">
             <soap:operation soapAction="urn:getInactiveExecutionPlan" style="document"/>
             <wsdl:input>
@@ -531,6 +583,15 @@
         <soap12:binding transport="http://schemas.xmlsoap.org/soap/http" style="document"/>
         <wsdl:operation name="editActiveExecutionPlan">
             <soap12:operation soapAction="urn:editActiveExecutionPlan" style="document"/>
+            <wsdl:input>
+                <soap12:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap12:body use="literal"/>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="getAllExecutionPlanStatusesInStorm">
+            <soap12:operation soapAction="urn:getAllExecutionPlanStatusesInStorm" style="document"/>
             <wsdl:input>
                 <soap12:body use="literal"/>
             </wsdl:input>
@@ -637,6 +698,15 @@
                 <soap12:body use="literal"/>
             </wsdl:output>
         </wsdl:operation>
+        <wsdl:operation name="isDistributedProcessingEnabled">
+            <soap12:operation soapAction="urn:isDistributedProcessingEnabled" style="document"/>
+            <wsdl:input>
+                <soap12:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap12:body use="literal"/>
+            </wsdl:output>
+        </wsdl:operation>
         <wsdl:operation name="getInactiveExecutionPlan">
             <soap12:operation soapAction="urn:getInactiveExecutionPlan" style="document"/>
             <wsdl:input>
@@ -678,6 +748,15 @@
         <http:binding verb="POST"/>
         <wsdl:operation name="editActiveExecutionPlan">
             <http:operation location="editActiveExecutionPlan"/>
+            <wsdl:input>
+                <mime:content type="text/xml" part="parameters"/>
+            </wsdl:input>
+            <wsdl:output>
+                <mime:content type="text/xml" part="parameters"/>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="getAllExecutionPlanStatusesInStorm">
+            <http:operation location="getAllExecutionPlanStatusesInStorm"/>
             <wsdl:input>
                 <mime:content type="text/xml" part="parameters"/>
             </wsdl:input>
@@ -784,6 +863,15 @@
                 <mime:content type="text/xml" part="parameters"/>
             </wsdl:output>
         </wsdl:operation>
+        <wsdl:operation name="isDistributedProcessingEnabled">
+            <http:operation location="isDistributedProcessingEnabled"/>
+            <wsdl:input>
+                <mime:content type="text/xml" part="parameters"/>
+            </wsdl:input>
+            <wsdl:output>
+                <mime:content type="text/xml" part="parameters"/>
+            </wsdl:output>
+        </wsdl:operation>
         <wsdl:operation name="getInactiveExecutionPlan">
             <http:operation location="getInactiveExecutionPlan"/>
             <wsdl:input>
@@ -823,13 +911,13 @@
     </wsdl:binding>
     <wsdl:service name="EventProcessorAdminService">
         <wsdl:port name="EventProcessorAdminServiceHttpsSoap11Endpoint" binding="ns:EventProcessorAdminServiceSoap11Binding">
-            <soap:address location="https://10.100.5.59:9443/services/EventProcessorAdminService.EventProcessorAdminServiceHttpsSoap11Endpoint/"/>
+            <soap:address location="https://10.224.133.6:9443/services/EventProcessorAdminService.EventProcessorAdminServiceHttpsSoap11Endpoint/"/>
         </wsdl:port>
         <wsdl:port name="EventProcessorAdminServiceHttpsSoap12Endpoint" binding="ns:EventProcessorAdminServiceSoap12Binding">
-            <soap12:address location="https://10.100.5.59:9443/services/EventProcessorAdminService.EventProcessorAdminServiceHttpsSoap12Endpoint/"/>
+            <soap12:address location="https://10.224.133.6:9443/services/EventProcessorAdminService.EventProcessorAdminServiceHttpsSoap12Endpoint/"/>
         </wsdl:port>
         <wsdl:port name="EventProcessorAdminServiceHttpsEndpoint" binding="ns:EventProcessorAdminServiceHttpBinding">
-            <http:address location="https://10.100.5.59:9443/services/EventProcessorAdminService.EventProcessorAdminServiceHttpsEndpoint/"/>
+            <http:address location="https://10.224.133.6:9443/services/EventProcessorAdminService.EventProcessorAdminServiceHttpsEndpoint/"/>
         </wsdl:port>
     </wsdl:service>
 </wsdl:definitions>
