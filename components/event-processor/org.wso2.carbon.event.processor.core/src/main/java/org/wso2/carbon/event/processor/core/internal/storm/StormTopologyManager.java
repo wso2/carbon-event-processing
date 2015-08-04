@@ -111,7 +111,7 @@ public class StormTopologyManager {
             }
             builder = StormTopologyConstructor.constructTopologyBuilder(stormQueryPlan, executionPlanName, tenantId,
                     EventProcessorValueHolder.getStormDeploymentConfiguration(), boltsCount);
-            updateTotalBoltsCountInExecutionPlanStatusHolder(topologyName, boltsCount[0]);
+            updateRequiredPublisherBoltsCountInExecutionPlanStatusHolder(topologyName, boltsCount[0]);
         } catch (XMLStreamException e) {
             throw new StormDeploymentException("Invalid Config for Execution Plan " + executionPlanName + " for tenant " + tenantId, e);
         } catch (TransformerException e) {
@@ -162,7 +162,7 @@ public class StormTopologyManager {
         return (executionPlanName + "[" + tenantId + "]");
     }
 
-    private void updateTotalBoltsCountInExecutionPlanStatusHolder(String stormTopologyName, int boltCount){
+    private void updateRequiredPublisherBoltsCountInExecutionPlanStatusHolder(String stormTopologyName, int boltCount){
         String keyExecutionPlanStatusHolder = EventProcessorDistributedModeConstants.STORM_STATUS_MAP + "." + stormTopologyName;
         HazelcastInstance hazelcastInstance = EventProcessorValueHolder.getHazelcastInstance();
         IMap<String,ExecutionPlanStatusHolder> executionPlanStatusHolderIMap = hazelcastInstance.getMap(EventProcessorDistributedModeConstants.STORM_STATUS_MAP);

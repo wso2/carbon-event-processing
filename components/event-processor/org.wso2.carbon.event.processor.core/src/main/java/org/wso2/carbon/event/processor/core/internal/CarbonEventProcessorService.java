@@ -389,7 +389,7 @@ public class CarbonEventProcessorService implements EventProcessorService {
         }
 
         if(isDistributedEnabledAndIsWroker){
-            updateCepReceiverCountInExecutionPlanStatusHolder(cepReceiverCount, StormTopologyManager.getTopologyName(executionPlanName, tenantId));
+            updateRequiredCepReceiversCountInExecutionPlanStatusHolder(cepReceiverCount, StormTopologyManager.getTopologyName(executionPlanName, tenantId));
         }
 
         if (executionPlanRuntime != null) {
@@ -417,7 +417,7 @@ public class CarbonEventProcessorService implements EventProcessorService {
      * @param cepReceiverCount
      * @param stormTopologyName
      */
-    private void updateCepReceiverCountInExecutionPlanStatusHolder(int cepReceiverCount, String stormTopologyName) {    //todo: rename this to update..TotalCount
+    private void updateRequiredCepReceiversCountInExecutionPlanStatusHolder(int cepReceiverCount, String stormTopologyName) {
         String keyExecutionPlanStatusHolder = EventProcessorDistributedModeConstants.STORM_STATUS_MAP + "." + stormTopologyName;
         HazelcastInstance hazelcastInstance = EventProcessorValueHolder.getHazelcastInstance();
         IMap<String,ExecutionPlanStatusHolder> executionPlanStatusHolderIMap = hazelcastInstance.getMap(EventProcessorDistributedModeConstants.STORM_STATUS_MAP);

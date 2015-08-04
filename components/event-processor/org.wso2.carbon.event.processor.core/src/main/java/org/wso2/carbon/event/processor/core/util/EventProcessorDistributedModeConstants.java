@@ -15,7 +15,6 @@ public final class EventProcessorDistributedModeConstants {
 
     public static final int LOCK_TIMEOUT = 1000;   //lock timeout in seconds.
 
-    //todo: remove "active" terms
     public final static String ERROR_LOCK_ACQUISITION_FAILED_FOR_TOPOLOGY_STATUS = "Couldn't acquire hazelcast lock for updating the topology status. " +
             "The 'Status in Storm' printed on the execution plan list may be wrong until the execution plan is redeployed.";
     public final static String ERROR_LOCK_ACQUISITION_FAILED_FOR_CONNECTED_PUBLISHING_BOLTS = "Couldn't acquire hazelcast lock for updating the connected publisher bolts count. " +
