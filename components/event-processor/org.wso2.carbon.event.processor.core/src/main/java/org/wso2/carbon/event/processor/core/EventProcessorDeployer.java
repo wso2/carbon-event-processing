@@ -48,6 +48,7 @@ public class EventProcessorDeployer extends AbstractDeployer implements EventPro
 
     public void init(ConfigurationContext configurationContext) {
         this.configurationContext = configurationContext;
+        EventProcessorValueHolder.addTenantConfig(PrivilegedCarbonContext.getThreadLocalCarbonContext().getTenantId(), configurationContext);
     }
 
     /**
@@ -59,7 +60,6 @@ public class EventProcessorDeployer extends AbstractDeployer implements EventPro
     public void deploy(DeploymentFileData deploymentFileData) throws DeploymentException {
         try {
             String path = deploymentFileData.getAbsolutePath();
-
             if (!deployedExecutionPlanFilePaths.contains(path)) {
                 try {
                     processDeploy(deploymentFileData);
