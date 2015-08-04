@@ -81,7 +81,7 @@ public class ExecutionPlanStatusHolder implements Serializable {
                 topologyStatus = "Topology has been removed from the storm cluster.\n";
                 break;
             case NOT_INITIALIZED:
-                topologyStatus = "Starting to query the topology status from Storm...";
+                topologyStatus = "Starting to query the topology status from Storm...\n";
                 break;
         }
         String cepReceiverStatus = this.getConnectedCepReceiversCount() + " of " + this.getRequiredCepReceiversCount() +
