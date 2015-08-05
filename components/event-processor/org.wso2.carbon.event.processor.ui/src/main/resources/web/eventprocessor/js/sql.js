@@ -71,10 +71,8 @@ CodeMirror.defineMode("sql", function (config, parserConfig) {
         } else {
             stream.eatWhile(/^[_\-\w\d]/);    /* Character '-' will also be eaten, to prevent the highlight happening in keywords being embedded in non-keyword strings. For example, 'all' in 'all-nonkeyword' */
             var word = stream.current().toLowerCase();         // Added toLowerCase() to highlight keywords in a case insensitive manner.
-            // dates (standard SQL syntax)
-            // ref: http://dev.mysql.com/doc/refman/5.5/en/date-and-time-literals.html
-            if (dateSQL.hasOwnProperty(word) && (stream.match(/^( )+'[^']*'/) || stream.match(/^( )+"[^"]*"/)))
-                return "number";
+
+            if (dateSQL.hasOwnProperty(word)) return "number";
             if (atoms.hasOwnProperty(word)) return "atom";
             if (builtin.hasOwnProperty(word)) return "builtin";
             if (keywords.hasOwnProperty(word)) return "keyword";
