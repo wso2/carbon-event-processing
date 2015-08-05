@@ -227,13 +227,15 @@ CodeMirror.defineMode("sql", function (config, parserConfig) {
     }
 
     // these keywords are used by all SQL dialects (however, a mode can still overwrite it)
-    var sqlKeywordsWithoutSymbols = "all and as begin by contains define delete end events " +
-        "every first for from full group having inner insert into join last " +
-        "left not of on or outer output partition raw return right select snapshot stream table update ";
+    var sqlKeywordsWithoutSymbols = "all and as at begin by current define delete end events " +
+        "every expired first for from full function group having in inner insert into is join last " +
+        "left not of on or outer output plan partition raw return right select snapshot stream table trigger " +
+        "unidirectional update window with within";
     var sqlKeywords = ", : ? # ( ) " + sqlKeywordsWithoutSymbols;
     var builtIn = "bool double float int long object string ";
     var atoms = "false true null ";
-    var dateSQL = "days hours milliseconds minutes months seconds ";
+    var dateSQL = "day days hour hours millisec millisecond milliseconds min minute minutes month months sec second" +
+        " seconds week weeks year years";
     var allSqlSuggestions = sqlKeywordsWithoutSymbols + builtIn + atoms + dateSQL;
 
     // turn a space-separated list into an array
