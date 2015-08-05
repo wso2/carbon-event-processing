@@ -35,7 +35,7 @@ public interface EventSimulator {
 
     public void uploadService(UploadedFileItem[] fileItems,AxisConfiguration axisConfiguration)throws AxisFault;
 
-    public String getEventStreamInfo(String fileName)throws AxisFault;
+    public String createTableAndAttributeMappingInfo(String fileName)throws AxisFault;
 
     public void createConfigurationXML(String fileName,String streamId,String separateChar, long eventSendingDelay,
                                        AxisConfiguration axisConfiguration);
