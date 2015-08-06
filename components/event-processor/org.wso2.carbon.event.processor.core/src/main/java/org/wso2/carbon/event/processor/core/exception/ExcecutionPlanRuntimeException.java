@@ -14,13 +14,21 @@
  * limitations under the License.
  */
 
-package org.wso2.carbon.event.simulator.admin.internal.util;
+package org.wso2.carbon.event.processor.core.exception;
 
-public final class EventSimulatorDataSourceConstants {
+public class ExcecutionPlanRuntimeException extends RuntimeException{
+    public ExcecutionPlanRuntimeException() {
+    }
 
-    public static final String GENERIC_RDBMS_FILE_SPECIFIC_PATH = "cep/";
-    public static final String GENERIC_RDBMS_FILE_NAME = "rdbms-configuration.xml";
-    public static final String GENERIC_RDBMS_ATTRIBUTE_TABLE_NAME = "$TABLE_NAME";
-    public static final String GENERIC_RDBMS_ATTRIBUTE_COLUMNS = "$COLUMNS";
+    public ExcecutionPlanRuntimeException(String message) {
+        super(message);
+    }
 
+    public ExcecutionPlanRuntimeException(String message, Throwable cause) {
+        super(message, cause);
+    }
+
+    public ExcecutionPlanRuntimeException(Throwable cause) {
+        super(cause);
+    }
 }

@@ -26,7 +26,6 @@ import org.wso2.carbon.core.AbstractAdmin;
 import org.wso2.carbon.databridge.commons.Attribute;
 import org.wso2.carbon.databridge.commons.StreamDefinition;
 import org.wso2.carbon.event.simulator.admin.internal.util.EventSimulatorAdminvalueHolder;
-import org.wso2.carbon.event.simulator.admin.internal.util.EventSimulatorDataSourceConstants;
 import org.wso2.carbon.event.simulator.admin.internal.util.EventSimulatorDataSourceInfo;
 import org.wso2.carbon.event.simulator.core.*;
 
@@ -253,11 +252,11 @@ public class EventSimulatorAdminService extends AbstractAdmin {
     public boolean sendDBConfigFileNameToSimulate(String fileName) throws AxisFault {
 
         EventSimulator eventSimulator = EventSimulatorAdminvalueHolder.getEventSimulator();
-        String jsonFormattedDBConfigAndColumnAndStreamAttributeDetails = eventSimulator.getEventStreamInfo(fileName);
+        String streamAttributeAndColumnMapping = eventSimulator.createTableAndAttributeMappingInfo(fileName);
         JSONObject jsonConvertedInfo;
         ExecutionInfo executionInfo;
         try {
-            jsonConvertedInfo = new JSONObject(jsonFormattedDBConfigAndColumnAndStreamAttributeDetails);
+            jsonConvertedInfo = new JSONObject(streamAttributeAndColumnMapping);
             executionInfo = EventSimulatorDataSourceInfo.getInitializedDatabaseExecutionInfo(jsonConvertedInfo);
         } catch (JSONException e) {
             throw new AxisFault("JSON exception when converting result of information retrieved by file name.");
@@ -274,21 +273,28 @@ public class EventSimulatorAdminService extends AbstractAdmin {
         return true;
     }
 
-    public String testSimulateRDBMSDataSourceConnection(String eventStreamDataSourceColumnNamesAndTypeInfo) throws AxisFault{
+    public String testSimulateRDBMSDataSourceConnection(String tableAndAttributeMappingInfo) throws AxisFault{
         ExecutionInfo executionInfo;
 
         try {
-            JSONObject jsonConvertedInfo = new JSONObject(eventStreamDataSourceColumnNamesAndTypeInfo);
+            JSONObject tableAndAttributeMappingJsonObj = new JSONObject(tableAndAttributeMappingInfo);
             try{
-                executionInfo = EventSimulatorDataSourceInfo.getInitializedDatabaseExecutionInfo(jsonConvertedInfo);
+                executionInfo = EventSimulatorDataSourceInfo.getInitializedDatabaseExecutionInfo(tableAndAttributeMappingJsonObj);
                 if(executionInfo!=null){
-                    String result = "{\""+ EventSimulatorConstant.EVENT_STREAM_ID+"\":\"" + jsonConvertedInfo.getString(EventSimulatorConstant.EVENT_STREAM_ID)
-                            + "\",\""+EventSimulatorConstant.EVENT_STREAM_NAME+"\":\"" + jsonConvertedInfo.getString(EventSimulatorConstant.EVENT_STREAM_NAME)
-                            + "\",\""+EventSimulatorConstant.DATA_SOURCE_NAME+"\":\"" + jsonConvertedInfo.getString(EventSimulatorConstant.DATA_SOURCE_NAME)
-                            + "\",\""+EventSimulatorConstant.TABLE_NAME+"\":\"" + jsonConvertedInfo.getString(EventSimulatorConstant.TABLE_NAME)
-                            + "\",\""+EventSimulatorConstant.CONFIGURATION_NAME+"\":\"" + jsonConvertedInfo.getString(EventSimulatorConstant.CONFIGURATION_NAME)
-                            + "\",\""+EventSimulatorConstant.DELAY_BETWEEN_EVENTS_IN_MILIES + "\":\"" + jsonConvertedInfo.getLong(EventSimulatorConstant.DELAY_BETWEEN_EVENTS_IN_MILIES)
-                            + "\",\""+EventSimulatorConstant.DATABASE_COLUMNS_AND_STREAM_ATTRIBUTE_INFO+"\":" + jsonConvertedInfo.getJSONArray(EventSimulatorConstant.DATABASE_COLUMNS_AND_STREAM_ATTRIBUTE_INFO)
+                    String result = "{\""+ EventSimulatorConstant.EVENT_STREAM_ID+"\":\"" +
+                            tableAndAttributeMappingJsonObj.getString(EventSimulatorConstant.EVENT_STREAM_ID)
+                            + "\",\""+EventSimulatorConstant.EVENT_STREAM_NAME+"\":\"" +
+                            tableAndAttributeMappingJsonObj.getString(EventSimulatorConstant.EVENT_STREAM_NAME)
+                            + "\",\""+EventSimulatorConstant.DATA_SOURCE_NAME+"\":\"" +
+                            tableAndAttributeMappingJsonObj.getString(EventSimulatorConstant.DATA_SOURCE_NAME)
+                            + "\",\""+EventSimulatorConstant.TABLE_NAME+"\":\"" +
+                            tableAndAttributeMappingJsonObj.getString(EventSimulatorConstant.TABLE_NAME)
+                            + "\",\""+EventSimulatorConstant.CONFIGURATION_NAME+"\":\"" +
+                            tableAndAttributeMappingJsonObj.getString(EventSimulatorConstant.CONFIGURATION_NAME)
+                            + "\",\""+EventSimulatorConstant.DELAY_BETWEEN_EVENTS_IN_MILIES + "\":\"" +
+                            tableAndAttributeMappingJsonObj.getLong(EventSimulatorConstant.DELAY_BETWEEN_EVENTS_IN_MILIES)
+                            + "\",\""+EventSimulatorConstant.DATABASE_COLUMNS_AND_STREAM_ATTRIBUTE_INFO+"\":" +
+                            tableAndAttributeMappingJsonObj.getJSONArray(EventSimulatorConstant.DATABASE_COLUMNS_AND_STREAM_ATTRIBUTE_INFO)
                             + "}";
 
                     return result;
@@ -297,20 +303,20 @@ public class EventSimulatorAdminService extends AbstractAdmin {
                 throw e;
             }
         } catch (JSONException e) {
-            log.error(EventSimulatorDataSourceConstants.JSON_EXCEPTION, e);
-            throw new AxisFault(EventSimulatorDataSourceConstants.JSON_EXCEPTION, e);
+            log.error("Created JSON formatted string with attribute mapping information is not valid", e);
+            throw new AxisFault("Created JSON formatted string with attribute mapping information is not valid", e);
         }
         return "failed";
     }
 
-    public boolean saveDataSourceConfigDetails(String dataSourceConfigAndEventStreamInfo) throws AxisFault {
+    public boolean saveDataSourceConfigDetails(String tableAndAttributeMappingInfo) throws AxisFault {
 
         EventSimulator eventSimulator = EventSimulatorAdminvalueHolder.getEventSimulator();
 
         ConfigurationContext configurationContext = getConfigContext();
         AxisConfiguration axisConfiguration = configurationContext.getAxisConfiguration();
 
-        eventSimulator.createConfigurationXMLForDataSource(dataSourceConfigAndEventStreamInfo, axisConfiguration);
+        eventSimulator.createConfigurationXMLForDataSource(tableAndAttributeMappingInfo, axisConfiguration);
         return true;
     }
 

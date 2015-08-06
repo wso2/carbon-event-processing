@@ -23,6 +23,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.w3c.dom.Node;
 import org.wso2.carbon.event.simulator.core.internal.CarbonEventSimulator;
 import org.wso2.carbon.event.simulator.core.internal.ds.EventSimulatorValueHolder;
 
@@ -81,7 +82,7 @@ public class CSVFileDeployer extends AbstractDeployer {
         if (streamIdSepCharAndDelay[1] != null) {
             csvFileInfo.setSeparateCharacter(streamIdSepCharAndDelay[1]);
         }
-        if (streamIdSepCharAndDelay[2] != null){
+        if (streamIdSepCharAndDelay[2] != null) {
             csvFileInfo.setDelayBetweenEventsInMilies(Long.valueOf(streamIdSepCharAndDelay[2]));
         }
         eventSimulator.addCSVFileInfo(csvFileInfo);
@@ -95,8 +96,8 @@ public class CSVFileDeployer extends AbstractDeployer {
         String dirPath = repo + EventSimulatorConstant.DEPLOY_DIRECTORY_PATH;
         String absolutePath = dirPath + File.separator + xmlName;
         String streamID = null;
-        String separateChar;
-        String eventSendingDelay;
+        String separateChar = null;
+        String eventSendingDelay = null;
         String[] streamIdSepCharAndDelay = new String[3];
         try {
             File xmlFile = new File(absolutePath);
@@ -107,16 +108,25 @@ public class CSVFileDeployer extends AbstractDeployer {
                 Document doc = dBuilder.parse(xmlFile);
 
                 Element element = doc.getDocumentElement();
-                streamID = element.getElementsByTagName(EventSimulatorConstant.STREAM_ID_ELEMENT).item(0).getTextContent();
-                eventSendingDelay = element.getElementsByTagName(EventSimulatorConstant.DELAY_BETWEEN_EVENTS_IN_MILIES).item(0).getTextContent();
-                separateChar = element.getElementsByTagName(EventSimulatorConstant.SEPARATE_CHAR_ELEMENT).item(0).getTextContent();
+                Node streamIdNode = element.getElementsByTagName(EventSimulatorConstant.STREAM_ID_ELEMENT).item(0);
+                if (streamIdNode != null) {
+                    streamID = streamIdNode.getTextContent();
+                }
+                Node eventSendingDelayNode = element.getElementsByTagName(EventSimulatorConstant.DELAY_BETWEEN_EVENTS_IN_MILIES).item(0);
+                if (eventSendingDelayNode != null) {
+                    eventSendingDelay = eventSendingDelayNode.getTextContent();
+                }
+                Node separateCharNode = element.getElementsByTagName(EventSimulatorConstant.SEPARATE_CHAR_ELEMENT).item(0);
+                if (separateCharNode != null) {
+                    separateChar = separateCharNode.getTextContent();
+                }
 
                 streamIdSepCharAndDelay[0] = streamID;
                 streamIdSepCharAndDelay[1] = separateChar;
                 streamIdSepCharAndDelay[2] = eventSendingDelay;
             }
         } catch (Exception e) {
-            log.error(e);
+            log.error("Error when getting event mapping configuration for event simulator : " + e.getMessage(), e);
         }
         return streamIdSepCharAndDelay;
     }

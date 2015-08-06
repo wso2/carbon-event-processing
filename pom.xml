@@ -478,13 +478,14 @@
                 <version>${scala.version}</version>
             </dependency>
 
+            <!-- Siddhi ML extension has been moved to carbon-ml repo and
+            will be packed as a separate feature -->
             <!-- Siddhi ML extension -->
-            <!-- TODO Need to Add other related dependencies -->
-            <dependency>
-                <groupId>org.wso2.siddhi</groupId>
-                <artifactId>siddhi-extension-ml</artifactId>
-                <version>${siddhi.version}</version>
-            </dependency>
+            <!--<dependency>-->
+            <!--<groupId>org.wso2.siddhi</groupId>-->
+            <!--<artifactId>siddhi-extension-ml</artifactId>-->
+            <!--<version>${siddhi.version}</version>-->
+            <!--</dependency>-->
 
             <!--siddhi dependencies stop-->
 

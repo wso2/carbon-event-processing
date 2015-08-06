@@ -83,12 +83,14 @@ public class StormManagerServer {
     public void tryBecomeCoordinator() {
         HazelcastInstance hazelcastInstance = EventProcessorValueHolder.getHazelcastInstance();
         if (hazelcastInstance != null) {
-            ILock lock = hazelcastInstance.getLock("StormManager");
-            boolean isCoordinator = lock.tryLock();
-            if(isCoordinator) {
-                log.info("Node became Storm Coordinator");
+            if(!isStormManager()) {
+                ILock lock = hazelcastInstance.getLock("StormManager");
+                boolean isCoordinator = lock.tryLock();
+                if (isCoordinator) {
+                    log.info("Node became Storm Coordinator");
+                }
+                setStormManager(isCoordinator);
             }
-            setStormManager(isCoordinator);
         }
     }
 
