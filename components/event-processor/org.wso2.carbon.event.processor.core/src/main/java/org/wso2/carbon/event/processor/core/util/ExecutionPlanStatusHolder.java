@@ -9,7 +9,6 @@ import java.io.Serializable;
  */
 public class ExecutionPlanStatusHolder implements Serializable {
 
-    //todo: Add debug logs
 
     private static Logger log = Logger.getLogger(ExecutionPlanStatusHolder.class);
 
@@ -43,12 +42,12 @@ public class ExecutionPlanStatusHolder implements Serializable {
         return requiredPublisherBoltsCount;
     }
 
-    public void setRequiredCepReceiversCount(int requiredCepReceiversCount) {
-        this.requiredCepReceiversCount += requiredCepReceiversCount;           // += is put because multiple workers could invoke setRequiredCepReceiversCount()
+    public void addRequiredCepReceiversCount(int requiredCepReceiversCount) {
+        this.requiredCepReceiversCount += requiredCepReceiversCount;           // += is put because multiple workers could invoke addRequiredCepReceiversCount()
     }
 
-    public void setRequiredPublisherBoltsCount(int requiredPublisherBoltsCount) {
-        this.requiredPublisherBoltsCount += requiredPublisherBoltsCount;      // += is put in case multiple managers (if it's allowed) could invoke setRequiredPublisherBoltsCount()
+    public void addRequiredPublisherBoltsCount(int requiredPublisherBoltsCount) {
+        this.requiredPublisherBoltsCount += requiredPublisherBoltsCount;      // += is put in case multiple managers (if it's allowed) could invoke addRequiredPublisherBoltsCount()
     }
 
     public void incrementConnectedCEPReceiversCount(){

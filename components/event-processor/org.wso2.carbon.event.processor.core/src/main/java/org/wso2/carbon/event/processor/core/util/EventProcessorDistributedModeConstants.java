@@ -13,7 +13,7 @@ public final class EventProcessorDistributedModeConstants {
         NOT_INITIALIZED         //Indicates the topology status has not been queried yet from Storm.
     }
 
-    public static final int LOCK_TIMEOUT = 1000;   //lock timeout in seconds.
+    public static final int LOCK_TIMEOUT = 60;   //lock timeout in seconds.     //todo: read from a config
 
     public final static String ERROR_LOCK_ACQUISITION_FAILED_FOR_TOPOLOGY_STATUS = "Couldn't acquire hazelcast lock for updating the topology status. " +
             "The 'Status in Storm' printed on the execution plan list may be wrong until the execution plan is redeployed.";
