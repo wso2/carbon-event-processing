@@ -1,24 +1,24 @@
 /*Copyright (C) 2015 by Marijn Haverbeke <marijnh@gmail.com> and others
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
+ Permission is hereby granted, free of charge, to any person obtaining a copy
+ of this software and associated documentation files (the "Software"), to deal
+ in the Software without restriction, including without limitation the rights
+ to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ copies of the Software, and to permit persons to whom the Software is
+ furnished to do so, subject to the following conditions:
 
-    The above copyright notice and this permission notice shall be included in
-all copies or substantial portions of the Software.
+ The above copyright notice and this permission notice shall be included in
+ all copies or substantial portions of the Software.
 
-    THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-    FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-    OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-THE SOFTWARE.*/
+ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ THE SOFTWARE.*/
 
-    CodeMirror.defineMode("sql", function (config, parserConfig) {
+CodeMirror.defineMode("sql", function (config, parserConfig) {
     "use strict";
 
     var client = parserConfig.client || {},
@@ -71,10 +71,8 @@ THE SOFTWARE.*/
         } else {
             stream.eatWhile(/^[_\-\w\d]/);    /* Character '-' will also be eaten, to prevent the highlight happening in keywords being embedded in non-keyword strings. For example, 'all' in 'all-nonkeyword' */
             var word = stream.current().toLowerCase();         // Added toLowerCase() to highlight keywords in a case insensitive manner.
-            // dates (standard SQL syntax)
-            // ref: http://dev.mysql.com/doc/refman/5.5/en/date-and-time-literals.html
-            if (dateSQL.hasOwnProperty(word) && (stream.match(/^( )+'[^']*'/) || stream.match(/^( )+"[^"]*"/)))
-                return "number";
+
+            if (dateSQL.hasOwnProperty(word)) return "number";
             if (atoms.hasOwnProperty(word)) return "atom";
             if (builtin.hasOwnProperty(word)) return "builtin";
             if (keywords.hasOwnProperty(word)) return "keyword";
@@ -227,13 +225,15 @@ THE SOFTWARE.*/
     }
 
     // these keywords are used by all SQL dialects (however, a mode can still overwrite it)
-    var sqlKeywordsWithoutSymbols = "all and as begin by contains define delete end events " +
-        "every first for from full group having inner insert into join last " +
-        "left not of on or outer output partition raw return right select snapshot stream table update ";
+    var sqlKeywordsWithoutSymbols = "all and as at begin by current define delete end events " +
+        "every expired first for from full function group having in inner insert into is join last " +
+        "left not of on or outer output plan partition raw return right select snapshot stream table trigger " +
+        "unidirectional update window with within";
     var sqlKeywords = ", : ? # ( ) " + sqlKeywordsWithoutSymbols;
     var builtIn = "bool double float int long object string ";
     var atoms = "false true null ";
-    var dateSQL = "days hours milliseconds minutes months seconds ";
+    var dateSQL = "day days hour hours millisec millisecond milliseconds min minute minutes month months sec second" +
+        " seconds week weeks year years";
     var allSqlSuggestions = sqlKeywordsWithoutSymbols + builtIn + atoms + dateSQL;
 
     // turn a space-separated list into an array
