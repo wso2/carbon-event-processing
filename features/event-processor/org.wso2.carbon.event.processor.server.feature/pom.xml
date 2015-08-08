@@ -61,8 +61,8 @@
             <artifactId>siddhi-query-compiler</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.apache.storm.wso2</groupId>
-            <artifactId>storm</artifactId>
+            <groupId>org.wso2.orbit.org.apache.storm</groupId>
+            <artifactId>storm-core</artifactId>
         </dependency>
         <dependency>
             <groupId>org.wso2.carbon.event-processing</groupId>
@@ -73,7 +73,7 @@
             <artifactId>org.wso2.carbon.event.processor.storm</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.wso2.lmax</groupId>
+            <groupId>org.wso2.orbit.com.lmax</groupId>
             <artifactId>disruptor</artifactId>
         </dependency>
         <!--<dependency>-->
@@ -83,6 +83,10 @@
         <dependency>
             <groupId>org.yaml</groupId>
             <artifactId>snakeyaml</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.googlecode.json-simple</groupId>
+            <artifactId>json-simple</artifactId>
         </dependency>
         <dependency>
             <groupId>org.antlr</groupId>
@@ -252,13 +256,13 @@
                                     org.wso2.siddhi:siddhi-query-compiler:${siddhi.version}
                                 </bundleDef>
                                 <bundleDef>
-                                    org.apache.storm.wso2:storm:${storm.version}
+                                    org.wso2.orbit.org.apache.storm:storm-core:${storm.orbit.version}
                                 </bundleDef>
                                 <bundleDef>
                                     org.wso2.carbon.event-processing:org.wso2.carbon.event.processor.common:${carbon.event.processing.version}
                                 </bundleDef>
                                 <bundleDef>
-                                    org.wso2.lmax:disruptor:${disruptor.orbit.version}
+                                    org.wso2.orbit.com.lmax:disruptor:${disruptor.orbit.version}
                                 </bundleDef>
                                 <!--<bundleDef>-->
                                     <!--org.hectorclient.wso2:hector-core:${hector.wso2.version}-->

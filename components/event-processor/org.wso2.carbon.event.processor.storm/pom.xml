@@ -59,7 +59,7 @@
             <artifactId>libthrift</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.wso2.lmax</groupId>
+            <groupId>org.wso2.orbit.com.lmax</groupId>
             <artifactId>disruptor</artifactId>
         </dependency>
         <dependency>
@@ -185,7 +185,11 @@
                         <Bundle-Name>${project.artifactId}</Bundle-Name>
                         <Export-Package>
                             !org.slf4j.*,
-                            * ; -split-package:=merge-first
+                            !common-version-info.properties,
+                            !core-default.xml,
+                            !org.apache.hadoop.application-classloader.properties,
+                            !rdbms-table-config.xml,
+                            *; -split-package:=merge-first
                         </Export-Package>
                         <Embed-Dependency>
                             siddhi-core|siddhi-query-api|siddhi-query-compiler|antlr4-runtime|guava|quartz|org.wso2.carbon.event.processor.manager.commons|org.wso2.carbon.event.processor.manager.core|org.wso2.carbon.event.processor.common|libthrift|disruptor|siddhi-extension-math|siddhi-extension-regex|siddhi-extension-string|siddhi-extension-event-table|siddhi-extension-eval-script|siddhi-extension-time|hadoop-common|jdbc-pool|commons-lang3|siddhi-extension-timeseries|commons-math3|siddhi-extension-geo|org.apache.servicemix.bundles.geocoder-java|scala-compiler|scala-reflect|scalascriptengine_2.11|mysql-connector-java;scope=compile|runtime;inline=true

@@ -75,7 +75,6 @@
                             org.wso2.carbon.event.stream.stub.*,
                             org.wso2.carbon.utils,
                             org.apache.axis2.*,
-                            org.apache.axiom.*; version="${imp.pkg.version.range.axiom}";resolution:=optional,
                             *;resolution:=optional
                         </Import-Package>
                         <DynamicImport-Package>*</DynamicImport-Package>
