@@ -13,17 +13,4 @@ public final class DistributedModeConstants {
         DEPLOYING,          //StormTopologyManager is in the process of deploying this  topology
         ACTIVE,             //Indicates that the topology was found to be in ACTIVE state (as in Storm terminology) in the storm cluster.
     }
-
-    public final static String ERROR_LOCK_ACQUISITION_FAILED_FOR_TOPOLOGY_STATUS = "Couldn't acquire hazelcast lock for updating the topology status. " +
-            "The 'Status in Storm' printed on the execution plan list may be wrong until the execution plan is redeployed.";
-    public final static String ERROR_LOCK_ACQUISITION_FAILED_FOR_CONNECTED_PUBLISHING_BOLTS = "Couldn't acquire hazelcast lock for updating the connected publisher bolts count. " +
-            "The 'Status in Storm' printed on the execution plan list may be wrong until the execution plan is redeployed.";
-    public final static String ERROR_LOCK_ACQUISITION_FAILED_FOR_REQUIRED_PUBLISHING_BOLTS = "Couldn't acquire hazelcast lock for updating the required no of publisher bolts. " +
-            "The 'Status in Storm' printed on the execution plan list may be wrong until the execution plan is redeployed.";
-    public final static String ERROR_LOCK_ACQUISITION_FAILED_FOR_CONNECTED_CEP_RECEIVERS =
-            "Couldn't acquire hazelcast lock for updating the connected CEP Receivers count. " +
-            "The 'Status in Storm' printed on the execution plan list may be wrong until the execution plan is redeployed.";
-    public final static String ERROR_LOCK_ACQUISITION_FAILED_FOR_REQUIRED_CEP_RECEIVERS =
-            "Couldn't acquire hazelcast lock for updating the required no of CEP Receivers. " +
-            "The 'Status in Storm' printed on the execution plan list may be wrong until the execution plan is redeployed.";
 }
