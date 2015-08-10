@@ -127,10 +127,10 @@
         <!--<artifactId>siddhi-extension-ml</artifactId>-->
         <!--</dependency>-->
 
-        <!--<dependency>-->
-            <!--<groupId>org.wso2.siddhi</groupId>-->
-            <!--<artifactId>siddhi-extension-geo</artifactId>-->
-        <!--</dependency>-->
+        <dependency>
+            <groupId>org.wso2.siddhi</groupId>
+            <artifactId>siddhi-extension-geo</artifactId>
+        </dependency>
 
         <dependency>
             <groupId>org.apache.commons</groupId>
@@ -299,6 +299,9 @@
                                 <bundleDef>
                                     org.wso2.siddhi:siddhi-extension-timeseries:${siddhi.version}
                                 </bundleDef>
+                                <bundleDef>
+                                    org.wso2.siddhi:siddhi-extension-geo:${siddhi.version}
+                                </bundleDef>
                                 <!--<bundleDef>-->
                                 <!--org.wso2.siddhi:siddhi-extension-ml:${siddhi.version}-->
                                 <!--</bundleDef>-->
@@ -332,6 +335,11 @@
                                 <!--<bundleDef>-->
                                     <!--org.scala-lang:scala-reflect:${scala.version}-->
                                 <!--</bundleDef>-->
+
+                                <bundleDef>
+                                    org.apache.servicemix.bundles:org.apache.servicemix.bundles.geocoder-java:${geocoder.version}
+                                </bundleDef>
+
                             </bundles>
                             <importFeatures>
                                 <importFeatureDef>org.wso2.carbon.core.server:${carbon.kernel.version}</importFeatureDef>
