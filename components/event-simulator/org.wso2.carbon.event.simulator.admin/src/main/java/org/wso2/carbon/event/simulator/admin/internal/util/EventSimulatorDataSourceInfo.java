@@ -39,13 +39,12 @@ import java.io.File;
 import java.sql.*;
 import java.util.*;
 
+/**
+ * Validates database table information Construct all the queries and assign to executionInfo instance
+ */
 public class EventSimulatorDataSourceInfo {
-    /**
-     * Construct all the queries and assign to executionInfo instance
-     */
 
     private static Map<String,Map<String,String>> dbTypeMappings;
-    private ResourceBundle resourceBundle;
 
     private static final Log log = LogFactory.getLog(EventSimulatorDataSourceInfo.class);
 
@@ -60,10 +59,11 @@ public class EventSimulatorDataSourceInfo {
         try {
             jaxbContext = JAXBContext.newInstance(Mappings.class);
             Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
-            String path = CarbonUtils.getCarbonConfigDirPath() + File.separator + EventSimulatorDataSourceConstants.ADAPTOR_GENERIC_RDBMS_FILE_SPECIFIC_PATH + EventSimulatorDataSourceConstants.ADAPTOR_GENERIC_RDBMS_FILE_NAME;
+            String path = CarbonUtils.getCarbonConfigDirPath() + File.separator + EventSimulatorDataSourceConstants.GENERIC_RDBMS_FILE_SPECIFIC_PATH
+                    + EventSimulatorDataSourceConstants.GENERIC_RDBMS_FILE_NAME;
             File configFile = new File(path);
             if (!configFile.exists()) {
-                throw new AxisFault("The " + EventSimulatorDataSourceConstants.ADAPTOR_GENERIC_RDBMS_FILE_NAME + " can not found in " + path);
+                throw new AxisFault("The " + EventSimulatorDataSourceConstants.GENERIC_RDBMS_FILE_NAME + " can not found in " + path);
             }
             Mappings mappings = (Mappings) unmarshaller.unmarshal(configFile);
             Map<String,Mapping> dbMap=new HashMap<String, Mapping>();
@@ -100,7 +100,14 @@ public class EventSimulatorDataSourceInfo {
         }
     }
 
-    public static ExecutionInfo getInitializedDatabaseExecutionInfo(JSONObject jsonDBConfigAndColumnStreamAttributeInfo) throws AxisFault {
+    /**
+     * Validates database table information Construct all the queries and assign to executionInfo instance
+     *
+     * @param tableAndAttributeMappingJsonObj JSONObject which contains dataSource, event stream, configuration name,
+     *                                        table name, delay between events in milliseconds,
+     *                                        table columns and mapping stream attributes and types
+     */
+    public static ExecutionInfo getInitializedDatabaseExecutionInfo(JSONObject tableAndAttributeMappingJsonObj) throws AxisFault {
         Connection con;
         String dbName;
         Statement stmt;
@@ -110,9 +117,8 @@ public class EventSimulatorDataSourceInfo {
         ExecutionInfo executionInfo = new ExecutionInfo();
         String dataSourceName;
         try {
-            dataSourceName = jsonDBConfigAndColumnStreamAttributeInfo.getString(EventSimulatorConstant.DATA_SOURCE_NAME);
-            String tableName = jsonDBConfigAndColumnStreamAttributeInfo.getString(EventSimulatorConstant.TABLE_NAME);
-            long delayBetweenEventsInMilies =  jsonDBConfigAndColumnStreamAttributeInfo.getLong(EventSimulatorConstant.DELAY_BETWEEN_EVENTS_IN_MILIES);
+            dataSourceName = tableAndAttributeMappingJsonObj.getString(EventSimulatorConstant.DATA_SOURCE_NAME);
+            String tableName = tableAndAttributeMappingJsonObj.getString(EventSimulatorConstant.TABLE_NAME);
 
             try {
                 CarbonDataSource carbonDataSource = EventSimulatorAdminvalueHolder.getDataSourceService().getDataSource(dataSourceName);
@@ -127,7 +133,8 @@ public class EventSimulatorDataSourceInfo {
 
                     Map<String, String> elementMappings = dbTypeMappings.get(dbName.toLowerCase());
 
-                    String isTableExistQuery = elementMappings.get("isTableExist").replace(EventSimulatorDataSourceConstants.ADAPTOR_GENERIC_RDBMS_ATTRIBUTE_TABLE_NAME,tableName);
+                    String isTableExistQuery = elementMappings.get("isTableExist").replace(
+                            EventSimulatorDataSourceConstants.GENERIC_RDBMS_ATTRIBUTE_TABLE_NAME,tableName);
                     executionInfo.setPreparedTableExistenceCheckStatement(isTableExistQuery);
 
                     try {
@@ -136,86 +143,72 @@ public class EventSimulatorDataSourceInfo {
                         String getColumnsQuery = "";
 
                         boolean addedFirstColumn = false;
-                        JSONArray dataSourceColumnsAndTypes = jsonDBConfigAndColumnStreamAttributeInfo.getJSONArray(EventSimulatorConstant.DATABASE_COLUMNS_AND_STREAM_ATTRIBUTE_INFO);
-                        for (int i=0; i<dataSourceColumnsAndTypes.length();i++){
-                            JSONObject temp = dataSourceColumnsAndTypes.getJSONObject(i);
-                            if(!getColumnsQuery.contains(temp.getString(EventSimulatorConstant.COLUMN_NAME))){
+                        JSONArray attributeColumnMappingArray = tableAndAttributeMappingJsonObj.getJSONArray(
+                                EventSimulatorConstant.DATABASE_COLUMNS_AND_STREAM_ATTRIBUTE_INFO);
+                        for (int i=0; i<attributeColumnMappingArray.length();i++){
+                            JSONObject attributeAndMappingColumn = attributeColumnMappingArray.getJSONObject(i);
+                            if(!getColumnsQuery.contains(attributeAndMappingColumn.getString(EventSimulatorConstant.COLUMN_NAME))){
                                 if(addedFirstColumn){
                                     getColumnsQuery = getColumnsQuery + ",";
                                 }
                                 addedFirstColumn = true;
-                                getColumnsQuery = getColumnsQuery + temp.getString(EventSimulatorConstant.COLUMN_NAME);
+                                getColumnsQuery = getColumnsQuery + attributeAndMappingColumn.getString(EventSimulatorConstant.COLUMN_NAME);
 
                             }
                         }
 
-                        String getColumnsDataTypeQuery = elementMappings.get("selectAllColumnsDataTypeInTable").replace(EventSimulatorDataSourceConstants.ADAPTOR_GENERIC_RDBMS_ATTRIBUTE_TABLE_NAME,tableName);
-                        String getSelectQuery = elementMappings.get("selectFromTable").replace(EventSimulatorDataSourceConstants.ADAPTOR_GENERIC_RDBMS_ATTRIBUTE_TABLE_NAME,tableName).replace(EventSimulatorDataSourceConstants.ADAPTOR_GENERIC_RDBMS_ATTRIBUTE_COLUMNS,getColumnsQuery);
+                        String columnsDataTypeQuery = elementMappings.get("selectAllColumnsDataTypeInTable").replace(
+                                EventSimulatorDataSourceConstants.GENERIC_RDBMS_ATTRIBUTE_TABLE_NAME,tableName);
+                        String selectQuery = elementMappings.get("selectFromTable").replace(
+                                EventSimulatorDataSourceConstants.GENERIC_RDBMS_ATTRIBUTE_TABLE_NAME, tableName).replace(
+                                EventSimulatorDataSourceConstants.GENERIC_RDBMS_ATTRIBUTE_COLUMNS, getColumnsQuery);
 
-                        executionInfo.setPreparedCheckTableColomnsDataTypeStatement(getColumnsDataTypeQuery);
-                        executionInfo.setPreparedSelectStatement(getSelectQuery);
+                        executionInfo.setPreparedCheckTableColomnsDataTypeStatement(columnsDataTypeQuery);
+                        executionInfo.setPreparedSelectStatement(selectQuery);
 
-                        int columndataTypeCorrectCount= 0;
-                        boolean emptyTable;
+                        int columnAndDataTypeCount= 0;
 
-                        emptyTable = true;
-                        getColumnsDataTypeQuery = executionInfo.getPreparedCheckTableColomnsDataTypeStatement();
-                        //to check columns and its data type matching
-                        ResultSet rs = stmt.executeQuery(getColumnsDataTypeQuery);
+                        columnsDataTypeQuery = executionInfo.getPreparedCheckTableColomnsDataTypeStatement();
+                        //to check validity of entered columns
+                        ResultSet rs = stmt.executeQuery(columnsDataTypeQuery);
                         while(rs.next()){
-
                             String tableVariable = rs.getString(1);
-                            String tableVariableType = rs.getString(2);
-
-                            for(int j=0; j<dataSourceColumnsAndTypes.length();j++){
-                                JSONObject temp = dataSourceColumnsAndTypes.getJSONObject(j);
-                                String eventStreamDataType;
-                                if (temp.getString(EventSimulatorConstant.COLUMN_TYPE).equalsIgnoreCase("int")) {
-                                    eventStreamDataType = elementMappings.get("integer");
-                                } else{
-                                    eventStreamDataType = elementMappings.get(temp.getString(EventSimulatorConstant.COLUMN_TYPE).toLowerCase());
-                                    eventStreamDataType = eventStreamDataType.replaceAll("[^a-zA-Z]", "");
-                                }
-                                if(temp.getString(EventSimulatorConstant.COLUMN_NAME).equalsIgnoreCase(tableVariable) && eventStreamDataType.equalsIgnoreCase(tableVariableType)){
-                                    columndataTypeCorrectCount++;
+                            for(int j=0; j<attributeColumnMappingArray.length();j++){
+                                JSONObject mappingAttributeAndColumn = attributeColumnMappingArray.getJSONObject(j);
+                                if(mappingAttributeAndColumn.getString(EventSimulatorConstant.COLUMN_NAME).equalsIgnoreCase(tableVariable)){
+                                    columnAndDataTypeCount++;
                                 }
                             }
+                        }
 
-
+                        if(columnAndDataTypeCount < attributeColumnMappingArray.length()){
+                            log.error("Entered Column name(s) are nt valid in " + tableName);
+                            throw new AxisFault("Entered Column name(s) are nt valid in " + tableName);
                         }
 
                         rs = stmt.executeQuery(executionInfo.getPreparedSelectStatement());
-                        if(rs.next()){
-                            emptyTable = false;
-                        }
-
-                        if(columndataTypeCorrectCount < dataSourceColumnsAndTypes.length()){
-                            log.error(tableName + EventSimulatorDataSourceConstants.DATA_TYPES_DOESNT_MATCH);
-                            throw new AxisFault(tableName + EventSimulatorDataSourceConstants.DATA_TYPES_DOESNT_MATCH);
-                        }
-
-                        if(emptyTable){
-                            log.error(tableName + EventSimulatorDataSourceConstants.NO_DATA_IN_TABLE);
-                            throw new AxisFault(tableName + EventSimulatorDataSourceConstants.NO_DATA_IN_TABLE);
+                        if(!rs.next()){
+                            log.error(tableName + " table does not contain data");
+                            throw new AxisFault(tableName + " table does not contain data");
                         }
                         cleanupConnections(stmt,con);
                     } catch (SQLException e) {
-                        log.error(tableName + EventSimulatorDataSourceConstants.NO_TABLE_OR_NO_DATA, e);
-                        throw new AxisFault(tableName + EventSimulatorDataSourceConstants.NO_TABLE_OR_NO_DATA, e);
+                        log.error(tableName + " table does not exist or no data", e);
+                        throw new AxisFault(tableName + " table does not exist or no data", e);
                     }
                 } catch (SQLException e) {
-                    log.error(EventSimulatorDataSourceConstants.CONNECTION_STRING_NOT_FOUND + dataSourceName, e);
-                    throw new AxisFault(EventSimulatorDataSourceConstants.CONNECTION_STRING_NOT_FOUND + dataSourceName, e);
+                    log.error("Exception when getting connection string for : " + dataSourceName, e);
+                    throw new AxisFault("Exception when getting connection string for : " + dataSourceName, e);
                 }
 
             } catch (DataSourceException e) {
-                log.error(EventSimulatorDataSourceConstants.DATA_SOURCE_NOT_FOUND_FOR_DATA_SOURCE_NAME + dataSourceName, e);
-                throw new AxisFault(EventSimulatorDataSourceConstants.DATA_SOURCE_NOT_FOUND_FOR_DATA_SOURCE_NAME + dataSourceName, e);
+                log.error("There is no any data source found named: " + dataSourceName, e);
+                throw new AxisFault("There is no any data source found named: " + dataSourceName, e);
 
             }
         } catch (JSONException e) {
-            log.error(EventSimulatorDataSourceConstants.JSON_EXCEPTION, e);
-            throw new AxisFault(EventSimulatorDataSourceConstants.JSON_EXCEPTION, e);
+            log.error("Created JSON formatted string with attribute mapping information is not valid", e);
+            throw new AxisFault("Created JSON formatted string with attribute mapping information is not valid", e);
         }
 
         return executionInfo;
