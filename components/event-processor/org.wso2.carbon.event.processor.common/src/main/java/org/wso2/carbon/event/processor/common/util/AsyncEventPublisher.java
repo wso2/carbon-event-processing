@@ -43,7 +43,10 @@ import java.util.Set;
 import java.util.concurrent.Executors;
 
 /**
- * Sending events to a remote endpoint asynchronously.
+ * Sending events asynchronously from "CEP Receiver" -> "Storm Receiver" and
+ * "Storm Publisher" -> "CEP Publisher" using TCPEventPublisher. This will
+ * discover and connect to the endpoint(i.e. Storm Receiver/CEP Publisher) to
+ * send events by talking to "Storm Management" service using EndpointConnectionCreator.
  */
 public class AsyncEventPublisher implements EventHandler<AsynchronousEventBuffer.DataHolder> {
     public enum DestinationType {STORM_RECEIVER, CEP_PUBLISHER}
@@ -61,11 +64,10 @@ public class AsyncEventPublisher implements EventHandler<AsynchronousEventBuffer
     private String thisHostIp;
     private List<HostAndPort> managerServiceEndpoints;
     private DistributedConfiguration stormDeploymentConfig;
+    AsynchronousEventBuffer eventSendBuffer = null;
 
     private TCPEventPublisher tcpEventPublisher = null;
     private EndpointConnectionCreator endpointConnectionCreator;
-    // TODO : make the buffer size configurable
-    private AsynchronousEventBuffer eventSendBuffer = new AsynchronousEventBuffer<Object[]>(1024, this);
 
     private boolean shutdown = false;
 
@@ -82,8 +84,14 @@ public class AsyncEventPublisher implements EventHandler<AsynchronousEventBuffer
         this.managerServiceEndpoints = managerServiceEndpoints;
         this.stormDeploymentConfig = stormDeploymentConfig;
         this.endpointConnectionCreator = new EndpointConnectionCreator();
+
         this.destinationTypeString = (destinationType == DestinationType.STORM_RECEIVER) ? "StormReceiver" : "CEPPublisher";
         this.publisherTypeString = (destinationType == DestinationType.STORM_RECEIVER) ? "CEPReceiver" : "PublisherBolt";
+
+        int bufferSize = (publisherTypeString.equals("CEPReceiver")) ?
+                stormDeploymentConfig.getCepReceiverOutputQueueSize() : stormDeploymentConfig.getStormPublisherOutputQueueSize();
+        eventSendBuffer = new AsynchronousEventBuffer<Object[]>(bufferSize, this);
+
         this.logPrefix = "[" + tenantId + ":" + executionPlanName + ":" + publisherTypeString + "] ";
     }
 
