@@ -3,6 +3,8 @@ package org.wso2.carbon.event.processor.core.util;
 import org.apache.log4j.Logger;
 
 import java.io.Serializable;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Holds the status relating to an execution plan
@@ -12,81 +14,71 @@ public class ExecutionPlanStatusHolder implements Serializable {
 
     private static Logger log = Logger.getLogger(ExecutionPlanStatusHolder.class);
 
-    private EventProcessorDistributedModeConstants.TopologyState topologyState = EventProcessorDistributedModeConstants.TopologyState.NOT_INITIALIZED;
-    private int connectedCepReceiversCount = 0;
-    private int requiredCepReceiversCount = 0;
-    private int connectedPublisherBoltsCount = 0;
+    private DistributedModeConstants.TopologyState topologyState = DistributedModeConstants.TopologyState.UNKNOWN;
+
+    private Map<String,Integer> publisherBoltsMap = new HashMap<String,Integer>();         // < IP , #publisherBolts >
+    private Map<String,Integer[]> cepReceiversMap = new HashMap<String,Integer[]>();            // < IP, #pendingReceiverConnections >
+
     private int requiredPublisherBoltsCount = 0;
 
-    public EventProcessorDistributedModeConstants.TopologyState getTopologyState() {
+    public ExecutionPlanStatusHolder(int requiredPublisherBolts) {
+        this.requiredPublisherBoltsCount = requiredPublisherBolts;
+    }
+
+    public DistributedModeConstants.TopologyState getTopologyState() {
         return topologyState;
     }
 
-    public void setStormTopologyStatus(EventProcessorDistributedModeConstants.TopologyState topologyState){
+    public void setStormTopologyStatus(DistributedModeConstants.TopologyState topologyState){
         this.topologyState = topologyState;
-    }
-
-    public int getConnectedCepReceiversCount() {
-        return connectedCepReceiversCount;
-    }
-
-    public int getConnectedPublisherBoltsCount() {
-        return connectedPublisherBoltsCount;
-    }
-
-    public int getRequiredCepReceiversCount() {
-        return requiredCepReceiversCount;
     }
 
     public int getRequiredPublisherBoltsCount() {
         return requiredPublisherBoltsCount;
     }
 
-    public void addRequiredCepReceiversCount(int requiredCepReceiversCount) {
-        this.requiredCepReceiversCount += requiredCepReceiversCount;           // += is put because multiple workers could invoke addRequiredCepReceiversCount()
+    public void setCEPReceiverStatus(String hostIp, int connected, int required){
+        log.info("------------------------------------ setCEPReceiverStatus " + connected + "/" + required);
+        cepReceiversMap.put(hostIp,new Integer[]{connected,required});
     }
 
-    public void addRequiredPublisherBoltsCount(int requiredPublisherBoltsCount) {
-        this.requiredPublisherBoltsCount += requiredPublisherBoltsCount;      // += is put in case multiple managers (if it's allowed) could invoke addRequiredPublisherBoltsCount()
-    }
-
-    public void incrementConnectedCEPReceiversCount(){
-        connectedCepReceiversCount++;
-    }
-
-    public void decrementConnectedCEPReceiversCount(){
-        if(connectedCepReceiversCount > 0) {
-            connectedCepReceiversCount--;
-        }
-    }
-
-    public void incrementConnectedPublisherBoltsCount(){
-        connectedPublisherBoltsCount++;
-    }
-
-    public void decrementConnectedPublisherBoltsCount(){
-        if(connectedPublisherBoltsCount > 0) {
-            connectedPublisherBoltsCount--;
-        }
+    public void setConnectedPublisherBoltsCount(String hostIp, int connectedCount){
+        log.info("------------------------------------ setConnectedPublisherBoltsCount " + connectedCount);
+        publisherBoltsMap.put(hostIp,connectedCount);
     }
 
     public String getExecutionPlanStatus(){
-        String topologyStatus = null;
-        switch (this.getTopologyState()) {
-            case ACTIVE:
-                topologyStatus = "Topology was found to be in ACTIVE state in the storm cluster.\n";
-                break;
-            case REMOVED:
-                topologyStatus = "Topology has been removed from the storm cluster.\n";
-                break;
-            case NOT_INITIALIZED:
-                topologyStatus = "Starting to query the topology status from Storm...\n";
-                break;
+        String topologyStatus = this.getTopologyState().toString() + "\n";
+
+        //cep receiver status
+        String receiverStatus = "CEP Receivers > ";
+        String receiverStatusDetails = "";
+        int totalPendingConnections = 0;
+        for (Map.Entry<String,Integer[]> entry : cepReceiversMap.entrySet()){
+            totalPendingConnections += entry.getValue()[1] - entry.getValue()[0];
+            receiverStatusDetails += entry.getKey() + " -> " + entry.getValue()[0] + "/" + entry.getValue()[1] + "\n";
         }
-        String cepReceiverStatus = this.getConnectedCepReceiversCount() + " of " + this.getRequiredCepReceiversCount() +
-                " CEP Receivers are connected to Storm Receivers.\n";
-        String stormPublishingBoltStatus = this.getConnectedPublisherBoltsCount() + " of " + this.getRequiredPublisherBoltsCount() +
-                " Storm Publishing Bolts are connected to CEP Publishers.\n";
-        return topologyStatus + cepReceiverStatus + stormPublishingBoltStatus;
+        if(cepReceiversMap.size() == 0){
+            receiverStatus += "No receivers found. \n";
+        } else if(totalPendingConnections == 0){
+            receiverStatus += "Connected. \n";
+        } else {
+            receiverStatus += "Pending connections: \n" + receiverStatusDetails + "\n";
+        }
+
+        //publishing bolts status
+        int boltsConnected = 0;
+        String stormPublishingBoltStatus = "Storm Publishers > ";
+        for (Map.Entry<String,Integer> entry : publisherBoltsMap.entrySet()){
+            boltsConnected += entry.getValue();
+        }
+        int requiredPublisherBoltsCount = getRequiredPublisherBoltsCount();
+        if(requiredPublisherBoltsCount - boltsConnected == 0){
+            stormPublishingBoltStatus += "Connected. \n";
+        } else {
+            stormPublishingBoltStatus += "Pending connections: " + (requiredPublisherBoltsCount - boltsConnected)
+                    + "/" + requiredPublisherBoltsCount + "\n";
+        }
+        return topologyStatus + receiverStatus + stormPublishingBoltStatus;
     }
 }

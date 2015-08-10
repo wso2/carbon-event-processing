@@ -32,11 +32,13 @@ import org.wso2.carbon.event.processor.core.internal.listener.SiddhiOutputStream
 import org.wso2.carbon.event.processor.core.internal.storm.SiddhiStormInputEventDispatcher;
 import org.wso2.carbon.event.processor.core.internal.storm.SiddhiStormOutputEventListener;
 import org.wso2.carbon.event.processor.core.internal.storm.StormTopologyManager;
+import org.wso2.carbon.event.processor.core.internal.storm.status.monitor.StormStatusMapListener;
+import org.wso2.carbon.event.processor.core.internal.storm.status.monitor.StormStatusMonitor;
 import org.wso2.carbon.event.processor.core.internal.util.EventProcessorConfigurationFilesystemInvoker;
 import org.wso2.carbon.event.processor.core.internal.util.EventProcessorConstants;
 import org.wso2.carbon.event.processor.core.internal.util.EventProcessorUtil;
 import org.wso2.carbon.event.processor.core.internal.util.helper.EventProcessorHelper;
-import org.wso2.carbon.event.processor.core.util.EventProcessorDistributedModeConstants;
+import org.wso2.carbon.event.processor.core.util.DistributedModeConstants;
 import org.wso2.carbon.event.processor.core.util.ExecutionPlanStatusHolder;
 import org.wso2.carbon.event.processor.manager.core.config.DistributedConfiguration;
 import org.wso2.carbon.event.processor.manager.core.config.ManagementModeInfo;
@@ -54,11 +56,9 @@ import org.wso2.siddhi.query.compiler.SiddhiCompiler;
 import org.wso2.siddhi.query.compiler.exception.SiddhiParserException;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
-import java.util.concurrent.TimeUnit;
 
 public class CarbonEventProcessorService implements EventProcessorService {
     private static final Log log = LogFactory.getLog(CarbonEventProcessorService.class);
@@ -300,9 +300,24 @@ public class CarbonEventProcessorService implements EventProcessorService {
             throw new ExecutionPlanConfigurationException("Invalid query specified, " + e.getMessage(), e);
         }
 
+        ExecutionPlan processorExecutionPlan = new ExecutionPlan(executionPlanName, executionPlanRuntime,
+                executionPlanConfiguration);
+        tenantExecutionPlans.put(executionPlanName, processorExecutionPlan);
+
+        boolean isDistributedEnabledAndIsWroker = (managementInfo.getMode() == Mode.Distributed && stormDeploymentConfiguration != null
+                && stormDeploymentConfiguration.isWorkerNode());
+
+        StormStatusMonitor stormStatusMonitor = null;
+        if(isDistributedEnabledAndIsWroker){
+            stormStatusMonitor = new StormStatusMonitor(tenantId, executionPlanName, importsMap.size());
+            StormStatusMapListener mapListener = new StormStatusMapListener(executionPlanName, tenantId, stormStatusMonitor);
+            processorExecutionPlan.setStormStatusMonitor(stormStatusMonitor);
+            processorExecutionPlan.setStormStatusMapListener(mapListener);
+        }
+
         if (managementInfo.getMode() == Mode.Distributed) {
             if (stormDeploymentConfiguration != null && stormDeploymentConfiguration.isManagerNode() && EventProcessorValueHolder
-                    .getStormManagerServer().isStormManager()) {
+                    .getStormManagerServer().isStormCoordinator()) {
                 try {
                     EventProcessorValueHolder.getStormTopologyManager().submitTopology(executionPlanConfiguration, importDefinitions, exportDefinitions,
                             tenantId, stormDeploymentConfiguration.getTopologySubmitRetryInterval());
@@ -317,16 +332,13 @@ public class CarbonEventProcessorService implements EventProcessorService {
         }
 
 
-        ExecutionPlan processorExecutionPlan = new ExecutionPlan(executionPlanName, executionPlanRuntime,
-                executionPlanConfiguration);
-        tenantExecutionPlans.put(executionPlanName, processorExecutionPlan);
         /**
          * Section to configure outputs
          */
         SiddhiStormOutputEventListener stormOutputListener = null;
         if (managementInfo.getMode() == Mode.Distributed && managementInfo.getDistributedConfiguration().isWorkerNode()) {
             stormOutputListener = new SiddhiStormOutputEventListener(executionPlanConfiguration, tenantId,
-                    stormDeploymentConfiguration);
+                    stormDeploymentConfiguration, stormStatusMonitor);
             processorExecutionPlan.addStormOutputListener(stormOutputListener);
         }
 
@@ -363,14 +375,11 @@ public class CarbonEventProcessorService implements EventProcessorService {
          */
 
         List<AbstractSiddhiInputEventDispatcher> inputEventDispatchers = new ArrayList<>();
-        int cepReceiverCount = 0; //this is used in distributed mode only
-        boolean isDistributedEnabledAndIsWroker = (managementInfo.getMode() == Mode.Distributed && stormDeploymentConfiguration != null && stormDeploymentConfiguration.isWorkerNode());
         for (Map.Entry<String, String> entry : importsMap.entrySet()) {
             InputHandler inputHandler = inputHandlerMap.get(entry.getValue());
 
             AbstractSiddhiInputEventDispatcher eventDispatcher;
             if (isDistributedEnabledAndIsWroker) {
-                cepReceiverCount++;
                 StreamDefinition streamDefinition = null;
                 try {
                     streamDefinition = EventProcessorValueHolder.getEventStreamService().getStreamDefinition
@@ -380,17 +389,13 @@ public class CarbonEventProcessorService implements EventProcessorService {
                 }
                 eventDispatcher = new SiddhiStormInputEventDispatcher(streamDefinition,
                         entry.getKey(), executionPlanConfiguration, tenantId,
-                        stormDeploymentConfiguration);
+                        stormDeploymentConfiguration, stormStatusMonitor);
             } else {
                 eventDispatcher = new SiddhiInputEventDispatcher(entry.getValue(),
                         inputHandler, executionPlanConfiguration, tenantId);
             }
             inputEventDispatchers.add(eventDispatcher);
 
-        }
-
-        if(isDistributedEnabledAndIsWroker){
-            updateRequiredCepReceiversCountInExecutionPlanStatusHolder(cepReceiverCount, StormTopologyManager.getTopologyName(executionPlanName, tenantId));
         }
 
         if (executionPlanRuntime != null) {
@@ -411,37 +416,6 @@ public class CarbonEventProcessorService implements EventProcessorService {
         }
 
 
-    }
-
-    /**
-     * Used, only in distributed mode, for updating the execution plan status in the UI
-     * @param cepReceiverCount
-     * @param stormTopologyName
-     */
-    private void updateRequiredCepReceiversCountInExecutionPlanStatusHolder(int cepReceiverCount, String stormTopologyName) {
-        String keyExecutionPlanStatusHolder = EventProcessorDistributedModeConstants.STORM_STATUS_MAP + "." + stormTopologyName;
-        HazelcastInstance hazelcastInstance = EventProcessorValueHolder.getHazelcastInstance();
-        IMap<String,ExecutionPlanStatusHolder> executionPlanStatusHolderIMap = hazelcastInstance.getMap(EventProcessorDistributedModeConstants.STORM_STATUS_MAP);
-        try {
-            if (executionPlanStatusHolderIMap.tryLock(keyExecutionPlanStatusHolder, EventProcessorDistributedModeConstants.LOCK_TIMEOUT, TimeUnit.SECONDS)){
-                try {
-                    ExecutionPlanStatusHolder executionPlanStatusHolder =
-                            executionPlanStatusHolderIMap.get(stormTopologyName);
-                    if(executionPlanStatusHolder == null){
-                        executionPlanStatusHolder = new ExecutionPlanStatusHolder();
-                        executionPlanStatusHolderIMap.putIfAbsent(stormTopologyName, executionPlanStatusHolder);
-                    }
-                    executionPlanStatusHolder.addRequiredCepReceiversCount(cepReceiverCount);
-                    executionPlanStatusHolderIMap.replace(stormTopologyName, executionPlanStatusHolder);
-                } finally {
-                    executionPlanStatusHolderIMap.unlock(keyExecutionPlanStatusHolder);
-                }
-            } else {
-                log.error(EventProcessorDistributedModeConstants.ERROR_LOCK_ACQUISITION_FAILED_FOR_REQUIRED_CEP_RECEIVERS);
-            }
-        } catch (InterruptedException e) {
-            log.error(EventProcessorDistributedModeConstants.ERROR_LOCK_ACQUISITION_FAILED_FOR_REQUIRED_CEP_RECEIVERS, e);
-        }
     }
 
     public List<StreamDefinition> getSiddhiStreams(String executionPlan) {
@@ -469,10 +443,11 @@ public class CarbonEventProcessorService implements EventProcessorService {
         return false;
     }
 
+
     @Override
     public Map<String, String> getAllExecutionPlanStatusesInStorm(){
         HazelcastInstance hazelcastInstance = EventProcessorValueHolder.getHazelcastInstance();
-        IMap<String,ExecutionPlanStatusHolder> executionPlanStatusHolderIMap = hazelcastInstance.getMap(EventProcessorDistributedModeConstants.STORM_STATUS_MAP);
+        IMap<String,ExecutionPlanStatusHolder> executionPlanStatusHolderIMap = hazelcastInstance.getMap(DistributedModeConstants.STORM_STATUS_MAP);
 
         int tenantId = PrivilegedCarbonContext.getThreadLocalCarbonContext().getTenantId();
         Map<String, ExecutionPlan> executionPlanMap = tenantSpecificExecutionPlans.get(tenantId);
@@ -518,12 +493,6 @@ public class CarbonEventProcessorService implements EventProcessorService {
     }
 
     private void removeExecutionPlanConfiguration(String name) {
-        System.out.println("Press any key to resume removeExecutionPlanConfiguration....");
-        try {
-            System.in.read();
-        } catch (IOException e) {
-            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-        }
         int tenantId = PrivilegedCarbonContext.getThreadLocalCarbonContext().getTenantId();
         Map<String, ExecutionPlan> executionPlanMap = tenantSpecificExecutionPlans.get(tenantId);
         if (executionPlanMap != null && executionPlanMap.containsKey(name)) {
@@ -534,7 +503,7 @@ public class CarbonEventProcessorService implements EventProcessorService {
 
             DistributedConfiguration stormDeploymentConfig = EventProcessorValueHolder.getStormDeploymentConfiguration();
             if (managementInfo.getMode() == Mode.Distributed && stormDeploymentConfig != null && stormDeploymentConfig.isManagerNode() &&
-                    EventProcessorValueHolder.getStormManagerServer().isStormManager()) {
+                    EventProcessorValueHolder.getStormManagerServer().isStormCoordinator()) {
                 try {
                     removeExecutionPlanStatusHolder(executionPlanConfiguration.getName(), tenantId);      //todo: test in #worker>1 and watch for NPE
                     EventProcessorValueHolder.getStormTopologyManager().killTopology(executionPlanConfiguration.getName(), tenantId);
@@ -560,7 +529,7 @@ public class CarbonEventProcessorService implements EventProcessorService {
     public void removeExecutionPlanStatusHolder(String executionPlanName, int tenantId){
         HazelcastInstance hazelcastInstance = EventProcessorValueHolder.getHazelcastInstance();
         IMap<String,ExecutionPlanStatusHolder> executionPlanStatusHolderIMap =
-                hazelcastInstance.getMap(EventProcessorDistributedModeConstants.STORM_STATUS_MAP);
+                hazelcastInstance.getMap(DistributedModeConstants.STORM_STATUS_MAP);
 
         String stormTopologyName = StormTopologyManager.getTopologyName(executionPlanName, tenantId);
         ExecutionPlanStatusHolder executionPlanStatusHolder =

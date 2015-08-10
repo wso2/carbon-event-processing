@@ -1,6 +1,6 @@
 package org.wso2.carbon.event.processor.core.util;
 
-public final class EventProcessorDistributedModeConstants {
+public final class DistributedModeConstants {
 
     public static final String STORM_STATUS_MAP = "org.wso2.cep.org.wso2.carbon.event.processor.core.storm.status.execution.plan.ui";
 
@@ -8,12 +8,11 @@ public final class EventProcessorDistributedModeConstants {
      * These states are different to the states in Storm terminology, except for ACTIVE
      */
     public enum TopologyState{
-        ACTIVE,                 //Indicates that the topology was found to be in ACTIVE state (as in Storm terminology) in the storm cluster.
-        REMOVED,                //Indicates that no such topology exist in the storm cluster.
-        NOT_INITIALIZED         //Indicates the topology status has not been queried yet from Storm.
+        UNKNOWN,            //Topology status has not been queried yet from Storm.
+        CLEANING,           //StormTopologyManager is cleaning an existing topology with the same name, to deploy this topology.
+        DEPLOYING,          //StormTopologyManager is in the process of deploying this  topology
+        ACTIVE,             //Indicates that the topology was found to be in ACTIVE state (as in Storm terminology) in the storm cluster.
     }
-
-    public static final int LOCK_TIMEOUT = 60;   //lock timeout in seconds.     //todo: read from a config
 
     public final static String ERROR_LOCK_ACQUISITION_FAILED_FOR_TOPOLOGY_STATUS = "Couldn't acquire hazelcast lock for updating the topology status. " +
             "The 'Status in Storm' printed on the execution plan list may be wrong until the execution plan is redeployed.";
@@ -21,8 +20,10 @@ public final class EventProcessorDistributedModeConstants {
             "The 'Status in Storm' printed on the execution plan list may be wrong until the execution plan is redeployed.";
     public final static String ERROR_LOCK_ACQUISITION_FAILED_FOR_REQUIRED_PUBLISHING_BOLTS = "Couldn't acquire hazelcast lock for updating the required no of publisher bolts. " +
             "The 'Status in Storm' printed on the execution plan list may be wrong until the execution plan is redeployed.";
-    public final static String ERROR_LOCK_ACQUISITION_FAILED_FOR_CONNECTED_CEP_RECEIVERS = "Couldn't acquire hazelcast lock for updating the connected CEP Receivers count. " +
+    public final static String ERROR_LOCK_ACQUISITION_FAILED_FOR_CONNECTED_CEP_RECEIVERS =
+            "Couldn't acquire hazelcast lock for updating the connected CEP Receivers count. " +
             "The 'Status in Storm' printed on the execution plan list may be wrong until the execution plan is redeployed.";
-    public final static String ERROR_LOCK_ACQUISITION_FAILED_FOR_REQUIRED_CEP_RECEIVERS = "Couldn't acquire hazelcast lock for updating the required no of CEP Receivers. " +
+    public final static String ERROR_LOCK_ACQUISITION_FAILED_FOR_REQUIRED_CEP_RECEIVERS =
+            "Couldn't acquire hazelcast lock for updating the required no of CEP Receivers. " +
             "The 'Status in Storm' printed on the execution plan list may be wrong until the execution plan is redeployed.";
 }

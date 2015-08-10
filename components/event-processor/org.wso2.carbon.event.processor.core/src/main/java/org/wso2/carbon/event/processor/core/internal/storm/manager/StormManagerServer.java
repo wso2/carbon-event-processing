@@ -60,12 +60,12 @@ public class StormManagerServer {
         stormManagerServer.stop();
     }
 
-    public void setStormManager(boolean stormManager) {
-        stormManagerService.setStormManager(stormManager);
+    public void setStormCoordinator(boolean isCoordinator) {
+        stormManagerService.setStormCoordinator(isCoordinator);
     }
 
-    public boolean isStormManager() {
-        return stormManagerService.isStormManager();
+    public boolean isStormCoordinator() {
+        return stormManagerService.isStormCoordinator();
     }
 
     static class ServerThread implements Runnable {
@@ -83,13 +83,13 @@ public class StormManagerServer {
     public void tryBecomeCoordinator() {
         HazelcastInstance hazelcastInstance = EventProcessorValueHolder.getHazelcastInstance();
         if (hazelcastInstance != null) {
-            if(!isStormManager()) {
+            if(!isStormCoordinator()) {
                 ILock lock = hazelcastInstance.getLock("StormManager");
                 boolean isCoordinator = lock.tryLock();
                 if (isCoordinator) {
                     log.info("Node became Storm Coordinator");
                 }
-                setStormManager(isCoordinator);
+                setStormCoordinator(isCoordinator);
             }
         }
     }

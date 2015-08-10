@@ -20,7 +20,6 @@
 <%@ page import="org.wso2.carbon.event.processor.stub.EventProcessorAdminServiceStub" %>
 <%@ page import="org.wso2.carbon.event.processor.stub.types.ExecutionPlanConfigurationDto" %>
 <%@ page import="org.wso2.carbon.event.processor.stub.types.ExecutionPlanConfigurationFileDto" %>
-<%@ page import="org.wso2.carbon.event.processor.stub.types.ExecutionPlanStatusDto" %>
 <%@ page import="org.wso2.carbon.event.processor.ui.EventProcessorUIUtils" %>
 <%@ page import="java.util.HashMap" %>
 <%@ page import="java.util.Map" %>
@@ -64,8 +63,7 @@
     <%
         }
 
-        Boolean isDistributedProcessingEnabled = stub.isDistributedProcessingEnabled();
-        Map<String, String> executionPlanStatuses = null;
+        Boolean isDistributedProcessingEnabled = false;
 
         ExecutionPlanConfigurationDto[] executionPlanConfigurationDtos = null;
 
@@ -80,12 +78,8 @@
         if (executionPlanConfigurationDtos != null) {
             totalActiveExecutionPlanConfigurations = executionPlanConfigurationDtos.length;
 
-            if (isDistributedProcessingEnabled) {
-                ExecutionPlanStatusDto[] executionPlanStatusDtos = stub.getAllExecutionPlanStatusesInStorm();
-                executionPlanStatuses = new HashMap<String, String>();
-                for (int i = 0; i < executionPlanStatusDtos.length; i++) {
-                    executionPlanStatuses.put(executionPlanStatusDtos[i].getExecutionPlanName(), executionPlanStatusDtos[i].getStatusInStorm());
-                }
+            if(!executionPlanConfigurationDtos[0].getDeploymentStatus().equals("not-distributed")){
+                isDistributedProcessingEnabled = true;
             }
         }
     %>
@@ -134,7 +128,7 @@
                     <%
 
                         if (isDistributedProcessingEnabled) {
-                            String executionPlanStatus = executionPlanStatuses.get(executionPlanConfigurationDto.getName());
+                            String executionPlanStatus = executionPlanConfigurationDto.getDeploymentStatus();
                             String[] executionPlanStatusLineByLine = executionPlanStatus.split("\n");
                     %>
                     <td>

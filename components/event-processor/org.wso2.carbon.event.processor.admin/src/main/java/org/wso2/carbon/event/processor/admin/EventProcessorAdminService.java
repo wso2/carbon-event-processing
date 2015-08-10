@@ -36,6 +36,8 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 
+//import org.wso2.siddhi.query.api.exception.ExecutionPlanValidationException;
+
 public class EventProcessorAdminService extends AbstractAdmin {
 
     private static final Log log = LogFactory.getLog(EventProcessorAdminService.class);
@@ -117,7 +119,7 @@ public class EventProcessorAdminService extends AbstractAdmin {
         if (eventProcessorService != null) {
             ExecutionPlanConfiguration executionConfiguration = eventProcessorService.getActiveExecutionPlanConfiguration(planName);
             ExecutionPlanConfigurationDto dto = new ExecutionPlanConfigurationDto();
-            copyConfigurationsToDto(executionConfiguration, dto);
+            copyConfigurationsToDto(executionConfiguration, dto, null);
             return dto;
         }
         return null;
@@ -150,16 +152,33 @@ public class EventProcessorAdminService extends AbstractAdmin {
         if (eventProcessorService != null) {
 
             Map<String, ExecutionPlanConfiguration> executionPlanConfigurations = eventProcessorService.getAllActiveExecutionConfigurations();
+
             if (executionPlanConfigurations != null) {
                 ExecutionPlanConfigurationDto[] configurationDtos = new ExecutionPlanConfigurationDto[executionPlanConfigurations.size()];
 
                 int i = 0;
-                for (ExecutionPlanConfiguration planConfiguration : executionPlanConfigurations.values()) {
-                    ExecutionPlanConfigurationDto dto = new ExecutionPlanConfigurationDto();
-                    copyConfigurationsToDto(planConfiguration, dto);
-                    configurationDtos[i] = dto;
-                    i++;
+                if(isDistributedProcessingEnabled()){
+                    Map<String, String> executionPlanStatuses = eventProcessorService.getAllExecutionPlanStatusesInStorm();
+                    for (Map.Entry<String, ExecutionPlanConfiguration> entry : executionPlanConfigurations.entrySet()) {
+                        ExecutionPlanConfigurationDto dto = new ExecutionPlanConfigurationDto();
+                        String status = executionPlanStatuses.get(entry.getKey());
+                        if(status == null){
+                            log.error("No distributed deployment status information available for execution plan " + entry.getKey());
+                        }
+                        copyConfigurationsToDto(entry.getValue(), dto, status);
+                        configurationDtos[i] = dto;
+                        i++;
+                    }
+                } else {
+                    for (ExecutionPlanConfiguration planConfiguration : executionPlanConfigurations.values()) {
+                        ExecutionPlanConfigurationDto dto = new ExecutionPlanConfigurationDto();
+                        copyConfigurationsToDto(planConfiguration, dto, null);
+                        configurationDtos[i] = dto;
+                        i++;
+                    }
+                    configurationDtos[0].setDeploymentStatus("not-distributed");
                 }
+
                 Arrays.sort(configurationDtos, new Comparator() {
 
                     @Override
@@ -222,7 +241,7 @@ public class EventProcessorAdminService extends AbstractAdmin {
                 int i = 0;
                 for (ExecutionPlanConfiguration planConfiguration : executionPlanConfigurations.values()) {
                     ExecutionPlanConfigurationDto dto = new ExecutionPlanConfigurationDto();
-                    copyConfigurationsToDto(planConfiguration, dto);
+                    copyConfigurationsToDto(planConfiguration, dto, null);
                     configurationDtos[i] = dto;
                     i++;
                 }
@@ -253,7 +272,7 @@ public class EventProcessorAdminService extends AbstractAdmin {
                 int i = 0;
                 for (ExecutionPlanConfiguration planConfiguration : executionPlanConfigurations.values()) {
                     ExecutionPlanConfigurationDto dto = new ExecutionPlanConfigurationDto();
-                    copyConfigurationsToDto(planConfiguration, dto);
+                    copyConfigurationsToDto(planConfiguration, dto, null);
                     configurationDtos[i] = dto;
                     i++;
                 }
@@ -338,33 +357,10 @@ public class EventProcessorAdminService extends AbstractAdmin {
         }
     }
 
-    public boolean isDistributedProcessingEnabled() throws AxisFault {
+    private boolean isDistributedProcessingEnabled() throws AxisFault {
         EventProcessorService eventProcessorService = EventProcessorAdminValueHolder.getEventProcessorService();
-
         if (eventProcessorService != null) {
             return eventProcessorService.isDistributedProcessingEnabled();
-        } else {
-            throw new AxisFault("Event processor is not loaded.");
-        }
-    }
-
-    public ExecutionPlanStatusDto[] getAllExecutionPlanStatusesInStorm() throws AxisFault {
-        EventProcessorService eventProcessorService = EventProcessorAdminValueHolder.getEventProcessorService();
-
-        if (eventProcessorService != null) {
-            Map<String, String> executionPlanStatuses = eventProcessorService.getAllExecutionPlanStatusesInStorm();
-            if(executionPlanStatuses != null){
-                ExecutionPlanStatusDto[] executionPlanStatusDtos = new ExecutionPlanStatusDto[executionPlanStatuses.size()];
-                int i = 0;
-                for (Map.Entry<String, String> mapEntry : executionPlanStatuses.entrySet()){
-                    ExecutionPlanStatusDto statusDto = new ExecutionPlanStatusDto(mapEntry.getKey(), mapEntry.getValue());
-                    executionPlanStatusDtos[i] = statusDto;
-                    i++;
-                }
-                return executionPlanStatusDtos;
-            } else {
-                return null;
-            }
         } else {
             throw new AxisFault("Event processor is not loaded.");
         }
@@ -384,13 +380,14 @@ public class EventProcessorAdminService extends AbstractAdmin {
     }
 
     private void copyConfigurationsToDto(ExecutionPlanConfiguration config,
-                                         ExecutionPlanConfigurationDto dto) {
+                                         ExecutionPlanConfigurationDto dto, String distributedDeploymentStatus) {
         dto.setName(config.getName());
         dto.setDescription(config.getDescription());
         dto.setExecutionPlan(config.getExecutionPlan());
         dto.setStatisticsEnabled(config.isStatisticsEnabled());
         dto.setTracingEnabled(config.isTracingEnabled());
         dto.setEditable(config.isEditable());
+        dto.setDeploymentStatus(distributedDeploymentStatus);
 
         if (config.getImportedStreams() != null) {
             StreamConfigurationDto[] importedStreamDtos = new StreamConfigurationDto[config.getImportedStreams().size()];

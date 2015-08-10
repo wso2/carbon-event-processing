@@ -26,6 +26,7 @@ import org.wso2.carbon.event.processor.common.storm.component.EventPublisherBolt
 import org.wso2.carbon.event.processor.common.storm.component.EventReceiverSpout;
 import org.wso2.carbon.event.processor.common.storm.component.SiddhiBolt;
 import org.wso2.carbon.event.processor.core.exception.StormQueryConstructionException;
+import org.wso2.carbon.event.processor.core.internal.storm.status.monitor.StormStatusHolderInitializer;
 import org.wso2.carbon.event.processor.core.internal.util.EventProcessorConstants;
 import org.wso2.carbon.event.processor.manager.core.config.DistributedConfiguration;
 import org.wso2.siddhi.query.api.definition.StreamDefinition;
@@ -46,7 +47,7 @@ public class StormTopologyConstructor {
     private static Logger log = Logger.getLogger(StormTopologyConstructor.class);
 
     public static TopologyBuilder constructTopologyBuilder(String queryPlanString, String executionPlanName, int tenantId,
-                                                           DistributedConfiguration stormDeploymentConfig, int[] boltsCount)
+                                                           DistributedConfiguration stormDeploymentConfig)
             throws XMLStreamException, StormQueryConstructionException {
 
         OMElement queryPlanElement = AXIOMUtil.stringToOM(queryPlanString);
@@ -160,7 +161,7 @@ public class StormTopologyConstructor {
                     inputStreamDefinitions, outputStreamDefinitions, query, executionPlanName, tenantId),
                     parallel));
             topologyInfoHolder.addComponent(componentInfoHolder);
-            boltsCount[0] = parallel;
+            StormStatusHolderInitializer.initializeStatusHolder(executionPlanName, tenantId, parallel);
         }
 
         topologyInfoHolder.indexComponents();

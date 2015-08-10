@@ -33,10 +33,11 @@ import org.wso2.carbon.event.processor.core.exception.ServerUnavailableException
 import org.wso2.carbon.event.processor.core.exception.StormDeploymentException;
 import org.wso2.carbon.event.processor.core.exception.StormQueryConstructionException;
 import org.wso2.carbon.event.processor.core.internal.ds.EventProcessorValueHolder;
-import org.wso2.carbon.event.processor.core.util.EventProcessorDistributedModeConstants;
-import org.wso2.carbon.event.processor.core.util.ExecutionPlanStatusHolder;
 import org.wso2.carbon.event.processor.core.internal.storm.util.StormQueryPlanBuilder;
 import org.wso2.carbon.event.processor.core.internal.storm.util.StormTopologyConstructor;
+import org.wso2.carbon.event.processor.core.util.DistributedModeConstants;
+import org.wso2.carbon.event.processor.core.util.ExecutionPlanStatusHolder;
+import org.wso2.carbon.event.processor.manager.core.config.DistributedConfiguration;
 import org.wso2.carbon.utils.CarbonUtils;
 import org.yaml.snakeyaml.Yaml;
 
@@ -65,6 +66,7 @@ public class StormTopologyManager {
     private static final Log log = LogFactory.getLog(StormTopologyManager.class);
     private final ConcurrentHashMap<String, TopologySubmitter> toDeployTopologies = new ConcurrentHashMap();
     private TopologyManagerThreadFactory topologyManagerThreadFactory = new TopologyManagerThreadFactory("Storm Deployment");
+    private final int lockTimeout;
 
     public StormTopologyManager() {
         String stormConfigDirPath = CarbonUtils.getCarbonConfigDirPath() + File.separator + "cep" + File.separator + "storm";
@@ -81,6 +83,9 @@ public class StormTopologyManager {
         } catch (FileNotFoundException e) {
             log.warn("Error occurred while reading storm configurations using default configurations", e);
         }
+
+        DistributedConfiguration stormDeploymentConfiguration = EventProcessorValueHolder.getStormDeploymentConfiguration();
+        lockTimeout = stormDeploymentConfiguration.getLockTimeout();
 
         jarLocation = stormConfigDirPath + File.separator + EventProcessorValueHolder.getStormDeploymentConfiguration().getJar();
     }
@@ -99,7 +104,6 @@ public class StormTopologyManager {
             StormDeploymentException, ExecutionPlanConfigurationException {
         String executionPlanName = configuration.getName();
         TopologyBuilder builder;
-        int[] boltsCount = {0};
         String topologyName = getTopologyName(executionPlanName, tenantId);
 
         try {
@@ -110,8 +114,7 @@ public class StormTopologyManager {
                         "\n" + stormQueryPlan);
             }
             builder = StormTopologyConstructor.constructTopologyBuilder(stormQueryPlan, executionPlanName, tenantId,
-                    EventProcessorValueHolder.getStormDeploymentConfiguration(), boltsCount);
-            updateRequiredPublisherBoltsCountInExecutionPlanStatusHolder(topologyName, boltsCount[0]);
+                    EventProcessorValueHolder.getStormDeploymentConfiguration());
         } catch (XMLStreamException e) {
             throw new StormDeploymentException("Invalid Config for Execution Plan " + executionPlanName + " for tenant " + tenantId, e);
         } catch (TransformerException e) {
@@ -162,32 +165,6 @@ public class StormTopologyManager {
         return (executionPlanName + "[" + tenantId + "]");
     }
 
-    private void updateRequiredPublisherBoltsCountInExecutionPlanStatusHolder(String stormTopologyName, int boltCount){
-        String keyExecutionPlanStatusHolder = EventProcessorDistributedModeConstants.STORM_STATUS_MAP + "." + stormTopologyName;
-        HazelcastInstance hazelcastInstance = EventProcessorValueHolder.getHazelcastInstance();
-        IMap<String,ExecutionPlanStatusHolder> executionPlanStatusHolderIMap = hazelcastInstance.getMap(EventProcessorDistributedModeConstants.STORM_STATUS_MAP);
-        try {
-            if (executionPlanStatusHolderIMap.tryLock(keyExecutionPlanStatusHolder, EventProcessorDistributedModeConstants.LOCK_TIMEOUT, TimeUnit.SECONDS)){
-                try {
-                    ExecutionPlanStatusHolder executionPlanStatusHolder =
-                            executionPlanStatusHolderIMap.get(stormTopologyName);
-                    if(executionPlanStatusHolder == null){
-                        executionPlanStatusHolder = new ExecutionPlanStatusHolder();
-                        executionPlanStatusHolderIMap.putIfAbsent(stormTopologyName, executionPlanStatusHolder);
-                    }
-                    executionPlanStatusHolder.addRequiredPublisherBoltsCount(boltCount);
-                    executionPlanStatusHolderIMap.replace(stormTopologyName, executionPlanStatusHolder);
-                } finally {
-                    executionPlanStatusHolderIMap.unlock(keyExecutionPlanStatusHolder);
-                }
-            } else {
-                log.error(EventProcessorDistributedModeConstants.ERROR_LOCK_ACQUISITION_FAILED_FOR_REQUIRED_PUBLISHING_BOLTS);
-            }
-        } catch (InterruptedException e) {
-            log.error(EventProcessorDistributedModeConstants.ERROR_LOCK_ACQUISITION_FAILED_FOR_REQUIRED_PUBLISHING_BOLTS, e);
-        }
-    }
-
     class TopologySubmitter implements Runnable {
         private final String topologyName;
         StormTopology topology;
@@ -211,7 +188,7 @@ public class StormTopologyManager {
                 }
                 try {
                     if (isTopologyExist()) {
-                        //todo: CLEANING
+                        updateExecutionPlanStatusInStorm(topologyName, DistributedModeConstants.TopologyState.CLEANING);
                         log.info(jobPrefix + "Killing already existing storm topology '" + topologyName + "' to re-submit");
                         KillOptions options = new KillOptions();
                         options.set_wait_secs(10);
@@ -231,7 +208,7 @@ public class StormTopologyManager {
                             log.info(jobPrefix + "Topology '" + topologyName + "' is not alive to kill");
                         }
                     } else {
-                        //todo: DEPLOYING
+                        updateExecutionPlanStatusInStorm(topologyName, DistributedModeConstants.TopologyState.DEPLOYING);
                         try {
                             String jsonConf = JSONValue.toJSONString(stormConfig);
                             synchronized (toDeployTopologies) {
@@ -306,18 +283,19 @@ public class StormTopologyManager {
                     thisTopologySummary = topologySummary;
                 }
             }
-            try {
-                while (true) {
-                    if (thisTopologySummary.get_status().equals(TopologyInitialStatus.ACTIVE.toString())) {
-                        updateExecutionPlanStatusInStorm(topologyName, EventProcessorDistributedModeConstants.TopologyState.ACTIVE);
-                        log.info(jobPrefix + "Topology '" + topologyName + "' found to be active in Storm cluster");
-                        return;
-                    } else {
-                        Thread.sleep(2000);
+            while (true) {
+                if (thisTopologySummary.get_status().equals(TopologyInitialStatus.ACTIVE.toString())) {
+                    updateExecutionPlanStatusInStorm(topologyName, DistributedModeConstants.TopologyState.ACTIVE);
+                    log.info(jobPrefix + "Topology '" + topologyName + "' found to be active in Storm cluster");
+                    return;
+                } else {
+                    try {
                         log.info(jobPrefix + "Waiting until '" + topologyName + "' becomes active in Storm cluster");
+                        Thread.sleep(2000);
+                    } catch (InterruptedException e) {
+                        Thread.currentThread().interrupt();
                     }
                 }
-            } catch (InterruptedException e) {
             }
         }
 
@@ -337,29 +315,32 @@ public class StormTopologyManager {
             }
         }
 
-        private void updateExecutionPlanStatusInStorm(String stormTopologyName, EventProcessorDistributedModeConstants.TopologyState topologyState){
-            String executionPlanStatusHolderKey = EventProcessorDistributedModeConstants.STORM_STATUS_MAP + "." + stormTopologyName;        //todo: rename key in others
+        private void updateExecutionPlanStatusInStorm(String stormTopologyName, DistributedModeConstants.TopologyState topologyState){
+            String executionPlanStatusHolderKey = DistributedModeConstants.STORM_STATUS_MAP + "." + stormTopologyName;        //todo: rename key in others
             HazelcastInstance hazelcastInstance = EventProcessorValueHolder.getHazelcastInstance();
-            IMap<String,ExecutionPlanStatusHolder> executionPlanStatusHolderIMap = hazelcastInstance.getMap(EventProcessorDistributedModeConstants.STORM_STATUS_MAP);
+            IMap<String,ExecutionPlanStatusHolder> executionPlanStatusHolderIMap = hazelcastInstance.getMap(DistributedModeConstants.STORM_STATUS_MAP);
             try {
-                if (executionPlanStatusHolderIMap.tryLock(executionPlanStatusHolderKey, EventProcessorDistributedModeConstants.LOCK_TIMEOUT, TimeUnit.SECONDS)){
+                if (executionPlanStatusHolderIMap.tryLock(executionPlanStatusHolderKey, lockTimeout, TimeUnit.SECONDS)){
                     try {
                         ExecutionPlanStatusHolder executionPlanStatusHolder =
                                 executionPlanStatusHolderIMap.get(stormTopologyName);
                         if(executionPlanStatusHolder == null){
-                            executionPlanStatusHolder = new ExecutionPlanStatusHolder();
-                            executionPlanStatusHolderIMap.putIfAbsent(stormTopologyName, executionPlanStatusHolder);
+                            log.error("Couldn't update topology status for topology:" + topologyName + " as the ExecutionPlanStatusHolder is null.");
+                        } else {
+                            executionPlanStatusHolder.setStormTopologyStatus(topologyState);
+                            executionPlanStatusHolderIMap.replace(stormTopologyName, executionPlanStatusHolder);
                         }
-                        executionPlanStatusHolder.setStormTopologyStatus(topologyState);
-                        executionPlanStatusHolderIMap.replace(stormTopologyName, executionPlanStatusHolder);
                     } finally {
                         executionPlanStatusHolderIMap.unlock(executionPlanStatusHolderKey);
                     }
                 } else {
-                    log.error(EventProcessorDistributedModeConstants.ERROR_LOCK_ACQUISITION_FAILED_FOR_TOPOLOGY_STATUS);
+                    log.error("Couldn't update topology status for topology:" + topologyName
+                            + " as the hazelcast lock acquisition failed.");
                 }
             } catch (InterruptedException e) {
-                log.error(EventProcessorDistributedModeConstants.ERROR_LOCK_ACQUISITION_FAILED_FOR_TOPOLOGY_STATUS, e);
+                Thread.currentThread().interrupt();
+                log.error("Couldn't update topology status for topology:" + topologyName
+                        + " as the hazelcast lock acquisition was interrupted.", e);
             }
         }
     }
