@@ -52,7 +52,7 @@ public class StormStatusMonitor implements ConnectionCallback{
         this.stormTopologyName = StormTopologyManager.getTopologyName(executionPlanName, tenantId);
         this.executionPlanStatusHolderKey = DistributedModeConstants.STORM_STATUS_MAP + "." + stormTopologyName;
         lockTimeout = EventProcessorValueHolder.getStormDeploymentConfiguration().getLockTimeout();
-        executorService.execute(new GlobalStatUpdater());    //todo:shutdown! done.
+        executorService.execute(new GlobalStatUpdater());
     }
 
     @Override

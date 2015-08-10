@@ -316,7 +316,7 @@ public class StormTopologyManager {
         }
 
         private void updateExecutionPlanStatusInStorm(String stormTopologyName, DistributedModeConstants.TopologyState topologyState){
-            String executionPlanStatusHolderKey = DistributedModeConstants.STORM_STATUS_MAP + "." + stormTopologyName;        //todo: rename key in others
+            String executionPlanStatusHolderKey = DistributedModeConstants.STORM_STATUS_MAP + "." + stormTopologyName;
             HazelcastInstance hazelcastInstance = EventProcessorValueHolder.getHazelcastInstance();
             IMap<String,ExecutionPlanStatusHolder> executionPlanStatusHolderIMap = hazelcastInstance.getMap(DistributedModeConstants.STORM_STATUS_MAP);
             try {
