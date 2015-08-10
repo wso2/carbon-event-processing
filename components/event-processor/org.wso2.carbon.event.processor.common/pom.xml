@@ -31,12 +31,14 @@
 
     <dependencies>
         <dependency>
-            <groupId>org.apache.storm.wso2</groupId>
-            <artifactId>storm</artifactId>
+            <groupId>org.wso2.orbit.org.apache.storm</groupId>
+            <artifactId>storm-core</artifactId>
+            <version>${storm.orbit.version}</version>
         </dependency>
         <dependency>
             <groupId>org.wso2.siddhi</groupId>
             <artifactId>siddhi-core</artifactId>
+            <version>${siddhi.version}</version>
         </dependency>
         <dependency>
             <groupId>junit</groupId>
@@ -49,8 +51,9 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>org.wso2.lmax</groupId>
+            <groupId>org.wso2.orbit.com.lmax</groupId>
             <artifactId>disruptor</artifactId>
+            <version>${disruptor.orbit.version}</version>
         </dependency>
         <!--<dependency>-->
             <!--<groupId>slf4j.wso2</groupId>-->
@@ -111,8 +114,7 @@
                         <Import-Package>
                             !javax.xml.namespace,
                             javax.xml.namespace; version=0.0.0,
-                            org.apache.axis2,
-                            org.wso2.lmax.*; version=${disruptor.version},
+                            com.lmax.disruptor.*;version="${disruptor.version.range}",
                             *;resolution:=optional,
                         </Import-Package>
                         <DynamicImport-Package>*</DynamicImport-Package>

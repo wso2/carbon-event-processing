@@ -79,8 +79,16 @@
             <artifactId>org.wso2.carbon.event.processor.common</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.apache.storm.wso2</groupId>
-            <artifactId>storm</artifactId>
+            <groupId>org.wso2.orbit.org.apache.storm</groupId>
+            <artifactId>storm-core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.yaml</groupId>
+            <artifactId>snakeyaml</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.googlecode.json-simple</groupId>
+            <artifactId>json-simple</artifactId>
         </dependency>
         <dependency>
             <groupId>org.wso2.carbon.analytics-common</groupId>
@@ -135,8 +143,6 @@
                             !javax.xml.namespace,
                             javax.xml.namespace; version=0.0.0,
                             org.wso2.siddhi.*,
-                            junit.framework.*,
-                            org.junit.*,
                             org.wso2.carbon.event.processor.common.*,
                             *;resolution:=optional
                         </Import-Package>
