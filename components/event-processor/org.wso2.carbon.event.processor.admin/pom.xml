@@ -84,11 +84,9 @@
                         <Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
                         <Bundle-Name>${project.artifactId}</Bundle-Name>
                         <Private-Package>
-                            org.wso2.carbon.event.processor.admin.internal,
                             org.wso2.carbon.event.processor.admin.internal.*
                         </Private-Package>
                         <Export-Package>
-                            !org.wso2.carbon.event.processor.admin.internal,
                             !org.wso2.carbon.event.processor.admin.internal.*
                             org.wso2.carbon.event.processor.admin.*,
                             org.wso2.carbon.event.processor.admin
