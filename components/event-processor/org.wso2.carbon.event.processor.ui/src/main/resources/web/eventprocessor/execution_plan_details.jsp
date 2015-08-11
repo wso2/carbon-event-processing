@@ -42,8 +42,7 @@
 
 <script type="text/javascript">
     function doDeleteExecutionPlan(executionPlan) {
-        alert(executionPlan);
-        CARBON.showConfirmationDialog("!. Are you sure want to delete execution plan:" + executionPlan,
+        CARBON.showConfirmationDialog("Are you sure want to delete execution plan:" + executionPlan,
                 function () {
                     new Ajax.Request('../eventprocessor/delete_execution_plan_ajaxprocessor.jsp', {
                         method: 'POST',
