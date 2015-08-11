@@ -51,7 +51,9 @@
                             executionPlan: executionPlan
                         }, onSuccess: function (msg) {
                             if ("success" == msg.responseText.trim()) {
-                                window.location.href = "../eventprocessor/index.jsp?region=region1&item=execution_plan_menu.jsp";
+                                CARBON.showInfoDialog("Execution plan successfully deleted.", function () {
+                                    window.location.href = "../eventprocessor/index.jsp?region=region1&item=execution_plan_menu.jsp";
+                                });
                             } else {
                                 CARBON.showErrorDialog("Failed to delete execution plan, Exception: " + msg.responseText.trim());
                             }
