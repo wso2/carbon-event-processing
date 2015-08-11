@@ -31,6 +31,7 @@ import org.wso2.carbon.event.processor.common.storm.manager.service.StormManager
 import org.wso2.carbon.event.processor.common.storm.manager.service.exception.EndpointNotFoundException;
 import org.wso2.carbon.event.processor.common.storm.manager.service.exception.NotStormManagerException;
 import org.wso2.carbon.event.processor.manager.commons.transport.client.TCPEventPublisher;
+import org.wso2.carbon.event.processor.manager.commons.transport.client.TCPEventPublisherConfig;
 import org.wso2.carbon.event.processor.manager.commons.utils.HostAndPort;
 import org.wso2.carbon.event.processor.manager.commons.utils.Utils;
 import org.wso2.carbon.event.processor.manager.core.config.DistributedConfiguration;
@@ -319,9 +320,14 @@ public class AsyncEventPublisher implements EventHandler<AsynchronousEventBuffer
             String endpoint = endpointHostPort;
             do {
                 try {
-                    tcpEventPublisher = new TCPEventPublisher(endpoint, true);
-                    StringBuilder streamsIDs = new StringBuilder();
+                    TCPEventPublisherConfig publisherConfigs = new TCPEventPublisherConfig();
+                    publisherConfigs.setBufferSize(stormDeploymentConfig.getTcpEventPublisherOutputQueueSize());
+                    publisherConfigs.setDefaultCharset(stormDeploymentConfig.getTcpEventPublisherCharSet());
+                    publisherConfigs.setTcpSendBufferSize(stormDeploymentConfig.getTcpEventPublisherSendBufferSize());
+                    boolean isSync = stormDeploymentConfig.getTcpEventPublisherMode().equals("blocking") ? true : false;
 
+                    tcpEventPublisher = new TCPEventPublisher(endpoint, publisherConfigs, isSync);
+                    StringBuilder streamsIDs = new StringBuilder();
                     for (StreamDefinition siddhiStreamDefinition : streams) {
                         tcpEventPublisher.addStreamDefinition(siddhiStreamDefinition);
                         streamsIDs.append(siddhiStreamDefinition.getId() + ",");

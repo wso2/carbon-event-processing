@@ -76,7 +76,9 @@ public class SiddhiStormOutputEventListener implements StreamCallback {
         try {
             listeningPort = findPort();
             thisHostIp = HostAddressFinder.findAddress("localhost");
-            tcpEventServer = new TCPEventServer(new TCPEventServerConfig(listeningPort), this);
+            TCPEventServerConfig configs =  new TCPEventServerConfig(listeningPort);
+            configs.setNumberOfThreads(stormDeploymentConfig.getTcpEventReceiverThreadCount());
+            tcpEventServer = new TCPEventServer(configs, this);
             tcpEventServer.start();
             executorService.execute(new Registrar());
         } catch (Exception e) {
