@@ -42,7 +42,7 @@ public class TCPEventTestClient {
         streamDefinition1.attribute("att3", Attribute.Type.STRING);
         streamDefinition1.attribute("att4", Attribute.Type.DOUBLE);
         streamDefinition1.attribute("att5", Attribute.Type.BOOL);
-        TCPEventPublisher TCPEventPublisher = new TCPEventPublisher("localhost:7612", true);
+        TCPEventPublisher TCPEventPublisher = new TCPEventPublisher("localhost:7612", true, null);
         TCPEventPublisher.addStreamDefinition(streamDefinition);
         TCPEventPublisher.addStreamDefinition(streamDefinition1);
 

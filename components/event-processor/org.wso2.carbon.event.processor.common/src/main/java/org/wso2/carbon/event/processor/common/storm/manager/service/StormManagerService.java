@@ -23,6 +23,7 @@ package org.wso2.carbon.event.processor.common.storm.manager.service;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.wso2.carbon.event.processor.common.storm.manager.service.exception.NotStormCoordinatorException;
 
 import java.util.*;
 
@@ -30,13 +31,13 @@ public class StormManagerService {
 
     public interface Iface {
 
-        public void registerStormReceiver(int tenantId, String executionPlanName, String hostName, int port) throws org.wso2.carbon.event.processor.common.storm.manager.service.exception.NotStormManagerException, org.apache.thrift.TException;
+        public void registerStormReceiver(int tenantId, String executionPlanName, String hostName, int port) throws NotStormCoordinatorException, org.apache.thrift.TException;
 
-        public void registerCEPPublisher(int tenantId, String executionPlanName, String hostName, int port) throws org.wso2.carbon.event.processor.common.storm.manager.service.exception.NotStormManagerException, org.apache.thrift.TException;
+        public void registerCEPPublisher(int tenantId, String executionPlanName, String hostName, int port) throws NotStormCoordinatorException, org.apache.thrift.TException;
 
-        public String getStormReceiver(int tenantId, String executionPlanName, String cepReceiverHostName) throws org.wso2.carbon.event.processor.common.storm.manager.service.exception.NotStormManagerException, org.wso2.carbon.event.processor.common.storm.manager.service.exception.EndpointNotFoundException, org.apache.thrift.TException;
+        public String getStormReceiver(int tenantId, String executionPlanName, String cepReceiverHostName) throws NotStormCoordinatorException, org.wso2.carbon.event.processor.common.storm.manager.service.exception.EndpointNotFoundException, org.apache.thrift.TException;
 
-        public String getCEPPublisher(int tenantId, String executionPlanName, String stormPublisherHostName) throws org.wso2.carbon.event.processor.common.storm.manager.service.exception.NotStormManagerException, org.wso2.carbon.event.processor.common.storm.manager.service.exception.EndpointNotFoundException, org.apache.thrift.TException;
+        public String getCEPPublisher(int tenantId, String executionPlanName, String stormPublisherHostName) throws NotStormCoordinatorException, org.wso2.carbon.event.processor.common.storm.manager.service.exception.EndpointNotFoundException, org.apache.thrift.TException;
 
      }
 
@@ -72,7 +73,7 @@ public class StormManagerService {
             super(iprot, oprot);
         }
 
-        public void registerStormReceiver(int tenantId, String executionPlanName, String hostName, int port) throws org.wso2.carbon.event.processor.common.storm.manager.service.exception.NotStormManagerException, org.apache.thrift.TException
+        public void registerStormReceiver(int tenantId, String executionPlanName, String hostName, int port) throws NotStormCoordinatorException, org.apache.thrift.TException
         {
             send_registerStormReceiver(tenantId, executionPlanName, hostName, port);
             recv_registerStormReceiver();
@@ -88,17 +89,17 @@ public class StormManagerService {
             sendBase("registerStormReceiver", args);
         }
 
-        public void recv_registerStormReceiver() throws org.wso2.carbon.event.processor.common.storm.manager.service.exception.NotStormManagerException, org.apache.thrift.TException
+        public void recv_registerStormReceiver() throws NotStormCoordinatorException, org.apache.thrift.TException
         {
             registerStormReceiver_result result = new registerStormReceiver_result();
             receiveBase(result, "registerStormReceiver");
-            if (result.nsme != null) {
-                throw result.nsme;
+            if (result.nsce != null) {
+                throw result.nsce;
             }
             return;
         }
 
-        public void registerCEPPublisher(int tenantId, String executionPlanName, String hostName, int port) throws org.wso2.carbon.event.processor.common.storm.manager.service.exception.NotStormManagerException, org.apache.thrift.TException
+        public void registerCEPPublisher(int tenantId, String executionPlanName, String hostName, int port) throws NotStormCoordinatorException, org.apache.thrift.TException
         {
             send_registerCEPPublisher(tenantId, executionPlanName, hostName, port);
             recv_registerCEPPublisher();
@@ -114,17 +115,17 @@ public class StormManagerService {
             sendBase("registerCEPPublisher", args);
         }
 
-        public void recv_registerCEPPublisher() throws org.wso2.carbon.event.processor.common.storm.manager.service.exception.NotStormManagerException, org.apache.thrift.TException
+        public void recv_registerCEPPublisher() throws NotStormCoordinatorException, org.apache.thrift.TException
         {
             registerCEPPublisher_result result = new registerCEPPublisher_result();
             receiveBase(result, "registerCEPPublisher");
-            if (result.nsme != null) {
-                throw result.nsme;
+            if (result.nsce != null) {
+                throw result.nsce;
             }
             return;
         }
 
-        public String getStormReceiver(int tenantId, String executionPlanName, String cepReceiverHostName) throws org.wso2.carbon.event.processor.common.storm.manager.service.exception.NotStormManagerException, org.wso2.carbon.event.processor.common.storm.manager.service.exception.EndpointNotFoundException, org.apache.thrift.TException
+        public String getStormReceiver(int tenantId, String executionPlanName, String cepReceiverHostName) throws NotStormCoordinatorException, org.wso2.carbon.event.processor.common.storm.manager.service.exception.EndpointNotFoundException, org.apache.thrift.TException
         {
             send_getStormReceiver(tenantId, executionPlanName, cepReceiverHostName);
             return recv_getStormReceiver();
@@ -139,15 +140,15 @@ public class StormManagerService {
             sendBase("getStormReceiver", args);
         }
 
-        public String recv_getStormReceiver() throws org.wso2.carbon.event.processor.common.storm.manager.service.exception.NotStormManagerException, org.wso2.carbon.event.processor.common.storm.manager.service.exception.EndpointNotFoundException, org.apache.thrift.TException
+        public String recv_getStormReceiver() throws NotStormCoordinatorException, org.wso2.carbon.event.processor.common.storm.manager.service.exception.EndpointNotFoundException, org.apache.thrift.TException
         {
             getStormReceiver_result result = new getStormReceiver_result();
             receiveBase(result, "getStormReceiver");
             if (result.isSetSuccess()) {
                 return result.success;
             }
-            if (result.nsme != null) {
-                throw result.nsme;
+            if (result.nsce != null) {
+                throw result.nsce;
             }
             if (result.enfe != null) {
                 throw result.enfe;
@@ -155,7 +156,7 @@ public class StormManagerService {
             throw new org.apache.thrift.TApplicationException(org.apache.thrift.TApplicationException.MISSING_RESULT, "getStormReceiver failed: unknown result");
         }
 
-        public String getCEPPublisher(int tenantId, String executionPlanName, String stormPublisherHostName) throws org.wso2.carbon.event.processor.common.storm.manager.service.exception.NotStormManagerException, org.wso2.carbon.event.processor.common.storm.manager.service.exception.EndpointNotFoundException, org.apache.thrift.TException
+        public String getCEPPublisher(int tenantId, String executionPlanName, String stormPublisherHostName) throws NotStormCoordinatorException, org.wso2.carbon.event.processor.common.storm.manager.service.exception.EndpointNotFoundException, org.apache.thrift.TException
         {
             send_getCEPPublisher(tenantId, executionPlanName, stormPublisherHostName);
             return recv_getCEPPublisher();
@@ -170,15 +171,15 @@ public class StormManagerService {
             sendBase("getCEPPublisher", args);
         }
 
-        public String recv_getCEPPublisher() throws org.wso2.carbon.event.processor.common.storm.manager.service.exception.NotStormManagerException, org.wso2.carbon.event.processor.common.storm.manager.service.exception.EndpointNotFoundException, org.apache.thrift.TException
+        public String recv_getCEPPublisher() throws NotStormCoordinatorException, org.wso2.carbon.event.processor.common.storm.manager.service.exception.EndpointNotFoundException, org.apache.thrift.TException
         {
             getCEPPublisher_result result = new getCEPPublisher_result();
             receiveBase(result, "getCEPPublisher");
             if (result.isSetSuccess()) {
                 return result.success;
             }
-            if (result.nsme != null) {
-                throw result.nsme;
+            if (result.nsce != null) {
+                throw result.nsce;
             }
             if (result.enfe != null) {
                 throw result.enfe;
@@ -235,7 +236,7 @@ public class StormManagerService {
                 prot.writeMessageEnd();
             }
 
-            public void getResult() throws org.wso2.carbon.event.processor.common.storm.manager.service.exception.NotStormManagerException, org.apache.thrift.TException {
+            public void getResult() throws NotStormCoordinatorException, org.apache.thrift.TException {
                 if (getState() != org.apache.thrift.async.TAsyncMethodCall.State.RESPONSE_READ) {
                     throw new IllegalStateException("Method call not finished!");
                 }
@@ -276,7 +277,7 @@ public class StormManagerService {
                 prot.writeMessageEnd();
             }
 
-            public void getResult() throws org.wso2.carbon.event.processor.common.storm.manager.service.exception.NotStormManagerException, org.apache.thrift.TException {
+            public void getResult() throws NotStormCoordinatorException, org.apache.thrift.TException {
                 if (getState() != org.apache.thrift.async.TAsyncMethodCall.State.RESPONSE_READ) {
                     throw new IllegalStateException("Method call not finished!");
                 }
@@ -314,7 +315,7 @@ public class StormManagerService {
                 prot.writeMessageEnd();
             }
 
-            public String getResult() throws org.wso2.carbon.event.processor.common.storm.manager.service.exception.NotStormManagerException, org.wso2.carbon.event.processor.common.storm.manager.service.exception.EndpointNotFoundException, org.apache.thrift.TException {
+            public String getResult() throws NotStormCoordinatorException, org.wso2.carbon.event.processor.common.storm.manager.service.exception.EndpointNotFoundException, org.apache.thrift.TException {
                 if (getState() != org.apache.thrift.async.TAsyncMethodCall.State.RESPONSE_READ) {
                     throw new IllegalStateException("Method call not finished!");
                 }
@@ -352,7 +353,7 @@ public class StormManagerService {
                 prot.writeMessageEnd();
             }
 
-            public String getResult() throws org.wso2.carbon.event.processor.common.storm.manager.service.exception.NotStormManagerException, org.wso2.carbon.event.processor.common.storm.manager.service.exception.EndpointNotFoundException, org.apache.thrift.TException {
+            public String getResult() throws NotStormCoordinatorException, org.wso2.carbon.event.processor.common.storm.manager.service.exception.EndpointNotFoundException, org.apache.thrift.TException {
                 if (getState() != org.apache.thrift.async.TAsyncMethodCall.State.RESPONSE_READ) {
                     throw new IllegalStateException("Method call not finished!");
                 }
@@ -395,8 +396,8 @@ public class StormManagerService {
                 registerStormReceiver_result result = new registerStormReceiver_result();
                 try {
                     iface.registerStormReceiver(args.tenantId, args.executionPlanName, args.hostName, args.port);
-                } catch (org.wso2.carbon.event.processor.common.storm.manager.service.exception.NotStormManagerException nsme) {
-                    result.nsme = nsme;
+                } catch (NotStormCoordinatorException nsce) {
+                    result.nsce = nsce;
                 }
                 return result;
             }
@@ -415,8 +416,8 @@ public class StormManagerService {
                 registerCEPPublisher_result result = new registerCEPPublisher_result();
                 try {
                     iface.registerCEPPublisher(args.tenantId, args.executionPlanName, args.hostName, args.port);
-                } catch (org.wso2.carbon.event.processor.common.storm.manager.service.exception.NotStormManagerException nsme) {
-                    result.nsme = nsme;
+                } catch (NotStormCoordinatorException nsce) {
+                    result.nsce = nsce;
                 }
                 return result;
             }
@@ -435,8 +436,8 @@ public class StormManagerService {
                 getStormReceiver_result result = new getStormReceiver_result();
                 try {
                     result.success = iface.getStormReceiver(args.tenantId, args.executionPlanName, args.cepReceiverHostName);
-                } catch (org.wso2.carbon.event.processor.common.storm.manager.service.exception.NotStormManagerException nsme) {
-                    result.nsme = nsme;
+                } catch (NotStormCoordinatorException nsce) {
+                    result.nsce = nsce;
                 } catch (org.wso2.carbon.event.processor.common.storm.manager.service.exception.EndpointNotFoundException enfe) {
                     result.enfe = enfe;
                 }
@@ -457,8 +458,8 @@ public class StormManagerService {
                 getCEPPublisher_result result = new getCEPPublisher_result();
                 try {
                     result.success = iface.getCEPPublisher(args.tenantId, args.executionPlanName, args.stormPublisherHostName);
-                } catch (org.wso2.carbon.event.processor.common.storm.manager.service.exception.NotStormManagerException nsme) {
-                    result.nsme = nsme;
+                } catch (NotStormCoordinatorException nsce) {
+                    result.nsce = nsce;
                 } catch (org.wso2.carbon.event.processor.common.storm.manager.service.exception.EndpointNotFoundException enfe) {
                     result.enfe = enfe;
                 }
@@ -1030,13 +1031,13 @@ public class StormManagerService {
     public static class registerStormReceiver_result implements org.apache.thrift.TBase<registerStormReceiver_result, registerStormReceiver_result._Fields>, java.io.Serializable, Cloneable   {
         private static final org.apache.thrift.protocol.TStruct STRUCT_DESC = new org.apache.thrift.protocol.TStruct("registerStormReceiver_result");
 
-        private static final org.apache.thrift.protocol.TField NSME_FIELD_DESC = new org.apache.thrift.protocol.TField("nsme", org.apache.thrift.protocol.TType.STRUCT, (short)1);
+        private static final org.apache.thrift.protocol.TField NSCE_FIELD_DESC = new org.apache.thrift.protocol.TField("nsce", org.apache.thrift.protocol.TType.STRUCT, (short)1);
 
-        public org.wso2.carbon.event.processor.common.storm.manager.service.exception.NotStormManagerException nsme; // required
+        public NotStormCoordinatorException nsce; // required
 
         /** The set of fields this struct contains, along with convenience methods for finding and manipulating them. */
         public enum _Fields implements org.apache.thrift.TFieldIdEnum {
-            NSME((short)1, "nsme");
+            NSCE((short)1, "nsce");
 
             private static final Map<String, _Fields> byName = new HashMap<String, _Fields>();
 
@@ -1051,8 +1052,8 @@ public class StormManagerService {
              */
             public static _Fields findByThriftId(int fieldId) {
                 switch(fieldId) {
-                    case 1: // NSME
-                        return NSME;
+                    case 1: // NSCE
+                        return NSCE;
                     default:
                         return null;
                 }
@@ -1097,7 +1098,7 @@ public class StormManagerService {
         public static final Map<_Fields, org.apache.thrift.meta_data.FieldMetaData> metaDataMap;
         static {
             Map<_Fields, org.apache.thrift.meta_data.FieldMetaData> tmpMap = new EnumMap<_Fields, org.apache.thrift.meta_data.FieldMetaData>(_Fields.class);
-            tmpMap.put(_Fields.NSME, new org.apache.thrift.meta_data.FieldMetaData("nsme", org.apache.thrift.TFieldRequirementType.DEFAULT,
+            tmpMap.put(_Fields.NSCE, new org.apache.thrift.meta_data.FieldMetaData("nsce", org.apache.thrift.TFieldRequirementType.DEFAULT,
                     new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.STRUCT)));
             metaDataMap = Collections.unmodifiableMap(tmpMap);
             org.apache.thrift.meta_data.FieldMetaData.addStructMetaDataMap(registerStormReceiver_result.class, metaDataMap);
@@ -1107,18 +1108,18 @@ public class StormManagerService {
         }
 
         public registerStormReceiver_result(
-                org.wso2.carbon.event.processor.common.storm.manager.service.exception.NotStormManagerException nsme)
+                NotStormCoordinatorException nsce)
         {
             this();
-            this.nsme = nsme;
+            this.nsce = nsce;
         }
 
         /**
          * Performs a deep copy on <i>other</i>.
          */
         public registerStormReceiver_result(registerStormReceiver_result other) {
-            if (other.isSetNsme()) {
-                this.nsme = new org.wso2.carbon.event.processor.common.storm.manager.service.exception.NotStormManagerException(other.nsme);
+            if (other.isSetNsce()) {
+                this.nsce = new NotStormCoordinatorException(other.nsce);
             }
         }
 
@@ -1128,40 +1129,40 @@ public class StormManagerService {
 
         @Override
         public void clear() {
-            this.nsme = null;
+            this.nsce = null;
         }
 
-        public org.wso2.carbon.event.processor.common.storm.manager.service.exception.NotStormManagerException getNsme() {
-            return this.nsme;
+        public NotStormCoordinatorException getNsce() {
+            return this.nsce;
         }
 
-        public registerStormReceiver_result setNsme(org.wso2.carbon.event.processor.common.storm.manager.service.exception.NotStormManagerException nsme) {
-            this.nsme = nsme;
+        public registerStormReceiver_result setNsce(NotStormCoordinatorException nsce) {
+            this.nsce = nsce;
             return this;
         }
 
-        public void unsetNsme() {
-            this.nsme = null;
+        public void unsetNsce() {
+            this.nsce = null;
         }
 
-        /** Returns true if field nsme is set (has been assigned a value) and false otherwise */
-        public boolean isSetNsme() {
-            return this.nsme != null;
+        /** Returns true if field nsce is set (has been assigned a value) and false otherwise */
+        public boolean isSetNsce() {
+            return this.nsce != null;
         }
 
-        public void setNsmeIsSet(boolean value) {
+        public void setNsceIsSet(boolean value) {
             if (!value) {
-                this.nsme = null;
+                this.nsce = null;
             }
         }
 
         public void setFieldValue(_Fields field, Object value) {
             switch (field) {
-                case NSME:
+                case NSCE:
                     if (value == null) {
-                        unsetNsme();
+                        unsetNsce();
                     } else {
-                        setNsme((org.wso2.carbon.event.processor.common.storm.manager.service.exception.NotStormManagerException)value);
+                        setNsce((NotStormCoordinatorException) value);
                     }
                     break;
 
@@ -1170,8 +1171,8 @@ public class StormManagerService {
 
         public Object getFieldValue(_Fields field) {
             switch (field) {
-                case NSME:
-                    return getNsme();
+                case NSCE:
+                    return getNsce();
 
             }
             throw new IllegalStateException();
@@ -1184,8 +1185,8 @@ public class StormManagerService {
             }
 
             switch (field) {
-                case NSME:
-                    return isSetNsme();
+                case NSCE:
+                    return isSetNsce();
             }
             throw new IllegalStateException();
         }
@@ -1203,12 +1204,12 @@ public class StormManagerService {
             if (that == null)
                 return false;
 
-            boolean this_present_nsme = true && this.isSetNsme();
-            boolean that_present_nsme = true && that.isSetNsme();
-            if (this_present_nsme || that_present_nsme) {
-                if (!(this_present_nsme && that_present_nsme))
+            boolean this_present_nsce = true && this.isSetNsce();
+            boolean that_present_nsce = true && that.isSetNsce();
+            if (this_present_nsce || that_present_nsce) {
+                if (!(this_present_nsce && that_present_nsce))
                     return false;
-                if (!this.nsme.equals(that.nsme))
+                if (!this.nsce.equals(that.nsce))
                     return false;
             }
 
@@ -1228,12 +1229,12 @@ public class StormManagerService {
             int lastComparison = 0;
             registerStormReceiver_result typedOther = (registerStormReceiver_result)other;
 
-            lastComparison = Boolean.valueOf(isSetNsme()).compareTo(typedOther.isSetNsme());
+            lastComparison = Boolean.valueOf(isSetNsce()).compareTo(typedOther.isSetNsce());
             if (lastComparison != 0) {
                 return lastComparison;
             }
-            if (isSetNsme()) {
-                lastComparison = org.apache.thrift.TBaseHelper.compareTo(this.nsme, typedOther.nsme);
+            if (isSetNsce()) {
+                lastComparison = org.apache.thrift.TBaseHelper.compareTo(this.nsce, typedOther.nsce);
                 if (lastComparison != 0) {
                     return lastComparison;
                 }
@@ -1255,10 +1256,10 @@ public class StormManagerService {
                     break;
                 }
                 switch (field.id) {
-                    case 1: // NSME
+                    case 1: // NSCE
                         if (field.type == org.apache.thrift.protocol.TType.STRUCT) {
-                            this.nsme = new org.wso2.carbon.event.processor.common.storm.manager.service.exception.NotStormManagerException();
-                            this.nsme.read(iprot);
+                            this.nsce = new NotStormCoordinatorException();
+                            this.nsce.read(iprot);
                         } else {
                             org.apache.thrift.protocol.TProtocolUtil.skip(iprot, field.type);
                         }
@@ -1277,9 +1278,9 @@ public class StormManagerService {
         public void write(org.apache.thrift.protocol.TProtocol oprot) throws org.apache.thrift.TException {
             oprot.writeStructBegin(STRUCT_DESC);
 
-            if (this.isSetNsme()) {
-                oprot.writeFieldBegin(NSME_FIELD_DESC);
-                this.nsme.write(oprot);
+            if (this.isSetNsce()) {
+                oprot.writeFieldBegin(NSCE_FIELD_DESC);
+                this.nsce.write(oprot);
                 oprot.writeFieldEnd();
             }
             oprot.writeFieldStop();
@@ -1291,11 +1292,11 @@ public class StormManagerService {
             StringBuilder sb = new StringBuilder("registerStormReceiver_result(");
             boolean first = true;
 
-            sb.append("nsme:");
-            if (this.nsme == null) {
+            sb.append("nsce:");
+            if (this.nsce == null) {
                 sb.append("null");
             } else {
-                sb.append(this.nsme);
+                sb.append(this.nsce);
             }
             first = false;
             sb.append(")");
@@ -1886,13 +1887,13 @@ public class StormManagerService {
     public static class registerCEPPublisher_result implements org.apache.thrift.TBase<registerCEPPublisher_result, registerCEPPublisher_result._Fields>, java.io.Serializable, Cloneable   {
         private static final org.apache.thrift.protocol.TStruct STRUCT_DESC = new org.apache.thrift.protocol.TStruct("registerCEPPublisher_result");
 
-        private static final org.apache.thrift.protocol.TField NSME_FIELD_DESC = new org.apache.thrift.protocol.TField("nsme", org.apache.thrift.protocol.TType.STRUCT, (short)1);
+        private static final org.apache.thrift.protocol.TField NSCE_FIELD_DESC = new org.apache.thrift.protocol.TField("nsce", org.apache.thrift.protocol.TType.STRUCT, (short)1);
 
-        public org.wso2.carbon.event.processor.common.storm.manager.service.exception.NotStormManagerException nsme; // required
+        public NotStormCoordinatorException nsce; // required
 
         /** The set of fields this struct contains, along with convenience methods for finding and manipulating them. */
         public enum _Fields implements org.apache.thrift.TFieldIdEnum {
-            NSME((short)1, "nsme");
+            NSCE((short)1, "nsce");
 
             private static final Map<String, _Fields> byName = new HashMap<String, _Fields>();
 
@@ -1907,8 +1908,8 @@ public class StormManagerService {
              */
             public static _Fields findByThriftId(int fieldId) {
                 switch(fieldId) {
-                    case 1: // NSME
-                        return NSME;
+                    case 1: // NSCE
+                        return NSCE;
                     default:
                         return null;
                 }
@@ -1953,7 +1954,7 @@ public class StormManagerService {
         public static final Map<_Fields, org.apache.thrift.meta_data.FieldMetaData> metaDataMap;
         static {
             Map<_Fields, org.apache.thrift.meta_data.FieldMetaData> tmpMap = new EnumMap<_Fields, org.apache.thrift.meta_data.FieldMetaData>(_Fields.class);
-            tmpMap.put(_Fields.NSME, new org.apache.thrift.meta_data.FieldMetaData("nsme", org.apache.thrift.TFieldRequirementType.DEFAULT,
+            tmpMap.put(_Fields.NSCE, new org.apache.thrift.meta_data.FieldMetaData("nsce", org.apache.thrift.TFieldRequirementType.DEFAULT,
                     new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.STRUCT)));
             metaDataMap = Collections.unmodifiableMap(tmpMap);
             org.apache.thrift.meta_data.FieldMetaData.addStructMetaDataMap(registerCEPPublisher_result.class, metaDataMap);
@@ -1963,18 +1964,18 @@ public class StormManagerService {
         }
 
         public registerCEPPublisher_result(
-                org.wso2.carbon.event.processor.common.storm.manager.service.exception.NotStormManagerException nsme)
+                NotStormCoordinatorException nsce)
         {
             this();
-            this.nsme = nsme;
+            this.nsce = nsce;
         }
 
         /**
          * Performs a deep copy on <i>other</i>.
          */
         public registerCEPPublisher_result(registerCEPPublisher_result other) {
-            if (other.isSetNsme()) {
-                this.nsme = new org.wso2.carbon.event.processor.common.storm.manager.service.exception.NotStormManagerException(other.nsme);
+            if (other.isSetNsce()) {
+                this.nsce = new NotStormCoordinatorException(other.nsce);
             }
         }
 
@@ -1984,40 +1985,40 @@ public class StormManagerService {
 
         @Override
         public void clear() {
-            this.nsme = null;
+            this.nsce = null;
         }
 
-        public org.wso2.carbon.event.processor.common.storm.manager.service.exception.NotStormManagerException getNsme() {
-            return this.nsme;
+        public NotStormCoordinatorException getNsce() {
+            return this.nsce;
         }
 
-        public registerCEPPublisher_result setNsme(org.wso2.carbon.event.processor.common.storm.manager.service.exception.NotStormManagerException nsme) {
-            this.nsme = nsme;
+        public registerCEPPublisher_result setNsce(NotStormCoordinatorException nsce) {
+            this.nsce = nsce;
             return this;
         }
 
-        public void unsetNsme() {
-            this.nsme = null;
+        public void unsetNsce() {
+            this.nsce = null;
         }
 
-        /** Returns true if field nsme is set (has been assigned a value) and false otherwise */
-        public boolean isSetNsme() {
-            return this.nsme != null;
+        /** Returns true if field nsce is set (has been assigned a value) and false otherwise */
+        public boolean isSetNsce() {
+            return this.nsce != null;
         }
 
-        public void setNsmeIsSet(boolean value) {
+        public void setNsceIsSet(boolean value) {
             if (!value) {
-                this.nsme = null;
+                this.nsce = null;
             }
         }
 
         public void setFieldValue(_Fields field, Object value) {
             switch (field) {
-                case NSME:
+                case NSCE:
                     if (value == null) {
-                        unsetNsme();
+                        unsetNsce();
                     } else {
-                        setNsme((org.wso2.carbon.event.processor.common.storm.manager.service.exception.NotStormManagerException)value);
+                        setNsce((NotStormCoordinatorException) value);
                     }
                     break;
 
@@ -2026,8 +2027,8 @@ public class StormManagerService {
 
         public Object getFieldValue(_Fields field) {
             switch (field) {
-                case NSME:
-                    return getNsme();
+                case NSCE:
+                    return getNsce();
 
             }
             throw new IllegalStateException();
@@ -2040,8 +2041,8 @@ public class StormManagerService {
             }
 
             switch (field) {
-                case NSME:
-                    return isSetNsme();
+                case NSCE:
+                    return isSetNsce();
             }
             throw new IllegalStateException();
         }
@@ -2059,12 +2060,12 @@ public class StormManagerService {
             if (that == null)
                 return false;
 
-            boolean this_present_nsme = true && this.isSetNsme();
-            boolean that_present_nsme = true && that.isSetNsme();
-            if (this_present_nsme || that_present_nsme) {
-                if (!(this_present_nsme && that_present_nsme))
+            boolean this_present_nsce = true && this.isSetNsce();
+            boolean that_present_nsce = true && that.isSetNsce();
+            if (this_present_nsce || that_present_nsce) {
+                if (!(this_present_nsce && that_present_nsce))
                     return false;
-                if (!this.nsme.equals(that.nsme))
+                if (!this.nsce.equals(that.nsce))
                     return false;
             }
 
@@ -2084,12 +2085,12 @@ public class StormManagerService {
             int lastComparison = 0;
             registerCEPPublisher_result typedOther = (registerCEPPublisher_result)other;
 
-            lastComparison = Boolean.valueOf(isSetNsme()).compareTo(typedOther.isSetNsme());
+            lastComparison = Boolean.valueOf(isSetNsce()).compareTo(typedOther.isSetNsce());
             if (lastComparison != 0) {
                 return lastComparison;
             }
-            if (isSetNsme()) {
-                lastComparison = org.apache.thrift.TBaseHelper.compareTo(this.nsme, typedOther.nsme);
+            if (isSetNsce()) {
+                lastComparison = org.apache.thrift.TBaseHelper.compareTo(this.nsce, typedOther.nsce);
                 if (lastComparison != 0) {
                     return lastComparison;
                 }
@@ -2111,10 +2112,10 @@ public class StormManagerService {
                     break;
                 }
                 switch (field.id) {
-                    case 1: // NSME
+                    case 1: // NSCE
                         if (field.type == org.apache.thrift.protocol.TType.STRUCT) {
-                            this.nsme = new org.wso2.carbon.event.processor.common.storm.manager.service.exception.NotStormManagerException();
-                            this.nsme.read(iprot);
+                            this.nsce = new NotStormCoordinatorException();
+                            this.nsce.read(iprot);
                         } else {
                             org.apache.thrift.protocol.TProtocolUtil.skip(iprot, field.type);
                         }
@@ -2133,9 +2134,9 @@ public class StormManagerService {
         public void write(org.apache.thrift.protocol.TProtocol oprot) throws org.apache.thrift.TException {
             oprot.writeStructBegin(STRUCT_DESC);
 
-            if (this.isSetNsme()) {
-                oprot.writeFieldBegin(NSME_FIELD_DESC);
-                this.nsme.write(oprot);
+            if (this.isSetNsce()) {
+                oprot.writeFieldBegin(NSCE_FIELD_DESC);
+                this.nsce.write(oprot);
                 oprot.writeFieldEnd();
             }
             oprot.writeFieldStop();
@@ -2147,11 +2148,11 @@ public class StormManagerService {
             StringBuilder sb = new StringBuilder("registerCEPPublisher_result(");
             boolean first = true;
 
-            sb.append("nsme:");
-            if (this.nsme == null) {
+            sb.append("nsce:");
+            if (this.nsce == null) {
                 sb.append("null");
             } else {
-                sb.append(this.nsme);
+                sb.append(this.nsce);
             }
             first = false;
             sb.append(")");
@@ -2659,17 +2660,17 @@ public class StormManagerService {
         private static final org.apache.thrift.protocol.TStruct STRUCT_DESC = new org.apache.thrift.protocol.TStruct("getStormReceiver_result");
 
         private static final org.apache.thrift.protocol.TField SUCCESS_FIELD_DESC = new org.apache.thrift.protocol.TField("success", org.apache.thrift.protocol.TType.STRING, (short)0);
-        private static final org.apache.thrift.protocol.TField NSME_FIELD_DESC = new org.apache.thrift.protocol.TField("nsme", org.apache.thrift.protocol.TType.STRUCT, (short)1);
+        private static final org.apache.thrift.protocol.TField NSCE_FIELD_DESC = new org.apache.thrift.protocol.TField("nsce", org.apache.thrift.protocol.TType.STRUCT, (short)1);
         private static final org.apache.thrift.protocol.TField ENFE_FIELD_DESC = new org.apache.thrift.protocol.TField("enfe", org.apache.thrift.protocol.TType.STRUCT, (short)2);
 
         public String success; // required
-        public org.wso2.carbon.event.processor.common.storm.manager.service.exception.NotStormManagerException nsme; // required
+        public NotStormCoordinatorException nsce; // required
         public org.wso2.carbon.event.processor.common.storm.manager.service.exception.EndpointNotFoundException enfe; // required
 
         /** The set of fields this struct contains, along with convenience methods for finding and manipulating them. */
         public enum _Fields implements org.apache.thrift.TFieldIdEnum {
             SUCCESS((short)0, "success"),
-            NSME((short)1, "nsme"),
+            NSCE((short)1, "nsce"),
             ENFE((short)2, "enfe");
 
             private static final Map<String, _Fields> byName = new HashMap<String, _Fields>();
@@ -2687,8 +2688,8 @@ public class StormManagerService {
                 switch(fieldId) {
                     case 0: // SUCCESS
                         return SUCCESS;
-                    case 1: // NSME
-                        return NSME;
+                    case 1: // NSCE
+                        return NSCE;
                     case 2: // ENFE
                         return ENFE;
                     default:
@@ -2737,7 +2738,7 @@ public class StormManagerService {
             Map<_Fields, org.apache.thrift.meta_data.FieldMetaData> tmpMap = new EnumMap<_Fields, org.apache.thrift.meta_data.FieldMetaData>(_Fields.class);
             tmpMap.put(_Fields.SUCCESS, new org.apache.thrift.meta_data.FieldMetaData("success", org.apache.thrift.TFieldRequirementType.DEFAULT,
                     new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.STRING)));
-            tmpMap.put(_Fields.NSME, new org.apache.thrift.meta_data.FieldMetaData("nsme", org.apache.thrift.TFieldRequirementType.DEFAULT,
+            tmpMap.put(_Fields.NSCE, new org.apache.thrift.meta_data.FieldMetaData("nsce", org.apache.thrift.TFieldRequirementType.DEFAULT,
                     new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.STRUCT)));
             tmpMap.put(_Fields.ENFE, new org.apache.thrift.meta_data.FieldMetaData("enfe", org.apache.thrift.TFieldRequirementType.DEFAULT,
                     new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.STRUCT)));
@@ -2750,12 +2751,12 @@ public class StormManagerService {
 
         public getStormReceiver_result(
                 String success,
-                org.wso2.carbon.event.processor.common.storm.manager.service.exception.NotStormManagerException nsme,
+                NotStormCoordinatorException nsce,
                 org.wso2.carbon.event.processor.common.storm.manager.service.exception.EndpointNotFoundException enfe)
         {
             this();
             this.success = success;
-            this.nsme = nsme;
+            this.nsce = nsce;
             this.enfe = enfe;
         }
 
@@ -2766,8 +2767,8 @@ public class StormManagerService {
             if (other.isSetSuccess()) {
                 this.success = other.success;
             }
-            if (other.isSetNsme()) {
-                this.nsme = new org.wso2.carbon.event.processor.common.storm.manager.service.exception.NotStormManagerException(other.nsme);
+            if (other.isSetNsce()) {
+                this.nsce = new NotStormCoordinatorException(other.nsce);
             }
             if (other.isSetEnfe()) {
                 this.enfe = new org.wso2.carbon.event.processor.common.storm.manager.service.exception.EndpointNotFoundException(other.enfe);
@@ -2781,7 +2782,7 @@ public class StormManagerService {
         @Override
         public void clear() {
             this.success = null;
-            this.nsme = null;
+            this.nsce = null;
             this.enfe = null;
         }
 
@@ -2809,27 +2810,27 @@ public class StormManagerService {
             }
         }
 
-        public org.wso2.carbon.event.processor.common.storm.manager.service.exception.NotStormManagerException getNsme() {
-            return this.nsme;
+        public NotStormCoordinatorException getNsce() {
+            return this.nsce;
         }
 
-        public getStormReceiver_result setNsme(org.wso2.carbon.event.processor.common.storm.manager.service.exception.NotStormManagerException nsme) {
-            this.nsme = nsme;
+        public getStormReceiver_result setNsce(NotStormCoordinatorException nsce) {
+            this.nsce = nsce;
             return this;
         }
 
-        public void unsetNsme() {
-            this.nsme = null;
+        public void unsetNsce() {
+            this.nsce = null;
         }
 
-        /** Returns true if field nsme is set (has been assigned a value) and false otherwise */
-        public boolean isSetNsme() {
-            return this.nsme != null;
+        /** Returns true if field nsce is set (has been assigned a value) and false otherwise */
+        public boolean isSetNsce() {
+            return this.nsce != null;
         }
 
-        public void setNsmeIsSet(boolean value) {
+        public void setNsceIsSet(boolean value) {
             if (!value) {
-                this.nsme = null;
+                this.nsce = null;
             }
         }
 
@@ -2867,11 +2868,11 @@ public class StormManagerService {
                     }
                     break;
 
-                case NSME:
+                case NSCE:
                     if (value == null) {
-                        unsetNsme();
+                        unsetNsce();
                     } else {
-                        setNsme((org.wso2.carbon.event.processor.common.storm.manager.service.exception.NotStormManagerException)value);
+                        setNsce((NotStormCoordinatorException) value);
                     }
                     break;
 
@@ -2891,8 +2892,8 @@ public class StormManagerService {
                 case SUCCESS:
                     return getSuccess();
 
-                case NSME:
-                    return getNsme();
+                case NSCE:
+                    return getNsce();
 
                 case ENFE:
                     return getEnfe();
@@ -2910,8 +2911,8 @@ public class StormManagerService {
             switch (field) {
                 case SUCCESS:
                     return isSetSuccess();
-                case NSME:
-                    return isSetNsme();
+                case NSCE:
+                    return isSetNsce();
                 case ENFE:
                     return isSetEnfe();
             }
@@ -2940,12 +2941,12 @@ public class StormManagerService {
                     return false;
             }
 
-            boolean this_present_nsme = true && this.isSetNsme();
-            boolean that_present_nsme = true && that.isSetNsme();
-            if (this_present_nsme || that_present_nsme) {
-                if (!(this_present_nsme && that_present_nsme))
+            boolean this_present_nsce = true && this.isSetNsce();
+            boolean that_present_nsce = true && that.isSetNsce();
+            if (this_present_nsce || that_present_nsce) {
+                if (!(this_present_nsce && that_present_nsce))
                     return false;
-                if (!this.nsme.equals(that.nsme))
+                if (!this.nsce.equals(that.nsce))
                     return false;
             }
 
@@ -2984,12 +2985,12 @@ public class StormManagerService {
                     return lastComparison;
                 }
             }
-            lastComparison = Boolean.valueOf(isSetNsme()).compareTo(typedOther.isSetNsme());
+            lastComparison = Boolean.valueOf(isSetNsce()).compareTo(typedOther.isSetNsce());
             if (lastComparison != 0) {
                 return lastComparison;
             }
-            if (isSetNsme()) {
-                lastComparison = org.apache.thrift.TBaseHelper.compareTo(this.nsme, typedOther.nsme);
+            if (isSetNsce()) {
+                lastComparison = org.apache.thrift.TBaseHelper.compareTo(this.nsce, typedOther.nsce);
                 if (lastComparison != 0) {
                     return lastComparison;
                 }
@@ -3028,10 +3029,10 @@ public class StormManagerService {
                             org.apache.thrift.protocol.TProtocolUtil.skip(iprot, field.type);
                         }
                         break;
-                    case 1: // NSME
+                    case 1: // NSCE
                         if (field.type == org.apache.thrift.protocol.TType.STRUCT) {
-                            this.nsme = new org.wso2.carbon.event.processor.common.storm.manager.service.exception.NotStormManagerException();
-                            this.nsme.read(iprot);
+                            this.nsce = new NotStormCoordinatorException();
+                            this.nsce.read(iprot);
                         } else {
                             org.apache.thrift.protocol.TProtocolUtil.skip(iprot, field.type);
                         }
@@ -3062,9 +3063,9 @@ public class StormManagerService {
                 oprot.writeFieldBegin(SUCCESS_FIELD_DESC);
                 oprot.writeString(this.success);
                 oprot.writeFieldEnd();
-            } else if (this.isSetNsme()) {
-                oprot.writeFieldBegin(NSME_FIELD_DESC);
-                this.nsme.write(oprot);
+            } else if (this.isSetNsce()) {
+                oprot.writeFieldBegin(NSCE_FIELD_DESC);
+                this.nsce.write(oprot);
                 oprot.writeFieldEnd();
             } else if (this.isSetEnfe()) {
                 oprot.writeFieldBegin(ENFE_FIELD_DESC);
@@ -3088,11 +3089,11 @@ public class StormManagerService {
             }
             first = false;
             if (!first) sb.append(", ");
-            sb.append("nsme:");
-            if (this.nsme == null) {
+            sb.append("nsce:");
+            if (this.nsce == null) {
                 sb.append("null");
             } else {
-                sb.append(this.nsme);
+                sb.append(this.nsce);
             }
             first = false;
             if (!first) sb.append(", ");
@@ -3608,17 +3609,17 @@ public class StormManagerService {
         private static final org.apache.thrift.protocol.TStruct STRUCT_DESC = new org.apache.thrift.protocol.TStruct("getCEPPublisher_result");
 
         private static final org.apache.thrift.protocol.TField SUCCESS_FIELD_DESC = new org.apache.thrift.protocol.TField("success", org.apache.thrift.protocol.TType.STRING, (short)0);
-        private static final org.apache.thrift.protocol.TField NSME_FIELD_DESC = new org.apache.thrift.protocol.TField("nsme", org.apache.thrift.protocol.TType.STRUCT, (short)1);
+        private static final org.apache.thrift.protocol.TField NSCE_FIELD_DESC = new org.apache.thrift.protocol.TField("nsce", org.apache.thrift.protocol.TType.STRUCT, (short)1);
         private static final org.apache.thrift.protocol.TField ENFE_FIELD_DESC = new org.apache.thrift.protocol.TField("enfe", org.apache.thrift.protocol.TType.STRUCT, (short)2);
 
         public String success; // required
-        public org.wso2.carbon.event.processor.common.storm.manager.service.exception.NotStormManagerException nsme; // required
+        public NotStormCoordinatorException nsce; // required
         public org.wso2.carbon.event.processor.common.storm.manager.service.exception.EndpointNotFoundException enfe; // required
 
         /** The set of fields this struct contains, along with convenience methods for finding and manipulating them. */
         public enum _Fields implements org.apache.thrift.TFieldIdEnum {
             SUCCESS((short)0, "success"),
-            NSME((short)1, "nsme"),
+            NSCE((short)1, "nsce"),
             ENFE((short)2, "enfe");
 
             private static final Map<String, _Fields> byName = new HashMap<String, _Fields>();
@@ -3636,8 +3637,8 @@ public class StormManagerService {
                 switch(fieldId) {
                     case 0: // SUCCESS
                         return SUCCESS;
-                    case 1: // NSME
-                        return NSME;
+                    case 1: // NSCE
+                        return NSCE;
                     case 2: // ENFE
                         return ENFE;
                     default:
@@ -3686,7 +3687,7 @@ public class StormManagerService {
             Map<_Fields, org.apache.thrift.meta_data.FieldMetaData> tmpMap = new EnumMap<_Fields, org.apache.thrift.meta_data.FieldMetaData>(_Fields.class);
             tmpMap.put(_Fields.SUCCESS, new org.apache.thrift.meta_data.FieldMetaData("success", org.apache.thrift.TFieldRequirementType.DEFAULT,
                     new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.STRING)));
-            tmpMap.put(_Fields.NSME, new org.apache.thrift.meta_data.FieldMetaData("nsme", org.apache.thrift.TFieldRequirementType.DEFAULT,
+            tmpMap.put(_Fields.NSCE, new org.apache.thrift.meta_data.FieldMetaData("nsce", org.apache.thrift.TFieldRequirementType.DEFAULT,
                     new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.STRUCT)));
             tmpMap.put(_Fields.ENFE, new org.apache.thrift.meta_data.FieldMetaData("enfe", org.apache.thrift.TFieldRequirementType.DEFAULT,
                     new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.STRUCT)));
@@ -3699,12 +3700,12 @@ public class StormManagerService {
 
         public getCEPPublisher_result(
                 String success,
-                org.wso2.carbon.event.processor.common.storm.manager.service.exception.NotStormManagerException nsme,
+                NotStormCoordinatorException nsce,
                 org.wso2.carbon.event.processor.common.storm.manager.service.exception.EndpointNotFoundException enfe)
         {
             this();
             this.success = success;
-            this.nsme = nsme;
+            this.nsce = nsce;
             this.enfe = enfe;
         }
 
@@ -3715,8 +3716,8 @@ public class StormManagerService {
             if (other.isSetSuccess()) {
                 this.success = other.success;
             }
-            if (other.isSetNsme()) {
-                this.nsme = new org.wso2.carbon.event.processor.common.storm.manager.service.exception.NotStormManagerException(other.nsme);
+            if (other.isSetNsce()) {
+                this.nsce = new NotStormCoordinatorException(other.nsce);
             }
             if (other.isSetEnfe()) {
                 this.enfe = new org.wso2.carbon.event.processor.common.storm.manager.service.exception.EndpointNotFoundException(other.enfe);
@@ -3730,7 +3731,7 @@ public class StormManagerService {
         @Override
         public void clear() {
             this.success = null;
-            this.nsme = null;
+            this.nsce = null;
             this.enfe = null;
         }
 
@@ -3758,27 +3759,27 @@ public class StormManagerService {
             }
         }
 
-        public org.wso2.carbon.event.processor.common.storm.manager.service.exception.NotStormManagerException getNsme() {
-            return this.nsme;
+        public NotStormCoordinatorException getNsce() {
+            return this.nsce;
         }
 
-        public getCEPPublisher_result setNsme(org.wso2.carbon.event.processor.common.storm.manager.service.exception.NotStormManagerException nsme) {
-            this.nsme = nsme;
+        public getCEPPublisher_result setNsce(NotStormCoordinatorException nsce) {
+            this.nsce = nsce;
             return this;
         }
 
-        public void unsetNsme() {
-            this.nsme = null;
+        public void unsetNsce() {
+            this.nsce = null;
         }
 
-        /** Returns true if field nsme is set (has been assigned a value) and false otherwise */
-        public boolean isSetNsme() {
-            return this.nsme != null;
+        /** Returns true if field nsce is set (has been assigned a value) and false otherwise */
+        public boolean isSetNsce() {
+            return this.nsce != null;
         }
 
-        public void setNsmeIsSet(boolean value) {
+        public void setNsceIsSet(boolean value) {
             if (!value) {
-                this.nsme = null;
+                this.nsce = null;
             }
         }
 
@@ -3816,11 +3817,11 @@ public class StormManagerService {
                     }
                     break;
 
-                case NSME:
+                case NSCE:
                     if (value == null) {
-                        unsetNsme();
+                        unsetNsce();
                     } else {
-                        setNsme((org.wso2.carbon.event.processor.common.storm.manager.service.exception.NotStormManagerException)value);
+                        setNsce((NotStormCoordinatorException) value);
                     }
                     break;
 
@@ -3840,8 +3841,8 @@ public class StormManagerService {
                 case SUCCESS:
                     return getSuccess();
 
-                case NSME:
-                    return getNsme();
+                case NSCE:
+                    return getNsce();
 
                 case ENFE:
                     return getEnfe();
@@ -3859,8 +3860,8 @@ public class StormManagerService {
             switch (field) {
                 case SUCCESS:
                     return isSetSuccess();
-                case NSME:
-                    return isSetNsme();
+                case NSCE:
+                    return isSetNsce();
                 case ENFE:
                     return isSetEnfe();
             }
@@ -3889,12 +3890,12 @@ public class StormManagerService {
                     return false;
             }
 
-            boolean this_present_nsme = true && this.isSetNsme();
-            boolean that_present_nsme = true && that.isSetNsme();
-            if (this_present_nsme || that_present_nsme) {
-                if (!(this_present_nsme && that_present_nsme))
+            boolean this_present_nsce = true && this.isSetNsce();
+            boolean that_present_nsce = true && that.isSetNsce();
+            if (this_present_nsce || that_present_nsce) {
+                if (!(this_present_nsce && that_present_nsce))
                     return false;
-                if (!this.nsme.equals(that.nsme))
+                if (!this.nsce.equals(that.nsce))
                     return false;
             }
 
@@ -3933,12 +3934,12 @@ public class StormManagerService {
                     return lastComparison;
                 }
             }
-            lastComparison = Boolean.valueOf(isSetNsme()).compareTo(typedOther.isSetNsme());
+            lastComparison = Boolean.valueOf(isSetNsce()).compareTo(typedOther.isSetNsce());
             if (lastComparison != 0) {
                 return lastComparison;
             }
-            if (isSetNsme()) {
-                lastComparison = org.apache.thrift.TBaseHelper.compareTo(this.nsme, typedOther.nsme);
+            if (isSetNsce()) {
+                lastComparison = org.apache.thrift.TBaseHelper.compareTo(this.nsce, typedOther.nsce);
                 if (lastComparison != 0) {
                     return lastComparison;
                 }
@@ -3977,10 +3978,10 @@ public class StormManagerService {
                             org.apache.thrift.protocol.TProtocolUtil.skip(iprot, field.type);
                         }
                         break;
-                    case 1: // NSME
+                    case 1: // NSCE
                         if (field.type == org.apache.thrift.protocol.TType.STRUCT) {
-                            this.nsme = new org.wso2.carbon.event.processor.common.storm.manager.service.exception.NotStormManagerException();
-                            this.nsme.read(iprot);
+                            this.nsce = new NotStormCoordinatorException();
+                            this.nsce.read(iprot);
                         } else {
                             org.apache.thrift.protocol.TProtocolUtil.skip(iprot, field.type);
                         }
@@ -4011,9 +4012,9 @@ public class StormManagerService {
                 oprot.writeFieldBegin(SUCCESS_FIELD_DESC);
                 oprot.writeString(this.success);
                 oprot.writeFieldEnd();
-            } else if (this.isSetNsme()) {
-                oprot.writeFieldBegin(NSME_FIELD_DESC);
-                this.nsme.write(oprot);
+            } else if (this.isSetNsce()) {
+                oprot.writeFieldBegin(NSCE_FIELD_DESC);
+                this.nsce.write(oprot);
                 oprot.writeFieldEnd();
             } else if (this.isSetEnfe()) {
                 oprot.writeFieldBegin(ENFE_FIELD_DESC);
@@ -4037,11 +4038,11 @@ public class StormManagerService {
             }
             first = false;
             if (!first) sb.append(", ");
-            sb.append("nsme:");
-            if (this.nsme == null) {
+            sb.append("nsce:");
+            if (this.nsce == null) {
                 sb.append("null");
             } else {
-                sb.append(this.nsme);
+                sb.append(this.nsce);
             }
             first = false;
             if (!first) sb.append(", ");

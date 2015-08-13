@@ -20,7 +20,7 @@ import org.apache.log4j.Logger;
 import org.apache.thrift.TException;
 import org.wso2.carbon.event.processor.common.storm.manager.service.StormManagerService;
 import org.wso2.carbon.event.processor.common.storm.manager.service.exception.EndpointNotFoundException;
-import org.wso2.carbon.event.processor.common.storm.manager.service.exception.NotStormManagerException;
+import org.wso2.carbon.event.processor.common.storm.manager.service.exception.NotStormCoordinatorException;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -31,7 +31,7 @@ public class StormManagerServiceImpl implements StormManagerService.Iface {
     public static final long MILLISECONDS_PER_MINUTE = 60000;
     private ConcurrentHashMap<String, Set<Endpoint>> stormReceivers = new ConcurrentHashMap<String, Set<Endpoint>>();
     private ConcurrentHashMap<String, Set<Endpoint>> cepPublishers = new ConcurrentHashMap<String, Set<Endpoint>>();
-    private boolean isStormManager;
+    private boolean isStormCoordinator;
     private String hostPort;
 
     public StormManagerServiceImpl(String hostPort) {
@@ -39,25 +39,25 @@ public class StormManagerServiceImpl implements StormManagerService.Iface {
     }
 
     @Override
-    public void registerStormReceiver(int tenantId, String executionPlanName, String hostName, int port) throws NotStormManagerException, TException {
-        if (!isStormManager) {
-            throw new NotStormManagerException(hostPort + " not a storm manager");
+    public void registerStormReceiver(int tenantId, String executionPlanName, String hostName, int port) throws NotStormCoordinatorException, TException {
+        if (!isStormCoordinator) {
+            throw new NotStormCoordinatorException(hostPort + " not a storm coordinator");
         }
         insertToCollection(stormReceivers, constructKey(tenantId, executionPlanName), new Endpoint(port, hostName));
     }
 
     @Override
-    public void registerCEPPublisher(int tenantId, String executionPlanName, String hostName, int port) throws NotStormManagerException, TException {
-        if (!isStormManager) {
-            throw new NotStormManagerException(hostPort + " not a storm manager");
+    public void registerCEPPublisher(int tenantId, String executionPlanName, String hostName, int port) throws NotStormCoordinatorException, TException {
+        if (!isStormCoordinator) {
+            throw new NotStormCoordinatorException(hostPort + " not a storm coordinator");
         }
         insertToCollection(cepPublishers, constructKey(tenantId, executionPlanName), new Endpoint(port, hostName));
     }
 
     @Override
-    public synchronized String getStormReceiver(int tenantId, String executionPlanName, String cepReceiverHostName) throws NotStormManagerException, EndpointNotFoundException, TException {
-        if (!isStormManager) {
-            throw new NotStormManagerException(hostPort + " not a storm manager");
+    public synchronized String getStormReceiver(int tenantId, String executionPlanName, String cepReceiverHostName) throws NotStormCoordinatorException, EndpointNotFoundException, TException {
+        if (!isStormCoordinator) {
+            throw new NotStormCoordinatorException(hostPort + " not a storm coordinator");
         }
         Set<Endpoint> endpointSet = stormReceivers.get(constructKey(tenantId, executionPlanName));
         Endpoint selectedEndpoint = getEndpoint(endpointSet, cepReceiverHostName);
@@ -70,9 +70,9 @@ public class StormManagerServiceImpl implements StormManagerService.Iface {
     }
 
     @Override
-    public synchronized String getCEPPublisher(int tenantId, String executionPlanName, String stormPublisherHostName) throws NotStormManagerException, EndpointNotFoundException, TException {
-        if (!isStormManager) {
-            throw new NotStormManagerException(hostPort + " not a storm manager");
+    public synchronized String getCEPPublisher(int tenantId, String executionPlanName, String stormPublisherHostName) throws NotStormCoordinatorException, EndpointNotFoundException, TException {
+        if (!isStormCoordinator) {
+            throw new NotStormCoordinatorException(hostPort + " not a storm coordinator");
         }
         Set<Endpoint> endpointSet = cepPublishers.get(constructKey(tenantId, executionPlanName));
         Endpoint selectedEndpoint = getEndpoint(endpointSet, stormPublisherHostName);
@@ -157,8 +157,8 @@ public class StormManagerServiceImpl implements StormManagerService.Iface {
         return tenantId + ":" + executionPlanName;
     }
 
-    public void setStormManager(boolean stormManager) {
-        this.isStormManager = stormManager;
+    public void setStormCoordinator(boolean isStormCoordinator) {
+        this.isStormCoordinator = isStormCoordinator;
     }
 
     private class Endpoint {
@@ -206,7 +206,7 @@ public class StormManagerServiceImpl implements StormManagerService.Iface {
         }
     }
 
-    public boolean isStormManager() {
-        return isStormManager;
+    public boolean isStormCoordinator() {
+        return isStormCoordinator;
     }
 }

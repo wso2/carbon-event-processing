@@ -29,9 +29,10 @@ import org.apache.thrift.transport.TTransport;
 import org.apache.thrift.transport.TTransportException;
 import org.wso2.carbon.event.processor.common.storm.manager.service.StormManagerService;
 import org.wso2.carbon.event.processor.common.storm.manager.service.exception.EndpointNotFoundException;
-import org.wso2.carbon.event.processor.common.storm.manager.service.exception.NotStormManagerException;
+import org.wso2.carbon.event.processor.common.storm.manager.service.exception.NotStormCoordinatorException;
 import org.wso2.carbon.event.processor.manager.commons.transport.client.TCPEventPublisher;
 import org.wso2.carbon.event.processor.manager.commons.transport.client.TCPEventPublisherConfig;
+import org.wso2.carbon.event.processor.manager.commons.transport.server.ConnectionCallback;
 import org.wso2.carbon.event.processor.manager.commons.utils.HostAndPort;
 import org.wso2.carbon.event.processor.manager.commons.utils.Utils;
 import org.wso2.carbon.event.processor.manager.core.config.DistributedConfiguration;
@@ -67,6 +68,8 @@ public class AsyncEventPublisher implements EventHandler<AsynchronousEventBuffer
     private DistributedConfiguration stormDeploymentConfig;
     AsynchronousEventBuffer eventSendBuffer = null;
 
+    private ConnectionCallback connectionCallback;
+
     private TCPEventPublisher tcpEventPublisher = null;
     private EndpointConnectionCreator endpointConnectionCreator;
 
@@ -75,15 +78,20 @@ public class AsyncEventPublisher implements EventHandler<AsynchronousEventBuffer
     private ThroughputProbe inputThroughputProbe;
     private ThroughputProbe publishThroughputProbe;
 
+    /**
+     * @param connectionCallback is a callback, invoked on connect() and disconnect() methods of TCPEventPublisher. Set to null if the callback is not needed.
+     */
     public AsyncEventPublisher(DestinationType destinationType, Set<StreamDefinition> streams,
                                List<HostAndPort> managerServiceEndpoints,
-                               String executionPlanName, int tenantId, DistributedConfiguration stormDeploymentConfig) {
+                               String executionPlanName, int tenantId, DistributedConfiguration stormDeploymentConfig,
+                               ConnectionCallback connectionCallback) {
         this.destinationType = destinationType;
         this.streams = streams;
         this.executionPlanName = executionPlanName;
         this.tenantId = tenantId;
         this.managerServiceEndpoints = managerServiceEndpoints;
         this.stormDeploymentConfig = stormDeploymentConfig;
+        this.connectionCallback = connectionCallback;
         this.endpointConnectionCreator = new EndpointConnectionCreator();
 
         this.destinationTypeString = (destinationType == DestinationType.STORM_RECEIVER) ? "StormReceiver" : "CEPPublisher";
@@ -239,14 +247,14 @@ public class AsyncEventPublisher implements EventHandler<AsynchronousEventBuffer
                         log.info(logPrefix + "Retrieved " + destinationTypeString + " at " + endpointHostPort + " " +
                                 "from storm manager service at " + endpoint.getHostName() + ":" + endpoint.getPort());
                         break;
-                    } catch (NotStormManagerException e) {
+                    } catch (NotStormCoordinatorException e) {
                         log.info(logPrefix + "Cannot retrieve " + destinationType.name() +
                                 " endpoint information from storm manager service at " +
-                                endpoint.getHostName() + ":" + endpoint.getPort() + " as it's not an active Storm manager, Trying next Storm manager.");
+                                endpoint.getHostName() + ":" + endpoint.getPort() + " as it's not a Storm coordinator, Trying next Storm manager.");
                         if (log.isDebugEnabled()) {
                             log.debug(logPrefix + "Cannot retrieve " + destinationType.name() +
                                     " endpoint information from storm manager service at " +
-                                    endpoint.getHostName() + ":" + endpoint.getPort() + " as it's not an active Storm manager", e);
+                                    endpoint.getHostName() + ":" + endpoint.getPort() + " as it's not a Storm coordinator", e);
                         }
                     } catch (TTransportException e) {
                         log.info(logPrefix + "Cannot retrieve " + destinationType.name() +
@@ -326,13 +334,12 @@ public class AsyncEventPublisher implements EventHandler<AsynchronousEventBuffer
                     publisherConfigs.setTcpSendBufferSize(stormDeploymentConfig.getTcpEventPublisherSendBufferSize());
                     boolean isSync = stormDeploymentConfig.getTcpEventPublisherMode().equals("blocking") ? true : false;
 
-                    tcpEventPublisher = new TCPEventPublisher(endpoint, publisherConfigs, isSync);
+                    tcpEventPublisher = new TCPEventPublisher(endpoint, publisherConfigs, isSync, connectionCallback);
                     StringBuilder streamsIDs = new StringBuilder();
                     for (StreamDefinition siddhiStreamDefinition : streams) {
                         tcpEventPublisher.addStreamDefinition(siddhiStreamDefinition);
                         streamsIDs.append(siddhiStreamDefinition.getId() + ",");
                     }
-
                     log.info(logPrefix + "Connected to " + destinationTypeString + " at " + endpoint + " for the Stream(s) " + streamsIDs.toString());
                 } catch (IOException e) {
                     log.info(logPrefix + "Cannot connect to " + destinationTypeString + " at " + endpoint + ", " + e.getMessage());
