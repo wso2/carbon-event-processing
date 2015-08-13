@@ -65,12 +65,12 @@ public class StormManagerServer {
         stormManagerService.deleteExecPlanEndpoints(tenantId, excPlanName);
     }
 
-    public void setStormManager(boolean stormManager) {
-        stormManagerService.setStormManager(stormManager);
+    public void setStormCoordinator(boolean isCoordinator) {
+        stormManagerService.setStormCoordinator(isCoordinator);
     }
 
-    public boolean isStormManager() {
-        return stormManagerService.isStormManager();
+    public boolean isStormCoordinator() {
+        return stormManagerService.isStormCoordinator();
     }
 
     static class ServerThread implements Runnable {
@@ -88,13 +88,13 @@ public class StormManagerServer {
     public void tryBecomeCoordinator() {
         HazelcastInstance hazelcastInstance = EventProcessorValueHolder.getHazelcastInstance();
         if (hazelcastInstance != null) {
-            if(!isStormManager()) {
-                ILock lock = hazelcastInstance.getLock("StormManager");
+            if(!isStormCoordinator()) {
+                ILock lock = hazelcastInstance.getLock("StormCoordinator");
                 boolean isCoordinator = lock.tryLock();
                 if (isCoordinator) {
-                    log.info("Node became Storm Coordinator");
+                    log.info("Node became Storm coordinator");
                 }
-                setStormManager(isCoordinator);
+                setStormCoordinator(isCoordinator);
             }
         }
     }

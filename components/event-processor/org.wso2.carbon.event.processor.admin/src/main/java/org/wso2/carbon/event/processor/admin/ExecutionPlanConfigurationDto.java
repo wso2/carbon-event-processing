@@ -25,6 +25,7 @@ public class ExecutionPlanConfigurationDto {
     private boolean tracingEnabled;
     private boolean statisticsEnabled;
     private boolean editable;
+    private String deploymentStatus;    //used only in distributed mode.
 
 
     public StreamConfigurationDto[] getImportedStreams() {
@@ -89,5 +90,13 @@ public class ExecutionPlanConfigurationDto {
 
     public boolean isEditable() {
         return editable;
+    }
+
+    public String getDeploymentStatus() {
+        return deploymentStatus;
+    }
+
+    public void setDeploymentStatus(String deploymentStatus) {
+        this.deploymentStatus = deploymentStatus;
     }
 }

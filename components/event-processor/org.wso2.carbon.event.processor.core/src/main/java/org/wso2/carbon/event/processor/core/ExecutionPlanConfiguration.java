@@ -74,14 +74,6 @@ public class ExecutionPlanConfiguration {
         this.exportedStreams.add(stream);
     }
 
-    public void removeExportedStream(String stream) {
-        this.exportedStreams.remove(stream);
-    }
-
-    public void removeImportedStream(String stream) {
-        this.importedStreams.remove(stream);
-    }
-
     public boolean isTracingEnabled() {
         return isTracingEnabled;
     }

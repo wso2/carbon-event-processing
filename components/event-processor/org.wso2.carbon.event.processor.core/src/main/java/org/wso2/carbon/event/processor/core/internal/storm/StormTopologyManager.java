@@ -20,6 +20,8 @@ import backtype.storm.generated.*;
 import backtype.storm.topology.TopologyBuilder;
 import backtype.storm.utils.NimbusClient;
 import backtype.storm.utils.Utils;
+import com.hazelcast.core.HazelcastInstance;
+import com.hazelcast.core.IMap;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.thrift7.TException;
@@ -33,6 +35,9 @@ import org.wso2.carbon.event.processor.core.exception.StormQueryConstructionExce
 import org.wso2.carbon.event.processor.core.internal.ds.EventProcessorValueHolder;
 import org.wso2.carbon.event.processor.core.internal.storm.util.StormQueryPlanBuilder;
 import org.wso2.carbon.event.processor.core.internal.storm.util.StormTopologyConstructor;
+import org.wso2.carbon.event.processor.core.util.DistributedModeConstants;
+import org.wso2.carbon.event.processor.core.util.ExecutionPlanStatusHolder;
+import org.wso2.carbon.event.processor.manager.core.config.DistributedConfiguration;
 import org.wso2.carbon.utils.CarbonUtils;
 import org.yaml.snakeyaml.Yaml;
 
@@ -48,6 +53,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ThreadFactory;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
@@ -60,6 +66,7 @@ public class StormTopologyManager {
     private static final Log log = LogFactory.getLog(StormTopologyManager.class);
     private final ConcurrentHashMap<String, TopologySubmitter> toDeployTopologies = new ConcurrentHashMap();
     private TopologyManagerThreadFactory topologyManagerThreadFactory = new TopologyManagerThreadFactory("Storm Deployment");
+    private final int lockTimeout;
 
     public StormTopologyManager() {
         String stormConfigDirPath = CarbonUtils.getCarbonConfigDirPath() + File.separator + "cep" + File.separator + "storm";
@@ -76,6 +83,9 @@ public class StormTopologyManager {
         } catch (FileNotFoundException e) {
             log.warn("Error occurred while reading storm configurations using default configurations", e);
         }
+
+        DistributedConfiguration stormDeploymentConfiguration = EventProcessorValueHolder.getStormDeploymentConfiguration();
+        lockTimeout = stormDeploymentConfiguration.getLockTimeout();
 
         jarLocation = stormConfigDirPath + File.separator + EventProcessorValueHolder.getStormDeploymentConfiguration().getJar();
     }
@@ -94,6 +104,8 @@ public class StormTopologyManager {
             StormDeploymentException, ExecutionPlanConfigurationException {
         String executionPlanName = configuration.getName();
         TopologyBuilder builder;
+        String topologyName = getTopologyName(executionPlanName, tenantId);
+
         try {
             Document document = StormQueryPlanBuilder.constructStormQueryPlanXML(configuration, importStreams, exportStreams);
             String stormQueryPlan = getStringQueryPlan(document);
@@ -101,7 +113,8 @@ public class StormTopologyManager {
                 log.debug("Following is the generated Storm query plan for execution plan: " + configuration.getName() +
                         "\n" + stormQueryPlan);
             }
-            builder = StormTopologyConstructor.constructTopologyBuilder(stormQueryPlan, executionPlanName, tenantId, EventProcessorValueHolder.getStormDeploymentConfiguration());
+            builder = StormTopologyConstructor.constructTopologyBuilder(stormQueryPlan, executionPlanName, tenantId,
+                    EventProcessorValueHolder.getStormDeploymentConfiguration());
         } catch (XMLStreamException e) {
             throw new StormDeploymentException("Invalid Config for Execution Plan " + executionPlanName + " for tenant " + tenantId, e);
         } catch (TransformerException e) {
@@ -114,7 +127,7 @@ public class StormTopologyManager {
 
         TopologySubmitter topologySubmitter = new TopologySubmitter(executionPlanName, builder.createTopology(), tenantId, resubmitRetryInterval);
         synchronized (toDeployTopologies) {
-            toDeployTopologies.put(getTopologyName(executionPlanName, tenantId), topologySubmitter);
+            toDeployTopologies.put(topologyName, topologySubmitter);
         }
 
         Thread deploymentThread = topologyManagerThreadFactory.newThread(topologySubmitter);
@@ -144,11 +157,10 @@ public class StormTopologyManager {
         StreamResult result = new StreamResult(sw);
         DOMSource source = new DOMSource(document);
         transformer.transform(source, result);
-        String xmlString = sw.toString();
-        return xmlString;
+        return sw.toString();   //returning the xmlString
     }
 
-    public String getTopologyName(String executionPlanName, int tenantId) {
+    public static String getTopologyName(String executionPlanName, int tenantId) {
         return (executionPlanName + "[" + tenantId + "]");
     }
 
@@ -175,6 +187,7 @@ public class StormTopologyManager {
                 }
                 try {
                     if (isTopologyExist()) {
+                        updateExecutionPlanStatusInStorm(topologyName, DistributedModeConstants.TopologyState.CLEANING);
                         log.info(jobPrefix + "Killing already existing storm topology '" + topologyName + "' to re-submit");
                         KillOptions options = new KillOptions();
                         options.set_wait_secs(10);
@@ -194,6 +207,7 @@ public class StormTopologyManager {
                             log.info(jobPrefix + "Topology '" + topologyName + "' is not alive to kill");
                         }
                     } else {
+                        updateExecutionPlanStatusInStorm(topologyName, DistributedModeConstants.TopologyState.DEPLOYING);
                         try {
                             String jsonConf = JSONValue.toJSONString(stormConfig);
                             synchronized (toDeployTopologies) {
@@ -203,6 +217,7 @@ public class StormTopologyManager {
                                     client.submitTopology(topologyName, uploadedJarLocation, jsonConf, topology);
                                     toDeployTopologies.remove(topologyName);
                                     log.info(jobPrefix + "Successfully submitted storm topology '" + topologyName + "'");
+                                    waitForTopologyToBeActive(client, jobPrefix, topologyName);
                                     return;
                                 } else {
                                     log.info(jobPrefix + "Aborting Storm deployment of '" + topologyName + "', as current job is outdated.");
@@ -218,7 +233,7 @@ public class StormTopologyManager {
                                 //ignore
                             }
                         } catch (InvalidTopologyException e) {
-                            log.error(jobPrefix + "Cannot deploy, Invalid Strom topology '" + topologyName + "' found.", e);
+                            log.error(jobPrefix + "Cannot deploy, Invalid Storm topology '" + topologyName + "' found.", e);
                         } catch (AlreadyAliveException e) {
                             log.warn(jobPrefix + "Topology '" + topologyName + "' already existing. Trying to kill and re-submit", e);
                         }
@@ -259,8 +274,46 @@ public class StormTopologyManager {
             }
         }
 
+        private void waitForTopologyToBeActive(Nimbus.Client client, String jobPrefix, String topologyName) throws TException {
+            TopologySummary thisTopologySummary = null;
+            while(thisTopologySummary == null){
+                List<TopologySummary> topologySummaryList = client.getClusterInfo().get_topologies();
+                for (TopologySummary  topologySummary: topologySummaryList) {
+                    if(topologySummary.get_name().equals(topologyName)){
+                        thisTopologySummary = topologySummary;
+                    }
+                }
+                if(thisTopologySummary == null){
+                    try {
+                        Thread.sleep(2000);
+                        log.info(jobPrefix + "Waiting until '" + topologyName + "' has been submitted to Storm cluster");
+                    } catch (InterruptedException e) {
+                        Thread.currentThread().interrupt();
+                        updateExecutionPlanStatusInStorm(topologyName, DistributedModeConstants.TopologyState.UNKNOWN);
+                        log.error("Could not verify whether " + topologyName + "' has been submitted to Storm cluster or not" +
+                                " as the verifier got interrupted. Setting distributed deployment status as UNKNOWN");
+                        return;
+                    }
+                }
+            }
+            while (true) {
+                if (thisTopologySummary.get_status().equals(TopologyInitialStatus.ACTIVE.toString())) {
+                    updateExecutionPlanStatusInStorm(topologyName, DistributedModeConstants.TopologyState.ACTIVE);
+                    log.info(jobPrefix + "Topology '" + topologyName + "' found to be active in Storm cluster");
+                    return;
+                } else {
+                    try {
+                        log.info(jobPrefix + "Waiting until '" + topologyName + "' becomes active in Storm cluster");
+                        Thread.sleep(2000);
+                    } catch (InterruptedException e) {
+                        Thread.currentThread().interrupt();
+                    }
+                }
+            }
+        }
+
         private void waitForTopologyToBeRemoved(String jobPrefix) throws TException, ServerUnavailableException {
-            log.info(jobPrefix + "Waiting topology '" + topologyName + "' to be removed from Storm cluster");
+            log.info(jobPrefix + "Waiting for topology '" + topologyName + "' to be removed from Storm cluster");
             try {
                 while (true) {
                     if (isTopologyExist()) {
@@ -272,6 +325,35 @@ public class StormTopologyManager {
                     }
                 }
             } catch (InterruptedException e) {
+            }
+        }
+
+        private void updateExecutionPlanStatusInStorm(String stormTopologyName, DistributedModeConstants.TopologyState topologyState){
+            String executionPlanStatusHolderKey = DistributedModeConstants.STORM_STATUS_MAP + "." + stormTopologyName;
+            HazelcastInstance hazelcastInstance = EventProcessorValueHolder.getHazelcastInstance();
+            IMap<String,ExecutionPlanStatusHolder> executionPlanStatusHolderIMap = hazelcastInstance.getMap(DistributedModeConstants.STORM_STATUS_MAP);
+            try {
+                if (executionPlanStatusHolderIMap.tryLock(executionPlanStatusHolderKey, lockTimeout, TimeUnit.SECONDS)){
+                    try {
+                        ExecutionPlanStatusHolder executionPlanStatusHolder =
+                                executionPlanStatusHolderIMap.get(stormTopologyName);
+                        if(executionPlanStatusHolder == null){
+                            log.error("Couldn't update topology status for topology:" + topologyName + " as the ExecutionPlanStatusHolder is null.");
+                        } else {
+                            executionPlanStatusHolder.setStormTopologyStatus(topologyState);
+                            executionPlanStatusHolderIMap.replace(stormTopologyName, executionPlanStatusHolder);
+                        }
+                    } finally {
+                        executionPlanStatusHolderIMap.unlock(executionPlanStatusHolderKey);
+                    }
+                } else {
+                    log.error("Couldn't update topology status for topology:" + topologyName
+                            + " as the hazelcast lock acquisition failed.");
+                }
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+                log.error("Couldn't update topology status for topology:" + topologyName
+                        + " as the hazelcast lock acquisition was interrupted.", e);
             }
         }
     }

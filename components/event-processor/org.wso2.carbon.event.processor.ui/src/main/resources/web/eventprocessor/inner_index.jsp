@@ -21,6 +21,8 @@
 <%@ page import="org.wso2.carbon.event.processor.stub.types.ExecutionPlanConfigurationDto" %>
 <%@ page import="org.wso2.carbon.event.processor.stub.types.ExecutionPlanConfigurationFileDto" %>
 <%@ page import="org.wso2.carbon.event.processor.ui.EventProcessorUIUtils" %>
+<%@ page import="java.util.HashMap" %>
+<%@ page import="java.util.Map" %>
 
 <fmt:bundle basename="org.wso2.carbon.event.processor.ui.i18n.Resources">
 
@@ -48,10 +50,10 @@
         String executionPlanName = request.getParameter("executionPlan");
         int totalActiveExecutionPlanConfigurations = 0;
 
-        ExecutionPlanConfigurationFileDto[] inactiveExecutionPlanConigurations = stub.getAllInactiveExecutionPlanConigurations();
+        ExecutionPlanConfigurationFileDto[] inactiveExecutionPlanConfigurations = stub.getAllInactiveExecutionPlanConigurations();
         int totalInactiveExecutionPlans = 0;
-        if (inactiveExecutionPlanConigurations != null) {
-            totalInactiveExecutionPlans = inactiveExecutionPlanConigurations.length;
+        if (inactiveExecutionPlanConfigurations != null) {
+            totalInactiveExecutionPlans = inactiveExecutionPlanConfigurations.length;
         }
 
         if (executionPlanName != null) {
@@ -61,10 +63,12 @@
     <%
         }
 
+        Boolean isDistributedProcessingEnabled = false;
+
         ExecutionPlanConfigurationDto[] executionPlanConfigurationDtos = null;
+
         if (loadingCondition == null) {
             executionPlanConfigurationDtos = stub.getAllActiveExecutionPlanConfigurations();
-
         } else if (loadingCondition.equals("exportedStreams")) {
             executionPlanConfigurationDtos = stub.getAllExportedStreamSpecificActiveExecutionPlanConfiguration(eventStreamWithVersion);
         } else if (loadingCondition.equals("importedStreams")) {
@@ -73,8 +77,11 @@
 
         if (executionPlanConfigurationDtos != null) {
             totalActiveExecutionPlanConfigurations = executionPlanConfigurationDtos.length;
-        }
 
+            if(totalActiveExecutionPlanConfigurations > 0 && !executionPlanConfigurationDtos[0].getDeploymentStatus().equals("not-distributed")){
+                isDistributedProcessingEnabled = true;
+            }
+        }
     %>
 
     <div>
@@ -90,13 +97,19 @@
             <br/><br/>
             <table class="styledLeft">
                 <%
-
                     if (executionPlanConfigurationDtos != null) {
                 %>
                 <thead>
                 <tr>
                     <th><fmt:message key="event.processor.execution.plan.name"/></th>
                     <th><fmt:message key="event.processor.description"/></th>
+                    <%
+                        if (isDistributedProcessingEnabled) {
+                    %>
+                    <th width="385px"><fmt:message key="event.processor.distributed.deployment.status"/></th>
+                    <%
+                        }
+                    %>
                     <th width="420px"><fmt:message key="event.processor.actions"/></th>
                 </tr>
                 </thead>
@@ -112,6 +125,20 @@
                     </td>
                     <td><%=executionPlanConfigurationDto.getDescription()%>
                     </td>
+                    <%
+
+                        if (isDistributedProcessingEnabled) {
+                            String executionPlanStatus = executionPlanConfigurationDto.getDeploymentStatus();
+                            executionPlanStatus = executionPlanStatus.replace("\n", "<br/>");
+                            executionPlanStatus = executionPlanStatus.replace("\t", "&nbsp;&nbsp;&nbsp;&nbsp;");
+                    %>
+                    <td>
+                        <%=executionPlanStatus%>
+                    </td>
+                    <%
+
+                        }
+                    %>
                     <td>
                         <% if (executionPlanConfigurationDto.getEditable()) { %>
                         <% if (executionPlanConfigurationDto.getStatisticsEnabled()) {%>

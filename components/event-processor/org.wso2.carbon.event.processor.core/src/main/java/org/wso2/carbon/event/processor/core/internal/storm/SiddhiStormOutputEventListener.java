@@ -25,6 +25,7 @@ import org.wso2.carbon.event.processor.common.storm.manager.service.StormManager
 import org.wso2.carbon.event.processor.common.util.ThroughputProbe;
 import org.wso2.carbon.event.processor.core.ExecutionPlanConfiguration;
 import org.wso2.carbon.event.processor.core.internal.listener.SiddhiOutputStreamListener;
+import org.wso2.carbon.event.processor.manager.commons.transport.server.ConnectionCallback;
 import org.wso2.carbon.event.processor.manager.commons.transport.server.StreamCallback;
 import org.wso2.carbon.event.processor.manager.commons.transport.server.TCPEventServer;
 import org.wso2.carbon.event.processor.manager.commons.transport.server.TCPEventServerConfig;
@@ -46,25 +47,28 @@ import java.util.concurrent.Executors;
  * the event to the relevant output adaptor for the stream.
  */
 public class SiddhiStormOutputEventListener implements StreamCallback {
-    private static Logger log = Logger.getLogger(SiddhiStormOutputEventListener.class);
+    private static final Logger log = Logger.getLogger(SiddhiStormOutputEventListener.class);
     private ExecutionPlanConfiguration executionPlanConfiguration;
     private int listeningPort;
     private int tenantId;
     private final DistributedConfiguration stormDeploymentConfig;
     private String thisHostIp;
-    private HashMap<String, SiddhiOutputStreamListener> streamNameToOutputStreamListenerMap = new HashMap<String, SiddhiOutputStreamListener>();
+    private HashMap<String, SiddhiOutputStreamListener> streamNameToOutputStreamListenerMap = new HashMap<>();
     private TCPEventServer tcpEventServer;
     private String logPrefix = "";
     private ExecutorService executorService = Executors.newSingleThreadExecutor();
     private int heartbeatInterval;
     private ThroughputProbe inputThroughputProbe;
 
+    private final ConnectionCallback connectionCallback;
+
     public SiddhiStormOutputEventListener(ExecutionPlanConfiguration executionPlanConfiguration, int tenantId,
-                                          DistributedConfiguration stormDeploymentConfig) {
+                                          DistributedConfiguration stormDeploymentConfig, ConnectionCallback connectionCallback) {
         this.executionPlanConfiguration = executionPlanConfiguration;
         this.tenantId = tenantId;
         this.stormDeploymentConfig = stormDeploymentConfig;
         this.heartbeatInterval = stormDeploymentConfig.getHeartbeatInterval();
+        this.connectionCallback = connectionCallback;
         init();
     }
 
@@ -78,7 +82,7 @@ public class SiddhiStormOutputEventListener implements StreamCallback {
             thisHostIp = HostAddressFinder.findAddress("localhost");
             TCPEventServerConfig configs =  new TCPEventServerConfig(listeningPort);
             configs.setNumberOfThreads(stormDeploymentConfig.getTcpEventReceiverThreadCount());
-            tcpEventServer = new TCPEventServer(configs, this);
+            tcpEventServer = new TCPEventServer(configs, this, connectionCallback);
             tcpEventServer.start();
             executorService.execute(new Registrar());
         } catch (Exception e) {
