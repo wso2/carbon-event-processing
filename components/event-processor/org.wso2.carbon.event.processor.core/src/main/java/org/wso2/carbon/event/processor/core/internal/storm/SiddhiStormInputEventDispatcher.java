@@ -22,7 +22,6 @@ import org.wso2.carbon.event.processor.common.util.AsyncEventPublisher;
 import org.wso2.carbon.event.processor.core.ExecutionPlanConfiguration;
 import org.wso2.carbon.event.processor.core.internal.listener.AbstractSiddhiInputEventDispatcher;
 import org.wso2.carbon.event.processor.core.internal.util.EventProcessorUtil;
-import org.wso2.carbon.event.processor.core.util.DistributedModeConstants;
 import org.wso2.carbon.event.processor.manager.commons.transport.server.ConnectionCallback;
 import org.wso2.carbon.event.processor.manager.core.config.DistributedConfiguration;
 import org.wso2.siddhi.core.event.Event;
@@ -40,27 +39,20 @@ public class SiddhiStormInputEventDispatcher extends AbstractSiddhiInputEventDis
     private static final Log log = LogFactory.getLog(SiddhiStormInputEventDispatcher.class);
 
     private final DistributedConfiguration stormDeploymentConfig;
-    private final ExecutionPlanConfiguration executionPlanConfiguration;
 
     private org.wso2.siddhi.query.api.definition.StreamDefinition siddhiStreamDefinition;
     private String logPrefix;
-    private ExecutorService executorService = Executors.newSingleThreadExecutor();   //todo: can't we remove this, since it doesn't seem to be used?
+    private ExecutorService executorService = Executors.newSingleThreadExecutor();
     private AsyncEventPublisher asyncEventPublisher;
-    private ConnectionCallback connectionCallback;
-
-    private final String stormTopologyName;
-    private final String executionPlanStatusHolderKey;
+    private final ConnectionCallback connectionCallback;
 
     public SiddhiStormInputEventDispatcher(StreamDefinition streamDefinition, String siddhiStreamId,
                                            ExecutionPlanConfiguration executionPlanConfiguration, int tenantId,
                                            DistributedConfiguration stormDeploymentConfig,
                                            ConnectionCallback connectionCallback) {
         super(streamDefinition.getStreamId(), siddhiStreamId, executionPlanConfiguration, tenantId);
-        this.executionPlanConfiguration = executionPlanConfiguration;
         this.stormDeploymentConfig = stormDeploymentConfig;
-        this.stormTopologyName = StormTopologyManager.getTopologyName(executionPlanConfiguration.getName(), tenantId);
         this.connectionCallback = connectionCallback;
-        this.executionPlanStatusHolderKey = DistributedModeConstants.STORM_STATUS_MAP + "." + stormTopologyName;
         init(streamDefinition, siddhiStreamId, executionPlanConfiguration);
     }
 
@@ -69,7 +61,7 @@ public class SiddhiStormInputEventDispatcher extends AbstractSiddhiInputEventDis
 
         try {
             this.siddhiStreamDefinition = EventProcessorUtil.convertToSiddhiStreamDefinition(streamDefinition, siddhiStreamName);
-            Set<org.wso2.siddhi.query.api.definition.StreamDefinition> streamDefinitions = new HashSet<org.wso2.siddhi.query.api.definition.StreamDefinition>();
+            Set<org.wso2.siddhi.query.api.definition.StreamDefinition> streamDefinitions = new HashSet<>();
             streamDefinitions.add(siddhiStreamDefinition);
 
             asyncEventPublisher = new AsyncEventPublisher(AsyncEventPublisher.DestinationType.STORM_RECEIVER,

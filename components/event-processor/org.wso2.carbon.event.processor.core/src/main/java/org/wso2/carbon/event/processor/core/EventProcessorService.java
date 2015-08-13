@@ -146,9 +146,7 @@ public interface EventProcessorService {
 
     /**
      * Validates a given execution plan. returns true if valid.
-     *
      * @param executionPlan execution plan.
-     * @return true if valid.
      */
     public void validateExecutionPlan(String executionPlan)
             throws ExecutionPlanConfigurationException, ExecutionPlanDependencyValidationException;

@@ -81,7 +81,7 @@ public class CarbonEventProcessorService implements EventProcessorService {
     public void deployExecutionPlan(String executionPlan)
             throws ExecutionPlanDependencyValidationException, ExecutionPlanConfigurationException {
         //validate execution plan
-        org.wso2.siddhi.query.api.ExecutionPlan parsedExecutionPlan = null;
+        org.wso2.siddhi.query.api.ExecutionPlan parsedExecutionPlan;
         try {
             parsedExecutionPlan = SiddhiCompiler.parse(executionPlan);
             String executionPlanName = AnnotationHelper.getAnnotationElement(EventProcessorConstants.ANNOTATION_NAME_NAME, null, parsedExecutionPlan.getAnnotations()).getValue();
@@ -228,7 +228,7 @@ public class CarbonEventProcessorService implements EventProcessorService {
             throw new ExecutionPlanConfigurationException("Execution plan with the same name already exists. Please remove it and retry.");
         }
 
-        //buidling Import/Export Map
+        //building Import/Export Map
         Map<String, String> importsMap = new HashMap<String, String>();   //<SiddhiStreamName, StreamID>
         Map<String, String> exportsMap = new HashMap<String, String>();   //<SiddhiStreamName, StreamID>
         for (Map.Entry<String, org.wso2.siddhi.query.api.definition.StreamDefinition> entry : parsedExecutionPlan.getStreamDefinitionMap().entrySet()) {
@@ -304,11 +304,11 @@ public class CarbonEventProcessorService implements EventProcessorService {
                 executionPlanConfiguration);
         tenantExecutionPlans.put(executionPlanName, processorExecutionPlan);
 
-        boolean isDistributedEnabledAndIsWroker = (managementInfo.getMode() == Mode.Distributed && stormDeploymentConfiguration != null
+        boolean isDistributedEnabledAndIsWorker = (managementInfo.getMode() == Mode.Distributed && stormDeploymentConfiguration != null
                 && stormDeploymentConfiguration.isWorkerNode());
 
         StormStatusMonitor stormStatusMonitor = null;
-        if(isDistributedEnabledAndIsWroker){
+        if(isDistributedEnabledAndIsWorker){
             stormStatusMonitor = new StormStatusMonitor(tenantId, executionPlanName, importsMap.size());
             StormStatusMapListener mapListener = new StormStatusMapListener(executionPlanName, tenantId, stormStatusMonitor);
             processorExecutionPlan.setStormStatusMonitor(stormStatusMonitor);
@@ -379,7 +379,7 @@ public class CarbonEventProcessorService implements EventProcessorService {
             InputHandler inputHandler = inputHandlerMap.get(entry.getValue());
 
             AbstractSiddhiInputEventDispatcher eventDispatcher;
-            if (isDistributedEnabledAndIsWroker) {
+            if (isDistributedEnabledAndIsWorker) {
                 StreamDefinition streamDefinition = null;
                 try {
                     streamDefinition = EventProcessorValueHolder.getEventStreamService().getStreamDefinition
@@ -437,10 +437,7 @@ public class CarbonEventProcessorService implements EventProcessorService {
 
     @Override
     public boolean isDistributedProcessingEnabled() {
-        if(managementInfo.getMode() == Mode.Distributed){
-            return true;
-        }
-        return false;
+        return managementInfo.getMode() == Mode.Distributed;
     }
 
 
@@ -526,7 +523,7 @@ public class CarbonEventProcessorService implements EventProcessorService {
 
     }
 
-    public void removeExecutionPlanStatusHolder(String executionPlanName, int tenantId){
+    void removeExecutionPlanStatusHolder(String executionPlanName, int tenantId){
         HazelcastInstance hazelcastInstance = EventProcessorValueHolder.getHazelcastInstance();
         IMap<String,ExecutionPlanStatusHolder> executionPlanStatusHolderIMap =
                 hazelcastInstance.getMap(DistributedModeConstants.STORM_STATUS_MAP);

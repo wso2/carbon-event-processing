@@ -46,19 +46,19 @@ import java.util.concurrent.Executors;
  * the event to the relevant output adaptor for the stream.
  */
 public class SiddhiStormOutputEventListener implements StreamCallback {
-    private static Logger log = Logger.getLogger(SiddhiStormOutputEventListener.class);
+    private static final Logger log = Logger.getLogger(SiddhiStormOutputEventListener.class);
     private ExecutionPlanConfiguration executionPlanConfiguration;
     private int listeningPort;
     private int tenantId;
     private final DistributedConfiguration stormDeploymentConfig;
     private String thisHostIp;
-    private HashMap<String, SiddhiOutputStreamListener> streamNameToOutputStreamListenerMap = new HashMap<String, SiddhiOutputStreamListener>();
+    private HashMap<String, SiddhiOutputStreamListener> streamNameToOutputStreamListenerMap = new HashMap<>();
     private TCPEventServer tcpEventServer;
     private String logPrefix = "";
     private ExecutorService executorService = Executors.newSingleThreadExecutor();
     private int heartbeatInterval;
 
-    private ConnectionCallback connectionCallback;
+    private final ConnectionCallback connectionCallback;
 
     public SiddhiStormOutputEventListener(ExecutionPlanConfiguration executionPlanConfiguration, int tenantId,
                                           DistributedConfiguration stormDeploymentConfig, ConnectionCallback connectionCallback) {
