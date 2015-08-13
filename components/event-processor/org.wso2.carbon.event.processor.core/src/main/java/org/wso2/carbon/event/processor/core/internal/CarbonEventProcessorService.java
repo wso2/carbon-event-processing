@@ -456,7 +456,9 @@ public class CarbonEventProcessorService implements EventProcessorService {
             if (managementInfo.getMode() == Mode.Distributed && stormDeploymentConfig != null && stormDeploymentConfig.isManagerNode() &&
                     EventProcessorValueHolder.getStormManagerServer().isStormManager()) {
                 try {
+                    // Kill the topology and notify the manager that execution plan is removed.
                     EventProcessorValueHolder.getStormTopologyManager().killTopology(executionPlanConfiguration.getName(), tenantId);
+                    EventProcessorValueHolder.getStormManagerServer().onExecutionPlanRemove(name, tenantId);
                 } catch (Exception e) {
                     log.error(e.getMessage(), e);
                 }

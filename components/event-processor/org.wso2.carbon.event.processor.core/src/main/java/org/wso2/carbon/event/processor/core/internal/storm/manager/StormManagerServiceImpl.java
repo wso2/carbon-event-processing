@@ -67,6 +67,7 @@ public class StormManagerServiceImpl implements StormManagerService.Iface {
         } else {
             throw new EndpointNotFoundException("No Storm Receiver for executionPlanName: " + executionPlanName + " of tenantId:" + tenantId + " for CEP Receiver form:" + cepReceiverHostName);
         }
+
     }
 
     @Override
@@ -82,6 +83,21 @@ public class StormManagerServiceImpl implements StormManagerService.Iface {
         } else {
             throw new EndpointNotFoundException("No CEP Publisher for executionPlanName: " + executionPlanName + " of tenantId:" + tenantId + " for Storm Publisher form:" + stormPublisherHostName);
         }
+    }
+
+    public synchronized void deleteExecPlanEndpoints(int tenantId, String executionPlanName){
+        Set<Endpoint> endpointSet = cepPublishers.get(constructKey(tenantId, executionPlanName));
+        if (endpointSet != null){
+            cepPublishers.remove(constructKey(tenantId, executionPlanName));
+        }
+
+        endpointSet = stormReceivers.get(constructKey(tenantId, executionPlanName));
+        if (endpointSet != null){
+            stormReceivers.remove(constructKey(tenantId, executionPlanName));
+        }
+
+        log.info("Removed all end point of '" + constructKey(tenantId, executionPlanName) + "' from Manager service.");
+
     }
 
     private synchronized Endpoint getEndpoint(Set<Endpoint> endpointSet, String requesterIp) {
@@ -107,13 +123,11 @@ public class StormManagerServiceImpl implements StormManagerService.Iface {
 
             if (selectedEndpoint != null) {
                 selectedEndpoint.setConnectionCount(selectedEndpoint.getConnectionCount() + 1);
-
             }
         }
         return selectedEndpoint;
     }
 
-    // TODO : Heart beat time configurable
     private synchronized Endpoint selectEndpoint(Set<Endpoint> endpointSet) {
         Endpoint selectedEndpoint = null;
         int minConnectionCount = Integer.MAX_VALUE;
@@ -124,7 +138,7 @@ public class StormManagerServiceImpl implements StormManagerService.Iface {
                     selectedEndpoint = endpoint;
                 }else{
                     log.warn("End point " + endpoint.getHostName() + ":" + endpoint.getPort() + " have not send a heart beat for "
-                            + Math.floor(System.currentTimeMillis() - endpoint.getLastRegisterTimestamp()/ MILLISECONDS_PER_MINUTE) + "mins");
+                            + String.format("%.2f", Math.floor(System.currentTimeMillis() - endpoint.getLastRegisterTimestamp() / MILLISECONDS_PER_MINUTE)) + " mins");
                 }
             }
         }

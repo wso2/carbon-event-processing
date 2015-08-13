@@ -60,6 +60,11 @@ public class StormManagerServer {
         stormManagerServer.stop();
     }
 
+    public void onExecutionPlanRemove(String excPlanName, int tenantId){
+        // Delete all end points of the removed execution plan from manager service.
+        stormManagerService.deleteExecPlanEndpoints(tenantId, excPlanName);
+    }
+
     public void setStormManager(boolean stormManager) {
         stormManagerService.setStormManager(stormManager);
     }
