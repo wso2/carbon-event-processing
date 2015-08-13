@@ -27,6 +27,7 @@ import org.apache.thrift.transport.TSocket;
 import org.apache.thrift.transport.TTransport;
 import org.wso2.carbon.event.processor.common.storm.event.Event;
 import org.wso2.carbon.event.processor.common.storm.manager.service.StormManagerService;
+import org.wso2.carbon.event.processor.common.util.ThroughputProbe;
 import org.wso2.carbon.event.processor.manager.commons.transport.server.StreamCallback;
 import org.wso2.carbon.event.processor.manager.commons.transport.server.TCPEventServer;
 import org.wso2.carbon.event.processor.manager.commons.transport.server.TCPEventServerConfig;
@@ -71,6 +72,7 @@ public class EventReceiverSpout extends BaseRichSpout implements StreamCallback 
      * this is filled by the receiver thread of data bridge and consumed by the nextTuple which
      * runs on the worker thread of spout.
      */
+    // TODO : Make this queue a fixed size to prevent out of memory issues
     private transient ConcurrentLinkedQueue<Event> storedEvents = null;
 
     private SpoutOutputCollector spoutOutputCollector = null;
@@ -78,9 +80,10 @@ public class EventReceiverSpout extends BaseRichSpout implements StreamCallback 
     private String executionPlanName;
     private int tenantId = -1234;
     private String logPrefix;
-    private int eventCount;
-    private long batchStartTime;
     private int heartbeatInterval;
+
+    private transient ThroughputProbe inputThroughputProbe;
+    private transient ThroughputProbe outputThroughputProbe;
 
     /**
      * Receives events from the CEP Receiver through Thrift using data bridge and pass through the events
@@ -101,7 +104,9 @@ public class EventReceiverSpout extends BaseRichSpout implements StreamCallback 
         for (String definition : incomingStreamDefinitions) {
             this.incomingStreamDefinitions.add(SiddhiCompiler.parseStreamDefinition(definition));
         }
-        this.logPrefix = "[" + tenantId + ":" + executionPlanName + ":" + "Event Receiver Spout" + "] ";
+        this.logPrefix = "[" + tenantId + ":" + executionPlanName + ":" + "EventReceiverSpout] ";
+
+
     }
 
     @Override
@@ -121,13 +126,19 @@ public class EventReceiverSpout extends BaseRichSpout implements StreamCallback 
     public void open(Map map, TopologyContext topologyContext, SpoutOutputCollector spoutOutputCollector) {
         this.spoutOutputCollector = spoutOutputCollector;
         this.storedEvents = new ConcurrentLinkedQueue<Event>();
-        this.eventCount = 0;
-        this.batchStartTime = System.currentTimeMillis();
+
+        inputThroughputProbe = new ThroughputProbe(logPrefix + "-IN", 10);
+        outputThroughputProbe = new ThroughputProbe(logPrefix + " -OUT", 10);
+
+        inputThroughputProbe.startSampling();
+        outputThroughputProbe.startSampling();
 
         try {
             listeningPort = findPort();
             thisHostIp = Utils.findAddress("localhost");
-            tcpEventServer = new TCPEventServer(new TCPEventServerConfig(listeningPort), this, null);
+            TCPEventServerConfig configs =  new TCPEventServerConfig(listeningPort);
+            configs.setNumberOfThreads(stormDeploymentConfig.getTcpEventReceiverThreadCount());
+            tcpEventServer = new TCPEventServer(configs, this, null);
             for (StreamDefinition siddhiStreamDefinition : incomingStreamDefinitions) {
                 tcpEventServer.addStreamDefinition(siddhiStreamDefinition);
             }
@@ -149,24 +160,16 @@ public class EventReceiverSpout extends BaseRichSpout implements StreamCallback 
                 Object[] eventData = Arrays.copyOf(event.getData(), event.getData().length + 1);
                 eventData[event.getData().length] = event.getTimestamp();
                 spoutOutputCollector.emit(siddhiStreamName, Arrays.asList(eventData));
+
                 if (log.isDebugEnabled()) {
                     log.debug(logPrefix + "Emitted Event: " + siddhiStreamName + ":" + Arrays.deepToString(eventData) + "@" + event.getTimestamp());
-                    updateThroughputCounter();
                 }
+                outputThroughputProbe.update();
             } else {
                 log.warn(logPrefix + "Event received for unknown stream : " + siddhiStreamName);
             }
         }
-    }
 
-    private void updateThroughputCounter() {
-        if (++eventCount % 10000 == 0) {
-            double timeSpentInSecs = (System.currentTimeMillis() - batchStartTime) / 1000.0D;
-            double throughput = 10000 / timeSpentInSecs;
-            log.info(logPrefix + "Processed 10000 events in " + timeSpentInSecs + " seconds, throughput : " + throughput + " events/sec");
-            eventCount = 0;
-            batchStartTime = System.currentTimeMillis();
-        }
     }
 
     private int findPort() throws Exception {
@@ -185,6 +188,7 @@ public class EventReceiverSpout extends BaseRichSpout implements StreamCallback 
             log.debug(logPrefix + "Received Event: " + streamId + ":" + Arrays.deepToString(eventData) + "@" + timestamp);
         }
         storedEvents.add(new Event(timestamp, eventData, streamId));
+        inputThroughputProbe.update();
     }
 
 
@@ -250,10 +254,10 @@ public class EventReceiverSpout extends BaseRichSpout implements StreamCallback 
 
                     StormManagerService.Client client = new StormManagerService.Client(protocol);
                     client.registerStormReceiver(tenantId, executionPlanName, thisHostIp, listeningPort);
-                    //if (log.isDebugEnabled()) {
+
                     log.info(logPrefix + "Successfully registered Event Receiver Spout for " + thisHostIp + ":" +
                             listeningPort);
-                    //}
+
                     managerHost = endpoint.getHostName();
                     managerPort = endpoint.getPort();
                     return true;

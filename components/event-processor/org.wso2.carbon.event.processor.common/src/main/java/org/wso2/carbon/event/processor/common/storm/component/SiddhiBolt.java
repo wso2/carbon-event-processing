@@ -23,6 +23,7 @@ import backtype.storm.tuple.Fields;
 import backtype.storm.tuple.Tuple;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.log4j.Logger;
+import org.wso2.carbon.event.processor.common.util.ThroughputProbe;
 import org.wso2.carbon.event.processor.manager.commons.utils.Utils;
 import org.wso2.siddhi.core.ExecutionPlanRuntime;
 import org.wso2.siddhi.core.SiddhiManager;
@@ -61,11 +62,12 @@ public class SiddhiBolt extends BaseBasicBolt {
     private String query;
 
     private BasicOutputCollector collector;
-    private int eventCount;
-    private long batchStartTime;
     private String logPrefix;
 
     private transient ExecutionPlanRuntime executionPlanRuntime;
+
+    private transient ThroughputProbe inputThroughputProbe;
+    private transient ThroughputProbe emitThroughputProbe;
 
     /**
      * Bolt which runs the Siddhi engine.
@@ -88,11 +90,15 @@ public class SiddhiBolt extends BaseBasicBolt {
      * Bolt get saved and reloaded, this to redo the configurations.
      */
     private void init() {
-        siddhiManager = new SiddhiManager();
-        eventCount = 0;
-        batchStartTime = System.currentTimeMillis();
         log = Logger.getLogger(SiddhiBolt.class);
 
+        inputThroughputProbe = new ThroughputProbe(logPrefix + "-IN", 10);
+        emitThroughputProbe = new ThroughputProbe(logPrefix + " -EMIT", 10);
+
+        inputThroughputProbe.startSampling();
+        emitThroughputProbe.startSampling();
+
+        siddhiManager = new SiddhiManager();
         String fullQueryExpression = Utils.constructQueryExpression(inputStreamDefinitions, outputStreamDefinitions,
                 query);
         executionPlanRuntime = siddhiManager.createExecutionPlanRuntime(fullQueryExpression);
@@ -110,19 +116,13 @@ public class SiddhiBolt extends BaseBasicBolt {
                         Object[] eventData = Arrays.copyOf(event.getData(), event.getData().length + 1);
                         eventData[event.getData().length] = event.getTimestamp();
                         collector.emit(outputSiddhiDefinition.getId(), Arrays.asList(eventData));
+
                         if (log.isDebugEnabled()) {
-                            if (++eventCount % 10000 == 0) {
-                                double timeSpentInSecs = (System.currentTimeMillis() - batchStartTime) / 1000.0D;
-                                double throughput = 10000 / timeSpentInSecs;
-                                log.debug(logPrefix + "Processed 10000 events in " + timeSpentInSecs + " seconds, " +
-                                        "throughput : " + throughput + " events/sec. Stream :" +
-                                        outputSiddhiDefinition.getId());
-                                eventCount = 0;
-                                batchStartTime = System.currentTimeMillis();
-                            }
                             log.debug(logPrefix + "Emitted Event:" + outputSiddhiDefinition.getId() +
                                     ":" + Arrays.deepToString(eventData) + "@" + event.getTimestamp());
                         }
+
+                        emitThroughputProbe.update();
                     }
                 }
             });
@@ -140,6 +140,7 @@ public class SiddhiBolt extends BaseBasicBolt {
         if (siddhiManager == null) {
             init();
         }
+        inputThroughputProbe.update();
 
         try {
             this.collector = collector;
@@ -147,6 +148,7 @@ public class SiddhiBolt extends BaseBasicBolt {
             Object[] dataArray = tuple.getValues().toArray();
             long timestamp = (Long) dataArray[dataArray.length - 1];
             dataArray = ArrayUtils.remove(dataArray, dataArray.length - 1);
+
             if (log.isDebugEnabled()) {
                 log.debug(logPrefix + "Received Event: " + tuple.getSourceStreamId() + ":" + Arrays.deepToString(dataArray) + "@" + timestamp);
             }

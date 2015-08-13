@@ -22,6 +22,7 @@ import org.apache.thrift.transport.TSocket;
 import org.apache.thrift.transport.TTransport;
 import org.wso2.carbon.databridge.commons.thrift.utils.HostAddressFinder;
 import org.wso2.carbon.event.processor.common.storm.manager.service.StormManagerService;
+import org.wso2.carbon.event.processor.common.util.ThroughputProbe;
 import org.wso2.carbon.event.processor.core.ExecutionPlanConfiguration;
 import org.wso2.carbon.event.processor.core.internal.listener.SiddhiOutputStreamListener;
 import org.wso2.carbon.event.processor.manager.commons.transport.server.ConnectionCallback;
@@ -57,6 +58,7 @@ public class SiddhiStormOutputEventListener implements StreamCallback {
     private String logPrefix = "";
     private ExecutorService executorService = Executors.newSingleThreadExecutor();
     private int heartbeatInterval;
+    private ThroughputProbe inputThroughputProbe;
 
     private final ConnectionCallback connectionCallback;
 
@@ -71,13 +73,16 @@ public class SiddhiStormOutputEventListener implements StreamCallback {
     }
 
     private void init() {
-        logPrefix = "[" + tenantId + ":" + executionPlanConfiguration.getName() + ":" + "CEP Publisher" + "] ";
+        logPrefix = "[" + tenantId + ":" + executionPlanConfiguration.getName() + ":" + "CEPPublisher" + "] ";
         log.info(logPrefix + "Initializing storm output event listener");
-
+        inputThroughputProbe = new ThroughputProbe(logPrefix + "-Receive", 10);
+        inputThroughputProbe.startSampling();
         try {
             listeningPort = findPort();
             thisHostIp = HostAddressFinder.findAddress("localhost");
-            tcpEventServer = new TCPEventServer(new TCPEventServerConfig(listeningPort), this, connectionCallback);
+            TCPEventServerConfig configs =  new TCPEventServerConfig(listeningPort);
+            configs.setNumberOfThreads(stormDeploymentConfig.getTcpEventReceiverThreadCount());
+            tcpEventServer = new TCPEventServer(configs, this, connectionCallback);
             tcpEventServer.start();
             executorService.execute(new Registrar());
         } catch (Exception e) {
@@ -97,6 +102,7 @@ public class SiddhiStormOutputEventListener implements StreamCallback {
         SiddhiOutputStreamListener outputStreamListener = streamNameToOutputStreamListenerMap.get(streamId);
         if (outputStreamListener != null) {
             outputStreamListener.sendEvent(new Event(timestamp, eventData));
+            inputThroughputProbe.update();
         } else {
             log.warn("Cannot find output event listener for stream " + streamId + " in execution plan " + executionPlanConfiguration.getName()
                     + " of tenant " + tenantId + ". Discarding Event:" + streamId +

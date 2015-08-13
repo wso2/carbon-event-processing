@@ -31,6 +31,7 @@ import org.wso2.carbon.event.processor.common.storm.manager.service.StormManager
 import org.wso2.carbon.event.processor.common.storm.manager.service.exception.EndpointNotFoundException;
 import org.wso2.carbon.event.processor.common.storm.manager.service.exception.NotStormCoordinatorException;
 import org.wso2.carbon.event.processor.manager.commons.transport.client.TCPEventPublisher;
+import org.wso2.carbon.event.processor.manager.commons.transport.client.TCPEventPublisherConfig;
 import org.wso2.carbon.event.processor.manager.commons.transport.server.ConnectionCallback;
 import org.wso2.carbon.event.processor.manager.commons.utils.HostAndPort;
 import org.wso2.carbon.event.processor.manager.commons.utils.Utils;
@@ -44,7 +45,10 @@ import java.util.Set;
 import java.util.concurrent.Executors;
 
 /**
- * Sending events to a remote endpoint asynchronously.
+ * Sending events asynchronously from "CEP Receiver" -> "Storm Receiver" and
+ * "Storm Publisher" -> "CEP Publisher" using TCPEventPublisher. This will
+ * discover and connect to the endpoint(i.e. Storm Receiver/CEP Publisher) to
+ * send events by talking to "Storm Management" service using EndpointConnectionCreator.
  */
 public class AsyncEventPublisher implements EventHandler<AsynchronousEventBuffer.DataHolder> {
     public enum DestinationType {STORM_RECEIVER, CEP_PUBLISHER}
@@ -62,23 +66,19 @@ public class AsyncEventPublisher implements EventHandler<AsynchronousEventBuffer
     private String thisHostIp;
     private List<HostAndPort> managerServiceEndpoints;
     private DistributedConfiguration stormDeploymentConfig;
+    AsynchronousEventBuffer eventSendBuffer = null;
 
     private ConnectionCallback connectionCallback;
 
     private TCPEventPublisher tcpEventPublisher = null;
     private EndpointConnectionCreator endpointConnectionCreator;
-    private AsynchronousEventBuffer eventSendBuffer = new AsynchronousEventBuffer<Object[]>(1024, this);
 
     private boolean shutdown = false;
 
+    private ThroughputProbe inputThroughputProbe;
+    private ThroughputProbe publishThroughputProbe;
+
     /**
-     *
-     * @param destinationType
-     * @param streams
-     * @param managerServiceEndpoints
-     * @param executionPlanName
-     * @param tenantId
-     * @param stormDeploymentConfig
      * @param connectionCallback is a callback, invoked on connect() and disconnect() methods of TCPEventPublisher. Set to null if the callback is not needed.
      */
     public AsyncEventPublisher(DestinationType destinationType, Set<StreamDefinition> streams,
@@ -93,8 +93,14 @@ public class AsyncEventPublisher implements EventHandler<AsynchronousEventBuffer
         this.stormDeploymentConfig = stormDeploymentConfig;
         this.connectionCallback = connectionCallback;
         this.endpointConnectionCreator = new EndpointConnectionCreator();
-        this.destinationTypeString = (destinationType == DestinationType.STORM_RECEIVER) ? "Storm Receiver" : "CEP Publisher";
-        this.publisherTypeString = (destinationType == DestinationType.STORM_RECEIVER) ? "CEP Receiver" : "Publisher Bolt";
+
+        this.destinationTypeString = (destinationType == DestinationType.STORM_RECEIVER) ? "StormReceiver" : "CEPPublisher";
+        this.publisherTypeString = (destinationType == DestinationType.STORM_RECEIVER) ? "CEPReceiver" : "PublisherBolt";
+
+        int bufferSize = (publisherTypeString.equals("CEPReceiver")) ?
+                stormDeploymentConfig.getCepReceiverOutputQueueSize() : stormDeploymentConfig.getStormPublisherOutputQueueSize();
+        eventSendBuffer = new AsynchronousEventBuffer<Object[]>(bufferSize, this);
+
         this.logPrefix = "[" + tenantId + ":" + executionPlanName + ":" + publisherTypeString + "] ";
     }
 
@@ -114,6 +120,12 @@ public class AsyncEventPublisher implements EventHandler<AsynchronousEventBuffer
                 Thread thread = new Thread(endpointConnectionCreator);
                 thread.start();
             }
+            inputThroughputProbe = new ThroughputProbe(logPrefix + "-In", 10);
+            publishThroughputProbe = new ThroughputProbe(logPrefix + " -Publish", 10);
+
+            inputThroughputProbe.startSampling();
+            publishThroughputProbe.startSampling();
+
         } catch (SocketException e) {
             log.error(logPrefix + "Error while trying to obtain this host IP address", e);
         }
@@ -128,6 +140,7 @@ public class AsyncEventPublisher implements EventHandler<AsynchronousEventBuffer
      */
     public void sendEvent(Object[] eventData, long timestamp, String streamId) {
         eventSendBuffer.addEvent(eventData, timestamp, streamId);
+        inputThroughputProbe.update();
     }
 
     /**
@@ -159,6 +172,8 @@ public class AsyncEventPublisher implements EventHandler<AsynchronousEventBuffer
         // TODO : comment on message lost of the last batch
         try {
             tcpEventPublisher.sendEvent(dataHolder.getStreamId(), dataHolder.getTimestamp(), (Object[]) dataHolder.getData(), endOfBatch);
+            publishThroughputProbe.update();
+
         } catch (IOException e) {
             log.error(logPrefix + "Error while trying to send event to " + destinationTypeString + " at " +
                     tcpEventPublisher.getHostUrl(), e);
@@ -313,9 +328,14 @@ public class AsyncEventPublisher implements EventHandler<AsynchronousEventBuffer
             String endpoint = endpointHostPort;
             do {
                 try {
-                    tcpEventPublisher = new TCPEventPublisher(endpoint, true, connectionCallback);
-                    StringBuilder streamsIDs = new StringBuilder();
+                    TCPEventPublisherConfig publisherConfigs = new TCPEventPublisherConfig();
+                    publisherConfigs.setBufferSize(stormDeploymentConfig.getTcpEventPublisherOutputQueueSize());
+                    publisherConfigs.setDefaultCharset(stormDeploymentConfig.getTcpEventPublisherCharSet());
+                    publisherConfigs.setTcpSendBufferSize(stormDeploymentConfig.getTcpEventPublisherSendBufferSize());
+                    boolean isSync = stormDeploymentConfig.getTcpEventPublisherMode().equals("blocking") ? true : false;
 
+                    tcpEventPublisher = new TCPEventPublisher(endpoint, publisherConfigs, isSync, connectionCallback);
+                    StringBuilder streamsIDs = new StringBuilder();
                     for (StreamDefinition siddhiStreamDefinition : streams) {
                         tcpEventPublisher.addStreamDefinition(siddhiStreamDefinition);
                         streamsIDs.append(siddhiStreamDefinition.getId() + ",");
@@ -405,6 +425,8 @@ class AsynchronousEventBuffer<Type> {
     }
 
     public void addEvent(Type data, long timestamp, String streamId) {
+        //TODO : Make this non blocking. Otherwise this bolt will get stuck and will cause the storm to restart the worker
+        // due to heart beat miss. Use try next.
         long sequenceNo = ringBuffer.next();
         try {
             DataHolder existingHolder = ringBuffer.get(sequenceNo);

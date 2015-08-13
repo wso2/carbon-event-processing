@@ -18,9 +18,7 @@
 
 <%@ page import="org.wso2.carbon.event.processor.stub.EventProcessorAdminServiceStub" %>
 <%@ page import="org.wso2.carbon.event.processor.stub.types.ExecutionPlanConfigurationDto" %>
-<%@ page import="org.wso2.carbon.event.processor.stub.types.StreamConfigurationDto" %>
 <%@ page import="org.wso2.carbon.event.processor.ui.EventProcessorUIUtils" %>
-<%@ page import="org.wso2.carbon.event.processor.ui.UIConstants" %>
 
 
 <fmt:bundle basename="org.wso2.carbon.event.processor.ui.i18n.Resources">
@@ -38,25 +36,153 @@
 <script type="text/javascript" src="../yui/build/connection/connection-min.js"></script>
 <script type="text/javascript" src="../eventprocessor/js/execution_plans.js"></script>
 <script type="text/javascript" src="../eventprocessor/js/eventprocessor_constants.js"></script>
+<script type="text/javascript" src="../ajax/js/prototype.js"></script>
 
 <link type="text/css" href="../resources/css/registry.css" rel="stylesheet"/>
 
+<script type="text/javascript">
+    function doDeleteExecutionPlan(executionPlan) {
+        CARBON.showConfirmationDialog("Are you sure want to delete execution plan:" + executionPlan,
+                function () {
+                    new Ajax.Request('../eventprocessor/delete_execution_plan_ajaxprocessor.jsp', {
+                        method: 'POST',
+                        asynchronous: false,
+                        parameters: {
+                            executionPlan: executionPlan
+                        }, onSuccess: function (msg) {
+                            if ("success" == msg.responseText.trim()) {
+                                CARBON.showInfoDialog("Execution plan successfully deleted.", function () {
+                                    window.location.href = "../eventprocessor/index.jsp?region=region1&item=execution_plan_menu.jsp";
+                                });
+                            } else {
+                                CARBON.showErrorDialog("Failed to delete execution plan, Exception: " + msg.responseText.trim());
+                            }
+                        }
+                    })
+                }, null, null);
+    }
+
+</script>
+
 <%--<html xmlns="http://www.w3.org/1999/html" xmlns="http://www.w3.org/1999/html">--%>
+<%
+
+    String execPlanName = request.getParameter("execPlan");
+    EventProcessorAdminServiceStub processorAdminServiceStub = EventProcessorUIUtils.getEventProcessorAdminService(config, session, request);
+    ExecutionPlanConfigurationDto configurationDto = processorAdminServiceStub.getActiveExecutionPlanConfiguration(execPlanName);
+%>
 
 <div id="middle">
-<h2>Event Processor Details</h2>
+<h2 style="padding-bottom: 7px">Event Processor Details
+    <span style="float: right; font-size:75%">
+        <% if (configurationDto.getEditable()) { %>
+            <% if (configurationDto.getStatisticsEnabled()) {%>
+            <div style="display: inline-block">
+                <div id="disableStat<%= configurationDto.getName()%>">
+                    <a href="#"
+                       onclick="disableStat('<%= configurationDto.getName() %>')"
+                       class="icon-link"
+                       style="background-image:url(../admin/images/static-icon.gif);"><fmt:message
+                            key="stat.disable.link"/></a>
+                </div>
+                <div id="enableStat<%= configurationDto.getName()%>"
+                     style="display:none;">
+                    <a href="#"
+                       onclick="enableStat('<%= configurationDto.getName() %>')"
+                       class="icon-link"
+                       style="background-image:url(../admin/images/static-icon-disabled.gif);"><fmt:message
+                            key="stat.enable.link"/></a>
+                </div>
+            </div>
+            <% } else { %>
+            <div style="display: inline-block">
+                <div id="enableStat<%= configurationDto.getName()%>">
+                    <a href="#"
+                       onclick="enableStat('<%= configurationDto.getName() %>')"
+                       class="icon-link"
+                       style="background-image:url(../admin/images/static-icon-disabled.gif);"><fmt:message
+                            key="stat.enable.link"/></a>
+                </div>
+                <div id="disableStat<%= configurationDto.getName()%>"
+                     style="display:none">
+                    <a href="#"
+                       onclick="disableStat('<%= configurationDto.getName() %>')"
+                       class="icon-link"
+                       style="background-image:url(../admin/images/static-icon.gif);"><fmt:message
+                            key="stat.disable.link"/></a>
+                </div>
+            </div>
+            <% }
+                if (configurationDto.getTracingEnabled()) {%>
+            <div style="display: inline-block">
+                <div id="disableTracing<%= configurationDto.getName()%>">
+                    <a href="#"
+                       onclick="disableTracing('<%= configurationDto.getName() %>')"
+                       class="icon-link"
+                       style="background-image:url(../admin/images/trace-icon.gif);"><fmt:message
+                            key="trace.disable.link"/></a>
+                </div>
+                <div id="enableTracing<%= configurationDto.getName()%>"
+                     style="display:none;">
+                    <a href="#"
+                       onclick="enableTracing('<%= configurationDto.getName() %>')"
+                       class="icon-link"
+                       style="background-image:url(../admin/images/trace-icon-disabled.gif);"><fmt:message
+                            key="trace.enable.link"/></a>
+                </div>
+            </div>
+            <% } else { %>
+            <div style="display: inline-block">
+                <div id="enableTracing<%= configurationDto.getName() %>">
+                    <a href="#"
+                       onclick="enableTracing('<%= configurationDto.getName() %>')"
+                       class="icon-link"
+                       style="background-image:url(../admin/images/trace-icon-disabled.gif);"><fmt:message
+                            key="trace.enable.link"/></a>
+                </div>
+                <div id="disableTracing<%= configurationDto.getName() %>"
+                     style="display:none">
+                    <a href="#"
+                       onclick="disableTracing('<%= configurationDto.getName() %>')"
+                       class="icon-link"
+                       style="background-image:url(../admin/images/trace-icon.gif);"><fmt:message
+                            key="trace.disable.link"/></a>
+                </div>
+            </div>
+
+            <% } %>
+
+            <div style="display: inline-block">
+                <a style="background-image: url(../admin/images/delete.gif);"
+                   class="icon-link"
+                   onclick="doDeleteExecutionPlan('<%=configurationDto.getName()%>')"><font
+                        color="#4682b4">Delete</font></a>
+            </div>
+            <div style="display: inline-block">
+                <a style="background-image: url(../admin/images/edit.gif);"
+                   class="icon-link"
+                   href="../eventprocessor/edit_execution_plan.jsp?ordinal=1&execPlanName=<%=configurationDto.getName()%>"><font
+                        color="#4682b4">Edit</font></a>
+            </div>
+
+            <% } else { %>
+            <div style="display: inline-block">
+                <div id="cappArtifact<%= configurationDto.getName()%>">
+                    <div style="background-image: url(images/capp.gif);" class="icon-nolink-nofloat">
+                        <fmt:message key="capp.artifact.message"/></div>
+                </div>
+            </div>
+
+            <% } %>
+    </span>
+</h2>
 
 <div id="workArea">
 <table style="width:100%" id="eventProcessorDetails" class="styledLeft noBorders spacer-bot">
 <tbody>
 <tr>
 <td>
-        <%
 
-            String execPlanName = request.getParameter("execPlan");
-            EventProcessorAdminServiceStub processorAdminServiceStub = EventProcessorUIUtils.getEventProcessorAdminService(config, session, request);
-            ExecutionPlanConfigurationDto configurationDto = processorAdminServiceStub.getActiveExecutionPlanConfiguration(execPlanName);
-        %>
 <table width="100%">
 
     <%--code mirror code--%>
