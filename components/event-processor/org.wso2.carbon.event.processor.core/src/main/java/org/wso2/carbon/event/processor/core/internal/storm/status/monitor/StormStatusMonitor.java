@@ -22,20 +22,16 @@ public class StormStatusMonitor implements ConnectionCallback{
 
     private static final Log log = LogFactory.getLog(StormStatusMonitor.class);
 
+    private final String stormTopologyName;
+    private final String executionPlanName;
+    private final String executionPlanStatusHolderKey;
+    private final ExecutorService executorService = Executors.newSingleThreadExecutor();
+    private final int lockTimeout;
+    private final String tenantDomain;
+    private String hostIp = null;
     private AtomicInteger connectedCepReceiversCount;
     private int importedStreamsCount = 0;
-
     private AtomicInteger connectedPublisherBoltsCount;
-
-
-    private String stormTopologyName;
-    private String executionPlanName;
-    private int tenantId;
-    private String executionPlanStatusHolderKey;
-    private String hostIp = null;
-    private ExecutorService executorService = Executors.newSingleThreadExecutor();
-    private final int lockTimeout;
-    private String tenantDomain;
 
     public StormStatusMonitor(int tenantId, String executionPlanName, int importedStreamsCount){
         tenantDomain = PrivilegedCarbonContext.getThreadLocalCarbonContext().getTenantDomain();
@@ -48,7 +44,6 @@ public class StormStatusMonitor implements ConnectionCallback{
         }
         this.importedStreamsCount = importedStreamsCount;
         this.executionPlanName = executionPlanName;
-        this.tenantId = tenantId;
         this.stormTopologyName = StormTopologyManager.getTopologyName(executionPlanName, tenantId);
         this.executionPlanStatusHolderKey = DistributedModeConstants.STORM_STATUS_MAP + "." + stormTopologyName;
         lockTimeout = EventProcessorValueHolder.getStormDeploymentConfiguration().getLockTimeout();
@@ -68,29 +63,34 @@ public class StormStatusMonitor implements ConnectionCallback{
                     ExecutionPlanStatusHolder executionPlanStatusHolder =
                             executionPlanStatusHolderIMap.get(stormTopologyName);
                     if(executionPlanStatusHolder == null){
-                        log.error("Couldn't increment connected CEP receivers count for execution plan:" + executionPlanName +
-                                ", for tenant-domain:" + tenantDomain
+                        log.error("Couldn't increment connected CEP receivers count for execution plan: " + executionPlanName +
+                                ", for tenant-domain: " + tenantDomain
                                 + " as the ExecutionPlanStatusHolder is null.");
                     } else {
                         executionPlanStatusHolder.setCEPReceiverStatus(hostIp, connectedCepReceiversCount.incrementAndGet(), importedStreamsCount);
                         executionPlanStatusHolderIMap.replace(stormTopologyName, executionPlanStatusHolder);
+                        if(log.isDebugEnabled()){
+                            log.debug("Incremented connected CEP receiver count as " + connectedCepReceiversCount.get() +
+                                    " for execution plan: " + executionPlanName + ", for tenant-domain: " + tenantDomain
+                                    + ", for IP address: " + hostIp);
+                        }
                     }
                 } finally {
                     executionPlanStatusHolderIMap.unlock(executionPlanStatusHolderKey);
                 }
             } else {
-                log.error("Couldn't increment connected CEP receivers count for execution plan:" + executionPlanName +
-                        ", for tenant-domain:" + tenantDomain
+                log.error("Couldn't increment connected CEP receivers count for execution plan: " + executionPlanName +
+                        ", for tenant-domain: " + tenantDomain
                         + " as the hazelcast lock acquisition failed.");
             }
         } catch (InterruptedException e) {
-            Thread.currentThread().interrupt();
-            log.error("Couldn't increment connected CEP receivers count for execution plan:" + executionPlanName +
-                    ", for tenant-domain:" + tenantDomain
+            log.error("Couldn't increment connected CEP receivers count for execution plan: " + executionPlanName +
+                    ", for tenant-domain: " + tenantDomain
                     + " as the hazelcast lock acquisition was interrupted.", e);
+            Thread.currentThread().interrupt();
         } catch (SocketException e) {
-            log.error("Couldn't increment connected CEP receivers count for execution plan:" + executionPlanName +
-                    ", for tenant-domain:" + tenantDomain
+            log.error("Couldn't increment connected CEP receivers count for execution plan: " + executionPlanName +
+                    ", for tenant-domain: " + tenantDomain
                     + " as the host IP couldn't be found for this node.", e);
         }
     }
@@ -108,36 +108,40 @@ public class StormStatusMonitor implements ConnectionCallback{
                     ExecutionPlanStatusHolder executionPlanStatusHolder =
                             executionPlanStatusHolderIMap.get(stormTopologyName);
                     if(executionPlanStatusHolder == null){
-                        log.error("Couldn't decrement connected CEP receivers count for execution plan:" + executionPlanName +
-                                ", for tenant-domain:" + tenantDomain
+                        log.error("Couldn't decrement connected CEP receivers count for execution plan: " + executionPlanName +
+                                ", for tenant-domain: " + tenantDomain
                                 + " as the ExecutionPlanStatusHolder is null.");
+                    } else {
+                        executionPlanStatusHolder.setCEPReceiverStatus(hostIp, connectedCepReceiversCount.decrementAndGet(), importedStreamsCount);
+                        executionPlanStatusHolderIMap.replace(stormTopologyName, executionPlanStatusHolder);
+                        if(log.isDebugEnabled()){
+                            log.debug("Decremented connected CEP receiver count as " + connectedCepReceiversCount.get() +
+                                    " for execution plan: " + executionPlanName + ", for tenant-domain: " + tenantDomain
+                                    + ", for IP address: " + hostIp);
+                        }
                     }
-                    executionPlanStatusHolder.setCEPReceiverStatus(hostIp, connectedCepReceiversCount.decrementAndGet(), importedStreamsCount);
-                    executionPlanStatusHolderIMap.replace(stormTopologyName, executionPlanStatusHolder);
                 } finally {
                     executionPlanStatusHolderIMap.unlock(executionPlanStatusHolderKey);
                 }
             } else {
-                log.error("Couldn't decrement connected CEP receivers count for execution plan:" + executionPlanName +
-                        ", for tenant-domain:" + tenantDomain
+                log.error("Couldn't decrement connected CEP receivers count for execution plan: " + executionPlanName +
+                        ", for tenant-domain: " + tenantDomain
                         + " as the hazelcast lock acquisition failed.");
             }
         } catch (InterruptedException e) {
-            Thread.currentThread().interrupt();
-            log.error("Couldn't decrement connected CEP receivers count for execution plan:" + executionPlanName +
-                    ", for tenant-domain:" + tenantDomain
+            log.error("Couldn't decrement connected CEP receivers count for execution plan: " + executionPlanName +
+                    ", for tenant-domain: " + tenantDomain
                     + " as the hazelcast lock acquisition was interrupted.", e);
+            Thread.currentThread().interrupt();
         }  catch (SocketException e) {
-            log.error("Couldn't decrement connected CEP receivers count for execution plan:" + executionPlanName +
-                    ", for tenant-domain:" + tenantDomain
+            log.error("Couldn't decrement connected CEP receivers count for execution plan: " + executionPlanName +
+                    ", for tenant-domain: " + tenantDomain
                     + " as the host IP couldn't be found for this node.", e);
         }
     }
 
     @Override
     public void onPublisherBoltConnect() {
-        log.info("-----------------------------------------------StormOutputListener onConnect() invoked");
-        int currentCount = connectedPublisherBoltsCount.incrementAndGet();
         HazelcastInstance hazelcastInstance = EventProcessorValueHolder.getHazelcastInstance();
         IMap<String,ExecutionPlanStatusHolder> executionPlanStatusHolderIMap = hazelcastInstance.getMap(DistributedModeConstants.STORM_STATUS_MAP);
         try {
@@ -149,35 +153,40 @@ public class StormStatusMonitor implements ConnectionCallback{
                     ExecutionPlanStatusHolder executionPlanStatusHolder =
                             executionPlanStatusHolderIMap.get(stormTopologyName);
                     if(executionPlanStatusHolder == null){
-                        log.error("Couldn't increment connected publisher bolts count for execution plan:" + executionPlanName +
-                                ", for tenant-domain:" + tenantDomain
+                        log.error("Couldn't increment connected publisher bolts count for execution plan: " + executionPlanName +
+                                ", for tenant-domain: " + tenantDomain
                                 + " as the ExecutionPlanStatusHolder is null.");
+                    } else {
+                        executionPlanStatusHolder.setConnectedPublisherBoltsCount(hostIp, connectedPublisherBoltsCount.incrementAndGet());
+                        executionPlanStatusHolderIMap.replace(stormTopologyName, executionPlanStatusHolder);
+                        if(log.isDebugEnabled()){
+                            log.debug("Incremented connected publisher bolt count as " + connectedPublisherBoltsCount.get() +
+                                    " for execution plan: " + executionPlanName + ", for tenant-domain: " + tenantDomain
+                                    + ", for IP address: " + hostIp);
+                        }
                     }
-                    executionPlanStatusHolder.setConnectedPublisherBoltsCount(hostIp,currentCount);
-                    executionPlanStatusHolderIMap.replace(stormTopologyName, executionPlanStatusHolder);
                 } finally {
                     executionPlanStatusHolderIMap.unlock(executionPlanStatusHolderKey);
                 }
             } else {
-                log.error("Couldn't increment connected publisher bolts count for execution plan:" + executionPlanName +
-                        ", for tenant-domain:" + tenantDomain
+                log.error("Couldn't increment connected publisher bolts count for execution plan: " + executionPlanName +
+                        ", for tenant-domain: " + tenantDomain
                         + " as the hazelcast lock acquisition failed.");
             }
         } catch (InterruptedException e) {
-            Thread.currentThread().interrupt();
-            log.error("Couldn't increment connected publisher bolts count for execution plan:" + executionPlanName +
-                    ", for tenant-domain:" + tenantDomain
+            log.error("Couldn't increment connected publisher bolts count for execution plan: " + executionPlanName +
+                    ", for tenant-domain: " + tenantDomain
                     + " as the hazelcast lock acquisition was interrupted.", e);
+            Thread.currentThread().interrupt();
         } catch (SocketException e) {
-            log.error("Couldn't increment connected publisher bolts count for execution plan:" + executionPlanName +
-                    ", for tenant-domain:" + tenantDomain
+            log.error("Couldn't increment connected publisher bolts count for execution plan: " + executionPlanName +
+                    ", for tenant-domain: " + tenantDomain
                     + " as the host IP couldn't be found for this node.", e);
         }
     }
 
     @Override
     public void onPublisherBoltDisconnect() {
-        int currentCount = connectedPublisherBoltsCount.decrementAndGet();
         HazelcastInstance hazelcastInstance = EventProcessorValueHolder.getHazelcastInstance();
         IMap<String,ExecutionPlanStatusHolder> executionPlanStatusHolderIMap = hazelcastInstance.getMap(DistributedModeConstants.STORM_STATUS_MAP);
         try {
@@ -189,28 +198,34 @@ public class StormStatusMonitor implements ConnectionCallback{
                     ExecutionPlanStatusHolder executionPlanStatusHolder =
                             executionPlanStatusHolderIMap.get(stormTopologyName);
                     if(executionPlanStatusHolder == null){
-                        log.error("Couldn't decrement connected publisher bolts count for execution plan:" + executionPlanName +
-                                ", for tenant-domain:" + tenantDomain
+                        log.error("Couldn't decrement connected publisher bolts count for execution plan: " + executionPlanName +
+                                ", for tenant-domain: " + tenantDomain
                                 + " as the ExecutionPlanStatusHolder is null.");
+                    } else {
+                        executionPlanStatusHolder.setConnectedPublisherBoltsCount(hostIp, connectedPublisherBoltsCount.decrementAndGet());
+                        executionPlanStatusHolderIMap.replace(stormTopologyName, executionPlanStatusHolder);
+                        if(log.isDebugEnabled()){
+                            log.debug("Decremented connected publisher bolt count as " + connectedPublisherBoltsCount.get() +
+                                    " for execution plan: " + executionPlanName + ", for tenant-domain: " + tenantDomain
+                                    + ", for IP address: " + hostIp);
+                        }
                     }
-                    executionPlanStatusHolder.setConnectedPublisherBoltsCount(hostIp,currentCount);
-                    executionPlanStatusHolderIMap.replace(stormTopologyName, executionPlanStatusHolder);
                 } finally {
                     executionPlanStatusHolderIMap.unlock(executionPlanStatusHolderKey);
                 }
             } else {
-                log.error("Couldn't decrement connected publisher bolts count for execution plan:" + executionPlanName +
-                        ", for tenant-domain:" + tenantDomain
+                log.error("Couldn't decrement connected publisher bolts count for execution plan: " + executionPlanName +
+                        ", for tenant-domain: " + tenantDomain
                         + " as the hazelcast lock acquisition failed.");
             }
         } catch (InterruptedException e) {
-            Thread.currentThread().interrupt();
-            log.error("Couldn't decrement connected publisher bolts count for execution plan:" + executionPlanName +
-                    ", for tenant-domain:" + tenantDomain
+            log.error("Couldn't decrement connected publisher bolts count for execution plan: " + executionPlanName +
+                    ", for tenant-domain: " + tenantDomain
                     + " as the hazelcast lock acquisition was interrupted.", e);
+            Thread.currentThread().interrupt();
         } catch (SocketException e) {
-            log.error("Couldn't decrement connected publisher bolts count for execution plan:" + executionPlanName +
-                    ", for tenant-domain:" + tenantDomain
+            log.error("Couldn't decrement connected publisher bolts count for execution plan: " + executionPlanName +
+                    ", for tenant-domain: " + tenantDomain
                     + " as the host IP couldn't be found for this node.", e);
         }
     }
@@ -227,35 +242,43 @@ public class StormStatusMonitor implements ConnectionCallback{
                     ExecutionPlanStatusHolder executionPlanStatusHolder =
                             executionPlanStatusHolderIMap.get(stormTopologyName);
                     if(executionPlanStatusHolder == null){
-                        log.error("Couldn't update distributed deployment status for execution plan:" + executionPlanName +
-                                ", for tenant-domain:" + tenantDomain
+                        log.error("Couldn't update distributed deployment status for execution plan: " + executionPlanName +
+                                ", for tenant-domain: " + tenantDomain
                                 + " as the ExecutionPlanStatusHolder is null.");
+                    } else {
+                        executionPlanStatusHolder.setCEPReceiverStatus(hostIp, connectedCepReceiversCount.get(), importedStreamsCount);
+                        executionPlanStatusHolder.setConnectedPublisherBoltsCount(hostIp, connectedPublisherBoltsCount.get());
+                        executionPlanStatusHolderIMap.replace(stormTopologyName, executionPlanStatusHolder);
+                        if (log.isDebugEnabled()) {
+                            log.debug("Updated distributed deployment status as follows. " +
+                                    "\nConnected CEP receivers count: " + connectedCepReceiversCount.get() +
+                                    "\nConnected publisher bolts count: " + connectedPublisherBoltsCount.get() +
+                                    "\nfor execution plan: " + executionPlanName + ", for tenant-domain: " + tenantDomain
+                                    + ", for IP address: " + hostIp);
+                        }
                     }
-                    executionPlanStatusHolder.setCEPReceiverStatus(hostIp, connectedCepReceiversCount.get(), importedStreamsCount);
-                    executionPlanStatusHolder.setConnectedPublisherBoltsCount(hostIp, connectedPublisherBoltsCount.get());
-                    executionPlanStatusHolderIMap.replace(stormTopologyName, executionPlanStatusHolder);
                 } finally {
                     executionPlanStatusHolderIMap.unlock(executionPlanStatusHolderKey);
                 }
             } else {
-                log.error("Couldn't update distributed deployment status for execution plan:" + executionPlanName +
-                        ", for tenant-domain:" + tenantDomain
+                log.error("Couldn't update distributed deployment status for execution plan: " + executionPlanName +
+                        ", for tenant-domain: " + tenantDomain
                         + " as the hazelcast lock acquisition failed.");
             }
         } catch (InterruptedException e) {
-            Thread.currentThread().interrupt();
-            log.error("Couldn't update distributed deployment status for execution plan:" + executionPlanName +
-                    ", for tenant-domain:" + tenantDomain
+            log.error("Couldn't update distributed deployment status for execution plan: " + executionPlanName +
+                    ", for tenant-domain: " + tenantDomain
                     + " as the hazelcast lock acquisition was interrupted.", e);
+            Thread.currentThread().interrupt();
         }  catch (SocketException e) {
-            log.error("Couldn't update distributed deployment status for execution plan:" + executionPlanName +
-                    ", for tenant-domain:" + tenantDomain
+            log.error("Couldn't update distributed deployment status for execution plan: " + executionPlanName +
+                    ", for tenant-domain: " + tenantDomain
                     + " as the host IP couldn't be found for this node.", e);
         }
     }
 
     public void shutdown(){
-        executorService.shutdown();
+        executorService.shutdownNow();
     }
 
     /**
@@ -287,29 +310,38 @@ public class StormStatusMonitor implements ConnectionCallback{
                             ExecutionPlanStatusHolder executionPlanStatusHolder =
                                     executionPlanStatusHolderIMap.get(stormTopologyName);
                             if(executionPlanStatusHolder == null){
-                                log.error("Couldn't update distributed deployment status for execution plan:" + executionPlanName +
-                                        ", for tenant-domain:" + tenantDomain
+                                log.error("Couldn't update distributed deployment status for execution plan: " + executionPlanName +
+                                        ", for tenant-domain: " + tenantDomain
                                         + " as the ExecutionPlanStatusHolder is null.");
+                            } else {
+                                executionPlanStatusHolder.setCEPReceiverStatus(hostIp, connectedCepReceiversCount.get(), importedStreamsCount);
+                                executionPlanStatusHolder.setConnectedPublisherBoltsCount(hostIp, connectedPublisherBoltsCount.get());
+                                executionPlanStatusHolderIMap.replace(stormTopologyName, executionPlanStatusHolder);
+                                if(log.isDebugEnabled()){
+                                    log.debug("Updated distributed deployment status as follows. " +
+                                            "\nConnected CEP receivers count: " + connectedCepReceiversCount.get() +
+                                            "\nConnected publisher bolts count: " + connectedPublisherBoltsCount.get() +
+                                            "\nfor execution plan: " + executionPlanName + ", for tenant-domain: " + tenantDomain
+                                            + ", for IP address: " + hostIp);
+                                }
                             }
-                            executionPlanStatusHolder.setCEPReceiverStatus(hostIp, connectedCepReceiversCount.get(), importedStreamsCount);
-                            executionPlanStatusHolder.setConnectedPublisherBoltsCount(hostIp, connectedPublisherBoltsCount.get());
-                            executionPlanStatusHolderIMap.replace(stormTopologyName, executionPlanStatusHolder);
                         } finally {
                             executionPlanStatusHolderIMap.unlock(executionPlanStatusHolderKey);
                         }
                     } else {
-                        log.error("Couldn't update distributed deployment status for execution plan:" + executionPlanName +
-                                ", for tenant-domain:" + tenantDomain
+                        log.error("Couldn't update distributed deployment status for execution plan: " + executionPlanName +
+                                ", for tenant-domain: " + tenantDomain
                                 + " as the hazelcast lock acquisition failed.");
                     }
                 } catch (InterruptedException e) {
-                    Thread.currentThread().interrupt();
-                    log.error("Couldn't update distributed deployment status for execution plan:" + executionPlanName +
-                            ", for tenant-domain:" + tenantDomain
+                    log.error("Couldn't update distributed deployment status for execution plan: " + executionPlanName +
+                            ", for tenant-domain: " + tenantDomain
                             + " as the hazelcast lock acquisition was interrupted.", e);
+                    Thread.currentThread().interrupt();
+                    return;
                 }  catch (SocketException e) {
-                    log.error("Couldn't update distributed deployment status for execution plan:" + executionPlanName +
-                            ", for tenant-domain:" + tenantDomain
+                    log.error("Couldn't update distributed deployment status for execution plan: " + executionPlanName +
+                            ", for tenant-domain: " + tenantDomain
                             + " as the host IP couldn't be found for this node.", e);
                 }
 
@@ -320,6 +352,11 @@ public class StormStatusMonitor implements ConnectionCallback{
                     Thread.sleep(updateRate);
                 } catch (InterruptedException e) {
                     Thread.currentThread().interrupt();
+                    if(log.isDebugEnabled()){
+                        log.debug("GlobalStatUpdater was interrupted, hence returning. " +
+                                "Details: execution plan name: " + executionPlanName + ", tenant domain: " + tenantDomain);
+                    }
+                    return;
                 }
             }
         }
