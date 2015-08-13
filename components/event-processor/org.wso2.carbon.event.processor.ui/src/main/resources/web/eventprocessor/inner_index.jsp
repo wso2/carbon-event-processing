@@ -50,10 +50,10 @@
         String executionPlanName = request.getParameter("executionPlan");
         int totalActiveExecutionPlanConfigurations = 0;
 
-        ExecutionPlanConfigurationFileDto[] inactiveExecutionPlanConigurations = stub.getAllInactiveExecutionPlanConigurations();
+        ExecutionPlanConfigurationFileDto[] inactiveExecutionPlanConfigurations = stub.getAllInactiveExecutionPlanConigurations();
         int totalInactiveExecutionPlans = 0;
-        if (inactiveExecutionPlanConigurations != null) {
-            totalInactiveExecutionPlans = inactiveExecutionPlanConigurations.length;
+        if (inactiveExecutionPlanConfigurations != null) {
+            totalInactiveExecutionPlans = inactiveExecutionPlanConfigurations.length;
         }
 
         if (executionPlanName != null) {
@@ -78,7 +78,7 @@
         if (executionPlanConfigurationDtos != null) {
             totalActiveExecutionPlanConfigurations = executionPlanConfigurationDtos.length;
 
-            if(!executionPlanConfigurationDtos[0].getDeploymentStatus().equals("not-distributed")){
+            if(totalActiveExecutionPlanConfigurations > 0 && !executionPlanConfigurationDtos[0].getDeploymentStatus().equals("not-distributed")){
                 isDistributedProcessingEnabled = true;
             }
         }
@@ -106,7 +106,7 @@
                     <%
                         if (isDistributedProcessingEnabled) {
                     %>
-                    <th width="385px"><fmt:message key="event.processor.status.in.storm"/></th>
+                    <th width="385px"><fmt:message key="event.processor.distributed.deployment.status"/></th>
                     <%
                         }
                     %>
@@ -129,17 +129,11 @@
 
                         if (isDistributedProcessingEnabled) {
                             String executionPlanStatus = executionPlanConfigurationDto.getDeploymentStatus();
-                            String[] executionPlanStatusLineByLine = executionPlanStatus.split("\n");
+                            executionPlanStatus = executionPlanStatus.replace("\n", "<br/>");
+                            executionPlanStatus = executionPlanStatus.replace("\t", "&nbsp;&nbsp;&nbsp;&nbsp;");
                     %>
                     <td>
-                        <%
-                            for(String line : executionPlanStatusLineByLine){
-                        %>
-                                <%=line%>
-                                <br/>
-                        <%
-                            }
-                        %>
+                        <%=executionPlanStatus%>
                     </td>
                     <%
 
