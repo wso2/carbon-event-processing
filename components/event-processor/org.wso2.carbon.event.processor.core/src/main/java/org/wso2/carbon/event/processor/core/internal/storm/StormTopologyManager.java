@@ -157,8 +157,7 @@ public class StormTopologyManager {
         StreamResult result = new StreamResult(sw);
         DOMSource source = new DOMSource(document);
         transformer.transform(source, result);
-        String xmlString = sw.toString();
-        return xmlString;
+        return sw.toString();   //returning the xmlString
     }
 
     public static String getTopologyName(String executionPlanName, int tenantId) {
@@ -277,10 +276,24 @@ public class StormTopologyManager {
 
         private void waitForTopologyToBeActive(Nimbus.Client client, String jobPrefix, String topologyName) throws TException {
             TopologySummary thisTopologySummary = null;
-            List<TopologySummary> topologySummaryList = client.getClusterInfo().get_topologies();
-            for (TopologySummary  topologySummary: topologySummaryList) {
-                if(topologySummary.get_name().equals(topologyName)){
-                    thisTopologySummary = topologySummary;
+            while(thisTopologySummary == null){
+                List<TopologySummary> topologySummaryList = client.getClusterInfo().get_topologies();
+                for (TopologySummary  topologySummary: topologySummaryList) {
+                    if(topologySummary.get_name().equals(topologyName)){
+                        thisTopologySummary = topologySummary;
+                    }
+                }
+                if(thisTopologySummary == null){
+                    try {
+                        Thread.sleep(2000);
+                        log.info(jobPrefix + "Waiting until '" + topologyName + "' has been submitted to Storm cluster");
+                    } catch (InterruptedException e) {
+                        Thread.currentThread().interrupt();
+                        updateExecutionPlanStatusInStorm(topologyName, DistributedModeConstants.TopologyState.UNKNOWN);
+                        log.error("Could not verify whether " + topologyName + "' has been submitted to Storm cluster or not" +
+                                " as the verifier got interrupted. Setting distributed deployment status as UNKNOWN");
+                        return;
+                    }
                 }
             }
             while (true) {
