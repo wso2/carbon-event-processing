@@ -23,8 +23,8 @@ package org.wso2.carbon.event.processor.common.storm.manager.service.exception;
 
 import java.util.*;
 
-public class NotStormManagerException extends Exception implements org.apache.thrift.TBase<NotStormManagerException, NotStormManagerException._Fields>, java.io.Serializable, Cloneable {
-  private static final org.apache.thrift.protocol.TStruct STRUCT_DESC = new org.apache.thrift.protocol.TStruct("NotStormManagerException");
+public class NotStormCoordinatorException extends Exception implements org.apache.thrift.TBase<NotStormCoordinatorException, NotStormCoordinatorException._Fields>, java.io.Serializable, Cloneable {
+  private static final org.apache.thrift.protocol.TStruct STRUCT_DESC = new org.apache.thrift.protocol.TStruct("NotStormCoordinatorException");
 
   private static final org.apache.thrift.protocol.TField MESSAGE_FIELD_DESC = new org.apache.thrift.protocol.TField("message", org.apache.thrift.protocol.TType.STRING, (short)1);
 
@@ -96,14 +96,14 @@ public class NotStormManagerException extends Exception implements org.apache.th
     tmpMap.put(_Fields.MESSAGE, new org.apache.thrift.meta_data.FieldMetaData("message", org.apache.thrift.TFieldRequirementType.REQUIRED, 
         new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.STRING)));
     metaDataMap = Collections.unmodifiableMap(tmpMap);
-    org.apache.thrift.meta_data.FieldMetaData.addStructMetaDataMap(NotStormManagerException.class, metaDataMap);
+    org.apache.thrift.meta_data.FieldMetaData.addStructMetaDataMap(NotStormCoordinatorException.class, metaDataMap);
   }
 
-  public NotStormManagerException() {
+  public NotStormCoordinatorException() {
   }
 
-  public NotStormManagerException(
-    String message)
+  public NotStormCoordinatorException(
+          String message)
   {
     this();
     this.message = message;
@@ -112,14 +112,14 @@ public class NotStormManagerException extends Exception implements org.apache.th
   /**
    * Performs a deep copy on <i>other</i>.
    */
-  public NotStormManagerException(NotStormManagerException other) {
+  public NotStormCoordinatorException(NotStormCoordinatorException other) {
     if (other.isSetMessage()) {
       this.message = other.message;
     }
   }
 
-  public NotStormManagerException deepCopy() {
-    return new NotStormManagerException(this);
+  public NotStormCoordinatorException deepCopy() {
+    return new NotStormCoordinatorException(this);
   }
 
   @Override
@@ -131,7 +131,7 @@ public class NotStormManagerException extends Exception implements org.apache.th
     return this.message;
   }
 
-  public NotStormManagerException setMessage(String message) {
+  public NotStormCoordinatorException setMessage(String message) {
     this.message = message;
     return this;
   }
@@ -190,12 +190,12 @@ public class NotStormManagerException extends Exception implements org.apache.th
   public boolean equals(Object that) {
     if (that == null)
       return false;
-    if (that instanceof NotStormManagerException)
-      return this.equals((NotStormManagerException)that);
+    if (that instanceof NotStormCoordinatorException)
+      return this.equals((NotStormCoordinatorException)that);
     return false;
   }
 
-  public boolean equals(NotStormManagerException that) {
+  public boolean equals(NotStormCoordinatorException that) {
     if (that == null)
       return false;
 
@@ -216,13 +216,13 @@ public class NotStormManagerException extends Exception implements org.apache.th
     return 0;
   }
 
-  public int compareTo(NotStormManagerException other) {
+  public int compareTo(NotStormCoordinatorException other) {
     if (!getClass().equals(other.getClass())) {
       return getClass().getName().compareTo(other.getClass().getName());
     }
 
     int lastComparison = 0;
-    NotStormManagerException typedOther = (NotStormManagerException)other;
+    NotStormCoordinatorException typedOther = (NotStormCoordinatorException)other;
 
     lastComparison = Boolean.valueOf(isSetMessage()).compareTo(typedOther.isSetMessage());
     if (lastComparison != 0) {
@@ -284,7 +284,7 @@ public class NotStormManagerException extends Exception implements org.apache.th
 
   @Override
   public String toString() {
-    StringBuilder sb = new StringBuilder("NotStormManagerException(");
+    StringBuilder sb = new StringBuilder("NotStormCoordinatorException(");
     boolean first = true;
 
     sb.append("message:");

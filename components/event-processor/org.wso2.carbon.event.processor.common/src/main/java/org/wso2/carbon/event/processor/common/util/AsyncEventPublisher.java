@@ -29,7 +29,7 @@ import org.apache.thrift.transport.TTransport;
 import org.apache.thrift.transport.TTransportException;
 import org.wso2.carbon.event.processor.common.storm.manager.service.StormManagerService;
 import org.wso2.carbon.event.processor.common.storm.manager.service.exception.EndpointNotFoundException;
-import org.wso2.carbon.event.processor.common.storm.manager.service.exception.NotStormManagerException;
+import org.wso2.carbon.event.processor.common.storm.manager.service.exception.NotStormCoordinatorException;
 import org.wso2.carbon.event.processor.manager.commons.transport.client.TCPEventPublisher;
 import org.wso2.carbon.event.processor.manager.commons.transport.server.ConnectionCallback;
 import org.wso2.carbon.event.processor.manager.commons.utils.HostAndPort;
@@ -232,14 +232,14 @@ public class AsyncEventPublisher implements EventHandler<AsynchronousEventBuffer
                         log.info(logPrefix + "Retrieved " + destinationTypeString + " at " + endpointHostPort + " " +
                                 "from storm manager service at " + endpoint.getHostName() + ":" + endpoint.getPort());
                         break;
-                    } catch (NotStormManagerException e) {
+                    } catch (NotStormCoordinatorException e) {
                         log.info(logPrefix + "Cannot retrieve " + destinationType.name() +
                                 " endpoint information from storm manager service at " +
-                                endpoint.getHostName() + ":" + endpoint.getPort() + " as it's not an active Storm manager, Trying next Storm manager.");
+                                endpoint.getHostName() + ":" + endpoint.getPort() + " as it's not a Storm coordinator, Trying next Storm manager.");
                         if (log.isDebugEnabled()) {
                             log.debug(logPrefix + "Cannot retrieve " + destinationType.name() +
                                     " endpoint information from storm manager service at " +
-                                    endpoint.getHostName() + ":" + endpoint.getPort() + " as it's not an active Storm manager", e);
+                                    endpoint.getHostName() + ":" + endpoint.getPort() + " as it's not a Storm coordinator", e);
                         }
                     } catch (TTransportException e) {
                         log.info(logPrefix + "Cannot retrieve " + destinationType.name() +
