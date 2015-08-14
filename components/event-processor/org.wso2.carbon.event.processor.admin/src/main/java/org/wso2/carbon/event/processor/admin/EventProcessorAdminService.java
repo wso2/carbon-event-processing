@@ -42,7 +42,7 @@ public class EventProcessorAdminService extends AbstractAdmin {
 
     private static final Log log = LogFactory.getLog(EventProcessorAdminService.class);
 
-        public void deployExecutionPlan(String executionPlan)
+    public void deployExecutionPlan(String executionPlan)
             throws AxisFault {
         EventProcessorService eventProcessorService = EventProcessorAdminValueHolder.getEventProcessorService();
 
@@ -153,16 +153,16 @@ public class EventProcessorAdminService extends AbstractAdmin {
 
             Map<String, ExecutionPlanConfiguration> executionPlanConfigurations = eventProcessorService.getAllActiveExecutionConfigurations();
 
-            if (executionPlanConfigurations != null) {
+            if (executionPlanConfigurations != null && !executionPlanConfigurations.isEmpty()) {
                 ExecutionPlanConfigurationDto[] configurationDtos = new ExecutionPlanConfigurationDto[executionPlanConfigurations.size()];
 
                 int i = 0;
-                if(isDistributedProcessingEnabled()){
+                if (isDistributedProcessingEnabled()) {
                     Map<String, String> executionPlanStatuses = eventProcessorService.getAllExecutionPlanStatusesInStorm();
                     for (Map.Entry<String, ExecutionPlanConfiguration> entry : executionPlanConfigurations.entrySet()) {
                         ExecutionPlanConfigurationDto dto = new ExecutionPlanConfigurationDto();
                         String status = executionPlanStatuses.get(entry.getKey());
-                        if(status == null){
+                        if (status == null) {
                             log.error("No distributed deployment status information available for execution plan " + entry.getKey());
                         }
                         copyConfigurationsToDto(entry.getValue(), dto, status);
