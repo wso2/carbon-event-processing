@@ -250,39 +250,22 @@ public class AsyncEventPublisher implements EventHandler<AsynchronousEventBuffer
                     } catch (NotStormCoordinatorException e) {
                         log.info(logPrefix + "Cannot retrieve " + destinationType.name() +
                                 " endpoint information from storm manager service at " +
-                                endpoint.getHostName() + ":" + endpoint.getPort() + " as it's not a Storm coordinator, Trying next Storm manager.");
-                        if (log.isDebugEnabled()) {
-                            log.debug(logPrefix + "Cannot retrieve " + destinationType.name() +
-                                    " endpoint information from storm manager service at " +
-                                    endpoint.getHostName() + ":" + endpoint.getPort() + " as it's not a Storm coordinator", e);
-                        }
+                                endpoint.getHostName() + ":" + endpoint.getPort() + " as it's not a Storm coordinator, Trying next Storm coordinator.");
+
                     } catch (TTransportException e) {
                         log.info(logPrefix + "Cannot retrieve " + destinationType.name() +
                                 " endpoint information from storm manager service at " +
                                 endpoint.getHostName() + ":" + endpoint.getPort() + " as it's not reachable, " + e.getMessage() + ". Trying next Storm manager.");
-                        if (log.isDebugEnabled()) {
-                            log.debug(logPrefix + "Cannot retrieve " + destinationType.name() +
-                                    " endpoint information from storm manager service at " +
-                                    endpoint.getHostName() + ":" + endpoint.getPort() + " as it's not reachable", e);
-                        }
+
                     } catch (TException e) {
                         log.info(logPrefix + "Cannot retrieve " + destinationType.name() +
                                 " endpoint information from storm manager service at " +
                                 endpoint.getHostName() + ":" + endpoint.getPort() + " as it's not reachable, " + e.getMessage() + ". Trying next Storm manager.");
-                        if (log.isDebugEnabled()) {
-                            log.debug(logPrefix + "Cannot retrieve " + destinationType.name() +
-                                    " endpoint information from storm manager service at " +
-                                    endpoint.getHostName() + ":" + endpoint.getPort() + " as it's not reachable", e);
-                        }
+
                     } catch (EndpointNotFoundException e) {
                         log.info(logPrefix + destinationType.name() +
                                 " endpoint information not available on storm manager service at " +
                                 endpoint.getHostName() + ":" + endpoint.getPort() + ". Trying next Storm manager.");
-                        if (log.isDebugEnabled()) {
-                            log.debug(logPrefix + destinationType.name() +
-                                    " endpoint information not available on storm manager service at " +
-                                    endpoint.getHostName() + ":" + endpoint.getPort() + ".", e);
-                        }
                     } finally {
                         if (transport != null) {
                             transport.close();

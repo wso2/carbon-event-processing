@@ -502,9 +502,10 @@ public class CarbonEventProcessorService implements EventProcessorService {
             if (managementInfo.getMode() == Mode.Distributed && stormDeploymentConfig != null && stormDeploymentConfig.isManagerNode() &&
                     EventProcessorValueHolder.getStormManagerServer().isStormCoordinator()) {
                 try {
-                    removeExecutionPlanStatusHolder(executionPlanConfiguration.getName(), tenantId);      //todo: test in #worker>1 and watch for NPE
+                    // Kill the topology and notify the manager that execution plan is removed.
+		    removeExecutionPlanStatusHolder(executionPlanConfiguration.getName(), tenantId); //todo: test in #worker>1 and watch for NPE
                     EventProcessorValueHolder.getStormTopologyManager().killTopology(executionPlanConfiguration.getName(), tenantId);
-
+                    EventProcessorValueHolder.getStormManagerServer().onExecutionPlanRemove(name, tenantId);
                 } catch (Exception e) {
                     log.error(e.getMessage(), e);
                 }
