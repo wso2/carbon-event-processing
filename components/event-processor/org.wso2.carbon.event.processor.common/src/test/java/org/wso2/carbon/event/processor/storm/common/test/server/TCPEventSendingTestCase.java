@@ -146,7 +146,7 @@ public class TCPEventSendingTestCase {
                 e.printStackTrace();
             } finally {
                 if (TCPEventPublisher != null) {
-                    TCPEventPublisher.shutdown();
+                    TCPEventPublisher.shutdown(false);
                 }
             }
         }

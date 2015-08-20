@@ -97,7 +97,6 @@ public class StormManagerServiceImpl implements StormManagerService.Iface {
         }
 
         log.info("Removed all end point of '" + constructKey(tenantId, executionPlanName) + "' from Manager service.");
-
     }
 
     private synchronized Endpoint getEndpoint(Set<Endpoint> endpointSet, String requesterIp) {
@@ -137,8 +136,9 @@ public class StormManagerServiceImpl implements StormManagerService.Iface {
                     minConnectionCount = endpoint.getConnectionCount();
                     selectedEndpoint = endpoint;
                 }else{
-                    log.warn("End point " + endpoint.getHostName() + ":" + endpoint.getPort() + " have not send a heart beat for "
-                            + String.format("%.2f", Math.floor(System.currentTimeMillis() - endpoint.getLastRegisterTimestamp() / MILLISECONDS_PER_MINUTE)) + " mins");
+
+                    log.warn("Ignoring endpoint " + endpoint.getHostName() + ":" + endpoint.getPort() + " because it has not sent a heart beat for "
+                            + (int) Math.floor((System.currentTimeMillis() - endpoint.getLastRegisterTimestamp()) / MILLISECONDS_PER_MINUTE) + " min(s)");
                 }
             }
         }
