@@ -195,14 +195,14 @@ public class AsyncEventPublisher implements EventHandler<AsynchronousEventBuffer
     }
 
     private void resetTCPEventPublisher() {
-        tcpEventPublisher.shutdown(false);
+        tcpEventPublisher.terminate();
         tcpEventPublisher = null;
     }
 
     @Override
     protected void finalize() {
         if (tcpEventPublisher != null) {
-            tcpEventPublisher.shutdown(true);
+            tcpEventPublisher.shutdown();
         }
     }
 
@@ -211,6 +211,9 @@ public class AsyncEventPublisher implements EventHandler<AsynchronousEventBuffer
             shutdown = true;
         }
         eventSendBuffer.terminate();
+        if (tcpEventPublisher != null){
+            tcpEventPublisher.shutdown();
+        }
 
     }
 
@@ -219,8 +222,11 @@ public class AsyncEventPublisher implements EventHandler<AsynchronousEventBuffer
         if (log.isDebugEnabled()){
             log.debug("Pinging failed to " + tcpEventPublisher.getHostUrl() + ". Trying to re-connect.");
         }
+
         if (!shutdown){
             reconnect();
+        }else{
+            log.info("Not trying to reconnect to " + tcpEventPublisher.getHostUrl() + " because event publisher is shutdown");
         }
     }
 

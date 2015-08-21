@@ -96,7 +96,7 @@ public class StormManagerServiceImpl implements StormManagerService.Iface {
             stormReceivers.remove(constructKey(tenantId, executionPlanName));
         }
 
-        log.info("Removed all end point of '" + constructKey(tenantId, executionPlanName) + "' from Manager service.");
+        log.info("Removed all end point details related to '" + constructKey(tenantId, executionPlanName) + "' from Manager service.");
     }
 
     private synchronized Endpoint getEndpoint(Set<Endpoint> endpointSet, String requesterIp) {
