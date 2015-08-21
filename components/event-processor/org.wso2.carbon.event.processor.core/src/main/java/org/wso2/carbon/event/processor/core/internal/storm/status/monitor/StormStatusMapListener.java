@@ -26,7 +26,9 @@ public class StormStatusMapListener {
      * Clean up method, removing the entry listener.
      */
     public void removeEntryListener(){
-        hazelcastInstance.getMap(DistributedModeConstants.STORM_STATUS_MAP).removeEntryListener(listenerId);
+        if(hazelcastInstance.getLifecycleService().isRunning()){
+            hazelcastInstance.getMap(DistributedModeConstants.STORM_STATUS_MAP).removeEntryListener(listenerId);
+        }
     }
 
     private class MapListenerImpl implements EntryAddedListener, EntryUpdatedListener{
