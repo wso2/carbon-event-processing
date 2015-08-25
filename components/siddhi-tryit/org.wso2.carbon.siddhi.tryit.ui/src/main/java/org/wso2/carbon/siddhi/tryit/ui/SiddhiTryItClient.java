@@ -125,7 +125,7 @@ public class SiddhiTryItClient {
 
 			for (int i = 0; i < inputStreamEventArray.length; i++) {
 				Matcher eventPatternMatcher =
-						eventPattern.matcher(inputStreamEventArray[i].replaceAll("\\s", ""));
+						eventPattern.matcher(inputStreamEventArray[i].trim());
 				Matcher delayPatternMatcher = delayPattern.matcher(inputStreamEventArray[i]);
 
 				if (eventPatternMatcher.find()) {
