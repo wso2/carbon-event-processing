@@ -25,6 +25,7 @@ function sendAjaxRequestToSiddhiProcessor(sendInputData) {
         onSuccess: function (data) {
             if (data != null) {
                 var jsonObject = JSON.parse(data.responseText);
+
                 if (jsonObject != undefined) {
                     if (jsonObject.success.localeCompare("true") == 0) {
                         jQuery('.js_resultCol').show();
@@ -33,20 +34,19 @@ function sendAjaxRequestToSiddhiProcessor(sendInputData) {
                         tabContent.innerHTML = '<div id="tabs"><ul id="tabHeaders"></ul></div>';
                         for (i = 0; i < jsonArray.length; i++) {
                             var tabHeader = document.getElementById('tabHeaders');
-                            var jsonArrayKey=jsonArray[i].key;
-                            var jsonArrayValue=jsonArray[i].jsonValue;
-                            if(jsonArrayKey.indexOf(':')==0){
-                                jsonArrayKey=jsonArrayKey.replace(':',' ');
+                            var jsonArrayKey = jsonArray[i].key;
+                            var jsonArrayValue = jsonArray[i].jsonValue;
+                            if (jsonArrayKey.indexOf(':') == 0) {
+                                jsonArrayKey = jsonArrayKey.replace(':', ' ');
                                 tabHeader.innerHTML = tabHeader.innerHTML + '<li><a class="query-tab" href="#tabs-' + i + '">' + jsonArrayKey + '</a></li>';
                             }
-                            else{
+                            else {
                                 tabHeader.innerHTML = tabHeader.innerHTML + '<li><a class="stream-tab" href="#tabs-' + i + '">' + jsonArrayKey + '</a></li>';
                             }
                             tabContent = document.getElementById('tabs');
-                            if(jsonArrayValue!=null){
+                            if (jsonArrayValue != null) {
                                 tabContent.innerHTML = tabContent.innerHTML + '<div id="tabs-' + i + '"><textarea rows="50" cols="50" readonly>' + jsonArrayValue + '</textarea></div>';
-                            }else
-                            {
+                            } else {
                                 tabContent.innerHTML = tabContent.innerHTML + '<div id="tabs-' + i + '"><textarea rows="50" cols="50" readonly></textarea></div>';
                             }
                         }
@@ -54,6 +54,7 @@ function sendAjaxRequestToSiddhiProcessor(sendInputData) {
                     }
                     else if (jsonObject.success.localeCompare("false") == 0) {
                         CARBON.showErrorDialog(jsonObject.jsonValue);
+                        jQuery('.js_resultCol').hide();
                     }
                 }
             }

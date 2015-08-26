@@ -16,34 +16,34 @@
 package org.wso2.carbon.siddhi.tryit.ui;
 
 public interface UIConstants {
-	String ANNOTATION_PLAN = "Plan";
+    String ANNOTATION_PLAN = "Plan";
 
-	String ANNOTATION_NAME_NAME = "name";
-	String ANNOTATION_TOKEN_AT = "@";
-	String ANNOTATION_TOKEN_COLON = ":";
-	String ANNOTATION_TOKEN_OPENING_BRACKET = "(";
-	String ANNOTATION_TOKEN_CLOSING_BRACKET = ")";
+    String ANNOTATION_NAME_NAME = "name";
+    String ANNOTATION_TOKEN_AT = "@";
+    String ANNOTATION_TOKEN_COLON = ":";
+    String ANNOTATION_TOKEN_OPENING_BRACKET = "(";
+    String ANNOTATION_TOKEN_CLOSING_BRACKET = ")";
 
-	String SIDDHI_LINE_SEPARATER = "\n";
-	String SIDDHI_SINGLE_QUOTE = "'";
+    String SIDDHI_LINE_SEPARATER = "\n";
+    String SIDDHI_SINGLE_QUOTE = "'";
 
-	String EXECUTION_PLAN_BASIC_TEMPLATE = ANNOTATION_TOKEN_AT + ANNOTATION_PLAN +
-	                                       ANNOTATION_TOKEN_COLON +
-	                                       ANNOTATION_NAME_NAME +
-	                                       ANNOTATION_TOKEN_OPENING_BRACKET +
-	                                       SIDDHI_SINGLE_QUOTE +
-	                                       "TestExecutionPlan" +
-	                                       SIDDHI_SINGLE_QUOTE +
-	                                       ANNOTATION_TOKEN_CLOSING_BRACKET +
-	                                       SIDDHI_LINE_SEPARATER + SIDDHI_LINE_SEPARATER;
-	String EXECUTION_PLAN_SAMPLE =
-			"define stream sensorStream (sensorId string, temperature float);\n" +
-			"\n" +
-			"@info(name = 'query1') \n" +
-			"from sensorStream[temperature>98.6] \n" +
-			"select sensorId \n" +
-			"insert into outputStream;";
-	String EVENT_STREAM_SAMPLE = "sensorStream=[tempID1,99.8]\n" +
-	                             "delay(100)\n" +
-	                             "sensorStream=[tempID2,80.6]";
+    String EXECUTION_PLAN_BASIC_TEMPLATE = ANNOTATION_TOKEN_AT + ANNOTATION_PLAN +
+            ANNOTATION_TOKEN_COLON +
+            ANNOTATION_NAME_NAME +
+            ANNOTATION_TOKEN_OPENING_BRACKET +
+            SIDDHI_SINGLE_QUOTE +
+            "TestExecutionPlan" +
+            SIDDHI_SINGLE_QUOTE +
+            ANNOTATION_TOKEN_CLOSING_BRACKET +
+            SIDDHI_LINE_SEPARATER + SIDDHI_LINE_SEPARATER;
+    String EXECUTION_PLAN_SAMPLE =
+            "define stream sensorStream (sensorId string, temperature float);\n" +
+                    "\n" +
+                    "@info(name = 'query1') \n" +
+                    "from sensorStream[temperature>98.6] \n" +
+                    "select sensorId \n" +
+                    "insert into outputStream;";
+    String EVENT_STREAM_SAMPLE = "sensorStream=[tempID1,99.8]\n" +
+            "delay(100)\n" +
+            "sensorStream=[tempID2,80.6]";
 }

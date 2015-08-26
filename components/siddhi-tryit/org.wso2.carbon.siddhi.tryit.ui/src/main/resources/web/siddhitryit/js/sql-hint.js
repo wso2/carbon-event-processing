@@ -1,31 +1,31 @@
 /*Copyright (C) 2015 by Marijn Haverbeke <marijnh@gmail.com> and others
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
+ Permission is hereby granted, free of charge, to any person obtaining a copy
+ of this software and associated documentation files (the "Software"), to deal
+ in the Software without restriction, including without limitation the rights
+ to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ copies of the Software, and to permit persons to whom the Software is
+ furnished to do so, subject to the following conditions:
 
-    The above copyright notice and this permission notice shall be included in
-all copies or substantial portions of the Software.
+ The above copyright notice and this permission notice shall be included in
+ all copies or substantial portions of the Software.
 
-    THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-    FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-    OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-THE SOFTWARE.*/
+ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ THE SOFTWARE.*/
 
-    (function(mod) {
+(function (mod) {
     if (typeof exports == "object" && typeof module == "object") // CommonJS
         mod(require("codemirror"), require("sql"));
     else if (typeof define == "function" && define.amd) // AMD
         define(["codemirror", "sql"], mod);
     else // Plain browser env
         mod(CodeMirror);
-})(function(CodeMirror) {
+})(function (CodeMirror) {
     "use strict";
 
     var tables;
@@ -116,12 +116,12 @@ THE SOFTWARE.*/
 
         // Try to complete table names
         var string = nameParts.join(".");
-        addMatches(result, string, tables, function(w) {
+        addMatches(result, string, tables, function (w) {
             return useBacktick ? insertBackticks(w) : w;
         });
 
         // Try to complete columns from defaultTable
-        addMatches(result, string, defaultTable, function(w) {
+        addMatches(result, string, defaultTable, function (w) {
             return useBacktick ? insertBackticks(w) : w;
         });
 
@@ -138,7 +138,7 @@ THE SOFTWARE.*/
             columns = columns.columns;
 
         if (columns) {
-            addMatches(result, string, columns, function(w) {
+            addMatches(result, string, columns, function (w) {
                 if (typeof w == "string") {
                     w = table + "." + w;
                 } else {
@@ -157,7 +157,7 @@ THE SOFTWARE.*/
         var excepted = /[,;]/g;
         var words = lineText.split(" ");
         for (var i = 0; i < words.length; i++) {
-            f(words[i]?words[i].replace(excepted, '') : '');
+            f(words[i] ? words[i].replace(excepted, '') : '');
         }
     }
 
@@ -184,9 +184,9 @@ THE SOFTWARE.*/
 
         //add separator
         var indexOfSeparator = fullQuery.indexOf(CONS.QUERY_DIV);
-        while(indexOfSeparator != -1) {
+        while (indexOfSeparator != -1) {
             separator.push(doc.posFromIndex(indexOfSeparator));
-            indexOfSeparator = fullQuery.indexOf(CONS.QUERY_DIV, indexOfSeparator+1);
+            indexOfSeparator = fullQuery.indexOf(CONS.QUERY_DIV, indexOfSeparator + 1);
         }
         separator.unshift(Pos(0, 0));
         separator.push(Pos(editor.lastLine(), editor.getLineHandle(editor.lastLine()).text.length));
@@ -194,10 +194,10 @@ THE SOFTWARE.*/
         //find valid range
         var prevItem = 0;
         var current = convertCurToNumber(editor.getCursor());
-        for (var i=0; i< separator.length; i++) {
+        for (var i = 0; i < separator.length; i++) {
             var _v = convertCurToNumber(separator[i]);
             if (current > prevItem && current <= _v) {
-                validRange = { start: convertNumberToCur(prevItem), end: convertNumberToCur(_v) };
+                validRange = {start: convertNumberToCur(prevItem), end: convertNumberToCur(_v)};
                 break;
             }
             prevItem = _v;
@@ -207,7 +207,7 @@ THE SOFTWARE.*/
 
         for (var i = 0; i < query.length; i++) {
             var lineText = query[i];
-            eachWord(lineText, function(word) {
+            eachWord(lineText, function (word) {
                 var wordUpperCase = word.toUpperCase();
                 if (wordUpperCase === aliasUpperCase && getItem(tables, previousWord))
                     table = previousWord;
@@ -222,7 +222,7 @@ THE SOFTWARE.*/
     /** This helper returns both
      *      SQL suggestions (as in original sql-hint.js) and
      *      any-word suggestions (which is a customization)   */
-    CodeMirror.registerHelper("hint", "sql", function(editor, options) {
+    CodeMirror.registerHelper("hint", "sql", function (editor, options) {
 
         //Making the SQL suggestions list as 'sqlSuggestions'
         tables = (options && options.tables) || {};
@@ -257,9 +257,15 @@ THE SOFTWARE.*/
         if (search.charAt(0) == "." || search.charAt(0) == "`") {
             start = nameCompletion(cur, token, sqlSuggestions, editor);
         } else {
-            addMatches(sqlSuggestions, search, tables, function(w) {return w;});
-            addMatches(sqlSuggestions, search, defaultTable, function(w) {return w;});
-            addMatches(sqlSuggestions, search, keywords, function(w) {return w;});
+            addMatches(sqlSuggestions, search, tables, function (w) {
+                return w;
+            });
+            addMatches(sqlSuggestions, search, defaultTable, function (w) {
+                return w;
+            });
+            addMatches(sqlSuggestions, search, keywords, function (w) {
+                return w;
+            });
         }
 
         var anyWordSuggestions = getAnyWordSuggestions(editor, options);

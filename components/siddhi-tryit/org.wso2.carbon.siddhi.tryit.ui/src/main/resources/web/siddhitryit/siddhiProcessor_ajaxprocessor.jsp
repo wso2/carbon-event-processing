@@ -46,7 +46,6 @@
         jsonObject.addProperty("success", "true");
         jsonObject.addProperty("jsonValue", toStringJsonArray);
     } catch (Exception e) {
-
         jsonObject.addProperty("success", "false");
         jsonObject.addProperty("jsonValue", e.getMessage());
     }
