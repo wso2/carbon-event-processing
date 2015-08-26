@@ -1,41 +1,41 @@
 /*
-Copyright (C) 2015 by Marijn Haverbeke <marijnh@gmail.com> and others
+ Copyright (C) 2015 by Marijn Haverbeke <marijnh@gmail.com> and others
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
+ Permission is hereby granted, free of charge, to any person obtaining a copy
+ of this software and associated documentation files (the "Software"), to deal
+ in the Software without restriction, including without limitation the rights
+ to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ copies of the Software, and to permit persons to whom the Software is
+ furnished to do so, subject to the following conditions:
 
-    The above copyright notice and this permission notice shall be included in
-all copies or substantial portions of the Software.
+ The above copyright notice and this permission notice shall be included in
+ all copies or substantial portions of the Software.
 
-    THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-    FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-    OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-THE SOFTWARE.
-*/
+ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ THE SOFTWARE.
+ */
 
-    (function(mod) {
+(function (mod) {
     if (typeof exports == "object" && typeof module == "object") // CommonJS
         mod(require("codemirror"));
     else if (typeof define == "function" && define.amd) // AMD
         define(["codemirror"], mod);
     else // Plain browser env
         mod(CodeMirror);
-})(function(CodeMirror) {
+})(function (CodeMirror) {
     "use strict";
 
-    var HINT_ELEMENT_CLASS        = "CodeMirror-hint";
+    var HINT_ELEMENT_CLASS = "CodeMirror-hint";
     var ACTIVE_HINT_ELEMENT_CLASS = "CodeMirror-hint-active";
 
     // This is the old interface, kept around for now to stay
     // backwards-compatible.
-    CodeMirror.showHint = function(cm, getHints, options) {
+    CodeMirror.showHint = function (cm, getHints, options) {
         if (!getHints) return cm.showHint(options);
         if (options && options.async) getHints.async = true;
         var newOpts = {hint: getHints};
@@ -44,10 +44,11 @@ THE SOFTWARE.
     };
 
     var asyncRunID = 0;
+
     function retrieveHints(getter, cm, options, then) {
         if (getter.async) {
             var id = ++asyncRunID;
-            getter(cm, function(hints) {
+            getter(cm, function (hints) {
                 if (asyncRunID == id) then(hints);
             }, options);
         } else {
@@ -55,7 +56,7 @@ THE SOFTWARE.
         }
     }
 
-    CodeMirror.defineExtension("showHint", function(options) {
+    CodeMirror.defineExtension("showHint", function (options) {
         // We want a single cursor position.
         if (this.listSelections().length > 1 || this.somethingSelected()) return;
 
@@ -65,7 +66,9 @@ THE SOFTWARE.
         if (!getHints) return;
 
         CodeMirror.signal(this, "startCompletion", this);
-        return retrieveHints(getHints, this, completion.options, function(hints) { completion.showHints(hints); });
+        return retrieveHints(getHints, this, completion.options, function (hints) {
+            completion.showHints(hints);
+        });
     });
 
     function Completion(cm, options) {
@@ -75,7 +78,7 @@ THE SOFTWARE.
     }
 
     Completion.prototype = {
-        close: function() {
+        close: function () {
             if (!this.active()) return;
             this.cm.state.completionActive = null;
 
@@ -84,11 +87,11 @@ THE SOFTWARE.
             CodeMirror.signal(this.cm, "endCompletion", this.cm);
         },
 
-        active: function() {
+        active: function () {
             return this.cm.state.completionActive == this;
         },
 
-        pick: function(data, i) {
+        pick: function (data, i) {
             var completion = data.list[i];
             if (completion.hint) completion.hint(this.cm, data, completion);
             else this.cm.replaceRange(getText(completion), completion.from || data.from,
@@ -97,7 +100,7 @@ THE SOFTWARE.
             this.close();
         },
 
-        showHints: function(data) {
+        showHints: function (data) {
             if (!data || !data.list.length || !this.active()) return this.close();
 
             if (this.options.completeSingle && data.list.length == 1)
@@ -106,7 +109,7 @@ THE SOFTWARE.
                 this.showWidget(data);
         },
 
-        showWidget: function(data) {
+        showWidget: function (data) {
             this.widget = new Widget(this, data);
             CodeMirror.signal(data, "shown");
 
@@ -114,9 +117,9 @@ THE SOFTWARE.
             var closeOn = this.options.closeCharacters;
             var startPos = this.cm.getCursor(), startLen = this.cm.getLine(startPos.line).length;
 
-            var requestAnimationFrame = window.requestAnimationFrame || function(fn) {
-                return setTimeout(fn, 1000/60);
-            };
+            var requestAnimationFrame = window.requestAnimationFrame || function (fn) {
+                    return setTimeout(fn, 1000 / 60);
+                };
             var cancelAnimationFrame = window.cancelAnimationFrame || clearTimeout;
 
             function done() {
@@ -132,8 +135,11 @@ THE SOFTWARE.
                 var myTick = ++tick;
                 if (data) CodeMirror.signal(data, "update");
                 retrieveHints(completion.options.hint, completion.cm, completion.options,
-                    function(d) { finishUpdate(d, myTick); });
+                    function (d) {
+                        finishUpdate(d, myTick);
+                    });
             }
+
             function finishUpdate(data_, myTick) {
                 if (tick != myTick) return;
                 data = data_;
@@ -164,11 +170,12 @@ THE SOFTWARE.
                     if (completion.widget) completion.widget.disable();
                 }
             }
+
             this.cm.on("cursorActivity", activity);
             this.onClose = done;
         },
 
-        buildOptions: function(options) {
+        buildOptions: function (options) {
             var editor = this.cm.options.hintOptions;
             var out = {};
             for (var prop in defaultOptions) out[prop] = defaultOptions[prop];
@@ -187,22 +194,37 @@ THE SOFTWARE.
 
     function buildKeyMap(completion, handle) {
         var baseMap = {
-            Up: function() {handle.moveFocus(-1);},
-            Down: function() {handle.moveFocus(1);},
-            PageUp: function() {handle.moveFocus(-handle.menuSize() + 1, true);},
-            PageDown: function() {handle.moveFocus(handle.menuSize() - 1, true);},
-            Home: function() {handle.setFocus(0);},
-            End: function() {handle.setFocus(handle.length - 1);},
+            Up: function () {
+                handle.moveFocus(-1);
+            },
+            Down: function () {
+                handle.moveFocus(1);
+            },
+            PageUp: function () {
+                handle.moveFocus(-handle.menuSize() + 1, true);
+            },
+            PageDown: function () {
+                handle.moveFocus(handle.menuSize() - 1, true);
+            },
+            Home: function () {
+                handle.setFocus(0);
+            },
+            End: function () {
+                handle.setFocus(handle.length - 1);
+            },
             Enter: handle.pick,
             Tab: handle.pick,
             Esc: handle.close
         };
         var custom = completion.options.customKeys;
         var ourMap = custom ? {} : baseMap;
+
         function addBinding(key, val) {
             var bound;
             if (typeof val != "string")
-                bound = function(cm) { return val(cm, handle); };
+                bound = function (cm) {
+                    return val(cm, handle);
+                };
             // This mechanism is deprecated
             else if (baseMap.hasOwnProperty(val))
                 bound = baseMap[val];
@@ -210,6 +232,7 @@ THE SOFTWARE.
                 bound = val;
             ourMap[key] = bound;
         }
+
         if (custom)
             for (var key in custom) if (custom.hasOwnProperty(key))
                 addBinding(key, custom[key]);
@@ -283,23 +306,39 @@ THE SOFTWARE.
         }
 
         cm.addKeyMap(this.keyMap = buildKeyMap(completion, {
-            moveFocus: function(n, avoidWrap) { widget.changeActive(widget.selectedHint + n, avoidWrap); },
-            setFocus: function(n) { widget.changeActive(n); },
-            menuSize: function() { return widget.screenAmount(); },
+            moveFocus: function (n, avoidWrap) {
+                widget.changeActive(widget.selectedHint + n, avoidWrap);
+            },
+            setFocus: function (n) {
+                widget.changeActive(n);
+            },
+            menuSize: function () {
+                return widget.screenAmount();
+            },
             length: completions.length,
-            close: function() { completion.close(); },
-            pick: function() { widget.pick(); },
+            close: function () {
+                completion.close();
+            },
+            pick: function () {
+                widget.pick();
+            },
             data: data
         }));
 
         if (completion.options.closeOnUnfocus) {
             var closingOnBlur;
-            cm.on("blur", this.onBlur = function() { closingOnBlur = setTimeout(function() { completion.close(); }, 100); });
-            cm.on("focus", this.onFocus = function() { clearTimeout(closingOnBlur); });
+            cm.on("blur", this.onBlur = function () {
+                closingOnBlur = setTimeout(function () {
+                    completion.close();
+                }, 100);
+            });
+            cm.on("focus", this.onFocus = function () {
+                clearTimeout(closingOnBlur);
+            });
         }
 
         var startScroll = cm.getScrollInfo();
-        cm.on("scroll", this.onScroll = function() {
+        cm.on("scroll", this.onScroll = function () {
             var curScroll = cm.getScrollInfo(), editor = cm.getWrapperElement().getBoundingClientRect();
             var newTop = top + startScroll.top - curScroll.top;
             var point = newTop - (window.pageYOffset || (document.documentElement || document.body).scrollTop);
@@ -309,12 +348,15 @@ THE SOFTWARE.
             hints.style.left = (left + startScroll.left - curScroll.left) + "px";
         });
 
-        CodeMirror.on(hints, "dblclick", function(e) {
+        CodeMirror.on(hints, "dblclick", function (e) {
             var t = getHintElement(hints, e.target || e.srcElement);
-            if (t && t.hintId != null) {widget.changeActive(t.hintId); widget.pick();}
+            if (t && t.hintId != null) {
+                widget.changeActive(t.hintId);
+                widget.pick();
+            }
         });
 
-        CodeMirror.on(hints, "click", function(e) {
+        CodeMirror.on(hints, "click", function (e) {
             var t = getHintElement(hints, e.target || e.srcElement);
             if (t && t.hintId != null) {
                 widget.changeActive(t.hintId);
@@ -322,8 +364,10 @@ THE SOFTWARE.
             }
         });
 
-        CodeMirror.on(hints, "mousedown", function() {
-            setTimeout(function(){cm.focus();}, 20);
+        CodeMirror.on(hints, "mousedown", function () {
+            setTimeout(function () {
+                cm.focus();
+            }, 20);
         });
 
         CodeMirror.signal(data, "select", completions[0], hints.firstChild);
@@ -331,7 +375,7 @@ THE SOFTWARE.
     }
 
     Widget.prototype = {
-        close: function() {
+        close: function () {
             if (this.completion.widget != this) return;
             this.completion.widget = null;
             this.hints.parentNode.removeChild(this.hints);
@@ -345,22 +389,26 @@ THE SOFTWARE.
             cm.off("scroll", this.onScroll);
         },
 
-        disable: function() {
+        disable: function () {
             this.completion.cm.removeKeyMap(this.keyMap);
             var widget = this;
-            this.keyMap = {Enter: function() { widget.picked = true; }};
+            this.keyMap = {
+                Enter: function () {
+                    widget.picked = true;
+                }
+            };
             this.completion.cm.addKeyMap(this.keyMap);
         },
 
-        pick: function() {
+        pick: function () {
             this.completion.pick(this.data, this.selectedHint);
         },
 
-        changeActive: function(i, avoidWrap) {
+        changeActive: function (i, avoidWrap) {
             if (i >= this.data.list.length)
                 i = avoidWrap ? this.data.list.length - 1 : 0;
             else if (i < 0)
-                i = avoidWrap ? 0  : this.data.list.length - 1;
+                i = avoidWrap ? 0 : this.data.list.length - 1;
             if (this.selectedHint == i) return;
             var node = this.hints.childNodes[this.selectedHint];
             node.className = node.className.replace(" " + ACTIVE_HINT_ELEMENT_CLASS, "");
@@ -373,12 +421,12 @@ THE SOFTWARE.
             CodeMirror.signal(this.data, "select", this.data.list[this.selectedHint], node);
         },
 
-        screenAmount: function() {
+        screenAmount: function () {
             return Math.floor(this.hints.clientHeight / this.hints.firstChild.offsetHeight) || 1;
         }
     };
 
-    CodeMirror.registerHelper("hint", "auto", function(cm, options) {
+    CodeMirror.registerHelper("hint", "auto", function (cm, options) {
         var helpers = cm.getHelpers(cm.getCursor(), "hint"), words;
         if (helpers.length) {
             for (var i = 0; i < helpers.length; i++) {
@@ -392,7 +440,7 @@ THE SOFTWARE.
         }
     });
 
-    CodeMirror.registerHelper("hint", "fromList", function(cm, options) {
+    CodeMirror.registerHelper("hint", "fromList", function (cm, options) {
         var cur = cm.getCursor(), token = cm.getTokenAt(cur);
         var found = [];
         for (var i = 0; i < options.words.length; i++) {
@@ -410,7 +458,7 @@ THE SOFTWARE.
 
     var WORD = /[\w$]+/g, RANGE = 500;
 
-    CodeMirror.registerHelper("hint", "anyword", function(editor, options) {
+    CodeMirror.registerHelper("hint", "anyword", function (editor, options) {
         var word = options && options.word || WORD;
         var range = options && options.range || RANGE;
         var cur = editor.getCursor(), curLine = editor.getLine(cur.line);
@@ -420,6 +468,7 @@ THE SOFTWARE.
         var curWord = start != end && curLine.slice(start, end);
 
         var list = [], seen = {};
+
         function scan(dir) {
             var line = cur.line, end = Math.min(Math.max(line + dir * range, editor.firstLine()), editor.lastLine()) + dir;
             for (; line != end; line += dir) {
@@ -433,6 +482,7 @@ THE SOFTWARE.
                 }
             }
         }
+
         scan(-1);
         scan(1);
         return {list: list, from: CodeMirror.Pos(cur.line, start), to: CodeMirror.Pos(cur.line, end)};

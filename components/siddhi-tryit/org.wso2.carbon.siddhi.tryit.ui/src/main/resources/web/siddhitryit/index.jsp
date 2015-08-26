@@ -70,12 +70,12 @@
                               id="executionPlanId"
                               style="margin-top:10px;"
                               onblur="window.queryEditor.save()"><%=EXECUTION_PLAN_BASIC_TEMPLATE +
-                                                                    EXECUTION_PLAN_SAMPLE%></textarea>
+                            EXECUTION_PLAN_SAMPLE%></textarea>
                     </td>
                     <td>
                         <fmt:message key="begin.time"/>&nbsp<input type="text" name="datetime"
-                                                              id="dateTimeID"
-                                                              value="<%=dataFormat.format(date)%>">
+                                                                   id="dateTimeID"
+                                                                   value="<%=dataFormat.format(date)%>">
                         <input type="button" value="Submit"
                                onclick="sendAjaxRequestToSiddhiProcessor()"/>
                         <br>

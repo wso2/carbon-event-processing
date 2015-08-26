@@ -22,13 +22,13 @@ CodeMirror.defineMode("sql", function (config, parserConfig) {
     "use strict";
 
     var client = parserConfig.client || {},
-        atoms = parserConfig.atoms || {"false":true, "true":true, "null":true},
+        atoms = parserConfig.atoms || {"false": true, "true": true, "null": true},
         builtin = parserConfig.builtin || {},
         keywords = parserConfig.keywords || {},
         operatorChars = parserConfig.operatorChars || /^[*+\-%<>!=&|~^]/,
         support = parserConfig.support || {},
         hooks = parserConfig.hooks || {},
-        dateSQL = parserConfig.dateSQL || {"date":true, "time":true, "timestamp":true};
+        dateSQL = parserConfig.dateSQL || {"date": true, "time": true, "timestamp": true};
 
     function tokenBase(stream, state) {
         var ch = stream.next();
@@ -69,7 +69,8 @@ CodeMirror.defineMode("sql", function (config, parserConfig) {
                 return "number";
             }
         } else {
-            stream.eatWhile(/^[_\-\w\d]/);    /* Character '-' will also be eaten, to prevent the highlight happening in keywords being embedded in non-keyword strings. For example, 'all' in 'all-nonkeyword' */
+            stream.eatWhile(/^[_\-\w\d]/);
+            /* Character '-' will also be eaten, to prevent the highlight happening in keywords being embedded in non-keyword strings. For example, 'all' in 'all-nonkeyword' */
             var word = stream.current().toLowerCase();         // Added toLowerCase() to highlight keywords in a case insensitive manner.
 
             if (dateSQL.hasOwnProperty(word)) return "number";
@@ -114,10 +115,10 @@ CodeMirror.defineMode("sql", function (config, parserConfig) {
 
     function pushContext(stream, state, type) {
         state.context = {
-            prev:state.context,
-            indent:stream.indentation(),
-            col:stream.column(),
-            type:type
+            prev: state.context,
+            indent: stream.indentation(),
+            col: stream.column(),
+            type: type
         };
     }
 
@@ -127,11 +128,11 @@ CodeMirror.defineMode("sql", function (config, parserConfig) {
     }
 
     return {
-        startState:function () {
-            return {tokenize:tokenBase, context:null};
+        startState: function () {
+            return {tokenize: tokenBase, context: null};
         },
 
-        token:function (stream, state) {
+        token: function (stream, state) {
             if (stream.sol()) {
                 if (state.context && state.context.align == null)
                     state.context.align = false;
@@ -154,7 +155,7 @@ CodeMirror.defineMode("sql", function (config, parserConfig) {
             return style;
         },
 
-        indent:function (state, textAfter) {
+        indent: function (state, textAfter) {
             var cx = state.context;
             if (!cx) return CodeMirror.Pass;
             var closing = textAfter.charAt(0) == cx.type;
@@ -245,14 +246,14 @@ CodeMirror.defineMode("sql", function (config, parserConfig) {
 
     // A generic SQL Mode. It's not a standard, it just try to support what is generally supported
     CodeMirror.defineMIME(MIME_TYPE_SIDDHI_QL, {
-        name:"sql",
-        keywords:set(sqlKeywords),
-        builtin:set(builtIn),
-        atoms:set(atoms),
-        operatorChars:/^[*+%<>!=/]/,
-        dateSQL:set(dateSQL),
-        support:set("doubleQuote "),
-        allSqlSuggestions:set(allSqlSuggestions)
+        name: "sql",
+        keywords: set(sqlKeywords),
+        builtin: set(builtIn),
+        atoms: set(atoms),
+        operatorChars: /^[*+%<>!=/]/,
+        dateSQL: set(dateSQL),
+        support: set("doubleQuote "),
+        allSqlSuggestions: set(allSqlSuggestions)
     });
 }());
 
