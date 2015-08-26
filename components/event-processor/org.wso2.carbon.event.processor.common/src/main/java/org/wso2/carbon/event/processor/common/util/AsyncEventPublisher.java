@@ -37,6 +37,7 @@ import org.wso2.carbon.event.processor.manager.commons.utils.HostAndPort;
 import org.wso2.carbon.event.processor.manager.commons.utils.Utils;
 import org.wso2.carbon.event.processor.manager.core.config.DistributedConfiguration;
 import org.wso2.siddhi.query.api.definition.StreamDefinition;
+import org.wso2.carbon.event.processor.manager.commons.transport.client.ConnectionFailureHandler;
 
 import java.io.IOException;
 import java.net.SocketException;
@@ -50,7 +51,7 @@ import java.util.concurrent.Executors;
  * discover and connect to the endpoint(i.e. Storm Receiver/CEP Publisher) to
  * send events by talking to "Storm Management" service using EndpointConnectionCreator.
  */
-public class AsyncEventPublisher implements EventHandler<AsynchronousEventBuffer.DataHolder> {
+public class AsyncEventPublisher implements EventHandler<AsynchronousEventBuffer.DataHolder>, ConnectionFailureHandler {
     public enum DestinationType {STORM_RECEIVER, CEP_PUBLISHER}
 
     private transient Logger log = Logger.getLogger(AsyncEventPublisher.class);
@@ -107,7 +108,7 @@ public class AsyncEventPublisher implements EventHandler<AsynchronousEventBuffer
     /**
      * Initialize and try to make a connection with remote endpoint
      *
-     * @param sync is this is set to true returns only after obtaining a connection to the remote endpoint. Otherwise initialization happens on a newly spawned
+     * @param sync if set to true returns only after obtaining a connection to the remote endpoint. Otherwise initialization happens on a newly spawned
      *             thread and this method returns immediately.
      */
     public void initializeConnection(boolean sync) {
@@ -164,19 +165,15 @@ public class AsyncEventPublisher implements EventHandler<AsynchronousEventBuffer
                     }
                 }
                 Thread.sleep(stormDeploymentConfig.getTransportReconnectInterval());
-            } catch (InterruptedException e) {
-                //ignore
-            }
+            } catch (InterruptedException e) {}
         }
 
         // TODO : comment on message lost of the last batch
         try {
             tcpEventPublisher.sendEvent(dataHolder.getStreamId(), dataHolder.getTimestamp(), (Object[]) dataHolder.getData(), endOfBatch);
             publishThroughputProbe.update();
-
         } catch (IOException e) {
-            log.error(logPrefix + "Error while trying to send event to " + destinationTypeString + " at " +
-                    tcpEventPublisher.getHostUrl(), e);
+            log.error(logPrefix + "Error while trying to send event to " + destinationTypeString + " at " + tcpEventPublisher.getHostUrl(), e);
             reconnect();
             onEvent(dataHolder, sequence, endOfBatch);
         }
@@ -188,17 +185,17 @@ public class AsyncEventPublisher implements EventHandler<AsynchronousEventBuffer
     private void reconnect() {
         String destinationHostPort = tcpEventPublisher.getHostUrl();
         resetTCPEventPublisher();
-
         // Retrying to connect to the existing endpoint.
         tcpEventPublisher = endpointConnectionCreator.connectToEndpoint(destinationHostPort, 3);
+        // Initialize connection from the beginning if can't connect to the existing endpoint
         if (tcpEventPublisher == null) {
-            log.error(logPrefix + "Failed to connect to existing " + destinationTypeString + " at " + destinationHostPort + ". Reinitializing");
+            log.error(logPrefix + "Failed to connect to existing " + destinationTypeString + " at " + destinationHostPort + ". Reinitializing connection process");
             initializeConnection(true);
         }
     }
 
     private void resetTCPEventPublisher() {
-        tcpEventPublisher.shutdown();
+        tcpEventPublisher.terminate();
         tcpEventPublisher = null;
     }
 
@@ -214,6 +211,23 @@ public class AsyncEventPublisher implements EventHandler<AsynchronousEventBuffer
             shutdown = true;
         }
         eventSendBuffer.terminate();
+        if (tcpEventPublisher != null){
+            tcpEventPublisher.shutdown();
+        }
+
+    }
+
+    @Override
+    public void onConnectionFail(Exception e){
+        if (log.isDebugEnabled()){
+            log.debug("Pinging failed to " + tcpEventPublisher.getHostUrl() + ". Trying to re-connect.");
+        }
+
+        if (!shutdown){
+            reconnect();
+        }else{
+            log.info("Not trying to reconnect to " + tcpEventPublisher.getHostUrl() + " because event publisher is shutdown");
+        }
     }
 
     /**
@@ -305,24 +319,29 @@ public class AsyncEventPublisher implements EventHandler<AsynchronousEventBuffer
          * @param retryAttempts    maximum number of retry attempts. 0 means retry for ever.
          * @return Returns TCPEvent publisher to talk to endpoint or null if reaches maximum number of attempts without succeeding
          */
-        public TCPEventPublisher connectToEndpoint(String endpointHostPort, int retryAttempts) {
+        public TCPEventPublisher connectToEndpoint(String endpoint, int retryAttempts) {
             TCPEventPublisher tcpEventPublisher = null;
             int attemptCount = 0;
-            String endpoint = endpointHostPort;
             do {
+                synchronized (AsyncEventPublisher.this) {
+                    if (shutdown) {
+                        log.info(logPrefix + "Stopping attempting to connect to endpoint " + endpoint + ". Async event publisher is shutdown");
+                        return null;
+                    }
+                }
+
                 try {
                     TCPEventPublisherConfig publisherConfigs = new TCPEventPublisherConfig();
-                    publisherConfigs.setBufferSize(stormDeploymentConfig.getTcpEventPublisherOutputQueueSize());
                     publisherConfigs.setDefaultCharset(stormDeploymentConfig.getTcpEventPublisherCharSet());
                     publisherConfigs.setTcpSendBufferSize(stormDeploymentConfig.getTcpEventPublisherSendBufferSize());
-                    boolean isSync = stormDeploymentConfig.getTcpEventPublisherMode().equals("blocking") ? true : false;
 
-                    tcpEventPublisher = new TCPEventPublisher(endpoint, publisherConfigs, isSync, connectionCallback);
+                    tcpEventPublisher = new TCPEventPublisher(endpoint, publisherConfigs, true, connectionCallback);
                     StringBuilder streamsIDs = new StringBuilder();
                     for (StreamDefinition siddhiStreamDefinition : streams) {
                         tcpEventPublisher.addStreamDefinition(siddhiStreamDefinition);
                         streamsIDs.append(siddhiStreamDefinition.getId() + ",");
                     }
+                    tcpEventPublisher.registerConnectionFailureHandler(AsyncEventPublisher.this);
                     log.info(logPrefix + "Connected to " + destinationTypeString + " at " + endpoint + " for the Stream(s) " + streamsIDs.toString());
                 } catch (IOException e) {
                     log.info(logPrefix + "Cannot connect to " + destinationTypeString + " at " + endpoint + ", " + e.getMessage());
@@ -331,23 +350,16 @@ public class AsyncEventPublisher implements EventHandler<AsynchronousEventBuffer
                     }
                 }
 
-                synchronized (AsyncEventPublisher.this) {
-                    if (shutdown) {
-                        log.info(logPrefix + "Stopping attempting to connect to endpoint " + endpoint + ". Async event publisher is shutdown");
-                        return null;
-                    }
-                }
-
                 if (tcpEventPublisher == null) {
                     ++attemptCount;
                     if (retryAttempts > 0 && (attemptCount > retryAttempts)) {
                         return null;
                     }
+
                     try {
                         log.info(logPrefix + "Retrying(" + attemptCount + ") to connect to " + destinationTypeString + " at " + endpoint + " in "
                                 + stormDeploymentConfig.getTransportReconnectInterval() + "ms");
                         Thread.sleep(stormDeploymentConfig.getTransportReconnectInterval());
-                        endpoint = getEndpointFromManagerService();
                     } catch (InterruptedException e1) {
                         Thread.currentThread().interrupt();
                     }
@@ -408,7 +420,6 @@ class AsynchronousEventBuffer<Type> {
     }
 
     public void addEvent(Type data, long timestamp, String streamId) {
-        //TODO : Make this non blocking. Otherwise this bolt will get stuck and will cause the storm to restart the worker
         // due to heart beat miss. Use try next.
         long sequenceNo = ringBuffer.next();
         try {
@@ -454,7 +465,7 @@ class AsynchronousEventBuffer<Type> {
             this.timestamp = timestamp;
         }
 
-
     }
 }
+
 
