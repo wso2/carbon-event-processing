@@ -44,10 +44,8 @@ import java.util.*;
  */
 public class EventSimulatorDataSourceInfo {
 
-    private static Map<String,Map<String,String>> dbTypeMappings;
-
+    private static Map<String, Map<String, String>> dbTypeMappings;
     private static final Log log = LogFactory.getLog(EventSimulatorDataSourceInfo.class);
-
 
     /**
      * Populate xml values to Jaxb mapping classes
@@ -55,48 +53,50 @@ public class EventSimulatorDataSourceInfo {
     private static void populateJaxbMappings() throws AxisFault {
 
         JAXBContext jaxbContext;
-        dbTypeMappings =new HashMap<String, Map<String, String>>();
+        dbTypeMappings = new HashMap<String, Map<String, String>>();
         try {
             jaxbContext = JAXBContext.newInstance(Mappings.class);
             Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
-            String path = CarbonUtils.getCarbonConfigDirPath() + File.separator + EventSimulatorDataSourceConstants.GENERIC_RDBMS_FILE_SPECIFIC_PATH
+            String path = CarbonUtils.getCarbonConfigDirPath() + File.separator
+                    + EventSimulatorDataSourceConstants.GENERIC_RDBMS_FILE_SPECIFIC_PATH
                     + EventSimulatorDataSourceConstants.GENERIC_RDBMS_FILE_NAME;
             File configFile = new File(path);
             if (!configFile.exists()) {
-                throw new AxisFault("The " + EventSimulatorDataSourceConstants.GENERIC_RDBMS_FILE_NAME + " can not found in " + path);
+                throw new AxisFault("The " + EventSimulatorDataSourceConstants.GENERIC_RDBMS_FILE_NAME
+                        + " can not found in " + path);
             }
             Mappings mappings = (Mappings) unmarshaller.unmarshal(configFile);
-            Map<String,Mapping> dbMap=new HashMap<String, Mapping>();
-            List<Mapping> mappingList=mappings.getMapping();
+            Map<String, Mapping> dbMap = new HashMap<String, Mapping>();
+            List<Mapping> mappingList = mappings.getMapping();
 
-            for(Mapping mapping : mappingList){
-                dbMap.put(mapping.getDb(),mapping);
+            for (Mapping mapping : mappingList) {
+                dbMap.put(mapping.getDb(), mapping);
             }
 
             //Constructs a map to contain all db wise elements and there values
-            for(Mapping mapping : mappingList){
-                if(mapping.getDb()!=null){
+            for (Mapping mapping : mappingList) {
+                if (mapping.getDb() != null) {
                     Mapping defaultMapping = dbMap.get(null);
                     Mapping specificMapping = dbMap.get(mapping.getDb());
                     List<Element> defaultElementList = defaultMapping.getElements().getElementList();
                     Map<String, String> elementMappings = new HashMap<String, String>();
-                    for(Element element : defaultElementList){
+                    for (Element element : defaultElementList) {
                         //Check if the mapping is present in the specific mapping
                         Element elementDetails = null;
-                        if( specificMapping.getElements().getElementList() != null){
+                        if (specificMapping.getElements().getElementList() != null) {
                             elementDetails = specificMapping.getElements().getType(element.getKey());
                         }
                         //If a specific mapping is not found then use the default mapping
-                        if(elementDetails == null){
+                        if (elementDetails == null) {
                             elementDetails = defaultMapping.getElements().getType(element.getKey());
                         }
-                        elementMappings.put(elementDetails.getKey(),elementDetails.getValue());
+                        elementMappings.put(elementDetails.getKey(), elementDetails.getValue());
                     }
                     dbTypeMappings.put(mapping.getDb(), elementMappings);
                 }
             }
         } catch (JAXBException e) {
-            throw new AxisFault(e.getMessage(),e);
+            throw new AxisFault(e.getMessage(), e);
         }
     }
 
@@ -134,7 +134,7 @@ public class EventSimulatorDataSourceInfo {
                     Map<String, String> elementMappings = dbTypeMappings.get(dbName.toLowerCase());
 
                     String isTableExistQuery = elementMappings.get("isTableExist").replace(
-                            EventSimulatorDataSourceConstants.GENERIC_RDBMS_ATTRIBUTE_TABLE_NAME,tableName);
+                            EventSimulatorDataSourceConstants.GENERIC_RDBMS_ATTRIBUTE_TABLE_NAME, tableName);
                     executionInfo.setPreparedTableExistenceCheckStatement(isTableExistQuery);
 
                     try {
@@ -145,10 +145,10 @@ public class EventSimulatorDataSourceInfo {
                         boolean addedFirstColumn = false;
                         JSONArray attributeColumnMappingArray = tableAndAttributeMappingJsonObj.getJSONArray(
                                 EventSimulatorConstant.DATABASE_COLUMNS_AND_STREAM_ATTRIBUTE_INFO);
-                        for (int i=0; i<attributeColumnMappingArray.length();i++){
+                        for (int i = 0; i < attributeColumnMappingArray.length(); i++) {
                             JSONObject attributeAndMappingColumn = attributeColumnMappingArray.getJSONObject(i);
-                            if(!getColumnsQuery.contains(attributeAndMappingColumn.getString(EventSimulatorConstant.COLUMN_NAME))){
-                                if(addedFirstColumn){
+                            if (!getColumnsQuery.contains(attributeAndMappingColumn.getString(EventSimulatorConstant.COLUMN_NAME))) {
+                                if (addedFirstColumn) {
                                     getColumnsQuery = getColumnsQuery + ",";
                                 }
                                 addedFirstColumn = true;
@@ -158,7 +158,7 @@ public class EventSimulatorDataSourceInfo {
                         }
 
                         String columnsDataTypeQuery = elementMappings.get("selectAllColumnsDataTypeInTable").replace(
-                                EventSimulatorDataSourceConstants.GENERIC_RDBMS_ATTRIBUTE_TABLE_NAME,tableName);
+                                EventSimulatorDataSourceConstants.GENERIC_RDBMS_ATTRIBUTE_TABLE_NAME, tableName);
                         String selectQuery = elementMappings.get("selectFromTable").replace(
                                 EventSimulatorDataSourceConstants.GENERIC_RDBMS_ATTRIBUTE_TABLE_NAME, tableName).replace(
                                 EventSimulatorDataSourceConstants.GENERIC_RDBMS_ATTRIBUTE_COLUMNS, getColumnsQuery);
@@ -166,32 +166,33 @@ public class EventSimulatorDataSourceInfo {
                         executionInfo.setPreparedCheckTableColomnsDataTypeStatement(columnsDataTypeQuery);
                         executionInfo.setPreparedSelectStatement(selectQuery);
 
-                        int columnAndDataTypeCount= 0;
+                        int columnAndDataTypeCount = 0;
 
                         columnsDataTypeQuery = executionInfo.getPreparedCheckTableColomnsDataTypeStatement();
                         //to check validity of entered columns
                         ResultSet rs = stmt.executeQuery(columnsDataTypeQuery);
-                        while(rs.next()){
+                        while (rs.next()) {
                             String tableVariable = rs.getString(1);
-                            for(int j=0; j<attributeColumnMappingArray.length();j++){
+                            for (int j = 0; j < attributeColumnMappingArray.length(); j++) {
                                 JSONObject mappingAttributeAndColumn = attributeColumnMappingArray.getJSONObject(j);
-                                if(mappingAttributeAndColumn.getString(EventSimulatorConstant.COLUMN_NAME).equalsIgnoreCase(tableVariable)){
+                                if (mappingAttributeAndColumn.getString(EventSimulatorConstant.COLUMN_NAME)
+                                        .equalsIgnoreCase(tableVariable)) {
                                     columnAndDataTypeCount++;
                                 }
                             }
                         }
 
-                        if(columnAndDataTypeCount < attributeColumnMappingArray.length()){
+                        if (columnAndDataTypeCount < attributeColumnMappingArray.length()) {
                             log.error("Entered Column name(s) are nt valid in " + tableName);
                             throw new AxisFault("Entered Column name(s) are nt valid in " + tableName);
                         }
 
                         rs = stmt.executeQuery(executionInfo.getPreparedSelectStatement());
-                        if(!rs.next()){
+                        if (!rs.next()) {
                             log.error(tableName + " table does not contain data");
                             throw new AxisFault(tableName + " table does not contain data");
                         }
-                        cleanupConnections(stmt,con);
+                        cleanupConnections(stmt, con);
                     } catch (SQLException e) {
                         log.error(tableName + " table does not exist or no data", e);
                         throw new AxisFault(tableName + " table does not exist or no data", e);
@@ -215,17 +216,10 @@ public class EventSimulatorDataSourceInfo {
     }
 
     /**
-     * Replace attribute values with target build queries
+     * Closing connections
+     * @param stmt          object used for executing a static SQL statement
+     * @param connection    database connection
      */
-    /*
-    public String constructQuery(String tableName, String query, StringBuilder column_types, StringBuilder columns, StringBuilder values, StringBuilder column_values, StringBuilder condition){
-
-        if(query.contains(EventSimulatoRDBMSDataSourceConstants.ADAPTOR_GENERIC_RDBMS_ATTRIBUTE_TABLE_NAME)){
-            query = query.replace(EventSimulatoRDBMSDataSourceConstants.ADAPTOR_GENERIC_RDBMS_ATTRIBUTE_TABLE_NAME,tableName);
-        }
-        return query;
-    }*/
-
     private static void cleanupConnections(Statement stmt, Connection connection) {
         if (stmt != null) {
             try {

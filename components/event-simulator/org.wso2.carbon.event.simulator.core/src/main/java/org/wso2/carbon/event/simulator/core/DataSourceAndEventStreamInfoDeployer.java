@@ -16,7 +16,6 @@
 
 package org.wso2.carbon.event.simulator.core;
 
-
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.deployment.AbstractDeployer;
 import org.apache.axis2.deployment.DeploymentException;
@@ -50,7 +49,8 @@ public class DataSourceAndEventStreamInfoDeployer extends AbstractDeployer {
             processDeploy(deploymentFileData);
 
         } catch (Exception e) {
-            throw new DeploymentException("XML file not deployed and in inactive state :  " + new File(path).getName(), e);
+            throw new DeploymentException("XML file not deployed and in inactive state :  " + new File(path).getName(),
+                    e);
         }
 
     }
@@ -65,25 +65,24 @@ public class DataSourceAndEventStreamInfoDeployer extends AbstractDeployer {
 
     }
 
-    public void processDeploy(DeploymentFileData deploymentFileData)
-            throws DeploymentException {
+    public void processDeploy(DeploymentFileData deploymentFileData) throws DeploymentException {
 
         File XMLFile = deploymentFileData.getFile();
         CarbonEventSimulator eventSimulator = EventSimulatorValueHolder.getEventSimulator();
         DataSourceTableAndStreamInfo dataSourceTableAndStreamInfo = new DataSourceTableAndStreamInfo();
 
-
         dataSourceTableAndStreamInfo.setFileName(XMLFile.getName());
         dataSourceTableAndStreamInfo.setFilePath(XMLFile.getAbsolutePath());
-        dataSourceTableAndStreamInfo = getEventMappingConfiguration(XMLFile.getName(),XMLFile.getAbsolutePath(), dataSourceTableAndStreamInfo);
-        if(dataSourceTableAndStreamInfo!=null){
+        dataSourceTableAndStreamInfo = getEventMappingConfiguration(XMLFile.getName(), XMLFile.getAbsolutePath(),
+                dataSourceTableAndStreamInfo);
+        if (dataSourceTableAndStreamInfo != null) {
             eventSimulator.addDataSourceTableAndStreamInfo(dataSourceTableAndStreamInfo);
         }
 
-
     }
 
-    public DataSourceTableAndStreamInfo getEventMappingConfiguration(String fileName,String absolutePath, DataSourceTableAndStreamInfo dataSourceTableAndStreamInfo) {
+    public DataSourceTableAndStreamInfo getEventMappingConfiguration(String fileName, String absolutePath,
+            DataSourceTableAndStreamInfo dataSourceTableAndStreamInfo) {
 
         try {
             File xmlFile = new File(absolutePath);
@@ -93,27 +92,32 @@ public class DataSourceAndEventStreamInfoDeployer extends AbstractDeployer {
                 DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
                 Document doc = dBuilder.parse(xmlFile);
 
-
                 Element element = doc.getDocumentElement();
-                if(element.getAttribute("type").equalsIgnoreCase("database")){
+                if (element.getAttribute("type").equalsIgnoreCase("database")) {
                     dataSourceTableAndStreamInfo.setConfigurationName(element.getAttribute("name"));
-                    dataSourceTableAndStreamInfo.setDataSourceName(element.getElementsByTagName(EventSimulatorConstant.DATA_SOURCE_NAME).item(0).getTextContent());
-                    dataSourceTableAndStreamInfo.setTableName(element.getElementsByTagName(EventSimulatorConstant.TABLE_NAME).item(0).getTextContent());
-                    dataSourceTableAndStreamInfo.setEventStreamID(element.getElementsByTagName(EventSimulatorConstant.EVENT_STREAM_ID).item(0).getTextContent());
-                    dataSourceTableAndStreamInfo.setDelayBetweenEventsInMilies(Long.parseLong(element.getElementsByTagName(EventSimulatorConstant.DELAY_BETWEEN_EVENTS_IN_MILIES).item(0).getTextContent()));
+                    dataSourceTableAndStreamInfo.setDataSourceName(
+                            element.getElementsByTagName(EventSimulatorConstant.DATA_SOURCE_NAME).item(0)
+                                    .getTextContent());
+                    dataSourceTableAndStreamInfo.setTableName(
+                            element.getElementsByTagName(EventSimulatorConstant.TABLE_NAME).item(0).getTextContent());
+                    dataSourceTableAndStreamInfo.setEventStreamID(
+                            element.getElementsByTagName(EventSimulatorConstant.EVENT_STREAM_ID).item(0)
+                                    .getTextContent());
+                    dataSourceTableAndStreamInfo.setDelayBetweenEventsInMilies(Long.parseLong(
+                            element.getElementsByTagName(EventSimulatorConstant.DELAY_BETWEEN_EVENTS_IN_MILIES).item(0)
+                                    .getTextContent()));
                     NodeList columnMappings = element.getElementsByTagName("columnMapping");
-                    String dataSourceColumnsAndTypes [][] = new String[2][columnMappings.getLength()];
+                    String dataSourceColumnsAndTypes[][] = new String[2][columnMappings.getLength()];
 
-                    for(int i=0; i<columnMappings.getLength(); i++){
+                    for (int i = 0; i < columnMappings.getLength(); i++) {
                         dataSourceColumnsAndTypes[0][i] = columnMappings.item(i).getAttributes().item(0).getNodeValue();
                         dataSourceColumnsAndTypes[1][i] = columnMappings.item(i).getAttributes().item(1).getNodeValue();
                     }
                     dataSourceTableAndStreamInfo.setDataSourceColumnsAndTypes(dataSourceColumnsAndTypes);
 
-                }else{
+                } else {
                     return null;
                 }
-
 
             }
         } catch (Exception e) {
@@ -121,6 +125,5 @@ public class DataSourceAndEventStreamInfoDeployer extends AbstractDeployer {
         }
         return dataSourceTableAndStreamInfo;
     }
-
 
 }
