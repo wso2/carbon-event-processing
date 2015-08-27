@@ -456,7 +456,12 @@ public class CarbonEventProcessorService implements EventProcessorService {
         String status;
 
         for (String executionPlanName: executionPlanNames){
-            status = executionPlanStatusHolderIMap.get(StormTopologyManager.getTopologyName(executionPlanName, tenantId)).getExecutionPlanStatus();
+            ExecutionPlanStatusHolder statusHolder = executionPlanStatusHolderIMap.get(StormTopologyManager.getTopologyName(executionPlanName, tenantId));
+            if(statusHolder == null) {
+                status = "Execution plan not deployed to a manager. Hence no status info available.";
+            } else {
+                status = statusHolder.getExecutionPlanStatus();
+            }
             executionPlanStatuses.put(executionPlanName,status);
         }
         return executionPlanStatuses;
