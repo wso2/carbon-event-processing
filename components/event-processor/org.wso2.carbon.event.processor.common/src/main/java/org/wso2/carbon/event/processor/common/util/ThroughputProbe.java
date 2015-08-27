@@ -68,7 +68,7 @@ public class ThroughputProbe extends TimerTask {
                         + " seconds. Throughput=" + formatter.format(throughput)
                         + " events/s.(Avg=" + formatter.format(accumulatedThroughput / sampleCount)
                         + " ,Max=" + formatter.format(maxThroughput)
-                        + " ,Min=" + formatter.format(minThroughput)
+                        + " ,Min=" + ((minThroughput == Double.MAX_VALUE) ? "0.0" : formatter.format(minThroughput))
                         + " ) TotalEvents=" + totalEventCount);
 
                 count = 0l;

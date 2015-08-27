@@ -255,8 +255,8 @@ public class EventReceiverSpout extends BaseRichSpout implements StreamCallback 
                     StormManagerService.Client client = new StormManagerService.Client(protocol);
                     client.registerStormReceiver(tenantId, executionPlanName, thisHostIp, listeningPort);
 
-                    log.info(logPrefix + "Successfully registered Event Receiver Spout for " + thisHostIp + ":" +
-                            listeningPort);
+                    log.info(logPrefix + "Successfully registered Event Receiver Spout for " + thisHostIp + ":" + listeningPort
+                            + " with manager service at " + endpoint.getHostName() + ":" + endpoint.getPort());
 
                     managerHost = endpoint.getHostName();
                     managerPort = endpoint.getPort();
