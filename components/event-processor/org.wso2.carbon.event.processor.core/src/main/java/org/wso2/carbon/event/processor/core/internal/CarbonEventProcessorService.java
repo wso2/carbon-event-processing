@@ -155,7 +155,8 @@ public class CarbonEventProcessorService implements EventProcessorService {
                 fileName = file.getFileName();
             }
             EventProcessorConfigurationFilesystemInvoker.delete(fileName);
-            EventProcessorConfigurationFilesystemInvoker.save(executionPlan, newExecutionPlanName, fileName);
+            EventProcessorConfigurationFilesystemInvoker.save(executionPlan, newExecutionPlanName,
+                    newExecutionPlanName + EventProcessorConstants.EP_CONFIG_FILE_EXTENSION_WITH_DOT);
         } else {
             throw new ExecutionPlanConfigurationException("Invalid configuration provided, No execution plan name.");
         }

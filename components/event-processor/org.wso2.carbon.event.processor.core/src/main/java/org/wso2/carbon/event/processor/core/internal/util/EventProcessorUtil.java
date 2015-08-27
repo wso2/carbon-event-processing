@@ -291,11 +291,12 @@ public class EventProcessorUtil {
             axisConfiguration = EventProcessorValueHolder.getConfigurationContext().
                     getServerConfigContext().getAxisConfiguration();
         } else {
-            ConfigurationContext configurationContext = EventProcessorValueHolder.getTenantConfig(PrivilegedCarbonContext.getThreadLocalCarbonContext().getTenantId());
+            int tenantId = PrivilegedCarbonContext.getThreadLocalCarbonContext().getTenantId();
+            ConfigurationContext configurationContext = EventProcessorValueHolder.getTenantConfig(tenantId);
             if(configurationContext != null){
                 axisConfiguration = configurationContext.getAxisConfiguration();
             }else{
-                throw new ExcecutionPlanRuntimeException("Tenant configuration not found");
+                throw new ExcecutionPlanRuntimeException("Tenant configuration not found for tenant id: " + tenantId);
             }
         }
         return axisConfiguration;

@@ -321,30 +321,34 @@ public class EventSimulatorAdminService extends AbstractAdmin {
     }
 
     public DataSourceTableAndStreamInfoDto[] getAllDataSourceTableAndStreamInfo() {
-
-
         EventSimulator eventSimulator = EventSimulatorAdminvalueHolder.getEventSimulator();
-
         try {
             List<DataSourceTableAndStreamInfo> DataSourceTableAndStreamInfoList = eventSimulator.getAllDataSourceInfo();
-
             if (DataSourceTableAndStreamInfoList != null) {
 
-                DataSourceTableAndStreamInfoDto[] DataSourceTableAndStreamInfoDtoArray = new DataSourceTableAndStreamInfoDto[DataSourceTableAndStreamInfoList.size()];
-
+                DataSourceTableAndStreamInfoDto[] DataSourceTableAndStreamInfoDtoArray = new DataSourceTableAndStreamInfoDto[DataSourceTableAndStreamInfoList
+                        .size()];
                 int index = 0;
+
                 for (DataSourceTableAndStreamInfo dataSourceTableAndStreamInfo : DataSourceTableAndStreamInfoList) {
 
                     DataSourceTableAndStreamInfoDtoArray[index] = new DataSourceTableAndStreamInfoDto();
-                    DataSourceTableAndStreamInfoDtoArray[index].setConfigurationName(dataSourceTableAndStreamInfo.getConfigurationName());
-                    DataSourceTableAndStreamInfoDtoArray[index].setDataSourceName(dataSourceTableAndStreamInfo.getDataSourceName());
-                    DataSourceTableAndStreamInfoDtoArray[index].setTableName(dataSourceTableAndStreamInfo.getTableName());
-                    DataSourceTableAndStreamInfoDtoArray[index].setEventStreamID(dataSourceTableAndStreamInfo.getEventStreamID());
-                    DataSourceTableAndStreamInfoDtoArray[index].setColumnNames(dataSourceTableAndStreamInfo.getDataSourceColumnsAndTypes()[0]);
-                    DataSourceTableAndStreamInfoDtoArray[index].setStreamAtrributeNames(dataSourceTableAndStreamInfo.getDataSourceColumnsAndTypes()[1]);
+                    DataSourceTableAndStreamInfoDtoArray[index]
+                            .setConfigurationName(dataSourceTableAndStreamInfo.getConfigurationName());
+                    DataSourceTableAndStreamInfoDtoArray[index]
+                            .setDataSourceName(dataSourceTableAndStreamInfo.getDataSourceName());
+                    DataSourceTableAndStreamInfoDtoArray[index]
+                            .setTableName(dataSourceTableAndStreamInfo.getTableName());
+                    DataSourceTableAndStreamInfoDtoArray[index]
+                            .setEventStreamID(dataSourceTableAndStreamInfo.getEventStreamID());
+                    DataSourceTableAndStreamInfoDtoArray[index]
+                            .setColumnNames(dataSourceTableAndStreamInfo.getDataSourceColumnsAndTypes()[0]);
+                    DataSourceTableAndStreamInfoDtoArray[index]
+                            .setStreamAtrributeNames(dataSourceTableAndStreamInfo.getDataSourceColumnsAndTypes()[1]);
                     DataSourceTableAndStreamInfoDtoArray[index].setFileName(dataSourceTableAndStreamInfo.getFileName());
                     DataSourceTableAndStreamInfoDtoArray[index].setFilePath(dataSourceTableAndStreamInfo.getFilePath());
-                    DataSourceTableAndStreamInfoDtoArray[index].setDelayBetweenEventsInMilies(dataSourceTableAndStreamInfo.getDelayBetweenEventsInMilies());
+                    DataSourceTableAndStreamInfoDtoArray[index].setDelayBetweenEventsInMilies(
+                            dataSourceTableAndStreamInfo.getDelayBetweenEventsInMilies());
 
                     index++;
                 }
