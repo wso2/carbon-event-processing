@@ -487,6 +487,11 @@ public class CarbonEventSimulator implements EventSimulator {
                 CSVFileInfo fileInfo = csvFileInfoMap.get(fileName);
                 String path = fileInfo.getFilePath();
                 long delayBetweenEventsInMilies = fileInfo.getDelayBetweenEventsInMilies();
+                if (delayBetweenEventsInMilies <= 0) {
+                    log.warn("Events will be sent continuously since the delay between events are set to "
+                            + delayBetweenEventsInMilies + "milliseconds");
+                    delayBetweenEventsInMilies = 0;
+                }
 
                 File file = new File(path);
                 FileInputStream fis = null;
@@ -513,7 +518,9 @@ public class CarbonEventSimulator implements EventSimulator {
                             event.setAttributeValues(attributeValueList);
 
                             sendEvent(event);
-                            Thread.sleep(delayBetweenEventsInMilies);
+                            if (delayBetweenEventsInMilies > 0) {
+                                Thread.sleep(delayBetweenEventsInMilies);
+                            }
                         } catch (Exception e) {
                             log.error("Error in row " + rowNumber + "-failed to create an event " + e);
                             rowNumber++;
@@ -807,6 +814,11 @@ public class CarbonEventSimulator implements EventSimulator {
                 dataSourceName = tableAndAttributeMappingJsonObj.getString(EventSimulatorConstant.DATA_SOURCE_NAME);
                 delayBetweenEventsInMilies = tableAndAttributeMappingJsonObj.getLong(
                         EventSimulatorConstant.DELAY_BETWEEN_EVENTS_IN_MILIES);
+                if (delayBetweenEventsInMilies <= 0) {
+                    log.warn("Events will be sent continuously since the delay between events are set to "
+                            + delayBetweenEventsInMilies + "milliseconds");
+                    delayBetweenEventsInMilies = 0;
+                }
                 try {
                     carbonDataSource = EventSimulatorValueHolder.getDataSourceService().getDataSource(dataSourceName);
                     datasource = (DataSource) carbonDataSource.getDSObject();
@@ -942,7 +954,9 @@ public class CarbonEventSimulator implements EventSimulator {
                     }
                     event.setAttributeValues(attributeValues);
                     sendEvent(event);
-                    Thread.sleep(delayBetweenEventsInMilies);
+                    if (delayBetweenEventsInMilies > 0) {
+                        Thread.sleep(delayBetweenEventsInMilies);
+                    }
                 }
             } catch (SQLException e) {
                 log.error("database exception occurred: " + e.getMessage(), e);
