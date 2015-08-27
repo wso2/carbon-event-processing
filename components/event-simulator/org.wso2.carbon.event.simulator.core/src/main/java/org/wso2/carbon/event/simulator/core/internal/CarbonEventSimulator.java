@@ -487,6 +487,11 @@ public class CarbonEventSimulator implements EventSimulator {
                 CSVFileInfo fileInfo = csvFileInfoMap.get(fileName);
                 String path = fileInfo.getFilePath();
                 long delayBetweenEventsInMilies = fileInfo.getDelayBetweenEventsInMilies();
+                if (delayBetweenEventsInMilies <= 0) {
+                    log.warn("Events will be sent continuously since the delay between events are set to "
+                            + delayBetweenEventsInMilies + "milliseconds");
+                    delayBetweenEventsInMilies = 0;
+                }
 
                 File file = new File(path);
                 FileInputStream fis = null;
@@ -513,7 +518,9 @@ public class CarbonEventSimulator implements EventSimulator {
                             event.setAttributeValues(attributeValueList);
 
                             sendEvent(event);
-                            Thread.sleep(delayBetweenEventsInMilies);
+                            if (delayBetweenEventsInMilies > 0) {
+                                Thread.sleep(delayBetweenEventsInMilies);
+                            }
                         } catch (Exception e) {
                             log.error("Error in row " + rowNumber + "-failed to create an event " + e);
                             rowNumber++;
@@ -549,11 +556,14 @@ public class CarbonEventSimulator implements EventSimulator {
 
         int tenantID = PrivilegedCarbonContext.getThreadLocalCarbonContext().getTenantId();
         if (tenantSpecificDataSourceInfoMap.containsKey(tenantID)) {
-            HashMap<String, DataSourceTableAndStreamInfo> dataSourceTableAndStreamInfoMap = tenantSpecificDataSourceInfoMap.get(tenantID);
-            dataSourceTableAndStreamInfoMap.put(dataSourceTableAndStreamInfo.getConfigurationName(), dataSourceTableAndStreamInfo);
+            HashMap<String, DataSourceTableAndStreamInfo> dataSourceTableAndStreamInfoMap = tenantSpecificDataSourceInfoMap.get(
+                    tenantID);
+            dataSourceTableAndStreamInfoMap.put(dataSourceTableAndStreamInfo.getConfigurationName(),
+                    dataSourceTableAndStreamInfo);
         } else {
             HashMap<String, DataSourceTableAndStreamInfo> dataSourceTableAndStreamInfoMap = new HashMap<String, DataSourceTableAndStreamInfo>();
-            dataSourceTableAndStreamInfoMap.put(dataSourceTableAndStreamInfo.getConfigurationName(), dataSourceTableAndStreamInfo);
+            dataSourceTableAndStreamInfoMap.put(dataSourceTableAndStreamInfo.getConfigurationName(),
+                    dataSourceTableAndStreamInfo);
             tenantSpecificDataSourceInfoMap.put(tenantID, dataSourceTableAndStreamInfoMap);
 
         }
@@ -563,7 +573,8 @@ public class CarbonEventSimulator implements EventSimulator {
     @Override
     public List<DataSourceTableAndStreamInfo> getAllDataSourceInfo() {
         int tenantID = PrivilegedCarbonContext.getThreadLocalCarbonContext().getTenantId();
-        HashMap<String, DataSourceTableAndStreamInfo> dataSourceTableAndStreamInfoMap = tenantSpecificDataSourceInfoMap.get(tenantID);
+        HashMap<String, DataSourceTableAndStreamInfo> dataSourceTableAndStreamInfoMap = tenantSpecificDataSourceInfoMap
+                .get(tenantID);
         if (dataSourceTableAndStreamInfoMap != null) {
             return new ArrayList<DataSourceTableAndStreamInfo>(dataSourceTableAndStreamInfoMap.values());
         } else {
@@ -573,7 +584,8 @@ public class CarbonEventSimulator implements EventSimulator {
     }
 
     @Override
-    public void createConfigurationXMLForDataSource(String tableAndAttributeMappingInfo, AxisConfiguration axisConfiguration) throws AxisFault {
+    public void createConfigurationXMLForDataSource(String tableAndAttributeMappingInfo,
+                                                    AxisConfiguration axisConfiguration) throws AxisFault {
 
         String repo = axisConfiguration.getRepository().getPath();
         String path = repo + EventSimulatorConstant.DATA_SOURCE_DEPLOY_DIRECTORY_PATH;
@@ -589,23 +601,27 @@ public class CarbonEventSimulator implements EventSimulator {
             Document doc = docBuilder.newDocument();
             Element rootElement = doc.createElement(EventSimulatorConstant.ROOT_ELEMENT_NAME);
             rootElement.setAttribute("type", "database");
-            rootElement.setAttribute("name", tableAndAttributeMappingJsonObj.getString(EventSimulatorConstant.CONFIGURATION_NAME));
+            rootElement.setAttribute("name", tableAndAttributeMappingJsonObj.getString(
+                    EventSimulatorConstant.CONFIGURATION_NAME));
             doc.appendChild(rootElement);
 
-
             Element dataSourceName = doc.createElement(EventSimulatorConstant.DATA_SOURCE_NAME);
-            dataSourceName.appendChild(doc.createTextNode(tableAndAttributeMappingJsonObj.getString(EventSimulatorConstant.DATA_SOURCE_NAME)));
+            dataSourceName.appendChild(doc.createTextNode(
+                    tableAndAttributeMappingJsonObj.getString(EventSimulatorConstant.DATA_SOURCE_NAME)));
             rootElement.appendChild(dataSourceName);
 
             Element tableName = doc.createElement(EventSimulatorConstant.TABLE_NAME);
-            tableName.appendChild(doc.createTextNode(tableAndAttributeMappingJsonObj.getString(EventSimulatorConstant.TABLE_NAME)));
+            tableName.appendChild(
+                    doc.createTextNode(tableAndAttributeMappingJsonObj.getString(EventSimulatorConstant.TABLE_NAME)));
             rootElement.appendChild(tableName);
 
             Element streamNameID = doc.createElement(EventSimulatorConstant.EVENT_STREAM_ID);
-            streamNameID.appendChild(doc.createTextNode(tableAndAttributeMappingJsonObj.getString(EventSimulatorConstant.EVENT_STREAM_ID)));
+            streamNameID.appendChild(doc.createTextNode(
+                    tableAndAttributeMappingJsonObj.getString(EventSimulatorConstant.EVENT_STREAM_ID)));
             rootElement.appendChild(streamNameID);
 
-            Element delayBetweenEventsInMilies = doc.createElement(EventSimulatorConstant.DELAY_BETWEEN_EVENTS_IN_MILIES);
+            Element delayBetweenEventsInMilies = doc.createElement(
+                    EventSimulatorConstant.DELAY_BETWEEN_EVENTS_IN_MILIES);
             delayBetweenEventsInMilies.appendChild(doc.createTextNode(String.valueOf(
                     tableAndAttributeMappingJsonObj.getLong(EventSimulatorConstant.DELAY_BETWEEN_EVENTS_IN_MILIES))));
             rootElement.appendChild(delayBetweenEventsInMilies);
@@ -618,8 +634,10 @@ public class CarbonEventSimulator implements EventSimulator {
                 JSONObject temp = databaseColumnAndStreamAttributeInfo1.getJSONObject(i);
 
                 Element columnMapping = doc.createElement("columnMapping");
-                columnMapping.setAttribute(EventSimulatorConstant.COLUMN_NAME, temp.getString(EventSimulatorConstant.COLUMN_NAME));
-                columnMapping.setAttribute(EventSimulatorConstant.STREAM_ATTRIBUTE_NAME, temp.getString(EventSimulatorConstant.STREAM_ATTRIBUTE_NAME));
+                columnMapping.setAttribute(EventSimulatorConstant.COLUMN_NAME,
+                        temp.getString(EventSimulatorConstant.COLUMN_NAME));
+                columnMapping.setAttribute(EventSimulatorConstant.STREAM_ATTRIBUTE_NAME,
+                        temp.getString(EventSimulatorConstant.STREAM_ATTRIBUTE_NAME));
 
                 columnMappings.appendChild(columnMapping);
             }
@@ -671,7 +689,8 @@ public class CarbonEventSimulator implements EventSimulator {
     public void deleteDBConfigFile(String fileName, AxisConfiguration axisConfiguration) throws AxisFault {
 
         int tenantID = PrivilegedCarbonContext.getThreadLocalCarbonContext().getTenantId();
-        HashMap<String, DataSourceTableAndStreamInfo> dataSourceTableAndStreamInfoMap = tenantSpecificDataSourceInfoMap.get(tenantID);
+        HashMap<String, DataSourceTableAndStreamInfo> dataSourceTableAndStreamInfoMap = tenantSpecificDataSourceInfoMap.get(
+                tenantID);
 
         fileName = fileName.replace(EventSimulatorConstant.DATA_SOURCE_CONFIGURATION_XML_PREFIX, "");
 
@@ -703,10 +722,13 @@ public class CarbonEventSimulator implements EventSimulator {
 
         String jsonFormattedAllInfo = "{\"" +
                 EventSimulatorConstant.EVENT_STREAM_ID + "\":\"" + dataSourceTableAndStreamInfo.getEventStreamID() +
-                "\",\"" + EventSimulatorConstant.DATA_SOURCE_NAME + "\":\"" + dataSourceTableAndStreamInfo.getDataSourceName() +
+                "\",\"" + EventSimulatorConstant.DATA_SOURCE_NAME + "\":\"" + dataSourceTableAndStreamInfo
+                .getDataSourceName() +
                 "\",\"" + EventSimulatorConstant.TABLE_NAME + "\":\"" + dataSourceTableAndStreamInfo.getTableName() +
-                "\", \"" + EventSimulatorConstant.CONFIGURATION_NAME + "\":\"" + dataSourceTableAndStreamInfo.getConfigurationName() +
-                "\", \"" + EventSimulatorConstant.DELAY_BETWEEN_EVENTS_IN_MILIES + "\":" + dataSourceTableAndStreamInfo.getDelayBetweenEventsInMilies() +
+                "\", \"" + EventSimulatorConstant.CONFIGURATION_NAME + "\":\"" + dataSourceTableAndStreamInfo
+                .getConfigurationName() +
+                "\", \"" + EventSimulatorConstant.DELAY_BETWEEN_EVENTS_IN_MILIES + "\":" + dataSourceTableAndStreamInfo
+                .getDelayBetweenEventsInMilies() +
                 ",\"" + EventSimulatorConstant.DATABASE_COLUMNS_AND_STREAM_ATTRIBUTE_INFO + "\":[";
 
         String jsonAttribute = "";
@@ -790,7 +812,13 @@ public class CarbonEventSimulator implements EventSimulator {
             String dataSourceName;
             try {
                 dataSourceName = tableAndAttributeMappingJsonObj.getString(EventSimulatorConstant.DATA_SOURCE_NAME);
-                delayBetweenEventsInMilies = tableAndAttributeMappingJsonObj.getLong(EventSimulatorConstant.DELAY_BETWEEN_EVENTS_IN_MILIES);
+                delayBetweenEventsInMilies = tableAndAttributeMappingJsonObj.getLong(
+                        EventSimulatorConstant.DELAY_BETWEEN_EVENTS_IN_MILIES);
+                if (delayBetweenEventsInMilies <= 0) {
+                    log.warn("Events will be sent continuously since the delay between events are set to "
+                            + delayBetweenEventsInMilies + "milliseconds");
+                    delayBetweenEventsInMilies = 0;
+                }
                 try {
                     carbonDataSource = EventSimulatorValueHolder.getDataSourceService().getDataSource(dataSourceName);
                     datasource = (DataSource) carbonDataSource.getDSObject();
@@ -827,7 +855,8 @@ public class CarbonEventSimulator implements EventSimulator {
                 PrivilegedCarbonContext.startTenantFlow();
                 PrivilegedCarbonContext.getThreadLocalCarbonContext().setTenantId(this.tenantId, true);
 
-                columnAndAttributeMapping = allInfo.getJSONArray(EventSimulatorConstant.DATABASE_COLUMNS_AND_STREAM_ATTRIBUTE_INFO);
+                columnAndAttributeMapping = allInfo.getJSONArray(
+                        EventSimulatorConstant.DATABASE_COLUMNS_AND_STREAM_ATTRIBUTE_INFO);
                 StreamDefinition streamDefinition = getStreamDefinition(allInfo.getString(EventSimulatorConstant.EVENT_STREAM_ID));
 
                 List<Attribute> metaAttributeList = streamDefinition.getMetaData();
@@ -844,7 +873,8 @@ public class CarbonEventSimulator implements EventSimulator {
 
                     int j = 0;
 
-                    String columnName = columnAndAttributeMapping.getJSONObject(j).getString(EventSimulatorConstant.COLUMN_NAME);
+                    String columnName = columnAndAttributeMapping.getJSONObject(j).getString(
+                            EventSimulatorConstant.COLUMN_NAME);
 
                     if (metaAttributeList != null) {
                         for (Attribute metaAttribute : metaAttributeList) {
@@ -865,7 +895,8 @@ public class CarbonEventSimulator implements EventSimulator {
                             if (j < columnAndAttributeMapping.length() - 1) {
                                 noOfAttributes++;
                                 j++;
-                                columnName = columnAndAttributeMapping.getJSONObject(j).getString(EventSimulatorConstant.COLUMN_NAME);
+                                columnName = columnAndAttributeMapping.getJSONObject(j).getString(
+                                        EventSimulatorConstant.COLUMN_NAME);
 
                             }
 
@@ -890,7 +921,8 @@ public class CarbonEventSimulator implements EventSimulator {
                             if (j < columnAndAttributeMapping.length() - 1) {
                                 noOfAttributes++;
                                 j++;
-                                columnName = columnAndAttributeMapping.getJSONObject(j).getString(EventSimulatorConstant.COLUMN_NAME);
+                                columnName = columnAndAttributeMapping.getJSONObject(j).getString(
+                                        EventSimulatorConstant.COLUMN_NAME);
 
                             }
                         }
@@ -914,14 +946,17 @@ public class CarbonEventSimulator implements EventSimulator {
                             if (j < columnAndAttributeMapping.length() - 1) {
                                 noOfAttributes++;
                                 j++;
-                                columnName = columnAndAttributeMapping.getJSONObject(j).getString(EventSimulatorConstant.COLUMN_NAME);
+                                columnName = columnAndAttributeMapping.getJSONObject(j).getString(
+                                        EventSimulatorConstant.COLUMN_NAME);
 
                             }
                         }
                     }
                     event.setAttributeValues(attributeValues);
                     sendEvent(event);
-                    Thread.sleep(delayBetweenEventsInMilies);
+                    if (delayBetweenEventsInMilies > 0) {
+                        Thread.sleep(delayBetweenEventsInMilies);
+                    }
                 }
             } catch (SQLException e) {
                 log.error("database exception occurred: " + e.getMessage(), e);

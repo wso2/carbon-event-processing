@@ -15,17 +15,19 @@
   --%>
 <%@ page import="org.json.JSONObject" %>
 <%@ page import="org.wso2.carbon.event.simulator.stub.EventSimulatorAdminServiceStub" %>
-<%@ page import="org.wso2.carbon.event.simulator.ui.EventSimulatorUIUtils" %><%
-    String msg=null;
-    try{
-        EventSimulatorAdminServiceStub stub = EventSimulatorUIUtils.getEventSimulatorAdminService(config, session, request);
+<%@ page import="org.wso2.carbon.event.simulator.ui.EventSimulatorUIUtils" %>
+<%
+    String msg = null;
+    try {
+        EventSimulatorAdminServiceStub stub = EventSimulatorUIUtils
+                .getEventSimulatorAdminService(config, session, request);
         String jsonData = request.getParameter("dataSourceConfigAndEventStreamInfo");
 
         stub.saveDataSourceConfigDetails(jsonData);
-        msg="Sent";
+        msg = "Sent";
 
-    }catch(Exception e){
-        msg=e.getMessage();
+    } catch (Exception e) {
+        msg = e.getMessage();
     }
 %>
 <%=msg%>
