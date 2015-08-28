@@ -34,6 +34,7 @@ import org.wso2.carbon.event.processor.core.internal.storm.SiddhiStormOutputEven
 import org.wso2.carbon.event.processor.core.internal.storm.StormTopologyManager;
 import org.wso2.carbon.event.processor.core.internal.storm.status.monitor.StormStatusMapListener;
 import org.wso2.carbon.event.processor.core.internal.storm.status.monitor.StormStatusMonitor;
+import org.wso2.carbon.event.processor.core.internal.storm.status.monitor.exception.DeploymentStatusMonitorException;
 import org.wso2.carbon.event.processor.core.internal.util.EventProcessorConfigurationFilesystemInvoker;
 import org.wso2.carbon.event.processor.core.internal.util.EventProcessorConstants;
 import org.wso2.carbon.event.processor.core.internal.util.EventProcessorUtil;
@@ -310,8 +311,13 @@ public class CarbonEventProcessorService implements EventProcessorService {
 
         StormStatusMonitor stormStatusMonitor = null;
         if(isDistributedEnabledAndIsWorker){
-            stormStatusMonitor = new StormStatusMonitor(tenantId, executionPlanName, importsMap.size());
-            StormStatusMapListener mapListener = new StormStatusMapListener(executionPlanName, tenantId, stormStatusMonitor);
+            StormStatusMapListener mapListener = null;
+            try {
+                stormStatusMonitor = new StormStatusMonitor(tenantId, executionPlanName, importsMap.size());
+                mapListener = new StormStatusMapListener(executionPlanName, tenantId, stormStatusMonitor);
+            } catch (DeploymentStatusMonitorException e) {
+                log.error("Failed to initialize map listener. Reason: " + e.getMessage(), e);
+            }
             processorExecutionPlan.setStormStatusMonitor(stormStatusMonitor);
             processorExecutionPlan.setStormStatusMapListener(mapListener);
         }
@@ -445,7 +451,6 @@ public class CarbonEventProcessorService implements EventProcessorService {
     @Override
     public Map<String, String> getAllExecutionPlanStatusesInStorm(){
         HazelcastInstance hazelcastInstance = EventProcessorValueHolder.getHazelcastInstance();
-        IMap<String,ExecutionPlanStatusHolder> executionPlanStatusHolderIMap = hazelcastInstance.getMap(DistributedModeConstants.STORM_STATUS_MAP);
 
         int tenantId = PrivilegedCarbonContext.getThreadLocalCarbonContext().getTenantId();
         Map<String, ExecutionPlan> executionPlanMap = tenantSpecificExecutionPlans.get(tenantId);
@@ -456,11 +461,16 @@ public class CarbonEventProcessorService implements EventProcessorService {
         String status;
 
         for (String executionPlanName: executionPlanNames){
-            ExecutionPlanStatusHolder statusHolder = executionPlanStatusHolderIMap.get(StormTopologyManager.getTopologyName(executionPlanName, tenantId));
-            if(statusHolder == null) {
-                status = "Execution plan not deployed to a manager. Hence no status info available.";
+            if (hazelcastInstance == null) {
+                status = "No status info available. \nTo get status info, enable clustering.";
             } else {
-                status = statusHolder.getExecutionPlanStatus();
+                IMap<String,ExecutionPlanStatusHolder> executionPlanStatusHolderIMap = hazelcastInstance.getMap(DistributedModeConstants.STORM_STATUS_MAP);
+                ExecutionPlanStatusHolder statusHolder = executionPlanStatusHolderIMap.get(StormTopologyManager.getTopologyName(executionPlanName, tenantId));
+                if(statusHolder == null) {
+                    status = "Execution plan not deployed to a manager. Hence no status info available.";
+                } else {
+                    status = statusHolder.getExecutionPlanStatus();
+                }
             }
             executionPlanStatuses.put(executionPlanName,status);
         }

@@ -8,6 +8,7 @@ import org.wso2.carbon.context.PrivilegedCarbonContext;
 import org.wso2.carbon.databridge.commons.thrift.utils.HostAddressFinder;
 import org.wso2.carbon.event.processor.core.internal.ds.EventProcessorValueHolder;
 import org.wso2.carbon.event.processor.core.internal.storm.StormTopologyManager;
+import org.wso2.carbon.event.processor.core.internal.storm.status.monitor.exception.DeploymentStatusMonitorException;
 import org.wso2.carbon.event.processor.core.util.DistributedModeConstants;
 import org.wso2.carbon.event.processor.core.util.ExecutionPlanStatusHolder;
 import org.wso2.carbon.event.processor.manager.commons.transport.server.ConnectionCallback;
@@ -33,7 +34,11 @@ public class StormStatusMonitor implements ConnectionCallback{
     private int importedStreamsCount = 0;
     private AtomicInteger connectedPublisherBoltsCount;
 
-    public StormStatusMonitor(int tenantId, String executionPlanName, int importedStreamsCount){
+    public StormStatusMonitor(int tenantId, String executionPlanName, int importedStreamsCount) throws DeploymentStatusMonitorException {
+        if(EventProcessorValueHolder.getHazelcastInstance() == null) {
+            throw new DeploymentStatusMonitorException("Couldn't initialize Distributed Deployment Status monitor as" +
+                " the hazelcast instance is null. Enable clustering and restart the server");
+        }
         tenantDomain = PrivilegedCarbonContext.getThreadLocalCarbonContext().getTenantDomain();
         connectedCepReceiversCount = new AtomicInteger(0);
         connectedPublisherBoltsCount = new AtomicInteger(0);
