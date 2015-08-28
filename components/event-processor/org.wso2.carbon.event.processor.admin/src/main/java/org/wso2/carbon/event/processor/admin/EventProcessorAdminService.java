@@ -185,7 +185,7 @@ public class EventProcessorAdminService extends AbstractAdmin {
                     }
                 });
 
-                if (!isDistributedProcessingEnabled()){
+                if (!isDistributedProcessingEnabled()) {
                     configurationDtos[0].setDeploymentStatus("not-distributed");
                 }
 
@@ -221,7 +221,7 @@ public class EventProcessorAdminService extends AbstractAdmin {
 
                     @Override
                     public int compare(Object o1, Object o2) {
-                        return ((ExecutionPlanConfigurationDto) o1).getName().compareTo(((ExecutionPlanConfigurationDto) o2).getName());
+                        return ((ExecutionPlanConfigurationFileDto) o1).getName().compareTo(((ExecutionPlanConfigurationFileDto) o2).getName());
                     }
                 });
                 return fileDtoArray;
