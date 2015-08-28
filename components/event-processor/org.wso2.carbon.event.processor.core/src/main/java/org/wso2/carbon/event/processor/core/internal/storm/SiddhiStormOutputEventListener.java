@@ -191,7 +191,7 @@ public class SiddhiStormOutputEventListener implements StreamCallback {
                     client.registerCEPPublisher(tenantId, executionPlanConfiguration.getName(), thisHostIp,
                             listeningPort);
                     log.info(logPrefix + "Successfully registered CEP publisher for " + thisHostIp + ":" +
-                            listeningPort);
+                            listeningPort + "  with manager service at" + endpoint.getHostName() + ":" + endpoint.getPort());
                     managerHost = endpoint.getHostName();
                     managerPort = endpoint.getPort();
                     return true;
