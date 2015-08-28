@@ -760,6 +760,11 @@
             <url>http://repo.springsource.org/libs-milestone/</url>
         </repository>
 
+	<!--repository>
+            <id>analytics-common-5.0.0-repo</id>
+            <url>http://maven.wso2.org/nexus/content/repositories/orgwso2carbonanalytics-common-057/</url>
+        </repository-->
+
     </repositories>
 
     <properties>
@@ -768,7 +773,7 @@
         <!--<carbon.kernel.imp.pkg.version>[4.4.0, 4.5.0)</carbon.kernel.imp.pkg.version>-->
 
         <carbon.commons.version>4.4.4</carbon.commons.version>
-        <carbon.analytics.common.version>5.0.0-SNAPSHOT</carbon.analytics.common.version>
+        <carbon.analytics.common.version>5.0.0</carbon.analytics.common.version>
 
         <!--CEP versions-->
         <siddhi.version>3.0.0</siddhi.version>
