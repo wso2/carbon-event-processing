@@ -760,11 +760,6 @@
             <url>http://repo.springsource.org/libs-milestone/</url>
         </repository>
 
-	<!--repository>
-            <id>analytics-common-5.0.0-repo</id>
-            <url>http://maven.wso2.org/nexus/content/repositories/orgwso2carbonanalytics-common-057/</url>
-        </repository-->
-
     </repositories>
 
     <properties>
