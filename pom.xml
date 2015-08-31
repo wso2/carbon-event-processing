@@ -768,7 +768,7 @@
         <!--<carbon.kernel.imp.pkg.version>[4.4.0, 4.5.0)</carbon.kernel.imp.pkg.version>-->
 
         <carbon.commons.version>4.4.4</carbon.commons.version>
-        <carbon.analytics.common.version>5.0.0</carbon.analytics.common.version>
+        <carbon.analytics.common.version>5.0.1-SNAPSHOT</carbon.analytics.common.version>
 
         <!--CEP versions-->
         <siddhi.version>3.0.0</siddhi.version>
