@@ -29,7 +29,15 @@ import org.wso2.carbon.context.PrivilegedCarbonContext;
 import org.wso2.carbon.databridge.commons.Attribute;
 import org.wso2.carbon.databridge.commons.AttributeType;
 import org.wso2.carbon.databridge.commons.StreamDefinition;
-import org.wso2.carbon.event.simulator.core.*;
+import org.wso2.carbon.event.processor.manager.core.EventManagementService;
+import org.wso2.carbon.event.processor.manager.core.config.DistributedConfiguration;
+import org.wso2.carbon.event.processor.manager.core.config.Mode;
+import org.wso2.carbon.event.simulator.core.CSVFileInfo;
+import org.wso2.carbon.event.simulator.core.DataSourceTableAndStreamInfo;
+import org.wso2.carbon.event.simulator.core.Event;
+import org.wso2.carbon.event.simulator.core.EventSimulator;
+import org.wso2.carbon.event.simulator.core.EventSimulatorConstant;
+import org.wso2.carbon.event.simulator.core.UploadedFileItem;
 import org.wso2.carbon.event.simulator.core.internal.ds.EventSimulatorValueHolder;
 import org.wso2.carbon.event.stream.core.EventStreamService;
 import org.wso2.carbon.event.stream.core.exception.EventStreamConfigurationException;
@@ -47,7 +55,14 @@ import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
-import java.io.*;
+import java.io.BufferedInputStream;
+import java.io.Closeable;
+import java.io.DataInputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -63,11 +78,27 @@ public class CarbonEventSimulator implements EventSimulator {
     private HashMap<String, EventStreamProducer> eventProducerMap;
     private HashMap<Integer, HashMap<String, CSVFileInfo>> tenantSpecificCSVFileInfoMap;
     private HashMap<Integer, HashMap<String, DataSourceTableAndStreamInfo>> tenantSpecificDataSourceInfoMap;
+    private boolean isWorkerNode = true;
+    private Mode mode;
 
     public CarbonEventSimulator() {
         eventProducerMap = new HashMap<String, EventStreamProducer>();
         tenantSpecificCSVFileInfoMap = new HashMap<Integer, HashMap<String, CSVFileInfo>>();
         tenantSpecificDataSourceInfoMap = new HashMap<Integer, HashMap<String, DataSourceTableAndStreamInfo>>();
+
+        // EventManagementService has a cardinality of 1..1 with EventSimulatorService.
+        // Therefore when event simulator is activated, EventMangementService will also be active.
+        EventManagementService eventManagementService = EventSimulatorValueHolder.getEventManagementService();
+        if (eventManagementService != null) {
+            mode = eventManagementService.getManagementModeInfo().getMode();
+            DistributedConfiguration distributedConfiguration = eventManagementService.getManagementModeInfo().getDistributedConfiguration();
+            if (mode == Mode.Distributed) {
+                if (distributedConfiguration != null) {
+                    isWorkerNode = distributedConfiguration.isWorkerNode();
+                }
+            }
+        }
+
     }
 
     public Collection<StreamDefinition> getAllEventStreamDefinitions() {
@@ -87,6 +118,12 @@ public class CarbonEventSimulator implements EventSimulator {
 
     @Override
     public void sendEvent(Event eventDetail) throws AxisFault {
+
+        if (mode == Mode.Distributed && !isWorkerNode) {
+            log.warn("Sending events via manager node in distributed mode is not allowed. " +
+                    "Dropping event for stream: " + eventDetail.getStreamDefinition().getStreamId());
+            return;
+        }
 
         EventStreamService eventstreamservice = EventSimulatorValueHolder.getEventStreamService();
 

@@ -18,6 +18,7 @@ package org.wso2.carbon.event.simulator.core.internal.ds;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.osgi.service.component.ComponentContext;
+import org.wso2.carbon.event.processor.manager.core.EventManagementService;
 import org.wso2.carbon.event.simulator.core.EventSimulator;
 import org.wso2.carbon.event.simulator.core.internal.CarbonEventSimulator;
 import org.wso2.carbon.event.stream.core.EventStreamService;
@@ -30,6 +31,9 @@ import org.wso2.carbon.ndatasource.core.DataSourceService;
  * cardinality="1..1" bind="setEventStreamService" unbind="unsetEventStreamService"
  * @scr.reference name="org.wso2.carbon.ndatasource" interface="org.wso2.carbon.ndatasource.core.DataSourceService"
  * cardinality="1..1" policy="dynamic" bind="setDataSourceService" unbind="unsetDataSourceService"
+ * @scr.reference name="eventManagement.service"
+ * interface="org.wso2.carbon.event.processor.manager.core.EventManagementService" cardinality="1..1"
+ * policy="dynamic" bind="setEventManagementService" unbind="unsetEventManagementService"
  */
 public class EventSimulatorDS {
 
@@ -72,6 +76,14 @@ public class EventSimulatorDS {
 
     protected void unsetDataSourceService(DataSourceService dataSourceService) {
         EventSimulatorValueHolder.setDataSourceService(null);
+    }
+
+    protected void setEventManagementService(EventManagementService eventManagementService) {
+        EventSimulatorValueHolder.setEventManagementService(eventManagementService);
+    }
+
+    protected void unsetEventManagementService(EventManagementService eventManagementService) {
+        EventSimulatorValueHolder.setEventManagementService(null);
     }
 
 }

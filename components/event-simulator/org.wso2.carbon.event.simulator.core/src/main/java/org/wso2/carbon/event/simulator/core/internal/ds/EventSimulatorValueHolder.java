@@ -15,6 +15,7 @@
  */
 package org.wso2.carbon.event.simulator.core.internal.ds;
 
+import org.wso2.carbon.event.processor.manager.core.EventManagementService;
 import org.wso2.carbon.event.simulator.core.internal.CarbonEventSimulator;
 import org.wso2.carbon.event.stream.core.EventStreamService;
 import org.wso2.carbon.ndatasource.core.DataSourceService;
@@ -25,6 +26,7 @@ public class EventSimulatorValueHolder {
     private static CarbonEventSimulator eventSimulator;
 
     private static DataSourceService dataSourceService;
+    private static EventManagementService eventManagerService;
 
     private EventSimulatorValueHolder() {
 
@@ -56,5 +58,13 @@ public class EventSimulatorValueHolder {
 
     public static DataSourceService getDataSourceService() {
         return dataSourceService;
+    }
+
+    public static void setEventManagementService(EventManagementService eventManagerService) {
+        EventSimulatorValueHolder.eventManagerService = eventManagerService;
+    }
+
+    public static EventManagementService getEventManagementService() {
+        return eventManagerService;
     }
 }
