@@ -67,7 +67,7 @@ public class SiddhiStormOutputEventListener implements StreamCallback {
         this.executionPlanConfiguration = executionPlanConfiguration;
         this.tenantId = tenantId;
         this.stormDeploymentConfig = stormDeploymentConfig;
-        this.heartbeatInterval = stormDeploymentConfig.getHeartbeatInterval();
+        this.heartbeatInterval = stormDeploymentConfig.getManagementHeartbeatInterval();
         this.connectionCallback = connectionCallback;
         init();
     }
@@ -81,7 +81,7 @@ public class SiddhiStormOutputEventListener implements StreamCallback {
             listeningPort = findPort();
             thisHostIp = HostAddressFinder.findAddress("localhost");
             TCPEventServerConfig configs =  new TCPEventServerConfig(listeningPort);
-            configs.setNumberOfThreads(stormDeploymentConfig.getTcpEventReceiverThreadCount());
+            configs.setNumberOfThreads(stormDeploymentConfig.getTransportReceiverThreads());
             tcpEventServer = new TCPEventServer(configs, this, connectionCallback);
             tcpEventServer.start();
             executorService.execute(new Registrar());

@@ -51,7 +51,7 @@ public class StormStatusMonitor implements ConnectionCallback{
         this.executionPlanName = executionPlanName;
         this.stormTopologyName = StormTopologyManager.getTopologyName(executionPlanName, tenantId);
         this.executionPlanStatusHolderKey = DistributedModeConstants.STORM_STATUS_MAP + "." + stormTopologyName;
-        lockTimeout = EventProcessorValueHolder.getStormDeploymentConfiguration().getLockTimeout();
+        lockTimeout = EventProcessorValueHolder.getStormDeploymentConfiguration().getStatusLockTimeout();
         executorService.execute(new GlobalStatUpdater());
     }
 
@@ -63,7 +63,7 @@ public class StormStatusMonitor implements ConnectionCallback{
             if(hostIp == null){
                 hostIp = HostAddressFinder.findAddress("localhost");
             }
-            if (executionPlanStatusHolderIMap.tryLock(executionPlanStatusHolderKey, lockTimeout, TimeUnit.SECONDS)){
+            if (executionPlanStatusHolderIMap.tryLock(executionPlanStatusHolderKey, lockTimeout, TimeUnit.MILLISECONDS)){
                 try {
                     ExecutionPlanStatusHolder executionPlanStatusHolder =
                             executionPlanStatusHolderIMap.get(stormTopologyName);
@@ -108,7 +108,7 @@ public class StormStatusMonitor implements ConnectionCallback{
             if(hostIp == null){
                 hostIp = HostAddressFinder.findAddress("localhost");
             }
-            if (executionPlanStatusHolderIMap.tryLock(executionPlanStatusHolderKey, lockTimeout, TimeUnit.SECONDS)){
+            if (executionPlanStatusHolderIMap.tryLock(executionPlanStatusHolderKey, lockTimeout, TimeUnit.MILLISECONDS)){
                 try {
                     ExecutionPlanStatusHolder executionPlanStatusHolder =
                             executionPlanStatusHolderIMap.get(stormTopologyName);
@@ -153,7 +153,7 @@ public class StormStatusMonitor implements ConnectionCallback{
             if(hostIp == null){
                 hostIp = HostAddressFinder.findAddress("localhost");
             }
-            if (executionPlanStatusHolderIMap.tryLock(executionPlanStatusHolderKey, lockTimeout, TimeUnit.SECONDS)){
+            if (executionPlanStatusHolderIMap.tryLock(executionPlanStatusHolderKey, lockTimeout, TimeUnit.MILLISECONDS)){
                 try {
                     ExecutionPlanStatusHolder executionPlanStatusHolder =
                             executionPlanStatusHolderIMap.get(stormTopologyName);
@@ -198,7 +198,7 @@ public class StormStatusMonitor implements ConnectionCallback{
             if(hostIp == null){
                 hostIp = HostAddressFinder.findAddress("localhost");
             }
-            if (executionPlanStatusHolderIMap.tryLock(executionPlanStatusHolderKey, lockTimeout, TimeUnit.SECONDS)){
+            if (executionPlanStatusHolderIMap.tryLock(executionPlanStatusHolderKey, lockTimeout, TimeUnit.MILLISECONDS)){
                 try {
                     ExecutionPlanStatusHolder executionPlanStatusHolder =
                             executionPlanStatusHolderIMap.get(stormTopologyName);
@@ -242,7 +242,7 @@ public class StormStatusMonitor implements ConnectionCallback{
             if(hostIp == null){
                 hostIp = HostAddressFinder.findAddress("localhost");
             }
-            if (executionPlanStatusHolderIMap.tryLock(executionPlanStatusHolderKey, lockTimeout, TimeUnit.SECONDS)){
+            if (executionPlanStatusHolderIMap.tryLock(executionPlanStatusHolderKey, lockTimeout, TimeUnit.MILLISECONDS)){
                 try {
                     ExecutionPlanStatusHolder executionPlanStatusHolder =
                             executionPlanStatusHolderIMap.get(stormTopologyName);
@@ -294,7 +294,7 @@ public class StormStatusMonitor implements ConnectionCallback{
         private final int updateRate;
 
         GlobalStatUpdater(){
-            updateRate = EventProcessorValueHolder.getStormDeploymentConfiguration().getUpdateRate();
+            updateRate = EventProcessorValueHolder.getStormDeploymentConfiguration().getStatusUpdateInterval();
         }
 
         @Override
@@ -310,7 +310,7 @@ public class StormStatusMonitor implements ConnectionCallback{
                     if(hostIp == null){
                         hostIp = HostAddressFinder.findAddress("localhost");
                     }
-                    if (executionPlanStatusHolderIMap.tryLock(executionPlanStatusHolderKey, lockTimeout, TimeUnit.SECONDS)){
+                    if (executionPlanStatusHolderIMap.tryLock(executionPlanStatusHolderKey, lockTimeout, TimeUnit.MILLISECONDS)){
                         try {
                             ExecutionPlanStatusHolder executionPlanStatusHolder =
                                     executionPlanStatusHolderIMap.get(stormTopologyName);

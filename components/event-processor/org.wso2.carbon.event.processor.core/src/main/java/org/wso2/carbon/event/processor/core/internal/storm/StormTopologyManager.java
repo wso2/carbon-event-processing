@@ -85,7 +85,7 @@ public class StormTopologyManager {
         }
 
         DistributedConfiguration stormDeploymentConfiguration = EventProcessorValueHolder.getStormDeploymentConfiguration();
-        lockTimeout = stormDeploymentConfiguration.getLockTimeout();
+        lockTimeout = stormDeploymentConfiguration.getStatusLockTimeout();
 
         jarLocation = stormConfigDirPath + File.separator + EventProcessorValueHolder.getStormDeploymentConfiguration().getJar();
     }
@@ -333,7 +333,7 @@ public class StormTopologyManager {
             HazelcastInstance hazelcastInstance = EventProcessorValueHolder.getHazelcastInstance();
             IMap<String,ExecutionPlanStatusHolder> executionPlanStatusHolderIMap = hazelcastInstance.getMap(DistributedModeConstants.STORM_STATUS_MAP);
             try {
-                if (executionPlanStatusHolderIMap.tryLock(executionPlanStatusHolderKey, lockTimeout, TimeUnit.SECONDS)){
+                if (executionPlanStatusHolderIMap.tryLock(executionPlanStatusHolderKey, lockTimeout, TimeUnit.MILLISECONDS)){
                     try {
                         ExecutionPlanStatusHolder executionPlanStatusHolder =
                                 executionPlanStatusHolderIMap.get(stormTopologyName);
