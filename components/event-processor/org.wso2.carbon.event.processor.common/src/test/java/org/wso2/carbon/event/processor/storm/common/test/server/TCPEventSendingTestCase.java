@@ -16,6 +16,7 @@
 
 package org.wso2.carbon.event.processor.storm.common.test.server;
 
+import com.lmax.disruptor.InsufficientCapacityException;
 import junit.framework.Assert;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -143,6 +144,8 @@ public class TCPEventSendingTestCase {
             } catch (IOException e) {
                 e.printStackTrace();
             } catch (InterruptedException e) {
+                e.printStackTrace();
+            } catch (InsufficientCapacityException e) {
                 e.printStackTrace();
             } finally {
                 if (TCPEventPublisher != null) {
