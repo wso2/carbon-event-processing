@@ -48,7 +48,7 @@
     org.wso2.carbon.event.simulator.stub.types.DataSourceTableAndStreamInfoDto[] dataSourceTableAndStreamInfoDtoArray
             = stub.getAllDataSourceTableAndStreamInfo();
 
-    String streamId;
+    String streamId = null;
     if (null != request.getParameter("streamId")) {
         streamId = request.getParameter("streamId");
     }
