@@ -1,17 +1,19 @@
 <%--
   ~ Copyright (c) 2015, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
   ~
-  ~ Licensed under the Apache License, Version 2.0 (the "License");
-  ~ you may not use this file except in compliance with the License.
+  ~ WSO2 Inc. licenses this file to you under the Apache License,
+  ~ Version 2.0 (the "License"); you may not use this file except
+  ~ in compliance with the License.
   ~ You may obtain a copy of the License at
   ~
   ~     http://www.apache.org/licenses/LICENSE-2.0
   ~
-  ~ Unless required by applicable law or agreed to in writing, software
-  ~ distributed under the License is distributed on an "AS IS" BASIS,
-  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-  ~ See the License for the specific language governing permissions and
-  ~ limitations under the License.
+  ~ Unless required by applicable law or agreed to in writing,
+  ~ software distributed under the License is distributed on an
+  ~ "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+  ~ KIND, either express or implied.  See the License for the
+  ~ specific language governing permissions and limitations
+  ~ under the License.
   --%>
 <%@ page import="org.wso2.carbon.event.simulator.stub.EventSimulatorAdminServiceStub" %>
 <%@ page import="org.wso2.carbon.event.simulator.ui.EventSimulatorUIUtils" %>
@@ -42,12 +44,12 @@
 
     org.wso2.carbon.event.simulator.stub.types.StreamDefinitionInfoDto[] eventInfoArray = stub.getAllEventStreamInfoDto();
 
-    org.wso2.carbon.event.simulator.stub.types.CSVFileInfoDto[] csvFileInfoDtosArray=stub.getAllCSVFileInfo();
+    org.wso2.carbon.event.simulator.stub.types.CSVFileInfoDto[] csvFileInfoDtosArray = stub.getAllCSVFileInfo();
     org.wso2.carbon.event.simulator.stub.types.DataSourceTableAndStreamInfoDto[] dataSourceTableAndStreamInfoDtoArray
             = stub.getAllDataSourceTableAndStreamInfo();
 
-    String streamId = "";
-    if(null != request.getParameter("streamId")){
+    String streamId;
+    if (null != request.getParameter("streamId")) {
         streamId = request.getParameter("streamId");
     }
 
@@ -145,20 +147,24 @@
                                                 <option value="select">select event stream
                                                 </option>
 
-                                                <%for (int i = 0; i < eventInfoArray.length; i++) {
+                                                <%
+                                                for (int i = 0; i < eventInfoArray.length; i++) {
                                                     String streamName = eventInfoArray[i].getStreamName();
                                                     String streamVersion = eventInfoArray[i].getStreamVersion();
-                                                    if(streamId.equalsIgnoreCase(streamName + ":" + streamVersion)){%>
-                                                        <option value="<%=eventInfoArray[i].getStreamName()%>" selected >
-                                                            <%=streamName+":"+streamVersion%>
+                                                    if ((streamName + ":" + streamVersion).equalsIgnoreCase(streamId)) {
+                                                        %>
+                                                        <option value="<%=eventInfoArray[i].getStreamName()%>" selected>
+                                                            <%=streamName + ":" + streamVersion%>
                                                         </option>
-                                                    <%}else{%>
+                                                    <%} else {%>
                                                         <option value="<%=eventInfoArray[i].getStreamName()%>">
-                                                            <%=streamName+":"+streamVersion%>
+                                                            <%=streamName + ":" + streamVersion%>
                                                         </option>
-                                                    <%}
+                                                    <%
+                                                    }
                                                 }
-                                                if(!streamId.equalsIgnoreCase("")){%>
+                                                if (!"".equalsIgnoreCase(streamId)) {
+                                                %>
                                                     <script>
                                                         showEventProperties();
                                                     </script>
@@ -221,9 +227,9 @@
                         <td></td>
                         <td></td>
                     </tr>
-                    <%}
-                    else{
-                        for(int k=0;k<csvFileInfoDtosArray.length;k++){
+                    <%
+                    } else {
+                        for (int k = 0; k < csvFileInfoDtosArray.length; k++) {
                     %>
 
                     <tr>
@@ -248,7 +254,7 @@
                         <%}%>
 
                         <td>
-                            <%if(csvFileInfoDtosArray[k].getStreamID()!=null){%>
+                            <%if (csvFileInfoDtosArray[k].getStreamID() != null) {%>
                             <input type="button" value="Play" onclick="sendFileDetails(
                                     '<%=csvFileInfoDtosArray[k].getFileName()%>')">
                             <%}%>
@@ -312,7 +318,7 @@
                                 </tr>
                                 </thead>
                                 <tbody>
-                                <%if(dataSourceTableAndStreamInfoDtoArray==null){%>
+                                <%if (dataSourceTableAndStreamInfoDtoArray == null) {%>
                                 <tr>
                                     <td><fmt:message key="no.configuration"/> </td>
                                     <td></td>
@@ -323,9 +329,9 @@
                                     <td></td>
                                     <td></td>
                                 </tr>
-                                <%}
-                                else{
-                                    for(int k=0;k<dataSourceTableAndStreamInfoDtoArray.length;k++){
+                                <%
+                                } else {
+                                    for (int k = 0; k < dataSourceTableAndStreamInfoDtoArray.length; k++) {
                                 %>
 
                                 <tr>
@@ -334,23 +340,23 @@
                                     <td><%=dataSourceTableAndStreamInfoDtoArray[k].getDataSourceName()%></td>
                                     <td><%=dataSourceTableAndStreamInfoDtoArray[k].getTableName()%></td>
                                     <%
-                                        String columns = "", streamAttributes= "";
+                                        String columns = "", streamAttributes = "";
 
                                         boolean addedFirstColumn = false;
                                         boolean addedFirstAttribute = false;
                                         String[] columnArray = dataSourceTableAndStreamInfoDtoArray[k].getColumnNames();
                                         String[] streamAttributesArray = dataSourceTableAndStreamInfoDtoArray[k].getStreamAtrributeNames();
 
-                                        for(int i=0; i<columnArray.length;i++) {
-                                            if(addedFirstColumn){
+                                        for (int i = 0; i < columnArray.length; i++) {
+                                            if (addedFirstColumn) {
                                                 columns = columns + ",";
-                                                if((i != 0) && (i % 3 == 0)){
+                                                if ((i != 0) && (i % 3 == 0)) {
                                                     columns = columns + "\n";
                                                 }
                                             }
-                                            if(addedFirstAttribute){
+                                            if (addedFirstAttribute) {
                                                 streamAttributes = streamAttributes + ",";
-                                                if((i != 0) && (i % 3 == 0)){
+                                                if ((i != 0) && (i % 3 == 0)) {
                                                     streamAttributes = streamAttributes + "\n";
                                                 }
                                             }
@@ -453,28 +459,33 @@
                                         <select name="EventStreamID" id="EventStreamID2" onload="showEventPropertiesForSimulator()"
                                                 onchange="showEventPropertiesForSimulator()">
 
-                                            <%if (eventInfoArray == null) {
+                                            <%
+                                                if (eventInfoArray == null) {
                                             %>
-                                                <option value="No Event Stream Definitions"><fmt:message key="no.event.stream.definition"/>
-                                                </option>
-                                            <%}else {%>
+                                            <option value="No Event Stream Definitions"><fmt:message
+                                                    key="no.event.stream.definition"/>
+                                            </option>
+                                            <%} else {%>
 
                                                 <option value="select">select event stream
                                                 </option>
-                                                <%for (int i = 0; i < eventInfoArray.length; i++) {
-                                                    String streamName = eventInfoArray[i].getStreamName();
-                                                    String streamVersion = eventInfoArray[i].getStreamVersion();
-                                                    if(streamId.equalsIgnoreCase(streamName + ":" + streamVersion)){%>
-                                                        <option value="<%=eventInfoArray[i].getStreamName()%>" selected >
-                                                            <%=streamName+":"+streamVersion%>
-                                                        </option>
-                                                    <%}else{%>
+                                                <%
+                                                    for (int i = 0; i < eventInfoArray.length; i++) {
+                                                        String streamName = eventInfoArray[i].getStreamName();
+                                                        String streamVersion = eventInfoArray[i].getStreamVersion();
+                                                        if (streamId.equalsIgnoreCase(streamName + ":" + streamVersion)) {
+                                                            %>
+                                                            <option value="<%=eventInfoArray[i].getStreamName()%>" selected>
+                                                                <%=streamName + ":" + streamVersion%>
+                                                            </option>
+                                                        <%} else {%>
                                                         <option value="<%=eventInfoArray[i].getStreamName()%>">
-                                                            <%=streamName+":"+streamVersion%>
+                                                            <%=streamName + ":" + streamVersion%>
                                                         </option>
-                                                    <%}
-                                                }
-                                            }%>
+                                                        <%
+                                                        }
+                                                    }
+                                                }%>
                                         </select>
                                     </td>
                                 </tr>
