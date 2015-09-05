@@ -18,7 +18,6 @@ package org.wso2.carbon.event.processor.common.util;
 
 import com.lmax.disruptor.EventFactory;
 import com.lmax.disruptor.EventHandler;
-import com.lmax.disruptor.InsufficientCapacityException;
 import com.lmax.disruptor.RingBuffer;
 import com.lmax.disruptor.dsl.Disruptor;
 import org.apache.log4j.Logger;
@@ -141,12 +140,8 @@ public class AsyncEventPublisher implements EventHandler<AsynchronousEventBuffer
      * @param streamId
      */
     public void sendEvent(Object[] eventData, long timestamp, String streamId) {
-        try {
-            eventSendBuffer.addEvent(eventData, timestamp, streamId);
-            inputThroughputProbe.update();
-        } catch (InsufficientCapacityException e) {
-            log.warn(logPrefix + " dropping event due to insufficient capacity : " + streamId + ":" + Arrays.deepToString(eventData));
-        }
+        eventSendBuffer.addEvent(eventData, timestamp, streamId);
+        inputThroughputProbe.update();
     }
 
     /**
@@ -182,8 +177,6 @@ public class AsyncEventPublisher implements EventHandler<AsynchronousEventBuffer
             log.error(logPrefix + "Error while trying to send event to " + destinationTypeString + " at " + tcpEventPublisher.getHostUrl(), e);
             reconnect();
             onEvent(dataHolder, sequence, endOfBatch);
-        } catch (InsufficientCapacityException e) {
-            log.warn(logPrefix + " dropping event due to insufficient capacity : " + dataHolder.getStreamId() + ":" + Arrays.deepToString((Object[]) dataHolder.getData()));
         }
     }
 
@@ -423,8 +416,8 @@ class AsynchronousEventBuffer<Type> {
         disruptor.start();
     }
 
-    public void addEvent(Type data, long timestamp, String streamId) throws InsufficientCapacityException {
-        long sequenceNo = ringBuffer.tryNext();
+    public void addEvent(Type data, long timestamp, String streamId) {
+        long sequenceNo = ringBuffer.next();
         try {
             DataHolder existingHolder = ringBuffer.get(sequenceNo);
             existingHolder.setData(data);
