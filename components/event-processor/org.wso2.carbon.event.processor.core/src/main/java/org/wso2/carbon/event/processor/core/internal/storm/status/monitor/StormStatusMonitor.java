@@ -70,7 +70,7 @@ public class StormStatusMonitor implements ConnectionCallback{
                     if(executionPlanStatusHolder == null){
                         log.error("Couldn't increment connected CEP receivers count for execution plan: " + executionPlanName +
                                 ", for tenant-domain: " + tenantDomain
-                                + " as the ExecutionPlanStatusHolder is null.");
+                                + " as status object not initialized by manager.");
                     } else {
                         executionPlanStatusHolder.setCEPReceiverStatus(hostIp, connectedCepReceiversCount.incrementAndGet(), importedStreamsCount);
                         executionPlanStatusHolderIMap.replace(stormTopologyName, executionPlanStatusHolder);
@@ -115,7 +115,7 @@ public class StormStatusMonitor implements ConnectionCallback{
                     if(executionPlanStatusHolder == null){
                         log.error("Couldn't decrement connected CEP receivers count for execution plan: " + executionPlanName +
                                 ", for tenant-domain: " + tenantDomain
-                                + " as the ExecutionPlanStatusHolder is null.");
+                                + " as status object not initialized by manager.");
                     } else {
                         executionPlanStatusHolder.setCEPReceiverStatus(hostIp, connectedCepReceiversCount.decrementAndGet(), importedStreamsCount);
                         executionPlanStatusHolderIMap.replace(stormTopologyName, executionPlanStatusHolder);
@@ -160,7 +160,7 @@ public class StormStatusMonitor implements ConnectionCallback{
                     if(executionPlanStatusHolder == null){
                         log.error("Couldn't increment connected publisher bolts count for execution plan: " + executionPlanName +
                                 ", for tenant-domain: " + tenantDomain
-                                + " as the ExecutionPlanStatusHolder is null.");
+                                + " as status object not initialized by manager.");
                     } else {
                         executionPlanStatusHolder.setConnectedPublisherBoltsCount(hostIp, connectedPublisherBoltsCount.incrementAndGet());
                         executionPlanStatusHolderIMap.replace(stormTopologyName, executionPlanStatusHolder);
@@ -205,7 +205,7 @@ public class StormStatusMonitor implements ConnectionCallback{
                     if(executionPlanStatusHolder == null){
                         log.error("Couldn't decrement connected publisher bolts count for execution plan: " + executionPlanName +
                                 ", for tenant-domain: " + tenantDomain
-                                + " as the ExecutionPlanStatusHolder is null.");
+                                + " as status object not initialized by manager.");
                     } else {
                         executionPlanStatusHolder.setConnectedPublisherBoltsCount(hostIp, connectedPublisherBoltsCount.decrementAndGet());
                         executionPlanStatusHolderIMap.replace(stormTopologyName, executionPlanStatusHolder);
@@ -249,7 +249,7 @@ public class StormStatusMonitor implements ConnectionCallback{
                     if(executionPlanStatusHolder == null){
                         log.error("Couldn't update distributed deployment status for execution plan: " + executionPlanName +
                                 ", for tenant-domain: " + tenantDomain
-                                + " as the ExecutionPlanStatusHolder is null.");
+                                + " as status object not initialized by manager.");
                     } else {
                         executionPlanStatusHolder.setCEPReceiverStatus(hostIp, connectedCepReceiversCount.get(), importedStreamsCount);
                         executionPlanStatusHolder.setConnectedPublisherBoltsCount(hostIp, connectedPublisherBoltsCount.get());
@@ -317,7 +317,7 @@ public class StormStatusMonitor implements ConnectionCallback{
                             if(executionPlanStatusHolder == null){
                                 log.error("Couldn't update distributed deployment status for execution plan: " + executionPlanName +
                                         ", for tenant-domain: " + tenantDomain
-                                        + " as the ExecutionPlanStatusHolder is null.");
+                                        + " as status object not initialized by manager.");
                             } else {
                                 executionPlanStatusHolder.setCEPReceiverStatus(hostIp, connectedCepReceiversCount.get(), importedStreamsCount);
                                 executionPlanStatusHolder.setConnectedPublisherBoltsCount(hostIp, connectedPublisherBoltsCount.get());
