@@ -40,6 +40,7 @@ import org.wso2.siddhi.query.api.definition.StreamDefinition;
 
 import java.io.IOException;
 import java.net.SocketException;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.Executors;
@@ -164,7 +165,8 @@ public class AsyncEventPublisher implements EventHandler<AsynchronousEventBuffer
                     }
                 }
                 Thread.sleep(stormDeploymentConfig.getTransportReconnectInterval());
-            } catch (InterruptedException e) {}
+            } catch (InterruptedException e) {
+            }
         }
 
         // TODO : comment on message lost of the last batch
@@ -194,14 +196,17 @@ public class AsyncEventPublisher implements EventHandler<AsynchronousEventBuffer
     }
 
     private void resetTCPEventPublisher() {
-        tcpEventPublisher.terminate();
-        tcpEventPublisher = null;
+        if (tcpEventPublisher != null) {
+            tcpEventPublisher.terminate();
+            tcpEventPublisher = null;
+        }
     }
 
     @Override
     protected void finalize() {
         if (tcpEventPublisher != null) {
             tcpEventPublisher.shutdown();
+            tcpEventPublisher = null;
         }
     }
 
@@ -210,21 +215,18 @@ public class AsyncEventPublisher implements EventHandler<AsynchronousEventBuffer
             shutdown = true;
         }
         eventSendBuffer.terminate();
-        if (tcpEventPublisher != null){
-            tcpEventPublisher.shutdown();
-        }
-
+        finalize();
     }
 
     @Override
-    public void onConnectionFail(Exception e){
-        if (log.isDebugEnabled()){
+    public void onConnectionFail(Exception e) {
+        if (log.isDebugEnabled()) {
             log.debug("Pinging failed to " + tcpEventPublisher.getHostUrl() + ". Trying to re-connect.");
         }
 
-        if (!shutdown){
+        if (!shutdown) {
             reconnect();
-        }else{
+        } else {
             log.info("Not trying to reconnect to " + tcpEventPublisher.getHostUrl() + " because event publisher is shutdown");
         }
     }
@@ -314,8 +316,8 @@ public class AsyncEventPublisher implements EventHandler<AsynchronousEventBuffer
          * Connect to a given endpoint (i.e. CEP publisher or storm receiver). In case of failure retry to connect. Returns only
          * after connecting to the endpoint or after reaching maximum attempts.
          *
-         * @param endpoint Destination Ip and port in <ip>:<port> format
-         * @param retryAttempts    maximum number of retry attempts. 0 means retry for ever.
+         * @param endpoint      Destination Ip and port in <ip>:<port> format
+         * @param retryAttempts maximum number of retry attempts. 0 means retry for ever.
          * @return Returns TCPEvent publisher to talk to endpoint or null if reaches maximum number of attempts without succeeding
          */
         public TCPEventPublisher connectToEndpoint(String endpoint, int retryAttempts) {
@@ -415,7 +417,6 @@ class AsynchronousEventBuffer<Type> {
     }
 
     public void addEvent(Type data, long timestamp, String streamId) {
-        // due to heart beat miss. Use try next.
         long sequenceNo = ringBuffer.next();
         try {
             DataHolder existingHolder = ringBuffer.get(sequenceNo);
