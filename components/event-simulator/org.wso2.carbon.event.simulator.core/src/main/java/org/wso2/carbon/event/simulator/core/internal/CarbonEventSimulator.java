@@ -402,9 +402,8 @@ public class CarbonEventSimulator implements EventSimulator {
                     throw new AxisFault("IOError: Writing resource failed.", e);
                 }
             } else {
-                throw new AxisFault("Invalid file type : " + uploadedFile.getFileType() + " ." +
-                                    "csv" +
-                                    " file type is expected");
+                throw new AxisFault("Invalid file type : " + uploadedFile.getFileType() +
+                                    " .csv file type is expected");
             }
         }
 
