@@ -40,11 +40,13 @@ public class DeployerHelper {
 
     /**
      * Returns CSVFileInfo configuration object from stream configuration XML file
-     * @param streamConfigXMLFile    stream configuration XML file
-     * @return  CSVFileInfo configuration object
+     *
+     * @param streamConfigXMLFile stream configuration XML file
+     * @return CSVFileInfo configuration object
      * @throws DeploymentException when the given XML file cannot be parsed; missing required info; or when the contents are inconsistent with filename.
      */
-    public static CSVFileInfo getCSVFileInfo(File streamConfigXMLFile, AxisConfiguration axisConfiguration)
+    public static CSVFileInfo getCSVFileInfo(File streamConfigXMLFile,
+                                             AxisConfiguration axisConfiguration)
             throws DeploymentException {
         CSVFileInfo csvFileInfo = new CSVFileInfo();
 
@@ -80,7 +82,7 @@ public class DeployerHelper {
         String csvAbsolutePath = path + File.separator + extractedCSVFileName;
         File csvFile = new File(csvAbsolutePath);
 
-        if(!csvFile.exists()) {
+        if (!csvFile.exists()) {
             throw new DeploymentException("CSV file: " + extractedCSVFileName + " does not exist for stream configuration: " + streamConfigXMLFile.getName());
         }
 
@@ -109,10 +111,12 @@ public class DeployerHelper {
 
     /**
      * Returns DataSourceTableAndStreamInfo configuration object from datasource configuration XML file
+     *
      * @param datasourceConfigXMLFile Datasource configuration XML file
      * @return DataSourceTableAndStreamInfo configuration object
      */
-    public static DataSourceTableAndStreamInfo getEventMappingConfiguration(File datasourceConfigXMLFile) {
+    public static DataSourceTableAndStreamInfo getEventMappingConfiguration(
+            File datasourceConfigXMLFile) {
         DataSourceTableAndStreamInfo dataSourceTableAndStreamInfo = new DataSourceTableAndStreamInfo();
         try {
             if (datasourceConfigXMLFile.exists()) {

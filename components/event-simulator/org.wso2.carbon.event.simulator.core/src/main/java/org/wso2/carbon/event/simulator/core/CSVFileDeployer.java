@@ -106,7 +106,7 @@ public class CSVFileDeployer extends AbstractDeployer {
         csvFileInfoMap.remove(csvFile.getName());
 
         if (xmlFile.exists()) {
-            if(!xmlFile.delete()){
+            if (!xmlFile.delete()) {
                 int tenantID = PrivilegedCarbonContext.getThreadLocalCarbonContext().getTenantId();
                 throw new DeploymentException(xmlFileName + " could not be deleted for tenant ID : " + tenantID);
             }
