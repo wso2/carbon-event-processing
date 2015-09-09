@@ -136,7 +136,7 @@ public class EventReceiverSpout extends BaseRichSpout implements StreamCallback 
         try {
             listeningPort = findPort();
             thisHostIp = Utils.findAddress("localhost");
-            TCPEventServerConfig configs =  new TCPEventServerConfig(listeningPort);
+            TCPEventServerConfig configs = new TCPEventServerConfig(thisHostIp, listeningPort);
             configs.setNumberOfThreads(stormDeploymentConfig.getTransportReceiverThreads());
             tcpEventServer = new TCPEventServer(configs, this, null);
             for (StreamDefinition siddhiStreamDefinition : incomingStreamDefinitions) {

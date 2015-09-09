@@ -338,7 +338,7 @@ public class StormTopologyManager {
                         ExecutionPlanStatusHolder executionPlanStatusHolder =
                                 executionPlanStatusHolderIMap.get(stormTopologyName);
                         if(executionPlanStatusHolder == null){
-                            log.error("Couldn't update topology status for topology:" + topologyName + " as the ExecutionPlanStatusHolder is null.");
+                            log.error("Couldn't update topology status for topology:" + topologyName + " as status object not initialized by manager.");
                         } else {
                             executionPlanStatusHolder.setStormTopologyStatus(topologyState);
                             executionPlanStatusHolderIMap.replace(stormTopologyName, executionPlanStatusHolder);
