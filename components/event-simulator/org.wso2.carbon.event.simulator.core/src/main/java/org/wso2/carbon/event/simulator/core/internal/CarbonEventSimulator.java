@@ -241,6 +241,22 @@ public class CarbonEventSimulator implements EventSimulator {
         }
     }
 
+    public void removeCSVFileInfo(String fileName) {
+        int tenantID = PrivilegedCarbonContext.getThreadLocalCarbonContext().getTenantId();
+        if (tenantSpecificCSVFileInfoMap.containsKey(tenantID)) {
+            HashMap<String, CSVFileInfo> csvFileInfoMap = tenantSpecificCSVFileInfoMap.get(tenantID);
+            if (csvFileInfoMap != null) {
+                CSVFileInfo oldCSVFileInfo = csvFileInfoMap.get(fileName);
+                if (oldCSVFileInfo != null) {
+                    CSVFileInfo newCSVFileInfo = new CSVFileInfo();
+                    newCSVFileInfo.setFileName(oldCSVFileInfo.getFileName());
+                    newCSVFileInfo.setFilePath(oldCSVFileInfo.getFilePath());
+                    csvFileInfoMap.put(fileName, newCSVFileInfo);
+                }
+            }
+        }
+    }
+
     public void addEventMappingConfiguration(String fileName, String streamId, String separateChar,
                                              long delayBetweenEventsInMilies) {
 
@@ -289,7 +305,7 @@ public class CarbonEventSimulator implements EventSimulator {
             Transformer transformer = transformerFactory.newTransformer();
             DOMSource source = new DOMSource(doc);
 
-            String absolutePath = path + File.separator + fileName.substring(0, fileName.length() - 4) + EventSimulatorConstant.CONFIGURATION_XML_PREFIX;
+            String absolutePath = path + File.separator + fileName.substring(0, fileName.length() - 4) + EventSimulatorConstant.CONFIGURATION_XML_SUFFIX;
             StreamResult result = new StreamResult(new File(absolutePath));
 
             transformer.transform(source, result);
@@ -313,32 +329,36 @@ public class CarbonEventSimulator implements EventSimulator {
         String repo = axisConfiguration.getRepository().getPath();
         String path = repo + EventSimulatorConstant.DEPLOY_DIRECTORY_PATH;
 
-        String xmlFileName = csvFileInfo.getFileName().substring(0, csvFileInfo.getFileName().length() - 4) + EventSimulatorConstant.CONFIGURATION_XML_PREFIX;
+        String xmlFileName = csvFileInfo.getFileName().substring(0, csvFileInfo.getFileName().length() - 4) + EventSimulatorConstant.CONFIGURATION_XML_SUFFIX;
         String xmlFilePath = path + File.separator + xmlFileName;
 
         File file = new File(csvFileInfo.getFilePath());
         File xmlFile = new File(xmlFilePath);
 
+        if (xmlFile.exists()) {
+            if(!xmlFile.delete()){
+                throw new AxisFault("Failed to delete the file : " + xmlFileName + " for tenant ID : " + tenantID);
+            }
+        }
+
         if (file.delete()) {
             csvFileInfoMap.remove(fileName);
         } else {
-            throw new AxisFault("Failed to delete the file .." + csvFileInfo.getFileName());
-        }
-
-        if (xmlFile.exists()) {
-            xmlFile.delete();
+            throw new AxisFault("Failed to delete the file : " + csvFileInfo.getFileName() + " for tenant ID : " + tenantID);
         }
 
     }
 
+    public HashMap<String, CSVFileInfo> getCSVFileInfoMap() {
+        int tenantID = PrivilegedCarbonContext.getThreadLocalCarbonContext().getTenantId();
+        return tenantSpecificCSVFileInfoMap.get(tenantID);
+    }
+
     @Override
     public void sendEvents(String fileName) throws AxisFault {
-
         int tenantId = PrivilegedCarbonContext.getThreadLocalCarbonContext().getTenantId();
         Thread eventCreator = new Thread(new EventCreation(fileName, tenantId));
         eventCreator.start();
-
-
     }
 
     @Override
@@ -590,21 +610,29 @@ public class CarbonEventSimulator implements EventSimulator {
     }
 
     public void addDataSourceTableAndStreamInfo(DataSourceTableAndStreamInfo dataSourceTableAndStreamInfo) {
-
         int tenantID = PrivilegedCarbonContext.getThreadLocalCarbonContext().getTenantId();
         if (tenantSpecificDataSourceInfoMap.containsKey(tenantID)) {
             HashMap<String, DataSourceTableAndStreamInfo> dataSourceTableAndStreamInfoMap = tenantSpecificDataSourceInfoMap.get(
                     tenantID);
             dataSourceTableAndStreamInfoMap.put(dataSourceTableAndStreamInfo.getConfigurationName(),
-                    dataSourceTableAndStreamInfo);
+                                                dataSourceTableAndStreamInfo);
         } else {
             HashMap<String, DataSourceTableAndStreamInfo> dataSourceTableAndStreamInfoMap = new HashMap<String, DataSourceTableAndStreamInfo>();
             dataSourceTableAndStreamInfoMap.put(dataSourceTableAndStreamInfo.getConfigurationName(),
-                    dataSourceTableAndStreamInfo);
+                                                dataSourceTableAndStreamInfo);
             tenantSpecificDataSourceInfoMap.put(tenantID, dataSourceTableAndStreamInfoMap);
-
         }
+    }
 
+    public void removeDataSourceTableAndStreamInfo(String datasourceConfigFileName) {
+        int tenantID = PrivilegedCarbonContext.getThreadLocalCarbonContext().getTenantId();
+        if (tenantSpecificDataSourceInfoMap.containsKey(tenantID)) {
+            HashMap<String, DataSourceTableAndStreamInfo> dataSourceTableAndStreamInfoMap = tenantSpecificDataSourceInfoMap.get(
+                    tenantID);
+            if(dataSourceTableAndStreamInfoMap != null){
+                dataSourceTableAndStreamInfoMap.remove(datasourceConfigFileName);
+            }
+        }
     }
 
     @Override
@@ -685,7 +713,7 @@ public class CarbonEventSimulator implements EventSimulator {
             Transformer transformer = transformerFactory.newTransformer();
             DOMSource source = new DOMSource(doc);
 
-            String absolutePath = path + File.separator + fileName + EventSimulatorConstant.DATA_SOURCE_CONFIGURATION_XML_PREFIX;
+            String absolutePath = path + File.separator + fileName + EventSimulatorConstant.DATA_SOURCE_CONFIGURATION_XML_SUFFIX;
             StreamResult result = new StreamResult(new File(absolutePath));
             uploadXMLFile(axisConfiguration);
             transformer.transform(source, result);
@@ -729,7 +757,7 @@ public class CarbonEventSimulator implements EventSimulator {
         HashMap<String, DataSourceTableAndStreamInfo> dataSourceTableAndStreamInfoMap = tenantSpecificDataSourceInfoMap.get(
                 tenantID);
 
-        fileName = fileName.replace(EventSimulatorConstant.DATA_SOURCE_CONFIGURATION_XML_PREFIX, "");
+        fileName = fileName.replace(EventSimulatorConstant.DATA_SOURCE_CONFIGURATION_XML_SUFFIX, "");
 
         DataSourceTableAndStreamInfo dataSourceTableAndStreamInfo = dataSourceTableAndStreamInfoMap.get(fileName);
         String repo = axisConfiguration.getRepository().getPath();
@@ -752,7 +780,7 @@ public class CarbonEventSimulator implements EventSimulator {
         PrivilegedCarbonContext.startTenantFlow();
         PrivilegedCarbonContext.getThreadLocalCarbonContext().setTenantId(tenantId, true);
 
-        fileName = fileName.replace(EventSimulatorConstant.DATA_SOURCE_CONFIGURATION_XML_PREFIX, "");
+        fileName = fileName.replace(EventSimulatorConstant.DATA_SOURCE_CONFIGURATION_XML_SUFFIX, "");
         HashMap<String, DataSourceTableAndStreamInfo> dataSourceInfoMap = tenantSpecificDataSourceInfoMap.get(tenantId);
 
         DataSourceTableAndStreamInfo dataSourceTableAndStreamInfo = dataSourceInfoMap.get(fileName);

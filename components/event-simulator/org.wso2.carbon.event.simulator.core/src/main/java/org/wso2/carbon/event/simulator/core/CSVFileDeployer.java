@@ -21,15 +21,13 @@ import org.apache.axis2.deployment.DeploymentException;
 import org.apache.axis2.deployment.repository.util.DeploymentFileData;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
+import org.wso2.carbon.context.PrivilegedCarbonContext;
 import org.wso2.carbon.event.simulator.core.internal.CarbonEventSimulator;
 import org.wso2.carbon.event.simulator.core.internal.ds.EventSimulatorValueHolder;
+import org.wso2.carbon.event.simulator.core.internal.util.DeployerHelper;
 
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
 import java.io.File;
+import java.util.HashMap;
 
 public class CSVFileDeployer extends AbstractDeployer {
 
@@ -42,92 +40,76 @@ public class CSVFileDeployer extends AbstractDeployer {
     }
 
     public void deploy(DeploymentFileData deploymentFileData) throws DeploymentException {
-
         String path = deploymentFileData.getAbsolutePath();
-
         try {
             processDeploy(deploymentFileData);
 
         } catch (Exception e) {
             throw new DeploymentException("CSV file not deployed and in inactive state :  " + new File(path).getName(), e);
         }
+    }
 
+    @Override
+    public void undeploy(String filePath) throws DeploymentException {
+        processUndeploy(filePath);
     }
 
     @Override
     public void setDirectory(String s) {
-
     }
 
     @Override
     public void setExtension(String s) {
-
     }
 
     public void processDeploy(DeploymentFileData deploymentFileData)
             throws DeploymentException {
-
+        CSVFileInfo csvFileInfo = null;
         File csvFile = deploymentFileData.getFile();
-        CarbonEventSimulator eventSimulator = EventSimulatorValueHolder.getEventSimulator();
-        CSVFileInfo csvFileInfo = new CSVFileInfo();
+        String xmlName = csvFile.getName().substring(0, csvFile.getName().length() - 4) + EventSimulatorConstant.CONFIGURATION_XML_SUFFIX;
+        String repo = configurationContext.getAxisConfiguration().getRepository().getPath();
+        String dirPath = repo + EventSimulatorConstant.DEPLOY_DIRECTORY_PATH;
+        String absolutePath = dirPath + File.separator + xmlName;
 
+        File xmlFile = new File(absolutePath);
+
+        if (xmlFile.exists()) {
+            csvFileInfo = DeployerHelper.getCSVFileInfo(xmlFile, configurationContext.getAxisConfiguration());
+        }
+
+        if (csvFileInfo == null) {
+            csvFileInfo = new CSVFileInfo();
+        }
 
         csvFileInfo.setFileName(csvFile.getName());
         csvFileInfo.setFilePath(csvFile.getAbsolutePath());
 
-        String[] streamIdSepCharAndDelay = getEventMappingConfiguration(csvFile.getName());
-        if (streamIdSepCharAndDelay[0] != null) {
-            csvFileInfo.setStreamID(streamIdSepCharAndDelay[0]);
-        }
-        if (streamIdSepCharAndDelay[1] != null) {
-            csvFileInfo.setSeparateCharacter(streamIdSepCharAndDelay[1]);
-        }
-        if (streamIdSepCharAndDelay[2] != null) {
-            csvFileInfo.setDelayBetweenEventsInMilies(Long.valueOf(streamIdSepCharAndDelay[2]));
-        }
+        CarbonEventSimulator eventSimulator = EventSimulatorValueHolder.getEventSimulator();
         eventSimulator.addCSVFileInfo(csvFileInfo);
-
     }
 
-    public String[] getEventMappingConfiguration(String fileName) {
+    public void processUndeploy(String filePath) throws DeploymentException {
+        CarbonEventSimulator eventSimulator = EventSimulatorValueHolder.getEventSimulator();
+        HashMap<String, CSVFileInfo> csvFileInfoMap = eventSimulator.getCSVFileInfoMap();
 
-        String xmlName = fileName.substring(0, fileName.length() - 4) + EventSimulatorConstant.CONFIGURATION_XML_PREFIX;
+        File csvFile = new File(filePath);
+        CSVFileInfo csvFileInfo = csvFileInfoMap.get(csvFile.getName());
+
         String repo = configurationContext.getAxisConfiguration().getRepository().getPath();
-        String dirPath = repo + EventSimulatorConstant.DEPLOY_DIRECTORY_PATH;
-        String absolutePath = dirPath + File.separator + xmlName;
-        String streamID = null;
-        String separateChar = null;
-        String eventSendingDelay = null;
-        String[] streamIdSepCharAndDelay = new String[3];
-        try {
-            File xmlFile = new File(absolutePath);
+        String path = repo + EventSimulatorConstant.DEPLOY_DIRECTORY_PATH;
 
-            if (xmlFile.exists()) {
-                DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
-                DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
-                Document doc = dBuilder.parse(xmlFile);
+        String xmlFileName = csvFileInfo.getFileName().substring(0, csvFileInfo.getFileName().length() - 4) + EventSimulatorConstant.CONFIGURATION_XML_SUFFIX;
+        String xmlFilePath = path + File.separator + xmlFileName;
 
-                Element element = doc.getDocumentElement();
-                Node streamIdNode = element.getElementsByTagName(EventSimulatorConstant.STREAM_ID_ELEMENT).item(0);
-                if (streamIdNode != null) {
-                    streamID = streamIdNode.getTextContent();
-                }
-                Node eventSendingDelayNode = element.getElementsByTagName(EventSimulatorConstant.DELAY_BETWEEN_EVENTS_IN_MILIES).item(0);
-                if (eventSendingDelayNode != null) {
-                    eventSendingDelay = eventSendingDelayNode.getTextContent();
-                }
-                Node separateCharNode = element.getElementsByTagName(EventSimulatorConstant.SEPARATE_CHAR_ELEMENT).item(0);
-                if (separateCharNode != null) {
-                    separateChar = separateCharNode.getTextContent();
-                }
+        File xmlFile = new File(xmlFilePath);
 
-                streamIdSepCharAndDelay[0] = streamID;
-                streamIdSepCharAndDelay[1] = separateChar;
-                streamIdSepCharAndDelay[2] = eventSendingDelay;
+        csvFileInfoMap.remove(csvFile.getName());
+
+        if (xmlFile.exists()) {
+            if(!xmlFile.delete()){
+                int tenantID = PrivilegedCarbonContext.getThreadLocalCarbonContext().getTenantId();
+                throw new DeploymentException(xmlFileName + " could not be deleted for tenant ID : " + tenantID);
             }
-        } catch (Exception e) {
-            log.error("Error when getting event mapping configuration for event simulator : " + e.getMessage(), e);
         }
-        return streamIdSepCharAndDelay;
     }
 }
