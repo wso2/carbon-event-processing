@@ -40,6 +40,10 @@ public class EventSimulatorConstant {
 
     public static final String DATA_SOURCE_CONFIGURATION_XML_SUFFIX ="_datSourceStreamConfiguration.xml";
 
+    public static final String STREAM_CONFIGURATION_TYPE = "type";
+    public static final String STREAM_CONFIGURATION_TYPE_DATABASE = "database";
+    public static final String STREAM_CONFIGURATION_NAME = "name";
+    public static final String COLUMN_MAPPING = "columnMapping";
     public static final String DATA_SOURCE_NAME = "dataSource";
     public static final String CONFIGURATION_NAME = "name";
     public static final String TABLE_NAME = "tableName";

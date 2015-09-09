@@ -125,8 +125,8 @@ public class DeployerHelper {
                 Document doc = dBuilder.parse(datasourceConfigXMLFile);
 
                 Element element = doc.getDocumentElement();
-                if (element.getAttribute("type").equalsIgnoreCase("database")) {
-                    dataSourceTableAndStreamInfo.setConfigurationName(element.getAttribute("name"));
+                if (element.getAttribute(EventSimulatorConstant.STREAM_CONFIGURATION_TYPE).equalsIgnoreCase(EventSimulatorConstant.STREAM_CONFIGURATION_TYPE_DATABASE)) {
+                    dataSourceTableAndStreamInfo.setConfigurationName(element.getAttribute(EventSimulatorConstant.STREAM_CONFIGURATION_NAME));
                     dataSourceTableAndStreamInfo.setDataSourceName(
                             element.getElementsByTagName(EventSimulatorConstant.DATA_SOURCE_NAME).item(0)
                                     .getTextContent());
@@ -138,7 +138,7 @@ public class DeployerHelper {
                     dataSourceTableAndStreamInfo.setDelayBetweenEventsInMilies(Long.parseLong(
                             element.getElementsByTagName(EventSimulatorConstant.DELAY_BETWEEN_EVENTS_IN_MILIES).item(0)
                                     .getTextContent()));
-                    NodeList columnMappings = element.getElementsByTagName("columnMapping");
+                    NodeList columnMappings = element.getElementsByTagName(EventSimulatorConstant.COLUMN_MAPPING);
                     String dataSourceColumnsAndTypes[][] = new String[2][columnMappings.getLength()];
 
                     for (int i = 0; i < columnMappings.getLength(); i++) {
