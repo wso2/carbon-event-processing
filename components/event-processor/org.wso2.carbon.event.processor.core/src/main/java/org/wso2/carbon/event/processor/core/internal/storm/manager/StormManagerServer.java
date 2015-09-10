@@ -36,7 +36,7 @@ import java.util.concurrent.TimeUnit;
 public class StormManagerServer {
 
     private static final String STORM_HZ_MAP_ACTIVE_MANAGER_KEY = "storm.hazelcast.map.active.manager.key";
-    private static final String STORM_ROLE_TO_MEMBERSHIP_HZ_MAP = "storm.role.membership.hazelcast.key";
+    private static final String STORM_ROLE_TO_MEMBERSHIP_HZ_MAP = "storm.role.membership.hazelcast.map";
 
     private static Logger log = Logger.getLogger(StormManagerServer.class);
     private TThreadPoolServer stormManagerServer;
@@ -97,11 +97,6 @@ public class StormManagerServer {
         if (!isCoordinator){
             stateChecker = executorService.schedule(new PeriodicStateChanger(), 10000, TimeUnit.MILLISECONDS);
         }
-//        }else{
-//            if (!executorService.isShutdown()){
-//                executorService.shutdown();
-//            }
-//        }
     }
 
     public boolean isStormCoordinator() {
