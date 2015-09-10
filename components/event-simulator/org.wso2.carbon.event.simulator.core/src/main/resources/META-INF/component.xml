@@ -24,7 +24,7 @@
         <deployer>
             <directory>eventsimulatorfiles</directory>
             <extension>xml</extension>
-            <class>org.wso2.carbon.event.simulator.core.DataSourceAndEventStreamInfoDeployer
+            <class>org.wso2.carbon.event.simulator.core.XMLFileDeployer
             </class>
         </deployer>
     </deployers>
