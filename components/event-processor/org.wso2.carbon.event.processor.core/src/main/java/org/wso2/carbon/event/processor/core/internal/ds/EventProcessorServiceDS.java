@@ -84,7 +84,8 @@ public class EventProcessorServiceDS {
                 EventProcessorValueHolder.registerStormDeploymentConfiguration(stormDeploymentConfig);
                 EventProcessorValueHolder.registerStormTopologyManager(new StormTopologyManager());
                 if (stormDeploymentConfig.isManagerNode()) {
-                    StormManagerServer stormManagerServer = new StormManagerServer(stormDeploymentConfig.getLocalManagerConfig().getHostName(), stormDeploymentConfig.getLocalManagerConfig().getPort());
+                    StormManagerServer stormManagerServer = new StormManagerServer(stormDeploymentConfig.getLocalManagerConfig().getHostName(),
+                            stormDeploymentConfig.getLocalManagerConfig().getPort());
                     EventProcessorValueHolder.registerStormManagerServer(stormManagerServer);
                 }
             }
@@ -148,13 +149,17 @@ public class EventProcessorServiceDS {
 
         StormManagerServer stormManagerServer = EventProcessorValueHolder.getStormManagerServer();
         if (stormManagerServer != null) {
+            stormManagerServer.setHzaelCastInstance(hazelcastInstance);
             stormManagerServer.tryBecomeCoordinator();
         }
 
         hazelcastInstance.getCluster().addMembershipListener(new MembershipListener() {
             @Override
             public void memberAdded(MembershipEvent membershipEvent) {
-
+                StormManagerServer stormManagerServer = EventProcessorValueHolder.getStormManagerServer();
+                if (stormManagerServer != null) {
+                    stormManagerServer.verifyState();
+                }
             }
 
             @Override
