@@ -121,7 +121,7 @@ public class CarbonEventSimulator implements EventSimulator {
 
         if (mode == Mode.Distributed && !isWorkerNode) {
             log.warn("Sending events via manager node in distributed mode is not allowed. " +
-                    "Dropping event for stream: " + eventDetail.getStreamDefinition().getStreamId());
+                     "Dropping event for stream: " + eventDetail.getStreamDefinition().getStreamId());
             return;
         }
 
@@ -241,6 +241,22 @@ public class CarbonEventSimulator implements EventSimulator {
         }
     }
 
+    public void removeCSVFileInfo(String fileName) {
+        int tenantID = PrivilegedCarbonContext.getThreadLocalCarbonContext().getTenantId();
+        if (tenantSpecificCSVFileInfoMap.containsKey(tenantID)) {
+            HashMap<String, CSVFileInfo> csvFileInfoMap = tenantSpecificCSVFileInfoMap.get(tenantID);
+            if (csvFileInfoMap != null) {
+                CSVFileInfo oldCSVFileInfo = csvFileInfoMap.get(fileName);
+                if (oldCSVFileInfo != null) {
+                    CSVFileInfo newCSVFileInfo = new CSVFileInfo();
+                    newCSVFileInfo.setFileName(oldCSVFileInfo.getFileName());
+                    newCSVFileInfo.setFilePath(oldCSVFileInfo.getFilePath());
+                    csvFileInfoMap.put(fileName, newCSVFileInfo);
+                }
+            }
+        }
+    }
+
     public void addEventMappingConfiguration(String fileName, String streamId, String separateChar,
                                              long delayBetweenEventsInMilies) {
 
@@ -254,7 +270,8 @@ public class CarbonEventSimulator implements EventSimulator {
     }
 
     @Override
-    public void createConfigurationXML(String fileName, String streamId, String separateChar, long delayBetweenEventsInMilies,
+    public void createConfigurationXML(String fileName, String streamId, String separateChar,
+                                       long delayBetweenEventsInMilies,
                                        AxisConfiguration axisConfiguration) {
 
         String repo = axisConfiguration.getRepository().getPath();
@@ -289,7 +306,7 @@ public class CarbonEventSimulator implements EventSimulator {
             Transformer transformer = transformerFactory.newTransformer();
             DOMSource source = new DOMSource(doc);
 
-            String absolutePath = path + File.separator + fileName.substring(0, fileName.length() - 4) + EventSimulatorConstant.CONFIGURATION_XML_PREFIX;
+            String absolutePath = path + File.separator + fileName.substring(0, fileName.length() - 4) + EventSimulatorConstant.CONFIGURATION_XML_SUFFIX;
             StreamResult result = new StreamResult(new File(absolutePath));
 
             transformer.transform(source, result);
@@ -313,32 +330,36 @@ public class CarbonEventSimulator implements EventSimulator {
         String repo = axisConfiguration.getRepository().getPath();
         String path = repo + EventSimulatorConstant.DEPLOY_DIRECTORY_PATH;
 
-        String xmlFileName = csvFileInfo.getFileName().substring(0, csvFileInfo.getFileName().length() - 4) + EventSimulatorConstant.CONFIGURATION_XML_PREFIX;
+        String xmlFileName = csvFileInfo.getFileName().substring(0, csvFileInfo.getFileName().length() - 4) + EventSimulatorConstant.CONFIGURATION_XML_SUFFIX;
         String xmlFilePath = path + File.separator + xmlFileName;
 
         File file = new File(csvFileInfo.getFilePath());
         File xmlFile = new File(xmlFilePath);
 
+        if (xmlFile.exists()) {
+            if (!xmlFile.delete()) {
+                throw new AxisFault("Failed to delete the file : " + xmlFileName + " for tenant ID : " + tenantID);
+            }
+        }
+
         if (file.delete()) {
             csvFileInfoMap.remove(fileName);
         } else {
-            throw new AxisFault("Failed to delete the file .." + csvFileInfo.getFileName());
-        }
-
-        if (xmlFile.exists()) {
-            xmlFile.delete();
+            throw new AxisFault("Failed to delete the file : " + csvFileInfo.getFileName() + " for tenant ID : " + tenantID);
         }
 
     }
 
+    public HashMap<String, CSVFileInfo> getCSVFileInfoMap() {
+        int tenantID = PrivilegedCarbonContext.getThreadLocalCarbonContext().getTenantId();
+        return tenantSpecificCSVFileInfoMap.get(tenantID);
+    }
+
     @Override
     public void sendEvents(String fileName) throws AxisFault {
-
         int tenantId = PrivilegedCarbonContext.getThreadLocalCarbonContext().getTenantId();
         Thread eventCreator = new Thread(new EventCreation(fileName, tenantId));
         eventCreator.start();
-
-
     }
 
     @Override
@@ -381,9 +402,8 @@ public class CarbonEventSimulator implements EventSimulator {
                     throw new AxisFault("IOError: Writing resource failed.", e);
                 }
             } else {
-                throw new AxisFault("Invalid file type : " + uploadedFile.getFileType() + " ." +
-                        "csv" +
-                        " file type is expected");
+                throw new AxisFault("Invalid file type : " + uploadedFile.getFileType() +
+                                    " .csv file type is expected");
             }
         }
 
@@ -415,7 +435,7 @@ public class CarbonEventSimulator implements EventSimulator {
         boolean isDeleted = tempDestFile.delete();
         if (!isDeleted) {
             log.warn("temp file: " + tempDestFile.getAbsolutePath() +
-                    " deletion failed, scheduled deletion on server exit.");
+                     " deletion failed, scheduled deletion on server exit.");
             tempDestFile.deleteOnExit();
         }
     }
@@ -526,7 +546,7 @@ public class CarbonEventSimulator implements EventSimulator {
                 long delayBetweenEventsInMilies = fileInfo.getDelayBetweenEventsInMilies();
                 if (delayBetweenEventsInMilies <= 0) {
                     log.warn("Events will be sent continuously since the delay between events are set to "
-                            + delayBetweenEventsInMilies + "milliseconds");
+                             + delayBetweenEventsInMilies + "milliseconds");
                     delayBetweenEventsInMilies = 0;
                 }
 
@@ -589,22 +609,31 @@ public class CarbonEventSimulator implements EventSimulator {
         }
     }
 
-    public void addDataSourceTableAndStreamInfo(DataSourceTableAndStreamInfo dataSourceTableAndStreamInfo) {
-
+    public void addDataSourceTableAndStreamInfo(
+            DataSourceTableAndStreamInfo dataSourceTableAndStreamInfo) {
         int tenantID = PrivilegedCarbonContext.getThreadLocalCarbonContext().getTenantId();
         if (tenantSpecificDataSourceInfoMap.containsKey(tenantID)) {
             HashMap<String, DataSourceTableAndStreamInfo> dataSourceTableAndStreamInfoMap = tenantSpecificDataSourceInfoMap.get(
                     tenantID);
             dataSourceTableAndStreamInfoMap.put(dataSourceTableAndStreamInfo.getConfigurationName(),
-                    dataSourceTableAndStreamInfo);
+                                                dataSourceTableAndStreamInfo);
         } else {
             HashMap<String, DataSourceTableAndStreamInfo> dataSourceTableAndStreamInfoMap = new HashMap<String, DataSourceTableAndStreamInfo>();
             dataSourceTableAndStreamInfoMap.put(dataSourceTableAndStreamInfo.getConfigurationName(),
-                    dataSourceTableAndStreamInfo);
+                                                dataSourceTableAndStreamInfo);
             tenantSpecificDataSourceInfoMap.put(tenantID, dataSourceTableAndStreamInfoMap);
-
         }
+    }
 
+    public void removeDataSourceTableAndStreamInfo(String datasourceConfigFileName) {
+        int tenantID = PrivilegedCarbonContext.getThreadLocalCarbonContext().getTenantId();
+        if (tenantSpecificDataSourceInfoMap.containsKey(tenantID)) {
+            HashMap<String, DataSourceTableAndStreamInfo> dataSourceTableAndStreamInfoMap = tenantSpecificDataSourceInfoMap.get(
+                    tenantID);
+            if (dataSourceTableAndStreamInfoMap != null) {
+                dataSourceTableAndStreamInfoMap.remove(datasourceConfigFileName);
+            }
+        }
     }
 
     @Override
@@ -622,7 +651,8 @@ public class CarbonEventSimulator implements EventSimulator {
 
     @Override
     public void createConfigurationXMLForDataSource(String tableAndAttributeMappingInfo,
-                                                    AxisConfiguration axisConfiguration) throws AxisFault {
+                                                    AxisConfiguration axisConfiguration)
+            throws AxisFault {
 
         String repo = axisConfiguration.getRepository().getPath();
         String path = repo + EventSimulatorConstant.DATA_SOURCE_DEPLOY_DIRECTORY_PATH;
@@ -672,9 +702,9 @@ public class CarbonEventSimulator implements EventSimulator {
 
                 Element columnMapping = doc.createElement("columnMapping");
                 columnMapping.setAttribute(EventSimulatorConstant.COLUMN_NAME,
-                        temp.getString(EventSimulatorConstant.COLUMN_NAME));
+                                           temp.getString(EventSimulatorConstant.COLUMN_NAME));
                 columnMapping.setAttribute(EventSimulatorConstant.STREAM_ATTRIBUTE_NAME,
-                        temp.getString(EventSimulatorConstant.STREAM_ATTRIBUTE_NAME));
+                                           temp.getString(EventSimulatorConstant.STREAM_ATTRIBUTE_NAME));
 
                 columnMappings.appendChild(columnMapping);
             }
@@ -685,7 +715,7 @@ public class CarbonEventSimulator implements EventSimulator {
             Transformer transformer = transformerFactory.newTransformer();
             DOMSource source = new DOMSource(doc);
 
-            String absolutePath = path + File.separator + fileName + EventSimulatorConstant.DATA_SOURCE_CONFIGURATION_XML_PREFIX;
+            String absolutePath = path + File.separator + fileName + EventSimulatorConstant.DATA_SOURCE_CONFIGURATION_XML_SUFFIX;
             StreamResult result = new StreamResult(new File(absolutePath));
             uploadXMLFile(axisConfiguration);
             transformer.transform(source, result);
@@ -723,13 +753,14 @@ public class CarbonEventSimulator implements EventSimulator {
 
 
     @Override
-    public void deleteDBConfigFile(String fileName, AxisConfiguration axisConfiguration) throws AxisFault {
+    public void deleteDBConfigFile(String fileName, AxisConfiguration axisConfiguration)
+            throws AxisFault {
 
         int tenantID = PrivilegedCarbonContext.getThreadLocalCarbonContext().getTenantId();
         HashMap<String, DataSourceTableAndStreamInfo> dataSourceTableAndStreamInfoMap = tenantSpecificDataSourceInfoMap.get(
                 tenantID);
 
-        fileName = fileName.replace(EventSimulatorConstant.DATA_SOURCE_CONFIGURATION_XML_PREFIX, "");
+        fileName = fileName.replace(EventSimulatorConstant.DATA_SOURCE_CONFIGURATION_XML_SUFFIX, "");
 
         DataSourceTableAndStreamInfo dataSourceTableAndStreamInfo = dataSourceTableAndStreamInfoMap.get(fileName);
         String repo = axisConfiguration.getRepository().getPath();
@@ -752,21 +783,21 @@ public class CarbonEventSimulator implements EventSimulator {
         PrivilegedCarbonContext.startTenantFlow();
         PrivilegedCarbonContext.getThreadLocalCarbonContext().setTenantId(tenantId, true);
 
-        fileName = fileName.replace(EventSimulatorConstant.DATA_SOURCE_CONFIGURATION_XML_PREFIX, "");
+        fileName = fileName.replace(EventSimulatorConstant.DATA_SOURCE_CONFIGURATION_XML_SUFFIX, "");
         HashMap<String, DataSourceTableAndStreamInfo> dataSourceInfoMap = tenantSpecificDataSourceInfoMap.get(tenantId);
 
         DataSourceTableAndStreamInfo dataSourceTableAndStreamInfo = dataSourceInfoMap.get(fileName);
 
         String jsonFormattedAllInfo = "{\"" +
-                EventSimulatorConstant.EVENT_STREAM_ID + "\":\"" + dataSourceTableAndStreamInfo.getEventStreamID() +
-                "\",\"" + EventSimulatorConstant.DATA_SOURCE_NAME + "\":\"" + dataSourceTableAndStreamInfo
+                                      EventSimulatorConstant.EVENT_STREAM_ID + "\":\"" + dataSourceTableAndStreamInfo.getEventStreamID() +
+                                      "\",\"" + EventSimulatorConstant.DATA_SOURCE_NAME + "\":\"" + dataSourceTableAndStreamInfo
                 .getDataSourceName() +
-                "\",\"" + EventSimulatorConstant.TABLE_NAME + "\":\"" + dataSourceTableAndStreamInfo.getTableName() +
-                "\", \"" + EventSimulatorConstant.CONFIGURATION_NAME + "\":\"" + dataSourceTableAndStreamInfo
+                                      "\",\"" + EventSimulatorConstant.TABLE_NAME + "\":\"" + dataSourceTableAndStreamInfo.getTableName() +
+                                      "\", \"" + EventSimulatorConstant.CONFIGURATION_NAME + "\":\"" + dataSourceTableAndStreamInfo
                 .getConfigurationName() +
-                "\", \"" + EventSimulatorConstant.DELAY_BETWEEN_EVENTS_IN_MILIES + "\":" + dataSourceTableAndStreamInfo
+                                      "\", \"" + EventSimulatorConstant.DELAY_BETWEEN_EVENTS_IN_MILIES + "\":" + dataSourceTableAndStreamInfo
                 .getDelayBetweenEventsInMilies() +
-                ",\"" + EventSimulatorConstant.DATABASE_COLUMNS_AND_STREAM_ATTRIBUTE_INFO + "\":[";
+                                      ",\"" + EventSimulatorConstant.DATABASE_COLUMNS_AND_STREAM_ATTRIBUTE_INFO + "\":[";
 
         String jsonAttribute = "";
 
@@ -786,9 +817,9 @@ public class CarbonEventSimulator implements EventSimulator {
                 for (int j = 0; j < columnAndStreamAttributeNames[0].length; j++) {
                     if (metaAttributeList.get(i).getName().equalsIgnoreCase(columnAndStreamAttributeNames[1][j])) {
                         jsonAttribute = jsonAttribute + "{\"" + EventSimulatorConstant.STREAM_ATTRIBUTE_NAME + "\":\"" +
-                                metaAttributeList.get(i).getName() + "\",\"" + EventSimulatorConstant.COLUMN_NAME + "\":\"" +
-                                columnAndStreamAttributeNames[0][j] + "\",\"" + EventSimulatorConstant.COLUMN_TYPE + "\":\"" +
-                                metaAttributeList.get(i).getType() + "\"},";
+                                        metaAttributeList.get(i).getName() + "\",\"" + EventSimulatorConstant.COLUMN_NAME + "\":\"" +
+                                        columnAndStreamAttributeNames[0][j] + "\",\"" + EventSimulatorConstant.COLUMN_TYPE + "\":\"" +
+                                        metaAttributeList.get(i).getType() + "\"},";
                     }
                 }
 
@@ -798,9 +829,9 @@ public class CarbonEventSimulator implements EventSimulator {
                 for (int j = 0; j < columnAndStreamAttributeNames[0].length; j++) {
                     if (correlationAttributeList.get(q).getName().equalsIgnoreCase(columnAndStreamAttributeNames[1][j])) {
                         jsonAttribute = jsonAttribute + "{\"" + EventSimulatorConstant.STREAM_ATTRIBUTE_NAME + "\":\"" +
-                                correlationAttributeList.get(q).getName() + "\",\"" + EventSimulatorConstant.COLUMN_NAME + "\":\"" +
-                                columnAndStreamAttributeNames[0][j] + "\",\"" + EventSimulatorConstant.COLUMN_TYPE + "\":\"" +
-                                correlationAttributeList.get(q).getType() + "\"},";
+                                        correlationAttributeList.get(q).getName() + "\",\"" + EventSimulatorConstant.COLUMN_NAME + "\":\"" +
+                                        columnAndStreamAttributeNames[0][j] + "\",\"" + EventSimulatorConstant.COLUMN_TYPE + "\":\"" +
+                                        correlationAttributeList.get(q).getType() + "\"},";
                     }
                 }
                 q++;
@@ -809,9 +840,9 @@ public class CarbonEventSimulator implements EventSimulator {
                 for (int j = 0; j < columnAndStreamAttributeNames[0].length; j++) {
                     if (payloadAttributeList.get(r).getName().equalsIgnoreCase(columnAndStreamAttributeNames[1][j])) {
                         jsonAttribute = jsonAttribute + "{\"" + EventSimulatorConstant.STREAM_ATTRIBUTE_NAME + "\":\"" +
-                                payloadAttributeList.get(r).getName() + "\",\"" + EventSimulatorConstant.COLUMN_NAME + "\":\"" +
-                                columnAndStreamAttributeNames[0][j] + "\",\"" + EventSimulatorConstant.COLUMN_TYPE + "\":\"" +
-                                payloadAttributeList.get(r).getType() + "\"},";
+                                        payloadAttributeList.get(r).getName() + "\",\"" + EventSimulatorConstant.COLUMN_NAME + "\":\"" +
+                                        columnAndStreamAttributeNames[0][j] + "\",\"" + EventSimulatorConstant.COLUMN_TYPE + "\":\"" +
+                                        payloadAttributeList.get(r).getType() + "\"},";
                     }
                 }
                 r++;
@@ -822,7 +853,8 @@ public class CarbonEventSimulator implements EventSimulator {
     }
 
     @Override
-    public void sendEventsViaDB(JSONObject allInfo, String getPreparedSelectStatement) throws AxisFault {
+    public void sendEventsViaDB(JSONObject allInfo, String getPreparedSelectStatement)
+            throws AxisFault {
 
         int tenantId = PrivilegedCarbonContext.getThreadLocalCarbonContext().getTenantId();
         Thread eventCreator = new Thread(new EventCreationForDB(tenantId, allInfo, getPreparedSelectStatement));
@@ -840,7 +872,8 @@ public class CarbonEventSimulator implements EventSimulator {
         private JSONArray columnAndAttributeMapping;
         private long delayBetweenEventsInMilies;
 
-        public EventCreationForDB(int tenantId, JSONObject tableAndAttributeMappingJsonObj, String preparedSelectStatement)
+        public EventCreationForDB(int tenantId, JSONObject tableAndAttributeMappingJsonObj,
+                                  String preparedSelectStatement)
                 throws AxisFault {
             this.tenantId = tenantId;
             this.allInfo = tableAndAttributeMappingJsonObj;
@@ -853,7 +886,7 @@ public class CarbonEventSimulator implements EventSimulator {
                         EventSimulatorConstant.DELAY_BETWEEN_EVENTS_IN_MILIES);
                 if (delayBetweenEventsInMilies <= 0) {
                     log.warn("Events will be sent continuously since the delay between events are set to "
-                            + delayBetweenEventsInMilies + "milliseconds");
+                             + delayBetweenEventsInMilies + "milliseconds");
                     delayBetweenEventsInMilies = 0;
                 }
                 try {
