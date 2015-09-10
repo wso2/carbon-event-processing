@@ -18,21 +18,34 @@ package org.wso2.carbon.event.processor.core.internal.storm.manager;
 
 import com.hazelcast.core.HazelcastInstance;
 import com.hazelcast.core.ILock;
+import com.hazelcast.core.IMap;
 import org.apache.log4j.Logger;
 import org.apache.thrift.server.TServer;
 import org.apache.thrift.server.TThreadPoolServer;
 import org.apache.thrift.transport.TServerSocket;
 import org.apache.thrift.transport.TTransportException;
-import org.wso2.carbon.event.processor.core.internal.ds.EventProcessorValueHolder;
 import org.wso2.carbon.event.processor.common.storm.manager.service.StormManagerService;
+import org.wso2.carbon.event.processor.core.internal.ds.EventProcessorValueHolder;
 
 import java.net.InetSocketAddress;
+import java.util.concurrent.Future;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 
 public class StormManagerServer {
+
+    private static final String STORM_HZ_MAP_ACTIVE_MANAGER_KEY = "storm.hazelcast.map.active.manager.key";
+    private static final String STORM_ROLE_TO_MEMBERSHIP_HZ_MAP = "storm.role.membership.hazelcast.key";
 
     private static Logger log = Logger.getLogger(StormManagerServer.class);
     private TThreadPoolServer stormManagerServer;
     private StormManagerServiceImpl stormManagerService;
+    private IMap<String, String> roleToMembershipMap;
+    HazelcastInstance hazelcastInstance;
+    private String myHazelcastId;
+    private Future stateChecker = null;
+    private  ScheduledExecutorService executorService;
 
     public StormManagerServer(String hostName, int port) {
 
@@ -46,11 +59,19 @@ public class StormManagerServer {
                     new TThreadPoolServer.Args(serverTransport).processor(processor));
             Thread thread = new Thread(new ServerThread(stormManagerServer));
             thread.start();
-            log.info("CEP Storm Management Thrift Server started on " + hostName + ":" + port);
 
+            log.info("CEP Storm Management Thrift Server started on " + hostName + ":" + port);
+            executorService = new ScheduledThreadPoolExecutor(3);
         } catch (TTransportException e) {
             log.error("Cannot start Storm Manager Server on " + hostName + ":" + port, e);
         }
+    }
+
+    public void setHzaelCastInstance(HazelcastInstance hazelcastInstance){
+        this.hazelcastInstance = hazelcastInstance;
+        this.roleToMembershipMap = hazelcastInstance.getMap(STORM_ROLE_TO_MEMBERSHIP_HZ_MAP);
+        myHazelcastId = hazelcastInstance.getCluster().getLocalMember().getUuid();
+
     }
 
     /**
@@ -58,6 +79,11 @@ public class StormManagerServer {
      */
     public void stop() {
         stormManagerServer.stop();
+        executorService.shutdown();
+
+        if (stateChecker != null){
+            stateChecker.cancel(false);
+        }
     }
 
     public void onExecutionPlanRemove(String excPlanName, int tenantId){
@@ -67,6 +93,15 @@ public class StormManagerServer {
 
     public void setStormCoordinator(boolean isCoordinator) {
         stormManagerService.setStormCoordinator(isCoordinator);
+
+        if (!isCoordinator){
+            stateChecker = executorService.schedule(new PeriodicStateChanger(), 10000, TimeUnit.MILLISECONDS);
+        }
+//        }else{
+//            if (!executorService.isShutdown()){
+//                executorService.shutdown();
+//            }
+//        }
     }
 
     public boolean isStormCoordinator() {
@@ -85,17 +120,40 @@ public class StormManagerServer {
         }
     }
 
-    public void tryBecomeCoordinator() {
+    public void verifyState(){
+        if (isStormCoordinator() && roleToMembershipMap != null &&
+                roleToMembershipMap.get(STORM_HZ_MAP_ACTIVE_MANAGER_KEY) != null &&
+                !roleToMembershipMap.get(STORM_HZ_MAP_ACTIVE_MANAGER_KEY).equals(myHazelcastId)){
+
+            log.info("Resigning as storm coordinator as there's another storm coordinator available in the cluster with member id "
+                    + roleToMembershipMap.get(STORM_HZ_MAP_ACTIVE_MANAGER_KEY));
+
+            setStormCoordinator(false);
+        }
+    }
+
+    public synchronized void tryBecomeCoordinator() {
         HazelcastInstance hazelcastInstance = EventProcessorValueHolder.getHazelcastInstance();
         if (hazelcastInstance != null) {
             if(!isStormCoordinator()) {
                 ILock lock = hazelcastInstance.getLock("StormCoordinator");
                 boolean isCoordinator = lock.tryLock();
-                if (isCoordinator) {
-                    log.info("Node became Storm coordinator");
-                }
                 setStormCoordinator(isCoordinator);
+                if (isCoordinator) {
+                    log.info("Node became the Storm coordinator with member id " + myHazelcastId);
+                    if (roleToMembershipMap != null){
+                        roleToMembershipMap.put(STORM_HZ_MAP_ACTIVE_MANAGER_KEY, myHazelcastId);
+                    }
+                }
             }
+        }
+    }
+
+    class PeriodicStateChanger implements Runnable {
+
+        @Override
+        public void run() {
+            tryBecomeCoordinator();
         }
     }
 
