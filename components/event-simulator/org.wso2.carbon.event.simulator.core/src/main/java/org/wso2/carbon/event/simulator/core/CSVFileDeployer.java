@@ -43,15 +43,18 @@ public class CSVFileDeployer extends AbstractDeployer {
         String path = deploymentFileData.getAbsolutePath();
         try {
             processDeploy(deploymentFileData);
-
-        } catch (Exception e) {
-            throw new DeploymentException("CSV file not deployed and in inactive state :  " + new File(path).getName(), e);
+        } catch (Throwable t) {
+            throw new DeploymentException("CSV file not deployed and in inactive state :  " + new File(path).getName(), t);
         }
     }
 
     @Override
     public void undeploy(String filePath) throws DeploymentException {
-        processUndeploy(filePath);
+        try {
+            processUndeploy(filePath);
+        } catch (Throwable t) {
+            throw new DeploymentException("CSV file could not be undeployed :  " + new File(filePath).getName(), t);
+        }
     }
 
     @Override

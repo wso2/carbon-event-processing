@@ -48,18 +48,22 @@ public class XMLFileDeployer extends AbstractDeployer {
                 log.warn("XML file : " + deploymentFileData.getName() + " not deployed. Name should contain either "
                          + EventSimulatorConstant.CONFIGURATION_XML_SUFFIX + " or " + EventSimulatorConstant.DATA_SOURCE_CONFIGURATION_XML_SUFFIX);
             }
-        } catch (Exception e) {
-            throw new DeploymentException("XML file not deployed and in inactive state :  " + new File(path).getName(), e);
+        } catch (Throwable t) {
+            throw new DeploymentException("XML file not deployed and in inactive state :  " + new File(path).getName(), t);
         }
     }
 
     public void undeploy(String filePath) throws DeploymentException {
-        File file = new File(filePath);
-        if (file.getName().contains(EventSimulatorConstant.CONFIGURATION_XML_SUFFIX)) {
-            processUndeployStreamConfig(file);
-        } else if (file.getName().contains(EventSimulatorConstant.DATA_SOURCE_CONFIGURATION_XML_SUFFIX)) {
-            processUndeployDatasourceConfig(file);
-        } //else, no need to bother since it has never being deployed.
+        try {
+            File file = new File(filePath);
+            if (file.getName().contains(EventSimulatorConstant.CONFIGURATION_XML_SUFFIX)) {
+                processUndeployStreamConfig(file);
+            } else if (file.getName().contains(EventSimulatorConstant.DATA_SOURCE_CONFIGURATION_XML_SUFFIX)) {
+                processUndeployDatasourceConfig(file);
+            } //else, no need to bother since it has never being deployed.
+        } catch (Throwable t) {
+            throw new DeploymentException("XML file could not be undeployed :  " + new File(filePath).getName(), t);
+        }
     }
 
     @Override
