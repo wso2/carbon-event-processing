@@ -768,10 +768,10 @@
         <!--<carbon.kernel.imp.pkg.version>[4.4.0, 4.5.0)</carbon.kernel.imp.pkg.version>-->
 
         <carbon.commons.version>4.4.7</carbon.commons.version>
-        <carbon.analytics.common.version>5.0.1-SNAPSHOT</carbon.analytics.common.version>
+        <carbon.analytics.common.version>5.0.1</carbon.analytics.common.version>
 
         <!--CEP versions-->
-        <siddhi.version>3.0.1-SNAPSHOT</siddhi.version>
+        <siddhi.version>3.0.1</siddhi.version>
         <carbon.event.processing.version>2.0.4-SNAPSHOT</carbon.event.processing.version>
         <storm.orbit.version>0.9.5.wso2v1</storm.orbit.version>
 
