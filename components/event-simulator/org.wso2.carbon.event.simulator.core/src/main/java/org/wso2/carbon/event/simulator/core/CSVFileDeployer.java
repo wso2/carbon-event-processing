@@ -44,7 +44,9 @@ public class CSVFileDeployer extends AbstractDeployer {
         try {
             processDeploy(deploymentFileData);
         } catch (Throwable t) {
-            throw new DeploymentException("CSV file not deployed and in inactive state :  " + new File(path).getName(), t);
+            File file = new File(path);
+            log.error("Could not deploy CSV file : " + file.getName(), t);
+            throw new DeploymentException("CSV file not deployed and in inactive state :  " + file.getName(), t);
         }
     }
 
@@ -53,7 +55,9 @@ public class CSVFileDeployer extends AbstractDeployer {
         try {
             processUndeploy(filePath);
         } catch (Throwable t) {
-            throw new DeploymentException("CSV file could not be undeployed :  " + new File(filePath).getName(), t);
+            File file = new File(filePath);
+            log.error("Could not undeploy CSV file : " + file.getName(), t);
+            throw new DeploymentException("CSV file could not be undeployed :  " + file.getName(), t);
         }
     }
 

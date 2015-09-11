@@ -49,6 +49,8 @@ public class XMLFileDeployer extends AbstractDeployer {
                          + EventSimulatorConstant.CONFIGURATION_XML_SUFFIX + " or " + EventSimulatorConstant.DATA_SOURCE_CONFIGURATION_XML_SUFFIX);
             }
         } catch (Throwable t) {
+            File file = new File(path);
+            log.error("Could not deploy XML file : " + file.getName(), t);
             throw new DeploymentException("XML file not deployed and in inactive state :  " + new File(path).getName(), t);
         }
     }
@@ -62,7 +64,9 @@ public class XMLFileDeployer extends AbstractDeployer {
                 processUndeployDatasourceConfig(file);
             } //else, no need to bother since it has never being deployed.
         } catch (Throwable t) {
-            throw new DeploymentException("XML file could not be undeployed :  " + new File(filePath).getName(), t);
+            File file = new File(filePath);
+            log.error("Could not deploy XML file : " + file.getName(), t);
+            throw new DeploymentException("XML file could not be undeployed :  " + file.getName(), t);
         }
     }
 
