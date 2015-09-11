@@ -69,10 +69,6 @@
             <artifactId>org.wso2.carbon.event.processor.common</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.wso2.carbon.event-processing</groupId>
-            <artifactId>org.wso2.carbon.event.processor.storm</artifactId>
-        </dependency>
-        <dependency>
             <groupId>org.wso2.orbit.com.lmax</groupId>
             <artifactId>disruptor</artifactId>
         </dependency>
