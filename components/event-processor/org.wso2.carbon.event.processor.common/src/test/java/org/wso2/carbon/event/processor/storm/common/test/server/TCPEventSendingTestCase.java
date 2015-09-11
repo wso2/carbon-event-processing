@@ -49,7 +49,7 @@ public class TCPEventSendingTestCase {
     }
 
     @Test
-    public void testEventSendingToServer() {
+    public void testEventSendingToServer() throws IOException, InterruptedException {
 
         StreamDefinition streamDefinition = new StreamDefinition().id("TestStream")
                 .attribute("att1", Attribute.Type.INT)
@@ -59,22 +59,18 @@ public class TCPEventSendingTestCase {
 
         TestStreamCallback streamCallback = new TestStreamCallback();
         TCPEventServer TCPEventServer = new TCPEventServer(new TCPEventServerConfig("0.0.0.0", 7612), streamCallback, null);
-        try {
-            TCPEventServer.addStreamDefinition(streamDefinition);
-            TCPEventServer.start();
-            Thread.sleep(1000);
-            threadPool.submit(new ClientThread(streamDefinition, new SimpleDataProvider(), 100));
-            Thread.sleep(5000);
-            Assert.assertEquals(100, streamCallback.getEventCount());
-            log.info("Shutting down server...");
-            TCPEventServer.shutdown();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+        TCPEventServer.addStreamDefinition(streamDefinition);
+        TCPEventServer.start();
+        Thread.sleep(1000);
+        threadPool.submit(new ClientThread(streamDefinition, new SimpleDataProvider(), 100));
+        Thread.sleep(5000);
+        Assert.assertEquals(100, streamCallback.getEventCount());
+        log.info("Shutting down server...");
+        TCPEventServer.shutdown();
     }
 
     @Test
-    public void testHighLoadEventSendingToServer() {
+    public void testHighLoadEventSendingToServer() throws IOException, InterruptedException {
 
         StreamDefinition streamDefinition = new StreamDefinition().id("analyticsStats")
                 .attribute("meta_ipAdd", Attribute.Type.STRING)
@@ -86,22 +82,18 @@ public class TCPEventSendingTestCase {
 
         TestStreamCallback streamCallback = new TestStreamCallback();
         TCPEventServer TCPEventServer = new TCPEventServer(new TCPEventServerConfig("0.0.0.0", 7612), streamCallback, null);
-        try {
-            TCPEventServer.addStreamDefinition(streamDefinition);
-            TCPEventServer.start();
-            Thread.sleep(1000);
-            for (int i = 0; i < TOTAL_CLIENTS; i++) {
-                threadPool.submit(new ClientThread(streamDefinition, new AnalyticStatDataProvider(), EVENTS_PER_CLIENT));
-            }
-            while (streamCallback.getEventCount() < TOTAL_CLIENTS * EVENTS_PER_CLIENT) {
-                Thread.sleep(5000);
-            }
-            Assert.assertEquals(TOTAL_CLIENTS * EVENTS_PER_CLIENT, streamCallback.getEventCount());
-            log.info("Shutting down server...");
-            TCPEventServer.shutdown();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
+        TCPEventServer.addStreamDefinition(streamDefinition);
+        TCPEventServer.start();
+        Thread.sleep(1000);
+        for (int i = 0; i < TOTAL_CLIENTS; i++) {
+            threadPool.submit(new ClientThread(streamDefinition, new AnalyticStatDataProvider(), EVENTS_PER_CLIENT));
         }
+        while (streamCallback.getEventCount() < TOTAL_CLIENTS * EVENTS_PER_CLIENT) {
+            Thread.sleep(5000);
+        }
+        Assert.assertEquals(TOTAL_CLIENTS * EVENTS_PER_CLIENT, streamCallback.getEventCount());
+        log.info("Shutting down server...");
+        TCPEventServer.shutdown();
     }
 
     private static class TestStreamCallback implements StreamCallback {
