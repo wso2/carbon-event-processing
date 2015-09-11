@@ -265,7 +265,7 @@ public class AsyncEventPublisher implements EventHandler<AsynchronousEventBuffer
                     } catch (NotStormCoordinatorException e) {
                         log.info(logPrefix + "Cannot retrieve " + destinationType.name() +
                                 " endpoint information from storm manager service at " +
-                                endpoint.getHostName() + ":" + endpoint.getPort() + " as it's not a Storm coordinator, Trying next Storm coordinator.");
+                                endpoint.getHostName() + ":" + endpoint.getPort() + " as it's not a Storm coordinator, Trying next Storm manager.");
 
                     } catch (TTransportException e) {
                         log.info(logPrefix + "Cannot retrieve " + destinationType.name() +

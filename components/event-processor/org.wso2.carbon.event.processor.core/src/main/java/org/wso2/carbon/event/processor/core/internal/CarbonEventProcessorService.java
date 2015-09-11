@@ -181,7 +181,6 @@ public class CarbonEventProcessorService implements EventProcessorService {
      * @throws ExecutionPlanConfigurationException
      */
     public void addExecutionPlan(String executionPlan, boolean isEditable) throws ExecutionPlanConfigurationException {
-        //Assumption: executionPlan is valid
 
         int tenantId = PrivilegedCarbonContext.getThreadLocalCarbonContext().getTenantId();
 
@@ -302,6 +301,24 @@ public class CarbonEventProcessorService implements EventProcessorService {
             throw new ExecutionPlanConfigurationException("Invalid query specified, " + e.getMessage(), e);
         }
 
+        if (managementInfo.getMode() == Mode.Distributed) {
+            if (stormDeploymentConfiguration != null && stormDeploymentConfiguration.isManagerNode() && EventProcessorValueHolder
+                    .getStormManagerServer().isStormCoordinator()) {
+                try {
+                    EventProcessorValueHolder.getStormTopologyManager().submitTopology(executionPlanConfiguration, importDefinitions, exportDefinitions,
+                            tenantId, stormDeploymentConfiguration.getTopologySubmitRetryInterval());
+                } catch (StormDeploymentException e) {
+                    throw new ExecutionPlanConfigurationException("Invalid distributed query specified, " + e.getMessage(), e);
+                }
+            }
+        }
+
+        for (Map.Entry<String, String> entry : importsMap.entrySet()) {
+            inputHandlerMap.put(entry.getValue(), executionPlanRuntime.getInputHandler(entry.getKey()));
+        }
+
+        //Assumption: executionPlan is valid
+
         ExecutionPlan processorExecutionPlan = new ExecutionPlan(executionPlanName, executionPlanRuntime,
                 executionPlanConfiguration);
         tenantExecutionPlans.put(executionPlanName, processorExecutionPlan);
@@ -322,21 +339,6 @@ public class CarbonEventProcessorService implements EventProcessorService {
             processorExecutionPlan.setStormStatusMapListener(mapListener);
         }
 
-        if (managementInfo.getMode() == Mode.Distributed) {
-            if (stormDeploymentConfiguration != null && stormDeploymentConfiguration.isManagerNode() && EventProcessorValueHolder
-                    .getStormManagerServer().isStormCoordinator()) {
-                try {
-                    EventProcessorValueHolder.getStormTopologyManager().submitTopology(executionPlanConfiguration, importDefinitions, exportDefinitions,
-                            tenantId, stormDeploymentConfiguration.getTopologySubmitRetryInterval());
-                } catch (StormDeploymentException e) {
-                    throw new ExecutionPlanConfigurationException("Invalid distributed query specified, " + e.getMessage(), e);
-                }
-            }
-        }
-
-        for (Map.Entry<String, String> entry : importsMap.entrySet()) {
-            inputHandlerMap.put(entry.getValue(), executionPlanRuntime.getInputHandler(entry.getKey()));
-        }
 
 
         /**

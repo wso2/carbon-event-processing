@@ -31,14 +31,19 @@ public class EventSimulatorConstant {
     public static final String FILE_ELEMENT="file";
     public static final String STREAM_ID_ELEMENT="streamID";
     public static final String SEPARATE_CHAR_ELEMENT="separateChar";
-    public static final String CONFIGURATION_XML_PREFIX="_streamConfiguration.xml";
+    public static final String CONFIGURATION_XML_SUFFIX ="_streamConfiguration.xml";
+    public static final String CSV_EXTENSION = ".csv";
     public static final String TEMP_DIR_PATH=File.separator + "tmp" ;
 
     //public static final String DATA_SOURCE_DEPLOY_DIRECTORY_PATH= "eventsimulatorfiles"+File.separator+"dataSourceconfigfiles";
     public static final String DATA_SOURCE_DEPLOY_DIRECTORY_PATH= "eventsimulatorfiles";
 
-    public static final String DATA_SOURCE_CONFIGURATION_XML_PREFIX="_datSourceStreamConfiguration.xml";
+    public static final String DATA_SOURCE_CONFIGURATION_XML_SUFFIX ="_datSourceStreamConfiguration.xml";
 
+    public static final String STREAM_CONFIGURATION_TYPE = "type";
+    public static final String STREAM_CONFIGURATION_TYPE_DATABASE = "database";
+    public static final String STREAM_CONFIGURATION_NAME = "name";
+    public static final String COLUMN_MAPPING = "columnMapping";
     public static final String DATA_SOURCE_NAME = "dataSource";
     public static final String CONFIGURATION_NAME = "name";
     public static final String TABLE_NAME = "tableName";
