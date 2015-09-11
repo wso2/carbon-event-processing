@@ -473,7 +473,7 @@
                                                     for (int i = 0; i < eventInfoArray.length; i++) {
                                                         String streamName = eventInfoArray[i].getStreamName();
                                                         String streamVersion = eventInfoArray[i].getStreamVersion();
-                                                        if (streamId.equalsIgnoreCase(streamName + ":" + streamVersion)) {
+                                                        if ((streamName + ":" + streamVersion).equalsIgnoreCase(streamId)) {
                                                             %>
                                                             <option value="<%=eventInfoArray[i].getStreamName()%>" selected>
                                                                 <%=streamName + ":" + streamVersion%>
