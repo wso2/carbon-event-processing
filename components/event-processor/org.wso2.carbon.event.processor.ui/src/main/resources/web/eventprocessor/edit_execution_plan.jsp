@@ -70,6 +70,12 @@
 %>
 
 <script type="text/javascript">
+    var oldExecPlan;
+
+    window.onload = function() {
+        oldExecPlan = window.queryEditor.getValue();
+    };
+
     function updateConfiguration(form, executionPlanName) {
         var newExecutionPlan = "";
 
@@ -132,7 +138,7 @@
 
         CARBON.showConfirmationDialog(
                 "Are you sure you want to reset?", function () {
-                    editAreaLoader.setValue("rawConfig", document.getElementById("rawConfig").value.trim());
+                    window.queryEditor.setValue(oldExecPlan);
                 });
 
     }
