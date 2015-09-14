@@ -179,12 +179,12 @@ public class StormQueryPlanBuilder {
             List<String> querySpecificEventTableDefinitionList = new ArrayList<>();
             List<String> querySpecificEventTableIdList = new ArrayList<>();
             String stringQueries = getQueryString(((QueryGroupInfoHolder) entry.getValue()).getStringQueries());
-            for (String evenTableIdTableId : eventTableIdSet) {
-                if (stringQueries.contains(evenTableIdTableId)) {
+            for (String evenTableId : eventTableIdSet) {
+                if (stringQueries.contains(evenTableId)) {
                     for (String evenTableDefinition : eventTableDefinitionList) {
-                        if (evenTableDefinition.contains(evenTableIdTableId)) {
+                        if (evenTableDefinition.contains(evenTableId)) {
                             querySpecificEventTableDefinitionList.add(evenTableDefinition);
-                            querySpecificEventTableIdList.add(evenTableIdTableId);
+                            querySpecificEventTableIdList.add(evenTableId);
                         }
                     }
                 }
