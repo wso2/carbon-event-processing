@@ -544,14 +544,20 @@ public class CarbonEventProcessorService implements EventProcessorService {
 
     void removeExecutionPlanStatusHolder(String executionPlanName, int tenantId){
         HazelcastInstance hazelcastInstance = EventProcessorValueHolder.getHazelcastInstance();
-        IMap<String,ExecutionPlanStatusHolder> executionPlanStatusHolderIMap =
-                hazelcastInstance.getMap(DistributedModeConstants.STORM_STATUS_MAP);
+        if(hazelcastInstance != null && hazelcastInstance.getLifecycleService().isRunning()){
+            IMap<String,ExecutionPlanStatusHolder> executionPlanStatusHolderIMap =
+                    hazelcastInstance.getMap(DistributedModeConstants.STORM_STATUS_MAP);
 
-        String stormTopologyName = StormTopologyManager.getTopologyName(executionPlanName, tenantId);
-        ExecutionPlanStatusHolder executionPlanStatusHolder =
-                executionPlanStatusHolderIMap.get(stormTopologyName);
+            String stormTopologyName = StormTopologyManager.getTopologyName(executionPlanName, tenantId);
+            ExecutionPlanStatusHolder executionPlanStatusHolder =
+                    executionPlanStatusHolderIMap.get(stormTopologyName);
 
-        executionPlanStatusHolderIMap.remove(stormTopologyName, executionPlanStatusHolder);
+            executionPlanStatusHolderIMap.remove(stormTopologyName, executionPlanStatusHolder);
+        } else {
+            log.error("Couldn't clean status info for execution plan: " + executionPlanName +
+                      ", for tenant ID : " + tenantId
+                      + " as the hazelcast instance is not active or not available.");
+        }
     }
 
     public void addExecutionPlanConfigurationFile(ExecutionPlanConfigurationFile configurationFile) {
