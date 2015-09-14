@@ -16,7 +16,14 @@
 package org.wso2.carbon.event.processor.core.internal.storm;
 
 import backtype.storm.StormSubmitter;
-import backtype.storm.generated.*;
+import backtype.storm.generated.AlreadyAliveException;
+import backtype.storm.generated.InvalidTopologyException;
+import backtype.storm.generated.KillOptions;
+import backtype.storm.generated.Nimbus;
+import backtype.storm.generated.NotAliveException;
+import backtype.storm.generated.StormTopology;
+import backtype.storm.generated.TopologyInitialStatus;
+import backtype.storm.generated.TopologySummary;
 import backtype.storm.topology.TopologyBuilder;
 import backtype.storm.utils.NimbusClient;
 import backtype.storm.utils.Utils;
@@ -48,7 +55,11 @@ import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
-import java.io.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.InputStream;
+import java.io.StringWriter;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -328,32 +339,38 @@ public class StormTopologyManager {
             }
         }
 
-        private void updateExecutionPlanStatusInStorm(String stormTopologyName, DistributedModeConstants.TopologyState topologyState){
+        private void updateExecutionPlanStatusInStorm(String stormTopologyName,
+                                                      DistributedModeConstants.TopologyState topologyState) {
             String executionPlanStatusHolderKey = DistributedModeConstants.STORM_STATUS_MAP + "." + stormTopologyName;
             HazelcastInstance hazelcastInstance = EventProcessorValueHolder.getHazelcastInstance();
-            IMap<String,ExecutionPlanStatusHolder> executionPlanStatusHolderIMap = hazelcastInstance.getMap(DistributedModeConstants.STORM_STATUS_MAP);
-            try {
-                if (executionPlanStatusHolderIMap.tryLock(executionPlanStatusHolderKey, lockTimeout, TimeUnit.MILLISECONDS)){
-                    try {
-                        ExecutionPlanStatusHolder executionPlanStatusHolder =
-                                executionPlanStatusHolderIMap.get(stormTopologyName);
-                        if(executionPlanStatusHolder == null){
-                            log.error("Couldn't update topology status for topology:" + topologyName + " as status object not initialized by manager.");
-                        } else {
-                            executionPlanStatusHolder.setStormTopologyStatus(topologyState);
-                            executionPlanStatusHolderIMap.replace(stormTopologyName, executionPlanStatusHolder);
+            if (hazelcastInstance != null && hazelcastInstance.getLifecycleService().isRunning()) {
+                IMap<String, ExecutionPlanStatusHolder> executionPlanStatusHolderIMap = hazelcastInstance.getMap(DistributedModeConstants.STORM_STATUS_MAP);
+                try {
+                    if (executionPlanStatusHolderIMap.tryLock(executionPlanStatusHolderKey, lockTimeout, TimeUnit.MILLISECONDS)) {
+                        try {
+                            ExecutionPlanStatusHolder executionPlanStatusHolder =
+                                    executionPlanStatusHolderIMap.get(stormTopologyName);
+                            if (executionPlanStatusHolder == null) {
+                                log.error("Couldn't update topology status for topology:" + topologyName + " as status object not initialized by manager.");
+                            } else {
+                                executionPlanStatusHolder.setStormTopologyStatus(topologyState);
+                                executionPlanStatusHolderIMap.replace(stormTopologyName, executionPlanStatusHolder);
+                            }
+                        } finally {
+                            executionPlanStatusHolderIMap.unlock(executionPlanStatusHolderKey);
                         }
-                    } finally {
-                        executionPlanStatusHolderIMap.unlock(executionPlanStatusHolderKey);
+                    } else {
+                        log.error("Couldn't update topology status for topology:" + topologyName
+                                  + " as the hazelcast lock acquisition failed.");
                     }
-                } else {
+                } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
                     log.error("Couldn't update topology status for topology:" + topologyName
-                            + " as the hazelcast lock acquisition failed.");
+                              + " as the hazelcast lock acquisition was interrupted.", e);
                 }
-            } catch (InterruptedException e) {
-                Thread.currentThread().interrupt();
+            } else {
                 log.error("Couldn't update topology status for topology:" + topologyName
-                        + " as the hazelcast lock acquisition was interrupted.", e);
+                          + " as the hazelcast instance is not active or not available.");
             }
         }
     }
