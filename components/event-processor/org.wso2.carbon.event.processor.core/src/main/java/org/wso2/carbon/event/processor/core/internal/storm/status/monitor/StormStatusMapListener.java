@@ -37,13 +37,14 @@ public class StormStatusMapListener {
     private String executionPlanName;
     private int tenantId;
 
-    public StormStatusMapListener(String executionPlanName, int tenantId, StormStatusMonitor stormStatusMonitor)
+    public StormStatusMapListener(String executionPlanName, int tenantId,
+                                  StormStatusMonitor stormStatusMonitor)
             throws DeploymentStatusMonitorException {
         hazelcastInstance = EventProcessorValueHolder.getHazelcastInstance();
-        if(hazelcastInstance == null) {
+        if (hazelcastInstance == null) {
             throw new DeploymentStatusMonitorException("Couldn't initialize Distributed Deployment Status monitor as" +
-                    " the hazelcast instance is not available. Enable clustering and restart the server");    //not giving context info, since this is not a per execution plan or tenant specific exception.
-        } else if(!hazelcastInstance.getLifecycleService().isRunning()) {
+                                                       " the hazelcast instance is not available. Enable clustering and restart the server");    //not giving context info, since this is not a per execution plan or tenant specific exception.
+        } else if (!hazelcastInstance.getLifecycleService().isRunning()) {
             throw new DeploymentStatusMonitorException("Couldn't initialize Distributed Deployment Status monitor as" +
                                                        " the hazelcast instance is not active.");    //not giving context info, since this is not a per execution plan or tenant specific exception.
         }
@@ -58,8 +59,8 @@ public class StormStatusMapListener {
     /**
      * Clean up method, removing the entry listener.
      */
-    public void removeEntryListener(){
-        if(hazelcastInstance == null) {
+    public void removeEntryListener() {
+        if (hazelcastInstance == null) {
             log.error("Couldn't unregister entry listener for execution plan: " + executionPlanName +
                       ", for tenant-ID: " + tenantId
                       + " as the hazelcast instance is not available.");
@@ -72,17 +73,17 @@ public class StormStatusMapListener {
         }
     }
 
-    private class MapListenerImpl implements EntryAddedListener, EntryUpdatedListener{
+    private class MapListenerImpl implements EntryAddedListener, EntryUpdatedListener {
         @Override
         public void entryAdded(EntryEvent entryEvent) {
-            if(!entryEvent.getMember().localMember()){
+            if (!entryEvent.getMember().localMember()) {
                 stormStatusMonitor.hazelcastListenerCallback();
             }
         }
 
         @Override
         public void entryUpdated(EntryEvent entryEvent) {
-            if(!entryEvent.getMember().localMember()){
+            if (!entryEvent.getMember().localMember()) {
                 stormStatusMonitor.hazelcastListenerCallback();
             }
         }

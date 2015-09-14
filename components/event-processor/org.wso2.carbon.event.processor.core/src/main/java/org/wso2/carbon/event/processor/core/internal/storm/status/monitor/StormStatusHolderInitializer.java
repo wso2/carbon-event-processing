@@ -30,11 +30,12 @@ import org.wso2.carbon.event.processor.core.util.ExecutionPlanStatusHolder;
 public class StormStatusHolderInitializer {
     private static Logger log = Logger.getLogger(StormStatusHolderInitializer.class);
 
-    public static void initializeStatusHolder(String executionPlanName, int tenantId, int parallel) {
+    public static void initializeStatusHolder(String executionPlanName, int tenantId,
+                                              int parallel) {
         String stormTopologyName = StormTopologyManager.getTopologyName(executionPlanName, tenantId);
 
         HazelcastInstance hazelcastInstance = EventProcessorValueHolder.getHazelcastInstance();
-        if(hazelcastInstance != null && hazelcastInstance.getLifecycleService().isRunning()){
+        if (hazelcastInstance != null && hazelcastInstance.getLifecycleService().isRunning()) {
             IMap<String, ExecutionPlanStatusHolder> executionPlanStatusHolderIMap = hazelcastInstance.getMap(DistributedModeConstants.STORM_STATUS_MAP);
             ExecutionPlanStatusHolder executionPlanStatusHolder = new ExecutionPlanStatusHolder(parallel);
             executionPlanStatusHolderIMap.put(stormTopologyName, executionPlanStatusHolder);
