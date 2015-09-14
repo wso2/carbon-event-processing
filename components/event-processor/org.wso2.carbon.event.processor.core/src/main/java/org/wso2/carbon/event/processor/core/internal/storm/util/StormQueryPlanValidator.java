@@ -47,10 +47,10 @@ public class StormQueryPlanValidator {
     private static void validatePublishingStreams(Document queryPlan) throws StormQueryConstructionException {
         try {
             Set<String> allEmittedStreams = new HashSet<>();
-            allEmittedStreams.addAll(getEventProcessorOutputStreamIds(queryPlan));
-            allEmittedStreams.addAll(getEventReceiverStreamIds(queryPlan));
+            allEmittedStreams.addAll(extractStreamIds(getEventProcessorOutputStreams(queryPlan)));
+            allEmittedStreams.addAll(extractStreamIds(getEventReceiverStreams(queryPlan)));
 
-            for (String publisherInputStream : getEventPublisherInputStreamIds(queryPlan)){
+            for (String publisherInputStream : extractStreamIds(getEventPublisherInputStreams(queryPlan))){
 
                 if (!allEmittedStreams.contains(publisherInputStream)){
                     throw new StormQueryConstructionException("Event publisher bolt(s) trying to consume stream '" + publisherInputStream + "', but it's " +
@@ -60,42 +60,6 @@ public class StormQueryPlanValidator {
         } catch (XPathExpressionException e) {
             throw new StormQueryConstructionException("Failed to validate query plan. Error :" + e.getMessage());
         }
-    }
-
-    /**
-     *  Fetch stream IDs listed under event-receiver element
-     */
-    private static Set<String> getEventReceiverStreamIds(Document queryPlan) throws XPathExpressionException {
-        Set<String> streamIds = new HashSet<>();
-        for (String streamDefinition : getEventReceiverStreams(queryPlan)){
-            streamIds.add(extractStreamId(streamDefinition));
-        }
-
-        return streamIds;
-    }
-
-    /**
-     *  Fetch output stream IDs listed under all event-processor's elements
-     */
-    private static Set<String> getEventProcessorOutputStreamIds(Document queryPlan) throws XPathExpressionException {
-        Set<String> streamIds = new HashSet<>();
-        for (String streamDefinition : getEventProcessorOutputStreams(queryPlan)){
-            streamIds.add(extractStreamId(streamDefinition));
-        }
-
-        return streamIds;
-    }
-
-    /**
-     *  Fetch input stream IDs listed under event-publisher element
-     */
-    private static Set<String> getEventPublisherInputStreamIds(Document queryPlan) throws XPathExpressionException {
-        Set<String> streamIds = new HashSet<>();
-        for (String streamDefinition : getEventPublisherInputStreams(queryPlan)){
-            streamIds.add(extractStreamId(streamDefinition));
-        }
-
-        return streamIds;
     }
 
     /**
@@ -159,6 +123,14 @@ public class StormQueryPlanValidator {
         return result;
     }
 
+    private static Set<String> extractStreamIds(Set<String> streamDefinitions){
+        Set<String> streamIds = new HashSet<>();
+        for (String streamDefinition : streamDefinitions){
+            streamIds.add(extractStreamId(streamDefinition));
+        }
+
+        return streamIds;
+    }
 
     private static String extractStreamId(String streamDefinition){
         return streamDefinition.split(" ")[2];
