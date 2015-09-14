@@ -18,6 +18,7 @@ package org.wso2.carbon.event.processor.core.internal.storm.status.monitor;
 
 import com.hazelcast.core.HazelcastInstance;
 import com.hazelcast.core.IMap;
+import org.apache.log4j.Logger;
 import org.wso2.carbon.event.processor.core.internal.ds.EventProcessorValueHolder;
 import org.wso2.carbon.event.processor.core.internal.storm.StormTopologyManager;
 import org.wso2.carbon.event.processor.core.util.DistributedModeConstants;
@@ -27,13 +28,20 @@ import org.wso2.carbon.event.processor.core.util.ExecutionPlanStatusHolder;
  * Utility to initialize the statusHolder.
  */
 public class StormStatusHolderInitializer {
+    private static Logger log = Logger.getLogger(StormStatusHolderInitializer.class);
 
     public static void initializeStatusHolder(String executionPlanName, int tenantId, int parallel) {
         String stormTopologyName = StormTopologyManager.getTopologyName(executionPlanName, tenantId);
 
         HazelcastInstance hazelcastInstance = EventProcessorValueHolder.getHazelcastInstance();
-        IMap<String, ExecutionPlanStatusHolder> executionPlanStatusHolderIMap = hazelcastInstance.getMap(DistributedModeConstants.STORM_STATUS_MAP);
-        ExecutionPlanStatusHolder executionPlanStatusHolder = new ExecutionPlanStatusHolder(parallel);
-        executionPlanStatusHolderIMap.put(stormTopologyName, executionPlanStatusHolder);
+        if(hazelcastInstance != null && hazelcastInstance.getLifecycleService().isRunning()){
+            IMap<String, ExecutionPlanStatusHolder> executionPlanStatusHolderIMap = hazelcastInstance.getMap(DistributedModeConstants.STORM_STATUS_MAP);
+            ExecutionPlanStatusHolder executionPlanStatusHolder = new ExecutionPlanStatusHolder(parallel);
+            executionPlanStatusHolderIMap.put(stormTopologyName, executionPlanStatusHolder);
+        } else {
+            log.error("Couldn't initialize status info object for execution plan: " + executionPlanName +
+                      ", for tenant-ID: " + tenantId
+                      + " as the hazelcast instance is not active or not available.");
+        }
     }
 }
