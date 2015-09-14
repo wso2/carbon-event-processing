@@ -67,7 +67,7 @@ public class StormQueryPlanBuilder {
             List<Element> processorElements;
             Element publisherElement;
 
-            receiverElement = constructReceiverElement(document,  configuration.getExecutionPlan(), importStreams);
+            receiverElement = constructReceiverElement(document, configuration.getExecutionPlan(), importStreams);
             publisherElement = constructPublisherElement(document, configuration.getExecutionPlan(), exportStreams);
             processorElements = constructProcessorElement(document, configuration.getExecutionPlan(), importStreams,
                     exportStreams);
@@ -93,7 +93,7 @@ public class StormQueryPlanBuilder {
      *
      * @param document
      * @param queryExpressions
-     *@param importedStreams  @return
+     * @param importedStreams  @return
      * @throws EventStreamConfigurationException
      */
     private static Element constructReceiverElement(Document document, String queryExpressions, List<String> importedStreams)
@@ -119,7 +119,7 @@ public class StormQueryPlanBuilder {
      * @return
      * @throws EventStreamConfigurationException
      */
-    private static Element constructPublisherElement(Document document,  String queryExpressions, List<String> exportedStreams)
+    private static Element constructPublisherElement(Document document, String queryExpressions, List<String> exportedStreams)
             throws EventStreamConfigurationException {
         Element publisherElement = document.createElement(EventProcessorConstants.EVENT_PUBLISHER);
         Element publisherInputStream = document.createElement(EventProcessorConstants.INPUT_STREAMS);
@@ -171,16 +171,15 @@ public class StormQueryPlanBuilder {
                     infoHolder.getExecutionElements());
             Element processor = document.createElement(EventProcessorConstants.EVENT_PROCESSOR_TAG);
             setAttributes(processor, name, holder);
-            Element inputStream = getProcessorInputStream(document, new ArrayList<String>(infoHolder
-                    .getInputDefinitionIds()), streamDefinitionMap, infoHolder.getPartitionFieldMap());
-            processor.appendChild(inputStream);
+
+            //tables
             Element tableDefinitions = document.createElement(EventProcessorConstants.TABLE_DEFINITIONS);
             List<String> querySpecificEventTableDefinitionList = new ArrayList<>();
             String stringQueries = getQueryString(((QueryGroupInfoHolder) entry.getValue()).getStringQueries());
-            for(String evenTableId : eventTableIdSet){
-                if(stringQueries.contains(evenTableId)){
-                    for(String evenTableDefinition : eventTableDefinitionList){
-                        if(evenTableDefinition.contains(evenTableId)){
+            for (String evenTableId : eventTableIdSet) {
+                if (stringQueries.contains(evenTableId)) {
+                    for (String evenTableDefinition : eventTableDefinitionList) {
+                        if (evenTableDefinition.contains(evenTableId)) {
                             querySpecificEventTableDefinitionList.add(evenTableDefinition);
                         }
                     }
@@ -190,6 +189,13 @@ public class StormQueryPlanBuilder {
             tableDefinitions.setTextContent(stringTableDefinitions);
             processor.appendChild(tableDefinitions);
 
+            //streams
+            List<String> inputDefinitionIds = new ArrayList<String>(infoHolder.getInputDefinitionIds());
+            inputDefinitionIds.removeAll(querySpecificEventTableDefinitionList);
+            Element inputStream = getProcessorInputStream(document, inputDefinitionIds, streamDefinitionMap, infoHolder.getPartitionFieldMap());
+            processor.appendChild(inputStream);
+
+            //queries
             Element queries = document.createElement(EventProcessorConstants.QUERIES);
             queries.setTextContent(stringQueries);
             processor.appendChild(queries);
@@ -211,7 +217,7 @@ public class StormQueryPlanBuilder {
     private static void setAttributes(Element processor, String name, ParallelismInfoHolder holder) throws
             StormQueryConstructionException {
 
-        if (name.matches(".*\\s+.*")){
+        if (name.matches(".*\\s+.*")) {
             // Storm UI gives an error when trying to show information of bolts which contains spaces.
             throw new StormQueryConstructionException("Query name '" + name + "' is not valid, it must not contain spaces.");
         }
@@ -243,7 +249,7 @@ public class StormQueryPlanBuilder {
             if (groupId == null) {
                 groupId = name;
             }
-            int parallel = getParallelism(executionElements.get(i).getAnnotations(),EventProcessorConstants.PARALLEL);
+            int parallel = getParallelism(executionElements.get(i).getAnnotations(), EventProcessorConstants.PARALLEL);
 
             if (executionElements.get(i) instanceof Query) {
                 Query query = (Query) executionElements.get(i);
@@ -390,7 +396,7 @@ public class StormQueryPlanBuilder {
      * @param annotations
      * @return
      */
-    private static int getParallelism(List<Annotation> annotations,String elementKey) {
+    private static int getParallelism(List<Annotation> annotations, String elementKey) {
         int parallelism = 1;
         if (annotations != null) {
             for (Annotation annotation : annotations) {
