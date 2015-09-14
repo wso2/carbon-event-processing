@@ -77,6 +77,8 @@ public class StormQueryPlanBuilder {
                 rootElement.appendChild(processorElement);
             }
             rootElement.appendChild(publisherElement);
+
+            StormQueryPlanValidator.validateQueryPlan(document);
         } catch (ParserConfigurationException e) {
             throw new StormQueryConstructionException("Error when creating storm query configuration.", e);
         } catch (EventStreamConfigurationException e) {
@@ -175,12 +177,14 @@ public class StormQueryPlanBuilder {
             //tables
             Element tableDefinitions = document.createElement(EventProcessorConstants.TABLE_DEFINITIONS);
             List<String> querySpecificEventTableDefinitionList = new ArrayList<>();
+            List<String> querySpecificEventTableIdList = new ArrayList<>();
             String stringQueries = getQueryString(((QueryGroupInfoHolder) entry.getValue()).getStringQueries());
-            for (String evenTableId : eventTableIdSet) {
-                if (stringQueries.contains(evenTableId)) {
+            for (String evenTableIdTableId : eventTableIdSet) {
+                if (stringQueries.contains(evenTableIdTableId)) {
                     for (String evenTableDefinition : eventTableDefinitionList) {
-                        if (evenTableDefinition.contains(evenTableId)) {
+                        if (evenTableDefinition.contains(evenTableIdTableId)) {
                             querySpecificEventTableDefinitionList.add(evenTableDefinition);
+                            querySpecificEventTableIdList.add(evenTableIdTableId);
                         }
                     }
                 }
@@ -191,7 +195,7 @@ public class StormQueryPlanBuilder {
 
             //streams
             List<String> inputDefinitionIds = new ArrayList<String>(infoHolder.getInputDefinitionIds());
-            inputDefinitionIds.removeAll(querySpecificEventTableDefinitionList);
+            inputDefinitionIds.removeAll(querySpecificEventTableIdList);
             Element inputStream = getProcessorInputStream(document, inputDefinitionIds, streamDefinitionMap, infoHolder.getPartitionFieldMap());
             processor.appendChild(inputStream);
 
