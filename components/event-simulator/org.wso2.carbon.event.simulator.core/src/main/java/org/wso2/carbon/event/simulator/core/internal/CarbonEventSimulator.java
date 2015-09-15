@@ -325,26 +325,9 @@ public class CarbonEventSimulator implements EventSimulator {
 
         int tenantID = PrivilegedCarbonContext.getThreadLocalCarbonContext().getTenantId();
         HashMap<String, CSVFileInfo> csvFileInfoMap = tenantSpecificCSVFileInfoMap.get(tenantID);
-
         CSVFileInfo csvFileInfo = csvFileInfoMap.get(fileName);
-        String repo = axisConfiguration.getRepository().getPath();
-        String path = repo + EventSimulatorConstant.DEPLOY_DIRECTORY_PATH;
-
-        String xmlFileName = csvFileInfo.getFileName().substring(0, csvFileInfo.getFileName().length() - 4) + EventSimulatorConstant.CONFIGURATION_XML_SUFFIX;
-        String xmlFilePath = path + File.separator + xmlFileName;
-
         File file = new File(csvFileInfo.getFilePath());
-        File xmlFile = new File(xmlFilePath);
-
-        if (xmlFile.exists()) {
-            if (!xmlFile.delete()) {
-                throw new AxisFault("Failed to delete the file : " + xmlFileName + " for tenant ID : " + tenantID);
-            }
-        }
-
-        if (file.delete()) {
-            csvFileInfoMap.remove(fileName);
-        } else {
+        if (!file.delete()) {
             throw new AxisFault("Failed to delete the file : " + csvFileInfo.getFileName() + " for tenant ID : " + tenantID);
         }
 

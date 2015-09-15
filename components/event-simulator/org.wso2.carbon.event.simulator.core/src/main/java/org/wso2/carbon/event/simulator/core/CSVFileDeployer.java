@@ -93,6 +93,7 @@ public class CSVFileDeployer extends AbstractDeployer {
 
         CarbonEventSimulator eventSimulator = EventSimulatorValueHolder.getEventSimulator();
         eventSimulator.addCSVFileInfo(csvFileInfo);
+        log.info("CSV file " + csvFile.getName() + " deployed successfully.");
     }
 
     public void processUndeploy(String filePath) throws DeploymentException {
@@ -118,5 +119,6 @@ public class CSVFileDeployer extends AbstractDeployer {
                 throw new DeploymentException(xmlFileName + " could not be deleted for tenant ID : " + tenantID);
             }
         }
+        log.info("CSV file " + csvFile.getName() + " undeployed successfully.");
     }
 }
