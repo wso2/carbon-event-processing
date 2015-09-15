@@ -791,6 +791,16 @@ public class CarbonEventSimulator implements EventSimulator {
         List<Attribute> metaAttributeList = streamDefinition.getMetaData();
         List<Attribute> correlationAttributeList = streamDefinition.getCorrelationData();
         List<Attribute> payloadAttributeList = streamDefinition.getPayloadData();
+        if (metaAttributeList == null) {
+            metaAttributeList = new ArrayList<>(0);
+        }
+        if (correlationAttributeList == null) {
+            correlationAttributeList = new ArrayList<>(0);
+        }
+        if (payloadAttributeList == null) {
+            payloadAttributeList = new ArrayList<>(0);
+        }
+
         int q = 0, r = 0;
 
         //columnAndStreamAttributeNames[0] includes column names
