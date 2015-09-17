@@ -31,6 +31,7 @@ import org.wso2.carbon.event.processor.core.exception.ExecutionPlanConfiguration
 import org.wso2.carbon.event.processor.core.exception.ExecutionPlanDependencyValidationException;
 import org.wso2.carbon.event.processor.core.internal.util.EventProcessorConstants;
 import org.wso2.carbon.event.stream.core.exception.EventStreamConfigurationException;
+import org.wso2.carbon.event.stream.core.exception.StreamDefinitionAlreadyDefinedException;
 import org.wso2.carbon.registry.api.RegistryException;
 import org.wso2.carbon.registry.core.Registry;
 import org.wso2.carbon.registry.core.Resource;
@@ -168,6 +169,10 @@ public class ExecutionManagerHelper {
                 log.error("Stream definition is incorrect in domain template " + templateDomain.getName(), e);
             } catch (EventStreamConfigurationException e) {
                 log.error("Exception occurred when configuring stream " + streamDefinition.getName(), e);
+            } catch (StreamDefinitionAlreadyDefinedException e) {
+                log.error("Same template stream name "+ streamDefinition.getName()
+                        + " has been defined for another definition ", e);
+                throw e;
             }
         }
     }
