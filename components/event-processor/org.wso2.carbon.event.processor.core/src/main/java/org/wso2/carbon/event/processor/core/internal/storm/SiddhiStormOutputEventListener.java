@@ -78,8 +78,8 @@ public class SiddhiStormOutputEventListener implements StreamCallback {
         inputThroughputProbe = new ThroughputProbe(logPrefix + "-Receive", 10);
         inputThroughputProbe.startSampling();
         try {
-            listeningPort = findPort();
             thisHostIp = HostAddressFinder.findAddress("localhost");
+            listeningPort = findPort(thisHostIp);
             TCPEventServerConfig configs = new TCPEventServerConfig(thisHostIp, listeningPort);
             configs.setNumberOfThreads(stormDeploymentConfig.getTransportReceiverThreads());
             tcpEventServer = new TCPEventServer(configs, this, connectionCallback);
@@ -110,9 +110,9 @@ public class SiddhiStormOutputEventListener implements StreamCallback {
         }
     }
 
-    private int findPort() throws Exception {
+    private int findPort(String host) throws Exception {
         for (int i = stormDeploymentConfig.getTransportMinPort(); i <= stormDeploymentConfig.getTransportMaxPort(); i++) {
-            if (!Utils.isPortUsed(i)) {
+            if (!Utils.isPortUsed(i, host)) {
                 return i;
             }
         }

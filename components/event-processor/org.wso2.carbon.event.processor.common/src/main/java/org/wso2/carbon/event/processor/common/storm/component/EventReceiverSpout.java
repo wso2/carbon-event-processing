@@ -134,8 +134,8 @@ public class EventReceiverSpout extends BaseRichSpout implements StreamCallback 
         outputThroughputProbe.startSampling();
 
         try {
-            listeningPort = findPort();
             thisHostIp = Utils.findAddress("localhost");
+            listeningPort = findPort(thisHostIp);
             TCPEventServerConfig configs = new TCPEventServerConfig(thisHostIp, listeningPort);
             configs.setNumberOfThreads(stormDeploymentConfig.getTransportReceiverThreads());
             tcpEventServer = new TCPEventServer(configs, this, null);
@@ -172,9 +172,9 @@ public class EventReceiverSpout extends BaseRichSpout implements StreamCallback 
 
     }
 
-    private int findPort() throws Exception {
+    private int findPort(String host) throws Exception {
         for (int i = stormDeploymentConfig.getTransportMinPort(); i <= stormDeploymentConfig.getTransportMaxPort(); i++) {
-            if (!Utils.isPortUsed(i)) {
+            if (!Utils.isPortUsed(i, host)) {
                 return i;
             }
         }
