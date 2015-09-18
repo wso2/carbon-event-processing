@@ -30,7 +30,11 @@ import org.wso2.carbon.event.processor.core.internal.CarbonEventProcessorService
 import org.wso2.carbon.event.processor.core.internal.ds.EventProcessorValueHolder;
 import org.wso2.carbon.event.processor.core.internal.util.helper.EventProcessorHelper;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.Collections;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
@@ -137,18 +141,21 @@ public class EventProcessorDeployer extends AbstractDeployer implements EventPro
 
                 log.info("Execution plan deployment held back and in inactive state : " + executionPlanConfigurationFile.getFileName() + ", Dependency validation exception: " + ex.getMessage());
             } catch (ExecutionPlanConfigurationException ex) {
-                executionPlanConfigurationFile.setDeploymentStatusMessage(ex.getMessage());
-                executionPlanConfigurationFile.setStatus(ExecutionPlanConfigurationFile.Status.ERROR);
-                executionPlanConfigurationFile.setExecutionPlanName(executionPlanName);
-                executionPlanConfigurationFile.setFileName(deploymentFileData.getName());
-                executionPlanConfigurationFile.setFilePath(deploymentFileData.getAbsolutePath());
-                carbonEventProcessorService.addExecutionPlanConfigurationFile(executionPlanConfigurationFile);
+                if (isEditable) {
+                    executionPlanConfigurationFile.setDeploymentStatusMessage(ex.getMessage());
+                    executionPlanConfigurationFile.setStatus(ExecutionPlanConfigurationFile.Status.ERROR);
+                    executionPlanConfigurationFile.setExecutionPlanName(executionPlanName);
+                    executionPlanConfigurationFile.setFileName(deploymentFileData.getName());
+                    executionPlanConfigurationFile.setFilePath(deploymentFileData.getAbsolutePath());
+                    carbonEventProcessorService.addExecutionPlanConfigurationFile(executionPlanConfigurationFile);
 
-                log.error("Execution plan is not deployed and in inactive state : " + executionPlanFile.getName(), ex);
+                    log.error("Execution plan is not deployed and in inactive state : " + executionPlanFile.getName(), ex);
+                }
                 throw new ExecutionPlanConfigurationException(ex.getMessage(), ex);
             }
         } else {
-            log.info("Execution plan " + executionPlanFile.getName() + " is already registered with this tenant (" + tenantId + "), hence ignoring redeployment");
+            throw new ExecutionPlanConfigurationException("Execution plan " + executionPlanFile.getName()
+                    + " is already registered with this tenant (" + tenantId + ")");
         }
 
     }
