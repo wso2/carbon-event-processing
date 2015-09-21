@@ -40,7 +40,6 @@ import org.wso2.siddhi.query.api.definition.StreamDefinition;
 
 import java.io.IOException;
 import java.net.SocketException;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.Executors;
@@ -372,11 +371,13 @@ public class AsyncEventPublisher implements EventHandler<AsynchronousEventBuffer
          */
         public void establishConnection() {
             log.info(logPrefix + "Requesting a " + destinationTypeString + " for " + thisHostIp);
-            String endpointHostPort = getEndpointFromManagerService();
 
-            if (endpointHostPort != null) {
-                tcpEventPublisher = connectToEndpoint(endpointHostPort, 0);
-            }
+            do {
+                String endpointHostPort = getEndpointFromManagerService();
+                if (endpointHostPort != null) {
+                    tcpEventPublisher = connectToEndpoint(endpointHostPort, 3);
+                }
+            } while (tcpEventPublisher == null);
         }
 
         @Override
