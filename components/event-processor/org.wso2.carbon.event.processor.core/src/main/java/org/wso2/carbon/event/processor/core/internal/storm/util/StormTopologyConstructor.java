@@ -179,25 +179,30 @@ public class StormTopologyConstructor {
                 BoltDeclarer boltDeclarer = (BoltDeclarer) componentInfoHolder.getDeclarer();
 
                 for (String inputStreamId : componentInfoHolder.getInputStreamIds()) {
-                    for (ComponentInfoHolder pubComponent : topologyInfoHolder.getPublishingComponents(inputStreamId)) {
+                    if (topologyInfoHolder.getPublishingComponents(inputStreamId) != null) {
+                        for (ComponentInfoHolder pubComponent : topologyInfoHolder.getPublishingComponents(inputStreamId)) {
 
-                        if (!pubComponent.getComponentName().equals(componentInfoHolder.getComponentName())) {
-                            String partitionedField = componentInfoHolder.getPartionenedField(inputStreamId);
-                            String groupingType = "ShuffleGrouping";
-                            if (partitionedField == null) {
-                                boltDeclarer.shuffleGrouping(pubComponent.getComponentName(), inputStreamId);
-                            } else {
-                                groupingType = "FieldGrouping";
-                                boltDeclarer.fieldsGrouping(pubComponent.getComponentName(), inputStreamId, new Fields(partitionedField));
-                            }
+                            if (!pubComponent.getComponentName().equals(componentInfoHolder.getComponentName())) {
+                                String partitionedField = componentInfoHolder.getPartionenedField(inputStreamId);
+                                String groupingType = "ShuffleGrouping";
+                                if (partitionedField == null) {
+                                    boltDeclarer.shuffleGrouping(pubComponent.getComponentName(), inputStreamId);
+                                } else {
+                                    groupingType = "FieldGrouping";
+                                    boltDeclarer.fieldsGrouping(pubComponent.getComponentName(), inputStreamId, new Fields(partitionedField));
+                                }
 
-                            if (log.isDebugEnabled()) {
-                                log.debug("Connecting storm components [Consumer:" + componentInfoHolder.getComponentName()
-                                        + ", Stream:" + inputStreamId
-                                        + ", Publisher:" + pubComponent.getComponentName()
-                                        + ", Grouping:" + groupingType + "]");
+                                if (log.isDebugEnabled()) {
+                                    log.debug("Connecting storm components [Consumer:" + componentInfoHolder.getComponentName()
+                                            + ", Stream:" + inputStreamId
+                                            + ", Publisher:" + pubComponent.getComponentName()
+                                            + ", Grouping:" + groupingType + "]");
+                                }
                             }
                         }
+                    } else {
+                        throw new StormQueryConstructionException("No corresponding stream imported for Siddhi stream" +
+                                " : " + inputStreamId);
                     }
                 }
             }
