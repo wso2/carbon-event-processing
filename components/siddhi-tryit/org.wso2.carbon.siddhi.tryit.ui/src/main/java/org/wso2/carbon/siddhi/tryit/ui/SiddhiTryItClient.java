@@ -54,7 +54,7 @@ public class SiddhiTryItClient {
 
     private static Log log = LogFactory.getLog(SiddhiTryItClient.class);
     private static Gson gson = new GsonBuilder().setPrettyPrinting().disableHtmlEscaping().create();
-    private static SimpleDateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
+    private SimpleDateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
     private String errMsg;
 
     /**
@@ -103,11 +103,11 @@ public class SiddhiTryItClient {
     /**
      * Process input stream and return a map with query and stream results
      *
-     * @param eventStream input event stream
-     * @param map string builder object map
-     * @param inputHandlerMap input handler object map
-     * @param startSetTime created time stamp for the given date and time
-     * @param startSystemTime system time at start
+     * @param eventStream          input event stream
+     * @param map                  string builder object map
+     * @param inputHandlerMap      input handler object map
+     * @param startSetTime         created time stamp for the given date and time
+     * @param startSystemTime      system time at start
      * @param executionPlanRuntime execution plan runtime object
      * @throws Exception
      */
@@ -182,8 +182,8 @@ public class SiddhiTryItClient {
     /**
      * Process stream callback
      *
-     * @param map string builder object map
-     * @param inputHandlerMap input handler object map
+     * @param map                  string builder object map
+     * @param inputHandlerMap      input handler object map
      * @param executionPlanRuntime execution plan runtime object
      */
     private void processStreamCallback(Map<String, StringBuilder> map, Map<String, InputHandler> inputHandlerMap, ExecutionPlanRuntime executionPlanRuntime) {
@@ -209,8 +209,8 @@ public class SiddhiTryItClient {
     /**
      * Process query callback
      *
-     * @param map string builder object map
-     * @param newExecutionPlan new execution plan passed through siddhi compiler
+     * @param map                  string builder object map
+     * @param newExecutionPlan     new execution plan passed through siddhi compiler
      * @param executionPlanRuntime execution plan runtime object
      */
     private void processQueryCallback(Map<String, StringBuilder> map, ExecutionPlan newExecutionPlan, ExecutionPlanRuntime executionPlanRuntime) {
