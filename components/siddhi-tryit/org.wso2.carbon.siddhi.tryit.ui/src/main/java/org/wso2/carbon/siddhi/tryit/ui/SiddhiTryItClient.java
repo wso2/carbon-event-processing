@@ -56,8 +56,8 @@ public class SiddhiTryItClient {
     private static Log log = LogFactory.getLog(SiddhiTryItClient.class);
     private static Gson gson = new GsonBuilder().setPrettyPrinting().disableHtmlEscaping().create();
     private SimpleDateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
-    Pattern eventPattern = Pattern.compile("(\\S+)=\\[(.*)\\]");
-    Pattern delayPattern = Pattern.compile("(delay\\()(\\d+)+");
+    private static Pattern eventPattern = Pattern.compile("(\\S+)=\\[(.*)\\]");
+    private static Pattern delayPattern = Pattern.compile("(delay\\()(\\d+)+");
     private String errMsg;
 
     /**
