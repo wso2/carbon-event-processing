@@ -45,6 +45,7 @@ import org.wso2.siddhi.query.api.util.AnnotationHelper;
 import org.wso2.siddhi.query.compiler.SiddhiCompiler;
 
 import javax.sql.DataSource;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.regex.Matcher;
@@ -55,6 +56,8 @@ public class SiddhiTryItClient {
     private static Log log = LogFactory.getLog(SiddhiTryItClient.class);
     private static Gson gson = new GsonBuilder().setPrettyPrinting().disableHtmlEscaping().create();
     private SimpleDateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
+    Pattern eventPattern = Pattern.compile("(\\S+)=\\[(.*)\\]");
+    Pattern delayPattern = Pattern.compile("(delay\\()(\\d+)+");
     private String errMsg;
 
     /**
@@ -111,9 +114,8 @@ public class SiddhiTryItClient {
      * @param executionPlanRuntime execution plan runtime object
      * @throws Exception
      */
-    private Map<String, StringBuilder> processEventStream(String eventStream, Map<String, StringBuilder> map, Map<String, InputHandler> inputHandlerMap, long startSetTime, long startSystemTime, ExecutionPlanRuntime executionPlanRuntime) throws Exception {
-        Pattern eventPattern = Pattern.compile("(\\S+)=\\[(.*)\\]");
-        Pattern delayPattern = Pattern.compile("(delay\\()(\\d+)+");
+    private Map<String, StringBuilder> processEventStream(String eventStream, Map<String, StringBuilder> map, Map<String,
+            InputHandler> inputHandlerMap, long startSetTime, long startSystemTime, ExecutionPlanRuntime executionPlanRuntime) throws Exception {
         String[] inputStreamEventArray = eventStream.split("\\r?\\n");
         executionPlanRuntime.start();
 
@@ -171,7 +173,7 @@ public class SiddhiTryItClient {
                             inputStreamEventArray[i] +
                             "\n\"." +
                             " Expected format: &lt;eventStreamName&gt;=[&lt;attribute1&gt;,&lt;attribute2&gt;]";
-                    throw new Exception(errMsg);
+                    throw new IllegalArgumentException(errMsg);
                 }
             }
         }
@@ -186,7 +188,8 @@ public class SiddhiTryItClient {
      * @param inputHandlerMap      input handler object map
      * @param executionPlanRuntime execution plan runtime object
      */
-    private void processStreamCallback(Map<String, StringBuilder> map, Map<String, InputHandler> inputHandlerMap, ExecutionPlanRuntime executionPlanRuntime) {
+    private void processStreamCallback(Map<String, StringBuilder> map, Map<String, InputHandler> inputHandlerMap,
+                                       ExecutionPlanRuntime executionPlanRuntime) {
         for (AbstractDefinition abstractDefinition : executionPlanRuntime.getStreamDefinitionMap().values()) {
             String streamId = abstractDefinition.getId();
 
@@ -243,14 +246,14 @@ public class SiddhiTryItClient {
      *
      * @param dateTime date and time to begin the process
      */
-    private long createTimeStamp(String dateTime) throws Exception {
+    private long createTimeStamp(String dateTime) throws ParseException {
         Date date;
         try {
             date = dateFormatter.parse(dateTime);
-        } catch (Exception e) {
+        } catch (ParseException e) {
             errMsg = "Error occurred while parsing date " + e.getMessage();
             log.error(errMsg, e);
-            throw new Exception(errMsg, e);
+            throw new ParseException(errMsg, e.getErrorOffset());
         }
         long timeStamp = date.getTime();
         return timeStamp;
@@ -269,12 +272,8 @@ public class SiddhiTryItClient {
             }
             List<CarbonDataSource> dataSources = SiddhiTryItValueHolder.getDataSourceService().getAllDataSources();
             for (CarbonDataSource cds : dataSources) {
-                try {
-                    if (cds.getDSObject() instanceof DataSource) {
-                        siddhiManager.setDataSource(cds.getDSMInfo().getName(), (DataSource) cds.getDSObject());
-                    }
-                } catch (Exception e) {
-                    log.error("Unable to add the datasource" + cds.getDSMInfo().getName(), e);
+                if (cds.getDSObject() instanceof DataSource) {
+                    siddhiManager.setDataSource(cds.getDSMInfo().getName(), (DataSource) cds.getDSObject());
                 }
             }
         } catch (DataSourceException e) {
