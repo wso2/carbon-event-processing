@@ -217,8 +217,7 @@ public class SiddhiTryItClient {
      * @param executionPlanRuntime execution plan runtime object
      */
     private void processQueryCallback(Map<String, StringBuilder> map, ExecutionPlan newExecutionPlan, ExecutionPlanRuntime executionPlanRuntime) {
-        for (int i = 0; i < newExecutionPlan.getExecutionElementList().size(); i++) {
-            ExecutionElement executionElement = newExecutionPlan.getExecutionElementList().get(i);
+        for (ExecutionElement executionElement : newExecutionPlan.getExecutionElementList()) {
             if (executionElement instanceof Query) {
                 Query query = (Query) executionElement;
                 Element element = AnnotationHelper
