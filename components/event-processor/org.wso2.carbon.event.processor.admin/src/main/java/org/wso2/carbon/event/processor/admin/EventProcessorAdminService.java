@@ -1,17 +1,19 @@
 /*
  * Copyright (c) 2015, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
+ * WSO2 Inc. licenses this file to you under the Apache License,
+ * Version 2.0 (the "License"); you may not use this file except
+ * in compliance with the License.
  * You may obtain a copy of the License at
  *
  *     http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
  */
 package org.wso2.carbon.event.processor.admin;
 
@@ -186,9 +188,11 @@ public class EventProcessorAdminService extends AbstractAdmin {
                 });
 
                 if (!isDistributedProcessingEnabled()) {
-                    configurationDtos[0].setDeploymentStatus("not-distributed");
+                    //set deploymentStatus flag for configurationDtos
+                    for (int j = 0; j < executionPlanConfigurations.size(); i++) {
+                        configurationDtos[j].setDeploymentStatus(EventProcessorConstants.NOT_DISTRIBUTED);
+                    }
                 }
-
                 return configurationDtos;
             }
         }
@@ -220,8 +224,8 @@ public class EventProcessorAdminService extends AbstractAdmin {
                 Arrays.sort(fileDtoArray, new Comparator() {
 
                     @Override
-                    public int compare(Object o1, Object o2) {
-                        return ((ExecutionPlanConfigurationFileDto) o1).getName().compareTo(((ExecutionPlanConfigurationFileDto) o2).getName());
+                    public int compare(Object excutionPlanConfigurationFileDtoObject, Object executionPlanConfigurationFileDtoAnotherObject) {
+                        return ((ExecutionPlanConfigurationFileDto) excutionPlanConfigurationFileDtoObject).getName().compareTo(((ExecutionPlanConfigurationFileDto) executionPlanConfigurationFileDtoAnotherObject).getName());
                     }
                 });
                 return fileDtoArray;
