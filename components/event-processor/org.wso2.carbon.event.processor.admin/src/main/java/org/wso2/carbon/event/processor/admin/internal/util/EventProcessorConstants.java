@@ -25,14 +25,14 @@ import java.util.Map;
 
 public interface EventProcessorConstants {
 
-    public static final Map<AttributeType,String> STRING_ATTRIBUTE_TYPE_MAP = Collections.unmodifiableMap(new HashMap<AttributeType,String>() {{
-        put(AttributeType.BOOL,"bool");
-        put(AttributeType.STRING,"string");
-        put(AttributeType.DOUBLE,"double");
-        put(AttributeType.FLOAT,"float");
-        put(AttributeType.INT,"int");
-        put(AttributeType.LONG,"long");
+    public static final Map<AttributeType, String> STRING_ATTRIBUTE_TYPE_MAP = Collections.unmodifiableMap(new HashMap<AttributeType, String>() {{
+        put(AttributeType.BOOL, "bool");
+        put(AttributeType.STRING, "string");
+        put(AttributeType.DOUBLE, "double");
+        put(AttributeType.FLOAT, "float");
+        put(AttributeType.INT, "int");
+        put(AttributeType.LONG, "long");
     }});
 
-    public static final String NOT_DISTRIBUTED="not-distributed";
+    public static final String NOT_DISTRIBUTED = "not-distributed";
 }

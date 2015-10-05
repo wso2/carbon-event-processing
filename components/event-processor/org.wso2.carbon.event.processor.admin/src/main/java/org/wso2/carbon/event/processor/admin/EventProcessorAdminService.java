@@ -188,9 +188,11 @@ public class EventProcessorAdminService extends AbstractAdmin {
                 });
 
                 if (!isDistributedProcessingEnabled()) {
-                    configurationDtos[0].setDeploymentStatus(EventProcessorConstants.NOT_DISTRIBUTED);
+                    //set deploymentStatus flag for configurationDtos
+                    for (int j = 0; j < executionPlanConfigurations.size(); i++) {
+                        configurationDtos[j].setDeploymentStatus(EventProcessorConstants.NOT_DISTRIBUTED);
+                    }
                 }
-
                 return configurationDtos;
             }
         }
@@ -222,8 +224,8 @@ public class EventProcessorAdminService extends AbstractAdmin {
                 Arrays.sort(fileDtoArray, new Comparator() {
 
                     @Override
-                    public int compare(Object ExecutionPlanConfigurationFileDtoObject, Object ExecutionPlanConfigurationFileDtoAnotherObject) {
-                        return ((ExecutionPlanConfigurationFileDto) ExecutionPlanConfigurationFileDtoObject).getName().compareTo(((ExecutionPlanConfigurationFileDto) ExecutionPlanConfigurationFileDtoAnotherObject).getName());
+                    public int compare(Object excutionPlanConfigurationFileDtoObject, Object executionPlanConfigurationFileDtoAnotherObject) {
+                        return ((ExecutionPlanConfigurationFileDto) excutionPlanConfigurationFileDtoObject).getName().compareTo(((ExecutionPlanConfigurationFileDto) executionPlanConfigurationFileDtoAnotherObject).getName());
                     }
                 });
                 return fileDtoArray;
