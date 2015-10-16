@@ -189,7 +189,7 @@ public class EventProcessorAdminService extends AbstractAdmin {
 
                 if (!isDistributedProcessingEnabled()) {
                     //set deploymentStatus flag for configurationDtos
-                    for (int j = 0; j < executionPlanConfigurations.size(); i++) {
+                    for (int j = 0; j < executionPlanConfigurations.size(); j++) {
                         configurationDtos[j].setDeploymentStatus(EventProcessorConstants.NOT_DISTRIBUTED);
                     }
                 }
