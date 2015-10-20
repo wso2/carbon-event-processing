@@ -28,21 +28,19 @@ public class TCPEventTestClient {
 
     public static void main(String[] args) throws Exception {
 
-        StreamDefinition streamDefinition = new StreamDefinition();
-        streamDefinition.id("TestStream");
+        StreamDefinition streamDefinition = StreamDefinition.id("TestStream");
         streamDefinition.attribute("att1", Attribute.Type.INT);
         streamDefinition.attribute("att2", Attribute.Type.FLOAT);
         streamDefinition.attribute("att3", Attribute.Type.STRING);
         streamDefinition.attribute("att4", Attribute.Type.INT);
 
-        StreamDefinition streamDefinition1 = new StreamDefinition();
-        streamDefinition1.id("TestStream1");
+        StreamDefinition streamDefinition1 = StreamDefinition.id("TestStream1");
         streamDefinition1.attribute("att1", Attribute.Type.LONG);
         streamDefinition1.attribute("att2", Attribute.Type.FLOAT);
         streamDefinition1.attribute("att3", Attribute.Type.STRING);
         streamDefinition1.attribute("att4", Attribute.Type.DOUBLE);
         streamDefinition1.attribute("att5", Attribute.Type.BOOL);
-        TCPEventPublisher TCPEventPublisher = new TCPEventPublisher("localhost:7612", true, null);
+        TCPEventPublisher TCPEventPublisher = new TCPEventPublisher("localhost:7621", true, null);
         TCPEventPublisher.addStreamDefinition(streamDefinition);
         TCPEventPublisher.addStreamDefinition(streamDefinition1);
 

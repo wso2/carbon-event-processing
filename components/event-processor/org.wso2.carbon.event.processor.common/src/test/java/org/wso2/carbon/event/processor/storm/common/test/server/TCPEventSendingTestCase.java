@@ -51,14 +51,14 @@ public class TCPEventSendingTestCase {
     @Test
     public void testEventSendingToServer() throws IOException, InterruptedException {
 
-        StreamDefinition streamDefinition = new StreamDefinition().id("TestStream")
+        StreamDefinition streamDefinition = StreamDefinition.id("TestStream")
                 .attribute("att1", Attribute.Type.INT)
                 .attribute("att2", Attribute.Type.FLOAT)
                 .attribute("att3", Attribute.Type.STRING)
                 .attribute("att4", Attribute.Type.INT);
 
         TestStreamCallback streamCallback = new TestStreamCallback();
-        TCPEventServer TCPEventServer = new TCPEventServer(new TCPEventServerConfig("0.0.0.0", 7612), streamCallback, null);
+        TCPEventServer TCPEventServer = new TCPEventServer(new TCPEventServerConfig("0.0.0.0", 7621), streamCallback, null);
         TCPEventServer.addStreamDefinition(streamDefinition);
         TCPEventServer.start();
         Thread.sleep(1000);
@@ -72,7 +72,7 @@ public class TCPEventSendingTestCase {
     @Test
     public void testHighLoadEventSendingToServer() throws IOException, InterruptedException {
 
-        StreamDefinition streamDefinition = new StreamDefinition().id("analyticsStats")
+        StreamDefinition streamDefinition = StreamDefinition.id("analyticsStats")
                 .attribute("meta_ipAdd", Attribute.Type.STRING)
                 .attribute("meta_index", Attribute.Type.LONG)
                 .attribute("meta_timestamp", Attribute.Type.LONG)
@@ -81,7 +81,7 @@ public class TCPEventSendingTestCase {
                 .attribute("searchTerms", Attribute.Type.STRING);
 
         TestStreamCallback streamCallback = new TestStreamCallback();
-        TCPEventServer TCPEventServer = new TCPEventServer(new TCPEventServerConfig("0.0.0.0", 7612), streamCallback, null);
+        TCPEventServer TCPEventServer = new TCPEventServer(new TCPEventServerConfig("0.0.0.0", 7621), streamCallback, null);
         TCPEventServer.addStreamDefinition(streamDefinition);
         TCPEventServer.start();
         Thread.sleep(1000);
@@ -124,10 +124,10 @@ public class TCPEventSendingTestCase {
         public void run() {
             TCPEventPublisher TCPEventPublisher = null;
             try {
-                TCPEventPublisher = new TCPEventPublisher("localhost:7612", true, null);
+                TCPEventPublisher = new TCPEventPublisher("localhost:7621", true, null);
                 TCPEventPublisher.addStreamDefinition(streamDefinition);
                 Thread.sleep(1000);
-                log.info("Starting event client to send events to localhost:7612");
+                log.info("Starting event client to send events to localhost:7621");
 
                 for (int i = 0; i < eventsToSend; i++) {
                     TCPEventPublisher.sendEvent(streamDefinition.getId(), System.currentTimeMillis(), dataProvider.getData(), true);
