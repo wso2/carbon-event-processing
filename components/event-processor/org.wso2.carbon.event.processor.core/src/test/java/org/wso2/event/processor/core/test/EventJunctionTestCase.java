@@ -23,8 +23,8 @@ import org.wso2.carbon.databridge.commons.Attribute;
 import org.wso2.carbon.databridge.commons.AttributeType;
 import org.wso2.carbon.databridge.commons.StreamDefinition;
 import org.wso2.carbon.databridge.commons.exception.MalformedStreamDefinitionException;
-import org.wso2.carbon.event.processor.core.StreamConfiguration;
 import org.wso2.carbon.event.processor.core.internal.util.EventProcessorUtil;
+import org.wso2.carbon.event.stream.core.exception.EventStreamConfigurationException;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -43,8 +43,13 @@ public class EventJunctionTestCase {
         streamDef.setMetaData(meta);
         streamDef.setPayloadData(payload);
 
-        org.wso2.siddhi.query.api.definition.StreamDefinition siddhiDefinition = EventProcessorUtil
-                .convertToSiddhiStreamDefinition(streamDef, "stockStream");
+        org.wso2.siddhi.query.api.definition.StreamDefinition siddhiDefinition = null;
+        try {
+            siddhiDefinition = EventProcessorUtil
+                    .convertToSiddhiStreamDefinition(streamDef, "stockStream");
+        } catch (EventStreamConfigurationException e) {
+            e.printStackTrace();
+        }
         Assert.assertEquals(siddhiDefinition.getAttributeList().size(), 2);
         log.info(siddhiDefinition);
 
