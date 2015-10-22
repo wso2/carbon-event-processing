@@ -96,13 +96,15 @@ public class EventProcessorUtil {
         try{
             if (streamDefinition.getMetaData() != null) {
                 for (org.wso2.carbon.databridge.commons.Attribute attribute : streamDefinition.getMetaData()) {
-                    siddhiStreamDefinition.attribute(attribute.getName(), convertToSiddhiAttribute(attribute, EventProcessorConstants.META + EventProcessorConstants.ATTRIBUTE_SEPARATOR).getType());
+                    Attribute siddhiAttribute = convertToSiddhiAttribute(attribute, EventProcessorConstants.META + EventProcessorConstants.ATTRIBUTE_SEPARATOR);
+                    siddhiStreamDefinition.attribute(siddhiAttribute.getName(), siddhiAttribute.getType());
                 }
             }
 
             if (streamDefinition.getCorrelationData() != null) {
                 for (org.wso2.carbon.databridge.commons.Attribute attribute : streamDefinition.getCorrelationData()) {
-                    siddhiStreamDefinition.attribute(attribute.getName(), convertToSiddhiAttribute(attribute, EventProcessorConstants.CORRELATION + EventProcessorConstants.ATTRIBUTE_SEPARATOR).getType());
+                    Attribute siddhiAttribute = convertToSiddhiAttribute(attribute, EventProcessorConstants.CORRELATION + EventProcessorConstants.ATTRIBUTE_SEPARATOR);
+                    siddhiStreamDefinition.attribute(siddhiAttribute.getName(), siddhiAttribute.getType());
                 }
             }
 
