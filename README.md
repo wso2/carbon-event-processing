@@ -16,5 +16,33 @@
  ~ under the License.
 -->
 
-carbon-event-processing
-=======================
+# carbon-event-processing
+---
+
+|  Branch | Build Status |
+| :------------ |:-------------
+| master      | [![Build Status](https://wso2.org/jenkins/job/carbon-event-processing/badge/icon)](https://wso2.org/jenkins/job/carbon-event-processing) |
+
+---
+
+Latest Released Version v2.0.8.
+
+This project contains compontents which implements realtime event processing functionalities used in WSO2 analytics platform.
+
+#### carbon-event-processing repo contains following components.
+
+* event-processor      
+* execution-manager
+* event-simulator
+* event-flow
+* siddhi-tryit
+
+## How to Contribute
+* Please report issues at [CEP JIRA] (https://wso2.org/jira/browse/CEP)
+* Send your bug fixes pull requests to [master branch] (https://github.com/wso2/carbon-event-processing/tree/master) 
+
+## Contact us
+WSO2 Carbon developers can be contacted via the mailing lists:
+
+* Carbon Developers List : dev@wso2.org
+* Carbon Architecture List : architecture@wso2.org

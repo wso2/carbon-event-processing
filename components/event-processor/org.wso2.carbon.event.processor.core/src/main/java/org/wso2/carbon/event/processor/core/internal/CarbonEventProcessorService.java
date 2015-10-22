@@ -353,10 +353,14 @@ public class CarbonEventProcessorService implements EventProcessorService {
 
         for (Map.Entry<String, String> entry : exportsMap.entrySet()) {
 
-            SiddhiOutputStreamListener streamCallback;
-
-            streamCallback = new SiddhiOutputStreamListener(entry.getKey(),
+            SiddhiOutputStreamListener streamCallback = new SiddhiOutputStreamListener(entry.getKey(),
                     entry.getValue(), executionPlanConfiguration, tenantId);
+
+            try {
+                EventProcessorValueHolder.getEventStreamService().subscribe(streamCallback);
+            } catch (EventStreamConfigurationException e) {
+                //ignored as this will never happen
+            }
 
             if (managementInfo.getMode() == Mode.Distributed && stormDeploymentConfiguration != null && stormDeploymentConfiguration.isWorkerNode()) {
                 try {
@@ -371,11 +375,7 @@ public class CarbonEventProcessorService implements EventProcessorService {
             } else {
                 executionPlanRuntime.addCallback(entry.getKey(), streamCallback);
             }
-            try {
-                EventProcessorValueHolder.getEventStreamService().subscribe(streamCallback);
-            } catch (EventStreamConfigurationException e) {
-                //ignored as this will never happen
-            }
+
             processorExecutionPlan.addProducer(streamCallback);
         }
 

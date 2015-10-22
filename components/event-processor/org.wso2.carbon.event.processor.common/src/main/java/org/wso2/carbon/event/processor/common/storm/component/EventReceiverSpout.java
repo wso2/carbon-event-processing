@@ -41,7 +41,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.concurrent.LinkedBlockingQueue;
 
 /**
  * Receive events from CEP receivers through thrift receiver and pass through
@@ -72,8 +72,7 @@ public class EventReceiverSpout extends BaseRichSpout implements StreamCallback 
      * this is filled by the receiver thread of data bridge and consumed by the nextTuple which
      * runs on the worker thread of spout.
      */
-    // TODO : Make this queue a fixed size to prevent out of memory issues
-    private transient ConcurrentLinkedQueue<Event> storedEvents = null;
+    private transient LinkedBlockingQueue<Event> storedEvents = null;
 
     private SpoutOutputCollector spoutOutputCollector = null;
 
@@ -125,7 +124,7 @@ public class EventReceiverSpout extends BaseRichSpout implements StreamCallback 
     @Override
     public void open(Map map, TopologyContext topologyContext, SpoutOutputCollector spoutOutputCollector) {
         this.spoutOutputCollector = spoutOutputCollector;
-        this.storedEvents = new ConcurrentLinkedQueue<Event>();
+        this.storedEvents = new LinkedBlockingQueue<Event>(stormDeploymentConfig.getStormSpoutBufferSize());
 
         inputThroughputProbe = new ThroughputProbe(logPrefix + "-IN", 10);
         outputThroughputProbe = new ThroughputProbe(logPrefix + " -OUT", 10);
@@ -134,10 +133,9 @@ public class EventReceiverSpout extends BaseRichSpout implements StreamCallback 
         outputThroughputProbe.startSampling();
 
         try {
-            listeningPort = findPort();
             thisHostIp = Utils.findAddress("localhost");
+            listeningPort = findPort(thisHostIp);
             TCPEventServerConfig configs = new TCPEventServerConfig(thisHostIp, listeningPort);
-            configs.setNumberOfThreads(stormDeploymentConfig.getTransportReceiverThreads());
             tcpEventServer = new TCPEventServer(configs, this, null);
             for (StreamDefinition siddhiStreamDefinition : incomingStreamDefinitions) {
                 tcpEventServer.addStreamDefinition(siddhiStreamDefinition);
@@ -172,9 +170,9 @@ public class EventReceiverSpout extends BaseRichSpout implements StreamCallback 
 
     }
 
-    private int findPort() throws Exception {
+    private int findPort(String host) throws Exception {
         for (int i = stormDeploymentConfig.getTransportMinPort(); i <= stormDeploymentConfig.getTransportMaxPort(); i++) {
-            if (!Utils.isPortUsed(i)) {
+            if (!Utils.isPortUsed(i, host)) {
                 return i;
             }
         }
@@ -187,8 +185,12 @@ public class EventReceiverSpout extends BaseRichSpout implements StreamCallback 
         if (log.isDebugEnabled()) {
             log.debug(logPrefix + "Received Event: " + streamId + ":" + Arrays.deepToString(eventData) + "@" + timestamp);
         }
-        storedEvents.add(new Event(timestamp, eventData, streamId));
-        inputThroughputProbe.update();
+        try {
+            storedEvents.put(new Event(timestamp, eventData, streamId));
+            inputThroughputProbe.update();
+        } catch (InterruptedException e) {
+            //ignore
+        }
     }
 
 

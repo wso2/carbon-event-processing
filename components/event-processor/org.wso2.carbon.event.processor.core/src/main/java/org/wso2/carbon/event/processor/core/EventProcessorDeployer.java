@@ -140,15 +140,17 @@ public class EventProcessorDeployer extends AbstractDeployer implements EventPro
                 carbonEventProcessorService.addExecutionPlanConfigurationFile(executionPlanConfigurationFile);
 
                 log.info("Execution plan deployment held back and in inactive state : " + executionPlanConfigurationFile.getFileName() + ", Dependency validation exception: " + ex.getMessage());
-            } catch (ExecutionPlanConfigurationException ex) {
-                executionPlanConfigurationFile.setDeploymentStatusMessage(ex.getMessage());
-                executionPlanConfigurationFile.setStatus(ExecutionPlanConfigurationFile.Status.ERROR);
-                executionPlanConfigurationFile.setExecutionPlanName(executionPlanName);
-                executionPlanConfigurationFile.setFileName(deploymentFileData.getName());
-                executionPlanConfigurationFile.setFilePath(deploymentFileData.getAbsolutePath());
-                carbonEventProcessorService.addExecutionPlanConfigurationFile(executionPlanConfigurationFile);
+            } catch (Exception ex) {
+                if (isEditable) {
+                    executionPlanConfigurationFile.setDeploymentStatusMessage(ex.getMessage());
+                    executionPlanConfigurationFile.setStatus(ExecutionPlanConfigurationFile.Status.ERROR);
+                    executionPlanConfigurationFile.setExecutionPlanName(executionPlanName);
+                    executionPlanConfigurationFile.setFileName(deploymentFileData.getName());
+                    executionPlanConfigurationFile.setFilePath(deploymentFileData.getAbsolutePath());
+                    carbonEventProcessorService.addExecutionPlanConfigurationFile(executionPlanConfigurationFile);
 
-                log.error("Execution plan is not deployed and in inactive state : " + executionPlanFile.getName(), ex);
+                    log.error("Execution plan is not deployed and in inactive state : " + executionPlanFile.getName(), ex);
+                }
                 throw new ExecutionPlanConfigurationException(ex.getMessage(), ex);
             }
         } else {
