@@ -31,9 +31,11 @@ import org.wso2.carbon.event.processor.core.StreamConfiguration;
 import org.wso2.carbon.event.processor.core.exception.ExcecutionPlanRuntimeException;
 import org.wso2.carbon.event.processor.core.exception.ExecutionPlanConfigurationException;
 import org.wso2.carbon.event.processor.core.internal.ds.EventProcessorValueHolder;
+import org.wso2.carbon.event.stream.core.exception.EventStreamConfigurationException;
 import org.wso2.carbon.utils.multitenancy.MultitenantConstants;
 import org.wso2.siddhi.core.util.SiddhiConstants;
 import org.wso2.siddhi.query.api.definition.Attribute;
+import org.wso2.siddhi.query.api.exception.DuplicateAttributeException;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
@@ -88,27 +90,33 @@ public class EventProcessorUtil {
     }
 
     public static org.wso2.siddhi.query.api.definition.StreamDefinition convertToSiddhiStreamDefinition(
-            StreamDefinition streamDefinition, String siddhiStreamName) {
+            StreamDefinition streamDefinition, String siddhiStreamName) throws EventStreamConfigurationException{
         org.wso2.siddhi.query.api.definition.StreamDefinition siddhiStreamDefinition = new org.wso2.siddhi.query.api.definition.StreamDefinition();
         siddhiStreamDefinition.setId(siddhiStreamName);
-        if (streamDefinition.getMetaData() != null) {
-            for (org.wso2.carbon.databridge.commons.Attribute attribute : streamDefinition.getMetaData()) {
-                siddhiStreamDefinition.attribute(attribute.getName(), convertToSiddhiAttribute(attribute, EventProcessorConstants.META + EventProcessorConstants.ATTRIBUTE_SEPARATOR).getType());
+        try{
+            if (streamDefinition.getMetaData() != null) {
+                for (org.wso2.carbon.databridge.commons.Attribute attribute : streamDefinition.getMetaData()) {
+                    siddhiStreamDefinition.attribute(attribute.getName(), convertToSiddhiAttribute(attribute, EventProcessorConstants.META + EventProcessorConstants.ATTRIBUTE_SEPARATOR).getType());
+                }
             }
+
+            if (streamDefinition.getCorrelationData() != null) {
+                for (org.wso2.carbon.databridge.commons.Attribute attribute : streamDefinition.getCorrelationData()) {
+                    siddhiStreamDefinition.attribute(attribute.getName(), convertToSiddhiAttribute(attribute, EventProcessorConstants.CORRELATION + EventProcessorConstants.ATTRIBUTE_SEPARATOR).getType());
+                }
+            }
+
+            if (streamDefinition.getPayloadData() != null) {
+                for (org.wso2.carbon.databridge.commons.Attribute attribute : streamDefinition.getPayloadData()) {
+                    siddhiStreamDefinition.attribute(attribute.getName(), convertToSiddhiAttribute(attribute, "").getType());
+                }
+            }
+
+            return siddhiStreamDefinition;
+        } catch (DuplicateAttributeException ex){
+            throw new EventStreamConfigurationException(ex.getMessage(), ex);
         }
 
-        if (streamDefinition.getCorrelationData() != null) {
-            for (org.wso2.carbon.databridge.commons.Attribute attribute : streamDefinition.getCorrelationData()) {
-                siddhiStreamDefinition.attribute(attribute.getName(), convertToSiddhiAttribute(attribute, EventProcessorConstants.CORRELATION + EventProcessorConstants.ATTRIBUTE_SEPARATOR).getType());
-            }
-        }
-
-        if (streamDefinition.getPayloadData() != null) {
-            for (org.wso2.carbon.databridge.commons.Attribute attribute : streamDefinition.getPayloadData()) {
-                siddhiStreamDefinition.attribute(attribute.getName(), convertToSiddhiAttribute(attribute, "").getType());
-            }
-        }
-        return siddhiStreamDefinition;
     }
 
     public static org.wso2.carbon.databridge.commons.Attribute convertToDatabridgeAttribute(

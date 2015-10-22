@@ -366,7 +366,7 @@ public class CarbonEventProcessorService implements EventProcessorService {
                             .convertToSiddhiStreamDefinition(databridgeDefinition, entry.getKey());
                     stormOutputListener.registerOutputStreamListener(siddhiStreamDefinition, streamCallback);
                 } catch (EventStreamConfigurationException e) {
-                    //ignored as this will not happen
+                    throw new ExecutionPlanConfigurationException(e.getMessage(), e);
                 }
             } else {
                 executionPlanRuntime.addCallback(entry.getKey(), streamCallback);
