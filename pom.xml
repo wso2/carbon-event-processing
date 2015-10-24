@@ -763,6 +763,7 @@
 
         <carbon.commons.version>4.4.8</carbon.commons.version>
         <carbon.analytics.common.version>5.0.6-SNAPSHOT</carbon.analytics.common.version>
+        <carbon.analytics.common.range>[5.0.6,6.0.0)</carbon.analytics.common.range>
 
         <!--CEP versions-->
         <siddhi.version>3.0.3-SNAPSHOT</siddhi.version>
