@@ -25,7 +25,7 @@
     <groupId>org.wso2.carbon.event-processing</groupId>
     <artifactId>carbon-event-processing</artifactId>
     <packaging>pom</packaging>
-    <version>2.0.9-SNAPSHOT</version>
+    <version>2.0.10-SNAPSHOT</version>
     <name>WSO2 Carbon - Carbon Event Processing Aggregator Module</name>
     <url>http://wso2.org</url>
 
@@ -759,17 +759,15 @@
     <properties>
         <!-- Carbon kernel version -->
         <carbon.kernel.version>4.4.2</carbon.kernel.version>
-        <!--<carbon.kernel.imp.pkg.version>[4.4.0, 4.5.0)</carbon.kernel.imp.pkg.version>-->
 
         <carbon.commons.version>4.4.8</carbon.commons.version>
-        <carbon.analytics.common.version>5.0.6-SNAPSHOT</carbon.analytics.common.version>
-
-        <!--CEP versions-->
-        <siddhi.version>3.0.3-SNAPSHOT</siddhi.version>
-        <carbon.event.processing.version>2.0.9-SNAPSHOT</carbon.event.processing.version>
-        <storm.orbit.version>0.9.5.wso2v1</storm.orbit.version>
-
         <carbon.p2.plugin.version>1.5.4</carbon.p2.plugin.version>
+
+        <carbon.event.processing.version>2.0.10-SNAPSHOT</carbon.event.processing.version>
+        <carbon.analytics.common.version>5.0.6</carbon.analytics.common.version>
+        <siddhi.version>3.0.3</siddhi.version>
+
+        <storm.orbit.version>0.9.5.wso2v1</storm.orbit.version>
         <orbit.version.axiom>1.2.11.wso2v6</orbit.version.axiom>
         <imp.pkg.version.range.axiom>[1.2.11.wso2v6, 1.3.0)</imp.pkg.version.range.axiom>
         <orbit.version.axis2>1.6.1.wso2v12</orbit.version.axis2>
@@ -777,7 +775,6 @@
         <libthrift.wso2.version>0.8.0.wso2v1</libthrift.wso2.version>
         <orbit.version.commons.lang>2.6.0.wso2v1</orbit.version.commons.lang>
         <gson.version>2.1</gson.version>
-        <!--<hector.wso2.version>1.1.4.wso2v1</hector.wso2.version>-->
         <junit.version>4.10</junit.version>
         <disruptor.version.range>[2.10.0,3.4)</disruptor.version.range>
         <disruptor.orbit.version>3.3.2.wso2v2</disruptor.orbit.version>
@@ -793,15 +790,14 @@
         <geocoder.version>0.16_1</geocoder.version>
         <commons-lang3.version>3.3.2</commons-lang3.version>
         <json-simple.version>1.1.1</json-simple.version>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <project.scm.id>my-scm-server</project.scm.id>
-
         <hadoop.common.version>2.6.0</hadoop.common.version>
         <jama.version>1.0.3</jama.version>
         <jdbc-pool.version>7.0.34.wso2v2</jdbc-pool.version>
         <mysql.connector.version>5.1.6</mysql.connector.version>
 
-    </properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.scm.id>my-scm-server</project.scm.id>
+   </properties>
 
 </project>
 
