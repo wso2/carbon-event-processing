@@ -593,7 +593,7 @@ public class CarbonEventProcessorService implements EventProcessorService {
             throws ExecutionPlanConfigurationException {
         ExecutionPlanConfigurationFile configFile = getExecutionPlanConfigurationFileByPlanName(planName);
         if (configFile == null) {
-            throw new ExecutionPlanConfigurationException("Configuration file for " + planName + "doesn't exist.");
+            throw new ExecutionPlanConfigurationException("Configuration file for " + planName + " doesn't exist.");
         }
         return EventProcessorConfigurationFilesystemInvoker.readExecutionPlanConfigFile(configFile.getFileName());
     }
