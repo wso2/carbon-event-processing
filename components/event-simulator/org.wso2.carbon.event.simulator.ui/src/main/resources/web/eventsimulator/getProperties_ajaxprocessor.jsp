@@ -23,11 +23,11 @@
     EventSimulatorAdminServiceStub stub = EventSimulatorUIUtils.getEventSimulatorAdminService(config, session, request);
     org.wso2.carbon.event.simulator.stub.types.StreamDefinitionInfoDto[] eventInfoArray = stub.getAllEventStreamInfoDto();
 
-    String eventName = request.getParameter("eventName");
+    String streamId = request.getParameter("eventStreamId");
     StreamDefinitionInfoDto selectedEvent =new StreamDefinitionInfoDto();
 
     for (int i = 0; i < eventInfoArray.length; i++) {
-        if (eventInfoArray[i].getStreamName().equals(eventName)) {
+        if (eventInfoArray[i].getStreamId().equals(streamId)) {
             selectedEvent = eventInfoArray[i];
             break;
         }

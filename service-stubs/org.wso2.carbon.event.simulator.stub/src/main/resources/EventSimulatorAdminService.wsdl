@@ -1,51 +1,31 @@
 <!--
   ~ Copyright (c) 2015, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
   ~
-  ~ Licensed under the Apache License, Version 2.0 (the "License");
-  ~ you may not use this file except in compliance with the License.
-  ~ You may obtain a copy of the License at
+  ~  Licensed under the Apache License, Version 2.0 (the "License");
+  ~  you may not use this file except in compliance with the License.
+  ~  You may obtain a copy of the License at
   ~
-  ~     http://www.apache.org/licenses/LICENSE-2.0
+  ~      http://www.apache.org/licenses/LICENSE-2.0
   ~
-  ~ Unless required by applicable law or agreed to in writing, software
-  ~ distributed under the License is distributed on an "AS IS" BASIS,
-  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-  ~ See the License for the specific language governing permissions and
-  ~ limitations under the License.
+  ~  Unless required by applicable law or agreed to in writing, software
+  ~  distributed under the License is distributed on an "AS IS" BASIS,
+  ~  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~  See the License for the specific language governing permissions and
+  ~  limitations under the License.
   -->
 
-<wsdl:definitions xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:ns1="http://org.apache.axis2/xsd" xmlns:ns="http://admin.simulator.event.carbon.wso2.org" xmlns:wsaw="http://www.w3.org/2006/05/addressing/wsdl" xmlns:http="http://schemas.xmlsoap.org/wsdl/http/" xmlns:ax2102="http://admin.simulator.event.carbon.wso2.org/xsd" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" targetNamespace="http://admin.simulator.event.carbon.wso2.org">
+<wsdl:definitions xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:ns1="http://org.apache.axis2/xsd" xmlns:ns="http://admin.simulator.event.carbon.wso2.org" xmlns:wsaw="http://www.w3.org/2006/05/addressing/wsdl" xmlns:http="http://schemas.xmlsoap.org/wsdl/http/" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/" xmlns:ax2120="http://admin.simulator.event.carbon.wso2.org/xsd" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" targetNamespace="http://admin.simulator.event.carbon.wso2.org">
     <wsdl:documentation>EventSimulatorAdminService</wsdl:documentation>
     <wsdl:types>
         <xs:schema attributeFormDefault="qualified" elementFormDefault="qualified" targetNamespace="http://admin.simulator.event.carbon.wso2.org/xsd">
-            <xs:complexType name="EventDto">
-                <xs:sequence>
-                    <xs:element maxOccurs="unbounded" minOccurs="0" name="attributeValues" nillable="true" type="xs:string"/>
-                    <xs:element minOccurs="0" name="eventStreamId" nillable="true" type="xs:string"/>
-                </xs:sequence>
-            </xs:complexType>
-            <xs:complexType name="CSVFileInfoDto">
-                <xs:sequence>
-                    <xs:element minOccurs="0" name="delayBetweenEventsInMilies" type="xs:long"/>
-                    <xs:element minOccurs="0" name="fileName" nillable="true" type="xs:string"/>
-                    <xs:element minOccurs="0" name="filePath" nillable="true" type="xs:string"/>
-                    <xs:element minOccurs="0" name="streamID" nillable="true" type="xs:string"/>
-                </xs:sequence>
-            </xs:complexType>
-            <xs:complexType name="UploadedFileItemDto">
-                <xs:sequence>
-                    <xs:element minOccurs="0" name="dataHandler" nillable="true" type="xs:base64Binary"/>
-                    <xs:element minOccurs="0" name="fileName" nillable="true" type="xs:string"/>
-                    <xs:element minOccurs="0" name="fileType" nillable="true" type="xs:string"/>
-                </xs:sequence>
-            </xs:complexType>
             <xs:complexType name="StreamDefinitionInfoDto">
                 <xs:sequence>
-                    <xs:element maxOccurs="unbounded" minOccurs="0" name="correlationAttributes" nillable="true" type="ax2102:StreamAttributeDto"/>
-                    <xs:element maxOccurs="unbounded" minOccurs="0" name="metaAttributes" nillable="true" type="ax2102:StreamAttributeDto"/>
-                    <xs:element maxOccurs="unbounded" minOccurs="0" name="payloadAttributes" nillable="true" type="ax2102:StreamAttributeDto"/>
+                    <xs:element maxOccurs="unbounded" minOccurs="0" name="correlationAttributes" nillable="true" type="ax2120:StreamAttributeDto"/>
+                    <xs:element maxOccurs="unbounded" minOccurs="0" name="metaAttributes" nillable="true" type="ax2120:StreamAttributeDto"/>
+                    <xs:element maxOccurs="unbounded" minOccurs="0" name="payloadAttributes" nillable="true" type="ax2120:StreamAttributeDto"/>
                     <xs:element minOccurs="0" name="streamDefinition" nillable="true" type="xs:string"/>
                     <xs:element minOccurs="0" name="streamDescription" nillable="true" type="xs:string"/>
+                    <xs:element minOccurs="0" name="streamId" nillable="true" type="xs:string"/>
                     <xs:element minOccurs="0" name="streamName" nillable="true" type="xs:string"/>
                     <xs:element minOccurs="0" name="streamVersion" nillable="true" type="xs:string"/>
                 </xs:sequence>
@@ -69,77 +49,30 @@
                     <xs:element minOccurs="0" name="tableName" nillable="true" type="xs:string"/>
                 </xs:sequence>
             </xs:complexType>
+            <xs:complexType name="EventDto">
+                <xs:sequence>
+                    <xs:element maxOccurs="unbounded" minOccurs="0" name="attributeValues" nillable="true" type="xs:string"/>
+                    <xs:element minOccurs="0" name="eventStreamId" nillable="true" type="xs:string"/>
+                </xs:sequence>
+            </xs:complexType>
+            <xs:complexType name="CSVFileInfoDto">
+                <xs:sequence>
+                    <xs:element minOccurs="0" name="delayBetweenEventsInMilies" type="xs:long"/>
+                    <xs:element minOccurs="0" name="fileName" nillable="true" type="xs:string"/>
+                    <xs:element minOccurs="0" name="filePath" nillable="true" type="xs:string"/>
+                    <xs:element minOccurs="0" name="streamID" nillable="true" type="xs:string"/>
+                </xs:sequence>
+            </xs:complexType>
+            <xs:complexType name="UploadedFileItemDto">
+                <xs:sequence>
+                    <xs:element minOccurs="0" name="dataHandler" nillable="true" type="xs:base64Binary"/>
+                    <xs:element minOccurs="0" name="fileName" nillable="true" type="xs:string"/>
+                    <xs:element minOccurs="0" name="fileType" nillable="true" type="xs:string"/>
+                </xs:sequence>
+            </xs:complexType>
         </xs:schema>
-        <xs:schema xmlns:ax2103="http://admin.simulator.event.carbon.wso2.org/xsd" attributeFormDefault="qualified" elementFormDefault="qualified" targetNamespace="http://admin.simulator.event.carbon.wso2.org">
+        <xs:schema xmlns:ax2121="http://admin.simulator.event.carbon.wso2.org/xsd" attributeFormDefault="qualified" elementFormDefault="qualified" targetNamespace="http://admin.simulator.event.carbon.wso2.org">
             <xs:import namespace="http://admin.simulator.event.carbon.wso2.org/xsd"/>
-            <xs:element name="deleteFile">
-                <xs:complexType>
-                    <xs:sequence>
-                        <xs:element minOccurs="0" name="fileName" nillable="true" type="xs:string"/>
-                    </xs:sequence>
-                </xs:complexType>
-            </xs:element>
-            <xs:element name="deleteFileResponse">
-                <xs:complexType>
-                    <xs:sequence>
-                        <xs:element minOccurs="0" name="return" type="xs:boolean"/>
-                    </xs:sequence>
-                </xs:complexType>
-            </xs:element>
-            <xs:element name="sendEvent">
-                <xs:complexType>
-                    <xs:sequence>
-                        <xs:element minOccurs="0" name="eventDto" nillable="true" type="ax2103:EventDto"/>
-                    </xs:sequence>
-                </xs:complexType>
-            </xs:element>
-            <xs:element name="sendEventResponse">
-                <xs:complexType>
-                    <xs:sequence>
-                        <xs:element minOccurs="0" name="return" type="xs:boolean"/>
-                    </xs:sequence>
-                </xs:complexType>
-            </xs:element>
-            <xs:element name="getAllCSVFileInfo">
-                <xs:complexType>
-                    <xs:sequence/>
-                </xs:complexType>
-            </xs:element>
-            <xs:element name="getAllCSVFileInfoResponse">
-                <xs:complexType>
-                    <xs:sequence>
-                        <xs:element maxOccurs="unbounded" minOccurs="0" name="return" nillable="true" type="ax2103:CSVFileInfoDto"/>
-                    </xs:sequence>
-                </xs:complexType>
-            </xs:element>
-            <xs:element name="uploadService">
-                <xs:complexType>
-                    <xs:sequence>
-                        <xs:element maxOccurs="unbounded" minOccurs="0" name="fileItems" nillable="true" type="ax2103:UploadedFileItemDto"/>
-                    </xs:sequence>
-                </xs:complexType>
-            </xs:element>
-            <xs:element name="uploadServiceResponse">
-                <xs:complexType>
-                    <xs:sequence>
-                        <xs:element minOccurs="0" name="return" type="xs:boolean"/>
-                    </xs:sequence>
-                </xs:complexType>
-            </xs:element>
-            <xs:element name="deleteDBConfigFile">
-                <xs:complexType>
-                    <xs:sequence>
-                        <xs:element minOccurs="0" name="fileName" nillable="true" type="xs:string"/>
-                    </xs:sequence>
-                </xs:complexType>
-            </xs:element>
-            <xs:element name="deleteDBConfigFileResponse">
-                <xs:complexType>
-                    <xs:sequence>
-                        <xs:element minOccurs="0" name="return" type="xs:boolean"/>
-                    </xs:sequence>
-                </xs:complexType>
-            </xs:element>
             <xs:element name="getAllEventStreamInfoDto">
                 <xs:complexType>
                     <xs:sequence/>
@@ -148,7 +81,7 @@
             <xs:element name="getAllEventStreamInfoDtoResponse">
                 <xs:complexType>
                     <xs:sequence>
-                        <xs:element maxOccurs="unbounded" minOccurs="0" name="return" nillable="true" type="ax2103:StreamDefinitionInfoDto"/>
+                        <xs:element maxOccurs="unbounded" minOccurs="0" name="return" nillable="true" type="ax2121:StreamDefinitionInfoDto"/>
                     </xs:sequence>
                 </xs:complexType>
             </xs:element>
@@ -226,7 +159,75 @@
             <xs:element name="getAllDataSourceTableAndStreamInfoResponse">
                 <xs:complexType>
                     <xs:sequence>
-                        <xs:element maxOccurs="unbounded" minOccurs="0" name="return" nillable="true" type="ax2103:DataSourceTableAndStreamInfoDto"/>
+                        <xs:element maxOccurs="unbounded" minOccurs="0" name="return" nillable="true" type="ax2121:DataSourceTableAndStreamInfoDto"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="sendEvent">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element minOccurs="0" name="eventDto" nillable="true" type="ax2121:EventDto"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="sendEventResponse">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element minOccurs="0" name="return" type="xs:boolean"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="deleteDBConfigFile">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element minOccurs="0" name="fileName" nillable="true" type="xs:string"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="deleteDBConfigFileResponse">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element minOccurs="0" name="return" type="xs:boolean"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="getAllCSVFileInfo">
+                <xs:complexType>
+                    <xs:sequence/>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="getAllCSVFileInfoResponse">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element maxOccurs="unbounded" minOccurs="0" name="return" nillable="true" type="ax2121:CSVFileInfoDto"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="uploadService">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element maxOccurs="unbounded" minOccurs="0" name="fileItems" nillable="true" type="ax2121:UploadedFileItemDto"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="uploadServiceResponse">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element minOccurs="0" name="return" type="xs:boolean"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="deleteFile">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element minOccurs="0" name="fileName" nillable="true" type="xs:string"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="deleteFileResponse">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element minOccurs="0" name="return" type="xs:boolean"/>
                     </xs:sequence>
                 </xs:complexType>
             </xs:element>
@@ -687,13 +688,13 @@
     </wsdl:binding>
     <wsdl:service name="EventSimulatorAdminService">
         <wsdl:port name="EventSimulatorAdminServiceHttpsSoap11Endpoint" binding="ns:EventSimulatorAdminServiceSoap11Binding">
-            <soap:address location="https://10.100.7.56:9443/services/EventSimulatorAdminService.EventSimulatorAdminServiceHttpsSoap11Endpoint/"/>
+            <soap:address location="https://10.100.5.59:9443/services/EventSimulatorAdminService.EventSimulatorAdminServiceHttpsSoap11Endpoint/"/>
         </wsdl:port>
         <wsdl:port name="EventSimulatorAdminServiceHttpsSoap12Endpoint" binding="ns:EventSimulatorAdminServiceSoap12Binding">
-            <soap12:address location="https://10.100.7.56:9443/services/EventSimulatorAdminService.EventSimulatorAdminServiceHttpsSoap12Endpoint/"/>
+            <soap12:address location="https://10.100.5.59:9443/services/EventSimulatorAdminService.EventSimulatorAdminServiceHttpsSoap12Endpoint/"/>
         </wsdl:port>
         <wsdl:port name="EventSimulatorAdminServiceHttpsEndpoint" binding="ns:EventSimulatorAdminServiceHttpBinding">
-            <http:address location="https://10.100.7.56:9443/services/EventSimulatorAdminService.EventSimulatorAdminServiceHttpsEndpoint/"/>
+            <http:address location="https://10.100.5.59:9443/services/EventSimulatorAdminService.EventSimulatorAdminServiceHttpsEndpoint/"/>
         </wsdl:port>
     </wsdl:service>
 </wsdl:definitions>

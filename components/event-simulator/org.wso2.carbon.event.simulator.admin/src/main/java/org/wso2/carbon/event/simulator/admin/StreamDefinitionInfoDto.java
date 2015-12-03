@@ -58,6 +58,10 @@ public class StreamDefinitionInfoDto {
         this.streamVersion = streamVersion;
     }
 
+    public String getStreamId() {
+        return streamName + ":" + streamVersion;
+    }
+
     public StreamDefinitionInfoDto(String streamName, String streamVersion) {
         this.streamName = streamName;
         this.streamVersion = streamVersion;
