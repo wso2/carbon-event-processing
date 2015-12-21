@@ -18,17 +18,17 @@ function showEventProperties() {
     var eventStreamTable = document.getElementById("inputEventDetailTable");
 
     var selectedIndex = document.getElementById("EventStreamID").selectedIndex;
-    var selected_name = document.getElementById("EventStreamID").options[selectedIndex].value;
+    var selected_id = document.getElementById("EventStreamID").options[selectedIndex].text;
 
     for (i = eventStreamTable.rows.length - 1; i > 0; i--) {
         eventStreamTable.deleteRow(i);
     }
 
-    if(selected_name.localeCompare("select")){
+    if(selected_id.localeCompare("select")){
         jQuery.ajax({
 
             type: "POST",
-            url: "../eventsimulator/getProperties_ajaxprocessor.jsp?eventName=" + selected_name + "",
+            url: "../eventsimulator/getProperties_ajaxprocessor.jsp?eventStreamId=" + selected_id + "",
             data: {},
             contentType: "application/json; charset=utf-8",
             dataType: "text",
@@ -163,18 +163,18 @@ function showEventPropertiesForSimulator() {
     var eventStreamTable = document.getElementById("inputEventDetailTable2");
 
     var selectedIndex = document.getElementById("EventStreamID2").selectedIndex;
-    var selected_name = document.getElementById("EventStreamID2").options[selectedIndex].value;
+    var selected_id = document.getElementById("EventStreamID2").options[selectedIndex].text;
 
 
     for (i = eventStreamTable.rows.length - 1; i > 0; i--) {
         eventStreamTable.deleteRow(i);
     }
 
-    if(selected_name.localeCompare("select")){
+    if(selected_id.localeCompare("select")){
         jQuery.ajax({
 
             type: "POST",
-            url: "../eventsimulator/getProperties_ajaxprocessor.jsp?eventName=" + selected_name + "",
+            url: "../eventsimulator/getProperties_ajaxprocessor.jsp?eventStreamId=" + selected_id + "",
             data: {},
             contentType: "application/json; charset=utf-8",
             dataType: "text",
