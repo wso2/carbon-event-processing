@@ -29,13 +29,11 @@
         </deployer>
     </deployers>
 
-
-
-    <!--<ManagementPermissions>-->
-        <!--<ManagementPermission>-->
-            <!--<DisplayName>Event Adaptors</DisplayName>-->
-            <!--<ResourceId>/permission/admin/manage/event-adaptors</ResourceId>-->
-        <!--</ManagementPermission>-->
-    <!--</ManagementPermissions>-->
+    <ManagementPermissions>
+        <ManagementPermission>
+            <DisplayName>Event Simulator</DisplayName>
+            <ResourceId>/permission/admin/manage/event-simulator</ResourceId>
+        </ManagementPermission>
+    </ManagementPermissions>
 
 </component>
