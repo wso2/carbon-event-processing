@@ -19,6 +19,7 @@
 <%@ page import="org.wso2.carbon.event.processor.ui.EventProcessorUIUtils" %>
 <%@ page import="org.wso2.carbon.event.processor.ui.UIConstants" %>
 <%@ page import="org.wso2.carbon.event.stream.stub.EventStreamAdminServiceStub" %>
+<%@ page import="java.util.Arrays" %>
 
 <fmt:bundle basename="org.wso2.carbon.event.processor.ui.i18n.Resources">
 
@@ -117,6 +118,8 @@
 
     EventStreamAdminServiceStub streamAdminServiceStub = EventProcessorUIUtils.getEventStreamAdminService(config, session, request);
     String[] streamNames = streamAdminServiceStub.getStreamNames();
+    Arrays.sort(streamNames);
+
 %>
 <tr>
     <td>
