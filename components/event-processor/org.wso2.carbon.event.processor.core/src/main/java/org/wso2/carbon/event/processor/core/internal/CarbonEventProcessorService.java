@@ -370,7 +370,7 @@ public class CarbonEventProcessorService implements EventProcessorService {
                             .convertToSiddhiStreamDefinition(databridgeDefinition, entry.getKey());
                     stormOutputListener.registerOutputStreamListener(siddhiStreamDefinition, streamCallback);
                 } catch (EventStreamConfigurationException e) {
-                    //ignored as this will not happen
+                    throw new ExecutionPlanConfigurationException(e.getMessage(), e);
                 }
             } else {
                 executionPlanRuntime.addCallback(entry.getKey(), streamCallback);
@@ -593,7 +593,7 @@ public class CarbonEventProcessorService implements EventProcessorService {
             throws ExecutionPlanConfigurationException {
         ExecutionPlanConfigurationFile configFile = getExecutionPlanConfigurationFileByPlanName(planName);
         if (configFile == null) {
-            throw new ExecutionPlanConfigurationException("Configuration file for " + planName + "doesn't exist.");
+            throw new ExecutionPlanConfigurationException("Configuration file for " + planName + " doesn't exist.");
         }
         return EventProcessorConfigurationFilesystemInvoker.readExecutionPlanConfigFile(configFile.getFileName());
     }
