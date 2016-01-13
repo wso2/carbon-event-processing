@@ -25,7 +25,7 @@
 
 ---
 
-Latest Released Version v2.0.8.
+Latest Released Version v2.0.10.
 
 This project contains compontents which implements realtime event processing functionalities used in WSO2 analytics platform.
 

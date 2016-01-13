@@ -118,7 +118,9 @@
 
     EventStreamAdminServiceStub streamAdminServiceStub = EventProcessorUIUtils.getEventStreamAdminService(config, session, request);
     String[] streamNames = streamAdminServiceStub.getStreamNames();
-    Arrays.sort(streamNames);
+    if(streamNames != null){
+        Arrays.sort(streamNames);
+    }
 
 %>
 <tr>
