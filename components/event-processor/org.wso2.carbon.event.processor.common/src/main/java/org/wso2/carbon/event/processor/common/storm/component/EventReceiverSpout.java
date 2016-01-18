@@ -181,7 +181,7 @@ public class EventReceiverSpout extends BaseRichSpout implements StreamCallback 
 
 
     @Override
-    public void receive(String streamId, long timestamp, Object[] eventData) {
+    public void receive(String streamId, long timestamp, Object[] eventData, Map<String, String> arbitraryMapData) {
         if (log.isDebugEnabled()) {
             log.debug(logPrefix + "Received Event: " + streamId + ":" + Arrays.deepToString(eventData) + "@" + timestamp);
         }

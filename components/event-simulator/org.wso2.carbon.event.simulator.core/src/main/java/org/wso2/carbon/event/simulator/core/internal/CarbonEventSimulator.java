@@ -121,7 +121,7 @@ public class CarbonEventSimulator implements EventSimulator {
 
         if (mode == Mode.Distributed && !isWorkerNode) {
             log.warn("Sending events via manager node in distributed mode is not allowed. " +
-                     "Dropping event for stream: " + eventDetail.getStreamDefinition().getStreamId());
+                    "Dropping event for stream: " + eventDetail.getStreamDefinition().getStreamId());
             return;
         }
 
@@ -198,9 +198,8 @@ public class CarbonEventSimulator implements EventSimulator {
             eventProducer.sendData(dataObjects);
         } else {
             EventStreamProducer eventStreamProducer = new EventStreamProducer();
-            eventStreamProducer.setStreamID(streamDefinition.getStreamId());
-
             try {
+                eventStreamProducer.setStreamID(streamDefinition.getStreamId());
                 eventstreamservice.subscribe(eventStreamProducer);
             } catch (EventStreamConfigurationException e) {
                 log.error(e);
@@ -386,7 +385,7 @@ public class CarbonEventSimulator implements EventSimulator {
                 }
             } else {
                 throw new AxisFault("Invalid file type : " + uploadedFile.getFileType() +
-                                    " .csv file type is expected");
+                        " .csv file type is expected");
             }
         }
 
@@ -418,7 +417,7 @@ public class CarbonEventSimulator implements EventSimulator {
         boolean isDeleted = tempDestFile.delete();
         if (!isDeleted) {
             log.warn("temp file: " + tempDestFile.getAbsolutePath() +
-                     " deletion failed, scheduled deletion on server exit.");
+                    " deletion failed, scheduled deletion on server exit.");
             tempDestFile.deleteOnExit();
         }
     }
@@ -529,7 +528,7 @@ public class CarbonEventSimulator implements EventSimulator {
                 long delayBetweenEventsInMilies = fileInfo.getDelayBetweenEventsInMilies();
                 if (delayBetweenEventsInMilies <= 0) {
                     log.warn("Events will be sent continuously since the delay between events are set to "
-                             + delayBetweenEventsInMilies + "milliseconds");
+                            + delayBetweenEventsInMilies + "milliseconds");
                     delayBetweenEventsInMilies = 0;
                 }
 
@@ -599,11 +598,11 @@ public class CarbonEventSimulator implements EventSimulator {
             HashMap<String, DataSourceTableAndStreamInfo> dataSourceTableAndStreamInfoMap = tenantSpecificDataSourceInfoMap.get(
                     tenantID);
             dataSourceTableAndStreamInfoMap.put(dataSourceTableAndStreamInfo.getConfigurationName(),
-                                                dataSourceTableAndStreamInfo);
+                    dataSourceTableAndStreamInfo);
         } else {
             HashMap<String, DataSourceTableAndStreamInfo> dataSourceTableAndStreamInfoMap = new HashMap<String, DataSourceTableAndStreamInfo>();
             dataSourceTableAndStreamInfoMap.put(dataSourceTableAndStreamInfo.getConfigurationName(),
-                                                dataSourceTableAndStreamInfo);
+                    dataSourceTableAndStreamInfo);
             tenantSpecificDataSourceInfoMap.put(tenantID, dataSourceTableAndStreamInfoMap);
         }
     }
@@ -685,9 +684,9 @@ public class CarbonEventSimulator implements EventSimulator {
 
                 Element columnMapping = doc.createElement("columnMapping");
                 columnMapping.setAttribute(EventSimulatorConstant.COLUMN_NAME,
-                                           temp.getString(EventSimulatorConstant.COLUMN_NAME));
+                        temp.getString(EventSimulatorConstant.COLUMN_NAME));
                 columnMapping.setAttribute(EventSimulatorConstant.STREAM_ATTRIBUTE_NAME,
-                                           temp.getString(EventSimulatorConstant.STREAM_ATTRIBUTE_NAME));
+                        temp.getString(EventSimulatorConstant.STREAM_ATTRIBUTE_NAME));
 
                 columnMappings.appendChild(columnMapping);
             }
@@ -772,15 +771,15 @@ public class CarbonEventSimulator implements EventSimulator {
         DataSourceTableAndStreamInfo dataSourceTableAndStreamInfo = dataSourceInfoMap.get(fileName);
 
         String jsonFormattedAllInfo = "{\"" +
-                                      EventSimulatorConstant.EVENT_STREAM_ID + "\":\"" + dataSourceTableAndStreamInfo.getEventStreamID() +
-                                      "\",\"" + EventSimulatorConstant.DATA_SOURCE_NAME + "\":\"" + dataSourceTableAndStreamInfo
+                EventSimulatorConstant.EVENT_STREAM_ID + "\":\"" + dataSourceTableAndStreamInfo.getEventStreamID() +
+                "\",\"" + EventSimulatorConstant.DATA_SOURCE_NAME + "\":\"" + dataSourceTableAndStreamInfo
                 .getDataSourceName() +
-                                      "\",\"" + EventSimulatorConstant.TABLE_NAME + "\":\"" + dataSourceTableAndStreamInfo.getTableName() +
-                                      "\", \"" + EventSimulatorConstant.CONFIGURATION_NAME + "\":\"" + dataSourceTableAndStreamInfo
+                "\",\"" + EventSimulatorConstant.TABLE_NAME + "\":\"" + dataSourceTableAndStreamInfo.getTableName() +
+                "\", \"" + EventSimulatorConstant.CONFIGURATION_NAME + "\":\"" + dataSourceTableAndStreamInfo
                 .getConfigurationName() +
-                                      "\", \"" + EventSimulatorConstant.DELAY_BETWEEN_EVENTS_IN_MILIES + "\":" + dataSourceTableAndStreamInfo
+                "\", \"" + EventSimulatorConstant.DELAY_BETWEEN_EVENTS_IN_MILIES + "\":" + dataSourceTableAndStreamInfo
                 .getDelayBetweenEventsInMilies() +
-                                      ",\"" + EventSimulatorConstant.DATABASE_COLUMNS_AND_STREAM_ATTRIBUTE_INFO + "\":[";
+                ",\"" + EventSimulatorConstant.DATABASE_COLUMNS_AND_STREAM_ATTRIBUTE_INFO + "\":[";
 
         String jsonAttribute = "";
 
@@ -810,9 +809,9 @@ public class CarbonEventSimulator implements EventSimulator {
                 for (int j = 0; j < columnAndStreamAttributeNames[0].length; j++) {
                     if (metaAttributeList.get(i).getName().equalsIgnoreCase(columnAndStreamAttributeNames[1][j])) {
                         jsonAttribute = jsonAttribute + "{\"" + EventSimulatorConstant.STREAM_ATTRIBUTE_NAME + "\":\"" +
-                                        metaAttributeList.get(i).getName() + "\",\"" + EventSimulatorConstant.COLUMN_NAME + "\":\"" +
-                                        columnAndStreamAttributeNames[0][j] + "\",\"" + EventSimulatorConstant.COLUMN_TYPE + "\":\"" +
-                                        metaAttributeList.get(i).getType() + "\"},";
+                                metaAttributeList.get(i).getName() + "\",\"" + EventSimulatorConstant.COLUMN_NAME + "\":\"" +
+                                columnAndStreamAttributeNames[0][j] + "\",\"" + EventSimulatorConstant.COLUMN_TYPE + "\":\"" +
+                                metaAttributeList.get(i).getType() + "\"},";
                     }
                 }
 
@@ -822,9 +821,9 @@ public class CarbonEventSimulator implements EventSimulator {
                 for (int j = 0; j < columnAndStreamAttributeNames[0].length; j++) {
                     if (correlationAttributeList.get(q).getName().equalsIgnoreCase(columnAndStreamAttributeNames[1][j])) {
                         jsonAttribute = jsonAttribute + "{\"" + EventSimulatorConstant.STREAM_ATTRIBUTE_NAME + "\":\"" +
-                                        correlationAttributeList.get(q).getName() + "\",\"" + EventSimulatorConstant.COLUMN_NAME + "\":\"" +
-                                        columnAndStreamAttributeNames[0][j] + "\",\"" + EventSimulatorConstant.COLUMN_TYPE + "\":\"" +
-                                        correlationAttributeList.get(q).getType() + "\"},";
+                                correlationAttributeList.get(q).getName() + "\",\"" + EventSimulatorConstant.COLUMN_NAME + "\":\"" +
+                                columnAndStreamAttributeNames[0][j] + "\",\"" + EventSimulatorConstant.COLUMN_TYPE + "\":\"" +
+                                correlationAttributeList.get(q).getType() + "\"},";
                     }
                 }
                 q++;
@@ -833,9 +832,9 @@ public class CarbonEventSimulator implements EventSimulator {
                 for (int j = 0; j < columnAndStreamAttributeNames[0].length; j++) {
                     if (payloadAttributeList.get(r).getName().equalsIgnoreCase(columnAndStreamAttributeNames[1][j])) {
                         jsonAttribute = jsonAttribute + "{\"" + EventSimulatorConstant.STREAM_ATTRIBUTE_NAME + "\":\"" +
-                                        payloadAttributeList.get(r).getName() + "\",\"" + EventSimulatorConstant.COLUMN_NAME + "\":\"" +
-                                        columnAndStreamAttributeNames[0][j] + "\",\"" + EventSimulatorConstant.COLUMN_TYPE + "\":\"" +
-                                        payloadAttributeList.get(r).getType() + "\"},";
+                                payloadAttributeList.get(r).getName() + "\",\"" + EventSimulatorConstant.COLUMN_NAME + "\":\"" +
+                                columnAndStreamAttributeNames[0][j] + "\",\"" + EventSimulatorConstant.COLUMN_TYPE + "\":\"" +
+                                payloadAttributeList.get(r).getType() + "\"},";
                     }
                 }
                 r++;
@@ -879,7 +878,7 @@ public class CarbonEventSimulator implements EventSimulator {
                         EventSimulatorConstant.DELAY_BETWEEN_EVENTS_IN_MILIES);
                 if (delayBetweenEventsInMilies <= 0) {
                     log.warn("Events will be sent continuously since the delay between events are set to "
-                             + delayBetweenEventsInMilies + "milliseconds");
+                            + delayBetweenEventsInMilies + "milliseconds");
                     delayBetweenEventsInMilies = 0;
                 }
                 try {
