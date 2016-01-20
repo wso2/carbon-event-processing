@@ -23,6 +23,9 @@ import org.wso2.carbon.event.processor.core.internal.ds.EventProcessorValueHolde
 import org.wso2.carbon.event.processor.core.internal.util.EventProcessorConstants;
 import org.wso2.carbon.event.statistics.EventStatisticsMonitor;
 import org.wso2.carbon.event.stream.core.SiddhiEventConsumer;
+import org.wso2.carbon.metrics.manager.Counter;
+import org.wso2.carbon.metrics.manager.Level;
+import org.wso2.carbon.metrics.manager.MetricManager;
 import org.wso2.siddhi.core.event.Event;
 
 import java.util.Arrays;
@@ -33,7 +36,6 @@ import java.util.Arrays;
 public abstract class AbstractSiddhiInputEventDispatcher implements SiddhiEventConsumer {
     private Logger trace = Logger.getLogger(EventProcessorConstants.EVENT_TRACE_LOGGER);
     private static Log log = LogFactory.getLog(AbstractSiddhiInputEventDispatcher.class);
-
     protected final String streamId;
     protected String siddhiStreamId;
     protected Object owner;
@@ -41,20 +43,33 @@ public abstract class AbstractSiddhiInputEventDispatcher implements SiddhiEventC
     private final boolean traceEnabled;
     private final boolean statisticsEnabled;
     private EventStatisticsMonitor statisticsMonitor;
+    private Counter eventCounter;
     private String tracerPrefix = "";
 
-    public AbstractSiddhiInputEventDispatcher(String streamId, String siddhiStreamId, ExecutionPlanConfiguration executionPlanConfiguration, int tenantId) {
+    public AbstractSiddhiInputEventDispatcher(String streamId, String siddhiStreamId,
+                                              ExecutionPlanConfiguration executionPlanConfiguration, int tenantId) {
         this.streamId = streamId;
         this.siddhiStreamId = siddhiStreamId;
         this.owner = executionPlanConfiguration;
         this.tenantId = tenantId;
         this.traceEnabled = executionPlanConfiguration.isTracingEnabled();
         this.statisticsEnabled = executionPlanConfiguration.isStatisticsEnabled();
+        String metricId = EventProcessorConstants.METRIC_PREFIX + EventProcessorConstants.METRIC_DELIMITER +
+                EventProcessorConstants.METRIC_INFIX_EXECUTION_PLANS + EventProcessorConstants.METRIC_DELIMITER +
+                executionPlanConfiguration.getName() + EventProcessorConstants.METRIC_DELIMITER +
+                EventProcessorConstants.METRIC_INFIX_STREAMS + EventProcessorConstants.METRIC_AGGREGATE_ANNOTATION +
+                EventProcessorConstants.METRIC_DELIMITER + streamId.replaceAll("\\.", "_") +
+                EventProcessorConstants.METRIC_DELIMITER + EventProcessorConstants.METRIC_NAME_INPUT_EVENTS;
         if (statisticsEnabled) {
-            statisticsMonitor = EventProcessorValueHolder.getEventStatisticsService().getEventStatisticMonitor(tenantId, EventProcessorConstants.EVENT_PROCESSOR, executionPlanConfiguration.getName(), streamId + " (" + siddhiStreamId + ")");
+            statisticsMonitor = EventProcessorValueHolder.getEventStatisticsService().getEventStatisticMonitor(tenantId,
+                    EventProcessorConstants.EVENT_PROCESSOR, executionPlanConfiguration.getName(),
+                    streamId + " (" + siddhiStreamId + ")");
+            eventCounter = MetricManager.counter(metricId, Level.INFO, Level.INFO);
         }
         if (traceEnabled) {
-            this.tracerPrefix = "TenantId : " + tenantId + ", " + EventProcessorConstants.EVENT_PROCESSOR + " : " + executionPlanConfiguration.getName() + ", " + EventProcessorConstants.EVENT_STREAM + " : " + streamId + " (" + siddhiStreamId + "), before processing " + System.getProperty("line.separator");
+            this.tracerPrefix = "TenantId : " + tenantId + ", " + EventProcessorConstants.EVENT_PROCESSOR + " : " +
+                    executionPlanConfiguration.getName() + ", " + EventProcessorConstants.EVENT_STREAM + " : " +
+                    streamId + " (" + siddhiStreamId + "), before processing " + System.getProperty("line.separator");
         }
     }
 
@@ -72,10 +87,12 @@ public abstract class AbstractSiddhiInputEventDispatcher implements SiddhiEventC
             try {
                 if (statisticsEnabled) {
                     statisticsMonitor.incrementRequest();
+                    eventCounter.inc();
                 }
                 sendEvent(event);
             } catch (InterruptedException e) {
-                log.error("Error in dispatching events " + Arrays.deepToString(events) + " to Siddhi stream :" + siddhiStreamId);
+                log.error("Error in dispatching events " + Arrays.deepToString(events) + " to Siddhi stream :" +
+                        siddhiStreamId);
             }
         }
     }
@@ -88,6 +105,7 @@ public abstract class AbstractSiddhiInputEventDispatcher implements SiddhiEventC
             }
             if (statisticsEnabled) {
                 statisticsMonitor.incrementRequest();
+                eventCounter.inc();
             }
             sendEvent(event);
         } catch (InterruptedException e) {

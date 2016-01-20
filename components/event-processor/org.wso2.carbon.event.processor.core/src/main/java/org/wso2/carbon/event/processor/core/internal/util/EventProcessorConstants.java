@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
+ * Copyright (c) 2016, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,114 +16,120 @@
 package org.wso2.carbon.event.processor.core.internal.util;
 
 
-public interface EventProcessorConstants {
+public class EventProcessorConstants {
 
-    String EP_CONF_NS = "http://wso2.org/carbon/eventprocessor";
+    private EventProcessorConstants() {
+        // Prevents instantiation.
+    }
 
-    String EP_PREFIX = "ep";
-    String EP_ELE_ROOT_ELEMENT = "executionPlan";
+    public static final String EP_CONF_NS = "http://wso2.org/carbon/eventprocessor";
+    public static final String EP_PREFIX = "ep";
+    public static final String EP_ELE_ROOT_ELEMENT = "executionPlan";
+    public static final String EP_ELE_DESC = "description";
+    public static final String EP_ELE_SIDDHI_CONFIG = "siddhiConfiguration";
+    public static final String EP_ELE_IMP_STREAMS = "importedStreams";
+    public static final String EP_ELE_EXP_STREAMS = "exportedStreams";
+    public static final String EP_ELE_QUERIES = "queryExpressions";
+    public static final String EP_ELE_STREAM = "stream";
+    public static final String EP_ELE_PROPERTY = "property";
+    public static final String EP_ATTR_STATISTICS = "statistics";
+    public static final String EP_ATTR_TRACING = "trace";
+    public static final String EP_ENABLE = "enable";
+    public static final String EP_DISABLE = "disable";
+    public static final String EP_ATTR_PASSTHROUGH_FLOW = "passthroughFlow";
+    // For inputs - siddhi stream.
+    public static final String EP_ATTR_AS = "as";
+    // For outputs - siddhi stream.
+    public static final String EP_ATTR_VALUEOF = "valueOf";
+    public static final String EP_ATTR_NAME = "name";
+    public static final String EP_ATTR_VERSION = "version";
 
-    String EP_ELE_DESC = "description";
-    String EP_ELE_SIDDHI_CONFIG = "siddhiConfiguration";
-    String EP_ELE_IMP_STREAMS = "importedStreams";
-    String EP_ELE_EXP_STREAMS = "exportedStreams";
-    String EP_ELE_QUERIES = "queryExpressions";
-    String EP_ELE_STREAM = "stream";
-    String EP_ELE_PROPERTY = "property";
-    String EP_ATTR_STATISTICS = "statistics";
-    String EP_ATTR_TRACING = "trace";
-    String EP_ENABLE = "enable";
-    String EP_DISABLE = "disable";
-    String EP_ATTR_PASSTHROUGH_FLOW = "passthroughFlow";
+    public static final String STREAM_SEPARATOR = ":";
+    public static final String ATTRIBUTE_SEPARATOR = "_";
 
+    public static final String EVENT_TRACE_LOGGER = "EVENT_TRACE_LOGGER";
 
-    // for inputs  - siddhi stream
-    String EP_ATTR_AS = "as";
-    // for outputs - siddhi stream
-    String EP_ATTR_VALUEOF = "valueOf";
+    public static final String EP_ELE_DIRECTORY = "executionplans";
+    public static final String XML_EXTENSION = ".xml";
+    public static final String SIDDHIQL_EXTENSION = ".siddhiql";
 
-    String EP_ATTR_NAME = "name";
-    String EP_ATTR_VERSION = "version";
+    public static final String EVENT_PROCESSOR = "Event Processor";
+    public static final String EVENT_STREAM = "Event Stream";
 
+    public static final String SIDDHI_DISTRIBUTED_PROCESSING = "siddhi.enable.distributed.processing";
+    public static final String SIDDHI_SNAPSHOT_INTERVAL = "siddhi.persistence.snapshot.time.interval.minutes";
+    public static final String EP_CONFIG_FILE_EXTENSION_WITH_DOT = ".siddhiql";
 
-    String STREAM_SEPARATOR = ":";
-    String ATTRIBUTE_SEPARATOR = "_";
+    public static final String META = "meta";
+    public static final String CORRELATION = "correlation";
+    public static final String META_PREFIX = "meta_";
+    public static final String CORRELATION_PREFIX = "correlation_";
 
-    String EVENT_TRACE_LOGGER = "EVENT_TRACE_LOGGER";
+    public static final String HAZELCAST_INSTANCE = "hazelcast.instance";
+    public static final String NO_DEPENDENCY_INFO_MSG = "No dependency information available for this event formatter";
 
-    String EP_ELE_DIRECTORY = "executionplans";
-    String XML_EXTENSION = ".xml";
-    String SIDDHIQL_EXTENSION = ".siddhiql";
+    // For storm query plan builder.
+    public static final String OPENING_BRACKETS = " ( ";
+    public static final String SPACE = " ";
+    public static final String COMMA = ", ";
+    public static final String CLOSING_BRACKETS = ");";
+    public static final String STORM_QUERY_PLAN = "storm-query-plan";
+    public static final String INPUT_STREAMS = "input-streams";
+    public static final String TABLE_DEFINITIONS = "table-definitions";
+    public static final String OUTPUT_STREAMS = "output-streams";
+    public static final String EVENT_PROCESSOR_TAG = "event-processor";
+    public static final String SIDDHI_BOLT = "SiddhiBolt";
+    public static final String QUERIES = "queries";
+    public static final String EVENT_RECEIVER = "event-receiver";
+    public static final String EVENT_RECEIVER_SPOUT = "EventReceiverSpout";
+    public static final String STREAMS = "streams";
+    public static final String STREAM = "stream";
+    public static final String DEFINE_STREAM = "define stream ";
+    public static final String EVENT_PUBLISHER = "event-publisher";
+    public static final String EVENT_PUBLISHER_BOLT = "EventPublisherBolt";
+    public static final String PARALLEL = "parallel";
+    public static final String RECEIVER_PARALLELISM = "receiverParallelism";
+    public static final String PUBLISHER_PARALLELISM = "publisherParallelism";
+    public static final String NAME = "name";
+    public static final String PARTITION = "partition";
+    public static final String DIST = "dist";
+    public static final String EXEC_GROUP = "execGroup";
+    public static final String ENFORCE_PARALLELISM = "enforceParallel";
 
-    String EVENT_PROCESSOR = "Event Processor";
-    String EVENT_STREAM = "Event Stream";
+    // Annotations, Annotation Names and relevant tokens.
+    public static final String ANNOTATION_PLAN = "Plan";
+    public static final String ANNOTATION_IMPORT = "Import";
+    public static final String ANNOTATION_EXPORT = "Export";
 
-    String SIDDHI_DISTRIBUTED_PROCESSING = "siddhi.enable.distributed.processing";
-    String SIDDHI_SNAPSHOT_INTERVAL = "siddhi.persistence.snapshot.time.interval.minutes";
-    String EP_CONFIG_FILE_EXTENSION_WITH_DOT = ".siddhiql";
+    public static final String ANNOTATION_NAME_NAME = "name";
+    public static final String ANNOTATION_NAME_DESCRIPTION = "description";
+    public static final String ANNOTATION_NAME_TRACE = "trace";
+    public static final String ANNOTATION_NAME_STATISTICS = "statistics";
 
-    String META = "meta";
-    String CORRELATION = "correlation";
-    String META_PREFIX = "meta_";
-    String CORRELATION_PREFIX = "correlation_";
+    public static final String ANNOTATION_TOKEN_AT = "@";
+    public static final String ANNOTATION_TOKEN_COLON = ":";
+    public static final String ANNOTATION_TOKEN_OPENING_BRACKET = "(";
+    public static final String ANNOTATION_TOKEN_CLOSING_BRACKET = ")";
 
-    String HAZELCAST_INSTANCE = "hazelcast.instance";
+    public static final String DATABRIDGE_STREAM_REGEX = "[a-zA-Z0-9_\\.]+";
+    public static final String STREAM_VER_REGEX = "([0-9]*)\\.([0-9]*)\\.([0-9]*)";
 
-    String NO_DEPENDENCY_INFO_MSG = "No dependency information available for this event formatter";
+    // "Execution plan header" is the part above the Import/Export statements.
 
-    // for storm query plan builder
-    String OPENING_BRACKETS = " ( ";
-    String SPACE = " ";
-    String COMMA = ", ";
-    String CLOSING_BRACKETS = ");";
-    String STORM_QUERY_PLAN = "storm-query-plan";
-    String INPUT_STREAMS = "input-streams";
-    String TABLE_DEFINITIONS = "table-definitions";
-    String OUTPUT_STREAMS = "output-streams";
-    String EVENT_PROCESSOR_TAG = "event-processor";
-    String SIDDHI_BOLT = "SiddhiBolt";
-    String QUERIES = "queries";
-    String EVENT_RECEIVER = "event-receiver";
-    String EVENT_RECEIVER_SPOUT = "EventReceiverSpout";
-    String STREAMS = "streams";
-    String STREAM = "stream";
-    String DEFINE_STREAM = "define stream ";
-    String EVENT_PUBLISHER = "event-publisher";
-    String EVENT_PUBLISHER_BOLT = "EventPublisherBolt";
-    String PARALLEL = "parallel";
-    String RECEIVER_PARALLELISM = "receiverParallelism";
-    String PUBLISHER_PARALLELISM = "publisherParallelism";
-    String NAME = "name";
-    String PARTITION = "partition";
-    String DIST = "dist";
-    String EXEC_GROUP = "execGroup";
-    String ENFORCE_PARALLELISM = "enforceParallel";
+    // Following regex represents a line in an execution plan header.
+    public static final String PLAN_HEADER_LINE_REGEX = "(^\\s*"+ ANNOTATION_TOKEN_AT + ANNOTATION_PLAN +
+            ANNOTATION_TOKEN_COLON + ".*)|(^\\s*--.*)|(^\\s*\\/\\*.*\\*\\/\\s*)|(^\\s*)";
 
-    /*Annotations, Annotation Names and relevant tokens*/
-    String ANNOTATION_PLAN = "Plan";
-    String ANNOTATION_IMPORT = "Import";
-    String ANNOTATION_EXPORT = "Export";
+    public static final String END_OF_PLAN_HEADER_COMMENT_REGEX = "^\\s*\\/\\* define streams and write query here ... \\*\\/\\s*";
 
-    String ANNOTATION_NAME_NAME = "name";
-    String ANNOTATION_NAME_DESCRIPTION = "description";
-    String ANNOTATION_NAME_TRACE = "trace";
-    String ANNOTATION_NAME_STATISTICS = "statistics";
+    public static final String SIDDHI_LINE_SEPARATER = "\n";
+    public static final String SIDDHI_SINGLE_QUOTE = "'";
 
-    String ANNOTATION_TOKEN_AT = "@";
-    String ANNOTATION_TOKEN_COLON = ":";
-    String ANNOTATION_TOKEN_OPENING_BRACKET = "(";
-    String ANNOTATION_TOKEN_CLOSING_BRACKET = ")";
-
-    String DATABRIDGE_STREAM_REGEX = "[a-zA-Z0-9_\\.]+";
-    String STREAM_VER_REGEX = "([0-9]*)\\.([0-9]*)\\.([0-9]*)";
-
-    //"Execution plan header" is the part above the Import/Export statements.
-
-    //Following regex represents a line in an execution plan header
-    String PLAN_HEADER_LINE_REGEX = "(^\\s*"+ ANNOTATION_TOKEN_AT + ANNOTATION_PLAN + ANNOTATION_TOKEN_COLON + ".*)|(^\\s*--.*)|(^\\s*\\/\\*.*\\*\\/\\s*)|(^\\s*)";
-
-    String END_OF_PLAN_HEADER_COMMENT_REGEX = "^\\s*\\/\\* define streams and write query here ... \\*\\/\\s*";
-
-    String SIDDHI_LINE_SEPARATER = "\n";
-    String SIDDHI_SINGLE_QUOTE = "'";
+    public static final String METRIC_PREFIX = "WSO2_CEP";
+    public static final String METRIC_INFIX_EXECUTION_PLANS = "ExecutionPlans";
+    public static final String METRIC_INFIX_STREAMS = "Streams";
+    public static final String METRIC_NAME_OUTPUT_EVENTS = "OutputEvents";
+    public static final String METRIC_NAME_INPUT_EVENTS = "InputEvents";
+    public static final String METRIC_AGGREGATE_ANNOTATION = "[+]";
+    public static final String METRIC_DELIMITER = ".";
 }

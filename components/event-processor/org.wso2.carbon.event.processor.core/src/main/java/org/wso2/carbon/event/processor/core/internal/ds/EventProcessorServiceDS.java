@@ -37,9 +37,11 @@ import org.wso2.carbon.event.statistics.EventStatisticsService;
 import org.wso2.carbon.event.stream.core.EventStreamListener;
 import org.wso2.carbon.event.stream.core.EventStreamService;
 import org.wso2.carbon.ndatasource.core.DataSourceService;
+import org.wso2.carbon.siddhi.metrics.core.SiddhiMetricsFactory;
 import org.wso2.carbon.user.core.UserRealm;
 import org.wso2.carbon.utils.ConfigurationContextService;
 import org.wso2.siddhi.core.SiddhiManager;
+import org.wso2.siddhi.core.config.StatisticsConfiguration;
 import org.wso2.siddhi.core.util.persistence.PersistenceStore;
 
 /**
@@ -104,6 +106,11 @@ public class EventProcessorServiceDS {
                 persistenceStore.setProperties(persistConfig.getPropertiesMap());
                 EventProcessorValueHolder.registerPersistenceConfiguration(persistConfig);
             }
+
+            StatisticsConfiguration statisticsConfiguration = new StatisticsConfiguration(new SiddhiMetricsFactory());
+            statisticsConfiguration.setMatricPrefix(EventProcessorConstants.METRIC_PREFIX);
+            siddhiManager.setStatisticsConfiguration(statisticsConfiguration);
+
             if (log.isDebugEnabled()) {
                 log.debug("Successfully deployed EventProcessorService");
             }
