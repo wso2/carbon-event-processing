@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.wso2.carbon.event.simulator.core.internal.ds;
 
 import org.apache.commons.logging.Log;
@@ -42,7 +43,7 @@ public class EventSimulatorDS {
     protected void activate(ComponentContext context) {
         try {
 
-            CarbonEventSimulator carbonEventSimulator=createEventSimulator();
+            CarbonEventSimulator carbonEventSimulator = createEventSimulator();
             setEventSimulator(carbonEventSimulator);
             context.getBundleContext().registerService(EventSimulator.class.getName(), carbonEventSimulator, null);
             if (log.isDebugEnabled()) {
@@ -66,7 +67,7 @@ public class EventSimulatorDS {
         return new CarbonEventSimulator();
     }
 
-    protected void setEventSimulator(CarbonEventSimulator carbonEventSimulator){
+    protected void setEventSimulator(CarbonEventSimulator carbonEventSimulator) {
         EventSimulatorValueHolder.setEventSimulator(carbonEventSimulator);
     }
 

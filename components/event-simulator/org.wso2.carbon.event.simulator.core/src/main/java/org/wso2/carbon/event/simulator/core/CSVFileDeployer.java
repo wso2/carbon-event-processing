@@ -24,14 +24,14 @@ import org.apache.commons.logging.LogFactory;
 import org.wso2.carbon.context.PrivilegedCarbonContext;
 import org.wso2.carbon.event.simulator.core.internal.CarbonEventSimulator;
 import org.wso2.carbon.event.simulator.core.internal.ds.EventSimulatorValueHolder;
-import org.wso2.carbon.event.simulator.core.internal.util.DeployerHelper;
+import org.wso2.carbon.event.simulator.core.internal.util.DeploymentHelper;
 
 import java.io.File;
 import java.util.HashMap;
 
 public class CSVFileDeployer extends AbstractDeployer {
 
-    private static Log log = LogFactory.getLog(CSVFileDeployer.class);
+    private static final Log log = LogFactory.getLog(CSVFileDeployer.class);
     private ConfigurationContext configurationContext;
 
     @Override
@@ -81,7 +81,7 @@ public class CSVFileDeployer extends AbstractDeployer {
         File xmlFile = new File(absolutePath);
 
         if (xmlFile.exists()) {
-            csvFileInfo = DeployerHelper.getCSVFileInfo(xmlFile, configurationContext.getAxisConfiguration());
+            csvFileInfo = DeploymentHelper.getCSVFileInfo(xmlFile, configurationContext.getAxisConfiguration());
         }
 
         if (csvFileInfo == null) {

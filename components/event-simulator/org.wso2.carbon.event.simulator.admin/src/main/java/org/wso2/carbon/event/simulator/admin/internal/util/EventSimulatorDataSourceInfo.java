@@ -16,20 +16,19 @@
 package org.wso2.carbon.event.simulator.admin.internal.util;
 
 import org.apache.axis2.AxisFault;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.wso2.carbon.event.simulator.admin.internal.ExecutionInfo;
+import org.wso2.carbon.event.simulator.admin.internal.jaxbMappings.Element;
+import org.wso2.carbon.event.simulator.admin.internal.jaxbMappings.Mapping;
+import org.wso2.carbon.event.simulator.admin.internal.jaxbMappings.Mappings;
 import org.wso2.carbon.event.simulator.core.EventSimulatorConstant;
 import org.wso2.carbon.ndatasource.common.DataSourceException;
 import org.wso2.carbon.ndatasource.core.CarbonDataSource;
 import org.wso2.carbon.utils.CarbonUtils;
-
-import org.wso2.carbon.event.simulator.admin.internal.jaxbMappings.Element;
-import org.wso2.carbon.event.simulator.admin.internal.jaxbMappings.Mapping;
-import org.wso2.carbon.event.simulator.admin.internal.jaxbMappings.Mappings;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 
 import javax.sql.DataSource;
 import javax.xml.bind.JAXBContext;
@@ -37,7 +36,9 @@ import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
 import java.io.File;
 import java.sql.*;
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Validates database table information Construct all the queries and assign to executionInfo instance
@@ -103,9 +104,10 @@ public class EventSimulatorDataSourceInfo {
     /**
      * Validates database table information Construct all the queries and assign to executionInfo instance
      *
-     * @param tableAndAttributeMappingJsonObj JSONObject which contains dataSource, event stream, configuration name,
-     *                                        table name, delay between events in milliseconds,
-     *                                        table columns and mapping stream attributes and types
+     * @param tableAndAttributeMappingJsonObj
+     *         JSONObject which contains dataSource, event stream, configuration name,
+     *         table name, delay between events in milliseconds,
+     *         table columns and mapping stream attributes and types
      */
     public static ExecutionInfo getInitializedDatabaseExecutionInfo(JSONObject tableAndAttributeMappingJsonObj) throws AxisFault {
         Connection con;
@@ -153,7 +155,6 @@ public class EventSimulatorDataSourceInfo {
                                 }
                                 addedFirstColumn = true;
                                 getColumnsQuery = getColumnsQuery + attributeAndMappingColumn.getString(EventSimulatorConstant.COLUMN_NAME);
-
                             }
                         }
 
@@ -163,12 +164,12 @@ public class EventSimulatorDataSourceInfo {
                                 EventSimulatorDataSourceConstants.GENERIC_RDBMS_ATTRIBUTE_TABLE_NAME, tableName).replace(
                                 EventSimulatorDataSourceConstants.GENERIC_RDBMS_ATTRIBUTE_COLUMNS, getColumnsQuery);
 
-                        executionInfo.setPreparedCheckTableColomnsDataTypeStatement(columnsDataTypeQuery);
+                        executionInfo.setPreparedCheckTableColumnsDataTypeStatement(columnsDataTypeQuery);
                         executionInfo.setPreparedSelectStatement(selectQuery);
 
                         int columnAndDataTypeCount = 0;
 
-                        columnsDataTypeQuery = executionInfo.getPreparedCheckTableColomnsDataTypeStatement();
+                        columnsDataTypeQuery = executionInfo.getPreparedCheckTableColumnsDataTypeStatement();
                         //to check validity of entered columns
                         ResultSet rs = stmt.executeQuery(columnsDataTypeQuery);
                         while (rs.next()) {
@@ -217,8 +218,9 @@ public class EventSimulatorDataSourceInfo {
 
     /**
      * Closing connections
-     * @param stmt          object used for executing a static SQL statement
-     * @param connection    database connection
+     *
+     * @param stmt       object used for executing a static SQL statement
+     * @param connection database connection
      */
     private static void cleanupConnections(Statement stmt, Connection connection) {
         if (stmt != null) {
