@@ -24,7 +24,7 @@ public class EventSimulatorAdminvalueHolder {
     private static DataSourceService dataSourceService;
 
 
-    public static void registerEventSimulator(EventSimulator eventSimulatorService) {
+    public static void setEventSimulator(EventSimulator eventSimulatorService) {
         EventSimulatorAdminvalueHolder.eventSimulator = eventSimulatorService;
     }
 

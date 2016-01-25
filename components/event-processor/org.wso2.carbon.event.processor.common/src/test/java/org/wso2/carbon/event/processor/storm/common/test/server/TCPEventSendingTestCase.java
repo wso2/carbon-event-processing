@@ -33,6 +33,7 @@ import org.wso2.siddhi.query.api.definition.StreamDefinition;
 
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -108,13 +109,13 @@ public class TCPEventSendingTestCase {
     private static class TestStreamCallback implements StreamCallback {
         AtomicInteger eventCount = new AtomicInteger(0);
 
-        @Override
-        public void receive(String streamId, long timestamp, Object[] event) {
-            log.info("Event count:" + eventCount.incrementAndGet() + ", Stream ID: " + streamId + ", Event: " + Arrays.deepToString(event));
-        }
-
         public int getEventCount() {
             return eventCount.get();
+        }
+
+        @Override
+        public void receive(String streamId, long timestamp, Object[] event, Map<String, String> arbitraryMapData) {
+            log.info("Event count:" + eventCount.incrementAndGet() + ", Stream ID: " + streamId + ", Event: " + Arrays.deepToString(event));
         }
     }
 

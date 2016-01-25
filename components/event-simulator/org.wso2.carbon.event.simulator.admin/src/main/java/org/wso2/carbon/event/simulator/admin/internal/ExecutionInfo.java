@@ -24,10 +24,10 @@ import javax.sql.DataSource;
 public class ExecutionInfo {
 
     private String preparedTableExistenceCheckStatement;
-    private String preparedCheckTableColomnsDataTypeStatement;
+    private String preparedCheckTableColumnsDataTypeStatement;
     private String preparedSelectStatement;
     private DataSource datasource;
-    private long delayBetweenEventsInMilies;
+    private long delayBetweenEventsInMillis;
 
     public DataSource getDatasource() {
         return datasource;
@@ -45,7 +45,6 @@ public class ExecutionInfo {
         this.preparedTableExistenceCheckStatement = preparedTableExistenceCheckStatement;
     }
 
-
     public String getPreparedSelectStatement() {
         return preparedSelectStatement;
     }
@@ -53,19 +52,20 @@ public class ExecutionInfo {
     public void setPreparedSelectStatement(String preparedSelectStatement) {
         this.preparedSelectStatement = preparedSelectStatement;
     }
-    public String getPreparedCheckTableColomnsDataTypeStatement() {
-        return preparedCheckTableColomnsDataTypeStatement;
+
+    public String getPreparedCheckTableColumnsDataTypeStatement() {
+        return preparedCheckTableColumnsDataTypeStatement;
     }
 
-    public void setPreparedCheckTableColomnsDataTypeStatement(String preparedCheckTableColomnsDataTypeStatement) {
-        this.preparedCheckTableColomnsDataTypeStatement = preparedCheckTableColomnsDataTypeStatement;
+    public void setPreparedCheckTableColumnsDataTypeStatement(String preparedCheckTableColumnsDataTypeStatement) {
+        this.preparedCheckTableColumnsDataTypeStatement = preparedCheckTableColumnsDataTypeStatement;
     }
 
-    public long getDelayBetweenEventsInMilies() {
-        return delayBetweenEventsInMilies;
+    public long getDelayBetweenEventsInMillis() {
+        return delayBetweenEventsInMillis;
     }
 
-    public void setDelayBetweenEventsInMilies(long delayBetweenEventsInMilies) {
-        this.delayBetweenEventsInMilies = delayBetweenEventsInMilies;
+    public void setDelayBetweenEventsInMillis(long delayBetweenEventsInMillis) {
+        this.delayBetweenEventsInMillis = delayBetweenEventsInMillis;
     }
 }

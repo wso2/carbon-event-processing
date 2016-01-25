@@ -16,6 +16,8 @@
 
 package org.wso2.carbon.event.processor.storm.common.test.server;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.wso2.carbon.event.processor.manager.commons.transport.client.TCPEventPublisher;
 import org.wso2.siddhi.query.api.definition.Attribute;
 import org.wso2.siddhi.query.api.definition.StreamDefinition;
@@ -25,6 +27,7 @@ import java.util.Random;
 
 public class TCPEventTestClient {
 
+    private static final Log log = LogFactory.getLog(TCPEventTestClient.class);
 
     public static void main(String[] args) throws Exception {
 
@@ -88,7 +91,7 @@ public class TCPEventTestClient {
                     tcpEventPublisher.sendEvent("TestStream", System.currentTimeMillis(), new Object[]{75, 45f, "Abcdefghijklmnop", 89,}, true);
                     tcpEventPublisher.sendEvent("TestStream1", System.currentTimeMillis(), new Object[]{90l, 77f, "Abcdefghijklmnop", 4.5, true}, true);
                 } catch (IOException e) {
-                    e.printStackTrace();
+                    log.error(e);
                 }
 
             }

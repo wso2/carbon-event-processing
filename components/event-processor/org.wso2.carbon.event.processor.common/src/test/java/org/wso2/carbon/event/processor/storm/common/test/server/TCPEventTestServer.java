@@ -23,6 +23,7 @@ import org.wso2.siddhi.query.api.definition.Attribute;
 import org.wso2.siddhi.query.api.definition.StreamDefinition;
 
 import java.util.Arrays;
+import java.util.Map;
 
 public class TCPEventTestServer {
 
@@ -54,8 +55,9 @@ public class TCPEventTestServer {
              * @param timestamp    the event timestamp
              * @param eventData    the event as an object array of attributes
              */
+
             @Override
-            public void receive(String streamId, long timestamp, Object[] eventData) {
+            public void receive(String streamId, long timestamp, Object[] eventData, Map<String, String> stringStringMap) {
                 if (!eventData[2].equals("Abcdefghijklmnop")) {
                     System.out.println(streamId + " prev: " + Arrays.deepToString(prev) + " current :  " + Arrays.deepToString(eventData));
                 }
@@ -68,11 +70,6 @@ public class TCPEventTestServer {
                     System.out.println("Throughput = " + tp + " Event/sec");
                     start = end;
                 }
-//                try {
-//                    Thread.sleep(2);
-//                } catch (InterruptedException e) {
-//                    e.printStackTrace();
-//                }
             }
         }, null);
 

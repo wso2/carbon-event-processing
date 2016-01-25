@@ -22,9 +22,7 @@ import org.wso2.carbon.ndatasource.core.DataSourceService;
 
 public class EventSimulatorValueHolder {
     private static EventStreamService eventstreamservice;
-
     private static CarbonEventSimulator eventSimulator;
-
     private static DataSourceService dataSourceService;
     private static EventManagementService eventManagerService;
 
@@ -44,11 +42,11 @@ public class EventSimulatorValueHolder {
         return EventSimulatorValueHolder.eventstreamservice;
     }
 
-    public static void setEventSimulator(CarbonEventSimulator eventSimulator){
-        EventSimulatorValueHolder.eventSimulator=eventSimulator;
+    public static void setEventSimulator(CarbonEventSimulator eventSimulator) {
+        EventSimulatorValueHolder.eventSimulator = eventSimulator;
     }
 
-    public static CarbonEventSimulator getEventSimulator(){
+    public static CarbonEventSimulator getEventSimulator() {
         return EventSimulatorValueHolder.eventSimulator;
     }
 

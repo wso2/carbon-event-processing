@@ -18,16 +18,24 @@
 <%
     String msg = null;
 
-    try{
+    try {
 
         EventSimulatorAdminServiceStub stub = EventSimulatorUIUtils.getEventSimulatorAdminService(config, session, request);
-        String fileName=request.getParameter("fileName");
+        String fileName = request.getParameter("fileName");
+        String mode = request.getParameter("mode");
 
-        stub.sendDBConfigFileNameToSimulate(fileName);
-
-        msg="sent";
-    }catch(Exception e){
-        msg=e.getMessage();
+        if ("send".equals(mode)) {
+            stub.sendDBConfigFileNameToSimulate(fileName);
+            msg = "sent";
+        } else if ("pause".equals(mode)) {
+            stub.pauseDBConfigFileNameToSimulate(fileName);
+            msg = "paused";
+        } else if ("resume".equals(mode)) {
+            stub.resumeDBConfigFileNameToSimulate(fileName);
+            msg = "resumed";
+        }
+    } catch (Exception e) {
+        msg = e.getMessage();
     }
 %>
 <%=msg%>

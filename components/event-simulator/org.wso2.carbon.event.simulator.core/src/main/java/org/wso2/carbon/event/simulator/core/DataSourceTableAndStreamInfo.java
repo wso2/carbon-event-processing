@@ -23,14 +23,13 @@ public class DataSourceTableAndStreamInfo {
     private String dataSourceName;
     private String tableName;
     private String eventStreamID;
-    private String dataSourceColumnsAndTypes [][];
+    private String dataSourceColumnsAndTypes[][];
     private String eventStreamName;
-    private long delayBetweenEventsInMilies;
-
+    private long delayBetweenEventsInMillis;
     private String filePath;
     private String fileName;
 
-    public DataSourceTableAndStreamInfo(){
+    public DataSourceTableAndStreamInfo() {
 
         configurationName = null;
         dataSourceName = null;
@@ -40,62 +39,78 @@ public class DataSourceTableAndStreamInfo {
         eventStreamName = null;
         fileName = null;
         filePath = null;
-        delayBetweenEventsInMilies = 0;
+        delayBetweenEventsInMillis = 0;
     }
 
-    public void setConfigurationName(String configurationName){
+    public void setConfigurationName(String configurationName) {
         this.configurationName = configurationName;
     }
-    public String getConfigurationName(){
+
+    public String getConfigurationName() {
         return configurationName;
     }
-    public void setDataSourceName(String dataSourceName){
+
+    public void setDataSourceName(String dataSourceName) {
         this.dataSourceName = dataSourceName;
     }
-    public String getDataSourceName(){
+
+    public String getDataSourceName() {
         return dataSourceName;
     }
-    public void setTableName(String tableName){
+
+    public void setTableName(String tableName) {
         this.tableName = tableName;
     }
-    public String getTableName(){
+
+    public String getTableName() {
         return tableName;
     }
-    public void setEventStreamID(String eventStreamID){
+
+    public void setEventStreamID(String eventStreamID) {
         this.eventStreamID = eventStreamID;
     }
-    public String getEventStreamID(){
+
+    public String getEventStreamID() {
         return eventStreamID;
     }
-    public void setDataSourceColumnsAndTypes(String[][] dataSourceColumnsAndTypes){
+
+    public void setDataSourceColumnsAndTypes(String[][] dataSourceColumnsAndTypes) {
         this.dataSourceColumnsAndTypes = dataSourceColumnsAndTypes;
     }
-    public String[][] getDataSourceColumnsAndTypes(){
+
+    public String[][] getDataSourceColumnsAndTypes() {
         return dataSourceColumnsAndTypes;
     }
-    public void setEventStreamNames(String eventStreamName){
+
+    public void setEventStreamNames(String eventStreamName) {
         this.eventStreamName = eventStreamName;
     }
-    public String getEventStreamName(){
+
+    public String getEventStreamName() {
         return eventStreamName;
     }
 
-    public void setFilePath(String filePath){
+    public void setFilePath(String filePath) {
         this.filePath = filePath;
     }
-    public String getFilePath(){
+
+    public String getFilePath() {
         return filePath;
     }
-    public void setFileName(String fileName){
+
+    public void setFileName(String fileName) {
         this.fileName = fileName;
     }
-    public String getFileName(){
+
+    public String getFileName() {
         return fileName;
     }
-    public long getDelayBetweenEventsInMilies() {
-        return delayBetweenEventsInMilies;
+
+    public long getDelayBetweenEventsInMillis() {
+        return delayBetweenEventsInMillis;
     }
-    public void setDelayBetweenEventsInMilies(long delayBetweenEventsInMilies) {
-        this.delayBetweenEventsInMilies = delayBetweenEventsInMilies;
+
+    public void setDelayBetweenEventsInMillis(long delayBetweenEventsInMillis) {
+        this.delayBetweenEventsInMillis = delayBetweenEventsInMillis;
     }
 }
