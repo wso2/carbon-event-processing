@@ -47,7 +47,9 @@ public class SiddhiOutputStreamListener extends StreamCallback implements EventP
     protected EventProducerCallback eventProducerCallback;
     private Logger trace = Logger.getLogger(EventProcessorConstants.EVENT_TRACE_LOGGER);
 
-    public SiddhiOutputStreamListener(String siddhiStreamName, String streamId, ExecutionPlanConfiguration executionPlanConfiguration, int tenantId) throws EventStreamConfigurationException {
+    public SiddhiOutputStreamListener(String siddhiStreamName, String streamId,
+                                      ExecutionPlanConfiguration executionPlanConfiguration, int tenantId)
+            throws EventStreamConfigurationException {
         this.streamId = streamId;
         this.tenantId = tenantId;
         this.streamDefinition = EventProcessorValueHolder.getEventStreamService().getStreamDefinition(streamId);
@@ -64,13 +66,13 @@ public class SiddhiOutputStreamListener extends StreamCallback implements EventP
             statisticsMonitor = EventProcessorValueHolder.getEventStatisticsService().getEventStatisticMonitor(tenantId,
                     EventProcessorConstants.EVENT_PROCESSOR, executionPlanConfiguration.getName(),
                     streamId + " (" + siddhiStreamName + ")");
-            eventCounter = MetricManager.counter(metricId, Level.INFO, Level.INFO);
         }
         if (traceEnabled) {
             this.tracerPrefix = "TenantId : " + tenantId + ", " + EventProcessorConstants.EVENT_PROCESSOR + " : " +
                     executionPlanConfiguration.getName() + ", " + EventProcessorConstants.EVENT_STREAM + " : " +
                     streamId + " (" + siddhiStreamName + "), after processing " + System.getProperty("line.separator");
         }
+        eventCounter = MetricManager.counter(metricId, Level.INFO, Level.INFO);
     }
 
     @Override
@@ -91,9 +93,9 @@ public class SiddhiOutputStreamListener extends StreamCallback implements EventP
             if (statisticsEnabled) {
                 for (Object obj : events) {
                     statisticsMonitor.incrementResponse();
-                    eventCounter.inc();
                 }
             }
+            eventCounter.inc();
             eventProducerCallback.sendEvents(EventProcessorUtil.getWso2Events(this.streamDefinition, events));
         } finally {
             PrivilegedCarbonContext.endTenantFlow();
@@ -116,9 +118,10 @@ public class SiddhiOutputStreamListener extends StreamCallback implements EventP
             }
             if (statisticsEnabled) {
                 statisticsMonitor.incrementResponse();
-                eventCounter.inc();
             }
-            eventProducerCallback.sendEvent(EventProcessorUtil.getWso2Event(streamDefinition, event.getTimestamp(), event.getData()));
+            eventCounter.inc();
+            eventProducerCallback.sendEvent(EventProcessorUtil.getWso2Event(streamDefinition, event.getTimestamp(),
+                    event.getData()));
         } finally {
             PrivilegedCarbonContext.endTenantFlow();
         }
