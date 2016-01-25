@@ -17,16 +17,37 @@ function sendFileDetails(fileName){
 
     jQuery.ajax({
         type: "POST",
-        url: "../eventsimulator/sendFileDetail_ajaxprocessor.jsp?fileName=" + fileName + "",
+        url: "../eventsimulator/sendFileDetail_ajaxprocessor.jsp?fileName=" + fileName + "&mode=send",
         async: true,
-
-
         success:function(msg){
             CARBON.showInfoDialog("Events sending using file is started .......");
-
-
         }
 
+    });
+}
+
+function pauseEventsViaFile(fileName){
+
+    jQuery.ajax({
+        type: "POST",
+        url: "../eventsimulator/sendFileDetail_ajaxprocessor.jsp?fileName=" + fileName + "&mode=pause",
+        async: true,
+        success:function(msg){
+            CARBON.showInfoDialog("Pausing events sending process .......");
+        }
+
+    });
+}
+
+function resumeEventsViaFile(fileName){
+
+    jQuery.ajax({
+        type: "POST",
+        url: "../eventsimulator/sendFileDetail_ajaxprocessor.jsp?fileName=" + fileName + "&mode=resume",
+        async: true,
+        success:function(msg){
+            CARBON.showInfoDialog("Resuming events sending process .......");
+        }
 
     });
 }
@@ -37,18 +58,12 @@ function deleteFile(fileName){
         type: "POST",
         url: "../eventsimulator/deleteFile_ajaxprocessor.jsp?fileName=" + fileName + "",
         async: false,
-
-
         success:function(msg){
             if(msg!=null &&msg.trim()=="deleted"){
                 CARBON.showInfoDialog("File is successfully deleted, please refresh the page to see the changes");
             }else{
                 CARBON.showErrorDialog(msg);
             }
-
-
         }
-
-
     });
 }

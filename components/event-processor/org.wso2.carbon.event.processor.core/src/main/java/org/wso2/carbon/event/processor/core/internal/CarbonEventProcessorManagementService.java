@@ -93,10 +93,10 @@ public class CarbonEventProcessorManagementService extends EventProcessorManagem
     }
 
 
-    public void persist(){
+    public void persist() {
         try {
             PrivilegedCarbonContext.startTenantFlow();
-            PrivilegedCarbonContext.getThreadLocalCarbonContext().setTenantId(tenantId,true);
+            PrivilegedCarbonContext.getThreadLocalCarbonContext().setTenantId(tenantId, true);
             EventProcessorValueHolder.getSiddhiManager().persist();
         } catch (Throwable e) {
             log.error("Unable to persist state for tenant :" + tenantId, e);

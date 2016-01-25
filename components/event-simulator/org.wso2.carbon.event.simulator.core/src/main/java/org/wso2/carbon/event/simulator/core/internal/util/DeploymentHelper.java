@@ -34,9 +34,9 @@ import javax.xml.parsers.ParserConfigurationException;
 import java.io.File;
 import java.io.IOException;
 
-public class DeployerHelper {
+public class DeploymentHelper {
 
-    private static Log log = LogFactory.getLog(DeployerHelper.class);
+    private static final Log log = LogFactory.getLog(DeploymentHelper.class);
 
     /**
      * Returns CSVFileInfo configuration object from stream configuration XML file
@@ -98,7 +98,7 @@ public class DeployerHelper {
         if (eventSendingDelayNode == null) {
             throw new DeploymentException(EventSimulatorConstant.DELAY_BETWEEN_EVENTS_IN_MILIES + " absent in stream configuration file: " + streamConfigXMLFile.getName());
         }
-        csvFileInfo.setDelayBetweenEventsInMilies(Long.valueOf(eventSendingDelayNode.getTextContent()));
+        csvFileInfo.setDelayBetweenEventsInMillis(Long.valueOf(eventSendingDelayNode.getTextContent()));
 
         Node separateCharNode = element.getElementsByTagName(EventSimulatorConstant.SEPARATE_CHAR_ELEMENT).item(0);
         if (separateCharNode == null) {
@@ -135,7 +135,7 @@ public class DeployerHelper {
                     dataSourceTableAndStreamInfo.setEventStreamID(
                             element.getElementsByTagName(EventSimulatorConstant.EVENT_STREAM_ID).item(0)
                                     .getTextContent());
-                    dataSourceTableAndStreamInfo.setDelayBetweenEventsInMilies(Long.parseLong(
+                    dataSourceTableAndStreamInfo.setDelayBetweenEventsInMillis(Long.parseLong(
                             element.getElementsByTagName(EventSimulatorConstant.DELAY_BETWEEN_EVENTS_IN_MILIES).item(0)
                                     .getTextContent()));
                     NodeList columnMappings = element.getElementsByTagName(EventSimulatorConstant.COLUMN_MAPPING);
@@ -151,7 +151,7 @@ public class DeployerHelper {
                 }
             }
         } catch (Exception e) {
-            log.error(e);
+            log.error("Exception occurred when converting the datasource configuration file ", e);
         }
         return dataSourceTableAndStreamInfo;
     }

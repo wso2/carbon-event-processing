@@ -48,7 +48,7 @@ public class EventJunctionTestCase {
             siddhiDefinition = EventProcessorUtil
                     .convertToSiddhiStreamDefinition(streamDef, "stockStream");
         } catch (EventStreamConfigurationException e) {
-            e.printStackTrace();
+            log.error(e);
         }
         Assert.assertEquals(siddhiDefinition.getAttributeList().size(), 2);
         log.info(siddhiDefinition);

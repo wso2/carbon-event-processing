@@ -37,6 +37,7 @@ import org.wso2.siddhi.query.api.definition.StreamDefinition;
 
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -97,7 +98,7 @@ public class SiddhiStormOutputEventListener implements StreamCallback {
     }
 
     @Override
-    public void receive(String streamId, long timestamp, Object[] eventData) {
+    public void receive(String streamId, long timestamp, Object[] eventData, Map<String, String> arbitraryMapData) {
         SiddhiOutputStreamListener outputStreamListener = streamNameToOutputStreamListenerMap.get(streamId);
         if (outputStreamListener != null) {
             outputStreamListener.sendEvent(new Event(timestamp, eventData));

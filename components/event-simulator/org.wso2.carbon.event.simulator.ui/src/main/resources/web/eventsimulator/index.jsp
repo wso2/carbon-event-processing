@@ -244,8 +244,8 @@
                             </td>
                         <%}%>
 
-                        <% if (csvFileInfoDtosArray[k].getDelayBetweenEventsInMilies() != 0) {%>
-                            <td><%=csvFileInfoDtosArray[k].getDelayBetweenEventsInMilies()%></td>
+                        <% if (csvFileInfoDtosArray[k].getDelayBetweenEventsInMillis() != 0) {%>
+                            <td><%=csvFileInfoDtosArray[k].getDelayBetweenEventsInMillis()%></td>
                             <%} else {
                             %>
                             <td>
@@ -256,6 +256,14 @@
                         <td>
                             <%if (csvFileInfoDtosArray[k].getStreamID() != null) {%>
                             <input type="button" value="Play" onclick="sendFileDetails(
+                                    '<%=csvFileInfoDtosArray[k].getFileName()%>')">
+                            <%}%>
+                            <%if (csvFileInfoDtosArray[k].getStreamID() != null) {%>
+                            <input type="button" value="Pause" onclick="pauseEventsViaFile(
+                                    '<%=csvFileInfoDtosArray[k].getFileName()%>')">
+                            <%}%>
+                            <%if (csvFileInfoDtosArray[k].getStreamID() != null) {%>
+                            <input type="button" value="Resume" onclick="resumeEventsViaFile(
                                     '<%=csvFileInfoDtosArray[k].getFileName()%>')">
                             <%}%>
                             <input type="button" value="Configure" onclick="createPopupStreamConfigUI(
@@ -345,7 +353,7 @@
                                         boolean addedFirstColumn = false;
                                         boolean addedFirstAttribute = false;
                                         String[] columnArray = dataSourceTableAndStreamInfoDtoArray[k].getColumnNames();
-                                        String[] streamAttributesArray = dataSourceTableAndStreamInfoDtoArray[k].getStreamAtrributeNames();
+                                        String[] streamAttributesArray = dataSourceTableAndStreamInfoDtoArray[k].getStreamAttributeNames();
 
                                         for (int i = 0; i < columnArray.length; i++) {
                                             if (addedFirstColumn) {
@@ -369,11 +377,15 @@
                                     <td><%=columns%></td>
                                     <td><%=dataSourceTableAndStreamInfoDtoArray[k].getEventStreamID()%></td>
                                     <td><%=streamAttributes%></td>
-                                    <td><%=dataSourceTableAndStreamInfoDtoArray[k].getDelayBetweenEventsInMilies()%></td>
+                                    <td><%=dataSourceTableAndStreamInfoDtoArray[k].getDelayBetweenEventsInMillis()%></td>
 
                                     <td>
 
                                         <input type="button" value="Play" onclick="sendDBConfigFileNameToSimulate(
+                                                '<%=dataSourceTableAndStreamInfoDtoArray[k].getFileName()%>')">
+                                        <input type="button" value="Pause" onclick="pauseDBConfigFileNameToSimulate(
+                                                '<%=dataSourceTableAndStreamInfoDtoArray[k].getFileName()%>')">
+                                        <input type="button" value="Resume" onclick="resumeDBConfigFileNameToSimulate(
                                                 '<%=dataSourceTableAndStreamInfoDtoArray[k].getFileName()%>')">
                                         <input type="button" value="Delete" onclick="deleteDBConfigFile(
                                                 '<%=dataSourceTableAndStreamInfoDtoArray[k].getFileName()%>')">
