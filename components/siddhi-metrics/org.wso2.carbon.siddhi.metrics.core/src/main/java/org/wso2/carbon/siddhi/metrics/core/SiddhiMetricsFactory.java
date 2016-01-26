@@ -27,17 +27,22 @@ import java.util.List;
  * Factory to retrieve required metric tracker.
  */
 public class SiddhiMetricsFactory implements StatisticsTrackerFactory {
+    private boolean statisticsEnabled = false;
+
+    public SiddhiMetricsFactory(boolean isStatisticsEnabled) {
+        statisticsEnabled = isStatisticsEnabled;
+    }
 
     public LatencyTracker createLatencyTracker(String name, StatisticsManager statisticsManager) {
-        return new SiddhiLatencyMetric(name);
+        return new SiddhiLatencyMetric(name, statisticsEnabled);
     }
 
     public ThroughputTracker createThroughputTracker(String name, StatisticsManager statisticsManager) {
-        return new SiddhiThroughputMetric(name);
+        return new SiddhiThroughputMetric(name, statisticsEnabled);
     }
 
     public MemoryUsageTracker createMemoryUsageTracker(StatisticsManager statisticsManager) {
-        return new SiddhiMemoryUsageMetric();
+        return new SiddhiMemoryUsageMetric(statisticsEnabled);
     }
 
     @Override

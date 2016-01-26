@@ -23,16 +23,17 @@ import org.wso2.carbon.metrics.manager.Level;
 import org.wso2.carbon.metrics.manager.MetricManager;
 import org.wso2.carbon.siddhi.metrics.core.util.SiddhiMetricsConstants;
 import org.wso2.siddhi.core.util.statistics.MemoryUsageTracker;
-import org.wso2.siddhi.core.util.statistics.memory.measurer.MemoryMeasurerUtil;
-import org.wso2.siddhi.core.util.statistics.memory.measurer.ObjectGraphMeasurer;
+import org.wso2.siddhi.core.util.statistics.memory.ObjectSizeCalculator;
 
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
 public class SiddhiMemoryUsageMetric implements MemoryUsageTracker {
     private ConcurrentMap<Object, ObjectMetric> registeredObjects = new ConcurrentHashMap<Object, ObjectMetric>();
+    private boolean enabled;
 
-    public SiddhiMemoryUsageMetric() {
+    public SiddhiMemoryUsageMetric(boolean isEnabled) {
+        enabled = isEnabled;
     }
 
     /**
@@ -43,9 +44,11 @@ public class SiddhiMemoryUsageMetric implements MemoryUsageTracker {
      */
     @Override
     public void registerObject(Object object, String name) {
-        if (registeredObjects.get(object) == null) {
-            String metricId = MetricManager.name(name, SiddhiMetricsConstants.METRIC_SUFFIX_MEMORY);
-            registeredObjects.put(object, new ObjectMetric(object, metricId));
+        if (enabled) {
+            if (registeredObjects.get(object) == null) {
+                String metricId = MetricManager.name(name, SiddhiMetricsConstants.METRIC_SUFFIX_MEMORY);
+                registeredObjects.put(object, new ObjectMetric(object, metricId));
+            }
         }
     }
 
@@ -54,8 +57,12 @@ public class SiddhiMemoryUsageMetric implements MemoryUsageTracker {
      */
     @Override
     public String getName(Object object) {
-        if (registeredObjects.get(object) != null) {
-            return registeredObjects.get(object).getName();
+        if (enabled) {
+            if (registeredObjects.get(object) != null) {
+                return registeredObjects.get(object).getName();
+            } else {
+                return null;
+            }
         } else {
             return null;
         }
@@ -78,12 +85,15 @@ public class SiddhiMemoryUsageMetric implements MemoryUsageTracker {
         private void initMetric() {
             MetricManager.gauge(
                     name,
-                    Level.INFO,
+                    Level.DEBUG,
                     new Gauge<Long>() {
                         @Override
                         public Long getValue() {
-                            ObjectGraphMeasurer.Footprint footprint = ObjectGraphMeasurer.measure(object);
-                            return MemoryMeasurerUtil.footprintSizeEstimate(footprint);
+                            try {
+                                return ObjectSizeCalculator.getObjectSize(object);
+                            } catch (UnsupportedOperationException e) {
+                                return 0l;
+                            }
                         }
                     });
         }

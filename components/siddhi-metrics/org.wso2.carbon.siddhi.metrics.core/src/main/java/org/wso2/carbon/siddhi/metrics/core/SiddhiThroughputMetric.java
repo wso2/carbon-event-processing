@@ -27,10 +27,14 @@ import org.wso2.siddhi.core.util.statistics.ThroughputTracker;
 public class SiddhiThroughputMetric implements ThroughputTracker {
     private Meter eventMeter = null;
     private String name;
+    private boolean enabled;
 
-    public SiddhiThroughputMetric(String name){
-        this.name = MetricManager.name(name, SiddhiMetricsConstants.METRIC_SUFFIX_THROUGHPUT);
-        eventMeter = MetricManager.meter(this.name, Level.INFO);
+    public SiddhiThroughputMetric(String name, boolean isEnabled){
+        enabled = isEnabled;
+        if (enabled) {
+            this.name = MetricManager.name(name, SiddhiMetricsConstants.METRIC_SUFFIX_THROUGHPUT);
+            eventMeter = MetricManager.meter(this.name, Level.INFO);
+        }
     }
 
     /**
@@ -38,7 +42,9 @@ public class SiddhiThroughputMetric implements ThroughputTracker {
      */
     @Override
     public void eventIn() {
-        eventMeter.mark();
+        if (enabled) {
+            eventMeter.mark();
+        }
     }
 
     /**
@@ -48,7 +54,9 @@ public class SiddhiThroughputMetric implements ThroughputTracker {
      */
     @Override
     public void eventsIn(int eventCount) {
-        eventMeter.mark(eventCount);
+        if (enabled) {
+            eventMeter.mark(eventCount);
+        }
     }
 
     /**
@@ -56,6 +64,10 @@ public class SiddhiThroughputMetric implements ThroughputTracker {
      */
     @Override
     public String getName() {
-        return name;
+        if (enabled) {
+            return name;
+        } else {
+            return null;
+        }
     }
 }

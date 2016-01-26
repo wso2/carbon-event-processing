@@ -74,19 +74,21 @@ public class EventProcessorServiceDS {
 
     protected void activate(ComponentContext context) {
         try {
-
             CarbonEventProcessorService carbonEventProcessorService = new CarbonEventProcessorService();
             EventProcessorValueHolder.registerEventProcessorService(carbonEventProcessorService);
 
-            CarbonEventProcessorManagementService carbonEventReceiverManagementService = new CarbonEventProcessorManagementService();
+            CarbonEventProcessorManagementService carbonEventReceiverManagementService =
+                    new CarbonEventProcessorManagementService();
             EventProcessorValueHolder.registerProcessorManagementService(carbonEventReceiverManagementService);
 
-            DistributedConfiguration stormDeploymentConfig = carbonEventProcessorService.getManagementInfo().getDistributedConfiguration();
+            DistributedConfiguration stormDeploymentConfig = carbonEventProcessorService.getManagementInfo()
+                    .getDistributedConfiguration();
             if (stormDeploymentConfig != null) {
                 EventProcessorValueHolder.registerStormDeploymentConfiguration(stormDeploymentConfig);
                 EventProcessorValueHolder.registerStormTopologyManager(new StormTopologyManager());
                 if (stormDeploymentConfig.isManagerNode()) {
-                    StormManagerServer stormManagerServer = new StormManagerServer(stormDeploymentConfig.getLocalManagerConfig().getHostName(),
+                    StormManagerServer stormManagerServer = new StormManagerServer(
+                            stormDeploymentConfig.getLocalManagerConfig().getHostName(),
                             stormDeploymentConfig.getLocalManagerConfig().getPort());
                     EventProcessorValueHolder.registerStormManagerServer(stormManagerServer);
                 }
@@ -99,7 +101,7 @@ public class EventProcessorServiceDS {
             EventProcessorValueHolder.registerSiddhiManager(siddhiManager);
 
             PersistenceConfiguration persistConfig = carbonEventProcessorService.getManagementInfo().getPersistenceConfiguration();
-            if(persistConfig != null) {
+            if (persistConfig != null) {
                 Class clazz = Class.forName(persistConfig.getPersistenceClass());
                 PersistenceStore persistenceStore = (PersistenceStore) clazz.newInstance();
                 siddhiManager.setPersistenceStore(persistenceStore);
@@ -107,14 +109,14 @@ public class EventProcessorServiceDS {
                 EventProcessorValueHolder.registerPersistenceConfiguration(persistConfig);
             }
 
-            StatisticsConfiguration statisticsConfiguration = new StatisticsConfiguration(new SiddhiMetricsFactory());
+            StatisticsConfiguration statisticsConfiguration = new StatisticsConfiguration(new SiddhiMetricsFactory(
+                    EventProcessorValueHolder.getEventStatisticsService().isGlobalStatisticsEnabled()));
             statisticsConfiguration.setMatricPrefix(EventProcessorConstants.METRIC_PREFIX);
             siddhiManager.setStatisticsConfiguration(statisticsConfiguration);
 
             if (log.isDebugEnabled()) {
                 log.debug("Successfully deployed EventProcessorService");
             }
-
         } catch (Throwable e) {
             log.error("Could not create EventProcessorService: " + e.getMessage(), e);
         }
@@ -122,7 +124,6 @@ public class EventProcessorServiceDS {
     }
 
     protected void deactivate(ComponentContext context) {
-
         try {
             StormManagerServer stormManagerServer = EventProcessorValueHolder.getStormManagerServer();
             if (stormManagerServer != null) {

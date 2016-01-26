@@ -30,19 +30,23 @@ public class SiddhiLatencyMetric implements LatencyTracker {
     private ThreadLocal<Timer> execLatencyTimer;
     private ThreadLocal<Timer.Context> context;
     private String metricName;
+    private boolean enabled;
 
-    public SiddhiLatencyMetric(String name) {
-        this.metricName = MetricManager.name(name, SiddhiMetricsConstants.METRIC_SUFFIX_LATENCY);
-        execLatencyTimer = new ThreadLocal<Timer>() {
-            protected Timer initialValue() {
-                return MetricManager.timer(metricName, Level.INFO);
-            }
-        };
-        context = new ThreadLocal<Timer.Context>() {
-            protected Timer.Context initialValue() {
-                return null;
-            }
-        };
+    public SiddhiLatencyMetric(String name, boolean isEnabled) {
+        enabled = isEnabled;
+        if (enabled) {
+            metricName = MetricManager.name(name, SiddhiMetricsConstants.METRIC_SUFFIX_LATENCY);
+            execLatencyTimer = new ThreadLocal<Timer>() {
+                protected Timer initialValue() {
+                    return MetricManager.timer(metricName, Level.INFO);
+                }
+            };
+            context = new ThreadLocal<Timer.Context>() {
+                protected Timer.Context initialValue() {
+                    return null;
+                }
+            };
+        }
     }
 
     /**
@@ -50,10 +54,12 @@ public class SiddhiLatencyMetric implements LatencyTracker {
      * ProcessStreamReceiver#receive before the event is passed into process chain.
      */
     public void markIn() {
-        if (context.get() != null) {
-            throw new IllegalStateException("MarkIn consecutively called without calling markOut in " + metricName);
+        if (enabled) {
+            if (context.get() != null) {
+                throw new IllegalStateException("MarkIn consecutively called without calling markOut in " + metricName);
+            }
+            context.set(execLatencyTimer.get().start());
         }
-        context.set(execLatencyTimer.get().start());
     }
 
     /**
@@ -63,9 +69,11 @@ public class SiddhiLatencyMetric implements LatencyTracker {
      */
     @Override
     public void markOut() {
-        if (context.get() != null) {
-            context.get().stop();
-            context.set(null);
+        if (enabled) {
+            if (context.get() != null) {
+                context.get().stop();
+                context.set(null);
+            }
         }
     }
 
@@ -74,6 +82,10 @@ public class SiddhiLatencyMetric implements LatencyTracker {
      */
     @Override
     public String getName() {
-        return metricName;
+        if (enabled) {
+            return metricName;
+        } else {
+            return null;
+        }
     }
 }

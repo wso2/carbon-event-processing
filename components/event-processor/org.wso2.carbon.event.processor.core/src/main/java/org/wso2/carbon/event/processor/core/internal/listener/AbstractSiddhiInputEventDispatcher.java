@@ -53,7 +53,8 @@ public abstract class AbstractSiddhiInputEventDispatcher implements SiddhiEventC
         this.owner = executionPlanConfiguration;
         this.tenantId = tenantId;
         this.traceEnabled = executionPlanConfiguration.isTracingEnabled();
-        this.statisticsEnabled = executionPlanConfiguration.isStatisticsEnabled();
+        this.statisticsEnabled = executionPlanConfiguration.isStatisticsEnabled() &&
+                EventProcessorValueHolder.getEventStatisticsService().isGlobalStatisticsEnabled();
         String metricId = EventProcessorConstants.METRIC_PREFIX + EventProcessorConstants.METRIC_DELIMITER +
                 EventProcessorConstants.METRIC_INFIX_EXECUTION_PLANS + EventProcessorConstants.METRIC_DELIMITER +
                 executionPlanConfiguration.getName() + EventProcessorConstants.METRIC_DELIMITER +
@@ -64,13 +65,13 @@ public abstract class AbstractSiddhiInputEventDispatcher implements SiddhiEventC
             statisticsMonitor = EventProcessorValueHolder.getEventStatisticsService().getEventStatisticMonitor(tenantId,
                     EventProcessorConstants.EVENT_PROCESSOR, executionPlanConfiguration.getName(),
                     streamId + " (" + siddhiStreamId + ")");
+            eventCounter = MetricManager.counter(metricId, Level.INFO, Level.INFO);
         }
         if (traceEnabled) {
             this.tracerPrefix = "TenantId : " + tenantId + ", " + EventProcessorConstants.EVENT_PROCESSOR + " : " +
                     executionPlanConfiguration.getName() + ", " + EventProcessorConstants.EVENT_STREAM + " : " +
                     streamId + " (" + siddhiStreamId + "), before processing " + System.getProperty("line.separator");
         }
-        eventCounter = MetricManager.counter(metricId, Level.INFO, Level.INFO);
     }
 
     @Override
@@ -87,8 +88,8 @@ public abstract class AbstractSiddhiInputEventDispatcher implements SiddhiEventC
             try {
                 if (statisticsEnabled) {
                     statisticsMonitor.incrementRequest();
+                    eventCounter.inc();
                 }
-                eventCounter.inc();
                 sendEvent(event);
             } catch (InterruptedException e) {
                 log.error("Error in dispatching events " + Arrays.deepToString(events) + " to Siddhi stream :" +
@@ -105,8 +106,8 @@ public abstract class AbstractSiddhiInputEventDispatcher implements SiddhiEventC
             }
             if (statisticsEnabled) {
                 statisticsMonitor.incrementRequest();
+                eventCounter.inc();
             }
-            eventCounter.inc();
             sendEvent(event);
         } catch (InterruptedException e) {
             log.error("Error in dispatching event " + event + " to Siddhi stream :" + siddhiStreamId);
