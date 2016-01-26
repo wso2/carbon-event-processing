@@ -114,6 +114,7 @@
                         <Import-Package>
                             !javax.xml.namespace,
                             javax.xml.namespace; version=0.0.0,
+			    org.apache.thrift;version="[0.8.0.wso2v1,0.9.0)",
                             com.lmax.disruptor.*;version="${disruptor.version.range}",
                             *;resolution:=optional,
                         </Import-Package>
