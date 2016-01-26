@@ -37,6 +37,8 @@ public interface EventSimulator {
 
     public void resumeEvents(String fileName) throws AxisFault;
 
+    public void stopEvents(String fileName) throws AxisFault;
+
     public void uploadService(UploadedFileItem[] fileItems, AxisConfiguration axisConfiguration) throws AxisFault;
 
     public String createTableAndAttributeMappingInfo(String fileName) throws AxisFault;
@@ -53,6 +55,8 @@ public interface EventSimulator {
     public void pauseEventsViaDB(String fileName) throws AxisFault;
 
     public void resumeEventsViaDB(String fileName) throws AxisFault;
+
+    public void stopEventsViaDB(String fileName) throws AxisFault;
 
     public void createConfigurationXMLForDataSource(String dataSourceConfigAndEventStreamInfo, AxisConfiguration axisConfiguration) throws AxisFault;
 

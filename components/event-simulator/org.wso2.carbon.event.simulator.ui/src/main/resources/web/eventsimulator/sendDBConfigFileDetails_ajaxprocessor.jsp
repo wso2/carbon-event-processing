@@ -33,6 +33,9 @@
         } else if ("resume".equals(mode)) {
             stub.resumeDBConfigFileNameToSimulate(fileName);
             msg = "resumed";
+        } else if ("stop".equals(mode)) {
+            stub.stopDBConfigFileNameToSimulate(fileName);
+            msg = "stopped";
         }
     } catch (Exception e) {
         msg = e.getMessage();
