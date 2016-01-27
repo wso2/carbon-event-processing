@@ -764,9 +764,9 @@
         <carbon.p2.plugin.version>1.5.4</carbon.p2.plugin.version>
 
         <carbon.event.processing.version>2.0.12-SNAPSHOT</carbon.event.processing.version>
-        <carbon.analytics.common.version>5.0.9</carbon.analytics.common.version>
+        <carbon.analytics.common.version>5.0.10-SNAPSHOT</carbon.analytics.common.version>
         <carbon.analytics.common.range>[5.0.7,6.0.0)</carbon.analytics.common.range>
-        <siddhi.version>3.0.4</siddhi.version>
+        <siddhi.version>3.0.5-SNAPSHOT</siddhi.version>
 
         <storm.orbit.version>0.9.5.wso2v1</storm.orbit.version>
         <orbit.version.axiom>1.2.11.wso2v6</orbit.version.axiom>
