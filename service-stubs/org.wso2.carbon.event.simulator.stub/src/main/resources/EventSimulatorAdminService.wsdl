@@ -45,6 +45,7 @@
                     <xs:element minOccurs="0" name="eventStreamID" nillable="true" type="xs:string"/>
                     <xs:element minOccurs="0" name="fileName" nillable="true" type="xs:string"/>
                     <xs:element minOccurs="0" name="filePath" nillable="true" type="xs:string"/>
+                    <xs:element minOccurs="0" name="status" nillable="true" type="xs:string"/>
                     <xs:element maxOccurs="unbounded" minOccurs="0" name="streamAttributeNames" nillable="true" type="xs:string"/>
                     <xs:element minOccurs="0" name="tableName" nillable="true" type="xs:string"/>
                 </xs:sequence>
@@ -60,6 +61,7 @@
                     <xs:element minOccurs="0" name="delayBetweenEventsInMillis" type="xs:long"/>
                     <xs:element minOccurs="0" name="fileName" nillable="true" type="xs:string"/>
                     <xs:element minOccurs="0" name="filePath" nillable="true" type="xs:string"/>
+                    <xs:element minOccurs="0" name="status" nillable="true" type="xs:string"/>
                     <xs:element minOccurs="0" name="streamID" nillable="true" type="xs:string"/>
                 </xs:sequence>
             </xs:complexType>
@@ -137,6 +139,20 @@
                     </xs:sequence>
                 </xs:complexType>
             </xs:element>
+            <xs:element name="stopEventsViaFile">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element minOccurs="0" name="fileName" nillable="true" type="xs:string"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="stopEventsViaFileResponse">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element minOccurs="0" name="return" type="xs:boolean"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
             <xs:element name="sendDBConfigFileNameToSimulate">
                 <xs:complexType>
                     <xs:sequence>
@@ -145,6 +161,20 @@
                 </xs:complexType>
             </xs:element>
             <xs:element name="sendDBConfigFileNameToSimulateResponse">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element minOccurs="0" name="return" type="xs:boolean"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="saveDataSourceConfigDetails">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element minOccurs="0" name="tableAndAttributeMappingInfo" nillable="true" type="xs:string"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="saveDataSourceConfigDetailsResponse">
                 <xs:complexType>
                     <xs:sequence>
                         <xs:element minOccurs="0" name="return" type="xs:boolean"/>
@@ -179,6 +209,20 @@
                     </xs:sequence>
                 </xs:complexType>
             </xs:element>
+            <xs:element name="stopDBConfigFileNameToSimulate">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element minOccurs="0" name="fileName" nillable="true" type="xs:string"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="stopDBConfigFileNameToSimulateResponse">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element minOccurs="0" name="return" type="xs:boolean"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
             <xs:element name="testSimulateRDBMSDataSourceConnection">
                 <xs:complexType>
                     <xs:sequence>
@@ -190,20 +234,6 @@
                 <xs:complexType>
                     <xs:sequence>
                         <xs:element minOccurs="0" name="return" nillable="true" type="xs:string"/>
-                    </xs:sequence>
-                </xs:complexType>
-            </xs:element>
-            <xs:element name="saveDataSourceConfigDetails">
-                <xs:complexType>
-                    <xs:sequence>
-                        <xs:element minOccurs="0" name="tableAndAttributeMappingInfo" nillable="true" type="xs:string"/>
-                    </xs:sequence>
-                </xs:complexType>
-            </xs:element>
-            <xs:element name="saveDataSourceConfigDetailsResponse">
-                <xs:complexType>
-                    <xs:sequence>
-                        <xs:element minOccurs="0" name="return" type="xs:boolean"/>
                     </xs:sequence>
                 </xs:complexType>
             </xs:element>
@@ -289,6 +319,12 @@
             </xs:element>
         </xs:schema>
     </wsdl:types>
+    <wsdl:message name="stopDBConfigFileNameToSimulateRequest">
+        <wsdl:part name="parameters" element="ns:stopDBConfigFileNameToSimulate"/>
+    </wsdl:message>
+    <wsdl:message name="stopDBConfigFileNameToSimulateResponse">
+        <wsdl:part name="parameters" element="ns:stopDBConfigFileNameToSimulateResponse"/>
+    </wsdl:message>
     <wsdl:message name="pauseDBConfigFileNameToSimulateRequest">
         <wsdl:part name="parameters" element="ns:pauseDBConfigFileNameToSimulate"/>
     </wsdl:message>
@@ -365,12 +401,6 @@
     <wsdl:message name="resumeDBConfigFileNameToSimulateResponse">
         <wsdl:part name="parameters" element="ns:resumeDBConfigFileNameToSimulateResponse"/>
     </wsdl:message>
-    <wsdl:message name="sendDBConfigFileNameToSimulateRequest">
-        <wsdl:part name="parameters" element="ns:sendDBConfigFileNameToSimulate"/>
-    </wsdl:message>
-    <wsdl:message name="sendDBConfigFileNameToSimulateResponse">
-        <wsdl:part name="parameters" element="ns:sendDBConfigFileNameToSimulateResponse"/>
-    </wsdl:message>
     <wsdl:message name="sendEventRequest">
         <wsdl:part name="parameters" element="ns:sendEvent"/>
     </wsdl:message>
@@ -383,7 +413,23 @@
     <wsdl:message name="resumeEventsViaFileResponse">
         <wsdl:part name="parameters" element="ns:resumeEventsViaFileResponse"/>
     </wsdl:message>
+    <wsdl:message name="sendDBConfigFileNameToSimulateRequest">
+        <wsdl:part name="parameters" element="ns:sendDBConfigFileNameToSimulate"/>
+    </wsdl:message>
+    <wsdl:message name="sendDBConfigFileNameToSimulateResponse">
+        <wsdl:part name="parameters" element="ns:sendDBConfigFileNameToSimulateResponse"/>
+    </wsdl:message>
+    <wsdl:message name="stopEventsViaFileRequest">
+        <wsdl:part name="parameters" element="ns:stopEventsViaFile"/>
+    </wsdl:message>
+    <wsdl:message name="stopEventsViaFileResponse">
+        <wsdl:part name="parameters" element="ns:stopEventsViaFileResponse"/>
+    </wsdl:message>
     <wsdl:portType name="EventSimulatorAdminServicePortType">
+        <wsdl:operation name="stopDBConfigFileNameToSimulate">
+            <wsdl:input message="ns:stopDBConfigFileNameToSimulateRequest" wsaw:Action="urn:stopDBConfigFileNameToSimulate"/>
+            <wsdl:output message="ns:stopDBConfigFileNameToSimulateResponse" wsaw:Action="urn:stopDBConfigFileNameToSimulateResponse"/>
+        </wsdl:operation>
         <wsdl:operation name="pauseDBConfigFileNameToSimulate">
             <wsdl:input message="ns:pauseDBConfigFileNameToSimulateRequest" wsaw:Action="urn:pauseDBConfigFileNameToSimulate"/>
             <wsdl:output message="ns:pauseDBConfigFileNameToSimulateResponse" wsaw:Action="urn:pauseDBConfigFileNameToSimulateResponse"/>
@@ -436,10 +482,6 @@
             <wsdl:input message="ns:resumeDBConfigFileNameToSimulateRequest" wsaw:Action="urn:resumeDBConfigFileNameToSimulate"/>
             <wsdl:output message="ns:resumeDBConfigFileNameToSimulateResponse" wsaw:Action="urn:resumeDBConfigFileNameToSimulateResponse"/>
         </wsdl:operation>
-        <wsdl:operation name="sendDBConfigFileNameToSimulate">
-            <wsdl:input message="ns:sendDBConfigFileNameToSimulateRequest" wsaw:Action="urn:sendDBConfigFileNameToSimulate"/>
-            <wsdl:output message="ns:sendDBConfigFileNameToSimulateResponse" wsaw:Action="urn:sendDBConfigFileNameToSimulateResponse"/>
-        </wsdl:operation>
         <wsdl:operation name="sendEvent">
             <wsdl:input message="ns:sendEventRequest" wsaw:Action="urn:sendEvent"/>
             <wsdl:output message="ns:sendEventResponse" wsaw:Action="urn:sendEventResponse"/>
@@ -448,9 +490,26 @@
             <wsdl:input message="ns:resumeEventsViaFileRequest" wsaw:Action="urn:resumeEventsViaFile"/>
             <wsdl:output message="ns:resumeEventsViaFileResponse" wsaw:Action="urn:resumeEventsViaFileResponse"/>
         </wsdl:operation>
+        <wsdl:operation name="sendDBConfigFileNameToSimulate">
+            <wsdl:input message="ns:sendDBConfigFileNameToSimulateRequest" wsaw:Action="urn:sendDBConfigFileNameToSimulate"/>
+            <wsdl:output message="ns:sendDBConfigFileNameToSimulateResponse" wsaw:Action="urn:sendDBConfigFileNameToSimulateResponse"/>
+        </wsdl:operation>
+        <wsdl:operation name="stopEventsViaFile">
+            <wsdl:input message="ns:stopEventsViaFileRequest" wsaw:Action="urn:stopEventsViaFile"/>
+            <wsdl:output message="ns:stopEventsViaFileResponse" wsaw:Action="urn:stopEventsViaFileResponse"/>
+        </wsdl:operation>
     </wsdl:portType>
     <wsdl:binding name="EventSimulatorAdminServiceSoap11Binding" type="ns:EventSimulatorAdminServicePortType">
         <soap:binding transport="http://schemas.xmlsoap.org/soap/http" style="document"/>
+        <wsdl:operation name="stopDBConfigFileNameToSimulate">
+            <soap:operation soapAction="urn:stopDBConfigFileNameToSimulate" style="document"/>
+            <wsdl:input>
+                <soap:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal"/>
+            </wsdl:output>
+        </wsdl:operation>
         <wsdl:operation name="getAllCSVFileInfo">
             <soap:operation soapAction="urn:getAllCSVFileInfo" style="document"/>
             <wsdl:input>
@@ -568,15 +627,6 @@
                 <soap:body use="literal"/>
             </wsdl:output>
         </wsdl:operation>
-        <wsdl:operation name="sendDBConfigFileNameToSimulate">
-            <soap:operation soapAction="urn:sendDBConfigFileNameToSimulate" style="document"/>
-            <wsdl:input>
-                <soap:body use="literal"/>
-            </wsdl:input>
-            <wsdl:output>
-                <soap:body use="literal"/>
-            </wsdl:output>
-        </wsdl:operation>
         <wsdl:operation name="sendEvent">
             <soap:operation soapAction="urn:sendEvent" style="document"/>
             <wsdl:input>
@@ -595,9 +645,36 @@
                 <soap:body use="literal"/>
             </wsdl:output>
         </wsdl:operation>
+        <wsdl:operation name="stopEventsViaFile">
+            <soap:operation soapAction="urn:stopEventsViaFile" style="document"/>
+            <wsdl:input>
+                <soap:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal"/>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="sendDBConfigFileNameToSimulate">
+            <soap:operation soapAction="urn:sendDBConfigFileNameToSimulate" style="document"/>
+            <wsdl:input>
+                <soap:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal"/>
+            </wsdl:output>
+        </wsdl:operation>
     </wsdl:binding>
     <wsdl:binding name="EventSimulatorAdminServiceSoap12Binding" type="ns:EventSimulatorAdminServicePortType">
         <soap12:binding transport="http://schemas.xmlsoap.org/soap/http" style="document"/>
+        <wsdl:operation name="stopDBConfigFileNameToSimulate">
+            <soap12:operation soapAction="urn:stopDBConfigFileNameToSimulate" style="document"/>
+            <wsdl:input>
+                <soap12:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap12:body use="literal"/>
+            </wsdl:output>
+        </wsdl:operation>
         <wsdl:operation name="getAllCSVFileInfo">
             <soap12:operation soapAction="urn:getAllCSVFileInfo" style="document"/>
             <wsdl:input>
@@ -715,15 +792,6 @@
                 <soap12:body use="literal"/>
             </wsdl:output>
         </wsdl:operation>
-        <wsdl:operation name="sendDBConfigFileNameToSimulate">
-            <soap12:operation soapAction="urn:sendDBConfigFileNameToSimulate" style="document"/>
-            <wsdl:input>
-                <soap12:body use="literal"/>
-            </wsdl:input>
-            <wsdl:output>
-                <soap12:body use="literal"/>
-            </wsdl:output>
-        </wsdl:operation>
         <wsdl:operation name="sendEvent">
             <soap12:operation soapAction="urn:sendEvent" style="document"/>
             <wsdl:input>
@@ -742,9 +810,36 @@
                 <soap12:body use="literal"/>
             </wsdl:output>
         </wsdl:operation>
+        <wsdl:operation name="stopEventsViaFile">
+            <soap12:operation soapAction="urn:stopEventsViaFile" style="document"/>
+            <wsdl:input>
+                <soap12:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap12:body use="literal"/>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="sendDBConfigFileNameToSimulate">
+            <soap12:operation soapAction="urn:sendDBConfigFileNameToSimulate" style="document"/>
+            <wsdl:input>
+                <soap12:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap12:body use="literal"/>
+            </wsdl:output>
+        </wsdl:operation>
     </wsdl:binding>
     <wsdl:binding name="EventSimulatorAdminServiceHttpBinding" type="ns:EventSimulatorAdminServicePortType">
         <http:binding verb="POST"/>
+        <wsdl:operation name="stopDBConfigFileNameToSimulate">
+            <http:operation location="stopDBConfigFileNameToSimulate"/>
+            <wsdl:input>
+                <mime:content type="text/xml" part="parameters"/>
+            </wsdl:input>
+            <wsdl:output>
+                <mime:content type="text/xml" part="parameters"/>
+            </wsdl:output>
+        </wsdl:operation>
         <wsdl:operation name="getAllCSVFileInfo">
             <http:operation location="getAllCSVFileInfo"/>
             <wsdl:input>
@@ -862,15 +957,6 @@
                 <mime:content type="text/xml" part="parameters"/>
             </wsdl:output>
         </wsdl:operation>
-        <wsdl:operation name="sendDBConfigFileNameToSimulate">
-            <http:operation location="sendDBConfigFileNameToSimulate"/>
-            <wsdl:input>
-                <mime:content type="text/xml" part="parameters"/>
-            </wsdl:input>
-            <wsdl:output>
-                <mime:content type="text/xml" part="parameters"/>
-            </wsdl:output>
-        </wsdl:operation>
         <wsdl:operation name="sendEvent">
             <http:operation location="sendEvent"/>
             <wsdl:input>
@@ -882,6 +968,24 @@
         </wsdl:operation>
         <wsdl:operation name="resumeEventsViaFile">
             <http:operation location="resumeEventsViaFile"/>
+            <wsdl:input>
+                <mime:content type="text/xml" part="parameters"/>
+            </wsdl:input>
+            <wsdl:output>
+                <mime:content type="text/xml" part="parameters"/>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="stopEventsViaFile">
+            <http:operation location="stopEventsViaFile"/>
+            <wsdl:input>
+                <mime:content type="text/xml" part="parameters"/>
+            </wsdl:input>
+            <wsdl:output>
+                <mime:content type="text/xml" part="parameters"/>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="sendDBConfigFileNameToSimulate">
+            <http:operation location="sendDBConfigFileNameToSimulate"/>
             <wsdl:input>
                 <mime:content type="text/xml" part="parameters"/>
             </wsdl:input>
@@ -902,4 +1006,3 @@
         </wsdl:port>
     </wsdl:service>
 </wsdl:definitions>
-

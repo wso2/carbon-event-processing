@@ -89,6 +89,7 @@ public class XMLFileDeployer extends AbstractDeployer {
         DataSourceTableAndStreamInfo dataSourceTableAndStreamInfo = DeploymentHelper.getEventMappingConfiguration(xmlFile);
         dataSourceTableAndStreamInfo.setFileName(xmlFile.getName());
         dataSourceTableAndStreamInfo.setFilePath(xmlFile.getAbsolutePath());
+        dataSourceTableAndStreamInfo.setStatus(DataSourceTableAndStreamInfo.Status.STOPPED);
 
         CarbonEventSimulator eventSimulator = EventSimulatorValueHolder.getEventSimulator();
         if (dataSourceTableAndStreamInfo != null) {

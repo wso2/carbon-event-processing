@@ -31,6 +31,9 @@
         } else if("resume".equals(mode)){
             stub.resumeEventsViaFile(fileName);
             msg = "resumed";
+        } else if("stop".equals(mode)){
+            stub.stopEventsViaFile(fileName);
+            msg = "stopped";
         }
     } catch (Exception e) {
         msg = e.getMessage();
