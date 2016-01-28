@@ -32,12 +32,13 @@
     <modules>
         <module>service-stubs</module>
 
+        <module>components/siddhi-metrics</module>
         <module>components/event-processor</module>
         <module>components/event-simulator</module>
         <module>components/event-flow</module>
         <module>components/execution-manager</module>
-
         <module>components/siddhi-tryit</module>
+
         <module>features/event-processor</module>
         <module>features/event-simulator</module>
         <module>features/event-flow</module>
@@ -348,6 +349,16 @@
                 <groupId>org.wso2.carbon.event-processing</groupId>
                 <artifactId>org.wso2.carbon.siddhi.tryit.ui</artifactId>
                 <version>${carbon.event.processing.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.wso2.carbon.event-processing</groupId>
+                <artifactId>org.wso2.carbon.siddhi.metrics.core</artifactId>
+                <version>${carbon.event.processing.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.wso2.carbon.metrics</groupId>
+                <artifactId>org.wso2.carbon.metrics.manager</artifactId>
+                <version>${carbon.metrics.version}</version>
             </dependency>
             <!--carbon event processing dependencies stop-->
 
@@ -767,6 +778,7 @@
         <carbon.analytics.common.version>5.0.10-SNAPSHOT</carbon.analytics.common.version>
         <carbon.analytics.common.range>[5.0.7,6.0.0)</carbon.analytics.common.range>
         <siddhi.version>3.0.5-SNAPSHOT</siddhi.version>
+        <carbon.metrics.version>1.2.0</carbon.metrics.version>
 
         <storm.orbit.version>0.9.5.wso2v1</storm.orbit.version>
         <orbit.version.axiom>1.2.11.wso2v6</orbit.version.axiom>
@@ -798,8 +810,6 @@
 
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.scm.id>my-scm-server</project.scm.id>
-   </properties>
+    </properties>
 
 </project>
-
-

@@ -69,6 +69,10 @@
             <artifactId>org.wso2.carbon.event.processor.common</artifactId>
         </dependency>
         <dependency>
+            <groupId>org.wso2.carbon.event-processing</groupId>
+            <artifactId>org.wso2.carbon.siddhi.metrics.core</artifactId>
+        </dependency>
+        <dependency>
             <groupId>org.wso2.orbit.com.lmax</groupId>
             <artifactId>disruptor</artifactId>
         </dependency>
@@ -230,6 +234,9 @@
                                 </bundleDef>
                                 <bundleDef>
                                     org.wso2.carbon.event-processing:org.wso2.carbon.event.processor.common:${carbon.event.processing.version}
+                                </bundleDef>
+                                <bundleDef>
+                                    org.wso2.carbon.event-processing:org.wso2.carbon.siddhi.metrics.core:${carbon.event.processing.version}
                                 </bundleDef>
                                 <bundleDef>
                                     org.wso2.orbit.com.lmax:disruptor:${disruptor.orbit.version}
