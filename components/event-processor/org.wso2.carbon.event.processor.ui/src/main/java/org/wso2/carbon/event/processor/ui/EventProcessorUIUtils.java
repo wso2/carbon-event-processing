@@ -122,9 +122,6 @@ public class EventProcessorUIUtils {
         }
         rootObject.add("payloadData", payloadData);
 
-
-
-
         return rootObject.toString();
     }
 
