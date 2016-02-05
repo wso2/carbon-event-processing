@@ -130,7 +130,7 @@
           .setGraph({})
           .setDefaultEdgeLabel(function() { return {}; });
 
-        var exeFlow = <%=executionPlan_nodes %>.replace(/\n/g, "\\n");
+        var exeFlow = <%=executionPlan_nodes %>.replace(/\n/g, "\\n").replace(/\'/g, "");
         var queryFlow = jQuery.parseJSON(exeFlow);
 
         //create nodes
