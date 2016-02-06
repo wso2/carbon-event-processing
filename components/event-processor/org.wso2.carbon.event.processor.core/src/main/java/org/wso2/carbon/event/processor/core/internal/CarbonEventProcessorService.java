@@ -430,10 +430,14 @@ public class CarbonEventProcessorService implements EventProcessorService {
         }
 
         if (EventProcessorValueHolder.getPersistenceConfiguration() != null) {
-            executionPlanRuntime.restoreLastRevision();
+            if(managementInfo.getMode() == Mode.HA &&
+                    managementInfo.getHaConfiguration().isActive() &&
+                    !managementInfo.getHaConfiguration().isSynced()) {
+                executionPlanRuntime.restoreLastRevision();
+            } else {
+                executionPlanRuntime.restoreLastRevision();
+            }
         }
-
-
     }
 
     public List<StreamDefinition> getSiddhiStreams(String executionPlan) {
