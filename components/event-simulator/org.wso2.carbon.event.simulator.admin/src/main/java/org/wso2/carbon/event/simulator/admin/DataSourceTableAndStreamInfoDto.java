@@ -27,6 +27,7 @@ public class DataSourceTableAndStreamInfoDto {
     private String filePath;
     private String fileName;
     private long delayBetweenEventsInMillis;
+    private String status;
 
 
     public DataSourceTableAndStreamInfoDto() {
@@ -112,5 +113,13 @@ public class DataSourceTableAndStreamInfoDto {
 
     public void setDelayBetweenEventsInMillis(long delayBetweenEventsInMillis) {
         this.delayBetweenEventsInMillis = delayBetweenEventsInMillis;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
     }
 }

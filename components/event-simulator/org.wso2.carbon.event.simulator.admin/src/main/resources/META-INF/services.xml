@@ -63,6 +63,11 @@
                 /permission/admin/manage/event-simulator
             </parameter>
         </operation>
+        <operation name="stopEventsViaFile">
+            <parameter name="AuthorizationAction" locked="false">
+                /permission/admin/manage/event-simulator
+            </parameter>
+        </operation>
         <operation name="deleteFile">
             <parameter name="AuthorizationAction" locked="false">
                 /permission/admin/manage/event-simulator
@@ -94,6 +99,11 @@
             </parameter>
         </operation>
         <operation name="resumeDBConfigFileNameToSimulate">
+            <parameter name="AuthorizationAction" locked="false">
+                /permission/admin/manage/event-simulator
+            </parameter>
+        </operation>
+        <operation name="stopDBConfigFileNameToSimulate">
             <parameter name="AuthorizationAction" locked="false">
                 /permission/admin/manage/event-simulator
             </parameter>

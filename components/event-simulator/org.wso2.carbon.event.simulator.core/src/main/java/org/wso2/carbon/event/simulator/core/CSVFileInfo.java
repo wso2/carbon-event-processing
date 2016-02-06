@@ -26,6 +26,8 @@ public class CSVFileInfo {
     private String streamId;
     private String separateCharacter;
     private long delayBetweenEventsInMillis;
+    public enum Status {STARTED, PAUSED, RESUMED, STOPPED}
+    private Status status;
 
     public String getSeparateCharacter() {
         return separateCharacter;
@@ -36,11 +38,6 @@ public class CSVFileInfo {
     }
 
     public CSVFileInfo() {
-        this.filePath = null;
-        this.fileName = null;
-        this.streamId = null;
-
-        this.separateCharacter = null;
         this.delayBetweenEventsInMillis = 0;
     }
 
@@ -74,5 +71,13 @@ public class CSVFileInfo {
 
     public void setDelayBetweenEventsInMillis(long delayBetweenEventsInMillis) {
         this.delayBetweenEventsInMillis = delayBetweenEventsInMillis;
+    }
+
+    public Status getStatus() {
+        return status;
+    }
+
+    public void setStatus(Status status) {
+        this.status = status;
     }
 }

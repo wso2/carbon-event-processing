@@ -28,6 +28,8 @@ public class DataSourceTableAndStreamInfo {
     private long delayBetweenEventsInMillis;
     private String filePath;
     private String fileName;
+    public enum Status {STARTED, PAUSED, RESUMED, STOPPED}
+    private Status status;
 
     public DataSourceTableAndStreamInfo() {
 
@@ -112,5 +114,13 @@ public class DataSourceTableAndStreamInfo {
 
     public void setDelayBetweenEventsInMillis(long delayBetweenEventsInMillis) {
         this.delayBetweenEventsInMillis = delayBetweenEventsInMillis;
+    }
+
+    public Status getStatus() {
+        return status;
+    }
+
+    public void setStatus(Status status) {
+        this.status = status;
     }
 }

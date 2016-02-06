@@ -63,8 +63,8 @@ public class CarbonEventSimulator implements EventSimulator {
     private HashMap<String, EventStreamProducer> eventProducerMap;
     private HashMap<Integer, HashMap<String, CSVFileInfo>> tenantSpecificCSVFileInfoMap;
     private HashMap<Integer, HashMap<String, DataSourceTableAndStreamInfo>> tenantSpecificDataSourceInfoMap;
-    private Map<Integer, Map<String, EventCreator>> fileEventSimulatorMap;
-    private Map<Integer, Map<String, EventCreatorForDB>> dbEventSimulatorMap;
+    private Map<Integer, Map<String, EventCreator>> tenantSpecificFileEventSimulatorMap;
+    private Map<Integer, Map<String, EventCreatorForDB>> tenantSpecificDBEventSimulatorMap;
     private boolean isWorkerNode = true;
     private Mode mode;
 
@@ -72,8 +72,8 @@ public class CarbonEventSimulator implements EventSimulator {
         eventProducerMap = new HashMap<String, EventStreamProducer>();
         tenantSpecificCSVFileInfoMap = new HashMap<Integer, HashMap<String, CSVFileInfo>>();
         tenantSpecificDataSourceInfoMap = new HashMap<Integer, HashMap<String, DataSourceTableAndStreamInfo>>();
-        fileEventSimulatorMap = new HashMap<>();
-        dbEventSimulatorMap = new HashMap<>();
+        tenantSpecificFileEventSimulatorMap = new HashMap<>();
+        tenantSpecificDBEventSimulatorMap = new HashMap<>();
 
         // EventManagementService has a cardinality of 1..1 with EventSimulatorService.
         // Therefore when event simulator is activated, EventManagementService will also be active.
@@ -206,6 +206,7 @@ public class CarbonEventSimulator implements EventSimulator {
     public void addCSVFileInfo(CSVFileInfo csvFileInfo) {
 
         int tenantID = PrivilegedCarbonContext.getThreadLocalCarbonContext().getTenantId();
+        csvFileInfo.setStatus(CSVFileInfo.Status.STOPPED);
         if (tenantSpecificCSVFileInfoMap.containsKey(tenantID)) {
             HashMap<String, CSVFileInfo> csvFileInfoMap = tenantSpecificCSVFileInfoMap.get(tenantID);
             csvFileInfoMap.put(csvFileInfo.getFileName(), csvFileInfo);
@@ -226,6 +227,7 @@ public class CarbonEventSimulator implements EventSimulator {
                     CSVFileInfo newCSVFileInfo = new CSVFileInfo();
                     newCSVFileInfo.setFileName(oldCSVFileInfo.getFileName());
                     newCSVFileInfo.setFilePath(oldCSVFileInfo.getFilePath());
+                    newCSVFileInfo.setStatus(CSVFileInfo.Status.STOPPED);
                     csvFileInfoMap.put(fileName, newCSVFileInfo);
                 }
             }
@@ -304,9 +306,9 @@ public class CarbonEventSimulator implements EventSimulator {
         if (!file.delete()) {
             throw new AxisFault("Failed to delete the file : " + csvFileInfo.getFileName() + " for tenant ID : " + tenantID);
         }
-        Map<String, EventCreator> tenantSpecificEventSimulatorMap = fileEventSimulatorMap.get(tenantID);
-        if (tenantSpecificEventSimulatorMap != null) {
-            tenantSpecificEventSimulatorMap.remove(fileName);
+        Map<String, EventCreator> fileEventSimulatorMap = tenantSpecificFileEventSimulatorMap.get(tenantID);
+        if (fileEventSimulatorMap != null) {
+            fileEventSimulatorMap.remove(fileName);
         }
 
     }
@@ -321,29 +323,65 @@ public class CarbonEventSimulator implements EventSimulator {
         int tenantId = PrivilegedCarbonContext.getThreadLocalCarbonContext().getTenantId();
         EventCreator eventCreator = new EventCreator(fileName, tenantId);
         Thread eventCreatorThread = new Thread(eventCreator);
-        Map<String, EventCreator> tenantSpecificEventSimulatorMap = fileEventSimulatorMap.get(tenantId);
-        if (tenantSpecificEventSimulatorMap == null) {
-            tenantSpecificEventSimulatorMap = new HashMap<>();
-            fileEventSimulatorMap.put(tenantId, tenantSpecificEventSimulatorMap);
+        Map<String, EventCreator> fileEventSimulatorMap = tenantSpecificFileEventSimulatorMap.get(tenantId);
+        if (fileEventSimulatorMap == null) {
+            fileEventSimulatorMap = new HashMap<>();
+            tenantSpecificFileEventSimulatorMap.put(tenantId, fileEventSimulatorMap);
         }
-        tenantSpecificEventSimulatorMap.put(fileName, eventCreator);
+        fileEventSimulatorMap.put(fileName, eventCreator);
         eventCreatorThread.start();
+        Map<String, CSVFileInfo> csvFileInfoMap = tenantSpecificCSVFileInfoMap.get(tenantId);
+        if (csvFileInfoMap != null) {
+            CSVFileInfo csvFileInfo = csvFileInfoMap.get(fileName);
+            if (csvFileInfo != null) {
+                csvFileInfo.setStatus(CSVFileInfo.Status.STARTED);
+            }
+        }
     }
 
     @Override
     public void pauseEvents(String fileName) throws AxisFault {
         int tenantId = PrivilegedCarbonContext.getThreadLocalCarbonContext().getTenantId();
-        Map<String, EventCreator> tenantSpecificEventSimulatorMap = fileEventSimulatorMap.get(tenantId);
-        EventCreator eventCreator = tenantSpecificEventSimulatorMap.get(fileName);
+        Map<String, EventCreator> fileEventSimulatorMap = tenantSpecificFileEventSimulatorMap.get(tenantId);
+        EventCreator eventCreator = fileEventSimulatorMap.get(fileName);
         eventCreator.pause();
+        Map<String, CSVFileInfo> csvFileInfoMap = tenantSpecificCSVFileInfoMap.get(tenantId);
+        if (csvFileInfoMap != null) {
+            CSVFileInfo csvFileInfo = csvFileInfoMap.get(fileName);
+            if (csvFileInfo != null) {
+                csvFileInfo.setStatus(CSVFileInfo.Status.PAUSED);
+            }
+        }
     }
 
     @Override
     public void resumeEvents(String fileName) throws AxisFault {
         int tenantId = PrivilegedCarbonContext.getThreadLocalCarbonContext().getTenantId();
-        Map<String, EventCreator> tenantSpecificEventSimulatorMap = fileEventSimulatorMap.get(tenantId);
-        EventCreator eventCreator = tenantSpecificEventSimulatorMap.get(fileName);
+        Map<String, EventCreator> fileEventSimulatorMap = tenantSpecificFileEventSimulatorMap.get(tenantId);
+        EventCreator eventCreator = fileEventSimulatorMap.get(fileName);
         eventCreator.resume();
+        Map<String, CSVFileInfo> csvFileInfoMap = tenantSpecificCSVFileInfoMap.get(tenantId);
+        if (csvFileInfoMap != null) {
+            CSVFileInfo csvFileInfo = csvFileInfoMap.get(fileName);
+            if (csvFileInfo != null) {
+                csvFileInfo.setStatus(CSVFileInfo.Status.RESUMED);
+            }
+        }
+    }
+
+    @Override
+    public void stopEvents(String fileName) throws AxisFault {
+        int tenantId = PrivilegedCarbonContext.getThreadLocalCarbonContext().getTenantId();
+        Map<String, EventCreator> fileEventSimulatorMap = tenantSpecificFileEventSimulatorMap.get(tenantId);
+        EventCreator eventCreator = fileEventSimulatorMap.get(fileName);
+        eventCreator.stop();
+        Map<String, CSVFileInfo> csvFileInfoMap = tenantSpecificCSVFileInfoMap.get(tenantId);
+        if (csvFileInfoMap != null) {
+            CSVFileInfo csvFileInfo = csvFileInfoMap.get(fileName);
+            if (csvFileInfo != null) {
+                csvFileInfo.setStatus(CSVFileInfo.Status.STOPPED);
+            }
+        }
     }
 
 
@@ -483,11 +521,12 @@ public class CarbonEventSimulator implements EventSimulator {
     }
 
 
-    private class EventCreator implements Runnable {
+    class EventCreator implements Runnable {
         String fileName;
         int tenantId;
         private final Object lock = new Object();
         private volatile boolean isPaused = false;
+        private volatile boolean isStopped = false;
 
         public EventCreator(String fileName, int tenantId) {
             this.fileName = fileName;
@@ -539,6 +578,8 @@ public class CarbonEventSimulator implements EventSimulator {
                                 continue;
                             }
                             rowNumber++;
+                        } else if (isStopped) {
+                            break;
                         } else {
                             synchronized (lock) {
                                 try {
@@ -570,6 +611,13 @@ public class CarbonEventSimulator implements EventSimulator {
                 }
             } finally {
                 PrivilegedCarbonContext.endTenantFlow();
+                Map<String, CSVFileInfo> csvFileInfoMap = tenantSpecificCSVFileInfoMap.get(tenantId);
+                if (csvFileInfoMap != null) {
+                    CSVFileInfo csvFileInfo = csvFileInfoMap.get(fileName);
+                    if (csvFileInfo != null) {
+                        csvFileInfo.setStatus(CSVFileInfo.Status.STOPPED);
+                    }
+                }
             }
         }
 
@@ -579,6 +627,14 @@ public class CarbonEventSimulator implements EventSimulator {
 
         public void resume() {
             isPaused = false;
+            synchronized (lock) {
+                lock.notifyAll();
+            }
+        }
+
+        public void stop() {
+            isPaused = true;
+            isStopped = true;
             synchronized (lock) {
                 lock.notifyAll();
             }
@@ -735,9 +791,9 @@ public class CarbonEventSimulator implements EventSimulator {
         if (xmlFile.exists()) {
             dataSourceTableAndStreamInfoMap.remove(fileName);
             xmlFile.delete();
-            Map<String, EventCreatorForDB> tenantSpecificEventSimulatorMap = dbEventSimulatorMap.get(tenantID);
-            if (tenantSpecificEventSimulatorMap != null) {
-                tenantSpecificEventSimulatorMap.remove(fileName);
+            Map<String, EventCreatorForDB> dbEventSimulatorMap = tenantSpecificDBEventSimulatorMap.get(tenantID);
+            if (dbEventSimulatorMap != null) {
+                dbEventSimulatorMap.remove(fileName);
             }
         }
     }
@@ -828,37 +884,78 @@ public class CarbonEventSimulator implements EventSimulator {
             throws AxisFault {
 
         int tenantId = PrivilegedCarbonContext.getThreadLocalCarbonContext().getTenantId();
-        EventCreatorForDB eventCreatorForDB = new EventCreatorForDB(tenantId, allInfo, getPreparedSelectStatement);
+        EventCreatorForDB eventCreatorForDB = new EventCreatorForDB(fileName, tenantId, allInfo, getPreparedSelectStatement);
         Thread eventCreatorThread = new Thread(eventCreatorForDB);
-        Map<String, EventCreatorForDB> tenantSpecificEventSimulatorMap = dbEventSimulatorMap.get(tenantId);
-        if (tenantSpecificEventSimulatorMap == null) {
-            tenantSpecificEventSimulatorMap = new HashMap<>();
-            dbEventSimulatorMap.put(tenantId, tenantSpecificEventSimulatorMap);
+        Map<String, EventCreatorForDB> dbEventSimulatorMap = tenantSpecificDBEventSimulatorMap.get(tenantId);
+        if (dbEventSimulatorMap == null) {
+            dbEventSimulatorMap = new HashMap<>();
+            tenantSpecificDBEventSimulatorMap.put(tenantId, dbEventSimulatorMap);
         }
-        tenantSpecificEventSimulatorMap.put(fileName, eventCreatorForDB);
+        dbEventSimulatorMap.put(fileName, eventCreatorForDB);
         eventCreatorThread.start();
+
+        Map<String, DataSourceTableAndStreamInfo> dataSourceTableAndStreamInfoHashMap = tenantSpecificDataSourceInfoMap.get(tenantId);
+        if (dataSourceTableAndStreamInfoHashMap != null) {
+            DataSourceTableAndStreamInfo dataSourceTableAndStreamInfo = dataSourceTableAndStreamInfoHashMap.get(fileName);
+            if (dataSourceTableAndStreamInfo != null) {
+                dataSourceTableAndStreamInfo.setStatus(DataSourceTableAndStreamInfo.Status.STARTED);
+            }
+        }
     }
 
     @Override
     public void pauseEventsViaDB(String fileName) throws AxisFault {
         int tenantId = PrivilegedCarbonContext.getThreadLocalCarbonContext().getTenantId();
-        Map<String, EventCreatorForDB> tenantSpecificEventSimulatorMap = dbEventSimulatorMap.get(tenantId);
-        EventCreatorForDB eventCreator = tenantSpecificEventSimulatorMap.get(fileName);
+        Map<String, EventCreatorForDB> dbEventSimulatorMap = tenantSpecificDBEventSimulatorMap.get(tenantId);
+        EventCreatorForDB eventCreator = dbEventSimulatorMap.get(fileName);
         eventCreator.pause();
+
+        Map<String, DataSourceTableAndStreamInfo> dataSourceTableAndStreamInfoHashMap = tenantSpecificDataSourceInfoMap.get(tenantId);
+        if (dataSourceTableAndStreamInfoHashMap != null) {
+            DataSourceTableAndStreamInfo dataSourceTableAndStreamInfo = dataSourceTableAndStreamInfoHashMap.get(fileName);
+            if (dataSourceTableAndStreamInfo != null) {
+                dataSourceTableAndStreamInfo.setStatus(DataSourceTableAndStreamInfo.Status.PAUSED);
+            }
+        }
     }
 
     @Override
     public void resumeEventsViaDB(String fileName) throws AxisFault {
         int tenantId = PrivilegedCarbonContext.getThreadLocalCarbonContext().getTenantId();
-        Map<String, EventCreatorForDB> tenantSpecificEventSimulatorMap = dbEventSimulatorMap.get(tenantId);
-        EventCreatorForDB eventCreator = tenantSpecificEventSimulatorMap.get(fileName);
+        Map<String, EventCreatorForDB> dbEventSimulatorMap = tenantSpecificDBEventSimulatorMap.get(tenantId);
+        EventCreatorForDB eventCreator = dbEventSimulatorMap.get(fileName);
         eventCreator.resume();
+
+        Map<String, DataSourceTableAndStreamInfo> dataSourceTableAndStreamInfoHashMap = tenantSpecificDataSourceInfoMap.get(tenantId);
+        if (dataSourceTableAndStreamInfoHashMap != null) {
+            DataSourceTableAndStreamInfo dataSourceTableAndStreamInfo = dataSourceTableAndStreamInfoHashMap.get(fileName);
+            if (dataSourceTableAndStreamInfo != null) {
+                dataSourceTableAndStreamInfo.setStatus(DataSourceTableAndStreamInfo.Status.RESUMED);
+            }
+        }
+    }
+
+    @Override
+    public void stopEventsViaDB(String fileName) throws AxisFault {
+        int tenantId = PrivilegedCarbonContext.getThreadLocalCarbonContext().getTenantId();
+        Map<String, EventCreatorForDB> dbEventSimulatorMap = tenantSpecificDBEventSimulatorMap.get(tenantId);
+        EventCreatorForDB eventCreator = dbEventSimulatorMap.get(fileName);
+        eventCreator.stop();
+
+        Map<String, DataSourceTableAndStreamInfo> dataSourceTableAndStreamInfoHashMap = tenantSpecificDataSourceInfoMap.get(tenantId);
+        if (dataSourceTableAndStreamInfoHashMap != null) {
+            DataSourceTableAndStreamInfo dataSourceTableAndStreamInfo = dataSourceTableAndStreamInfoHashMap.get(fileName);
+            if (dataSourceTableAndStreamInfo != null) {
+                dataSourceTableAndStreamInfo.setStatus(DataSourceTableAndStreamInfo.Status.STOPPED);
+            }
+        }
     }
 
 
-    private class EventCreatorForDB implements Runnable {
+    class EventCreatorForDB implements Runnable {
 
-        private ResultSet resultSet = null;
+        private String fileName;
+        private ResultSet resultSet;
         private int tenantId;
         private JSONObject allInfo;
         private DataSource datasource;
@@ -866,10 +963,12 @@ public class CarbonEventSimulator implements EventSimulator {
         private long delayBetweenEventsInMillis;
         private final Object lock = new Object();
         private volatile boolean isPaused = false;
+        private volatile boolean isStopped = false;
 
-        public EventCreatorForDB(int tenantId, JSONObject tableAndAttributeMappingJsonObj,
+        public EventCreatorForDB(String fileName, int tenantId, JSONObject tableAndAttributeMappingJsonObj,
                                  String preparedSelectStatement)
                 throws AxisFault {
+            this.fileName = fileName;
             this.tenantId = tenantId;
             this.allInfo = tableAndAttributeMappingJsonObj;
             CarbonDataSource carbonDataSource;
@@ -1011,6 +1110,8 @@ public class CarbonEventSimulator implements EventSimulator {
                         if (delayBetweenEventsInMillis > 0) {
                             Thread.sleep(delayBetweenEventsInMillis);
                         }
+                    } else if (isStopped) {
+                        break;
                     } else {
                         synchronized (lock) {
                             try {
@@ -1030,6 +1131,15 @@ public class CarbonEventSimulator implements EventSimulator {
                 log.error(axisFault.getMessage(), axisFault);
             } catch (InterruptedException e) {
                 log.error("Error when delaying sending events: " + e.getMessage(), e);
+            } finally {
+                PrivilegedCarbonContext.endTenantFlow();
+                Map<String, DataSourceTableAndStreamInfo> dataSourceTableAndStreamInfoHashMap = tenantSpecificDataSourceInfoMap.get(tenantId);
+                if (dataSourceTableAndStreamInfoHashMap != null) {
+                    DataSourceTableAndStreamInfo dataSourceTableAndStreamInfo = dataSourceTableAndStreamInfoHashMap.get(fileName);
+                    if (dataSourceTableAndStreamInfo != null) {
+                        dataSourceTableAndStreamInfo.setStatus(DataSourceTableAndStreamInfo.Status.STOPPED);
+                    }
+                }
             }
         }
 
@@ -1039,6 +1149,14 @@ public class CarbonEventSimulator implements EventSimulator {
 
         public void resume() {
             isPaused = false;
+            synchronized (lock) {
+                lock.notifyAll();
+            }
+        }
+
+        public void stop() {
+            isPaused = true;
+            isStopped = true;
             synchronized (lock) {
                 lock.notifyAll();
             }
