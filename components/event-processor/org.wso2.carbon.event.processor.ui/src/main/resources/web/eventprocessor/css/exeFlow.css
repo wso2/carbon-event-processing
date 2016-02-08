@@ -114,7 +114,6 @@ text {
     line-height: 30px;
 }
 
-
 #flowdivInfo .node rect  {
     stroke-width: 0px;
     fill: #FFFFFF;
@@ -125,7 +124,6 @@ text {
     stroke: #707070;
     fill: #F0F0F0 ;
 }
-
 
 .edgeLabel rect {
     fill: #fff;

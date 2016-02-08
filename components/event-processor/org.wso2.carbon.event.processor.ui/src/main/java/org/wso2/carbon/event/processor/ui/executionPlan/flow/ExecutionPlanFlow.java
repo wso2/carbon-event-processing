@@ -218,7 +218,6 @@ public class ExecutionPlanFlow {
                 }
             }
         }
-
         executionPlanFlow = new StringBuilder(executionPlanFlow.substring(0, executionPlanFlow.length() - 1));
         executionPlanFlow.append("]}'");
 

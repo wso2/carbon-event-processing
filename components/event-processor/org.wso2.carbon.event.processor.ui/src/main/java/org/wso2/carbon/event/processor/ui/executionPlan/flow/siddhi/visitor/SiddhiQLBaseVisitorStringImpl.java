@@ -30,7 +30,6 @@ import java.util.Set;
 public class SiddhiQLBaseVisitorStringImpl extends SiddhiQLBaseVisitor {
 
     private Set<String> activeStreams = new HashSet<String>();
-
     private TokenStreamRewriter tokenStreamRewriter;
 
     public SiddhiQLBaseVisitorStringImpl(TokenStreamRewriter tokenStreamRewriter) {

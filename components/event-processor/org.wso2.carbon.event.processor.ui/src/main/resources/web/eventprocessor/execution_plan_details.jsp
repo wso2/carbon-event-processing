@@ -292,7 +292,6 @@
                             key="trace.disable.link"/></a>
                 </div>
             </div>
-
             <% } %>
 
             <div style="display: inline-block">

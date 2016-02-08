@@ -44,7 +44,6 @@ public class SiddhiFlowCompiler {
         ParseTree tree = parser.parse();
 
         SiddhiQLVisitor eval = new SiddhiQLBaseVisitorStringImpl(tokenStreamRewriter);
-
         return (StringBuilder) eval.visit(tree);
     }
 }
