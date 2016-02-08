@@ -429,11 +429,13 @@ public class CarbonEventProcessorService implements EventProcessorService {
             }
         }
 
-        if (EventProcessorValueHolder.getPersistenceConfiguration() != null) {
+        // State restoring of HA mode should be handled at HAManager,
+        // therefore it should be ignored here.
+        if (managementInfo.getMode() != Mode.HA &&
+                EventProcessorValueHolder.getPersistenceConfiguration() != null &&
+                executionPlanRuntime != null) {
             executionPlanRuntime.restoreLastRevision();
         }
-
-
     }
 
     public List<StreamDefinition> getSiddhiStreams(String executionPlan) {
