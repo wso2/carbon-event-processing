@@ -72,9 +72,11 @@
     String executionPlanName = request.getParameter("execPlanName");
     String executionPlanPath = request.getParameter("execPlanPath");
     String executionPlan = request.getParameter("execPlan");
+
     EventProcessorAdminServiceStub processorAdminServiceStub = EventProcessorUIUtils.getEventProcessorAdminService(config, session, request);
     ExecutionPlanConfigurationDto configurationDto = processorAdminServiceStub.getActiveExecutionPlanConfiguration(executionPlan);
     String planFlow = configurationDto.getExecutionPlan();
+
     ExecutionPlanFlow exePlanFlow = new ExecutionPlanFlow();
     String executionPlan_nodes = exePlanFlow.get_executionPlanFlow (planFlow) ;
 %>
