@@ -13,18 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.wso2.carbon.event.processor.ui.ExecutionPlan_flow;
+package org.wso2.carbon.event.processor.ui.execution.flow;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-import org.wso2.siddhi.query.compiler.SiddhiStringCompiler;
+import org.wso2.carbon.event.processor.ui.execution.flow.siddhi.visitor.SiddhiFlowCompiler;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class Extract_JsonValueImpl {
+public class ExtractJsonValueImpl {
     private String executionPlan_Text;
     //stream
     private List<String> streamId = new ArrayList<String>();
@@ -59,7 +59,7 @@ public class Extract_JsonValueImpl {
 
     public void set_jsonValues(String executionPlan) {
 
-        StringBuilder executionPlan_String = SiddhiStringCompiler.parseString(executionPlan);
+        StringBuilder executionPlan_String = SiddhiFlowCompiler.parseString(executionPlan);
 
         JsonElement jsonElement = new JsonParser().parse(executionPlan_String.toString());
         JsonObject jsonObject = jsonElement.getAsJsonObject();

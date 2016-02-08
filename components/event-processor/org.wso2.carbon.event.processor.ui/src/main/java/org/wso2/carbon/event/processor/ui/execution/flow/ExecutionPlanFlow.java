@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.wso2.carbon.event.processor.ui.ExecutionPlan_flow;
+package org.wso2.carbon.event.processor.ui.execution.flow;
 
 import com.google.gson.JsonArray;
 
@@ -22,7 +22,7 @@ import java.util.List;
 public class ExecutionPlanFlow {
     public String get_executionPlanFlow(String executionPlan_String) {
 
-        Extract_JsonValueImpl converter = new Extract_JsonValueImpl();
+        ExtractJsonValueImpl converter = new ExtractJsonValueImpl();
 
         converter.set_jsonValues(executionPlan_String);
         StringBuilder executionPlanFlow = new StringBuilder(" '{ \"nodes\": [ ");
@@ -116,7 +116,7 @@ public class ExecutionPlanFlow {
                         String outId = ("\"" + stream.get(j).getAsString() + "\"");
                         if (tableId.get(k).equals(outId)) {
                             executionPlanFlow.append("\"nodeTable\": \"T\"").append(",");
-                            executionPlanFlow.append("\"toolTip\": ").append(tableText.get(i)).append(",");
+                            executionPlanFlow.append("\"toolTip\": ").append(tableText.get(k)).append(",");
                         }
                     }
                     for (int l = 0; l < streamId.size(); l++) {
