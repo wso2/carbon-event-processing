@@ -71,6 +71,7 @@ public class EventProcessorServiceDS {
 
     protected void activate(ComponentContext context) {
         try {
+            checkIsStatsEnabled();
             CarbonEventProcessorService carbonEventProcessorService = new CarbonEventProcessorService();
             EventProcessorValueHolder.registerEventProcessorService(carbonEventProcessorService);
 
