@@ -19,7 +19,7 @@
 <%@ page import="org.wso2.carbon.event.processor.stub.EventProcessorAdminServiceStub" %>
 <%@ page import="org.wso2.carbon.event.processor.stub.types.ExecutionPlanConfigurationDto" %>
 <%@ page import="org.wso2.carbon.event.processor.ui.EventProcessorUIUtils" %>
-<%@ page import="org.wso2.carbon.event.processor.ui.execution.flow.ExecutionPlanFlow" %>
+<%@ page import="org.wso2.carbon.event.processor.ui.executionPlan.flow.ExecutionPlanFlow" %>
 
 <fmt:bundle basename="org.wso2.carbon.event.processor.ui.i18n.Resources">
 
