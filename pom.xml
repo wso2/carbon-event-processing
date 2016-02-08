@@ -316,11 +316,6 @@
                 <version>${carbon.event.processing.version}</version>
             </dependency>
             <dependency>
-                <groupId>org.wso2.carbon.analytics-common</groupId>
-                <artifactId>org.wso2.carbon.event.statistics</artifactId>
-                <version>${carbon.analytics.common.version}</version>
-            </dependency>
-            <dependency>
                 <groupId>org.wso2.carbon.event-processing</groupId>
                 <artifactId>org.wso2.carbon.event.flow.ui</artifactId>
                 <version>${carbon.event.processing.version}</version>

@@ -21,7 +21,6 @@ import org.apache.log4j.Logger;
 import org.wso2.carbon.event.processor.core.ExecutionPlanConfiguration;
 import org.wso2.carbon.event.processor.core.internal.ds.EventProcessorValueHolder;
 import org.wso2.carbon.event.processor.core.internal.util.EventProcessorConstants;
-import org.wso2.carbon.event.statistics.EventStatisticsMonitor;
 import org.wso2.carbon.event.stream.core.SiddhiEventConsumer;
 import org.wso2.carbon.metrics.manager.Counter;
 import org.wso2.carbon.metrics.manager.Level;
@@ -42,7 +41,6 @@ public abstract class AbstractSiddhiInputEventDispatcher implements SiddhiEventC
     protected final int tenantId;
     private final boolean traceEnabled;
     private final boolean statisticsEnabled;
-    private EventStatisticsMonitor statisticsMonitor;
     private Counter eventCounter;
     private String tracerPrefix = "";
 
@@ -54,7 +52,7 @@ public abstract class AbstractSiddhiInputEventDispatcher implements SiddhiEventC
         this.tenantId = tenantId;
         this.traceEnabled = executionPlanConfiguration.isTracingEnabled();
         this.statisticsEnabled = executionPlanConfiguration.isStatisticsEnabled() &&
-                EventProcessorValueHolder.getEventStatisticsService().isGlobalStatisticsEnabled();
+                EventProcessorValueHolder.isGlobalStatisticsEnabled();
         String metricId = EventProcessorConstants.METRIC_PREFIX + EventProcessorConstants.METRIC_DELIMITER +
                 EventProcessorConstants.METRIC_INFIX_EXECUTION_PLANS + EventProcessorConstants.METRIC_DELIMITER +
                 executionPlanConfiguration.getName() + EventProcessorConstants.METRIC_DELIMITER +
@@ -62,9 +60,6 @@ public abstract class AbstractSiddhiInputEventDispatcher implements SiddhiEventC
                 EventProcessorConstants.METRIC_DELIMITER + streamId.replaceAll("\\.", "_") +
                 EventProcessorConstants.METRIC_DELIMITER + EventProcessorConstants.METRIC_NAME_INPUT_EVENTS;
         if (statisticsEnabled) {
-            statisticsMonitor = EventProcessorValueHolder.getEventStatisticsService().getEventStatisticMonitor(tenantId,
-                    EventProcessorConstants.EVENT_PROCESSOR, executionPlanConfiguration.getName(),
-                    streamId + " (" + siddhiStreamId + ")");
             eventCounter = MetricManager.counter(metricId, Level.INFO, Level.INFO);
         }
         if (traceEnabled) {
@@ -87,7 +82,6 @@ public abstract class AbstractSiddhiInputEventDispatcher implements SiddhiEventC
         for (Event event : events) {
             try {
                 if (statisticsEnabled) {
-                    statisticsMonitor.incrementRequest();
                     eventCounter.inc();
                 }
                 sendEvent(event);
@@ -105,7 +99,6 @@ public abstract class AbstractSiddhiInputEventDispatcher implements SiddhiEventC
                 trace.info(tracerPrefix + event);
             }
             if (statisticsEnabled) {
-                statisticsMonitor.incrementRequest();
                 eventCounter.inc();
             }
             sendEvent(event);

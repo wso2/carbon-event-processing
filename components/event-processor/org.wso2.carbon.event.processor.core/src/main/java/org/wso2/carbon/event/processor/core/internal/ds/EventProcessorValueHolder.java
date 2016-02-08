@@ -25,7 +25,6 @@ import org.wso2.carbon.event.processor.core.internal.storm.manager.StormManagerS
 import org.wso2.carbon.event.processor.manager.core.EventManagementService;
 import org.wso2.carbon.event.processor.manager.core.config.DistributedConfiguration;
 import org.wso2.carbon.event.processor.manager.core.config.PersistenceConfiguration;
-import org.wso2.carbon.event.statistics.EventStatisticsService;
 import org.wso2.carbon.event.stream.core.EventStreamService;
 import org.wso2.carbon.ndatasource.core.DataSourceService;
 import org.wso2.carbon.user.core.UserRealm;
@@ -36,7 +35,6 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public class EventProcessorValueHolder {
     private static CarbonEventProcessorService eventProcessorService;
-    private static EventStatisticsService eventStatisticsService;
     private static EventManagementService eventManagementService;
     private static EventStreamService eventStreamService;
     private static HazelcastInstance hazelcastInstance;
@@ -51,6 +49,7 @@ public class EventProcessorValueHolder {
     private static SiddhiManager siddhiManager;
     private static StormTopologyManager stormTopologyManager;
     private static ConcurrentHashMap<Integer, ConfigurationContext> tenantConfigs = new ConcurrentHashMap<>();
+    private static boolean globalStatisticsEnabled;
 
     public static SiddhiManager getSiddhiManager() {
         return siddhiManager;
@@ -66,14 +65,6 @@ public class EventProcessorValueHolder {
 
     public static CarbonEventProcessorService getEventProcessorService() {
         return eventProcessorService;
-    }
-
-    public static void registerEventStatisticsService(EventStatisticsService eventStatisticsService) {
-        EventProcessorValueHolder.eventStatisticsService = eventStatisticsService;
-    }
-
-    public static EventStatisticsService getEventStatisticsService() {
-        return eventStatisticsService;
     }
 
     public static void registerHazelcastInstance(HazelcastInstance hazelcastInstance) {
@@ -201,5 +192,13 @@ public class EventProcessorValueHolder {
 
     public static ConfigurationContext getTenantConfig(int tenantId){
         return tenantConfigs.get(tenantId);
+    }
+
+    public static boolean isGlobalStatisticsEnabled() {
+        return globalStatisticsEnabled;
+    }
+
+    public static void setGlobalStatisticsEnabled(boolean globalStatisticsEnabled) {
+        EventProcessorValueHolder.globalStatisticsEnabled = globalStatisticsEnabled;
     }
 }

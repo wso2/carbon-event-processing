@@ -22,6 +22,7 @@ import com.hazelcast.core.MembershipListener;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.osgi.service.component.ComponentContext;
+import org.wso2.carbon.base.ServerConfiguration;
 import org.wso2.carbon.base.api.ServerConfigurationService;
 import org.wso2.carbon.event.processor.core.EventProcessorService;
 import org.wso2.carbon.event.processor.core.internal.CarbonEventProcessorManagementService;
@@ -33,7 +34,6 @@ import org.wso2.carbon.event.processor.core.internal.util.EventProcessorConstant
 import org.wso2.carbon.event.processor.manager.core.EventManagementService;
 import org.wso2.carbon.event.processor.manager.core.config.DistributedConfiguration;
 import org.wso2.carbon.event.processor.manager.core.config.PersistenceConfiguration;
-import org.wso2.carbon.event.statistics.EventStatisticsService;
 import org.wso2.carbon.event.stream.core.EventStreamListener;
 import org.wso2.carbon.event.stream.core.EventStreamService;
 import org.wso2.carbon.ndatasource.core.DataSourceService;
@@ -46,9 +46,6 @@ import org.wso2.siddhi.core.util.persistence.PersistenceStore;
 
 /**
  * @scr.component name="eventProcessorService.component" immediate="true"
- * @scr.reference name="eventStatistics.service"
- * interface="org.wso2.carbon.event.statistics.EventStatisticsService" cardinality="1..1"
- * policy="dynamic" bind="setEventStatisticsService" unbind="unsetEventStatisticsService"
  * @scr.reference name="eventStreamManager.service"
  * interface="org.wso2.carbon.event.stream.core.EventStreamService" cardinality="1..1"
  * policy="dynamic" bind="setEventStreamService" unbind="unsetEventStreamService"
@@ -110,7 +107,7 @@ public class EventProcessorServiceDS {
             }
 
             StatisticsConfiguration statisticsConfiguration = new StatisticsConfiguration(new SiddhiMetricsFactory(
-                    EventProcessorValueHolder.getEventStatisticsService().isGlobalStatisticsEnabled()));
+                    EventProcessorValueHolder.isGlobalStatisticsEnabled()));
             statisticsConfiguration.setMatricPrefix(EventProcessorConstants.METRIC_PREFIX);
             siddhiManager.setStatisticsConfiguration(statisticsConfiguration);
 
@@ -123,6 +120,20 @@ public class EventProcessorServiceDS {
 
     }
 
+    protected void checkIsStatsEnabled() {
+        ServerConfiguration config = ServerConfiguration.getInstance();
+        String confStatisticsReporterDisabled = config.getFirstProperty("StatisticsReporterDisabled");
+        if (!"".equals(confStatisticsReporterDisabled)) {
+            boolean disabled = Boolean.valueOf(confStatisticsReporterDisabled);
+            if (disabled) {
+                return;
+            }
+
+        }
+        EventProcessorValueHolder.setGlobalStatisticsEnabled(true);
+    }
+
+
     protected void deactivate(ComponentContext context) {
         try {
             StormManagerServer stormManagerServer = EventProcessorValueHolder.getStormManagerServer();
@@ -134,15 +145,6 @@ public class EventProcessorServiceDS {
         }
         EventProcessorValueHolder.getEventProcessorService().shutdown();
     }
-
-    protected void setEventStatisticsService(EventStatisticsService eventStatisticsService) {
-        EventProcessorValueHolder.registerEventStatisticsService(eventStatisticsService);
-    }
-
-    protected void unsetEventStatisticsService(EventStatisticsService eventStatisticsService) {
-        EventProcessorValueHolder.registerEventStatisticsService(null);
-    }
-
 
     protected void setEventStreamService(EventStreamService eventStreamService) {
         EventProcessorValueHolder.registerEventStreamService(eventStreamService);

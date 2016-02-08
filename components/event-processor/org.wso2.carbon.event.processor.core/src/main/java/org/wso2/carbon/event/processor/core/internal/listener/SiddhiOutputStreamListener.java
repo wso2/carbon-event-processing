@@ -22,7 +22,6 @@ import org.wso2.carbon.event.processor.core.ExecutionPlanConfiguration;
 import org.wso2.carbon.event.processor.core.internal.ds.EventProcessorValueHolder;
 import org.wso2.carbon.event.processor.core.internal.util.EventProcessorConstants;
 import org.wso2.carbon.event.processor.core.internal.util.EventProcessorUtil;
-import org.wso2.carbon.event.statistics.EventStatisticsMonitor;
 import org.wso2.carbon.event.stream.core.EventProducer;
 import org.wso2.carbon.event.stream.core.EventProducerCallback;
 import org.wso2.carbon.event.stream.core.exception.EventStreamConfigurationException;
@@ -41,7 +40,6 @@ public class SiddhiOutputStreamListener extends StreamCallback implements EventP
     protected final boolean statisticsEnabled;
     private final String streamId;
     private StreamDefinition streamDefinition;
-    protected EventStatisticsMonitor statisticsMonitor;
     protected String tracerPrefix;
     private Counter eventCounter;
     protected EventProducerCallback eventProducerCallback;
@@ -56,7 +54,7 @@ public class SiddhiOutputStreamListener extends StreamCallback implements EventP
         this.siddhiStreamName = siddhiStreamName;
         this.traceEnabled = executionPlanConfiguration.isTracingEnabled();
         this.statisticsEnabled = executionPlanConfiguration.isStatisticsEnabled() &&
-                EventProcessorValueHolder.getEventStatisticsService().isGlobalStatisticsEnabled();
+                EventProcessorValueHolder.isGlobalStatisticsEnabled();
         String metricId = EventProcessorConstants.METRIC_PREFIX + EventProcessorConstants.METRIC_DELIMITER +
                 EventProcessorConstants.METRIC_INFIX_EXECUTION_PLANS + EventProcessorConstants.METRIC_DELIMITER +
                 executionPlanConfiguration.getName() + EventProcessorConstants.METRIC_DELIMITER +
@@ -64,9 +62,6 @@ public class SiddhiOutputStreamListener extends StreamCallback implements EventP
                 EventProcessorConstants.METRIC_DELIMITER + streamId.replaceAll("\\.", "_") +
                 EventProcessorConstants.METRIC_DELIMITER + EventProcessorConstants.METRIC_NAME_OUTPUT_EVENTS;
         if (statisticsEnabled) {
-            statisticsMonitor = EventProcessorValueHolder.getEventStatisticsService().getEventStatisticMonitor(tenantId,
-                    EventProcessorConstants.EVENT_PROCESSOR, executionPlanConfiguration.getName(),
-                    streamId + " (" + siddhiStreamName + ")");
             eventCounter = MetricManager.counter(metricId, Level.INFO, Level.INFO);
         }
         if (traceEnabled) {
@@ -92,9 +87,6 @@ public class SiddhiOutputStreamListener extends StreamCallback implements EventP
                 trace.info(tracerPrefix + Arrays.deepToString(events));
             }
             if (statisticsEnabled) {
-                for (Object obj : events) {
-                    statisticsMonitor.incrementResponse();
-                }
                 eventCounter.inc(events.length);
             }
             if(eventProducerCallback != null) {
@@ -120,7 +112,6 @@ public class SiddhiOutputStreamListener extends StreamCallback implements EventP
                 trace.info(tracerPrefix + event);
             }
             if (statisticsEnabled) {
-                statisticsMonitor.incrementResponse();
                 eventCounter.inc();
             }
             if(eventProducerCallback != null) {
