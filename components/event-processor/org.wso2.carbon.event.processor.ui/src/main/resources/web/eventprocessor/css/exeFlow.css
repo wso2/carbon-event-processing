@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
+ * Copyright (c) 2015, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -114,6 +114,7 @@ text {
     line-height: 30px;
 }
 
+
 #flowdivInfo .node rect  {
     stroke-width: 0px;
     fill: #FFFFFF;
@@ -124,6 +125,7 @@ text {
     stroke: #707070;
     fill: #F0F0F0 ;
 }
+
 
 .edgeLabel rect {
     fill: #fff;

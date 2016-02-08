@@ -263,6 +263,7 @@
                             key="trace.disable.link"/></a>
                 </div>
             </div>
+
             <% } %>
 
             <div style="display: inline-block">
@@ -314,10 +315,12 @@
 <script>
     var init = function () {
         var mime = MIME_TYPE_SIDDHI_QL;
+
         // get mime type
         if (window.location.href.indexOf('mime=') > -1) {
             mime = window.location.href.substr(window.location.href.indexOf('mime=') + 5);
         }
+
         window.queryEditor = CodeMirror.fromTextArea(document.getElementById('queryExpressions'), {
             mode: mime,
             indentWithTabs: true,
