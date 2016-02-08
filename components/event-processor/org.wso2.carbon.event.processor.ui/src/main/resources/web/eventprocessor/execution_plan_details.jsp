@@ -65,43 +65,33 @@
                     })
                 }, null, null);
     }
-
 </script>
 
 <%--<html xmlns="http://www.w3.org/1999/html" xmlns="http://www.w3.org/1999/html">--%>
 <%
-
     String executionPlanName = request.getParameter("execPlanName");
     String executionPlanPath = request.getParameter("execPlanPath");
     String executionPlan = request.getParameter("execPlan");
-
     EventProcessorAdminServiceStub processorAdminServiceStub = EventProcessorUIUtils.getEventProcessorAdminService(config, session, request);
     ExecutionPlanConfigurationDto configurationDto = processorAdminServiceStub.getActiveExecutionPlanConfiguration(executionPlan);
-
     String planFlow = configurationDto.getExecutionPlan();
-
     ExecutionPlanFlow exePlanFlow = new ExecutionPlanFlow();
     String executionPlan_nodes = exePlanFlow.get_executionPlanFlow (planFlow) ;
 %>
 
 <script type="text/javascript">
-
     window.onload = function () {
             tryDrawProcessingFlowInfo();
             tryDraw();
         };
-
     function tryDrawProcessingFlowInfo() {
-
         var g = new dagreD3.graphlib.Graph().setGraph({});
-
         g.setNode("1", {labelType: "html",label: '<div id=flowdivInfo onmouseover= "" style="cursor: pointer;"> <span class="typeInfo typeInfo-I"></span><span  name="nameElement" class="nameInfo" style="margin-right: 10px;">Import Stream</span></div>'});
         g.setNode("2", {labelType: "html",label: '<div id=flowdivInfo onmouseover= "" style="cursor: pointer;"> <span class="typeInfo typeInfo-E"></span><span  name="nameElement" class="nameInfo" style="margin-right: 10px;">Export Stream</span></div>'});
         g.setNode("3", {labelType: "html",label: '<div id=flowdivInfo onmouseover= "" style="cursor: pointer;"> <span class="typeInfo typeInfo-S"></span><span  name="nameElement" class="nameInfo" style="margin-right: 10px;">Stream</span></div>'});
         g.setNode("4", {labelType: "html",label: '<div id=flowdivInfo onmouseover= "" style="cursor: pointer;"> <span class="typeInfo typeInfo-T"></span><span  name="nameElement" class="nameInfo" style="margin-right: 10px;">Table</span></div>'});
         g.setNode("5", {labelType: "html",label: '<div id=flowdivInfo onmouseover= "" style="cursor: pointer;"> <span class="typeInfo typeInfo-Q"></span><span  name="nameElement" class="nameInfo" style="margin-right: 10px;">Query</span></div>'});
         g.setNode("6", {labelType: "html",label: '<div id=flowdivInfo onmouseover= "" style="cursor: pointer;"> <span class="typeInfo typeInfo-PW"></span><span  name="nameElement" class="nameInfo" style="margin-right: 10px;">Partition</span></div>'});
-
     //left to right layout
         g.setGraph({
         nodesep: 70,
@@ -109,30 +99,22 @@
         marginx: 20,
         marginy: 20
         });
-
         g.nodes().forEach(function(v) {
           var node = g.node(v);
           node.padding = 0;
         });
-
         var render = new dagreD3.render();
-
         var svg = d3.select('#flowdivInfo'),
             svgGroup = svg.append('g');
-
         render(svgGroup, g);
     }
-
     function tryDraw() {
-
         // Create a new directed graph
         var g = new dagreD3.graphlib.Graph({compound:true})
           .setGraph({})
           .setDefaultEdgeLabel(function() { return {}; });
-
         var exeFlow = <%=executionPlan_nodes %>.replace(/\n/g, "\\n").replace(/\'/g, "");
         var queryFlow = jQuery.parseJSON(exeFlow);
-
         //create nodes
         var nodes = queryFlow.nodes;
         for (var i = 0; i < nodes.length; i++) {
@@ -141,7 +123,6 @@
             }
             g.setNode(nodes[i].id, {labelType: "html",label: '<div id=flowdiv onmouseover= "" style="cursor: pointer;"data-toggle="tooltip" title=\'' + nodes[i].toolTip + '\'><span class="type type-'+ nodes[i].nodeclass + '"></span><span  name="nameElement" class="name" style="margin-right: 10px;">' + nodes[i].label + '</span></div>'});
         }
-
         g.nodes().forEach(function(v) {
             var node = g.node(v);
             //Round the corner's of each node
@@ -149,13 +130,11 @@
             //remove the space around the content
             node.padding = 0;
         });
-
         // node which used to group
         var partitionWith = queryFlow.partitionWith;
         for (var i = 0; i < partitionWith.length; i++) {
             g.setNode(partitionWith[i].id, {labelType: "html",label:'<div onmouseover= "" style="cursor: pointer;"data-toggle="tooltip" title=\'' +partitionWith[i].toolTip +'\'> <span  name="nameElement" class="name" style="margin-right: 10px;">' + partitionWith[i].label + '</span></div>', clusterLabelPos: 'bottom', style: 'fill: #d3d7e8',  });
         }
-
         //set parent
         for (var i = 0; i < nodes.length; i++) {
             for (var k = 0; k < partitionWith.length; k++) {
@@ -164,13 +143,11 @@
                 }
             }
         }
-
         //create edges
         var edges = queryFlow.edges;
         for (var i = 0; i < edges.length; i++) {
             g.setEdge(edges[i].from, edges[i].to, {});
         }
-
         //left to right layout
         g.setGraph({
             nodesep: 70,
@@ -179,24 +156,19 @@
             marginx: 20,
             marginy: 20
         });
-
         // Create the renderer
         var render = new dagreD3.render();
-
         // Set up an SVG group so that we can translate the final graph.
         var svg = d3.select('#flowdiv'),
             svgGroup = svg.append("g").attr("transform","translate(0,0)scale(0.75)");
-
         // Run the renderer. This is what draws the final graph.
         render(svgGroup, g);
-
         // Set up zoom support
         var zoom = d3.behavior.zoom().on("zoom", function() {
               svgGroup.attr("transform", "translate(" + d3.event.translate + ")" +
                                       "scale(" + d3.event.scale + ")");
             });
         svg.call(zoom);
-
         // Zoom and scale to fit
         var graphWidth = g.graph().width + 80;
         var graphHeight = g.graph().height + 40;
@@ -207,7 +179,6 @@
         zoom.translate(translate);
         zoom.scale(zoomScale);
         zoom.event(isUpdate ? svg.transition().duration(500) : d3.select("svg"));
-
         // Center the graph
         var xCenterOffset = (svg.attr("width") - g.graph().width) / 2;
         svgGroup.attr("transform", "translate(" + xCenterOffset + ", 20)");
@@ -343,12 +314,10 @@
 <script>
     var init = function () {
         var mime = MIME_TYPE_SIDDHI_QL;
-
         // get mime type
         if (window.location.href.indexOf('mime=') > -1) {
             mime = window.location.href.substr(window.location.href.indexOf('mime=') + 5);
         }
-
         window.queryEditor = CodeMirror.fromTextArea(document.getElementById('queryExpressions'), {
             mode: mime,
             indentWithTabs: true,

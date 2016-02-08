@@ -27,28 +27,40 @@ public interface EventSimulator {
 
     public Collection<StreamDefinition> getAllEventStreamDefinitions();
 
-    public void sendEvent(Event eventDetail)throws AxisFault;
+    public void sendEvent(Event eventDetail) throws AxisFault;
 
     public List<CSVFileInfo> getAllCSVFileInfo();
 
-    public void sendEvents(String fileName)throws AxisFault;
+    public void sendEvents(String fileName) throws AxisFault;
 
-    public void uploadService(UploadedFileItem[] fileItems,AxisConfiguration axisConfiguration)throws AxisFault;
+    public void pauseEvents(String fileName) throws AxisFault;
 
-    public String createTableAndAttributeMappingInfo(String fileName)throws AxisFault;
+    public void resumeEvents(String fileName) throws AxisFault;
 
-    public void createConfigurationXML(String fileName,String streamId,String separateChar, long eventSendingDelay,
+    public void stopEvents(String fileName) throws AxisFault;
+
+    public void uploadService(UploadedFileItem[] fileItems, AxisConfiguration axisConfiguration) throws AxisFault;
+
+    public String createTableAndAttributeMappingInfo(String fileName) throws AxisFault;
+
+    public void createConfigurationXML(String fileName, String streamId, String separateChar, long eventSendingDelay,
                                        AxisConfiguration axisConfiguration);
 
-    public void deleteFile(String fileName,AxisConfiguration axisConfiguration)throws AxisFault;
+    public void deleteFile(String fileName, AxisConfiguration axisConfiguration) throws AxisFault;
 
     public List<DataSourceTableAndStreamInfo> getAllDataSourceInfo();
 
-    public void sendEventsViaDB(JSONObject allInfo, String preparedSelectStatement) throws AxisFault;
+    public void sendEventsViaDB(String fileName, JSONObject allInfo, String preparedSelectStatement) throws AxisFault;
 
-    public void createConfigurationXMLForDataSource(String dataSourceConfigAndEventStreamInfo,AxisConfiguration axisConfiguration) throws AxisFault;
+    public void pauseEventsViaDB(String fileName) throws AxisFault;
 
-    public void deleteDBConfigFile(String fileName,AxisConfiguration axisConfiguration)throws AxisFault;
+    public void resumeEventsViaDB(String fileName) throws AxisFault;
+
+    public void stopEventsViaDB(String fileName) throws AxisFault;
+
+    public void createConfigurationXMLForDataSource(String dataSourceConfigAndEventStreamInfo, AxisConfiguration axisConfiguration) throws AxisFault;
+
+    public void deleteDBConfigFile(String fileName, AxisConfiguration axisConfiguration) throws AxisFault;
 
 
 }

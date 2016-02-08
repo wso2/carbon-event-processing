@@ -1,3 +1,5 @@
+<%@ page import="org.wso2.carbon.event.simulator.stub.EventSimulatorAdminServiceStub" %>
+<%@ page import="org.wso2.carbon.event.simulator.ui.EventSimulatorUIUtils" %>
 <%--
   ~ Copyright (c) 2015, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
   ~
@@ -15,8 +17,6 @@
   ~ specific language governing permissions and limitations
   ~ under the License.
   --%>
-<%@ page import="org.wso2.carbon.event.simulator.stub.EventSimulatorAdminServiceStub" %>
-<%@ page import="org.wso2.carbon.event.simulator.ui.EventSimulatorUIUtils" %>
 
 
 <%@ taglib uri="http://wso2.org/projects/carbon/taglibs/carbontags.jar" prefix="carbon" %>
@@ -56,7 +56,7 @@
 %>
 
 <script type="text/javascript">
-    jQuery(document).ready(function() {
+    jQuery(document).ready(function () {
         document.getElementById("fileArea").style.display = "inline";
         document.getElementById("dataSourceArea").style.display = "none";
     });
@@ -75,10 +75,10 @@
 <script type="text/javascript">
 
     function saveDataSourceConfiguration() {
-        var selectDataSourceId = document.getElementById( "dataSourceTypeID" );
-        if(selectDataSourceId.options[selectDataSourceId.selectedIndex ].value.localeCompare("RDBMS") == 0){
+        var selectDataSourceId = document.getElementById("dataSourceTypeID");
+        if (selectDataSourceId.options[selectDataSourceId.selectedIndex ].value.localeCompare("RDBMS") == 0) {
             saveDBConfiguration("RDBMS");
-        }else{
+        } else {
             saveDBConfiguration("Cassandra");
         }
 
@@ -88,10 +88,10 @@
 <script type="text/javascript">
 
     function testConnection() {
-        var selectDataSourceId = document.getElementById( "dataSourceTypeID" );
-        if(selectDataSourceId.options[selectDataSourceId.selectedIndex ].value.localeCompare("RDBMS") == 0){
+        var selectDataSourceId = document.getElementById("dataSourceTypeID");
+        if (selectDataSourceId.options[selectDataSourceId.selectedIndex ].value.localeCompare("RDBMS") == 0) {
             testRDBMConnection("RDBMS");
-        }else{
+        } else {
             testRDBMConnection("Cassandra");
         }
 
@@ -107,412 +107,536 @@
 <div id="custom_dcontainer" style="display:none"></div>
 
 <div id="middle">
-    <div id="workArea">
-    <h2><fmt:message key="event.stream.simulator"/> </h2>
-    <br>
+<div id="workArea">
+<h2><fmt:message key="event.stream.simulator"/></h2>
+<br>
 
-        <h4 style="color: #0D4d79"><fmt:message key="send.single.event"/> </h4>
+<h4 style="color: #0D4d79"><fmt:message key="send.single.event"/></h4>
 
-        <div id="dataArea" style="display: inline;">
-            <form name="eventStreams" id="eventStreams" method="post" >
-                <table id="eventStreamtable" class="styledLeft">
-                    <thead>
-                    <tr>
-                        <th> </th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    <tr>
-                        <td class="formRow">
-                            <table id="inputEventDetailTable" class="normal-nopadding">
-                                <tbody>
-                                <tr>
-                                    <td class="leftCol-med"><fmt:message key="select.the.event.stream"/>
-                                        <span class="required">*</span>
-                                    </td>
-                                    <td>
-                                        <select name="EventStreamID" id="EventStreamID" onload="showEventProperties()"
-                                                onchange="showEventProperties()">
-
-                                            <%
-                                                if (eventInfoArray == null) {
-                                            %>
-
-                                            <option value="No Event Stream Definitions">
-                                                <fmt:message key="no.event.stream.definition"/>
-                                            </option>
-                                            <%
-                                            } else {%>
-
-                                                <option value="select">select event stream
-                                                </option>
-
-                                                <%
-                                                for (int i = 0; i < eventInfoArray.length; i++) {
-                                                    String streamName = eventInfoArray[i].getStreamName();
-                                                    String streamVersion = eventInfoArray[i].getStreamVersion();
-                                                    if ((streamName + ":" + streamVersion).equalsIgnoreCase(streamId)) {
-                                                        %>
-                                                        <option value="<%=eventInfoArray[i].getStreamName()%>" selected>
-                                                            <%=streamName + ":" + streamVersion%>
-                                                        </option>
-                                                    <%} else {%>
-                                                        <option value="<%=eventInfoArray[i].getStreamName()%>">
-                                                            <%=streamName + ":" + streamVersion%>
-                                                        </option>
-                                                    <%
-                                                    }
-                                                }
-                                                if (!"".equalsIgnoreCase(streamId)) {
-                                                %>
-                                                    <script>
-                                                        showEventProperties();
-                                                    </script>
-                                                <%}
-                                            }%>
-                                        </select>
-                                    </td>
-                                </tr>
-                                </tbody>
-                            </table>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td class="buttonRow">
-                            <input type="button" value="Send"
-                                   onclick="sendEvent(document.getElementById('eventStreams'))"/>
-                            <input id="btnClear" type="button" value="Clear"/>
-                        </td>
-                    </tr>
-                    </tbody>
-                </table>
-
-            </form>
-
-        </div>
-
-        <br/>
-        <h4 style="color: #0D4d79"><fmt:message key="send.multiple.events"/>
-        </h4>
-
-        <div id="fileArea">
-            <form name="csvFileForm" id="csvFileForm" method="post" action="../../fileupload/csv" enctype="multipart/form-data"
-                  target="_self"  >
-
-                <table class="styledLeft">
-                    <thead>
-                    <tr>
-                        <th colspan="4" class="middle-header">
-                                            <span
-                                                    style="float: left; position: relative; margin-top: 2px;">
-                                                    <fmt:message key="input.by.file" />
-                                            </span>
-                            <a href="#" onclick="changeView('fileArea');" class="icon-link"
-                               style="background-image: url(images/design-view.gif); font-weight: normal">
-                                switch to configure database for simulation</a>
-                        </th>
-                    </tr>
-                    <tr>
-                        <th><fmt:message key="file"/> </th>
-                        <th><fmt:message key="stream.configuration"/> </th>
-                        <th><fmt:message key="event.delay"/> </th>
-                        <th><fmt:message key="action"/> </th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    <%if(csvFileInfoDtosArray==null){%>
-                    <tr>
-                        <td><fmt:message key="no.file.has.been.uploaded"/> </td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                    </tr>
-                    <%
-                    } else {
-                        for (int k = 0; k < csvFileInfoDtosArray.length; k++) {
-                    %>
-
-                    <tr>
-                        <td><strong><%=csvFileInfoDtosArray[k].getFileName()%></strong></td>
-
-                        <% if (csvFileInfoDtosArray[k].getStreamID() != null) {%>
-                            <td><%=csvFileInfoDtosArray[k].getStreamID()%></td>
-                        <%} else {
-                            %>
-                            <td>
-                                <fmt:message key="click.configuration"/>
+<div id="dataArea" style="display: inline;">
+    <form name="eventStreams" id="eventStreams" method="post">
+        <table id="eventStreamtable" class="styledLeft">
+            <thead>
+            <tr>
+                <th></th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+                <td class="formRow">
+                    <table id="inputEventDetailTable" class="normal-nopadding">
+                        <tbody>
+                        <tr>
+                            <td class="leftCol-med"><fmt:message key="select.the.event.stream"/>
+                                <span class="required">*</span>
                             </td>
-                        <%}%>
-
-                        <% if (csvFileInfoDtosArray[k].getDelayBetweenEventsInMilies() != 0) {%>
-                            <td><%=csvFileInfoDtosArray[k].getDelayBetweenEventsInMilies()%></td>
-                            <%} else {
-                            %>
                             <td>
-                                <fmt:message key="click.configuration"/>
-                            </td>
-                        <%}%>
+                                <select name="EventStreamID" id="EventStreamID" onload="showEventProperties()"
+                                        onchange="showEventProperties()">
 
-                        <td>
-                            <%if (csvFileInfoDtosArray[k].getStreamID() != null) {%>
-                            <input type="button" value="Play" onclick="sendFileDetails(
-                                    '<%=csvFileInfoDtosArray[k].getFileName()%>')">
-                            <%}%>
-                            <input type="button" value="Configure" onclick="createPopupStreamConfigUI(
-                                    '<%=csvFileInfoDtosArray[k].getFileName()%>')">
-                            <input type="button" value="Delete" onclick="deleteFile(
-                                    '<%=csvFileInfoDtosArray[k].getFileName()%>')">
-                        </td>
-                    </tr>
-                    <%
-                            }
-                        }
-
-                    %>
-
-                    </tbody>
-
-                    <tr>
-                        <td class="buttonRow" colspan="4">
-                            <input type="file" name="csvFileName" id="csvFile" size="50"/>
-                            <input name="upload" class="button registryWriteOperation" type="button"
-                                   value="upload" onclick="validateUpload()"/>
-                        </td>
-                    </tr>
-                </table>
-            </form>
-        </div>
-        <div id="dataSourceArea">
-
-                <form name="inputFormDB" action="#" method="post" id="inputFormDB">
-                    <table class="styledLeft noBorders" cellspacing="0" cellpadding="0" border="0" style="border-bottom:1px solid #cccccc">
-                        <thead>
-
-                    <tr>
-                        <th colspan="3" class="middle-header">
-                                                <span
-                                                        style="float: left; position: relative; margin-top: 2px;">
-                                                        <fmt:message key="input.by.ds" />
-                                                </span>
-                            <a href="#" onclick="changeView('dataSourceArea');" class="icon-link"
-                               style="background-image: url(images/design-view.gif); font-weight: normal">
-                                switch to upload file for simulation</a>
-                        </th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    <tr>
-                        <td colspan="3">
-                            <table class="styledLeft" id = "dataSourceConfigInfoTableID" cellspacing="0"
-                                   cellpadding="0" style="border-bottom:none">
-                                <thead>
-                                <tr>
-                                    <th><fmt:message key="configuration.name"/> </th>
-                                    <th><fmt:message key="data.source.name"/> </th>
-                                    <th><fmt:message key="table.name"/> </th>
-                                    <th><fmt:message key="column.names"/> </th>
-                                    <th><fmt:message key="stream.id"/> </th>
-                                    <th><fmt:message key="stream.attributes"/> </th>
-                                    <th><fmt:message key="event.delay"/> </th>
-                                    <th><fmt:message key="action"/> </th>
-                                </tr>
-                                </thead>
-                                <tbody>
-                                <%if (dataSourceTableAndStreamInfoDtoArray == null) {%>
-                                <tr>
-                                    <td><fmt:message key="no.configuration"/> </td>
-                                    <td></td>
-                                    <td></td>
-                                    <td></td>
-                                    <td></td>
-                                    <td></td>
-                                    <td></td>
-                                    <td></td>
-                                </tr>
-                                <%
-                                } else {
-                                    for (int k = 0; k < dataSourceTableAndStreamInfoDtoArray.length; k++) {
-                                %>
-
-                                <tr>
-
-                                    <td><%=dataSourceTableAndStreamInfoDtoArray[k].getConfigurationName()%></td>
-                                    <td><%=dataSourceTableAndStreamInfoDtoArray[k].getDataSourceName()%></td>
-                                    <td><%=dataSourceTableAndStreamInfoDtoArray[k].getTableName()%></td>
                                     <%
-                                        String columns = "", streamAttributes = "";
+                                        if (eventInfoArray == null) {
+                                    %>
 
-                                        boolean addedFirstColumn = false;
-                                        boolean addedFirstAttribute = false;
-                                        String[] columnArray = dataSourceTableAndStreamInfoDtoArray[k].getColumnNames();
-                                        String[] streamAttributesArray = dataSourceTableAndStreamInfoDtoArray[k].getStreamAtrributeNames();
+                                    <option value="No Event Stream Definitions">
+                                        <fmt:message key="no.event.stream.definition"/>
+                                    </option>
+                                    <%
+                                    } else {%>
 
-                                        for (int i = 0; i < columnArray.length; i++) {
-                                            if (addedFirstColumn) {
-                                                columns = columns + ",";
-                                                if ((i != 0) && (i % 3 == 0)) {
-                                                    columns = columns + "\n";
-                                                }
+                                    <option value="select">select event stream
+                                    </option>
+
+                                    <%
+                                        for (int i = 0; i < eventInfoArray.length; i++) {
+                                            String streamName = eventInfoArray[i].getStreamName();
+                                            String streamVersion = eventInfoArray[i].getStreamVersion();
+                                            if ((streamName + ":" + streamVersion).equalsIgnoreCase(streamId)) {
+                                    %>
+                                    <option value="<%=eventInfoArray[i].getStreamName()%>" selected>
+                                        <%=streamName + ":" + streamVersion%>
+                                    </option>
+                                    <%} else {%>
+                                    <option value="<%=eventInfoArray[i].getStreamName()%>">
+                                        <%=streamName + ":" + streamVersion%>
+                                    </option>
+                                    <%
                                             }
-                                            if (addedFirstAttribute) {
-                                                streamAttributes = streamAttributes + ",";
-                                                if ((i != 0) && (i % 3 == 0)) {
-                                                    streamAttributes = streamAttributes + "\n";
-                                                }
+                                        }
+                                        if (!"".equalsIgnoreCase(streamId)) {
+                                    %>
+                                    <script>
+                                        showEventProperties();
+                                    </script>
+                                    <%
                                             }
-                                            addedFirstColumn = true;
-                                            addedFirstAttribute = true;
-                                            columns = columns + columnArray[i];
-                                            streamAttributes = streamAttributes + streamAttributesArray[i];
                                         }
                                     %>
-                                    <td><%=columns%></td>
-                                    <td><%=dataSourceTableAndStreamInfoDtoArray[k].getEventStreamID()%></td>
-                                    <td><%=streamAttributes%></td>
-                                    <td><%=dataSourceTableAndStreamInfoDtoArray[k].getDelayBetweenEventsInMilies()%></td>
+                                </select>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </td>
+            </tr>
+            <tr>
+                <td class="buttonRow">
+                    <input type="button" value="Send"
+                           onclick="sendEvent(document.getElementById('eventStreams'))"/>
+                    <input id="btnClear" type="button" value="Clear"/>
+                </td>
+            </tr>
+            </tbody>
+        </table>
 
-                                    <td>
+    </form>
 
-                                        <input type="button" value="Play" onclick="sendDBConfigFileNameToSimulate(
-                                                '<%=dataSourceTableAndStreamInfoDtoArray[k].getFileName()%>')">
-                                        <input type="button" value="Delete" onclick="deleteDBConfigFile(
-                                                '<%=dataSourceTableAndStreamInfoDtoArray[k].getFileName()%>')">
-                                    </td>
-                                </tr>
-                                <%}
+</div>
 
-                                }%>
-
-                                </tbody>
-                            </table>
-                        </td>
-                    </tr>
-
-                    <tr>
-                        <td class="formRow" colspan="2">
-                            <table id="inputEventDetailTable3" class="normal-nopadding" style="width:100%">
-                                <tbody>
-                                <tr>
-                                    <td style="padding-left:10px">Configuration Name<span class="required">*</span></td>
-                                    <td colspan="2" style="padding-left:10px">
-                                        <div class="outputFields">
-                                            <input style="width:75%" type="text" id="configurationNameId2"
-                                                   name="configuration.name" value="" class="initE">
-                                        </div>
-                                    </td>
-                                </tr>
-
-                                <tr>
-                                    <td style="padding-left:10px">Data Source Type<span class="required">*</span></td>
-                                    <td colspan="2" style="padding-left:10px">
-                                        <select name="dataSourceTypeID" id="dataSourceTypeID">
-
-                                            <option value="RDBMS">RDBMS
-                                            </option>
-                                        </select>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td style="padding-left:10px" >Data Source Name<span class="required">*</span></td>
-                                    <td colspan="2" style="padding-left:10px">
-                                        <div class="outputFields">
-                                            <input style="width:75%" type="text" id="dataSourceNameId2"
-                                                   name="datasource.name" value="" class="initE">
-                                        </div>
-                                    </td>
-                                </tr>
-
-                                <tr>
-                                    <td class="leftCol-med" style="padding-left:10px">Table Name
-                                        <span class="required">*</span>
-                                    </td>
-                                    <td style="padding-left:10px">
-                                        <div class="outputFields">
-                                            <input type="text" name="table.name" id="tableNameId2" class="initE" style="width:75%" value="">
-                                        </div>
-                                    </td>
-                                </tr>
-
-                                <tr>
-                                    <td class="leftCol-med" style="padding-left:10px">Delay between events in milliseconds
-                                        <span class="required">*</span>
-                                    </td>
-                                    <td style="padding-left:10px">
-                                        <div class="outputFields">
-                                            <input type="text" name="table.name" id="eventSendingDelay2" class="initE" style="width:75%" value="1000">
-                                        </div>
-                                    </td>
-                                </tr>
-                                </tbody>
-                            </table>
-                        </td>
-                    </tr>
+<br/>
+<h4 style="color: #0D4d79"><fmt:message key="send.multiple.events"/>
+</h4>
 
 
-                    <tr>
-                        <td class="formRow" colspan="2">
-                            <table id="inputEventDetailTable2" class="normal-nopadding" style="width:100%">
-                                <tbody>
-                                <tr>
-                                    <td class="leftCol-med"><fmt:message key="select.the.event.stream"/> <span class="required">*</span></td>
-                                    <td>
-                                        <select name="EventStreamID" id="EventStreamID2" onload="showEventPropertiesForSimulator()"
-                                                onchange="showEventPropertiesForSimulator()">
+<div id="fileArea">
+    <form name="csvFileForm" id="csvFileForm" method="post" action="../../fileupload/csv" enctype="multipart/form-data"
+          target="_self">
 
-                                            <%
-                                                if (eventInfoArray == null) {
-                                            %>
-                                            <option value="No Event Stream Definitions"><fmt:message
-                                                    key="no.event.stream.definition"/>
-                                            </option>
-                                            <%} else {%>
+        <table class="styledLeft">
+            <thead>
+            <tr>
+                <th colspan="4" class="middle-header">
+                                            <span
+                                                    style="float: left; position: relative; margin-top: 2px;">
+                                                    <fmt:message key="input.by.file"/>
+                                            </span>
+                    <a href="#" onclick="changeView('fileArea');" class="icon-link"
+                       style="background-image: url(images/design-view.gif); font-weight: normal">
+                        switch to configure database for simulation</a>
+                </th>
+            </tr>
+            <tr>
+                <th><fmt:message key="file"/></th>
+                <th><fmt:message key="stream.configuration"/></th>
+                <th><fmt:message key="event.delay"/></th>
+                <th><fmt:message key="action"/></th>
+            </tr>
+            </thead>
+            <tbody>
+            <%if (csvFileInfoDtosArray == null) {%>
+            <tr>
+                <td><fmt:message key="no.file.has.been.uploaded"/></td>
+                <td></td>
+                <td></td>
+                <td></td>
+            </tr>
+            <%
+            } else {
+                for (int k = 0; k < csvFileInfoDtosArray.length; k++) {
+            %>
 
-                                                <option value="select">select event stream
-                                                </option>
-                                                <%
-                                                    for (int i = 0; i < eventInfoArray.length; i++) {
-                                                        String streamName = eventInfoArray[i].getStreamName();
-                                                        String streamVersion = eventInfoArray[i].getStreamVersion();
-                                                        if ((streamName + ":" + streamVersion).equalsIgnoreCase(streamId)) {
-                                                            %>
-                                                            <option value="<%=eventInfoArray[i].getStreamName()%>" selected>
-                                                                <%=streamName + ":" + streamVersion%>
-                                                            </option>
-                                                        <%} else {%>
-                                                        <option value="<%=eventInfoArray[i].getStreamName()%>">
-                                                            <%=streamName + ":" + streamVersion%>
-                                                        </option>
-                                                        <%
-                                                        }
-                                                    }
-                                                }%>
-                                        </select>
-                                    </td>
-                                </tr>
+            <tr>
+                <td><strong><%=csvFileInfoDtosArray[k].getFileName()%>
+                </strong></td>
 
-                                </tbody>
-                            </table>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td class="buttonRow formRow" colspan="2">
-                            <input type="button" value="Test Connection" onclick = "testConnection()">
-                            <input type="button" value="Save" onclick = "saveDataSourceConfiguration()">
-                        </td>
+                <% if (csvFileInfoDtosArray[k].getStreamID() != null) {%>
+                <td><%=csvFileInfoDtosArray[k].getStreamID()%>
+                </td>
+                <%
+                } else {
+                %>
+                <td>
+                    <fmt:message key="click.configuration"/>
+                </td>
+                <%}%>
 
-                    </tr>
-                    </tbody>
+                <% if (csvFileInfoDtosArray[k].getDelayBetweenEventsInMillis() != 0) {%>
+                <td><%=csvFileInfoDtosArray[k].getDelayBetweenEventsInMillis()%>
+                </td>
+                <%
+                } else {
+                %>
+                <td>
+                    <fmt:message key="click.configuration"/>
+                </td>
+                <%}%>
 
-                </table>
+                <td>
+                    <%if (csvFileInfoDtosArray[k].getStreamID() != null && csvFileInfoDtosArray[k].getStatus().equalsIgnoreCase("STOPPED")) {%>
+                    <span id="fileSimulationPlay<%= csvFileInfoDtosArray[k].getFileName()%>" >
+                        <input type="button" value="Play" onclick="sendFileDetails(
+                                '<%=csvFileInfoDtosArray[k].getFileName()%>')">
+                    </span>
+                    <span id="fileSimulationPause<%= csvFileInfoDtosArray[k].getFileName()%>" style="display:none;">
+                        <input type="button" value="Pause" onclick="pauseEventsViaFile(
+                                '<%=csvFileInfoDtosArray[k].getFileName()%>')">
+                    </span>
+                    <span id="fileSimulationResume<%= csvFileInfoDtosArray[k].getFileName()%>" style="display:none;">
+                        <input type="button" value="Resume" onclick="resumeEventsViaFile(
+                                '<%=csvFileInfoDtosArray[k].getFileName()%>')">
+                    </span>
+                    <span id="fileSimulationStop<%= csvFileInfoDtosArray[k].getFileName()%>" style="display:none;">
+                        <input type="button" value="Stop" onclick="stopEventsViaFile(
+                                '<%=csvFileInfoDtosArray[k].getFileName()%>')">
+                    </span>
+                    <%}%>
 
-            </form>
-        </div>
+                    <%if (csvFileInfoDtosArray[k].getStreamID() != null && (csvFileInfoDtosArray[k].getStatus().equalsIgnoreCase("STARTED") || csvFileInfoDtosArray[k].getStatus().equalsIgnoreCase("RESUMED"))) {%>
+                    <span id="fileSimulationPlay<%= csvFileInfoDtosArray[k].getFileName()%>" style="display:none;">
+                        <input type="button" value="Play" onclick="sendFileDetails(
+                                '<%=csvFileInfoDtosArray[k].getFileName()%>')">
+                    </span
+                            >
+                    <span id="fileSimulationPause<%= csvFileInfoDtosArray[k].getFileName()%>" >
+                        <input type="button" value="Pause" onclick="pauseEventsViaFile(
+                                '<%=csvFileInfoDtosArray[k].getFileName()%>')">
+                    </span>
+                    <span id="fileSimulationResume<%= csvFileInfoDtosArray[k].getFileName()%>" style="display:none;">
+                        <input type="button" value="Resume" onclick="resumeEventsViaFile(
+                                '<%=csvFileInfoDtosArray[k].getFileName()%>')">
+                    </span>
+                    <span id="fileSimulationStop<%= csvFileInfoDtosArray[k].getFileName()%>" >
+                        <input type="button" value="Stop" onclick="stopEventsViaFile(
+                                '<%=csvFileInfoDtosArray[k].getFileName()%>')">
+                    </span>
+                    <%}%>
+
+                    <%if (csvFileInfoDtosArray[k].getStreamID() != null && csvFileInfoDtosArray[k].getStatus().equalsIgnoreCase("PAUSED")) {%>
+                    <span id="fileSimulationPlay<%= csvFileInfoDtosArray[k].getFileName()%>" style="display:none;">
+                        <input type="button" value="Play" onclick="sendFileDetails(
+                                '<%=csvFileInfoDtosArray[k].getFileName()%>')">
+                    </span>
+                    <span id="fileSimulationPause<%= csvFileInfoDtosArray[k].getFileName()%>" style="display:none;">
+                        <input type="button" value="Pause" onclick="pauseEventsViaFile(
+                                '<%=csvFileInfoDtosArray[k].getFileName()%>')">
+                    </span>
+                    <span id="fileSimulationResume<%= csvFileInfoDtosArray[k].getFileName()%>" >
+                        <input type="button" value="Resume" onclick="resumeEventsViaFile(
+                                '<%=csvFileInfoDtosArray[k].getFileName()%>')">
+                    </span>
+                    <span id="fileSimulationStop<%= csvFileInfoDtosArray[k].getFileName()%>" >
+                        <input type="button" value="Stop" onclick="stopEventsViaFile(
+                                '<%=csvFileInfoDtosArray[k].getFileName()%>')">
+                    </span>
+                    <%}%>
+                    <input type="button" value="Configure" onclick="createPopupStreamConfigUI(
+                            '<%=csvFileInfoDtosArray[k].getFileName()%>')">
+                    <input type="button" value="Delete" onclick="deleteFile(
+                            '<%=csvFileInfoDtosArray[k].getFileName()%>')">
+                </td>
+            </tr>
+            <%
+                    }
+                }
+
+            %>
+
+            </tbody>
+
+            <tr>
+                <td class="buttonRow" colspan="4">
+                    <input type="file" name="csvFileName" id="csvFile" size="50"/>
+                    <input name="upload" class="button registryWriteOperation" type="button"
+                           value="upload" onclick="validateUpload()"/>
+                </td>
+            </tr>
+        </table>
+    </form>
+</div>
+<div id="dataSourceArea">
+
+<form name="inputFormDB" action="#" method="post" id="inputFormDB">
+<table class="styledLeft noBorders" cellspacing="0" cellpadding="0" border="0" style="border-bottom:1px solid #cccccc">
+<thead>
+
+<tr>
+    <th colspan="3" class="middle-header">
+                                                <span
+                                                        style="float: left; position: relative; margin-top: 2px;">
+                                                        <fmt:message key="input.by.ds"/>
+                                                </span>
+        <a href="#" onclick="changeView('dataSourceArea');" class="icon-link"
+           style="background-image: url(images/design-view.gif); font-weight: normal">
+            switch to upload file for simulation</a>
+    </th>
+</tr>
+</thead>
+<tbody>
+<tr>
+    <td colspan="3">
+        <table class="styledLeft" id="dataSourceConfigInfoTableID" cellspacing="0"
+               cellpadding="0" style="border-bottom:none">
+            <thead>
+            <tr>
+                <th><fmt:message key="configuration.name"/></th>
+                <th><fmt:message key="data.source.name"/></th>
+                <th><fmt:message key="table.name"/></th>
+                <th><fmt:message key="column.names"/></th>
+                <th><fmt:message key="stream.id"/></th>
+                <th><fmt:message key="stream.attributes"/></th>
+                <th><fmt:message key="event.delay"/></th>
+                <th><fmt:message key="action"/></th>
+            </tr>
+            </thead>
+            <tbody>
+            <%if (dataSourceTableAndStreamInfoDtoArray == null) {%>
+            <tr>
+                <td><fmt:message key="no.configuration"/></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+            </tr>
+            <%
+            } else {
+                for (int k = 0; k < dataSourceTableAndStreamInfoDtoArray.length; k++) {
+            %>
+
+            <tr>
+
+                <td><%=dataSourceTableAndStreamInfoDtoArray[k].getConfigurationName()%>
+                </td>
+                <td><%=dataSourceTableAndStreamInfoDtoArray[k].getDataSourceName()%>
+                </td>
+                <td><%=dataSourceTableAndStreamInfoDtoArray[k].getTableName()%>
+                </td>
+                <%
+                    String columns = "", streamAttributes = "";
+
+                    boolean addedFirstColumn = false;
+                    boolean addedFirstAttribute = false;
+                    String[] columnArray = dataSourceTableAndStreamInfoDtoArray[k].getColumnNames();
+                    String[] streamAttributesArray = dataSourceTableAndStreamInfoDtoArray[k].getStreamAttributeNames();
+
+                    for (int i = 0; i < columnArray.length; i++) {
+                        if (addedFirstColumn) {
+                            columns = columns + ",";
+                            if ((i != 0) && (i % 3 == 0)) {
+                                columns = columns + "\n";
+                            }
+                        }
+                        if (addedFirstAttribute) {
+                            streamAttributes = streamAttributes + ",";
+                            if ((i != 0) && (i % 3 == 0)) {
+                                streamAttributes = streamAttributes + "\n";
+                            }
+                        }
+                        addedFirstColumn = true;
+                        addedFirstAttribute = true;
+                        columns = columns + columnArray[i];
+                        streamAttributes = streamAttributes + streamAttributesArray[i];
+                    }
+                %>
+                <td><%=columns%>
+                </td>
+                <td><%=dataSourceTableAndStreamInfoDtoArray[k].getEventStreamID()%>
+                </td>
+                <td><%=streamAttributes%>
+                </td>
+                <td><%=dataSourceTableAndStreamInfoDtoArray[k].getDelayBetweenEventsInMillis()%>
+                </td>
+
+                <td>
+
+                    <%if (dataSourceTableAndStreamInfoDtoArray[k].getStatus().equalsIgnoreCase("STOPPED")) {%>
+                    <span id="dbSimulationPlay<%= dataSourceTableAndStreamInfoDtoArray[k].getFileName()%>" >
+                        <input type="button" value="Play" onclick="sendDBConfigFileNameToSimulate(
+                                '<%=dataSourceTableAndStreamInfoDtoArray[k].getFileName()%>')">
+                    </span>
+                    <span id="dbSimulationPause<%= dataSourceTableAndStreamInfoDtoArray[k].getFileName()%>" style="display:none;">
+                        <input type="button" value="Pause" onclick="pauseDBConfigFileNameToSimulate(
+                                '<%=dataSourceTableAndStreamInfoDtoArray[k].getFileName()%>')">
+                    </span>
+                    <span id="dbSimulationResume<%= dataSourceTableAndStreamInfoDtoArray[k].getFileName()%>" style="display:none;">
+                        <input type="button" value="Resume" onclick="resumeDBConfigFileNameToSimulate(
+                                '<%=dataSourceTableAndStreamInfoDtoArray[k].getFileName()%>')">
+                    </span>
+                    <span id="dbSimulationStop<%= dataSourceTableAndStreamInfoDtoArray[k].getFileName()%>" style="display:none;">
+                        <input type="button" value="Stop" onclick="stopDBConfigFileNameToSimulate(
+                                '<%=dataSourceTableAndStreamInfoDtoArray[k].getFileName()%>')">
+                    </span>
+                    <%}%>
+
+                    <%if ((dataSourceTableAndStreamInfoDtoArray[k].getStatus().equalsIgnoreCase("STARTED") || dataSourceTableAndStreamInfoDtoArray[k].getStatus().equalsIgnoreCase("RESUMED"))) {%>
+                    <span id="dbSimulationPlay<%= dataSourceTableAndStreamInfoDtoArray[k].getFileName()%>" style="display:none;">
+                        <input type="button" value="Play" onclick="sendDBConfigFileNameToSimulate(
+                                '<%=dataSourceTableAndStreamInfoDtoArray[k].getFileName()%>')">
+                    </span
+                            >
+                    <span id="dbSimulationPause<%= dataSourceTableAndStreamInfoDtoArray[k].getFileName()%>" >
+                        <input type="button" value="Pause" onclick="pauseDBConfigFileNameToSimulate(
+                                '<%=dataSourceTableAndStreamInfoDtoArray[k].getFileName()%>')">
+                    </span>
+                    <span id="dbSimulationResume<%= dataSourceTableAndStreamInfoDtoArray[k].getFileName()%>" style="display:none;">
+                        <input type="button" value="Resume" onclick="resumeDBConfigFileNameToSimulate(
+                                '<%=dataSourceTableAndStreamInfoDtoArray[k].getFileName()%>')">
+                    </span>
+                    <span id="dbSimulationStop<%= dataSourceTableAndStreamInfoDtoArray[k].getFileName()%>" >
+                        <input type="button" value="Stop" onclick="stopDBConfigFileNameToSimulate(
+                                '<%=dataSourceTableAndStreamInfoDtoArray[k].getFileName()%>')">
+                    </span>
+                    <%}%>
+
+                    <%if (dataSourceTableAndStreamInfoDtoArray[k].getStatus().equalsIgnoreCase("PAUSED")) {%>
+                    <span id="dbSimulationPlay<%= dataSourceTableAndStreamInfoDtoArray[k].getFileName()%>" style="display:none;">
+                        <input type="button" value="Play" onclick="sendDBConfigFileNameToSimulate(
+                                '<%=dataSourceTableAndStreamInfoDtoArray[k].getFileName()%>')">
+                    </span>
+                    <span id="dbSimulationPause<%= dataSourceTableAndStreamInfoDtoArray[k].getFileName()%>" style="display:none;">
+                        <input type="button" value="Pause" onclick="pauseDBConfigFileNameToSimulate(
+                                '<%=dataSourceTableAndStreamInfoDtoArray[k].getFileName()%>')">
+                    </span>
+                    <span id="dbSimulationResume<%= dataSourceTableAndStreamInfoDtoArray[k].getFileName()%>" >
+                        <input type="button" value="Resume" onclick="resumeDBConfigFileNameToSimulate(
+                                '<%=dataSourceTableAndStreamInfoDtoArray[k].getFileName()%>')">
+                    </span>
+                    <span id="dbSimulationStop<%= dataSourceTableAndStreamInfoDtoArray[k].getFileName()%>" >
+                        <input type="button" value="Stop" onclick="stopDBConfigFileNameToSimulate(
+                                '<%=dataSourceTableAndStreamInfoDtoArray[k].getFileName()%>')">
+                    </span>
+                    <%}%>
+                    <input type="button" value="Delete" onclick="deleteDBConfigFile(
+                            '<%=dataSourceTableAndStreamInfoDtoArray[k].getFileName()%>')">
+                </td>
+            </tr>
+            <%
+                    }
+
+                }
+            %>
+
+            </tbody>
+        </table>
+    </td>
+</tr>
+
+<tr>
+    <td class="formRow" colspan="2">
+        <table id="inputEventDetailTable3" class="normal-nopadding" style="width:100%">
+            <tbody>
+            <tr>
+                <td style="padding-left:10px">Configuration Name<span class="required">*</span></td>
+                <td colspan="2" style="padding-left:10px">
+                    <div class="outputFields">
+                        <input style="width:75%" type="text" id="configurationNameId2"
+                               name="configuration.name" value="" class="initE">
+                    </div>
+                </td>
+            </tr>
+
+            <tr>
+                <td style="padding-left:10px">Data Source Type<span class="required">*</span></td>
+                <td colspan="2" style="padding-left:10px">
+                    <select name="dataSourceTypeID" id="dataSourceTypeID">
+
+                        <option value="RDBMS">RDBMS
+                        </option>
+                    </select>
+                </td>
+            </tr>
+            <tr>
+                <td style="padding-left:10px">Data Source Name<span class="required">*</span></td>
+                <td colspan="2" style="padding-left:10px">
+                    <div class="outputFields">
+                        <input style="width:75%" type="text" id="dataSourceNameId2"
+                               name="datasource.name" value="" class="initE">
+                    </div>
+                </td>
+            </tr>
+
+            <tr>
+                <td class="leftCol-med" style="padding-left:10px">Table Name
+                    <span class="required">*</span>
+                </td>
+                <td style="padding-left:10px">
+                    <div class="outputFields">
+                        <input type="text" name="table.name" id="tableNameId2" class="initE" style="width:75%" value="">
+                    </div>
+                </td>
+            </tr>
+
+            <tr>
+                <td class="leftCol-med" style="padding-left:10px">Delay between events in milliseconds
+                    <span class="required">*</span>
+                </td>
+                <td style="padding-left:10px">
+                    <div class="outputFields">
+                        <input type="text" name="table.name" id="eventSendingDelay2" class="initE" style="width:75%"
+                               value="1000">
+                    </div>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </td>
+</tr>
 
 
+<tr>
+    <td class="formRow" colspan="2">
+        <table id="inputEventDetailTable2" class="normal-nopadding" style="width:100%">
+            <tbody>
+            <tr>
+                <td class="leftCol-med"><fmt:message key="select.the.event.stream"/> <span class="required">*</span>
+                </td>
+                <td>
+                    <select name="EventStreamID" id="EventStreamID2" onload="showEventPropertiesForSimulator()"
+                            onchange="showEventPropertiesForSimulator()">
+
+                        <%
+                            if (eventInfoArray == null) {
+                        %>
+                        <option value="No Event Stream Definitions"><fmt:message
+                                key="no.event.stream.definition"/>
+                        </option>
+                        <%} else {%>
+
+                        <option value="select">select event stream
+                        </option>
+                        <%
+                            for (int i = 0; i < eventInfoArray.length; i++) {
+                                String streamName = eventInfoArray[i].getStreamName();
+                                String streamVersion = eventInfoArray[i].getStreamVersion();
+                                if ((streamName + ":" + streamVersion).equalsIgnoreCase(streamId)) {
+                        %>
+                        <option value="<%=eventInfoArray[i].getStreamName()%>" selected>
+                            <%=streamName + ":" + streamVersion%>
+                        </option>
+                        <%} else {%>
+                        <option value="<%=eventInfoArray[i].getStreamName()%>">
+                            <%=streamName + ":" + streamVersion%>
+                        </option>
+                        <%
+                                    }
+                                }
+                            }%>
+                    </select>
+                </td>
+            </tr>
+
+            </tbody>
+        </table>
+    </td>
+</tr>
+<tr>
+    <td class="buttonRow formRow" colspan="2">
+        <input type="button" value="Test Connection" onclick="testConnection()">
+        <input type="button" value="Save" onclick="saveDataSourceConfiguration()">
+    </td>
+
+</tr>
+</tbody>
+
+</table>
+
+</form>
+</div>
 
 
-
-    </div>
+</div>
 
 </div>
 </fmt:bundle>

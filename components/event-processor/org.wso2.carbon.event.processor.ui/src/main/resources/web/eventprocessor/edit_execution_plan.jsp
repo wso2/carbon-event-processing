@@ -103,6 +103,7 @@
                 }
             }
         });
+
     }
 
     function updateNotDeployedConfiguration(form, executionPlanPath) {

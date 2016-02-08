@@ -25,23 +25,19 @@ import org.json.JSONObject;
 import org.wso2.carbon.core.AbstractAdmin;
 import org.wso2.carbon.databridge.commons.Attribute;
 import org.wso2.carbon.databridge.commons.StreamDefinition;
+import org.wso2.carbon.event.simulator.admin.internal.ExecutionInfo;
 import org.wso2.carbon.event.simulator.admin.internal.util.EventSimulatorAdminvalueHolder;
 import org.wso2.carbon.event.simulator.admin.internal.util.EventSimulatorDataSourceInfo;
 import org.wso2.carbon.event.simulator.core.*;
 
-import org.wso2.carbon.event.simulator.admin.internal.ExecutionInfo;
-
 import java.util.Collection;
 import java.util.List;
-
-//import org.wso2.carbon.eventsimulator.core.EventSimulator;
-
 
 public class EventSimulatorAdminService extends AbstractAdmin {
 
     private static Log log = LogFactory.getLog(EventSimulatorAdminService.class);
 
-    public StreamDefinitionInfoDto[] getAllEventStreamInfoDto() {
+    public StreamDefinitionInfoDto[] getAllEventStreamInfoDto() throws AxisFault {
 
         EventSimulator eventSimulator = EventSimulatorAdminvalueHolder.getEventSimulator();
 
@@ -61,23 +57,17 @@ public class EventSimulatorAdminService extends AbstractAdmin {
 
                     // Set Meta attributes to EventStreamInfoDtos
                     List<Attribute> meataDataAttributeList = streamDefinition.getMetaData();
-
-
                     if (meataDataAttributeList != null) {
                         StreamAttributeDto[] metaDataAttributeArray = new StreamAttributeDto[meataDataAttributeList.size()];
                         for (int i = 0; i < metaDataAttributeArray.length; i++) {
-
                             metaDataAttributeArray[i] = new StreamAttributeDto();
                             metaDataAttributeArray[i].setAttributeName(meataDataAttributeList.get(i).getName());
                             metaDataAttributeArray[i].setAttributeType(meataDataAttributeList.get(i).getType().toString());
-
                         }
-
                         streamDefinitionInfoDtos[index].setMetaAttributes(metaDataAttributeArray);
                     }
                     //Set correlation attributes to EventStreamInfoDtos
                     List<Attribute> correlationDataAttributeList = streamDefinition.getCorrelationData();
-
 
                     if (correlationDataAttributeList != null) {
                         StreamAttributeDto[] correlationDataAttributeArray = new StreamAttributeDto[correlationDataAttributeList.size()];
@@ -90,10 +80,9 @@ public class EventSimulatorAdminService extends AbstractAdmin {
 
                         streamDefinitionInfoDtos[index].setCorrelationAttributes(correlationDataAttributeArray);
                     }
+
                     //Set payload data attributes to EventStreamInfoDtos
-
                     List<Attribute> payloadDataAttributeList = streamDefinition.getPayloadData();
-
 
                     if (payloadDataAttributeList != null) {
                         StreamAttributeDto[] payloadDataAttributesArray = new StreamAttributeDto[payloadDataAttributeList.size()];
@@ -114,10 +103,9 @@ public class EventSimulatorAdminService extends AbstractAdmin {
             }
 
         } catch (Exception e) {
-            log.error(e);
+            log.error("Exception when retrieving stream details", e);
+            throw new AxisFault(e.getMessage());
         }
-
-        return new StreamDefinitionInfoDto[0];
     }
 
     public boolean sendEvent(EventDto eventDto) throws AxisFault {
@@ -129,8 +117,6 @@ public class EventSimulatorAdminService extends AbstractAdmin {
 
         try {
             Collection<StreamDefinition> streamDefinitionList = eventSimulator.getAllEventStreamDefinitions();
-
-            int index = 0;
             if (streamDefinitionList != null) {
                 for (StreamDefinition streamDefinition1 : streamDefinitionList) {
                     if (streamDefinition1.getStreamId().equals(streamID)) {
@@ -145,7 +131,6 @@ public class EventSimulatorAdminService extends AbstractAdmin {
             if (streamDefinition != null) {
                 event.setStreamDefinition(streamDefinition);
                 event.setAttributeValues(attributeValues);
-
                 eventSimulator.sendEvent(event);
             } else {
                 throw new AxisFault("Relevant stream not found");
@@ -170,11 +155,9 @@ public class EventSimulatorAdminService extends AbstractAdmin {
         int index = 0;
         for (UploadedFileItemDto uploadedFileItemDto : fileItems) {
             uploadedFileItems[index] = new UploadedFileItem();
-
             uploadedFileItems[index].setFileName(uploadedFileItemDto.getFileName());
             uploadedFileItems[index].setFileType(uploadedFileItemDto.getFileType());
             uploadedFileItems[index].setDataHandler(uploadedFileItemDto.getDataHandler());
-
             index++;
         }
 
@@ -187,10 +170,8 @@ public class EventSimulatorAdminService extends AbstractAdmin {
     public void sendConfigDetails(String fileName, String streamId, String separateChar, long delayBetweenEventsInMilies) {
 
         EventSimulator eventSimulator = EventSimulatorAdminvalueHolder.getEventSimulator();
-
         ConfigurationContext configurationContext = getConfigContext();
         AxisConfiguration axisConfiguration = configurationContext.getAxisConfiguration();
-
         eventSimulator.createConfigurationXML(fileName, streamId, separateChar, delayBetweenEventsInMilies, axisConfiguration);
 
     }
@@ -205,18 +186,18 @@ public class EventSimulatorAdminService extends AbstractAdmin {
             if (CSVFileInfoList != null) {
 
                 CSVFileInfoDto[] CSVFileInfoDtoArray = new CSVFileInfoDto[CSVFileInfoList.size()];
-
                 int index = 0;
-                for (CSVFileInfo csvFileInfo : CSVFileInfoList) {
 
+                for (CSVFileInfo csvFileInfo : CSVFileInfoList) {
                     CSVFileInfoDtoArray[index] = new CSVFileInfoDto();
                     CSVFileInfoDtoArray[index].setFileName(csvFileInfo.getFileName());
                     CSVFileInfoDtoArray[index].setFilePath(csvFileInfo.getFilePath());
+                    CSVFileInfoDtoArray[index].setStatus(csvFileInfo.getStatus().toString());
                     if (csvFileInfo.getStreamID() != null) {
                         CSVFileInfoDtoArray[index].setStreamID(csvFileInfo.getStreamID());
                     }
-                    if (csvFileInfo.getDelayBetweenEventsInMilies() != 0){
-                        CSVFileInfoDtoArray[index].setDelayBetweenEventsInMilies(csvFileInfo.getDelayBetweenEventsInMilies());
+                    if (csvFileInfo.getDelayBetweenEventsInMillis() != 0) {
+                        CSVFileInfoDtoArray[index].setDelayBetweenEventsInMillis(csvFileInfo.getDelayBetweenEventsInMillis());
                     }
                     index++;
                 }
@@ -227,7 +208,7 @@ public class EventSimulatorAdminService extends AbstractAdmin {
             }
 
         } catch (Exception e) {
-            log.error(e);
+            log.error("Exception occurred while retrieving CSV File details", e);
         }
 
         return new CSVFileInfoDto[0];
@@ -240,9 +221,26 @@ public class EventSimulatorAdminService extends AbstractAdmin {
         return true;
     }
 
+    public boolean pauseEventsViaFile(String fileName) throws AxisFault {
+        EventSimulator eventSimulator = EventSimulatorAdminvalueHolder.getEventSimulator();
+        eventSimulator.pauseEvents(fileName);
+        return true;
+    }
+
+    public boolean resumeEventsViaFile(String fileName) throws AxisFault {
+        EventSimulator eventSimulator = EventSimulatorAdminvalueHolder.getEventSimulator();
+        eventSimulator.resumeEvents(fileName);
+        return true;
+    }
+
+    public boolean stopEventsViaFile(String fileName) throws AxisFault {
+        EventSimulator eventSimulator = EventSimulatorAdminvalueHolder.getEventSimulator();
+        eventSimulator.stopEvents(fileName);
+        return true;
+    }
+
     public boolean deleteFile(String fileName) throws AxisFault {
         EventSimulator eventSimulator = EventSimulatorAdminvalueHolder.getEventSimulator();
-
         ConfigurationContext configurationContext = getConfigContext();
         AxisConfiguration axisConfiguration = configurationContext.getAxisConfiguration();
         eventSimulator.deleteFile(fileName, axisConfiguration);
@@ -261,7 +259,28 @@ public class EventSimulatorAdminService extends AbstractAdmin {
         } catch (JSONException e) {
             throw new AxisFault("JSON exception when converting result of information retrieved by file name.");
         }
-        eventSimulator.sendEventsViaDB(jsonConvertedInfo, executionInfo.getPreparedSelectStatement());
+        eventSimulator.sendEventsViaDB(fileName, jsonConvertedInfo, executionInfo.getPreparedSelectStatement());
+        return true;
+    }
+
+    public boolean pauseDBConfigFileNameToSimulate(String fileName) throws AxisFault {
+
+        EventSimulator eventSimulator = EventSimulatorAdminvalueHolder.getEventSimulator();
+        eventSimulator.pauseEventsViaDB(fileName);
+        return true;
+    }
+
+    public boolean resumeDBConfigFileNameToSimulate(String fileName) throws AxisFault {
+
+        EventSimulator eventSimulator = EventSimulatorAdminvalueHolder.getEventSimulator();
+        eventSimulator.resumeEventsViaDB(fileName);
+        return true;
+    }
+
+    public boolean stopDBConfigFileNameToSimulate(String fileName) throws AxisFault {
+
+        EventSimulator eventSimulator = EventSimulatorAdminvalueHolder.getEventSimulator();
+        eventSimulator.stopEventsViaDB(fileName);
         return true;
     }
 
@@ -273,35 +292,32 @@ public class EventSimulatorAdminService extends AbstractAdmin {
         return true;
     }
 
-    public String testSimulateRDBMSDataSourceConnection(String tableAndAttributeMappingInfo) throws AxisFault{
+    public String testSimulateRDBMSDataSourceConnection(String tableAndAttributeMappingInfo) throws AxisFault {
         ExecutionInfo executionInfo;
 
         try {
             JSONObject tableAndAttributeMappingJsonObj = new JSONObject(tableAndAttributeMappingInfo);
-            try{
-                executionInfo = EventSimulatorDataSourceInfo.getInitializedDatabaseExecutionInfo(tableAndAttributeMappingJsonObj);
-                if(executionInfo!=null){
-                    String result = "{\""+ EventSimulatorConstant.EVENT_STREAM_ID+"\":\"" +
-                            tableAndAttributeMappingJsonObj.getString(EventSimulatorConstant.EVENT_STREAM_ID)
-                            + "\",\""+EventSimulatorConstant.EVENT_STREAM_NAME+"\":\"" +
-                            tableAndAttributeMappingJsonObj.getString(EventSimulatorConstant.EVENT_STREAM_NAME)
-                            + "\",\""+EventSimulatorConstant.DATA_SOURCE_NAME+"\":\"" +
-                            tableAndAttributeMappingJsonObj.getString(EventSimulatorConstant.DATA_SOURCE_NAME)
-                            + "\",\""+EventSimulatorConstant.TABLE_NAME+"\":\"" +
-                            tableAndAttributeMappingJsonObj.getString(EventSimulatorConstant.TABLE_NAME)
-                            + "\",\""+EventSimulatorConstant.CONFIGURATION_NAME+"\":\"" +
-                            tableAndAttributeMappingJsonObj.getString(EventSimulatorConstant.CONFIGURATION_NAME)
-                            + "\",\""+EventSimulatorConstant.DELAY_BETWEEN_EVENTS_IN_MILIES + "\":\"" +
-                            tableAndAttributeMappingJsonObj.getLong(EventSimulatorConstant.DELAY_BETWEEN_EVENTS_IN_MILIES)
-                            + "\",\""+EventSimulatorConstant.DATABASE_COLUMNS_AND_STREAM_ATTRIBUTE_INFO+"\":" +
-                            tableAndAttributeMappingJsonObj.getJSONArray(EventSimulatorConstant.DATABASE_COLUMNS_AND_STREAM_ATTRIBUTE_INFO)
-                            + "}";
+            executionInfo = EventSimulatorDataSourceInfo.getInitializedDatabaseExecutionInfo(tableAndAttributeMappingJsonObj);
+            if (executionInfo != null) {
+                String result = "{\"" + EventSimulatorConstant.EVENT_STREAM_ID + "\":\"" +
+                        tableAndAttributeMappingJsonObj.getString(EventSimulatorConstant.EVENT_STREAM_ID)
+                        + "\",\"" + EventSimulatorConstant.EVENT_STREAM_NAME + "\":\"" +
+                        tableAndAttributeMappingJsonObj.getString(EventSimulatorConstant.EVENT_STREAM_NAME)
+                        + "\",\"" + EventSimulatorConstant.DATA_SOURCE_NAME + "\":\"" +
+                        tableAndAttributeMappingJsonObj.getString(EventSimulatorConstant.DATA_SOURCE_NAME)
+                        + "\",\"" + EventSimulatorConstant.TABLE_NAME + "\":\"" +
+                        tableAndAttributeMappingJsonObj.getString(EventSimulatorConstant.TABLE_NAME)
+                        + "\",\"" + EventSimulatorConstant.CONFIGURATION_NAME + "\":\"" +
+                        tableAndAttributeMappingJsonObj.getString(EventSimulatorConstant.CONFIGURATION_NAME)
+                        + "\",\"" + EventSimulatorConstant.DELAY_BETWEEN_EVENTS_IN_MILIES + "\":\"" +
+                        tableAndAttributeMappingJsonObj.getLong(EventSimulatorConstant.DELAY_BETWEEN_EVENTS_IN_MILIES)
+                        + "\",\"" + EventSimulatorConstant.DATABASE_COLUMNS_AND_STREAM_ATTRIBUTE_INFO + "\":" +
+                        tableAndAttributeMappingJsonObj.getJSONArray(EventSimulatorConstant.DATABASE_COLUMNS_AND_STREAM_ATTRIBUTE_INFO)
+                        + "}";
 
-                    return result;
-                }
-            }catch(AxisFault e){
-                throw e;
+                return result;
             }
+
         } catch (JSONException e) {
             log.error("Created JSON formatted string with attribute mapping information is not valid", e);
             throw new AxisFault("Created JSON formatted string with attribute mapping information is not valid", e);
@@ -312,57 +328,55 @@ public class EventSimulatorAdminService extends AbstractAdmin {
     public boolean saveDataSourceConfigDetails(String tableAndAttributeMappingInfo) throws AxisFault {
 
         EventSimulator eventSimulator = EventSimulatorAdminvalueHolder.getEventSimulator();
-
         ConfigurationContext configurationContext = getConfigContext();
         AxisConfiguration axisConfiguration = configurationContext.getAxisConfiguration();
-
         eventSimulator.createConfigurationXMLForDataSource(tableAndAttributeMappingInfo, axisConfiguration);
         return true;
     }
 
-    public DataSourceTableAndStreamInfoDto[] getAllDataSourceTableAndStreamInfo() {
+    public DataSourceTableAndStreamInfoDto[] getAllDataSourceTableAndStreamInfo() throws AxisFault {
         EventSimulator eventSimulator = EventSimulatorAdminvalueHolder.getEventSimulator();
         try {
             List<DataSourceTableAndStreamInfo> DataSourceTableAndStreamInfoList = eventSimulator.getAllDataSourceInfo();
             if (DataSourceTableAndStreamInfoList != null) {
 
-                DataSourceTableAndStreamInfoDto[] DataSourceTableAndStreamInfoDtoArray = new DataSourceTableAndStreamInfoDto[DataSourceTableAndStreamInfoList
+                DataSourceTableAndStreamInfoDto[] dataSourceTableAndStreamInfoDtoArray = new DataSourceTableAndStreamInfoDto[DataSourceTableAndStreamInfoList
                         .size()];
                 int index = 0;
 
                 for (DataSourceTableAndStreamInfo dataSourceTableAndStreamInfo : DataSourceTableAndStreamInfoList) {
 
-                    DataSourceTableAndStreamInfoDtoArray[index] = new DataSourceTableAndStreamInfoDto();
-                    DataSourceTableAndStreamInfoDtoArray[index]
+                    dataSourceTableAndStreamInfoDtoArray[index] = new DataSourceTableAndStreamInfoDto();
+                    dataSourceTableAndStreamInfoDtoArray[index]
                             .setConfigurationName(dataSourceTableAndStreamInfo.getConfigurationName());
-                    DataSourceTableAndStreamInfoDtoArray[index]
+                    dataSourceTableAndStreamInfoDtoArray[index]
                             .setDataSourceName(dataSourceTableAndStreamInfo.getDataSourceName());
-                    DataSourceTableAndStreamInfoDtoArray[index]
+                    dataSourceTableAndStreamInfoDtoArray[index]
                             .setTableName(dataSourceTableAndStreamInfo.getTableName());
-                    DataSourceTableAndStreamInfoDtoArray[index]
+                    dataSourceTableAndStreamInfoDtoArray[index]
                             .setEventStreamID(dataSourceTableAndStreamInfo.getEventStreamID());
-                    DataSourceTableAndStreamInfoDtoArray[index]
+                    dataSourceTableAndStreamInfoDtoArray[index]
                             .setColumnNames(dataSourceTableAndStreamInfo.getDataSourceColumnsAndTypes()[0]);
-                    DataSourceTableAndStreamInfoDtoArray[index]
-                            .setStreamAtrributeNames(dataSourceTableAndStreamInfo.getDataSourceColumnsAndTypes()[1]);
-                    DataSourceTableAndStreamInfoDtoArray[index].setFileName(dataSourceTableAndStreamInfo.getFileName());
-                    DataSourceTableAndStreamInfoDtoArray[index].setFilePath(dataSourceTableAndStreamInfo.getFilePath());
-                    DataSourceTableAndStreamInfoDtoArray[index].setDelayBetweenEventsInMilies(
-                            dataSourceTableAndStreamInfo.getDelayBetweenEventsInMilies());
+                    dataSourceTableAndStreamInfoDtoArray[index]
+                            .setStreamAttributeNames(dataSourceTableAndStreamInfo.getDataSourceColumnsAndTypes()[1]);
+                    dataSourceTableAndStreamInfoDtoArray[index].setFileName(dataSourceTableAndStreamInfo.getFileName());
+                    dataSourceTableAndStreamInfoDtoArray[index].setFilePath(dataSourceTableAndStreamInfo.getFilePath());
+                    dataSourceTableAndStreamInfoDtoArray[index].setDelayBetweenEventsInMillis(
+                            dataSourceTableAndStreamInfo.getDelayBetweenEventsInMillis());
+                    dataSourceTableAndStreamInfoDtoArray[index].setStatus(dataSourceTableAndStreamInfo.getStatus().toString());
 
                     index++;
                 }
 
-                return DataSourceTableAndStreamInfoDtoArray;
+                return dataSourceTableAndStreamInfoDtoArray;
             } else {
                 return new DataSourceTableAndStreamInfoDto[0];
             }
 
         } catch (Exception e) {
             log.error(e);
+            throw new AxisFault(e.getMessage(), e);
         }
-
-        return new DataSourceTableAndStreamInfoDto[0];
     }
 
 }

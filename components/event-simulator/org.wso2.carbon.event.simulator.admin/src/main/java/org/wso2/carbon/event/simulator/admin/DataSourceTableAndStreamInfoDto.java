@@ -17,86 +17,109 @@
 package org.wso2.carbon.event.simulator.admin;
 
 
-public class DataSourceTableAndStreamInfoDto{
+public class DataSourceTableAndStreamInfoDto {
     private String configurationName;
     private String dataSourceName;
     private String tableName;
     private String eventStreamID;
     private String[] columnNames;
-    private String[] streamAtrributeNames;
+    private String[] streamAttributeNames;
     private String filePath;
     private String fileName;
-    private long delayBetweenEventsInMilies;
+    private long delayBetweenEventsInMillis;
+    private String status;
 
 
-    public DataSourceTableAndStreamInfoDto(){
-
+    public DataSourceTableAndStreamInfoDto() {
         configurationName = null;
-
         eventStreamID = null;
         columnNames = null; //array
-        streamAtrributeNames = null;
+        streamAttributeNames = null;
         tableName = null;
         fileName = null;
         filePath = null;
         dataSourceName = null;
-        delayBetweenEventsInMilies = 0;
+        delayBetweenEventsInMillis = 0;
     }
 
-    public void setConfigurationName(String configurationName){
+    public void setConfigurationName(String configurationName) {
         this.configurationName = configurationName;
     }
-    public String getConfigurationName(){
+
+    public String getConfigurationName() {
         return configurationName;
     }
-    public void setDataSourceName(String dataSourceName){
+
+    public void setDataSourceName(String dataSourceName) {
         this.dataSourceName = dataSourceName;
     }
-    public String getDataSourceName(){
+
+    public String getDataSourceName() {
         return dataSourceName;
     }
-    public void setTableName(String tableName){
+
+    public void setTableName(String tableName) {
         this.tableName = tableName;
     }
-    public String getTableName(){
+
+    public String getTableName() {
         return tableName;
     }
-    public void setEventStreamID(String eventStreamID){
+
+    public void setEventStreamID(String eventStreamID) {
         this.eventStreamID = eventStreamID;
     }
-    public String getEventStreamID(){
+
+    public String getEventStreamID() {
         return eventStreamID;
     }
 
 
-    public void setColumnNames(String[] columnNames){
+    public void setColumnNames(String[] columnNames) {
         this.columnNames = columnNames;
     }
-    public String[] getColumnNames(){
+
+    public String[] getColumnNames() {
         return columnNames;
     }
-    public void setStreamAtrributeNames(String[] streamAtrributeNames){
-        this.streamAtrributeNames = streamAtrributeNames;
+
+    public void setStreamAttributeNames(String[] streamAttributeNames) {
+        this.streamAttributeNames = streamAttributeNames;
     }
-    public String[] getStreamAtrributeNames(){
-        return streamAtrributeNames;
+
+    public String[] getStreamAttributeNames() {
+        return streamAttributeNames;
     }
-    public void setFilePath(String filePath){
+
+    public void setFilePath(String filePath) {
         this.filePath = filePath;
     }
-    public String getFilePath(){
+
+    public String getFilePath() {
         return filePath;
     }
-    public void setFileName(String fileName){
+
+    public void setFileName(String fileName) {
         this.fileName = fileName;
     }
-    public String getFileName(){
+
+    public String getFileName() {
         return fileName;
     }
-    public long getDelayBetweenEventsInMilies() {
-        return delayBetweenEventsInMilies;
+
+    public long getDelayBetweenEventsInMillis() {
+        return delayBetweenEventsInMillis;
     }
-    public void setDelayBetweenEventsInMilies(long delayBetweenEventsInMilies) {
-        this.delayBetweenEventsInMilies = delayBetweenEventsInMilies;
+
+    public void setDelayBetweenEventsInMillis(long delayBetweenEventsInMillis) {
+        this.delayBetweenEventsInMillis = delayBetweenEventsInMillis;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
     }
 }

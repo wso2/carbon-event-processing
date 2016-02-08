@@ -20,7 +20,16 @@
 
 function getAnnotationHints(cm, options) {
     var cur = cm.getCursor();
-    var result = ['Plan:name(\'\')', 'Plan:description(\'\')', 'Plan:trace(\'\')', 'Plan:statistics(\'\')', 'Import(\'\')', 'Export(\'\')'];
+    var result = [
+        'Plan:name(\'\')',
+        'Plan:description(\'\')',
+        'Plan:trace(\'\')',
+        'Plan:statistics(\'\')',
+        'Import(\'\')',
+        'Export(\'\')',
+        'From(eventtable=\'\', )',
+        'IndexBy(\'\')'
+    ];
     return {
         list: result,
         from: cur,

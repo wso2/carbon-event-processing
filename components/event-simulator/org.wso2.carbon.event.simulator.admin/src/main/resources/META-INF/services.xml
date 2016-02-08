@@ -21,75 +21,98 @@
         <parameter name="ServiceClass">org.wso2.carbon.event.simulator.admin.EventSimulatorAdminService</parameter>
 
         <parameter name="AuthorizationAction" locked="false">
-            /permission/admin/manage/eventSimulator
+            /permission/admin/manage/event-simulator
         </parameter>
         <operation name="getAllEventStreamInfoDto">
             <parameter name="AuthorizationAction" locked="false">
-                /permission/admin/manage/eventSimulator
+                /permission/admin/manage/event-simulator
             </parameter>
         </operation>
         <operation name="sendEvent">
             <parameter name="AuthorizationAction" locked="false">
-                /permission/admin/manage/eventSimulator
+                /permission/admin/manage/event-simulator
             </parameter>
         </operation>
-
         <operation name="uploadService">
             <parameter name="AuthorizationAction" locked="false">
-                /permission/admin/manage/eventSimulator
+                /permission/admin/manage/event-simulator
             </parameter>
         </operation>
-
         <operation name="getAllCSVFileInfo">
             <parameter name="AuthorizationAction" locked="false">
-                /permission/admin/manage/eventSimulator
+                /permission/admin/manage/event-simulator
             </parameter>
         </operation>
-
         <operation name="sendConfigDetails">
             <parameter name="AuthorizationAction" locked="false">
-                /permission/admin/manage/eventSimulator
+                /permission/admin/manage/event-simulator
             </parameter>
         </operation>
-
         <operation name="sendEventsViaFile">
             <parameter name="AuthorizationAction" locked="false">
-                /permission/admin/manage/eventSimulator
+                /permission/admin/manage/event-simulator
             </parameter>
         </operation>
-
+        <operation name="pauseEventsViaFile">
+            <parameter name="AuthorizationAction" locked="false">
+                /permission/admin/manage/event-simulator
+            </parameter>
+        </operation>
+        <operation name="resumeEventsViaFile">
+            <parameter name="AuthorizationAction" locked="false">
+                /permission/admin/manage/event-simulator
+            </parameter>
+        </operation>
+        <operation name="stopEventsViaFile">
+            <parameter name="AuthorizationAction" locked="false">
+                /permission/admin/manage/event-simulator
+            </parameter>
+        </operation>
         <operation name="deleteFile">
             <parameter name="AuthorizationAction" locked="false">
-                /permission/admin/manage/eventSimulator
+                /permission/admin/manage/event-simulator
             </parameter>
         </operation>
-
         <operation name="testSimulateRDBMSDataSourceConnection">
             <parameter name="AuthorizationAction" locked="false">
-                /permission/admin/manage/eventSimulator
+                /permission/admin/manage/event-simulator
             </parameter>
         </operation>
         <operation name="saveDataSourceConfigDetails">
             <parameter name="AuthorizationAction" locked="false">
-                /permission/admin/manage/eventSimulator
+                /permission/admin/manage/event-simulator
             </parameter>
         </operation>
         <operation name="getAllDataSourceTableAndStreamInfo">
             <parameter name="AuthorizationAction" locked="false">
-                /permission/admin/manage/eventSimulator
+                /permission/admin/manage/event-simulator
             </parameter>
         </operation>
         <operation name="sendDBConfigFileNameToSimulate">
             <parameter name="AuthorizationAction" locked="false">
-                /permission/admin/manage/eventSimulator
+                /permission/admin/manage/event-simulator
+            </parameter>
+        </operation>
+        <operation name="pauseDBConfigFileNameToSimulate">
+            <parameter name="AuthorizationAction" locked="false">
+                /permission/admin/manage/event-simulator
+            </parameter>
+        </operation>
+        <operation name="resumeDBConfigFileNameToSimulate">
+            <parameter name="AuthorizationAction" locked="false">
+                /permission/admin/manage/event-simulator
+            </parameter>
+        </operation>
+        <operation name="stopDBConfigFileNameToSimulate">
+            <parameter name="AuthorizationAction" locked="false">
+                /permission/admin/manage/event-simulator
             </parameter>
         </operation>
         <operation name="deleteDBConfigFile">
             <parameter name="AuthorizationAction" locked="false">
-                /permission/admin/manage/eventSimulator
+                /permission/admin/manage/event-simulator
             </parameter>
         </operation>
-
 
     </service>
 

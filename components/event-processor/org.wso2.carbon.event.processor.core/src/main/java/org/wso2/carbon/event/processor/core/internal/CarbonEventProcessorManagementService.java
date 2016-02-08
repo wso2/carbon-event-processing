@@ -38,10 +38,12 @@ public class CarbonEventProcessorManagementService extends EventProcessorManagem
 
     public CarbonEventProcessorManagementService() {
         EventProcessorValueHolder.getEventManagementService().subscribe(this);
-        EventProcessorValueHolder.getEventProcessorService().setManagementInfo(EventProcessorValueHolder.getEventManagementService().getManagementModeInfo());
+        EventProcessorValueHolder.getEventProcessorService().setManagementInfo(EventProcessorValueHolder
+                .getEventManagementService().getManagementModeInfo());
         tenantId = PrivilegedCarbonContext.getThreadLocalCarbonContext().getTenantId();
     }
 
+    @Override
     public byte[] getState() {
         Map<Integer, ConcurrentHashMap<String, ExecutionPlan>> map
                 = EventProcessorValueHolder.getEventProcessorService().getTenantSpecificExecutionPlans();
@@ -50,17 +52,21 @@ public class CarbonEventProcessorManagementService extends EventProcessorManagem
         for (Map.Entry<Integer, ConcurrentHashMap<String, ExecutionPlan>> tenantEntry : map.entrySet()) {
             HashMap<String, byte[]> tenantData = new HashMap<String, byte[]>();
             for (Map.Entry<String, ExecutionPlan> executionPlanData : tenantEntry.getValue().entrySet()) {
-                tenantData.put(executionPlanData.getKey(), executionPlanData.getValue().getExecutionPlanRuntime().snapshot());
+                tenantData.put(
+                        executionPlanData.getKey(),
+                        executionPlanData.getValue().getExecutionPlanRuntime().snapshot());
             }
             snapshotdata.put(tenantEntry.getKey(), tenantData);
         }
         return ByteSerializer.OToB(snapshotdata);
     }
 
+    @Override
     public void restoreState(byte[] bytes) {
         Map<Integer, ConcurrentHashMap<String, ExecutionPlan>> map
                 = EventProcessorValueHolder.getEventProcessorService().getTenantSpecificExecutionPlans();
-        HashMap<Integer, HashMap<String, byte[]>> snapshotDataList = (HashMap<Integer, HashMap<String, byte[]>>) ByteSerializer.BToO(bytes);
+        HashMap<Integer, HashMap<String, byte[]>> snapshotDataList =
+                (HashMap<Integer, HashMap<String, byte[]>>) ByteSerializer.BToO(bytes);
 
         for (Map.Entry<Integer, HashMap<String, byte[]>> tenantEntry : snapshotDataList.entrySet()) {
             for (Map.Entry<String, byte[]> executionPlanData : tenantEntry.getValue().entrySet()) {
@@ -70,7 +76,8 @@ public class CarbonEventProcessorManagementService extends EventProcessorManagem
                     if (executionPlan != null) {
                         executionPlan.getExecutionPlanRuntime().restore(executionPlanData.getValue());
                     } else {
-                        throw new EventManagementException("No execution plans with name '" + executionPlanData.getKey() + "' exist for tenant  " + tenantEntry.getKey());
+                        throw new EventManagementException("No execution plans with name '" +
+                                executionPlanData.getKey() + "' exist for tenant  " + tenantEntry.getKey());
                     }
                 } else {
                     throw new EventManagementException("No execution plans exist for tenant  " + tenantEntry.getKey());
@@ -79,10 +86,12 @@ public class CarbonEventProcessorManagementService extends EventProcessorManagem
         }
     }
 
+    @Override
     public void pause() {
         readWriteLock.writeLock().lock();
     }
 
+    @Override
     public void resume() {
         readWriteLock.writeLock().unlock();
     }
@@ -92,14 +101,27 @@ public class CarbonEventProcessorManagementService extends EventProcessorManagem
         return EventProcessorValueHolder.getEventProcessorService().getManagementInfo();
     }
 
-
-    public void persist(){
+    @Override
+    public void persist() {
         try {
             PrivilegedCarbonContext.startTenantFlow();
-            PrivilegedCarbonContext.getThreadLocalCarbonContext().setTenantId(tenantId,true);
+            PrivilegedCarbonContext.getThreadLocalCarbonContext().setTenantId(tenantId, true);
             EventProcessorValueHolder.getSiddhiManager().persist();
         } catch (Throwable e) {
             log.error("Unable to persist state for tenant :" + tenantId, e);
+        } finally {
+            PrivilegedCarbonContext.endTenantFlow();
+        }
+    }
+
+    @Override
+    public void restoreLastState() {
+        try {
+            PrivilegedCarbonContext.startTenantFlow();
+            PrivilegedCarbonContext.getThreadLocalCarbonContext().setTenantId(tenantId, true);
+            EventProcessorValueHolder.getSiddhiManager().restoreLastState();
+        } catch (Throwable e) {
+            log.error("Unable to restore state for tenant :" + tenantId, e);
         } finally {
             PrivilegedCarbonContext.endTenantFlow();
         }

@@ -20,7 +20,7 @@
     <parent>
         <groupId>org.wso2.carbon.event-processing</groupId>
         <artifactId>event-processor</artifactId>
-        <version>2.0.10-SNAPSHOT</version>
+        <version>2.0.12-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
@@ -95,6 +95,7 @@
                             <!--!javax.xml.namespace,-->
                             org.wso2.carbon.event.processor.core.*,
                             javax.xml.namespace; version=0.0.0,
+                            org.wso2.carbon.databridge.commons.*;version="${carbon.analytics.common.range}",
                             *;resolution:=optional
                         </Import-Package>
                         <DynamicImport-Package>*</DynamicImport-Package>

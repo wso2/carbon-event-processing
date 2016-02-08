@@ -284,6 +284,3 @@ public class ExtractJsonValueImpl {
         return partition_with_stream;
     }
 }
-
-
-

@@ -13,18 +13,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.wso2.carbon.event.simulator.core;
 
 /*To Store the CSV file path and file name
+*/
 
- */
 public class CSVFileInfo {
 
     private String filePath;
     private String fileName;
     private String streamId;
     private String separateCharacter;
-    private long delayBetweenEventsInMilies;
+    private long delayBetweenEventsInMillis;
+    public enum Status {STARTED, PAUSED, RESUMED, STOPPED}
+    private Status status;
 
     public String getSeparateCharacter() {
         return separateCharacter;
@@ -35,12 +38,7 @@ public class CSVFileInfo {
     }
 
     public CSVFileInfo() {
-        this.filePath = null;
-        this.fileName=null;
-        this.streamId =null;
-
-        this.separateCharacter =null;
-        this.delayBetweenEventsInMilies = 0;
+        this.delayBetweenEventsInMillis = 0;
     }
 
     public String getStreamID() {
@@ -67,11 +65,19 @@ public class CSVFileInfo {
         this.fileName = fileName;
     }
 
-    public long getDelayBetweenEventsInMilies() {
-        return delayBetweenEventsInMilies;
+    public long getDelayBetweenEventsInMillis() {
+        return delayBetweenEventsInMillis;
     }
 
-    public void setDelayBetweenEventsInMilies(long delayBetweenEventsInMilies) {
-        this.delayBetweenEventsInMilies = delayBetweenEventsInMilies;
+    public void setDelayBetweenEventsInMillis(long delayBetweenEventsInMillis) {
+        this.delayBetweenEventsInMillis = delayBetweenEventsInMillis;
+    }
+
+    public Status getStatus() {
+        return status;
+    }
+
+    public void setStatus(Status status) {
+        this.status = status;
     }
 }

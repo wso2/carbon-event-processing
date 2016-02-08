@@ -24,12 +24,12 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.wso2.carbon.event.simulator.core.internal.CarbonEventSimulator;
 import org.wso2.carbon.event.simulator.core.internal.ds.EventSimulatorValueHolder;
-import org.wso2.carbon.event.simulator.core.internal.util.DeployerHelper;
+import org.wso2.carbon.event.simulator.core.internal.util.DeploymentHelper;
 
 import java.io.File;
 
 public class XMLFileDeployer extends AbstractDeployer {
-    private static Log log = LogFactory.getLog(XMLFileDeployer.class);
+    private static final Log log = LogFactory.getLog(XMLFileDeployer.class);
     private ConfigurationContext configurationContext;
 
     @Override
@@ -46,7 +46,7 @@ public class XMLFileDeployer extends AbstractDeployer {
                 processDeployDatasourceConfig(deploymentFileData);
             } else {
                 log.warn("XML file : " + deploymentFileData.getName() + " not deployed. Name should contain either "
-                         + EventSimulatorConstant.CONFIGURATION_XML_SUFFIX + " or " + EventSimulatorConstant.DATA_SOURCE_CONFIGURATION_XML_SUFFIX);
+                        + EventSimulatorConstant.CONFIGURATION_XML_SUFFIX + " or " + EventSimulatorConstant.DATA_SOURCE_CONFIGURATION_XML_SUFFIX);
             }
         } catch (Throwable t) {
             File file = new File(path);
@@ -86,9 +86,10 @@ public class XMLFileDeployer extends AbstractDeployer {
     public void processDeployDatasourceConfig(DeploymentFileData deploymentFileData)
             throws DeploymentException {
         File xmlFile = deploymentFileData.getFile();
-        DataSourceTableAndStreamInfo dataSourceTableAndStreamInfo = DeployerHelper.getEventMappingConfiguration(xmlFile);
+        DataSourceTableAndStreamInfo dataSourceTableAndStreamInfo = DeploymentHelper.getEventMappingConfiguration(xmlFile);
         dataSourceTableAndStreamInfo.setFileName(xmlFile.getName());
         dataSourceTableAndStreamInfo.setFilePath(xmlFile.getAbsolutePath());
+        dataSourceTableAndStreamInfo.setStatus(DataSourceTableAndStreamInfo.Status.STOPPED);
 
         CarbonEventSimulator eventSimulator = EventSimulatorValueHolder.getEventSimulator();
         if (dataSourceTableAndStreamInfo != null) {
@@ -110,7 +111,7 @@ public class XMLFileDeployer extends AbstractDeployer {
      */
     public void processDeployStreamConfig(DeploymentFileData deploymentFileData)
             throws DeploymentException {
-        CSVFileInfo csvFileInfo = DeployerHelper.getCSVFileInfo(deploymentFileData.getFile(), configurationContext.getAxisConfiguration());
+        CSVFileInfo csvFileInfo = DeploymentHelper.getCSVFileInfo(deploymentFileData.getFile(), configurationContext.getAxisConfiguration());
         CarbonEventSimulator eventSimulator = EventSimulatorValueHolder.getEventSimulator();
         eventSimulator.addCSVFileInfo(csvFileInfo);
     }

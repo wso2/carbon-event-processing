@@ -21,13 +21,14 @@ public class CSVFileInfoDto {
     private String filePath;
     private String fileName;
     private String streamID;
-    private long delayBetweenEventsInMilies;
+    private long delayBetweenEventsInMillis;
+    private String status;
 
     public CSVFileInfoDto(){
         this.fileName=null;
         this.filePath=null;
         this.streamID=null;
-        this.delayBetweenEventsInMilies = 0;
+        this.delayBetweenEventsInMillis = 0;
     }
 
     public String getStreamID() {
@@ -54,11 +55,19 @@ public class CSVFileInfoDto {
         this.fileName = fileName;
     }
 
-    public long getDelayBetweenEventsInMilies() {
-        return delayBetweenEventsInMilies;
+    public long getDelayBetweenEventsInMillis() {
+        return delayBetweenEventsInMillis;
     }
 
-    public void setDelayBetweenEventsInMilies(long delayBetweenEventsInMilies) {
-        this.delayBetweenEventsInMilies = delayBetweenEventsInMilies;
+    public void setDelayBetweenEventsInMillis(long delayBetweenEventsInMillis) {
+        this.delayBetweenEventsInMillis = delayBetweenEventsInMillis;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
     }
 }

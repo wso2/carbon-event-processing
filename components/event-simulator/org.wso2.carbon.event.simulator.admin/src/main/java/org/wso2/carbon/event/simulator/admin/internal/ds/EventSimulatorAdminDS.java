@@ -36,15 +36,14 @@ public class EventSimulatorAdminDS {
 
     protected void activate(ComponentContext context) {
 
-
     }
 
     protected void setEventSimulatorService(EventSimulator eventSimulatorService) {
-        EventSimulatorAdminvalueHolder.registerEventSimulator(eventSimulatorService);
+        EventSimulatorAdminvalueHolder.setEventSimulator(eventSimulatorService);
     }
 
     protected void unsetEventSimulatorService(EventSimulator eventSimulatorService) {
-
+        EventSimulatorAdminvalueHolder.setEventSimulator(null);
     }
 
 

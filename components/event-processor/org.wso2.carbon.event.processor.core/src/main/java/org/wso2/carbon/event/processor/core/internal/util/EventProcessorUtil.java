@@ -25,6 +25,7 @@ import org.w3c.dom.Document;
 import org.wso2.carbon.context.CarbonContext;
 import org.wso2.carbon.context.PrivilegedCarbonContext;
 import org.wso2.carbon.databridge.commons.AttributeType;
+import org.wso2.carbon.databridge.commons.Event;
 import org.wso2.carbon.databridge.commons.StreamDefinition;
 import org.wso2.carbon.databridge.commons.exception.MalformedStreamDefinitionException;
 import org.wso2.carbon.event.processor.core.StreamConfiguration;
@@ -90,10 +91,10 @@ public class EventProcessorUtil {
     }
 
     public static org.wso2.siddhi.query.api.definition.StreamDefinition convertToSiddhiStreamDefinition(
-            StreamDefinition streamDefinition, String siddhiStreamName) throws EventStreamConfigurationException{
+            StreamDefinition streamDefinition, String siddhiStreamName) throws EventStreamConfigurationException {
         org.wso2.siddhi.query.api.definition.StreamDefinition siddhiStreamDefinition = new org.wso2.siddhi.query.api.definition.StreamDefinition();
         siddhiStreamDefinition.setId(siddhiStreamName);
-        try{
+        try {
             if (streamDefinition.getMetaData() != null) {
                 for (org.wso2.carbon.databridge.commons.Attribute attribute : streamDefinition.getMetaData()) {
                     Attribute siddhiAttribute = convertToSiddhiAttribute(attribute, EventProcessorConstants.META + EventProcessorConstants.ATTRIBUTE_SEPARATOR);
@@ -115,7 +116,7 @@ public class EventProcessorUtil {
             }
 
             return siddhiStreamDefinition;
-        } catch (DuplicateAttributeException ex){
+        } catch (DuplicateAttributeException ex) {
             throw new EventStreamConfigurationException(ex.getMessage(), ex);
         }
 
@@ -303,12 +304,39 @@ public class EventProcessorUtil {
         } else {
             int tenantId = PrivilegedCarbonContext.getThreadLocalCarbonContext().getTenantId();
             ConfigurationContext configurationContext = EventProcessorValueHolder.getTenantConfig(tenantId);
-            if(configurationContext != null){
+            if (configurationContext != null) {
                 axisConfiguration = configurationContext.getAxisConfiguration();
-            }else{
+            } else {
                 throw new ExcecutionPlanRuntimeException("Tenant configuration not found for tenant id: " + tenantId);
             }
         }
         return axisConfiguration;
+    }
+
+    public static Event getWso2Event(org.wso2.carbon.databridge.commons.StreamDefinition streamDefinition, long timestamp, Object[] data) {
+        int metaAttrCount = streamDefinition.getMetaData() != null ? streamDefinition.getMetaData().size() : 0;
+        int correlationAttrCount = streamDefinition.getCorrelationData() != null ? streamDefinition.getCorrelationData().size() : 0;
+        int payloadAttrCount = streamDefinition.getPayloadData() != null ? streamDefinition.getPayloadData().size() : 0;
+        Object[] metaAttrArray = new Object[metaAttrCount];
+        Object[] correlationAttrArray = new Object[correlationAttrCount];
+        Object[] payloadAttrArray = new Object[payloadAttrCount];
+        for (int i = 0; i < data.length; i++) {
+            if (i < metaAttrCount) {
+                metaAttrArray[i] = data[i];
+            } else if (i < metaAttrCount + correlationAttrCount) {
+                correlationAttrArray[i - metaAttrCount] = data[i];
+            } else {
+                payloadAttrArray[i - (metaAttrCount + correlationAttrCount)] = data[i];
+            }
+        }
+        return new Event(streamDefinition.getStreamId(), timestamp, metaAttrArray, correlationAttrArray, payloadAttrArray);
+    }
+
+    public static List<Event> getWso2Events(org.wso2.carbon.databridge.commons.StreamDefinition streamDefinition, org.wso2.siddhi.core.event.Event[] events) {
+        List<Event> eventList = new ArrayList<>();
+        for (org.wso2.siddhi.core.event.Event event : events) {
+            eventList.add(getWso2Event(streamDefinition, event.getTimestamp(), event.getData()));
+        }
+        return eventList;
     }
 }
