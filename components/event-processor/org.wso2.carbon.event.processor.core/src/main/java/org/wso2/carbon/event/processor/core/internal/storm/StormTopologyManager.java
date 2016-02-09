@@ -245,12 +245,7 @@ public class StormTopologyManager {
                             }
                         } catch (InvalidTopologyException e) {
                             log.error(jobPrefix + "Cannot deploy, Invalid Storm topology '" + topologyName + "' found.", e);
-                            log.info(jobPrefix + "Retrying to submit topology '" + topologyName + "' in " + retryInterval + " ms");
-                            try {
-                                Thread.sleep(retryInterval);
-                            } catch (InterruptedException e1) {
-                                //ignore
-                            }
+                            return;
                         } catch (AlreadyAliveException e) {
                             log.warn(jobPrefix + "Topology '" + topologyName + "' already existing. Trying to kill and re-submit", e);
                         }
