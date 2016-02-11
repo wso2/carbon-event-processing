@@ -115,7 +115,7 @@
         var g = new dagreD3.graphlib.Graph({compound:true})
           .setGraph({})
           .setDefaultEdgeLabel(function() { return {}; });
-        var exeFlow = <%=executionPlan_nodes %>.replace(/\n/g, "\\n").replace(/\'/g, "");
+        var exeFlow = <%=executionPlan_nodes %>.replace(/\n/g, "\\n").replace(/\t/g, "\\t").replace(/\'/g, "");
         var queryFlow = jQuery.parseJSON(exeFlow);
         //create nodes
         var nodes = queryFlow.nodes;
