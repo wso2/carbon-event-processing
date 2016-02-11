@@ -453,6 +453,32 @@
                 <version>${geocoder.version}</version>
             </dependency>
 
+            <!-- Siddhi Kalman filter extension -->
+            <dependency>
+                <groupId>org.wso2.siddhi</groupId>
+                <artifactId>siddhi-extension-kalman-filter</artifactId>
+                <version>${siddhi.version}</version>
+            </dependency>
+
+            <!-- Siddhi Map extension -->
+            <dependency>
+                <groupId>org.wso2.siddhi</groupId>
+                <artifactId>siddhi-extension-map</artifactId>
+                <version>${siddhi.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.json.wso2</groupId>
+                <artifactId>json</artifactId>
+                <version>${json.version}</version>
+            </dependency>
+
+            <!-- Siddhi Recorder extension -->
+            <dependency>
+                <groupId>org.wso2.siddhi</groupId>
+                <artifactId>siddhi-extension-reorder</artifactId>
+                <version>${siddhi.version}</version>
+            </dependency>
+
             <!-- Siddhi Eval-Script extension -->
             <!-- TODO Need to Add other related dependencies -->
             <dependency>
@@ -798,6 +824,7 @@
         <geocoder.version>0.16_1</geocoder.version>
         <commons-lang3.version>3.3.2</commons-lang3.version>
         <json-simple.version>1.1.1</json-simple.version>
+        <json.version>3.0.0.wso2v1</json.version>
         <hadoop.common.version>2.6.0</hadoop.common.version>
         <jama.version>1.0.3</jama.version>
         <jdbc-pool.version>7.0.34.wso2v2</jdbc-pool.version>

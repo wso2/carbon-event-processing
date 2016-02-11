@@ -123,13 +123,24 @@
             <artifactId>siddhi-extension-timeseries</artifactId>
         </dependency>
         <!--<dependency>-->
-        <!--<groupId>org.wso2.siddhi</groupId>-->
-        <!--<artifactId>siddhi-extension-ml</artifactId>-->
+            <!--<groupId>org.wso2.siddhi</groupId>-->
+            <!--<artifactId>siddhi-extension-ml</artifactId>-->
         <!--</dependency>-->
-
         <dependency>
             <groupId>org.wso2.siddhi</groupId>
             <artifactId>siddhi-extension-geo</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.wso2.siddhi</groupId>
+            <artifactId>siddhi-extension-kalman-filter</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.wso2.siddhi</groupId>
+            <artifactId>siddhi-extension-map</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.wso2.siddhi</groupId>
+            <artifactId>siddhi-extension-reorder</artifactId>
         </dependency>
 
         <dependency>
@@ -176,6 +187,14 @@
             <!--<groupId>org.scala-lang</groupId>-->
             <!--<artifactId>scala-reflect</artifactId>-->
         <!--</dependency>-->
+        <dependency>
+            <groupId>org.apache.ws.commons.axiom.wso2</groupId>
+            <artifactId>axiom</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.json.wso2</groupId>
+            <artifactId>json</artifactId>
+        </dependency>
     </dependencies>
 
 
@@ -283,6 +302,16 @@
                                 <!--org.wso2.siddhi:siddhi-extension-ml:${siddhi.version}-->
                                 <!--</bundleDef>-->
                                 <bundleDef>
+                                    org.wso2.siddhi:siddhi-extension-kalman-filter:${siddhi.version}
+                                </bundleDef>
+                                <bundleDef>
+                                    org.wso2.siddhi:siddhi-extension-map:${siddhi.version}
+                                </bundleDef>
+                                <bundleDef>
+                                    org.wso2.siddhi:siddhi-extension-reorder:${siddhi.version}
+                                </bundleDef>
+
+                                <bundleDef>
                                     org.wso2.orbit.org.apache.hadoop:hadoop-client:${hadoop.client.version}
                                 </bundleDef>
                                 <bundleDef>
@@ -312,6 +341,12 @@
                                 <!--<bundleDef>-->
                                     <!--org.scala-lang:scala-reflect:${scala.version}-->
                                 <!--</bundleDef>-->
+                                <bundleDef>
+                                    org.apache.ws.commons.axiom.wso2:axiom:${orbit.version.axiom}
+                                </bundleDef>
+                                <bundleDef>
+                                    org.json.wso2:json:${json.version}
+                                </bundleDef>
 
                                 <bundleDef>
                                     org.apache.servicemix.bundles:org.apache.servicemix.bundles.geocoder-java:${geocoder.version}
