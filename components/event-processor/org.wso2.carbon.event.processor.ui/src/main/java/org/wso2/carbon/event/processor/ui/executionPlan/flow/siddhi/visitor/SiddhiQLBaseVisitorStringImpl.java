@@ -305,9 +305,6 @@ public class SiddhiQLBaseVisitorStringImpl extends SiddhiQLBaseVisitor {
         queryText.append("\"outputStream\":").append(visit(ctx.query_output())).append(",");
 
         String q_Text = tokenStreamRewriter.getTokenStream().getText(ctx.getStart(), ctx.getStop()).replaceAll("\\n", "\\\\n").replaceAll("\\t", "\\\\t");
-
-        System.out.println(q_Text.replaceAll("\\t", "\\\\t")+"\n");
-
         queryText.append("\"query_Text\":\"").append(q_Text).append("\",");
 
         queryText = new StringBuilder(queryText.substring(0, queryText.length() - 1));
