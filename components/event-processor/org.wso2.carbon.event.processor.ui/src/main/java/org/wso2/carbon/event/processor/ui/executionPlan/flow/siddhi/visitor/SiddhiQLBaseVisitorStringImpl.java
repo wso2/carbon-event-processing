@@ -64,7 +64,7 @@ public class SiddhiQLBaseVisitorStringImpl extends SiddhiQLBaseVisitor {
             executionPlanText.append((StringBuilder) visit(triggerContext)).append(", ");
         }
 
-        String exe_Text = tokenStreamRewriter.getTokenStream().getText(ctx.getStart(), ctx.getStop()).replaceAll("\\n", "\\\\n");
+        String exe_Text = tokenStreamRewriter.getTokenStream().getText(ctx.getStart(), ctx.getStop()).replaceAll("\\n", "\\\\n").replaceAll("\\t", "\\\\t");
         executionPlanText.append(" { \"executionPlan_Text\":\"").append(exe_Text.replaceAll("\"", "\\\\\"")).append("\",");
 
         executionPlanText = new StringBuilder(executionPlanText.substring(0, executionPlanText.length() - 1));
@@ -304,7 +304,10 @@ public class SiddhiQLBaseVisitorStringImpl extends SiddhiQLBaseVisitor {
 
         queryText.append("\"outputStream\":").append(visit(ctx.query_output())).append(",");
 
-        String q_Text = tokenStreamRewriter.getTokenStream().getText(ctx.getStart(), ctx.getStop()).replaceAll("\\n", "\\\\n");
+        String q_Text = tokenStreamRewriter.getTokenStream().getText(ctx.getStart(), ctx.getStop()).replaceAll("\\n", "\\\\n").replaceAll("\\t", "\\\\t");
+
+        System.out.println(q_Text.replaceAll("\\t", "\\\\t")+"\n");
+
         queryText.append("\"query_Text\":\"").append(q_Text).append("\",");
 
         queryText = new StringBuilder(queryText.substring(0, queryText.length() - 1));
