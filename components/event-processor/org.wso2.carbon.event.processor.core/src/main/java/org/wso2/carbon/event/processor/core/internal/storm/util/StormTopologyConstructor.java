@@ -131,7 +131,7 @@ public class StormTopologyConstructor {
             OMElement eventProcessorElement = iterator.next();
             String name = eventProcessorElement.getAttributeValue(new QName("name"));
             int parallel = Integer.parseInt(eventProcessorElement.getAttributeValue(new QName("parallel")));
-            ComponentInfoHolder componentInfoHolder = new ComponentInfoHolder(name, ComponentInfoHolder.ComponentType.SIDDHI_BOLT);
+            ComponentInfoHolder componentInfoHolder = new ComponentInfoHolder(name, ComponentInfoHolder.ComponentType.EVENT_PUBLISHER_BOLT);
 
             OMElement inputStreamsElement = eventProcessorElement.getFirstChildWithName(new QName("input-streams"));
             List<String> inputStreamDefinitions = getStreamDefinitions(inputStreamsElement);
@@ -182,7 +182,8 @@ public class StormTopologyConstructor {
                     if (topologyInfoHolder.getPublishingComponents(inputStreamId) != null) {
                         for (ComponentInfoHolder pubComponent : topologyInfoHolder.getPublishingComponents(inputStreamId)) {
 
-                            if (!pubComponent.getComponentName().equals(componentInfoHolder.getComponentName())) {
+                            if (pubComponent.getComponentType() != ComponentInfoHolder.ComponentType.EVENT_PUBLISHER_BOLT &&
+                                    !pubComponent.getComponentName().equals(componentInfoHolder.getComponentName())) {
                                 String partitionedField = componentInfoHolder.getPartionenedField(inputStreamId);
                                 String groupingType = "ShuffleGrouping";
                                 if (partitionedField == null) {
