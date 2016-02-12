@@ -16,11 +16,22 @@
 package org.wso2.carbon.event.processor.ui.executionPlan.flow;
 
 import com.google.gson.JsonArray;
+import org.wso2.siddhi.core.ExecutionPlanRuntime;
+import org.wso2.siddhi.core.SiddhiManager;
+import org.wso2.siddhi.query.api.definition.AbstractDefinition;
 
+import java.util.Collection;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 public class ExecutionPlanFlow {
     public String get_executionPlanFlow(String executionPlan_String) {
+
+        SiddhiManager manager = new SiddhiManager();
+        ExecutionPlanRuntime executionPlanRuntime = manager.createExecutionPlanRuntime(executionPlan_String);
+        Set<String> id = executionPlanRuntime.getStreamDefinitionMap().keySet();
+        Collection<AbstractDefinition> definitions= executionPlanRuntime.getStreamDefinitionMap().values();
 
         ExtractJsonValueImpl converter = new ExtractJsonValueImpl();
 
@@ -31,6 +42,8 @@ public class ExecutionPlanFlow {
         List<String> streamText = converter.get_streamText();
         List<String> streamAnno = converter.get_streamAnno();
         List<String> streamElement = converter.get_streamElement();
+        List<String> streamMapId = converter.get_StreamMapId();
+        List<String> streamDefinition = converter.get_StreamDefinition();
 
         List<String> tableId = converter.get_tableId();
         List<String> tableText = converter.get_tableText();
@@ -92,10 +105,10 @@ public class ExecutionPlanFlow {
                         executionPlanFlow.append("\"toolTip\": ").append(tableText.get(k)).append(",");
                     }
                 }
-                for (int l = 0; l < streamId.size(); l++) {
-                    String inId = ("\"" + stream.get(j).getAsString() + "\"");
-                    if (streamId.get(l).equals(inId)) {
-                        executionPlanFlow.append("\"toolTip\": ").append(streamText.get(l)).append(",");
+                for (int l = 0; l < streamMapId.size(); l++) {
+                    String inId = (stream.get(j).getAsString());
+                    if (streamMapId.get(l).equals(inId)) {
+                        executionPlanFlow.append("\"toolTip\": ").append(streamDefinition.get(l)).append(",");
                     }
                 }
                 executionPlanFlow.append("\"nodeclass\": \"S\"").append("},");
@@ -119,10 +132,10 @@ public class ExecutionPlanFlow {
                             executionPlanFlow.append("\"toolTip\": ").append(tableText.get(k)).append(",");
                         }
                     }
-                    for (int l = 0; l < streamId.size(); l++) {
-                        String outId = ("\"" + stream.get(j).getAsString() + "\"");
-                        if (streamId.get(l).equals(outId)) {
-                            executionPlanFlow.append("\"toolTip\": ").append(streamText.get(l)).append(",");
+                    for (int l = 0; l < streamMapId.size(); l++) {
+                        String outId = (stream.get(j).getAsString());
+                        if (streamMapId.get(l).equals(outId)) {
+                            executionPlanFlow.append("\"toolTip\": ").append(streamDefinition.get(l)).append(",");
                         }
                     }
                     executionPlanFlow.append("\"nodeclass\": \"S\"").append("},");
