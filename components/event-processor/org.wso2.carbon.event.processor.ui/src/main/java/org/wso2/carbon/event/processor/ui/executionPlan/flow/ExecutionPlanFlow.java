@@ -28,11 +28,6 @@ import java.util.Set;
 public class ExecutionPlanFlow {
     public String get_executionPlanFlow(String executionPlan_String) {
 
-        SiddhiManager manager = new SiddhiManager();
-        ExecutionPlanRuntime executionPlanRuntime = manager.createExecutionPlanRuntime(executionPlan_String);
-        Set<String> id = executionPlanRuntime.getStreamDefinitionMap().keySet();
-        Collection<AbstractDefinition> definitions= executionPlanRuntime.getStreamDefinitionMap().values();
-
         ExtractJsonValueImpl converter = new ExtractJsonValueImpl();
 
         converter.set_jsonValues(executionPlan_String);
