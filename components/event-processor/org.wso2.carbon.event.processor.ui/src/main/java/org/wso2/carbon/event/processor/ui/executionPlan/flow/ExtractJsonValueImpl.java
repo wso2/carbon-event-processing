@@ -21,9 +21,14 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import org.wso2.carbon.event.processor.ui.executionPlan.flow.siddhi.visitor.SiddhiFlowCompiler;
+import org.wso2.siddhi.core.ExecutionPlanRuntime;
+import org.wso2.siddhi.core.SiddhiManager;
+import org.wso2.siddhi.query.api.definition.AbstractDefinition;
+import org.wso2.siddhi.query.api.definition.Attribute;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 public class ExtractJsonValueImpl {
     private String executionPlan_Text;
@@ -32,6 +37,8 @@ public class ExtractJsonValueImpl {
     private List<String> streamAnno = new ArrayList<String>();
     private List<String> streamElement = new ArrayList<String>();
     private List<String> stream_Text = new ArrayList<String>();
+    private List<String> streamMapId = new ArrayList<String> ();
+    private List<String> streamDefinition = new ArrayList<String>();
 
     //table
     private List<String> tableId = new ArrayList<String>();
@@ -57,10 +64,10 @@ public class ExtractJsonValueImpl {
     private List<JsonArray> partition_with_condition = new ArrayList<JsonArray>();
     private List<List<String>> partitionAttribute_toolTip = new ArrayList<List<String>>();
 
-
     public void set_jsonValues(String executionPlan) {
 
         StringBuilder executionPlan_String = SiddhiFlowCompiler.parseString(executionPlan);
+        createStreamDefinition(executionPlan);
 
         JsonElement jsonElement = new JsonParser().parse(executionPlan_String.toString());
         JsonObject jsonObject = jsonElement.getAsJsonObject();
@@ -90,6 +97,30 @@ public class ExtractJsonValueImpl {
             if (exeplanArray.get(k).getAsJsonObject().get("executionPlan_Text") != null) {
                 executionPlan_Text = exeplanArray.get(k).getAsJsonObject().get("executionPlan_Text").toString();
             }
+        }
+    }
+    //create stream definition
+    private void createStreamDefinition (String executionPlan) {
+        SiddhiManager manager = new SiddhiManager();
+        ExecutionPlanRuntime executionPlanRuntime = manager.createExecutionPlanRuntime(executionPlan);
+
+        Map<String, AbstractDefinition> streamDefinitionMap = executionPlanRuntime.getStreamDefinitionMap();
+        List<List<Attribute>> attributeList = new ArrayList<List<Attribute>>();
+
+        for (AbstractDefinition ab : streamDefinitionMap.values()) {
+            streamMapId.add(ab.getId());
+            attributeList.add(ab.getAttributeList());
+        }
+
+        for (int j=0; j<attributeList.size(); j++) {
+            StringBuilder stream = new StringBuilder();
+            stream.append("\"define stream ").append(streamMapId.get(j)).append(" (");
+            for (int i=0; i<attributeList.get(j).size(); i++) {
+                stream.append(" ").append(attributeList.get(j).get(i).getName()).append(" ") .append(attributeList.get(j).get(i).getType().toString().toLowerCase()).append(",");
+            }
+            stream = new StringBuilder(stream.substring(0, stream.length() - 1));
+            stream.append(")\"");
+            streamDefinition.add(stream.toString());
         }
     }
 
@@ -283,4 +314,8 @@ public class ExtractJsonValueImpl {
     public List<String> get_partitionWithStream() {
         return partition_with_stream;
     }
+
+    public List<String> get_StreamMapId() { return streamMapId; }
+
+    public List<String> get_StreamDefinition() { return streamDefinition; }
 }
