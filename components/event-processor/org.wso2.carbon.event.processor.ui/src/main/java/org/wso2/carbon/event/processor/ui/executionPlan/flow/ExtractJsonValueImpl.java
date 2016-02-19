@@ -31,20 +31,26 @@ import java.util.List;
 import java.util.Map;
 
 public class ExtractJsonValueImpl {
-    private String executionPlan_Text;
+    private String executionPlanText;
     //stream
     private List<String> streamId = new ArrayList<String>();
     private List<String> streamAnno = new ArrayList<String>();
     private List<String> streamElement = new ArrayList<String>();
-    private List<String> stream_Text = new ArrayList<String>();
+    private List<String> streamText = new ArrayList<String>();
     private List<String> streamMapId = new ArrayList<String> ();
     private List<String> streamDefinition = new ArrayList<String>();
 
+    //trigger
+    private List<String> triggerName = new ArrayList<String>();
+    private List<String> triggerText = new ArrayList<String>();
+
     //table
     private List<String> tableId = new ArrayList<String>();
-    private List<String> tableAnno = new ArrayList<String>();
-    private List<String> tableElement = new ArrayList<String>();
-    private List<String> table_Text = new ArrayList<String>();
+    private List<String> tableText = new ArrayList<String>();
+
+    //function
+    private List<String> functionName = new ArrayList<String>();
+    private List<String> functionText = new ArrayList<String>();
 
     //query
     private List<JsonArray> inputStream = new ArrayList<JsonArray>();
@@ -53,56 +59,68 @@ public class ExtractJsonValueImpl {
     private List<JsonArray> innerStream_out = new ArrayList<JsonArray>();
     private List<String> queryID = new ArrayList<String>();
     private List<String> queryName = new ArrayList<String>();
-    private List<String> query_Text = new ArrayList<String>();
-    private List<String> query_withPartition = new ArrayList<String>();
+    private List<String> queryText = new ArrayList<String>();
+    private List<String> queryWithPartition = new ArrayList<String>();
 
     //partition
-    private List<String> partition_with_Text = new ArrayList<String>();
-    private List<String> partition_Text = new ArrayList<String>();
-    private List<String> partition_with_stream = new ArrayList<String>();
-    private List<JsonArray> partition_with_attribute = new ArrayList<JsonArray>();
-    private List<JsonArray> partition_with_condition = new ArrayList<JsonArray>();
-    private List<List<String>> partitionAttribute_toolTip = new ArrayList<List<String>>();
+    private List<String> partitionWithText = new ArrayList<String>();
+    private List<String> partitionText = new ArrayList<String>();
+    private List<String> partitionWithStream = new ArrayList<String>();
+    private List<JsonArray> partitionWithAttribute = new ArrayList<JsonArray>();
+    private List<JsonArray> partitionWithCondition = new ArrayList<JsonArray>();
+    private List<List<String>> partitionAttributeToolTip = new ArrayList<List<String>>();
 
-    public void set_jsonValues(String executionPlan) {
+    public void setJsonValues(String executionPlan) {
 
         StringBuilder executionPlan_String = SiddhiFlowCompiler.parseString(executionPlan);
         createStreamDefinition(executionPlan);
 
         JsonElement jsonElement = new JsonParser().parse(executionPlan_String.toString());
         JsonObject jsonObject = jsonElement.getAsJsonObject();
-        JsonArray exeplanArray = jsonObject.getAsJsonArray("ExecutionPlan");
+        JsonArray executionPlanArray = jsonObject.getAsJsonArray("ExecutionPlan");
 
-        for (int k = 0; k < exeplanArray.size(); k++) {
-            if (exeplanArray.get(k).getAsJsonObject().get("Stream") != null) {
-                JsonArray streamArray = exeplanArray.get(k).getAsJsonObject().getAsJsonArray("Stream");
-                set_streamJsonValue(streamArray);
+        for (int k = 0; k < executionPlanArray.size(); k++) {
+            if (executionPlanArray.get(k).getAsJsonObject().get("Stream") != null) {
+                JsonArray streamArray = executionPlanArray.get(k).getAsJsonObject().getAsJsonArray("Stream");
+                setStreamJsonValue(streamArray);
             }
 
-            if (exeplanArray.get(k).getAsJsonObject().get("Table") != null) {
-                JsonArray tableArray = exeplanArray.get(k).getAsJsonObject().getAsJsonArray("Table");
-                set_tableJsonValue(tableArray);
+            if (executionPlanArray.get(k).getAsJsonObject().get("Table") != null) {
+                JsonArray tableArray = executionPlanArray.get(k).getAsJsonObject().getAsJsonArray("Table");
+                setTableJsonValue(tableArray);
             }
 
-            if (exeplanArray.get(k).getAsJsonObject().get("Query") != null) {
-                JsonArray queryArray = exeplanArray.get(k).getAsJsonObject().getAsJsonArray("Query");
-                set_queryJsonValue(queryArray, null);
+            if (executionPlanArray.get(k).getAsJsonObject().get("Query") != null) {
+                JsonArray queryArray = executionPlanArray.get(k).getAsJsonObject().getAsJsonArray("Query");
+                setQueryJsonValue(queryArray, null);
             }
 
-            if (exeplanArray.get(k).getAsJsonObject().get("Partition") != null) {
-                JsonArray partitionArray = exeplanArray.get(k).getAsJsonObject().getAsJsonArray("Partition");
-                set_partitionJsonValue(partitionArray);
+            if (executionPlanArray.get(k).getAsJsonObject().get("Trigger") != null) {
+                JsonArray triggerArray = executionPlanArray.get(k).getAsJsonObject().getAsJsonArray("Trigger");
+                setTriggerJsonValue(triggerArray);
             }
 
-            if (exeplanArray.get(k).getAsJsonObject().get("executionPlan_Text") != null) {
-                executionPlan_Text = exeplanArray.get(k).getAsJsonObject().get("executionPlan_Text").toString();
+            if (executionPlanArray.get(k).getAsJsonObject().get("Function") != null) {
+                JsonArray functionArray = executionPlanArray.get(k).getAsJsonObject().getAsJsonArray("Function");
+                setTriggerJsonValue(functionArray);
+            }
+
+            if (executionPlanArray.get(k).getAsJsonObject().get("Partition") != null) {
+                JsonArray partitionArray = executionPlanArray.get(k).getAsJsonObject().getAsJsonArray("Partition");
+                setPartitionJsonValue(partitionArray);
+            }
+
+            if (executionPlanArray.get(k).getAsJsonObject().get("executionPlan_Text") != null) {
+                executionPlanText = executionPlanArray.get(k).getAsJsonObject().get("executionPlan_Text").toString();
             }
         }
     }
     //create stream definition
     private void createStreamDefinition (String executionPlan) {
         SiddhiManager manager = new SiddhiManager();
-        ExecutionPlanRuntime executionPlanRuntime = manager.createExecutionPlanRuntime(executionPlan);
+        //Specially handle for events tables
+        String executionPlanCleaned=  executionPlan.replaceAll("@from\\(.*?\\)","");
+        ExecutionPlanRuntime executionPlanRuntime = manager.createExecutionPlanRuntime(executionPlanCleaned);
 
         Map<String, AbstractDefinition> streamDefinitionMap = executionPlanRuntime.getStreamDefinitionMap();
         List<List<Attribute>> attributeList = new ArrayList<List<Attribute>>();
@@ -125,34 +143,50 @@ public class ExtractJsonValueImpl {
     }
 
     //Stream
-    private void set_streamJsonValue(JsonArray streamArray) {
+    private void setStreamJsonValue(JsonArray streamArray) {
         for (int i = 0; i < streamArray.size(); i++) {
             JsonObject streamObj = streamArray.get(i).getAsJsonObject();
-            stream_Text.add(streamObj.get("stream_Text").toString());
+            streamText.add(streamObj.get("stream_Text").toString());
             streamId.add(streamObj.get("streamId").toString());
             streamAnno.add(streamObj.get("annoName").toString());
             streamElement.add(streamObj.get("annoElement").toString());
         }
     }
 
+    //trigger
+    private void setTriggerJsonValue(JsonArray trigerArray) {
+        for (int i = 0; i < trigerArray.size(); i++) {
+            JsonObject streamObj = trigerArray.get(i).getAsJsonObject();
+            triggerName.add(streamObj.get("triggerName").toString());
+            triggerText.add(streamObj.get("triggerText").toString());
+        }
+    }
+
+    //function
+    private void setFunctionJsonValue(JsonArray trigerArray) {
+        for (int i = 0; i < trigerArray.size(); i++) {
+            JsonObject streamObj = trigerArray.get(i).getAsJsonObject();
+            functionName.add(streamObj.get("functionName").toString());
+            functionText.add(streamObj.get("functionText").toString());
+        }
+    }
+
     //table
-    private void set_tableJsonValue(JsonArray tableArray) {
+    private void setTableJsonValue(JsonArray tableArray) {
         for (int i = 0; i < tableArray.size(); i++) {
             JsonObject streamObj = tableArray.get(i).getAsJsonObject();
-            table_Text.add(streamObj.get("table_Text").toString());
+            tableText.add(streamObj.get("table_Text").toString());
             tableId.add(streamObj.get("tableId").toString());
-            tableAnno.add(streamObj.get("annoName").toString());
-            tableElement.add(streamObj.get("annoElement").toString());
         }
     }
 
     //query
-    private void set_queryJsonValue(JsonArray queryArray, String partitionWith) {
+    private void setQueryJsonValue(JsonArray queryArray, String partitionWith) {
         for (int i = 0; i < queryArray.size(); i++) {
             JsonObject queryObj = queryArray.get(i).getAsJsonObject();
             queryName.add(queryObj.get("annotationElement").toString());
-            query_Text.add(queryObj.get("query_Text").toString().replaceAll("\'", "\\\\'"));
-            query_withPartition.add(partitionWith);
+            queryText.add(queryObj.get("query_Text").toString().replaceAll("\'", "\\\\'"));
+            queryWithPartition.add(partitionWith);
 
             if (queryObj.get("inputStream").isJsonObject()) {
                 JsonObject inputStreamObj = queryObj.getAsJsonObject("inputStream");
@@ -185,35 +219,35 @@ public class ExtractJsonValueImpl {
     }
 
     //partition
-    private void set_partitionJsonValue(JsonArray partitionArray) {
+    private void setPartitionJsonValue(JsonArray partitionArray) {
         for (int m = 0; m < partitionArray.size(); m++) {
             JsonObject partitionObj = partitionArray.get(m).getAsJsonObject();
-            partition_with_Text.add(partitionObj.get("Partition_with_Text").toString());
-            partition_Text.add(partitionObj.get("Partition_Text").toString());
+            partitionWithText.add(partitionObj.get("Partition_with_Text").toString());
+            partitionText.add(partitionObj.get("Partition_Text").toString());
 
             JsonArray partitionWith = partitionObj.getAsJsonArray("PartitionWith");
             JsonObject partitionWithObj = partitionWith.get(0).getAsJsonObject();
-            partition_with_stream.add(partitionWithObj.get("Partition_Stream").toString());
-            partition_with_attribute.add(partitionWithObj.get("attribute").getAsJsonArray());
-            partition_with_condition.add(partitionWithObj.get("condition").getAsJsonArray());
+            partitionWithStream.add(partitionWithObj.get("Partition_Stream").toString());
+            partitionWithAttribute.add(partitionWithObj.get("attribute").getAsJsonArray());
+            partitionWithCondition.add(partitionWithObj.get("condition").getAsJsonArray());
 
             for (int j = 0; j < partitionObj.get("Query_size").getAsInt(); j++) {
                 JsonArray partitionQuery_Array = partitionObj.getAsJsonArray("Query_" + j);
                 JsonObject partitionQuery_Obj = partitionQuery_Array.get(0).getAsJsonObject();
                 JsonArray queryArray = partitionQuery_Obj.getAsJsonObject().getAsJsonArray("Query");
 
-                set_queryJsonValue(queryArray, partitionObj.get("Partition_with_Text").toString());
+                setQueryJsonValue(queryArray, partitionObj.get("Partition_with_Text").toString());
             }
         }
     }
 
-    public List<List<String>> getPartitionAttribute_toolTip() {
-        for (int i = 0; i < partition_with_attribute.size(); i++) {
+    public List<List<String>> getPartitionAttributeToolTip() {
+        for (int i = 0; i < partitionWithAttribute.size(); i++) {
             List<String> attribute_toolTip = new ArrayList<String>();
-            for (int j = 0; j < partition_with_attribute.get(i).size(); j++) {
-                if (!partition_with_condition.get(i).toString().equals("[null]")) {
-                    JsonArray attribute = partition_with_attribute.get(i);
-                    JsonArray condition = partition_with_condition.get(i);
+            for (int j = 0; j < partitionWithAttribute.get(i).size(); j++) {
+                if (!partitionWithCondition.get(i).toString().equals("[null]")) {
+                    JsonArray attribute = partitionWithAttribute.get(i);
+                    JsonArray condition = partitionWithCondition.get(i);
                     if (j == 0) {
                         attribute_toolTip.add("\"" + attribute.get(j).getAsString() + " : " + condition.get(j).getAsString() + "\"");
                     } else {
@@ -223,99 +257,107 @@ public class ExtractJsonValueImpl {
                     attribute_toolTip.add(null);
                 }
             }
-            partitionAttribute_toolTip.add(attribute_toolTip);
+            partitionAttributeToolTip.add(attribute_toolTip);
         }
-        return partitionAttribute_toolTip;
+        return partitionAttributeToolTip;
     }
 
-    public List<String> get_queryID() {
+    public List<String> getQueryID() {
         for (int i = 0; i < queryName.size(); i++) {
             queryID.add("\"Q_" + i + "\"");
         }
         return queryID;
     }
 
-    public String get_executionPlan_Text() {
-        return executionPlan_Text;
+    public String getExecutionPlanText() {
+        return executionPlanText;
     }
 
-    public List<String> get_streamId() {
+    public List<String> getStreamId() {
         return streamId;
     }
 
-    public List<String> get_streamAnno() {
+    public List<String> getStreamAnno() {
         return streamAnno;
     }
 
-    public List<String> get_streamElement() {
+    public List<String> getStreamElement() {
         return streamElement;
     }
 
-    public List<String> get_streamText() {
-        return stream_Text;
+    public List<String> getStreamText() {
+        return streamText;
     }
 
-    public List<String> get_tableId() {
+    public List<String> getTableId() {
         return tableId;
     }
 
-    public List<String> get_tableText() {
-        return table_Text;
+    public List<String> getTableText() {
+        return tableText;
     }
 
-    public List<String> get_tableAnno() {
-        return tableAnno;
+    public List<String> getTriggerId() {
+        return triggerName;
     }
 
-    public List<String> get_tableElement() {
-        return tableElement;
+    public List<String> getTriggerText() {
+        return triggerText;
     }
 
-    public List<JsonArray> get_inputStream() {
+    public List<String> getFunctionId() {
+        return functionName;
+    }
+
+    public List<String> getFunctionText() {
+        return functionText;
+    }
+
+    public List<JsonArray> getInputStream() {
         return inputStream;
     }
 
-    public List<JsonArray> get_innerStreamIn() {
+    public List<JsonArray> getInnerInputStream() {
         return innerStream_in;
     }
 
-    public List<JsonArray> get_innerStreamOut() {
+    public List<JsonArray> getInnerOutputStream() {
         return innerStream_out;
     }
 
-    public List<JsonArray> get_outputStream() {
+    public List<JsonArray> getOutputStream() {
         return outputStream;
     }
 
-    public List<String> get_queryText() {
-        return query_Text;
+    public List<String> getQueryText() {
+        return queryText;
     }
 
-    public List<String> get_queryName() {
+    public List<String> getQueryName() {
         return queryName;
     }
 
-    public List<String> get_partitonWith_query() {
-        return query_withPartition;
+    public List<String> getPartitionWithQuery() {
+        return queryWithPartition;
     }
 
-    public List<String> get_partitionWithText() {
-        return partition_with_Text;
+    public List<String> getPartitionWithText() {
+        return partitionWithText;
     }
 
-    public List<String> get_partitionText() {
-        return partition_Text;
+    public List<String> getPartitionText() {
+        return partitionText;
     }
 
-    public List<JsonArray> get_partitionWithAttribute() {
-        return partition_with_attribute;
+    public List<JsonArray> getPartitionWithAttribute() {
+        return partitionWithAttribute;
     }
 
-    public List<String> get_partitionWithStream() {
-        return partition_with_stream;
+    public List<String> getPartitionWithStream() {
+        return partitionWithStream;
     }
 
-    public List<String> get_StreamMapId() { return streamMapId; }
+    public List<String> getStreamMapId() { return streamMapId; }
 
-    public List<String> get_StreamDefinition() { return streamDefinition; }
+    public List<String> getStreamDefinition() { return streamDefinition; }
 }
