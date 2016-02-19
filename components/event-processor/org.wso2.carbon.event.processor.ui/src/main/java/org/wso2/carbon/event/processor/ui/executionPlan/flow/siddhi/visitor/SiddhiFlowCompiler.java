@@ -28,6 +28,7 @@ import org.wso2.siddhi.query.compiler.SiddhiQLVisitor;
 import org.wso2.siddhi.query.compiler.internal.SiddhiErrorListener;
 
 public class SiddhiFlowCompiler {
+
     public static StringBuilder parseString(String source) {
 
         ANTLRInputStream input = new ANTLRInputStream(source);

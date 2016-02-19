@@ -46,29 +46,25 @@ public class SiddhiQLBaseVisitorStringImpl extends SiddhiQLBaseVisitor {
         StringBuilder executionPlanText = new StringBuilder(" { \"ExecutionPlan\": [ ");
 
         for (SiddhiQLParser.Plan_annotationContext annotationContext : ctx.plan_annotation()) {
-            executionPlanText.append((StringBuilder) visit(annotationContext)).append(", ");
+            executionPlanText.append((StringBuilder) visit(annotationContext)).append(",");
         }
         for (SiddhiQLParser.Definition_streamContext streamContext : ctx.definition_stream()) {
-            executionPlanText.append((StringBuilder) visit(streamContext)).append(", ");
+            executionPlanText.append((StringBuilder) visit(streamContext)).append(",");
         }
         for (SiddhiQLParser.Definition_tableContext tableContext : ctx.definition_table()) {
-            executionPlanText.append((StringBuilder) visit(tableContext)).append(", ");
+            executionPlanText.append((StringBuilder) visit(tableContext)).append(",");
         }
         for (SiddhiQLParser.Definition_functionContext functionContext : ctx.definition_function()) {
-            executionPlanText.append((StringBuilder) visit(functionContext)).append(", ");
+            executionPlanText.append((StringBuilder) visit(functionContext)).append(",");
         }
         for (SiddhiQLParser.Execution_elementContext executionElementContext : ctx.execution_element()) {
-            executionPlanText.append((StringBuilder) visit(executionElementContext)).append(", ");
+            executionPlanText.append((StringBuilder) visit(executionElementContext)).append(",");
         }
         for (SiddhiQLParser.Definition_triggerContext triggerContext : ctx.definition_trigger()) {
-            executionPlanText.append((StringBuilder) visit(triggerContext)).append(", ");
+            executionPlanText.append((StringBuilder) visit(triggerContext)).append(",");
         }
-
-        String exe_Text = tokenStreamRewriter.getTokenStream().getText(ctx.getStart(), ctx.getStop()).replaceAll("\\n", "\\\\n").replaceAll("\\t", "\\\\t");
-        executionPlanText.append(" { \"executionPlan_Text\":\"").append(exe_Text.replaceAll("\"", "\\\\\"")).append("\",");
-
         executionPlanText = new StringBuilder(executionPlanText.substring(0, executionPlanText.length() - 1));
-        executionPlanText.append("}]}");
+        executionPlanText.append("]}");
 
         return executionPlanText;
     }
@@ -107,7 +103,7 @@ public class SiddhiQLBaseVisitorStringImpl extends SiddhiQLBaseVisitor {
 
         streamText.append("  [{ \"streamId\":\"").append(ctx.source().stream_id().getText()).append("\" ,");
 
-        String stream_Text = tokenStreamRewriter.getTokenStream().getText(ctx.getStart(), ctx.getStop()).replaceAll("\\n", "\\\\n");
+        String stream_Text = excapeCode(tokenStreamRewriter.getTokenStream().getText(ctx.getStart(), ctx.getStop()));
         streamText.append(" \"stream_Text\":\"").append(stream_Text).append("\" ,");
 
         if (ctx.annotation().isEmpty()) {
@@ -144,10 +140,10 @@ public class SiddhiQLBaseVisitorStringImpl extends SiddhiQLBaseVisitor {
         functionText.append("\"languageName\":\"").append(ctx.language_name().getText()).append("\",");
 
         functionText.append("\"attributeType\":\"").append(ctx.attribute_type().getText()).append("\",");
-        String functionBody = tokenStreamRewriter.getTokenStream().getText(ctx.function_body().getStart(), ctx.function_body().getStop()).replaceAll("\\n", "\\\\n");
-        functionText.append("\"functionBody\":\"").append(functionBody.replaceAll("\"", "\\\\\"")).append("\",");
-        String function_Text = tokenStreamRewriter.getTokenStream().getText(ctx.getStart(), ctx.getStop()).replaceAll("\\n", "\\\\n");
-        functionText.append("\"functionText\":\"").append(function_Text.replaceAll("\"", "\\\\\"")).append("\",");
+        String functionBody = excapeCode(tokenStreamRewriter.getTokenStream().getText(ctx.function_body().getStart(), ctx.function_body().getStop()));
+        functionText.append("\"functionBody\":\"").append(functionBody).append("\",");;
+        String function_Text = excapeCode(tokenStreamRewriter.getTokenStream().getText(ctx.getStart(), ctx.getStop()));
+        functionText.append("\"functionText\":\"").append(function_Text).append("\",");
 
         functionText = new StringBuilder(functionText.substring(0, functionText.length() - 1));
         functionText.append(" }]}");
@@ -170,9 +166,10 @@ public class SiddhiQLBaseVisitorStringImpl extends SiddhiQLBaseVisitor {
         } else {
             triggerText.append(" \"triggerValue\":\"").append(ctx.string_value().getText()).append("\",");
         }
-        triggerText.append(" \"triggerText\":\"").append(tokenStreamRewriter.getTokenStream().getText(ctx.getStart(), ctx.getStop()).replaceAll("\\n", "\\\\n")).append("\",");
+        String trigger_text = excapeCode(tokenStreamRewriter.getTokenStream().getText(ctx.getStart(), ctx.getStop()));
+        triggerText.append(" \"triggerText\":\"").append(trigger_text).append("\",");
 
-        triggerText = new StringBuilder(triggerText.substring(0,triggerText.length() - 1));
+        triggerText = new StringBuilder(triggerText.substring(0, triggerText.length() - 1));
         triggerText.append(" }]}");
 
         return triggerText;
@@ -189,18 +186,8 @@ public class SiddhiQLBaseVisitorStringImpl extends SiddhiQLBaseVisitor {
 
         tableText.append("  [{ \"tableId\":\"").append(ctx.source().stream_id().getText()).append("\",");
 
-        String table_Text = tokenStreamRewriter.getTokenStream().getText(ctx.getStart(), ctx.getStop()).replaceAll("\\n", "\\\\n");
+        String table_Text = excapeCode(tokenStreamRewriter.getTokenStream().getText(ctx.getStart(), ctx.getStop()));
         tableText.append(" \"table_Text\":\"").append(table_Text).append("\",");
-
-        if (ctx.annotation().isEmpty()) {
-            tableText.append(" \"annoName\": ").append("null").append(" ,");
-            tableText.append(" \"annoElement\": ").append("null").append(" ,");
-        } else {
-            for (SiddhiQLParser.AnnotationContext annotationContext : ctx.annotation()) {
-                tableText.append(" \"annoName\":\"").append(annotationContext.name().getText()).append("\" ,");
-                tableText.append(" \"annoElement\":\"").append(annotationContext.annotation_element(2).property_value().getText()).append("\" ,");
-            }
-        }
         tableText = new StringBuilder(tableText.substring(0, tableText.length() - 1));
         tableText.append(" }]}");
 
@@ -217,7 +204,7 @@ public class SiddhiQLBaseVisitorStringImpl extends SiddhiQLBaseVisitor {
         StringBuilder partitionText = new StringBuilder(" { \"Partition\":  ");
 
         for (SiddhiQLParser.Partition_with_streamContext with_streamContext : ctx.partition_with_stream()) {
-            String pw_Text = tokenStreamRewriter.getTokenStream().getText(with_streamContext.getStart(), with_streamContext.getStop()).replaceAll("\\n", "\\\\n");
+            String pw_Text = excapeCode(tokenStreamRewriter.getTokenStream().getText(with_streamContext.getStart(), with_streamContext.getStop()));
             partitionText.append("  [{  \"Partition_with_Text\":\"").append(pw_Text).append("\", ");
         }
 
@@ -231,7 +218,7 @@ public class SiddhiQLBaseVisitorStringImpl extends SiddhiQLBaseVisitor {
             SiddhiQLParser.QueryContext queryContext = ctx.query().get(i);
             partitionText.append("\"Query_" + i + "\" : [").append(visitQuery(queryContext)).append("], ");
         }
-        String p_Text = tokenStreamRewriter.getTokenStream().getText(ctx.getStart(), ctx.getStop()).replaceAll("\\n", "\\\\n");
+        String p_Text = excapeCode(tokenStreamRewriter.getTokenStream().getText(ctx.getStart(), ctx.getStop()));
         partitionText.append(" \"Partition_Text\":\"").append(p_Text).append("\",");
 
         partitionText = new StringBuilder(partitionText.substring(0, partitionText.length() - 1));
@@ -251,7 +238,7 @@ public class SiddhiQLBaseVisitorStringImpl extends SiddhiQLBaseVisitor {
 
         if (ctx.condition_ranges() != null) {
             for (SiddhiQLParser.Condition_rangeContext context : ctx.condition_ranges().condition_range()) {
-                condition.add("\"" + tokenStreamRewriter.getTokenStream().getText(context.expression().getStart(),context.expression().getStop()) + "\"");
+                condition.add("\"" + excapeCode(tokenStreamRewriter.getTokenStream().getText(context.expression().getStart(), context.expression().getStop())) + "\"");
                 attribute.add("\"" + context.string_value().getText() + "\"");
             }
             partitionWith.append(" \"condition\":").append(condition).append(", ");
@@ -304,7 +291,7 @@ public class SiddhiQLBaseVisitorStringImpl extends SiddhiQLBaseVisitor {
 
         queryText.append("\"outputStream\":").append(visit(ctx.query_output())).append(",");
 
-        String q_Text = tokenStreamRewriter.getTokenStream().getText(ctx.getStart(), ctx.getStop()).replaceAll("\\n", "\\\\n").replaceAll("\\t", "\\\\t");
+        String q_Text = excapeCode(tokenStreamRewriter.getTokenStream().getText(ctx.getStart(), ctx.getStop()));
         queryText.append("\"query_Text\":\"").append(q_Text).append("\",");
 
         queryText = new StringBuilder(queryText.substring(0, queryText.length() - 1));
@@ -588,6 +575,13 @@ public class SiddhiQLBaseVisitorStringImpl extends SiddhiQLBaseVisitor {
 
         return annotation;
     }
+
+
+    public String excapeCode(String cleanText) {
+          return cleanText.replaceAll("\\n", "\\\\n").replaceAll("\\t", "\\\\t").replaceAll("\'", "\\\\\'").replaceAll("\"", "\\\\\"");
+    }
+
+
 
     private class Source {
 
