@@ -388,8 +388,8 @@
                             </tr>
                             <tr>
                                 <td colspan="2">
-                                    <div>
-                                        <svg id=flowdiv width=100% height=350></svg>
+                                    <div style="border:1px solid #ccc">
+                                        <svg id=flowdiv width=100% height=350 style="border:0px"></svg>
                                     </div>
                                 </td>
                             </tr>
