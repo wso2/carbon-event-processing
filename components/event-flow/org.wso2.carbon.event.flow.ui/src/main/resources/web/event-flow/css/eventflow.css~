@@ -1,0 +1,109 @@
+/*
+ * Copyright (c) 2015, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+.type-ER {
+    background-color: #3d35d5;
+}
+
+.type-ES {
+    background-color: #FF8A3C;
+}
+
+.type-EXP  {
+    background-color: #a33c74;
+}
+
+.type-EP {
+    background-color: #54c082;
+}
+
+.type-ER-info  {
+    background-image: url(../images/event-receiver.png);
+}
+
+.type-ES-info {
+    background-image: url(../images/event_stream.png);
+}
+
+.type-EXP-info   {
+    background-image: url(../images/execution_plan.png);
+}
+
+.type-EP-info  {
+    background-image:url(../images/event-publisher.png);
+}
+
+.node g div {
+    height: 100px;
+    line-height: 100px;
+}
+
+.name-info{
+    white-space:nowrap;
+    font-weight: bold;
+    font-size: larger;
+}
+
+.name{
+    white-space:nowrap;
+}
+
+.type {
+    height: 30px;
+    width: 10px;
+    display: block;
+    float: left;
+    border-top-left-radius: 5px;
+    border-bottom-left-radius: 5px;
+    margin-right: 4px;
+}
+
+.infoType {
+    background-repeat: no-repeat;
+    background-position: 5px 50%;
+    border-top-right-radius: 5px;
+    border-bottom-right-radius: 5px;
+    width: 25px;
+}
+
+svg {
+    overflow: hidden;
+}
+
+text {
+    font-weight: 300;
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serf;
+}
+
+#flowdivInfo .node rect  {
+    stroke-width: 0px;
+}
+
+#flowdiv .node rect  {
+    stroke-width: 1px;
+    stroke: #707070;
+    fill: #F0F0F0 ;
+}
+
+.edgeLabel rect {
+    fill: #fff;
+}
+
+.edgePath path {
+    stroke: #333;
+    stroke-width: 1.5px;
+    fill: none;
+}
