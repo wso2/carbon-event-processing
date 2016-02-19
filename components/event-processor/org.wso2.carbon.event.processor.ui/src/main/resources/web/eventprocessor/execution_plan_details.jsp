@@ -78,13 +78,15 @@
         String planFlow = configurationDto.getExecutionPlan();
 
         ExecutionPlanFlow exePlanFlow = new ExecutionPlanFlow();
-        String executionPlan_nodes = exePlanFlow.get_executionPlanFlow(planFlow);
+        String executionPlan_nodes = exePlanFlow.getExecutionPlanFlow(planFlow);
     %>
 
     <script type="text/javascript">
         window.onload = function () {
-            tryDrawProcessingFlowInfo();
-            tryDraw();
+            <% if(executionPlan_nodes != null){ %>
+                tryDrawProcessingFlowInfo();
+                tryDraw();
+            <%  } %>
         };
         function tryDrawProcessingFlowInfo() {
             var g = new dagreD3.graphlib.Graph().setGraph({});
@@ -374,6 +376,8 @@
                             </script>
 
                                 <%--Code mirror code end--%>
+
+                             <% if(executionPlan_nodes != null){ %>
                             <tr>
                                 <td>
                                     <b> Execution Plan Flow </b>
@@ -393,6 +397,7 @@
                                     </div>
                                 </td>
                             </tr>
+                            <% } %>
                             <tr>
                                 <td colspan="2">
                                     <b><fmt:message key="execution.plan"/></b>
