@@ -38,6 +38,7 @@
         <module>components/event-flow</module>
         <module>components/execution-manager</module>
         <module>components/siddhi-tryit</module>
+        <module>components/event-throttler</module>
 
         <module>features/event-processor</module>
         <module>features/event-simulator</module>
@@ -225,6 +226,16 @@
             <dependency>
                 <groupId>org.wso2.carbon.analytics-common</groupId>
                 <artifactId>org.wso2.carbon.event.processor.manager.commons</artifactId>
+                <version>${carbon.analytics.common.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.wso2.carbon.analytics-common</groupId>
+                <artifactId>org.wso2.carbon.databridge.core</artifactId>
+                <version>${carbon.analytics.common.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.wso2.carbon.analytics-common</groupId>
+                <artifactId>org.wso2.carbon.databridge.agent</artifactId>
                 <version>${carbon.analytics.common.version}</version>
             </dependency>
             <!--analytics-common dependencies end-->
