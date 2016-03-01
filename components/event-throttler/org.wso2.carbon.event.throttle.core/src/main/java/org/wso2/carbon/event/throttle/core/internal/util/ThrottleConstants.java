@@ -20,6 +20,8 @@ package org.wso2.carbon.event.throttle.core.internal.util;
 
 public class ThrottleConstants {
 
+
+
     private ThrottleConstants(){
         //avoids initialization
     }
@@ -48,5 +50,9 @@ public class ThrottleConstants {
     public static final String LOCAL_QUERY = "LocalQuery";
     public static final String GLOBAL_QUERY = "GlobalQuery";
     public static final String HTTPS_PORT = "HTTPSPort";
+    public static final String REQUEST_STREAM_ID = "RequestStreamID";
+    public static final String THROTTLE_STREAM = "ThrottleStream";
+    public static final String THROTTLE_STREAM_ID = "ThrottleStreamID";
+    public static final String EMITTING_QUERY = "EmittingQuery";
 
 }

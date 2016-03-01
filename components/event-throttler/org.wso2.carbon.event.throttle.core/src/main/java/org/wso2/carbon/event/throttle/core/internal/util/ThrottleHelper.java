@@ -161,19 +161,38 @@ public class ThrottleHelper {
         OMElement commonConfigElement = loadConfigXML(path);
 
         OMElement requestStreamElement;
+        OMElement requestStreamIDElement;
         OMElement eligibilityStreamElement;
+        OMElement throttleStreamElement;
+        OMElement throttleStreamIDElement;
         OMElement eventTableElement;
         OMElement localQueryElement;
         OMElement globalQueryElement;
+        OMElement emittingQueryElement;
 
         if ((requestStreamElement = commonConfigElement.getFirstChildWithName(new QName(ThrottleConstants
                 .REQUEST_STREAM))) == null) {
             throw new ThrottleConfigurationException("Invalid config element with no request stream in " +
                     ThrottleConstants.THROTTLE_COMMON_CONFIG_XML);
         }
+        if ((requestStreamIDElement = commonConfigElement.getFirstChildWithName(new QName(ThrottleConstants
+                .REQUEST_STREAM_ID))) == null) {
+            throw new ThrottleConfigurationException("Invalid config element with no request stream ID in " +
+                    ThrottleConstants.THROTTLE_COMMON_CONFIG_XML);
+        }
         if ((eligibilityStreamElement = commonConfigElement.getFirstChildWithName(new QName(ThrottleConstants
                 .ELIGIBILITY_STREAM))) == null) {
             throw new ThrottleConfigurationException("Invalid config element with no eligibility stream in " +
+                    ThrottleConstants.THROTTLE_COMMON_CONFIG_XML);
+        }
+        if ((throttleStreamElement = commonConfigElement.getFirstChildWithName(new QName(ThrottleConstants
+                .THROTTLE_STREAM))) == null) {
+            throw new ThrottleConfigurationException("Invalid config element with no throttle stream in " +
+                    ThrottleConstants.THROTTLE_COMMON_CONFIG_XML);
+        }
+        if ((throttleStreamIDElement = commonConfigElement.getFirstChildWithName(new QName(ThrottleConstants
+                .THROTTLE_STREAM_ID))) == null) {
+            throw new ThrottleConfigurationException("Invalid config element with no throttle stream ID in " +
                     ThrottleConstants.THROTTLE_COMMON_CONFIG_XML);
         }
         if ((eventTableElement = commonConfigElement.getFirstChildWithName(new QName(ThrottleConstants
@@ -191,9 +210,16 @@ public class ThrottleHelper {
             throw new ThrottleConfigurationException("Invalid config element with no global query in " +
                     ThrottleConstants.THROTTLE_COMMON_CONFIG_XML);
         }
+        if ((emittingQueryElement = commonConfigElement.getFirstChildWithName(new QName(ThrottleConstants
+                .EMITTING_QUERY))) == null) {
+            throw new ThrottleConfigurationException("Invalid config element with no emitting query in " +
+                    ThrottleConstants.THROTTLE_COMMON_CONFIG_XML);
+        }
 
-        return new ThrottleConfig(requestStreamElement.getText(), eligibilityStreamElement.getText(),
-                eventTableElement.getText(), localQueryElement.getText(), globalQueryElement.getText());
+        return new ThrottleConfig(requestStreamElement.getText(), requestStreamIDElement.getText(),
+                eligibilityStreamElement.getText(), throttleStreamElement.getText(), throttleStreamIDElement.getText(),
+                eventTableElement.getText(), localQueryElement.getText(), globalQueryElement.getText(),
+                emittingQueryElement.getText());
     }
 
     /**

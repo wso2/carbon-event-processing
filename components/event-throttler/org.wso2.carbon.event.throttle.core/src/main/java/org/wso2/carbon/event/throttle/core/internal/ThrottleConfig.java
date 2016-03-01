@@ -23,18 +23,26 @@ package org.wso2.carbon.event.throttle.core.internal;
  */
 public class ThrottleConfig {
     private String requestStream;
+    private String requestStreamID;
     private String eligibilityStream;
+    private String throttleStream;
+    private String throttleStreamID;
     private String eventTable;
     private String localQuery;
     private String globalQuery;
+    private String emittingQuery;
 
-    public ThrottleConfig(String requestStream, String eligibilityStream, String eventTable, String localQuery,
-                          String globalQuery) {
+    public ThrottleConfig(String requestStream, String requestStreamID, String eligibilityStream, String throttleStream, String throttleStreamID, String eventTable, String localQuery,
+                          String globalQuery, String emittingQuery) {
         this.requestStream = requestStream;
+        this.requestStreamID = requestStreamID;
         this.eligibilityStream = eligibilityStream;
+        this.throttleStream = throttleStream;
+        this.throttleStreamID = throttleStreamID;
         this.eventTable = eventTable;
         this.localQuery = localQuery;
         this.globalQuery = globalQuery;
+        this.emittingQuery = emittingQuery;
     }
 
     public String getRequestStream() {
@@ -55,5 +63,21 @@ public class ThrottleConfig {
 
     public String getGlobalQuery() {
         return globalQuery;
+    }
+
+    public String getRequestStreamID() {
+        return requestStreamID;
+    }
+
+    public String getThrottleStream() {
+        return throttleStream;
+    }
+
+    public String getThrottleStreamID() {
+        return throttleStreamID;
+    }
+
+    public String getEmittingQuery() {
+        return emittingQuery;
     }
 }

@@ -64,7 +64,7 @@ public class ThrottlingPolicyDeployer extends AbstractDeployer{
 
     private void processDeploy(DeploymentFileData deploymentFileData) throws ThrottleConfigurationException {
         Policy policy = ThrottleHelper.loadThrottlingPolicies(deploymentFileData);
-        ThrottleServiceValueHolder.getThrottlerService().deployLocalCEPRules(policy);
+        ThrottleServiceValueHolder.getThrottlerService().deployLocalThrottlingPolicy(policy);
         log.info("Successfully deployed throttle policy named " + policy.getName());
     }
 

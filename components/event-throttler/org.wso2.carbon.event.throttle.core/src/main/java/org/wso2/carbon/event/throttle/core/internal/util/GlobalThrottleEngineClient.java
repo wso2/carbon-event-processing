@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 20016, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
+ * Copyright (c) 2016, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
  *
  *  WSO2 Inc. licenses this file to you under the Apache License,
  *  Version 2.0 (the "License"); you may not use this file except
@@ -16,7 +16,7 @@
  * under the License.
  */
 
-package org.wso2.carbon.event.throttle.core.internal;
+package org.wso2.carbon.event.throttle.core.internal.util;
 
 import org.apache.axis2.client.Options;
 import org.apache.axis2.client.ServiceClient;
@@ -28,6 +28,7 @@ import org.wso2.carbon.authenticator.stub.LoginAuthenticationExceptionException;
 import org.wso2.carbon.authenticator.stub.LogoutAuthenticationExceptionException;
 import org.wso2.carbon.event.processor.stub.EventProcessorAdminServiceStub;
 import org.wso2.carbon.event.throttle.core.exception.ThrottleConfigurationException;
+import org.wso2.carbon.event.throttle.core.internal.GlobalThrottleEngineConfig;
 
 import java.rmi.RemoteException;
 
