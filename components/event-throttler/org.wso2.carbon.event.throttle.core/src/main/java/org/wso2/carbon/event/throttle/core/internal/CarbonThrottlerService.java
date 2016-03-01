@@ -61,6 +61,7 @@ public class CarbonThrottlerService implements ThrottlerService {
 
     private DataPublisher dataPublisher = null;
     private String streamID;
+    private ThrottleConfig throttleConfig;
 
     private GlobalThrottleEngineConfig globalThrottleEngineConfig;
 
@@ -113,7 +114,7 @@ public class CarbonThrottlerService implements ThrottlerService {
     private String getCommonExecutionPlan() throws ThrottleConfigurationException {
         String carbonConfigHome = System.getProperty(ServerConstants.CARBON_CONFIG_DIR_PATH);
         String path = carbonConfigHome + File.separator + ThrottleConstants.THROTTLE_COMMON_CONFIG_XML;
-        ThrottleConfig throttleConfig = ThrottleHelper.loadThrottleConfig(path);
+        throttleConfig = ThrottleHelper.loadThrottleConfig(path);
 
         StringBuilder builder = new StringBuilder();
         builder.append(throttleConfig.getRequestStream()).append(throttleConfig.getEligibilityStream()).append
@@ -143,8 +144,7 @@ public class CarbonThrottlerService implements ThrottlerService {
         String name = policy.getName();
         if (!requestStreamInputHandlerMap.containsKey(name)) {
             StringBuilder eligibilityQueriesBuilder = new StringBuilder();
-            eligibilityQueriesBuilder.append("define stream RequestStream (" + QueryTemplateStore.getInstance()
-                    .loadThrottlingAttributes() + "); \n");
+            eligibilityQueriesBuilder.append(throttleConfig.getRequestStream());
             eligibilityQueriesBuilder.append(policy.getEligibilityQuery());
 
             ExecutionPlanRuntime ruleRuntime = siddhiManager.createExecutionPlanRuntime(
@@ -202,6 +202,11 @@ public class CarbonThrottlerService implements ThrottlerService {
     public boolean isThrottled(Object[] throttleRequest) {
         if (ruleCount.get() != 0) {
             String uniqueKey = (String) throttleRequest[0];
+            //Converting properties map into json compatible String
+            if (throttleRequest[6] != null) {
+                throttleRequest[6] = (throttleRequest[6]).toString();
+            }
+
             ResultContainer result = new ResultContainer(ruleCount.get());
             resultMap.put(uniqueKey.toString(), result);
             for(InputHandler inputHandler : requestStreamInputHandlerMap.values()) {
@@ -252,7 +257,7 @@ public class CarbonThrottlerService implements ThrottlerService {
 
     private void sendToGlobalThrottler(Object[] throttleRequest) {
         org.wso2.carbon.databridge.commons.Event event = new org.wso2.carbon.databridge.commons.Event(streamID,
-                System.currentTimeMillis(),null,null,throttleRequest);
+                System.currentTimeMillis(), null, null, throttleRequest);
         dataPublisher.tryPublish(event);
     }
 
