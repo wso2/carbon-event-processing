@@ -61,6 +61,7 @@ public class CarbonThrottlerService implements ThrottlerService {
 
     private DataPublisher dataPublisher = null;
     private String streamID;
+    private ThrottleConfig throttleConfig;
 
     private GlobalThrottleEngineConfig globalThrottleEngineConfig;
     private ThrottleConfig throttleConfig;
@@ -148,13 +149,13 @@ public class CarbonThrottlerService implements ThrottlerService {
      * @param policy
      * @throws ThrottleConfigurationException
      */
+
     public void deployLocalThrottlingPolicy(Policy policy) throws ThrottleConfigurationException {
         final String name = policy.getName();
         if (requestStreamInputHandlerMap.containsKey(name)) {
             undeployLocalCEPRules(name);
         }
-        String eligibilityQueries = ("define stream RequestStream (" + QueryTemplateStore.getInstance()
-                .loadThrottlingAttributes() + "); \n") + policy.getEligibilityQuery();
+        String eligibilityQueries = (throttleConfig.getRequestStream() + "\n" + policy.getEligibilityQuery();
 
         ExecutionPlanRuntime ruleRuntime = siddhiManager.createExecutionPlanRuntime(eligibilityQueries);
 
@@ -206,6 +207,11 @@ public class CarbonThrottlerService implements ThrottlerService {
     public boolean isThrottled(Object[] throttleRequest) {
         if (ruleCount.get() != 0) {
             String uniqueKey = (String) throttleRequest[0];
+            //Converting properties map into json compatible String
+            if (throttleRequest[6] != null) {
+                throttleRequest[6] = (throttleRequest[6]).toString();
+            }
+
             ResultContainer result = new ResultContainer(ruleCount.get());
             resultMap.put(uniqueKey.toString(), result);
             for (InputHandler inputHandler : requestStreamInputHandlerMap.values()) {
