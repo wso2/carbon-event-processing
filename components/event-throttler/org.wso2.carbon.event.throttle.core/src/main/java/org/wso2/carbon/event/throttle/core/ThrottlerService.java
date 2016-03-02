@@ -19,6 +19,8 @@
 
 package org.wso2.carbon.event.throttle.core;
 
+import org.wso2.carbon.event.throttle.core.exception.ThrottleConfigurationException;
+
 public interface ThrottlerService {
 
     /**
@@ -28,4 +30,14 @@ public interface ThrottlerService {
      * @return Throttle status for current throttleRequest
      */
     public boolean isThrottled(Object[] throttleRequest);
+
+    /**
+     * Deploys the provided query under provided name in global throttling engine. Local validation is done prior to
+     * deploying. If throttling policy with the same name exists in global throttling engine will edit/replace it.
+     * Else will deploy as a new policy. If anything fails will throw {@link ThrottleConfigurationException}
+     * @param name Name of the throttling policy
+     * @param query Query which represents the throttling policy
+     * @throws ThrottleConfigurationException
+     */
+    public void deployGlobalThrottlingPolicy(String name, String query) throws ThrottleConfigurationException;
 }

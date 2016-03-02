@@ -27,6 +27,7 @@ import org.wso2.carbon.authenticator.stub.AuthenticationAdminStub;
 import org.wso2.carbon.authenticator.stub.LoginAuthenticationExceptionException;
 import org.wso2.carbon.authenticator.stub.LogoutAuthenticationExceptionException;
 import org.wso2.carbon.event.processor.stub.EventProcessorAdminServiceStub;
+import org.wso2.carbon.event.processor.stub.types.ExecutionPlanConfigurationDto;
 import org.wso2.carbon.event.throttle.core.exception.ThrottleConfigurationException;
 import org.wso2.carbon.event.throttle.core.internal.GlobalThrottleEngineConfig;
 
@@ -49,7 +50,18 @@ public class GlobalThrottleEngineClient {
         return sessionCookie;
     }
 
-    private void deploy(String sessionCookie, String executionPlan, GlobalThrottleEngineConfig globalThrottleEngineConfig) throws RemoteException {
+    /**
+     * 1. Check validity of execution plan
+     * 2. If execution plan exist with same name edit it
+     * 3. Else deploy new execution plan
+     * @param name Name of execution plan
+     * @param executionPlan execution query plan
+     * @param sessionCookie session cookie to use established connection
+     * @param globalThrottleEngineConfig configuration which has connection information for global engine
+     * @throws RemoteException
+     */
+    private void deploy(String name, String executionPlan, String sessionCookie, GlobalThrottleEngineConfig
+            globalThrottleEngineConfig) throws RemoteException {
         ServiceClient serviceClient;
         Options options;
 
@@ -60,6 +72,14 @@ public class GlobalThrottleEngineClient {
         options.setManageSession(true);
         options.setProperty(org.apache.axis2.transport.http.HTTPConstants.COOKIE_STRING, sessionCookie);
 
+        eventProcessorAdminServiceStub.validateExecutionPlan(executionPlan);
+        ExecutionPlanConfigurationDto[] executionPlanConfigurationDtos = eventProcessorAdminServiceStub
+                .getAllActiveExecutionPlanConfigurations();
+        for (ExecutionPlanConfigurationDto executionPlanConfigurationDto : executionPlanConfigurationDtos) {
+            if (executionPlanConfigurationDto.getName().equals(name)) {
+                eventProcessorAdminServiceStub.editActiveExecutionPlan(executionPlan, name);
+            }
+        }
         eventProcessorAdminServiceStub.deployExecutionPlan(executionPlan);
     }
 
@@ -69,20 +89,22 @@ public class GlobalThrottleEngineClient {
     }
 
 
-    public void deployExecutionPlan(String executionPlan, GlobalThrottleEngineConfig globalThrottleEngineConfig) throws ThrottleConfigurationException {
+    public void deployExecutionPlan(String name, String executionPlan, GlobalThrottleEngineConfig
+            globalThrottleEngineConfig) throws ThrottleConfigurationException {
         try {
             String sessionID = login(globalThrottleEngineConfig);
-            deploy(sessionID, executionPlan, globalThrottleEngineConfig);
-            logout();
-        } catch (RemoteException e) {
+            deploy(name, executionPlan, sessionID, globalThrottleEngineConfig);
+        } catch (Throwable e) {
             throw new ThrottleConfigurationException("Error in deploying policy \n" + executionPlan + "\nin global " +
-                    "throttling engine",e);
-        } catch (LogoutAuthenticationExceptionException e) {
-            throw new ThrottleConfigurationException("Error in deploying policy \n" + executionPlan + "\nin global " +
-                    "throttling engine",e);
-        } catch (LoginAuthenticationExceptionException e) {
-            throw new ThrottleConfigurationException("Error in deploying policy \n" + executionPlan + "\nin global " +
-                    "throttling engine",e);
+                    "throttling engine", e);
+        } finally {
+            try {
+                logout();
+            } catch (RemoteException e) {
+                log.error("Error when logging out from global throttling engine. " + e.getMessage(), e);
+            } catch (LogoutAuthenticationExceptionException e) {
+                log.error("Error when logging out from global throttling engine. " + e.getMessage(), e);
+            }
         }
     }
 }

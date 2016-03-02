@@ -54,5 +54,6 @@ public class ThrottleConstants {
     public static final String THROTTLE_STREAM = "ThrottleStream";
     public static final String THROTTLE_STREAM_ID = "ThrottleStreamID";
     public static final String EMITTING_QUERY = "EmittingQuery";
+    public static final String COMMON_PLAN = "common-throttling-plan";
 
 }

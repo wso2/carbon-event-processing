@@ -43,14 +43,11 @@ public class GlobalPolicyGenerator {
             "@Export(''{3}'')\n" +
             "{4}\n" +
             "\n" +
-            "/*Eligibility Query*/\n" +
+            "/*Eligibility Query & Decision Query*/\n" +
             "{5}\n" +
             "\n" +
-            "/*Decision Query*/\n" +
-            "{6}\n" +
-            "\n" +
             "/*Emitting query*/\n" +
-            "{7}";
+            "{6}";
 
     private String commonPolicyTemplate = "/* Enter a unique ExecutionPlan */\n" +
             "@Plan:name(''{0}'')\n" +
@@ -76,7 +73,7 @@ public class GlobalPolicyGenerator {
      * @return Global Common Execution Plan
      */
     public String getCommonPolicyPlan(){
-        String executionPlan = MessageFormat.format(commonPolicyTemplate, "commonThrottlingExecutionPlan",
+        String executionPlan = MessageFormat.format(commonPolicyTemplate, ThrottleConstants.COMMON_PLAN,
                 throttleConfig.getThrottleStreamID(), throttleConfig.getThrottleStream(),
                 throttleConfig.getEventTable(), throttleConfig.getGlobalQuery());
         return executionPlan;
@@ -84,14 +81,13 @@ public class GlobalPolicyGenerator {
 
     /**
      * Returns global execution plan for given throttling policies.
-     * @param policy Throttling policy for which execution plan should be built.
      * @return Global execution plan
      */
-    public String getCustomPolicyPlan(Policy policy){
-        String executionPlan = MessageFormat.format(generalPolicyTemplate, policy.getName(),
+    public String getCustomPolicyPlan(String name, String query){
+        String executionPlan = MessageFormat.format(generalPolicyTemplate, name,
                 throttleConfig.getRequestStreamID(), throttleConfig.getRequestStream(),
                 throttleConfig.getThrottleStreamID(), throttleConfig.getThrottleStream(),
-                policy.getEligibilityQuery(), policy.getDecisionQuery(), throttleConfig.getEmittingQuery());
+                query, throttleConfig.getEmittingQuery());
         return executionPlan;
     }
 }

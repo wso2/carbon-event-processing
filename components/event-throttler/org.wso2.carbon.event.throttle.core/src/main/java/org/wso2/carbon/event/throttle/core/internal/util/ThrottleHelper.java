@@ -157,7 +157,9 @@ public class ThrottleHelper {
                 streamVersionElement.getText());
     }
 
-    public static ThrottleConfig loadThrottleConfig(String path) throws ThrottleConfigurationException {
+    public static ThrottleConfig loadThrottleConfig() throws ThrottleConfigurationException {
+        String carbonConfigHome = System.getProperty(ServerConstants.CARBON_CONFIG_DIR_PATH);
+        String path = carbonConfigHome + File.separator + ThrottleConstants.THROTTLE_COMMON_CONFIG_XML;
         OMElement commonConfigElement = loadConfigXML(path);
 
         OMElement requestStreamElement;

@@ -29,16 +29,15 @@ import org.wso2.carbon.databridge.commons.utils.DataBridgeCommonsUtils;
 import org.wso2.carbon.event.throttle.core.ThrottlerService;
 import org.wso2.carbon.event.throttle.core.exception.ThrottleConfigurationException;
 import org.wso2.carbon.event.throttle.core.internal.util.GlobalPolicyGenerator;
+import org.wso2.carbon.event.throttle.core.internal.util.GlobalThrottleEngineClient;
 import org.wso2.carbon.event.throttle.core.internal.util.ThrottleConstants;
 import org.wso2.carbon.event.throttle.core.internal.util.ThrottleHelper;
-import org.wso2.carbon.utils.ServerConstants;
 import org.wso2.siddhi.core.ExecutionPlanRuntime;
 import org.wso2.siddhi.core.SiddhiManager;
 import org.wso2.siddhi.core.event.Event;
 import org.wso2.siddhi.core.stream.input.InputHandler;
 import org.wso2.siddhi.core.stream.output.StreamCallback;
 
-import java.io.File;
 import java.util.Arrays;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -52,8 +51,8 @@ public class CarbonThrottlerService implements ThrottlerService {
 
     private SiddhiManager siddhiManager;
     private InputHandler eligibilityStreamInputHandler;
-    private Map<String,InputHandler> requestStreamInputHandlerMap;
-    private Map<String,ExecutionPlanRuntime> ruleRuntimeMap;
+    private Map<String, InputHandler> requestStreamInputHandlerMap;
+    private Map<String, ExecutionPlanRuntime> ruleRuntimeMap;
     private Map<String, ResultContainer> resultMap;
 
     private AtomicInteger ruleCount = new AtomicInteger(0);
@@ -64,73 +63,88 @@ public class CarbonThrottlerService implements ThrottlerService {
     private String streamID;
 
     private GlobalThrottleEngineConfig globalThrottleEngineConfig;
+    private ThrottleConfig throttleConfig;
     private GlobalPolicyGenerator globalPolicyGenerator;
 
-    public CarbonThrottlerService() {
-        requestStreamInputHandlerMap = new ConcurrentHashMap<String, InputHandler>();
-        ruleRuntimeMap = new ConcurrentHashMap<String, ExecutionPlanRuntime>();
-        resultMap = new ConcurrentHashMap<String, ResultContainer>();
-        this.start();
+
+    public CarbonThrottlerService() throws ThrottleConfigurationException {
+        try {
+            requestStreamInputHandlerMap = new ConcurrentHashMap<String, InputHandler>();
+            ruleRuntimeMap = new ConcurrentHashMap<String, ExecutionPlanRuntime>();
+            resultMap = new ConcurrentHashMap<String, ResultContainer>();
+
+            throttleConfig = ThrottleHelper.loadThrottleConfig();
+            globalThrottleEngineConfig = ThrottleHelper.loadCEPConfig();
+            globalPolicyGenerator = new GlobalPolicyGenerator(throttleConfig);
+            this.start();
+        } catch (ThrottleConfigurationException e) {
+            log.fatal("Error in initializing throttling engine. Throttling functionality will be disabled." + e
+                    .getMessage(), e);
+            throw e;
+        } finally {
+            stop();
+        }
     }
 
     /**
      * Starts throttler engine. Calling method should catch the exceptions and call stop to clean up.
      */
-    private void start() {
-        try {
-            siddhiManager = new SiddhiManager();
-            ThrottleHelper.loadDataSourceConfiguration(siddhiManager);
+    private void start() throws ThrottleConfigurationException {
+        siddhiManager = new SiddhiManager();
+        ThrottleHelper.loadDataSourceConfiguration(siddhiManager);
 
-            String commonExecutionPlan = getCommonThrottleConfig();
-            commonExecutionPlanRuntime = siddhiManager.createExecutionPlanRuntime(commonExecutionPlan);
+        deployGlobalThrottlingPolicy(ThrottleConstants.COMMON_PLAN, null);
 
-            //add callback to get local throttling result and add it to ResultContainer
-            commonExecutionPlanRuntime.addCallback("ThrottleStream", new StreamCallback() {
-                @Override
-                public void receive(Event[] events) {
-                    for (Event event : events) {
-                        resultMap.get(event.getData(1).toString()).addResult((String) event.getData(0), (Boolean) event.getData(2));
-                    }
+        String commonExecutionPlan = getLocalCommonThrottleConfig();
+        commonExecutionPlanRuntime = siddhiManager.createExecutionPlanRuntime(commonExecutionPlan);
+        //add callback to get local throttling result and add it to ResultContainer
+        commonExecutionPlanRuntime.addCallback("ThrottleStream", new StreamCallback() {
+            @Override
+            public void receive(Event[] events) {
+                for (Event event : events) {
+                    resultMap.get(event.getData(1).toString()).addResult((String) event.getData(0), (Boolean) event.getData(2));
                 }
-            });
+            }
+        });
+        commonExecutionPlanRuntime.start();
+        //get and register inputHandler
+        this.eligibilityStreamInputHandler = commonExecutionPlanRuntime.getInputHandler("EligibilityStream");
 
-            commonExecutionPlanRuntime.start();
-            //get and register inputHandler
-            this.eligibilityStreamInputHandler = commonExecutionPlanRuntime.getInputHandler("EligibilityStream");
-
-            //initialize binary data publisher to send requests to global CEP instance
-            initDataPublisher();
-        } catch (ThrottleConfigurationException e) {
-            log.error("Error in initializing throttling engine. " + e.getMessage(), e);
-        }
+        //initialize binary data publisher to send requests to global CEP instance
+        initDataPublisher();
 
 
     }
 
     /**
      * Retrieves the common throttling configuration from file and create the common execution plan.
+     *
      * @return Common execution plan used by local throttler
      * @throws ThrottleConfigurationException
      */
-    private String getCommonThrottleConfig() throws ThrottleConfigurationException {
-        String carbonConfigHome = System.getProperty(ServerConstants.CARBON_CONFIG_DIR_PATH);
-        String path = carbonConfigHome + File.separator + ThrottleConstants.THROTTLE_COMMON_CONFIG_XML;
-        ThrottleConfig throttleConfig = ThrottleHelper.loadThrottleConfig(path);
+    private String getLocalCommonThrottleConfig() throws ThrottleConfigurationException {
 
-        StringBuilder builder = new StringBuilder();
-        builder.append(throttleConfig.getRequestStream()).append(throttleConfig.getEligibilityStream()).append
-                (throttleConfig.getEventTable()).append(throttleConfig.getLocalQuery());
-        return builder.toString();
+        String query = throttleConfig.getRequestStream() + throttleConfig.getEligibilityStream() +
+                throttleConfig.getEventTable() + throttleConfig.getLocalQuery();
+        return query;
     }
 
-    //todo: this method has not being implemented completely. Will be done after doing perf tests.
-    private void deployGlobalThrottlingPolicy(String ruleName, String query) {
+    public void deployGlobalThrottlingPolicy(String name, String query) throws ThrottleConfigurationException {
+        String queryPlan;
+        if (name.equals(ThrottleConstants.COMMON_PLAN)) {
+            queryPlan = globalPolicyGenerator.getCommonPolicyPlan();
+        } else {
+            queryPlan = globalPolicyGenerator.getCustomPolicyPlan(name, query);
+        }
+        GlobalThrottleEngineClient globalThrottleEngineClient = new GlobalThrottleEngineClient();
+        globalThrottleEngineClient.deployExecutionPlan(name, queryPlan, globalThrottleEngineConfig);
     }
 
     /**
      * Deploy the provided policy file and store the references for usages. Each policy will be deployed as a
      * separate ExecutionPlans and will be connected with common ExecutionPlan using call backs. Each policy will
      * return a single throttling decision. Throttling decision of a request is the aggregation of these decisions.
+     *
      * @param policy
      * @throws ThrottleConfigurationException
      */
@@ -139,49 +153,41 @@ public class CarbonThrottlerService implements ThrottlerService {
         if (requestStreamInputHandlerMap.containsKey(name)) {
             undeployLocalCEPRules(name);
         }
-//        if (!requestStreamInputHandlerMap.containsKey(name)) {
-            StringBuilder eligibilityQueriesBuilder = new StringBuilder();
-            eligibilityQueriesBuilder.append("define stream RequestStream (" + QueryTemplateStore.getInstance()
-                    .loadThrottlingAttributes() + "); \n");
-            eligibilityQueriesBuilder.append(policy.getEligibilityQuery());
+        String eligibilityQueries = ("define stream RequestStream (" + QueryTemplateStore.getInstance()
+                .loadThrottlingAttributes() + "); \n") + policy.getEligibilityQuery();
 
-            ExecutionPlanRuntime ruleRuntime = siddhiManager.createExecutionPlanRuntime(
-                    eligibilityQueriesBuilder.toString());
+        ExecutionPlanRuntime ruleRuntime = siddhiManager.createExecutionPlanRuntime(eligibilityQueries);
 
-            //Add call backs. Here, we take output events and insert into EligibilityStream
-            ruleRuntime.addCallback("EligibilityStream", new StreamCallback() {
-                @Override
-                public void receive(Event[] events) {
-                    try {
-                        eligibilityStreamInputHandler.send(events);
-                    } catch (InterruptedException e) {
-                        Thread.currentThread().interrupt();
-                        log.error("Error occurred when publishing to EligibilityStream of throttling policy " + name, e);
-                    }
+        //Add call backs. Here, we take output events and insert into EligibilityStream
+        ruleRuntime.addCallback("EligibilityStream", new StreamCallback() {
+            @Override
+            public void receive(Event[] events) {
+                try {
+                    eligibilityStreamInputHandler.send(events);
+                } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
+                    log.error("Error occurred when publishing to EligibilityStream of throttling policy " + name, e);
                 }
-            });
+            }
+        });
 
-            ruleRuntime.start();
+        ruleRuntime.start();
 
-            //get and register input handler for RequestStream, so isThrottled() can use it.
+        //get and register input handler for RequestStream, so isThrottled() can use it.
 
-            requestStreamInputHandlerMap.put(name, ruleRuntime.getInputHandler("RequestStream"));
-            ruleRuntimeMap.put(name, ruleRuntime);
-            ruleCount.incrementAndGet();
-//        } else {
-//            throw new ThrottleConfigurationException("Throttling policy configuration with name " + name + "is " +
-//                    "already defined. Please create a policy with a different name.");
-//        }
+        requestStreamInputHandlerMap.put(name, ruleRuntime.getInputHandler("RequestStream"));
+        ruleRuntimeMap.put(name, ruleRuntime);
+        ruleCount.incrementAndGet();
 
     }
 
     /**
-     * Undeploy the throttling policy with given name if already deployed.
+     * Undeploy the throttling policy with given name if already deployed.     *
      * @param policyName
      */
-    public void undeployLocalCEPRules(String policyName){
+    public void undeployLocalCEPRules(String policyName) {
         ExecutionPlanRuntime ruleRuntime = ruleRuntimeMap.get(policyName);
-        if(ruleRuntime != null){
+        if (ruleRuntime != null) {
             ruleCount.decrementAndGet();
             requestStreamInputHandlerMap.remove(policyName);
             ruleRuntime.shutdown();
@@ -202,7 +208,7 @@ public class CarbonThrottlerService implements ThrottlerService {
             String uniqueKey = (String) throttleRequest[0];
             ResultContainer result = new ResultContainer(ruleCount.get());
             resultMap.put(uniqueKey.toString(), result);
-            for(InputHandler inputHandler : requestStreamInputHandlerMap.values()) {
+            for (InputHandler inputHandler : requestStreamInputHandlerMap.values()) {
                 try {
                     inputHandler.send(Arrays.copyOf(throttleRequest, throttleRequest.length));
                 } catch (InterruptedException e) {
@@ -250,14 +256,13 @@ public class CarbonThrottlerService implements ThrottlerService {
 
     private void sendToGlobalThrottler(Object[] throttleRequest) {
         org.wso2.carbon.databridge.commons.Event event = new org.wso2.carbon.databridge.commons.Event(streamID,
-                System.currentTimeMillis(),null,null,throttleRequest);
+                System.currentTimeMillis(), null, null, throttleRequest);
         dataPublisher.tryPublish(event);
     }
 
     //todo exception handling
     private void initDataPublisher() {
         try {
-            globalThrottleEngineConfig = ThrottleHelper.loadCEPConfig();
             dataPublisher = new DataPublisher("Binary", "tcp://" + globalThrottleEngineConfig.getHostname() + ":" + globalThrottleEngineConfig.getBinaryTCPPort(),
                     "ssl://" + globalThrottleEngineConfig.getHostname() + ":" + globalThrottleEngineConfig.getBinarySSLPort(), globalThrottleEngineConfig.getUsername(),
                     globalThrottleEngineConfig.getPassword());
@@ -275,9 +280,6 @@ public class CarbonThrottlerService implements ThrottlerService {
             log.error("Error in initializing binary data-publisher to send requests to global throttling engine " +
                     e.getMessage(), e);
         } catch (TransportException e) {
-            log.error("Error in initializing binary data-publisher to send requests to global throttling engine " +
-                    e.getMessage(), e);
-        } catch (ThrottleConfigurationException e) {
             log.error("Error in initializing binary data-publisher to send requests to global throttling engine " +
                     e.getMessage(), e);
         }
