@@ -43,11 +43,14 @@ public class GlobalPolicyGenerator {
             "@Export(''{3}'')\n" +
             "{4}\n" +
             "\n" +
-            "/*Eligibility Query & Decision Query*/\n" +
+            "/*Stream Conversion Query*/\n" +
             "{5}\n" +
             "\n" +
+            "/*Eligibility Query & Decision Query*/\n" +
+            "{6}\n" +
+            "\n" +
             "/*Emitting query*/\n" +
-            "{6}";
+            "{7}";
 
     private String commonPolicyTemplate = "/* Enter a unique ExecutionPlan */\n" +
             "@Plan:name(''{0}'')\n" +
@@ -69,7 +72,8 @@ public class GlobalPolicyGenerator {
     }
 
     /**
-     * Returns Global Common Execution Plan. Each throttling request will be finally handled with this Execution Plan.
+     * Returns Global Common Execution Plan. Each throttling request will be finally handled with this Execution Plan
+     * . Currently this is deployed in Global Throttling Engine bu default. Hence this method will not be used.
      * @return Global Common Execution Plan
      */
     public String getCommonPolicyPlan(){
@@ -84,10 +88,9 @@ public class GlobalPolicyGenerator {
      * @return Global execution plan
      */
     public String getCustomPolicyPlan(String name, String query){
-        String executionPlan = MessageFormat.format(generalPolicyTemplate, name,
-                throttleConfig.getRequestStreamID(), throttleConfig.getRequestStream(),
-                throttleConfig.getThrottleStreamID(), throttleConfig.getThrottleStream(),
-                query, throttleConfig.getEmittingQuery());
+        String executionPlan = MessageFormat.format(generalPolicyTemplate, name, throttleConfig.getRequestStreamID(),
+                throttleConfig.getPreRequestStream(), throttleConfig.getThrottleStreamID(), throttleConfig.getThrottleStream(),
+                throttleConfig.getStreamConversionQuery(), query, throttleConfig.getEmittingQuery());
         return executionPlan;
     }
 }

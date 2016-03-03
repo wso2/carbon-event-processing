@@ -27,22 +27,26 @@ public class ThrottleConfig {
     private String eligibilityStream;
     private String throttleStream;
     private String throttleStreamID;
+    private String preRequestStream;
     private String eventTable;
     private String localQuery;
     private String globalQuery;
     private String emittingQuery;
+    private String streamConversionQuery;
 
-    public ThrottleConfig(String requestStream, String requestStreamID, String eligibilityStream, String throttleStream, String throttleStreamID, String eventTable, String localQuery,
-                          String globalQuery, String emittingQuery) {
+    public ThrottleConfig(String requestStream, String requestStreamID, String eligibilityStream, String throttleStream, String throttleStreamID, String preRequestStream, String eventTable, String localQuery,
+                          String globalQuery, String emittingQuery, String streamConversionQuery) {
         this.requestStream = requestStream;
         this.requestStreamID = requestStreamID;
         this.eligibilityStream = eligibilityStream;
         this.throttleStream = throttleStream;
         this.throttleStreamID = throttleStreamID;
+        this.preRequestStream = preRequestStream;
         this.eventTable = eventTable;
         this.localQuery = localQuery;
         this.globalQuery = globalQuery;
         this.emittingQuery = emittingQuery;
+        this.streamConversionQuery = streamConversionQuery;
     }
 
     public String getRequestStream() {
@@ -79,5 +83,13 @@ public class ThrottleConfig {
 
     public String getEmittingQuery() {
         return emittingQuery;
+    }
+
+    public String getPreRequestStream() {
+        return preRequestStream;
+    }
+
+    public String getStreamConversionQuery() {
+        return streamConversionQuery;
     }
 }

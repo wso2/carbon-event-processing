@@ -93,8 +93,6 @@ public class CarbonThrottlerService implements ThrottlerService {
         siddhiManager = new SiddhiManager();
         ThrottleHelper.loadDataSourceConfiguration(siddhiManager);
 
-        deployGlobalThrottlingPolicy(ThrottleConstants.COMMON_PLAN, null);
-
         String commonExecutionPlan = getLocalCommonThrottleConfig();
         commonExecutionPlanRuntime = siddhiManager.createExecutionPlanRuntime(commonExecutionPlan);
         //add callback to get local throttling result and add it to ResultContainer
@@ -112,8 +110,6 @@ public class CarbonThrottlerService implements ThrottlerService {
 
         //initialize binary data publisher to send requests to global CEP instance
         initDataPublisher();
-
-
     }
 
     /**
@@ -132,6 +128,8 @@ public class CarbonThrottlerService implements ThrottlerService {
     public void deployGlobalThrottlingPolicy(String name, String query) throws ThrottleConfigurationException {
         String queryPlan;
         if (name.equals(ThrottleConstants.COMMON_PLAN)) {
+            //This is not used in this implementation. Common policy is deployed by default to Global Throttling Engine.
+            //In a clustered deployment file will be copied manually.
             queryPlan = globalPolicyGenerator.getCommonPolicyPlan();
         } else {
             queryPlan = globalPolicyGenerator.getCustomPolicyPlan(name, query);
@@ -266,10 +264,12 @@ public class CarbonThrottlerService implements ThrottlerService {
     //todo exception handling
     private void initDataPublisher() {
         try {
-            dataPublisher = new DataPublisher("Binary", "tcp://" + globalThrottleEngineConfig.getHostname() + ":" + globalThrottleEngineConfig.getBinaryTCPPort(),
-                    "ssl://" + globalThrottleEngineConfig.getHostname() + ":" + globalThrottleEngineConfig.getBinarySSLPort(), globalThrottleEngineConfig.getUsername(),
+            dataPublisher = new DataPublisher("Binary", "tcp://" + globalThrottleEngineConfig.getHostname() + ":" +
+                    globalThrottleEngineConfig.getBinaryTCPPort(), "ssl://" + globalThrottleEngineConfig.getHostname() +
+                    ":" + globalThrottleEngineConfig.getBinarySSLPort(), globalThrottleEngineConfig.getUsername(),
                     globalThrottleEngineConfig.getPassword());
-            streamID = DataBridgeCommonsUtils.generateStreamId(globalThrottleEngineConfig.getStreamName(), globalThrottleEngineConfig.getStreamVersion());
+            streamID = DataBridgeCommonsUtils.generateStreamId(throttleConfig.getRequestStreamID().split(":")[0],
+                    throttleConfig.getRequestStreamID().split(":")[1]);
         } catch (DataEndpointAgentConfigurationException e) {
             log.error("Error in initializing binary data-publisher to send requests to global throttling engine " +
                     e.getMessage(), e);

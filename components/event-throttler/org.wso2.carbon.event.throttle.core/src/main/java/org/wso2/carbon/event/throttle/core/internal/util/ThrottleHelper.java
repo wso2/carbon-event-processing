@@ -116,8 +116,6 @@ public class ThrottleHelper {
         OMElement httpsPortElement;
         OMElement usernameElement;
         OMElement passwordElement;
-        OMElement streamNameElement;
-        OMElement streamVersionElement;
 
         if ((hostNameElement = configElement.getFirstChildWithName(new QName(ThrottleConstants.HOST_NAME))) == null) {
             throw new ThrottleConfigurationException("Invalid config element with no host name in " +
@@ -143,18 +141,9 @@ public class ThrottleHelper {
             throw new ThrottleConfigurationException("Invalid config element with no password in " +
                     ThrottleConstants.CEP_CONFIG_XML);
         }
-        if ((streamNameElement = configElement.getFirstChildWithName(new QName(ThrottleConstants.STREAM_NAME))) == null) {
-            throw new ThrottleConfigurationException("Invalid config element with no stream name in " +
-                    ThrottleConstants.CEP_CONFIG_XML);
-        }
-        if ((streamVersionElement = configElement.getFirstChildWithName(new QName(ThrottleConstants.STREAM_VERSION))) == null) {
-            throw new ThrottleConfigurationException("Invalid config element with no stream version in " +
-                    ThrottleConstants.CEP_CONFIG_XML);
-        }
 
         return new GlobalThrottleEngineConfig(hostNameElement.getText(), tcpPortElement.getText(), sslPortElement.getText(),
-                httpsPortElement.getText(),usernameElement.getText(), passwordElement.getText(), streamNameElement.getText(),
-                streamVersionElement.getText());
+                httpsPortElement.getText(),usernameElement.getText(), passwordElement.getText());
     }
 
     public static ThrottleConfig loadThrottleConfig() throws ThrottleConfigurationException {
@@ -167,10 +156,12 @@ public class ThrottleHelper {
         OMElement eligibilityStreamElement;
         OMElement throttleStreamElement;
         OMElement throttleStreamIDElement;
+        OMElement preRequestStreamElement;
         OMElement eventTableElement;
         OMElement localQueryElement;
         OMElement globalQueryElement;
         OMElement emittingQueryElement;
+        OMElement streamConversionQueryElement;
 
         if ((requestStreamElement = commonConfigElement.getFirstChildWithName(new QName(ThrottleConstants
                 .REQUEST_STREAM))) == null) {
@@ -190,6 +181,11 @@ public class ThrottleHelper {
         if ((throttleStreamElement = commonConfigElement.getFirstChildWithName(new QName(ThrottleConstants
                 .THROTTLE_STREAM))) == null) {
             throw new ThrottleConfigurationException("Invalid config element with no throttle stream in " +
+                    ThrottleConstants.THROTTLE_COMMON_CONFIG_XML);
+        }
+        if ((preRequestStreamElement = commonConfigElement.getFirstChildWithName(new QName(ThrottleConstants
+                .PRE_REQUEST_STREAM))) == null) {
+            throw new ThrottleConfigurationException("Invalid config element with no pre-request stream ID in " +
                     ThrottleConstants.THROTTLE_COMMON_CONFIG_XML);
         }
         if ((throttleStreamIDElement = commonConfigElement.getFirstChildWithName(new QName(ThrottleConstants
@@ -217,11 +213,16 @@ public class ThrottleHelper {
             throw new ThrottleConfigurationException("Invalid config element with no emitting query in " +
                     ThrottleConstants.THROTTLE_COMMON_CONFIG_XML);
         }
+        if ((streamConversionQueryElement = commonConfigElement.getFirstChildWithName(new QName(ThrottleConstants
+                .STREAM_CONVERSION_QUERY))) == null) {
+            throw new ThrottleConfigurationException("Invalid config element with no stream conversion query in " +
+                    ThrottleConstants.THROTTLE_COMMON_CONFIG_XML);
+        }
 
         return new ThrottleConfig(requestStreamElement.getText(), requestStreamIDElement.getText(),
                 eligibilityStreamElement.getText(), throttleStreamElement.getText(), throttleStreamIDElement.getText(),
-                eventTableElement.getText(), localQueryElement.getText(), globalQueryElement.getText(),
-                emittingQueryElement.getText());
+                preRequestStreamElement.getText(), eventTableElement.getText(), localQueryElement.getText(),
+                globalQueryElement.getText(), emittingQueryElement.getText(), streamConversionQueryElement.getText());
     }
 
     /**
