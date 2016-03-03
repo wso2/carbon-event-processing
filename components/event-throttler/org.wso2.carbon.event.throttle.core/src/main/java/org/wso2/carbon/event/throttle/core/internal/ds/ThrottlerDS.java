@@ -21,6 +21,7 @@ package org.wso2.carbon.event.throttle.core.internal.ds;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.osgi.service.component.ComponentContext;
+import org.wso2.carbon.event.throttle.core.exception.ThrottleConfigurationException;
 import org.wso2.carbon.ndatasource.core.DataSourceService;
 import org.wso2.carbon.event.throttle.core.ThrottlerService;
 import org.wso2.carbon.event.throttle.core.internal.CarbonThrottlerService;
@@ -34,7 +35,7 @@ import org.wso2.carbon.event.throttle.core.internal.CarbonThrottlerService;
 public class ThrottlerDS {
     private static final Log log = LogFactory.getLog(ThrottlerDS.class);
 
-    protected void activate(ComponentContext context) {
+    protected void activate(ComponentContext context) throws ThrottleConfigurationException {
         try {
             CarbonThrottlerService throttlerService = new CarbonThrottlerService();
             ThrottleServiceValueHolder.registerThrottlerService(throttlerService);
@@ -43,7 +44,8 @@ public class ThrottlerDS {
                 log.debug("Successfully deployed the WSO2 Throttling Service");
             }
         } catch (Throwable e) {
-            log.error("Could not create WSO2 Throttling Service: " + e.getMessage(), e);
+            log.error("Could not create WSO2 Throttling Service. Throttling functionality will be disabled. " + e.getMessage(), e);
+            throw e;
         }
     }
 

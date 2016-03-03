@@ -77,10 +77,6 @@ public class CarbonThrottlerService implements ThrottlerService {
             globalThrottleEngineConfig = ThrottleHelper.loadCEPConfig();
             globalPolicyGenerator = new GlobalPolicyGenerator(throttleConfig);
             this.start();
-        } catch (ThrottleConfigurationException e) {
-            log.fatal("Error in initializing throttling engine. Throttling functionality will be disabled." + e
-                    .getMessage(), e);
-            throw e;
         } finally {
             stop();
         }
