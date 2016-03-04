@@ -89,8 +89,8 @@ public class GlobalThrottleEngineClient {
     }
 
 
-    public void deployExecutionPlan(String name, String executionPlan, GlobalThrottleEngineConfig
-            globalThrottleEngineConfig) throws ThrottleConfigurationException {
+    public void deployExecutionPlan(String name, String executionPlan, GlobalThrottleEngineConfig globalThrottleEngineConfig)
+            throws ThrottleConfigurationException {
         try {
             String sessionID = login(globalThrottleEngineConfig);
             deploy(name, executionPlan, sessionID, globalThrottleEngineConfig);
