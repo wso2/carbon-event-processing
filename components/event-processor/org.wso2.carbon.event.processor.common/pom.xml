@@ -79,6 +79,10 @@
             <groupId>org.wso2.carbon.analytics-common</groupId>
             <artifactId>org.wso2.carbon.event.processor.manager.core</artifactId>
         </dependency>
+        <dependency>
+            <groupId>commons-lang.wso2</groupId>
+            <artifactId>commons-lang</artifactId>
+        </dependency>
     </dependencies>
 
     <build>
@@ -114,7 +118,7 @@
                         <Import-Package>
                             !javax.xml.namespace,
                             javax.xml.namespace; version=0.0.0,
-			    org.apache.thrift;version="[0.8.0.wso2v1,0.9.0)",
+			                org.apache.thrift;version="${libthrift.wso2.version.range}",
                             com.lmax.disruptor.*;version="${disruptor.version.range}",
                             *;resolution:=optional,
                         </Import-Package>

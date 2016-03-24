@@ -388,11 +388,16 @@ public class StormManagerService {
                 super("registerStormReceiver");
             }
 
-            protected registerStormReceiver_args getEmptyArgsInstance() {
+            public registerStormReceiver_args getEmptyArgsInstance() {
                 return new registerStormReceiver_args();
             }
 
-            protected registerStormReceiver_result getResult(I iface, registerStormReceiver_args args) throws org.apache.thrift.TException {
+            @Override
+            protected boolean isOneway() {
+                return false;
+            }
+
+            public registerStormReceiver_result getResult(I iface, registerStormReceiver_args args) throws org.apache.thrift.TException {
                 registerStormReceiver_result result = new registerStormReceiver_result();
                 try {
                     iface.registerStormReceiver(args.tenantId, args.executionPlanName, args.hostName, args.port);
@@ -408,11 +413,16 @@ public class StormManagerService {
                 super("registerCEPPublisher");
             }
 
-            protected registerCEPPublisher_args getEmptyArgsInstance() {
+            public registerCEPPublisher_args getEmptyArgsInstance() {
                 return new registerCEPPublisher_args();
             }
 
-            protected registerCEPPublisher_result getResult(I iface, registerCEPPublisher_args args) throws org.apache.thrift.TException {
+            @Override
+            protected boolean isOneway() {
+                return false;
+            }
+
+            public registerCEPPublisher_result getResult(I iface, registerCEPPublisher_args args) throws org.apache.thrift.TException {
                 registerCEPPublisher_result result = new registerCEPPublisher_result();
                 try {
                     iface.registerCEPPublisher(args.tenantId, args.executionPlanName, args.hostName, args.port);
@@ -428,11 +438,16 @@ public class StormManagerService {
                 super("getStormReceiver");
             }
 
-            protected getStormReceiver_args getEmptyArgsInstance() {
+            public getStormReceiver_args getEmptyArgsInstance() {
                 return new getStormReceiver_args();
             }
 
-            protected getStormReceiver_result getResult(I iface, getStormReceiver_args args) throws org.apache.thrift.TException {
+            @Override
+            protected boolean isOneway() {
+                return false;
+            }
+
+            public getStormReceiver_result getResult(I iface, getStormReceiver_args args) throws org.apache.thrift.TException {
                 getStormReceiver_result result = new getStormReceiver_result();
                 try {
                     result.success = iface.getStormReceiver(args.tenantId, args.executionPlanName, args.cepReceiverHostName);
@@ -450,11 +465,16 @@ public class StormManagerService {
                 super("getCEPPublisher");
             }
 
-            protected getCEPPublisher_args getEmptyArgsInstance() {
+            public getCEPPublisher_args getEmptyArgsInstance() {
                 return new getCEPPublisher_args();
             }
 
-            protected getCEPPublisher_result getResult(I iface, getCEPPublisher_args args) throws org.apache.thrift.TException {
+            @Override
+            protected boolean isOneway() {
+                return false;
+            }
+
+            public getCEPPublisher_result getResult(I iface, getCEPPublisher_args args) throws org.apache.thrift.TException {
                 getCEPPublisher_result result = new getCEPPublisher_result();
                 try {
                     result.success = iface.getCEPPublisher(args.tenantId, args.executionPlanName, args.stormPublisherHostName);
