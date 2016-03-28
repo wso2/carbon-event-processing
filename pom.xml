@@ -36,13 +36,13 @@
         <module>components/event-processor</module>
         <module>components/event-simulator</module>
         <module>components/event-flow</module>
-        <module>components/execution-manager</module>
+        <module>components/cep-template-deployer</module>
         <module>components/siddhi-tryit</module>
 
         <module>features/event-processor</module>
         <module>features/event-simulator</module>
         <module>features/event-flow</module>
-        <module>features/execution-manager</module>
+        <module>features/cep-template-deployer</module>
         <module>features/siddhi-tryit</module>
     </modules>
 
@@ -322,23 +322,28 @@
             </dependency>
             <dependency>
                 <groupId>org.wso2.carbon.event-processing</groupId>
+                <artifactId>org.wso2.carbon.event.execution.manager.deployer.realtime</artifactId>
+                <version>${carbon.event.processing.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.wso2.carbon.analytics-common</groupId>
                 <artifactId>org.wso2.carbon.event.execution.manager.core</artifactId>
-                <version>${carbon.event.processing.version}</version>
+                <version>${carbon.analytics.common.version}</version>
             </dependency>
             <dependency>
-                <groupId>org.wso2.carbon.event-processing</groupId>
+                <groupId>org.wso2.carbon.analytics-common</groupId>
                 <artifactId>org.wso2.carbon.event.execution.manager.ui</artifactId>
-                <version>${carbon.event.processing.version}</version>
+                <version>${carbon.analytics.common.version}</version>
             </dependency>
             <dependency>
-                <groupId>org.wso2.carbon.event-processing</groupId>
+                <groupId>org.wso2.carbon.analytics-common</groupId>
                 <artifactId>org.wso2.carbon.event.execution.manager.admin</artifactId>
-                <version>${carbon.event.processing.version}</version>
+                <version>${carbon.analytics.common.version}</version>
             </dependency>
             <dependency>
-                <groupId>org.wso2.carbon.event-processing</groupId>
+                <groupId>org.wso2.carbon.analytics-common</groupId>
                 <artifactId>org.wso2.carbon.event.execution.manager.stub</artifactId>
-                <version>${carbon.event.processing.version}</version>
+                <version>${carbon.analytics.common.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.wso2.carbon.event-processing</groupId>
@@ -542,13 +547,7 @@
             </dependency>
             <dependency>
                 <groupId>org.wso2.carbon.event-processing</groupId>
-                <artifactId>org.wso2.carbon.event.execution.manager.server.feature</artifactId>
-                <version>${carbon.event.processing.version}</version>
-                <type>zip</type>
-            </dependency>
-            <dependency>
-                <groupId>org.wso2.carbon.event-processing</groupId>
-                <artifactId>org.wso2.carbon.event.execution.manager.ui.feature</artifactId>
+                <artifactId>org.wso2.carbon.event.execution.manager.deployer.realtime.feature</artifactId>
                 <version>${carbon.event.processing.version}</version>
                 <type>zip</type>
             </dependency>
@@ -683,7 +682,7 @@
                 <module>components/event-flow</module>
                 <module>components/event-processor</module>
                 <module>components/event-simulator</module>
-                <module>components/execution-manager</module>
+                <module>components/cep-template-deployer</module>
             </modules>
         </profile>
         <profile>
@@ -698,7 +697,7 @@
                 <module>components/event-flow</module>
                 <module>components/event-processor</module>
                 <module>components/event-simulator</module>
-                <module>components/execution-manager</module>
+                <module>components/cep-template-deployer</module>
             </modules>
         </profile>
     </profiles>
