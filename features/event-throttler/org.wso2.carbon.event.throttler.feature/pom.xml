@@ -136,13 +136,6 @@
             <groupId>org.apache.httpcomponents.wso2</groupId>
             <artifactId>httpcore</artifactId>
         </dependency>
-
-        <!--Other Third Party Dependencies -->
-        <!--TODO, check for the possibility to move -->
-        <dependency>
-            <groupId>com.fasterxml.jackson.core</groupId>
-            <artifactId>jackson-databind</artifactId>
-        </dependency>
     </dependencies>
 
 
@@ -160,7 +153,7 @@
                             <goal>p2-feature-gen</goal>
                         </goals>
                         <configuration>
-                            <id>org.wso2.carbon.event.processor.server</id>
+                            <id>org.wso2.carbon.event.throttler</id>
                             <propertiesFile>../../etc/feature.properties</propertiesFile>
                             <adviceFile>
                                 <properties>
@@ -226,10 +219,6 @@
                                 <bundleDef>
                                     org.apache.commons:commons-lang3:${commons-lang3.version}
                                 </bundleDef>
-                                <bundleDef>
-                                    org.apache.ws.commons.axiom.wso2:axiom:${orbit.version.axiom}
-                                </bundleDef>
-
 
                                 <!--CEP Dependencies -->
                                 <bundleDef>
@@ -248,11 +237,6 @@
                                 </bundleDef>
                                 <bundleDef>
                                     org.apache.httpcomponents.wso2:httpcore:${apache.httpcore.wso2.version}
-                                </bundleDef>
-
-                                <!--Other Third Party Dependencies -->
-                                <bundleDef>
-                                    com.fasterxml.jackson.core:jackson-databind:${jackson.databind.version}
                                 </bundleDef>
                             </bundles>
 
