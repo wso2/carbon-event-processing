@@ -110,6 +110,10 @@
             <groupId>org.wso2.carbon.metrics</groupId>
             <artifactId>org.wso2.carbon.metrics.manager</artifactId>
         </dependency>
+        <dependency>
+            <groupId>commons-lang.wso2</groupId>
+            <artifactId>commons-lang</artifactId>
+        </dependency>
     </dependencies>
 
     <build>
@@ -154,6 +158,7 @@
                             org.wso2.carbon.event.processor.common.*,
                             org.wso2.carbon.siddhi.metrics.core.*,
                             org.wso2.carbon.databridge.commons.*;version="${carbon.analytics.common.range}",
+                            org.apache.thrift;version="${libthrift.wso2.version.range}",
                             *;resolution:=optional
                         </Import-Package>
                         <DynamicImport-Package>*</DynamicImport-Package>
