@@ -22,7 +22,7 @@
 |  Branch | Build Status |
 | :------------ |:-------------
 | master      | [![Build Status](https://wso2.org/jenkins/job/carbon-event-processing/badge/icon)](https://wso2.org/jenkins/job/carbon-event-processing) |
-
+| master-java8      | [![Build Status](https://wso2.org/jenkins/job/carbon-event-processing/badge/icon)](https://wso2.org/jenkins/job/carbon-event-processing__java8/) |
 ---
 
 Latest Released Version v2.0.12.
