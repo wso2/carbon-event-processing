@@ -266,6 +266,10 @@ public class AsyncEventPublisher implements EventHandler<AsynchronousEventBuffer
                                 " endpoint information from storm manager service at " +
                                 endpoint.getHostName() + ":" + endpoint.getPort() + " as it's not a Storm coordinator, Trying next Storm manager.");
 
+                    } catch (EndpointNotFoundException e) {
+                        log.info(logPrefix + destinationType.name() +
+                                " endpoint information not available on storm manager service at " +
+                                endpoint.getHostName() + ":" + endpoint.getPort() + ". Trying next Storm manager.");
                     } catch (TTransportException e) {
                         log.info(logPrefix + "Cannot retrieve " + destinationType.name() +
                                 " endpoint information from storm manager service at " +
@@ -276,11 +280,7 @@ public class AsyncEventPublisher implements EventHandler<AsynchronousEventBuffer
                                 " endpoint information from storm manager service at " +
                                 endpoint.getHostName() + ":" + endpoint.getPort() + " as it's not reachable, " + e.getMessage() + ". Trying next Storm manager.");
 
-                    } catch (EndpointNotFoundException e) {
-                        log.info(logPrefix + destinationType.name() +
-                                " endpoint information not available on storm manager service at " +
-                                endpoint.getHostName() + ":" + endpoint.getPort() + ". Trying next Storm manager.");
-                    } finally {
+                    }  finally {
                         if (transport != null) {
                             transport.close();
                         }

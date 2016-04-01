@@ -1,7 +1,7 @@
-namespace java org.wso2.carbon.event.processor.storm.common.manager.service.exception
+namespace java org.wso2.carbon.event.processor.common.storm.manager.service.exception
 
 
-exception NotStormManagerException {
+exception NotStormCoordinatorException {
     1: required string message
 }
 
