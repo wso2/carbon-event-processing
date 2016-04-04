@@ -44,6 +44,11 @@
             <artifactId>org.wso2.carbon.event.processor.ui.feature</artifactId>
             <type>zip</type>
         </dependency>
+        <dependency>
+            <groupId>org.wso2.carbon.event-processing</groupId>
+            <artifactId>org.wso2.carbon.event.processor.template.deployer.feature</artifactId>
+            <type>zip</type>
+        </dependency>
     </dependencies>
 
     <build>
@@ -72,6 +77,9 @@
                                 </includedFeatureDef>
                                 <includedFeatureDef>
                                     org.wso2.carbon.event-processing:org.wso2.carbon.event.processor.ui.feature:${carbon.event.processing.version}
+                                </includedFeatureDef>
+                                <includedFeatureDef>
+                                    org.wso2.carbon.event-processing:org.wso2.carbon.event.processor.template.deployer.feature:${carbon.event.processing.version}
                                 </includedFeatureDef>
                             </includedFeatures>
                         </configuration>

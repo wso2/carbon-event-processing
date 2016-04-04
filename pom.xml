@@ -36,13 +36,11 @@
         <module>components/event-processor</module>
         <module>components/event-simulator</module>
         <module>components/event-flow</module>
-        <module>components/execution-manager</module>
         <module>components/siddhi-tryit</module>
 
         <module>features/event-processor</module>
         <module>features/event-simulator</module>
         <module>features/event-flow</module>
-        <module>features/execution-manager</module>
         <module>features/siddhi-tryit</module>
     </modules>
 
@@ -227,6 +225,26 @@
                 <artifactId>org.wso2.carbon.event.processor.manager.commons</artifactId>
                 <version>${carbon.analytics.common.version}</version>
             </dependency>
+            <dependency>
+                <groupId>org.wso2.carbon.analytics-common</groupId>
+                <artifactId>org.wso2.carbon.event.execution.manager.core</artifactId>
+                <version>${carbon.analytics.common.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.wso2.carbon.analytics-common</groupId>
+                <artifactId>org.wso2.carbon.event.execution.manager.ui</artifactId>
+                <version>${carbon.analytics.common.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.wso2.carbon.analytics-common</groupId>
+                <artifactId>org.wso2.carbon.event.execution.manager.admin</artifactId>
+                <version>${carbon.analytics.common.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.wso2.carbon.analytics-common</groupId>
+                <artifactId>org.wso2.carbon.event.execution.manager.stub</artifactId>
+                <version>${carbon.analytics.common.version}</version>
+            </dependency>
             <!--analytics-common dependencies end-->
 
             <!--third party dependencies start-->
@@ -317,27 +335,12 @@
             </dependency>
             <dependency>
                 <groupId>org.wso2.carbon.event-processing</groupId>
+                <artifactId>org.wso2.carbon.event.processor.template.deployer</artifactId>
+                <version>${carbon.event.processing.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.wso2.carbon.event-processing</groupId>
                 <artifactId>org.wso2.carbon.event.flow.ui</artifactId>
-                <version>${carbon.event.processing.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.wso2.carbon.event-processing</groupId>
-                <artifactId>org.wso2.carbon.event.execution.manager.core</artifactId>
-                <version>${carbon.event.processing.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.wso2.carbon.event-processing</groupId>
-                <artifactId>org.wso2.carbon.event.execution.manager.ui</artifactId>
-                <version>${carbon.event.processing.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.wso2.carbon.event-processing</groupId>
-                <artifactId>org.wso2.carbon.event.execution.manager.admin</artifactId>
-                <version>${carbon.event.processing.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.wso2.carbon.event-processing</groupId>
-                <artifactId>org.wso2.carbon.event.execution.manager.stub</artifactId>
                 <version>${carbon.event.processing.version}</version>
             </dependency>
             <dependency>
@@ -541,14 +544,20 @@
                 <type>zip</type>
             </dependency>
             <dependency>
-                <groupId>org.wso2.carbon.event-processing</groupId>
+                <groupId>org.wso2.carbon.analytics-common</groupId>
                 <artifactId>org.wso2.carbon.event.execution.manager.server.feature</artifactId>
-                <version>${carbon.event.processing.version}</version>
+                <version>${carbon.analytics.common.version}</version>
+                <type>zip</type>
+            </dependency>
+            <dependency>
+                <groupId>org.wso2.carbon.analytics-common</groupId>
+                <artifactId>org.wso2.carbon.event.execution.manager.ui.feature</artifactId>
+                <version>${carbon.analytics.common.version}</version>
                 <type>zip</type>
             </dependency>
             <dependency>
                 <groupId>org.wso2.carbon.event-processing</groupId>
-                <artifactId>org.wso2.carbon.event.execution.manager.ui.feature</artifactId>
+                <artifactId>org.wso2.carbon.event.processor.template.deployer.feature</artifactId>
                 <version>${carbon.event.processing.version}</version>
                 <type>zip</type>
             </dependency>
