@@ -76,7 +76,7 @@ public class CarbonThrottlerService implements ThrottlerService {
             throttleConfig = ThrottleHelper.loadThrottleConfig();
             globalThrottleEngineConfig = ThrottleHelper.loadCEPConfig();
             globalPolicyGenerator = new GlobalPolicyGenerator(throttleConfig);
-            this.start();
+            //this.start();
         } catch (ThrottleConfigurationException e) {
             stop();
             throw e;
