@@ -142,7 +142,7 @@ function addImportedStreamDefinition() {
 
     if (propAs.value.trim() == "") {
         propAs.value = propStreamId.value.trim().split(':')[0];
-        propAs.value = propAs.value.replace(/\./g, '_');
+        propAs.value = propAs.value.replace(/\-\./g, '_');
     }
 
     new Ajax.Request('../eventprocessor/get_stream_definition_ajaxprocessor.jsp', {

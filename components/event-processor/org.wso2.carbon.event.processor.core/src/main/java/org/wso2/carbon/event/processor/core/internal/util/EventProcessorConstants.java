@@ -111,7 +111,7 @@ public class EventProcessorConstants {
     public static final String ANNOTATION_TOKEN_OPENING_BRACKET = "(";
     public static final String ANNOTATION_TOKEN_CLOSING_BRACKET = ")";
 
-    public static final String DATABRIDGE_STREAM_REGEX = "[a-zA-Z0-9_\\.]+";
+    public static final String DATABRIDGE_STREAM_REGEX = "[a-zA-Z0-9_\\-\\.]+";
     public static final String STREAM_VER_REGEX = "([0-9]*)\\.([0-9]*)\\.([0-9]*)";
 
     // "Execution plan header" is the part above the Import/Export statements.
