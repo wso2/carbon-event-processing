@@ -48,5 +48,7 @@ public class EventStreamProducer implements EventProducer {
         eventProducerCallback.sendEvent(EventSimulatorUtil.getWso2Event(streamDefinition, System.currentTimeMillis(), data));
     }
 
-
+    public StreamDefinition getStreamDefinition() {
+        return streamDefinition;
+    }
 }
