@@ -17,14 +17,19 @@ package org.wso2.carbon.event.simulator.core.internal.ds;
 
 import org.wso2.carbon.event.processor.manager.core.EventManagementService;
 import org.wso2.carbon.event.simulator.core.internal.CarbonEventSimulator;
+import org.wso2.carbon.event.simulator.core.internal.EventStreamProducer;
 import org.wso2.carbon.event.stream.core.EventStreamService;
 import org.wso2.carbon.ndatasource.core.DataSourceService;
+
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class EventSimulatorValueHolder {
     private static EventStreamService eventstreamservice;
     private static CarbonEventSimulator eventSimulator;
     private static DataSourceService dataSourceService;
     private static EventManagementService eventManagerService;
+    private static Map<String, EventStreamProducer> eventProducerMap = new ConcurrentHashMap<>();
 
     private EventSimulatorValueHolder() {
 
@@ -65,4 +70,9 @@ public class EventSimulatorValueHolder {
     public static EventManagementService getEventManagementService() {
         return eventManagerService;
     }
+
+    public static Map<String, EventStreamProducer> getEventProducerMap() {
+        return eventProducerMap;
+    }
+
 }

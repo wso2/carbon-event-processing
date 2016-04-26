@@ -22,6 +22,8 @@ import org.osgi.service.component.ComponentContext;
 import org.wso2.carbon.event.processor.manager.core.EventManagementService;
 import org.wso2.carbon.event.simulator.core.EventSimulator;
 import org.wso2.carbon.event.simulator.core.internal.CarbonEventSimulator;
+import org.wso2.carbon.event.simulator.core.internal.util.EventStreamListenerImpl;
+import org.wso2.carbon.event.stream.core.EventStreamListener;
 import org.wso2.carbon.event.stream.core.EventStreamService;
 import org.wso2.carbon.ndatasource.core.DataSourceService;
 
@@ -46,6 +48,7 @@ public class EventSimulatorDS {
             CarbonEventSimulator carbonEventSimulator = createEventSimulator();
             setEventSimulator(carbonEventSimulator);
             context.getBundleContext().registerService(EventSimulator.class.getName(), carbonEventSimulator, null);
+            context.getBundleContext().registerService(EventStreamListener.class.getName(), new EventStreamListenerImpl(), null);
             if (log.isDebugEnabled()) {
                 log.debug("Successfully deployed EventSimulator");
             }

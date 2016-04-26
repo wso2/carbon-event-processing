@@ -60,7 +60,6 @@ import java.util.*;
 public class CarbonEventSimulator implements EventSimulator {
 
     private static final Log log = LogFactory.getLog(CarbonEventSimulator.class);
-    private HashMap<String, EventStreamProducer> eventProducerMap;
     private HashMap<Integer, HashMap<String, CSVFileInfo>> tenantSpecificCSVFileInfoMap;
     private HashMap<Integer, HashMap<String, DataSourceTableAndStreamInfo>> tenantSpecificDataSourceInfoMap;
     private Map<Integer, Map<String, EventCreator>> tenantSpecificFileEventSimulatorMap;
@@ -69,7 +68,6 @@ public class CarbonEventSimulator implements EventSimulator {
     private Mode mode;
 
     public CarbonEventSimulator() {
-        eventProducerMap = new HashMap<String, EventStreamProducer>();
         tenantSpecificCSVFileInfoMap = new HashMap<Integer, HashMap<String, CSVFileInfo>>();
         tenantSpecificDataSourceInfoMap = new HashMap<Integer, HashMap<String, DataSourceTableAndStreamInfo>>();
         tenantSpecificFileEventSimulatorMap = new HashMap<>();
@@ -173,17 +171,22 @@ public class CarbonEventSimulator implements EventSimulator {
             }
         }
 
-        EventStreamProducer eventStreamProducer = new EventStreamProducer();
-        try {
-            eventStreamProducer.setStreamID(streamDefinition.getStreamId());
-            eventstreamservice.subscribe(eventStreamProducer);
-        } catch (EventStreamConfigurationException e) {
-            log.error("Exception occurred when subscribing to Event Stream service", e);
+        EventStreamProducer existingEventStreamProducer = EventSimulatorValueHolder.getEventProducerMap().get(streamDefinition.getStreamId());
+        if (existingEventStreamProducer != null ) {
+            EventStreamProducer eventProducer = EventSimulatorValueHolder.getEventProducerMap().get(streamDefinition.getStreamId());
+            eventProducer.sendData(dataObjects);
+        } else {
+            EventStreamProducer eventStreamProducer = new EventStreamProducer();
+            try {
+                eventStreamProducer.setStreamID(streamDefinition.getStreamId());
+                eventstreamservice.subscribe(eventStreamProducer);
+            } catch (EventStreamConfigurationException e) {
+                log.error("Exception occurred when subscribing to Event Stream service", e);
+            }
+
+            EventSimulatorValueHolder.getEventProducerMap().put(streamDefinition.getStreamId(), eventStreamProducer);
+            eventStreamProducer.sendData(dataObjects);
         }
-
-        //eventProducerMap.put(streamDefinition.getStreamId(), eventStreamProducer);
-        eventStreamProducer.sendData(dataObjects);
-
     }
 
 
