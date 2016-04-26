@@ -181,7 +181,7 @@ public class CarbonEventSimulator implements EventSimulator {
             log.error("Exception occurred when subscribing to Event Stream service", e);
         }
 
-        eventProducerMap.put(streamDefinition.getStreamId(), eventStreamProducer);
+        //eventProducerMap.put(streamDefinition.getStreamId(), eventStreamProducer);
         eventStreamProducer.sendData(dataObjects);
 
     }
