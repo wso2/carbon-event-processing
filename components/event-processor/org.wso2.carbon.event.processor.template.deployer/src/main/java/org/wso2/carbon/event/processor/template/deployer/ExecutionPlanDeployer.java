@@ -17,17 +17,19 @@ package org.wso2.carbon.event.processor.template.deployer;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.wso2.carbon.analytics.spark.core.exception.AnalyticsPersistenceException;
+import org.wso2.carbon.context.PrivilegedCarbonContext;
 import org.wso2.carbon.databridge.commons.StreamDefinition;
 import org.wso2.carbon.databridge.commons.exception.MalformedStreamDefinitionException;
 import org.wso2.carbon.databridge.commons.utils.EventDefinitionConverterUtils;
 import org.wso2.carbon.event.execution.manager.core.DeployableTemplate;
 import org.wso2.carbon.event.execution.manager.core.TemplateDeployer;
 import org.wso2.carbon.event.execution.manager.core.TemplateDeploymentException;
-import org.wso2.carbon.event.processor.template.deployer.internal.ExecutionPlanDeployerConstants;
-import org.wso2.carbon.event.processor.template.deployer.internal.ExecutionPlanDeployerValueHolder;
 import org.wso2.carbon.event.processor.core.exception.ExecutionPlanConfigurationException;
 import org.wso2.carbon.event.processor.core.exception.ExecutionPlanDependencyValidationException;
 import org.wso2.carbon.event.processor.core.internal.util.EventProcessorConstants;
+import org.wso2.carbon.event.processor.template.deployer.internal.ExecutionPlanDeployerConstants;
+import org.wso2.carbon.event.processor.template.deployer.internal.ExecutionPlanDeployerValueHolder;
 import org.wso2.carbon.event.stream.core.exception.EventStreamConfigurationException;
 import org.wso2.carbon.event.stream.core.exception.StreamDefinitionAlreadyDefinedException;
 import org.wso2.siddhi.query.api.util.AnnotationHelper;
@@ -40,58 +42,75 @@ public class ExecutionPlanDeployer implements TemplateDeployer {
 
     @Override
     public String getType() {
-        return "realtime";
+        return "iot";
     }
 
 
     @Override
     public void deployArtifact(DeployableTemplate template) throws TemplateDeploymentException {
+        String artifactId = template.getConfiguration().getFrom()
+                            + ExecutionPlanDeployerConstants.CONFIG_NAME_SEPARATOR + template.getConfiguration().getName();
 
+        undeployArtifact(artifactId);
+
+        deployStreams(template);
+
+        // configuring plan name etc
+        for (String executionPlan : template.getExecutionPlans()) {                   //todo: test for multiple execution plans in the config. Names might conflict.
+            deployExecutionPlan(executionPlan, template.getConfiguration().getFrom(), template.getConfiguration().getName());
+        }
+
+        //deploying Spark script
         try {
+            int tenantId = PrivilegedCarbonContext.getThreadLocalCarbonContext().getTenantId();
+            ExecutionPlanDeployerValueHolder.getAnalyticsProcessorService().deleteScript(tenantId, artifactId);
 
-            String artifactId = template.getConfiguration().getFrom()
-                    + ExecutionPlanDeployerConstants.CONFIG_NAME_SEPARATOR + template.getConfiguration().getName();
+            ExecutionPlanDeployerValueHolder.getAnalyticsProcessorService().saveScript(tenantId,
+                                                                                       artifactId, template.getSparkScript(), template.getCronExpression());
+        } catch (AnalyticsPersistenceException e) {
+            throw new TemplateDeploymentException("Error when saving batch script." + template.getConfiguration().getName(), e);
+        }
 
-            undeployArtifact(artifactId);
+    }
 
-            deployStreams(template);
-
-            // configuring plan name etc
-            String updatedExecutionPlan = template.getScript();
+    /**
+     * Util method to deploy execution plan
+     * @param executionPlan
+     */
+    public static void deployExecutionPlan(String executionPlan, String fromElement, String nameElement)
+            throws TemplateDeploymentException {
+        try{
             String executionPlanNameDefinition = ExecutionPlanDeployerConstants.EXECUTION_PLAN_NAME_ANNOTATION + "('"
-                    + template.getConfiguration().getFrom() + ExecutionPlanDeployerConstants.CONFIG_NAME_SEPARATOR + template.getConfiguration().getName() + "')";
+                                                 + fromElement + ExecutionPlanDeployerConstants.CONFIG_NAME_SEPARATOR + nameElement + "')";
 
             if (AnnotationHelper.getAnnotationElement(
                     EventProcessorConstants.ANNOTATION_NAME_NAME, null,
-                    SiddhiCompiler.parse(updatedExecutionPlan).getAnnotations()) == null
-                    || !updatedExecutionPlan.contains(ExecutionPlanDeployerConstants.EXECUTION_PLAN_NAME_ANNOTATION)) {
-                updatedExecutionPlan = executionPlanNameDefinition + updatedExecutionPlan;
+                    SiddhiCompiler.parse(executionPlan).getAnnotations()) == null
+                || !executionPlan.contains(ExecutionPlanDeployerConstants.EXECUTION_PLAN_NAME_ANNOTATION)) {
+                executionPlan = executionPlanNameDefinition + executionPlan;
             } else {
                 //@Plan:name will be updated with given configuration name and uncomment in case if it is commented
-                updatedExecutionPlan = updatedExecutionPlan.replaceAll(
+                executionPlan = executionPlan.replaceAll(
                         ExecutionPlanDeployerConstants.EXECUTION_PLAN_NAME_ANNOTATION
-                                + ExecutionPlanDeployerConstants.REGEX_NAME_COMMENTED_VALUE,
+                        + ExecutionPlanDeployerConstants.REGEX_NAME_COMMENTED_VALUE,
                         executionPlanNameDefinition);
             }
 
-
             //Get Template Execution plan, Tenant Id and deploy Execution Plan
             ExecutionPlanDeployerValueHolder.getEventProcessorService()
-                    .deployExecutionPlan(updatedExecutionPlan);
-
-        } catch (ExecutionPlanConfigurationException e) {
-            throw new TemplateDeploymentException(
-                    "Configuration exception occurred when adding Execution Plan of Template "
-                            + template.getConfiguration().getName() + " of Domain " + template.getConfiguration().getFrom(), e);
-
-        } catch (ExecutionPlanDependencyValidationException e) {
-            throw new TemplateDeploymentException(
-                    "Validation exception occurred when adding Execution Plan of Template "
-                            + template.getConfiguration().getName() + " of Domain " + template.getConfiguration().getFrom(), e);
+                    .deployExecutionPlan(executionPlan);
         } catch (SiddhiParserException e) {
             throw new TemplateDeploymentException(
                     "Validation exception occurred when parsing Execution Plan of Template "
-                            + template.getConfiguration().getName() + " of Domain " + template.getConfiguration().getFrom(), e);
+                    + nameElement + " of Domain " + fromElement, e);
+        } catch (ExecutionPlanConfigurationException e) {
+            throw new TemplateDeploymentException(
+                    "Configuration exception occurred when adding Execution Plan of Template "
+                    + nameElement + " of Domain " + fromElement, e);
+        } catch (ExecutionPlanDependencyValidationException e) {
+            throw new TemplateDeploymentException(
+                    "Validation exception occurred when adding Execution Plan of Template "
+                    + nameElement + " of Domain " + fromElement, e);
         }
     }
 
