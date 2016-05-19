@@ -49,6 +49,7 @@ import java.io.StringWriter;
 import java.io.Writer;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 public class EventProcessorUtil {
     private static Log log = LogFactory.getLog(EventProcessorUtil.class);
@@ -317,10 +318,16 @@ public class EventProcessorUtil {
         int metaAttrCount = streamDefinition.getMetaData() != null ? streamDefinition.getMetaData().size() : 0;
         int correlationAttrCount = streamDefinition.getCorrelationData() != null ? streamDefinition.getCorrelationData().size() : 0;
         int payloadAttrCount = streamDefinition.getPayloadData() != null ? streamDefinition.getPayloadData().size() : 0;
+        int dataLength = data.length;
         Object[] metaAttrArray = new Object[metaAttrCount];
         Object[] correlationAttrArray = new Object[correlationAttrCount];
         Object[] payloadAttrArray = new Object[payloadAttrCount];
-        for (int i = 0; i < data.length; i++) {
+        Map<String, String> arbitraryDataMap = null;
+        if ((metaAttrCount + correlationAttrCount + payloadAttrCount + 1) == dataLength) {
+            dataLength = data.length - 1;
+            arbitraryDataMap = (Map<String, String>) data[dataLength];
+        }
+        for (int i = 0; i < dataLength; i++) {
             if (i < metaAttrCount) {
                 metaAttrArray[i] = data[i];
             } else if (i < metaAttrCount + correlationAttrCount) {
@@ -329,7 +336,7 @@ public class EventProcessorUtil {
                 payloadAttrArray[i - (metaAttrCount + correlationAttrCount)] = data[i];
             }
         }
-        return new Event(streamDefinition.getStreamId(), timestamp, metaAttrArray, correlationAttrArray, payloadAttrArray);
+        return new Event(streamDefinition.getStreamId(), timestamp, metaAttrArray, correlationAttrArray, payloadAttrArray, arbitraryDataMap);
     }
 
     public static List<Event> getWso2Events(org.wso2.carbon.databridge.commons.StreamDefinition streamDefinition, org.wso2.siddhi.core.event.Event[] events) {
