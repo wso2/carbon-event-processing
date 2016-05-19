@@ -15,15 +15,20 @@
   --%>
 <%@ page import="org.wso2.carbon.event.processor.ui.EventProcessorUIUtils" %>
 <%@ page import="org.wso2.carbon.event.stream.stub.EventStreamAdminServiceStub" %>
+<%@ page import="org.wso2.carbon.event.processor.ui.UIConstants" %>
 
 <%
     EventStreamAdminServiceStub streamAdminServiceStub = EventProcessorUIUtils.getEventStreamAdminService(config, session, request);
     String strStreamId = request.getParameter("streamId");
     String strStreamAs = request.getParameter("streamAs");
-
+    String strIsArbitrary = request.getParameter("isArbitrary");
 
     if (strStreamId != null) {
         String definition = streamAdminServiceStub.getStreamDefinitionAsString(strStreamId);
+
+        if (strIsArbitrary != null && strIsArbitrary.equals(UIConstants.TRUE_LITERAL)) {
+            definition = definition + UIConstants.ARBITRARY_DATA_OBJECT;
+        }
 
         StringBuilder formattedDefinition = new StringBuilder("");
         StringBuilder unformattedDefinition = new StringBuilder("");
