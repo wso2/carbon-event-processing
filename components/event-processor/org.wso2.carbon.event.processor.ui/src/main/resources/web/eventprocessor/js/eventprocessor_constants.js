@@ -37,3 +37,4 @@ var SIDDHI_LITERAL_DEFINE_STREAM = "define stream";
 
 var MIME_TYPE_SIDDHI_QL = "text/siddhi-ql";
 
+var INCLUDE_ARBITRARY_DATA= ", arbitrary.data='true'";
