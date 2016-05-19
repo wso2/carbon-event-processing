@@ -39,6 +39,8 @@ public interface UIConstants {
     final String SIDDHI_LITERAL_END_MULTI_LINE_COMMENT = "*/";
     final String SIDDHI_LITERAL_DECLARE_SINGLE_LINE_COMMENT = "--";
 
+    final String ARBITRARY_DATA_OBJECT= " ,arbitraryDataMap Object";
+
     final String EXECUTION_PLAN_BASIC_TEMPLATE = SIDDHI_LITERAL_BEGIN_MULTI_LINE_COMMENT +
             " Enter a unique ExecutionPlan " +
             SIDDHI_LITERAL_END_MULTI_LINE_COMMENT + SIDDHI_LINE_SEPARATER +
