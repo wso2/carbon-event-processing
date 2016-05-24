@@ -18,25 +18,21 @@ package org.wso2.carbon.event.processor.template.deployer.internal.ds;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.osgi.service.component.ComponentContext;
-import org.wso2.carbon.analytics.spark.core.AnalyticsProcessorService;
 import org.wso2.carbon.event.execution.manager.core.TemplateDeployer;
-import org.wso2.carbon.event.processor.core.EventProcessorService;
-import org.wso2.carbon.event.processor.template.deployer.ExecutionPlanDeployer;
+import org.wso2.carbon.event.processor.template.deployer.ExecutionPlanTemplateDeployer;
 import org.wso2.carbon.event.processor.template.deployer.internal.ExecutionPlanDeployerValueHolder;
+import org.wso2.carbon.event.processor.core.EventProcessorService;
 import org.wso2.carbon.event.stream.core.EventStreamService;
 
 
 /**
- * @scr.component name="TemplateDeployer.iot.component" immediate="true"
+ * @scr.component name="TemplateDeployer.realtime.component" immediate="true"
  * @scr.reference name="eventStreamService.service"
  * interface="org.wso2.carbon.event.stream.core.EventStreamService" cardinality="1..1"
  * policy="dynamic" bind="setEventStreamService" unbind="unsetEventStreamService"
  * @scr.reference name="eventProcessorService.service"
  * interface="org.wso2.carbon.event.processor.core.EventProcessorService" cardinality="1..1"
  * policy="dynamic" bind="setEventProcessorService" unbind="unsetEventProcessorService"
- * @scr.reference name="analyticsProcessorService.service"
- * interface="org.wso2.carbon.analytics.spark.core.AnalyticsProcessorService" cardinality="1..1"
- * policy="dynamic" bind="setAnalyticsProcessorService" unbind="unsetAnalyticsProcessorService"
  */
 public class ExecutionPlanDeployerDS {
 
@@ -45,11 +41,11 @@ public class ExecutionPlanDeployerDS {
     protected void activate(ComponentContext context) {
 
         try {
-            ExecutionPlanDeployer deployer = new ExecutionPlanDeployer();
-            context.getBundleContext().registerService(TemplateDeployer.class.getName(), deployer, null);
+            ExecutionPlanTemplateDeployer templateDeployer = new ExecutionPlanTemplateDeployer();
+            context.getBundleContext().registerService(TemplateDeployer.class.getName(), templateDeployer, null);
 
         } catch (RuntimeException e) {
-            log.error("Couldn't register ExecutionPlanDeployer service", e);
+            log.error("Couldn't register ExecutionPlanTemplateDeployer service", e);
         }
     }
 
@@ -67,13 +63,5 @@ public class ExecutionPlanDeployerDS {
 
     public void unsetEventProcessorService(EventProcessorService eventProcessorService) {
         ExecutionPlanDeployerValueHolder.setEventProcessorService(null);
-    }
-
-    protected void setAnalyticsProcessorService(AnalyticsProcessorService analyticsProcessorService) {
-        ExecutionPlanDeployerValueHolder.setAnalyticsProcessorService(analyticsProcessorService);
-    }
-
-    protected void unsetAnalyticsProcessorService(AnalyticsProcessorService analyticsProcessorService) {
-        ExecutionPlanDeployerValueHolder.setAnalyticsProcessorService(null);
     }
 }

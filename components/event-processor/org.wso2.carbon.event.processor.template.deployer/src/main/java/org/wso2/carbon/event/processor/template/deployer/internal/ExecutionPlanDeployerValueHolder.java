@@ -15,7 +15,6 @@
  */
 package org.wso2.carbon.event.processor.template.deployer.internal;
 
-import org.wso2.carbon.analytics.spark.core.AnalyticsProcessorService;
 import org.wso2.carbon.event.processor.core.EventProcessorService;
 import org.wso2.carbon.event.stream.core.EventStreamService;
 
@@ -23,7 +22,6 @@ public class ExecutionPlanDeployerValueHolder {
 
     private static EventProcessorService eventProcessorService;
     private static EventStreamService eventStreamService;
-    private static AnalyticsProcessorService analyticsProcessorService;
 
 
     public static void setEventStreamService(EventStreamService eventBuilderService) {
@@ -42,12 +40,5 @@ public class ExecutionPlanDeployerValueHolder {
         ExecutionPlanDeployerValueHolder.eventProcessorService = eventProcessorService;
     }
 
-    public static AnalyticsProcessorService getAnalyticsProcessorService() {
-        return analyticsProcessorService;
-    }
 
-    public static void setAnalyticsProcessorService(
-            AnalyticsProcessorService analyticsProcessorService) {
-        ExecutionPlanDeployerValueHolder.analyticsProcessorService = analyticsProcessorService;
-    } 
 }
