@@ -17,6 +17,11 @@
 <%@ page import="org.wso2.carbon.event.simulator.ui.EventSimulatorUIUtils" %>
 <%
 
+    if (!"post".equalsIgnoreCase(request.getMethod())) {
+        response.sendError(405);
+        return;
+    }
+
     String msg=null;
 
     try{
