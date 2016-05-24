@@ -13,7 +13,8 @@
   ~ See the License for the specific language governing permissions and
   ~ limitations under the License.
   -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
     <parent>
         <groupId>org.wso2.carbon.event-processing</groupId>
@@ -46,6 +47,10 @@
         <dependency>
             <groupId>org.wso2.carbon</groupId>
             <artifactId>org.wso2.carbon.ndatasource.core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.wso2.carbon.analytics-common</groupId>
+            <artifactId>org.wso2.carbon.databridge.commons</artifactId>
         </dependency>
     </dependencies>
 
@@ -84,7 +89,11 @@
                             !org.wso2.carbon.event.simulator.core.internal.*,
                             org.wso2.carbon.event.simulator.core.*
                         </Export-Package>
-                        <Import-Package />
+                        <Import-Package>
+                            javax.xml.namespace; version=0.0.0,
+                            org.wso2.carbon.databridge.commons.*;version="${carbon.analytics.common.range}",
+                            *;resolution:=optional
+                        </Import-Package>
                         <Axis2Deployer>CSVFileDeployer</Axis2Deployer>
                         <DynamicImport-Package>*</DynamicImport-Package>
                     </instructions>
