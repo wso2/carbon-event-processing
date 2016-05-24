@@ -19,6 +19,11 @@
 
 
 <%
+    if (!"post".equalsIgnoreCase(request.getMethod())) {
+        response.sendError(405);
+        return;
+    }
+
     String executionPlanName = request.getParameter("execPlanName");
     String action = request.getParameter("action");
 
