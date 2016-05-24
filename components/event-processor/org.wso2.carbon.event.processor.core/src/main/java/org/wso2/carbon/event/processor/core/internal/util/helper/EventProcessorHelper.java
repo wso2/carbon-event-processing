@@ -208,14 +208,29 @@ public class EventProcessorHelper {
             if (streamDefinition != null) {
                 String siddhiAttributeName;
                 int attributeCount = 0;
+                int siddhiStreamAttributeCount = siddhiStreamDefinition.getAttributeList().size();
                 int streamSize = (streamDefinition.getMetaData() == null ? 0 : streamDefinition.getMetaData().size())
                         + (streamDefinition.getCorrelationData() == null ? 0 : streamDefinition.getCorrelationData().size())
                         + (streamDefinition.getPayloadData() == null ? 0 : streamDefinition.getPayloadData().size());
-                if (siddhiStreamDefinition.getAttributeList().size() != streamSize) {
+                Element ArbitraryElement = AnnotationHelper.getAnnotationElement(EventProcessorConstants.ANNOTATION_IMPORT,
+                        EventProcessorConstants.ANNOTATION_INCLUDE_ARBITRARY, siddhiStreamDefinition.getAnnotations());
+                if (ArbitraryElement == null) {
+                    ArbitraryElement = AnnotationHelper.getAnnotationElement(EventProcessorConstants.ANNOTATION_EXPORT,
+                            EventProcessorConstants.ANNOTATION_INCLUDE_ARBITRARY, siddhiStreamDefinition.getAnnotations());
+                }
+                if (ArbitraryElement != null && ArbitraryElement.getValue().equals("true")) {
+                    if (!siddhiStreamDefinition.getAttributeList().get(siddhiStreamAttributeCount - 1).getName().equals(EventProcessorConstants.ARBITRARY_MAP)) {
+                        //Arbitrary attribute is not giving or not in the last position of the siddhi stream definition attribute list
+                        throw new ExecutionPlanDependencyValidationException(streamName + EventProcessorConstants.STREAM_SEPARATOR
+                                + streamVersion, "Please specify " + EventProcessorConstants.ARBITRARY_MAP + " attribute name in stream "
+                                + streamName + EventProcessorConstants.STREAM_SEPARATOR + streamVersion);
+                    }
+                } else if (siddhiStreamAttributeCount != streamSize) {
                     throw new ExecutionPlanDependencyValidationException(streamName + EventProcessorConstants.STREAM_SEPARATOR
                             + streamVersion, "No of attributes in stream " + streamName + EventProcessorConstants.STREAM_SEPARATOR + streamVersion
                             + " do not match the no of attributes in Siddhi stream");
                 }
+
                 if (streamDefinition.getMetaData() != null) {
                     for (Attribute attribute : streamDefinition.getMetaData()) {
                         siddhiAttributeName = EventProcessorConstants.META_PREFIX + attribute.getName();

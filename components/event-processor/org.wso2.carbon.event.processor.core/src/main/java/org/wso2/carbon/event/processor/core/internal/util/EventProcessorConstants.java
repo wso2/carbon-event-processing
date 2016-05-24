@@ -105,6 +105,7 @@ public class EventProcessorConstants {
     public static final String ANNOTATION_NAME_DESCRIPTION = "description";
     public static final String ANNOTATION_NAME_TRACE = "trace";
     public static final String ANNOTATION_NAME_STATISTICS = "statistics";
+    public static final String ANNOTATION_INCLUDE_ARBITRARY = "arbitrary.data";
 
     public static final String ANNOTATION_TOKEN_AT = "@";
     public static final String ANNOTATION_TOKEN_COLON = ":";
@@ -113,6 +114,7 @@ public class EventProcessorConstants {
 
     public static final String DATABRIDGE_STREAM_REGEX = "[a-zA-Z0-9_\\-\\.]+";
     public static final String STREAM_VER_REGEX = "([0-9]*)\\.([0-9]*)\\.([0-9]*)";
+    public static final String ARBITRARY_MAP = "arbitraryDataMap";
 
     // "Execution plan header" is the part above the Import/Export statements.
 

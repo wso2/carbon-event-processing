@@ -129,6 +129,7 @@ function createExportedStreamDefinition(element) {
 function addImportedStreamDefinition() {
     var propStreamId = document.getElementById("importedStreamId");
     var propAs = document.getElementById("importedStreamAs");
+    var propImportArbitrary = document.getElementById("isImportArbitraryId").checked;
 
     var error = "";
     if (propStreamId.value == "" || propStreamId.value == "createStreamDef") {
@@ -148,7 +149,7 @@ function addImportedStreamDefinition() {
     new Ajax.Request('../eventprocessor/get_stream_definition_ajaxprocessor.jsp', {
         method:'POST',
         asynchronous:false,
-        parameters:{streamId:propStreamId.value, streamAs:propAs.value },
+        parameters:{streamId:propStreamId.value, streamAs:propAs.value, isArbitrary:propImportArbitrary },
         onSuccess:function (eventStreamDefinition) {
             var definitions = eventStreamDefinition.responseText.trim().split("|=");
             var streamId = definitions[0].trim();
@@ -180,17 +181,33 @@ function addImportedStreamDefinition() {
                     }
                 }
             }
-            var importStatement = ANNOTATION_TOKEN_AT +
-                ANNOTATION_IMPORT +
-                ANNOTATION_TOKEN_OPENING_BRACKET +
-                SIDDHI_SINGLE_QUOTE + streamId + SIDDHI_SINGLE_QUOTE +
-                ANNOTATION_TOKEN_CLOSING_BRACKET +
-                SIDDHI_LINE_BREAK +
-                SIDDHI_LITERAL_DEFINE_STREAM + SIDDHI_SPACE_LITERAL + streamAs + SIDDHI_SPACE_LITERAL +
-                ANNOTATION_TOKEN_OPENING_BRACKET +
-                streamDefinition +
-                ANNOTATION_TOKEN_CLOSING_BRACKET +
-                SIDDHI_STATEMENT_DELIMETER;
+            var importStatement;
+            if(propImportArbitrary){
+                importStatement = ANNOTATION_TOKEN_AT +
+                    ANNOTATION_IMPORT +
+                    ANNOTATION_TOKEN_OPENING_BRACKET +
+                    SIDDHI_SINGLE_QUOTE + streamId + SIDDHI_SINGLE_QUOTE +
+                    INCLUDE_ARBITRARY_DATA +
+                    ANNOTATION_TOKEN_CLOSING_BRACKET +
+                    SIDDHI_LINE_BREAK +
+                    SIDDHI_LITERAL_DEFINE_STREAM + SIDDHI_SPACE_LITERAL + streamAs + SIDDHI_SPACE_LITERAL +
+                    ANNOTATION_TOKEN_OPENING_BRACKET +
+                    streamDefinition +
+                    ANNOTATION_TOKEN_CLOSING_BRACKET +
+                    SIDDHI_STATEMENT_DELIMETER;
+            }else{
+                importStatement = ANNOTATION_TOKEN_AT +
+                    ANNOTATION_IMPORT +
+                    ANNOTATION_TOKEN_OPENING_BRACKET +
+                    SIDDHI_SINGLE_QUOTE + streamId + SIDDHI_SINGLE_QUOTE +
+                    ANNOTATION_TOKEN_CLOSING_BRACKET +
+                    SIDDHI_LINE_BREAK +
+                    SIDDHI_LITERAL_DEFINE_STREAM + SIDDHI_SPACE_LITERAL + streamAs + SIDDHI_SPACE_LITERAL +
+                    ANNOTATION_TOKEN_OPENING_BRACKET +
+                    streamDefinition +
+                    ANNOTATION_TOKEN_CLOSING_BRACKET +
+                    SIDDHI_STATEMENT_DELIMETER;
+            }
             window.queryEditor.setValue(executionPlanHeader + importStatement + SIDDHI_LINE_BREAK + executionPlanBody);
             window.queryEditor.save();
         }
@@ -203,6 +220,7 @@ function addExportedStreamDefinition() {
     var propStreamId = document.getElementById("exportedStreamId");
     var propValueOf = document.getElementById("exportedStreamValueOf");
     var streamDefinitionsTable = document.getElementById("streamDefinitionsTable");
+    var propExportArbitrary = document.getElementById("isExportArbitraryId").checked;
 
     var error = "";
 
@@ -222,7 +240,7 @@ function addExportedStreamDefinition() {
     new Ajax.Request('../eventprocessor/get_stream_definition_ajaxprocessor.jsp', {
         method:'POST',
         asynchronous:false,
-        parameters:{streamId:propStreamId.value, streamAs:propValueOf.value },
+        parameters:{streamId:propStreamId.value, streamAs:propValueOf.value, isArbitrary:propExportArbitrary },
         onSuccess:function (eventStreamDefinition) {
             var definitions = eventStreamDefinition.responseText.trim().split("|=");
             var streamId = definitions[0].trim();
@@ -261,10 +279,19 @@ function addExportedStreamDefinition() {
                     }
                 }
             }
-            var exportStatement = ANNOTATION_TOKEN_AT + ANNOTATION_EXPORT + ANNOTATION_TOKEN_OPENING_BRACKET +
-                SIDDHI_SINGLE_QUOTE + streamId + SIDDHI_SINGLE_QUOTE + ANNOTATION_TOKEN_CLOSING_BRACKET +
-                SIDDHI_LINE_BREAK + SIDDHI_LITERAL_DEFINE_STREAM + SIDDHI_SPACE_LITERAL + streamAs + SIDDHI_SPACE_LITERAL +
-                ANNOTATION_TOKEN_OPENING_BRACKET + streamDefinition + ANNOTATION_TOKEN_CLOSING_BRACKET + SIDDHI_STATEMENT_DELIMETER;
+            var exportStatement;
+            if(propExportArbitrary){
+                exportStatement= ANNOTATION_TOKEN_AT + ANNOTATION_EXPORT + ANNOTATION_TOKEN_OPENING_BRACKET +
+                    SIDDHI_SINGLE_QUOTE + streamId + SIDDHI_SINGLE_QUOTE+ INCLUDE_ARBITRARY_DATA + ANNOTATION_TOKEN_CLOSING_BRACKET +
+                    SIDDHI_LINE_BREAK + SIDDHI_LITERAL_DEFINE_STREAM + SIDDHI_SPACE_LITERAL + streamAs + SIDDHI_SPACE_LITERAL +
+                    ANNOTATION_TOKEN_OPENING_BRACKET + streamDefinition + ANNOTATION_TOKEN_CLOSING_BRACKET + SIDDHI_STATEMENT_DELIMETER;
+            }else{
+                exportStatement= ANNOTATION_TOKEN_AT + ANNOTATION_EXPORT + ANNOTATION_TOKEN_OPENING_BRACKET +
+                    SIDDHI_SINGLE_QUOTE + streamId + SIDDHI_SINGLE_QUOTE + ANNOTATION_TOKEN_CLOSING_BRACKET +
+                    SIDDHI_LINE_BREAK + SIDDHI_LITERAL_DEFINE_STREAM + SIDDHI_SPACE_LITERAL + streamAs + SIDDHI_SPACE_LITERAL +
+                    ANNOTATION_TOKEN_OPENING_BRACKET + streamDefinition + ANNOTATION_TOKEN_CLOSING_BRACKET + SIDDHI_STATEMENT_DELIMETER;
+            }
+
             window.queryEditor.setValue(executionPlanHeader + exportStatement + SIDDHI_LINE_BREAK + executionPlanBody);
             window.queryEditor.save();
         }
