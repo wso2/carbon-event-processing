@@ -87,6 +87,20 @@ public class ExecutionPlanTemplateDeployer implements TemplateDeployer {
 
 
     @Override
+    public void deployIfNotDoneAlready(DeployableTemplate template, String planName) throws TemplateDeploymentException{
+        if (ExecutionPlanDeployerValueHolder.getEventProcessorService().
+                getAllActiveExecutionConfigurations().get(planName) == null) {
+            deployArtifact(template, planName);
+        } else {
+            if(log.isDebugEnabled()) {
+                log.debug("Common Artifact: " + planName + " of Domain " + template.getConfiguration().getDomain()
+                          + " was not deployed as it is already being deployed.");
+            }
+        }
+    }
+
+
+    @Override
     public void undeployArtifact(String artifactId) throws TemplateDeploymentException {
 
         if (ExecutionPlanDeployerValueHolder.getEventProcessorService()
