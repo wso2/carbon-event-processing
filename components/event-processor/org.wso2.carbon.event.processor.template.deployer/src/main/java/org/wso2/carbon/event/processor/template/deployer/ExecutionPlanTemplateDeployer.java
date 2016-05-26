@@ -43,6 +43,9 @@ public class ExecutionPlanTemplateDeployer implements TemplateDeployer {
     public void deployArtifact(DeployableTemplate template) throws TemplateDeploymentException {
 
         try {
+            if (template == null) {
+                throw new TemplateDeploymentException("No artifact received to be deployed.");
+            }
             String planName = template.getArtifactId();
             undeployArtifact(planName);
 
@@ -88,6 +91,9 @@ public class ExecutionPlanTemplateDeployer implements TemplateDeployer {
 
     @Override
     public void deployIfNotDoneAlready(DeployableTemplate template) throws TemplateDeploymentException{
+        if (template == null) {
+            throw new TemplateDeploymentException("No artifact received to be deployed.");
+        }
         String planName = template.getArtifactId();
         if (ExecutionPlanDeployerValueHolder.getEventProcessorService().
                 getAllActiveExecutionConfigurations().get(planName) == null) {
