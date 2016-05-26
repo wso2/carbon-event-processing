@@ -40,10 +40,10 @@ public class ExecutionPlanTemplateDeployer implements TemplateDeployer {
 
 
     @Override
-    public void deployArtifact(DeployableTemplate template, String planName) throws TemplateDeploymentException {
+    public void deployArtifact(DeployableTemplate template) throws TemplateDeploymentException {
 
         try {
-
+            String planName = template.getArtifactId();
             undeployArtifact(planName);
 
             // configuring plan name etc
@@ -87,10 +87,11 @@ public class ExecutionPlanTemplateDeployer implements TemplateDeployer {
 
 
     @Override
-    public void deployIfNotDoneAlready(DeployableTemplate template, String planName) throws TemplateDeploymentException{
+    public void deployIfNotDoneAlready(DeployableTemplate template) throws TemplateDeploymentException{
+        String planName = template.getArtifactId();
         if (ExecutionPlanDeployerValueHolder.getEventProcessorService().
                 getAllActiveExecutionConfigurations().get(planName) == null) {
-            deployArtifact(template, planName);
+            deployArtifact(template);
         } else {
             if(log.isDebugEnabled()) {
                 log.debug("Common Artifact: " + planName + " of Domain " + template.getConfiguration().getDomain()
