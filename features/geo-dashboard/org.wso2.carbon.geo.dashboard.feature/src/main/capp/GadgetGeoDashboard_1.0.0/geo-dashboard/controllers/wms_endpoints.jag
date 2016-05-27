@@ -1,0 +1,108 @@
+<%
+/*
+ ~ Copyright (c) 2016, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
+ ~
+ ~ WSO2 Inc. licenses this file to you under the Apache License,
+ ~ Version 2.0 (the "License"); you may not use this file except
+ ~ in compliance with the License.
+ ~ You may obtain a copy of the License at
+ ~
+ ~ http://www.apache.org/licenses/LICENSE-2.0
+ ~
+ ~ Unless required by applicable law or agreed to in writing,
+ ~ software distributed under the License is distributed on an
+ ~ "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ ~ KIND, either express or implied.  See the License for the
+ ~ specific language governing permissions and limitations
+ ~ under the License.
+ */
+
+/*
+* Get all available tile servers from RDB via HTTP GET, Insert new tile servers information via HTTP POST request
+*/
+
+var configuration = require('../conf/database.json');
+var log = new Log();
+
+var tableName = "webMapService";
+var db = new Database("jdbc:h2:repository/database/WSO2_GEO",configuration.username,configuration.password);
+
+if(request.getMethod() == "GET"){
+
+    var checkTableExist = "SELECT * FROM webMapService limit 1";
+    var createTableWebMapService = "CREATE TABLE webMapService (serviceId int NOT NULL AUTO_INCREMENT, "+
+            "serviceUrl varchar(255) NOT NULL, name varchar(255), layers varchar(255),version DECIMAL(20,3),"+
+            "format varchar(255), PRIMARY KEY (serviceId))";
+
+    try{
+        db.query(checkTableExist);
+    } catch(e){
+        log.info("Table "+tableName+" does not exist. It will be created.");
+        db.query(createTableWebMapService);
+    }
+
+
+    var serverId = request.getParameter("serverId");
+    if(serverId == "all"){
+        var getAllWmsEndPoints = "select * from webMapService";
+            try{
+                var allWmsEndPoints = db.query(getAllWmsEndPoints);
+                log.info(allWmsEndPoints);
+                response.contentType = "application/json";
+                response.characterEncoding = "UTF-8";
+                response.content = allWmsEndPoints;
+            }
+            catch(e){
+                log.info(e.toString());
+            }
+            finally{
+                db.close();
+            }
+    }
+    else{
+    // TODO: get specific server details
+    }
+}
+else if(request.getMethod() == "POST"){
+
+    var serviceName = request.getParameter("serviceName");
+    var layers = request.getParameter("layers");
+    var wmsVersion = parseInt(request.getParameter("wmsVersion"));
+    var serviceEndPoint = request.getParameter("serviceEndPoint");
+    var outputFormat = request.getParameter("outputFormat");
+
+    var insertWmsEndPoint  ="INSERT INTO webMapService (serviceUrl, name, layers, version, format) VALUES('"+ serviceEndPoint +"', '"+ serviceName +"', '"+ layers +"', '"+ wmsVersion +"', '"+ outputFormat +"' );";
+    try{
+        db.query(insertWmsEndPoint);
+        log.info(serviceName + ' wms service added successfully!');
+        print(serviceName + 'added successfully!');
+    }
+    catch(e){
+        log.error(e.toString());
+    }
+    finally{
+        db.close();
+    }
+}
+
+
+function logToFile(message){
+    var currentdate = new Date();
+    var datetime = "[Info]: " + currentdate.getDate() + "/"
+                    + (currentdate.getMonth()+1)  + "/"
+                    + currentdate.getFullYear() + " @ "
+                    + currentdate.getHours() + ":"
+                    + currentdate.getMinutes() + ":"
+                    + currentdate.getSeconds()+"\t";
+
+    message = datetime + message + "\n";
+    var path = "../log/server.log";
+    var file = new File(path);
+    file.open("a+");
+
+    message = file.write(message);
+    file.close();
+
+}
+
+%>
