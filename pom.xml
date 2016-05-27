@@ -44,6 +44,7 @@
         <module>features/event-simulator</module>
         <module>features/event-flow</module>
         <module>features/siddhi-tryit</module>
+        <module>features/geo-dashboard</module>
     </modules>
 
     <dependencyManagement>
@@ -857,6 +858,8 @@
         <!--<xercesImpl.version>2.8.1.wso2v2</xercesImpl.version>-->
         <xerces.xercesImpl.version>2.11.0</xerces.xercesImpl.version>
 
+        <carbon-p2-plugin.version>1.5.3</carbon-p2-plugin.version>
+        <maven-antrun-plugin.version>1.7</maven-antrun-plugin.version>
     </properties>
 
 </project>
