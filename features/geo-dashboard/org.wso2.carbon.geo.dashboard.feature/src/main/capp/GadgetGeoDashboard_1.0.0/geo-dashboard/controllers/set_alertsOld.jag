@@ -1,0 +1,178 @@
+<%
+/*
+ ~ Copyright (c) 2016, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
+ ~
+ ~ WSO2 Inc. licenses this file to you under the Apache License,
+ ~ Version 2.0 (the "License"); you may not use this file except
+ ~ in compliance with the License.
+ ~ You may obtain a copy of the License at
+ ~
+ ~ http://www.apache.org/licenses/LICENSE-2.0
+ ~
+ ~ Unless required by applicable law or agreed to in writing,
+ ~ software distributed under the License is distributed on an
+ ~ "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ ~ KIND, either express or implied.  See the License for the
+ ~ specific language governing permissions and limitations
+ ~ under the License.
+ */
+
+/* Includes */
+var escapeSiddhiql = require('../include/commons.jag').escapeSiddhiql;
+var storeAlerts = require('../include/store_alerts.jag').store; // TODO: change to js
+var ws = require('ws');
+var process = require("process"),host = process.getProperty('server.host'),
+        ip = process.getProperty('carbon.local.ip');
+var httpsPort = process.getProperty('mgt.transport.https.proxyPort');
+if(!httpsPort){
+    //can use http.port as well
+    httpsPort = process.getProperty('mgt.transport.https.port');
+}
+
+var log = new Log();
+
+var verb = request.getMethod();
+var executionPlan = request.getParameter('executionPlan');
+var queryName = request.getParameter('queryName');
+var customName = request.getParameter('customName');
+var cepAction = request.getParameter('cepAction'); // i.e 'deploy' new executionPlan , 'edit' executionPlan and etc..
+
+var parseData = request.getParameter('parseData'); // TODO: if app/json use request.getContent()
+var parseDataJson = JSON.parse(parseData);
+
+if(verb == "POST") {
+    var path = "../conf/alerts/geo_"+executionPlan+"_alert.siddhiql";
+    var file = new File(path);
+    file.open("r");
+    var template = "";
+    template = file.readAll();
+    file.close(); // TODO: use try catch finally  put close inside finally
+
+    for(var parseKey in parseDataJson) {
+        parseValue = parseDataJson[parseKey];
+        var find = "\\$"+parseKey;
+        var re = new RegExp(find, 'g');
+        template = template.replace(re,parseValue);
+    }
+
+    var updatedTemplate = template;
+    log.info(updatedTemplate);
+    var escapedTemplate = escapeSiddhiql(updatedTemplate);
+
+
+    optionalArgs = {"queryName": queryName,"customName": customName,"executionPlan": executionPlan};
+    // TODO: Inefficient if and else if blocks change it by using general keyword to resourceContents
+    if(executionPlan == 'within'){
+        var resourceContents = parseDataJson.geoFenceGeoJSON;
+    } else if(executionPlan == "stationery"){
+        var resourceContents = parseDataJson;
+    } else if(executionPlan == 'speed'){
+        var resourceContents = parseDataJson.speedAlertValue;
+    } else if(executionPlan == 'proximity'){
+        var resourceContents = parseDataJson
+    } else if(executionPlan == 'traffic'){
+        var resourceContents = parseDataJson.geoFenceGeoJSON;
+    }
+    storeAlerts(parseKey,resourceContents,executionPlan,optionalArgs);
+
+    // Init ws request
+    // TODO: use cep stub
+    var client = new ws.WSRequest();
+
+
+
+
+    //====================================
+    var username = "admin";
+    var password = "admin";
+
+    var carbon = require('carbon');
+    var host = process.getProperty('server.host'), ip = process.getProperty('carbon.local.ip');
+    if(!httpsPort){
+        //can use http.port as well
+        httpsPort = process.getProperty('mgt.transport.https.port');
+    }
+
+    var httpPort = process.getProperty('mgt.transport.http.proxyPort');
+    if(!httpPort){
+        //can use http.port as well
+        httpPort = process.getProperty('mgt.transport.http.port');
+    }
+
+    var url = 'https://'+ip+':'+httpsPort;
+    var server = new carbon.server.Server(url);
+    var authentication = server.authenticate(username,password);
+
+    if(authentication){
+        log.info("Successfully Authorized");
+        var server = new carbon.server.Server({url: url});
+        var cookie = server.login(username,password);
+
+        var authorizedUser =  carbon.server.tenantUser(username);
+        session.put("user", authorizedUser);
+        session.put("websocketHost", ip);
+        session.put("websocketPort", httpPort);
+        session.put(authorizedUser.tenantId.toString(), cookie);
+    } else{
+        session.put("error", "User "+username+" Login failed! Please recheck the username and password and try again.");
+        session.put("user", null);
+        session.put("websocketHost", null);
+        session.put("websocketPort", null);
+    }
+    //====================================
+
+    var currentUserTenantId = session.get("user").tenantId;
+
+    log.warn(session.get(currentUserTenantId.toString()));
+    log.warn(session.get("authToken"));
+
+
+    var currentUserTenantId = session.get("user").tenantId;
+    var cookieObject = session.get("authToken");
+    cookieObject = cookieObject.replace("=null", "");
+    log.warn("-----> now : "+cookieObject);
+    <!--var cookieObject = session.get(currentUserTenantId.toString());-->
+
+    var options = {HTTPHeaders: [
+        { name: 'Cookie', value: "JSESSIONID=6AA84DDDF4DBB50C571D522888267F4F; Path=/; Secure=null; HttpOnly=null"}
+    ]};
+    options.useSOAP = 1.2;
+    options.useWSA = 1.0;
+    var payload;
+
+    if(cepAction == "edit"){
+        options.action = "urn:editActiveExecutionPlan"; // TODO: replace {edit}ActiveExecutionPlanConfiguration with cepAction ????
+        payload =     '<adm:editActiveExecutionPlan xmlns:adm="http://admin.processor.event.carbon.wso2.org">'
+                +      '<adm:executionPlan>'
+                +     escapedTemplate
+                +     '</adm:executionPlan>'
+                +     '<adm:name>geo_'+executionPlan+'_alert</adm:name>'
+                +  '</adm:editActiveExecutionPlan>';
+    }
+    else if(cepAction == "deploy"){
+        options.action = "urn:deployExecutionPlan";
+        payload =     '<adm:deployExecutionPlan xmlns:adm="http://admin.processor.event.carbon.wso2.org">'
+                +      '<adm:executionPlan>'
+                +     escapedTemplate
+                +     '</adm:executionPlan>'
+                +  '</adm:deployExecutionPlan>';
+    }
+
+    var result;
+
+    var responseJson = { "status" :"" , "message" : ""};
+    try {
+        client.open(options, "https://"+ip+":"+httpsPort+"/services/EventProcessorAdminService.EventProcessorAdminServiceHttpsSoap12Endpoint/", false);
+        client.send(payload);
+        result = client.responseE4X;
+        responseJson.status = "success";
+        responseJson.message = "Query deployed successfully";
+    } catch (e) {
+        responseJson.status = "failed";
+        responseJson.message = "Error occurred while deploying the execution plan";
+        log.error(e.toString());
+    }
+    print(responseJson);
+}
+
+%>

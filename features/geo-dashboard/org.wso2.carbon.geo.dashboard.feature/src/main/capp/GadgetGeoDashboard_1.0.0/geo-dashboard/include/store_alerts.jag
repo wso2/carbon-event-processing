@@ -1,0 +1,149 @@
+<%
+/*
+ ~ Copyright (c) 2016, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
+ ~
+ ~ WSO2 Inc. licenses this file to you under the Apache License,
+ ~ Version 2.0 (the "License"); you may not use this file except
+ ~ in compliance with the License.
+ ~ You may obtain a copy of the License at
+ ~
+ ~ http://www.apache.org/licenses/LICENSE-2.0
+ ~
+ ~ Unless required by applicable law or agreed to in writing,
+ ~ software distributed under the License is distributed on an
+ ~ "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ ~ KIND, either express or implied.  See the License for the
+ ~ specific language governing permissions and limitations
+ ~ under the License.
+ */
+
+// TODO: change the name of this jaggery file even thoe it says 'store_alerts' it is actually removing the alerts from the data store as well o.O wired
+
+var dataStore = require('../include/commons.jag').dataStore;
+var log = new Log();
+
+
+function store(parameterKeyName,resourceContents,executionPlan,optional) {
+    log.info("DEBUG:*** resourceContents:"+resourceContents);
+    if(executionPlan == "speed"){
+        var currentLimit;
+        try{
+            currentLimit = dataStore.get("speed.json");
+        }
+        catch(e){
+            log.info("DEBUG:*** Catch error:"+e.message);
+            currentLimit = dataStore.newResource();
+            currentLimit.mediaType = 'application/json';
+            currentLimit.description = "User define speed limit for display alerts.";
+        }
+        currentLimit.content = String('{"speedLimit": '+resourceContents+'}');
+        dataStore.put("speed.json",currentLimit);
+        log.info("DEBUG:*** Current speed limit set to:"+currentLimit.content);
+    }
+    else if(executionPlan == "within"){
+        try{
+            var res = dataStore.get("geo/alerts/within");
+        }
+        catch(e){
+            var geo = dataStore.newCollection();
+            var alerts = dataStore.newCollection();
+            var within = dataStore.newCollection();
+
+            dataStore.put("geo", geo);
+            dataStore.put("alerts", alerts);
+            dataStore.put("within", within);
+
+        }
+        log.info("DEBUG:****** resourceContents = "+String('{"geoJson": '+resourceContents+'}'));
+        var resource = dataStore.newResource();
+        resource.addProperty("queryName", optional.queryName);
+        resource.addProperty("areaName", optional.customName);
+        resource.mediaType = 'application/json';
+        resource.content = String(resourceContents);
+        dataStore.put(String("geo/alerts/within/"+optional.queryName+".json"), resource);
+    } else if(executionPlan == "proximity"){
+
+        try{
+            var res = dataStore.get("geo/alerts/proximity");
+        }
+        catch(e){
+            var geo = dataStore.newCollection();
+            var alerts = dataStore.newCollection();
+            var proximity = dataStore.newCollection();
+
+            dataStore.put("geo", geo);
+            dataStore.put("alerts", alerts);
+            dataStore.put("proximity", proximity);
+        }
+        log.info("DEBUG:****** resourceContents = "+resourceContents);
+        var resource = dataStore.newResource();
+        resource.addProperty("proximityDistance", resourceContents.proximityDistance);
+        resource.addProperty("proximityTime", resourceContents.proximityTime);
+        dataStore.put(String("geo/alerts/proximity/"+optional.executionPlan+".json"), resource);
+
+    } else if(executionPlan == "stationery"){
+
+        try{
+            var res = dataStore.get("geo/alerts/stationery");
+        }
+        catch(e){
+            var geo = dataStore.newCollection();
+            var alerts = dataStore.newCollection();
+            var stationery = dataStore.newCollection();
+
+            dataStore.put("geo", geo);
+            dataStore.put("alerts", alerts);
+            dataStore.put("stationery", stationery);
+        }
+        log.info("DEBUG:****** resourceContents = "+resourceContents.geoFenceGeoJSON);
+        var resource = dataStore.newResource();
+        resource.addProperty("queryName", optional.queryName);
+        resource.addProperty("stationeryName", optional.customName);
+        resource.addProperty("stationeryTime", resourceContents.stationeryTime);
+        resource.addProperty("fluctuationRadius", resourceContents.fluctuationRadius);
+        resource.content = String(resourceContents.geoFenceGeoJSON);
+        dataStore.put(String("geo/alerts/stationery/"+optional.queryName+".json"), resource);
+
+    } else if(executionPlan == "traffic"){
+
+        try{
+            var res = dataStore.get("geo/alerts/traffic");
+        }
+        catch(e){
+            var geo = dataStore.newCollection();
+            var alerts = dataStore.newCollection();
+            var traffic = dataStore.newCollection();
+
+            dataStore.put("geo", geo);
+            dataStore.put("alerts", alerts);
+            dataStore.put("traffic", traffic);
+        }
+        log.info("DEBUG:****** resourceContents = "+resourceContents.geoFenceGeoJSON);
+        var resource = dataStore.newResource();
+        resource.addProperty("queryName", optional.queryName);
+        resource.addProperty("areaName", optional.customName);
+        resource.content = String(resourceContents);
+        dataStore.put(String("geo/alerts/traffic/"+optional.queryName+".json"), resource);
+
+    }
+
+}
+
+function remove(queryName,id) {
+    var path = "";
+    try{
+        if(id=="WithIn"){
+            path = "geo/alerts/within/"+queryName+".json";
+        } else if(id=="Stationery"){
+            path = "geo/alerts/stationery/"+queryName+".json";
+        } else if(id=="Traffic"){
+            path = "geo/alerts/traffic/"+queryName+".json";
+        }
+        log.info("DEBUG: path = "+path);
+        dataStore.remove(path);
+    }
+    catch(e){
+        log.info("The requested resource "+path+" was not found on this server. That’s all we know."); // Inspired by google 404 message
+    }
+}
+%>
