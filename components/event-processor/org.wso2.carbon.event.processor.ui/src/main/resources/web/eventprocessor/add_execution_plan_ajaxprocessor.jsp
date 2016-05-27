@@ -20,6 +20,12 @@
 <%@ page import="org.wso2.carbon.event.processor.ui.UIConstants" %>
 <%@ page import="java.util.Arrays" %>
 <%
+
+    if (!"post".equalsIgnoreCase(request.getMethod())) {
+        response.sendError(405);
+        return;
+    }
+
     String msg;
     EventProcessorAdminServiceStub stub = EventProcessorUIUtils.getEventProcessorAdminService(config, session, request);
 

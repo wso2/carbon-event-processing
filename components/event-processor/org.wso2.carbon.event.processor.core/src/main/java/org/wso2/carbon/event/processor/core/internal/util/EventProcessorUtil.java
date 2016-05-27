@@ -19,6 +19,9 @@ import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.xerces.impl.Constants;
+import org.apache.xerces.util.*;
+import org.apache.xerces.util.SecurityManager;
 import org.apache.xml.serialize.OutputFormat;
 import org.apache.xml.serialize.XMLSerializer;
 import org.w3c.dom.Document;
@@ -49,9 +52,11 @@ import java.io.StringWriter;
 import java.io.Writer;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 public class EventProcessorUtil {
     private static Log log = LogFactory.getLog(EventProcessorUtil.class);
+    private static final int ENTITY_EXPANSION_LIMIT = 0;
 
     public static StreamDefinition convertToDatabridgeStreamDefinition(
             org.wso2.siddhi.query.api.definition.StreamDefinition siddhiStreamDefinition,
@@ -195,9 +200,33 @@ public class EventProcessorUtil {
         }
     }
 
+    private static DocumentBuilderFactory getSecuredDocumentBuilder() {
+
+        DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+        dbf.setNamespaceAware(true);
+        dbf.setXIncludeAware(false);
+        dbf.setExpandEntityReferences(false);
+        try {
+            dbf.setFeature(Constants.SAX_FEATURE_PREFIX + Constants.EXTERNAL_GENERAL_ENTITIES_FEATURE, false);
+            dbf.setFeature(Constants.SAX_FEATURE_PREFIX + Constants.EXTERNAL_PARAMETER_ENTITIES_FEATURE, false);
+            dbf.setFeature(Constants.XERCES_FEATURE_PREFIX + Constants.LOAD_EXTERNAL_DTD_FEATURE, false);
+        } catch (ParserConfigurationException e) {
+            log.error(
+                    "Failed to load XML Processor Feature " + Constants.EXTERNAL_GENERAL_ENTITIES_FEATURE + " or " +
+                            Constants.EXTERNAL_PARAMETER_ENTITIES_FEATURE + " or " + Constants.LOAD_EXTERNAL_DTD_FEATURE);
+        }
+
+        org.apache.xerces.util.SecurityManager securityManager = new SecurityManager();
+        securityManager.setEntityExpansionLimit(ENTITY_EXPANSION_LIMIT);
+        dbf.setAttribute(Constants.XERCES_PROPERTY_PREFIX + Constants.SECURITY_MANAGER_PROPERTY, securityManager);
+
+        return dbf;
+    }
+
+
     private static Document parseXmlFile(String in) throws ExecutionPlanConfigurationException {
         try {
-            DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+            DocumentBuilderFactory dbf = getSecuredDocumentBuilder();
             DocumentBuilder db = dbf.newDocumentBuilder();
             InputSource is = new InputSource(new StringReader(in));
             return db.parse(is);
@@ -317,10 +346,16 @@ public class EventProcessorUtil {
         int metaAttrCount = streamDefinition.getMetaData() != null ? streamDefinition.getMetaData().size() : 0;
         int correlationAttrCount = streamDefinition.getCorrelationData() != null ? streamDefinition.getCorrelationData().size() : 0;
         int payloadAttrCount = streamDefinition.getPayloadData() != null ? streamDefinition.getPayloadData().size() : 0;
+        int dataLength = data.length;
         Object[] metaAttrArray = new Object[metaAttrCount];
         Object[] correlationAttrArray = new Object[correlationAttrCount];
         Object[] payloadAttrArray = new Object[payloadAttrCount];
-        for (int i = 0; i < data.length; i++) {
+        Map<String, String> arbitraryDataMap = null;
+        if ((metaAttrCount + correlationAttrCount + payloadAttrCount + 1) == dataLength) {
+            dataLength = data.length - 1;
+            arbitraryDataMap = (Map<String, String>) data[dataLength];
+        }
+        for (int i = 0; i < dataLength; i++) {
             if (i < metaAttrCount) {
                 metaAttrArray[i] = data[i];
             } else if (i < metaAttrCount + correlationAttrCount) {
@@ -329,7 +364,7 @@ public class EventProcessorUtil {
                 payloadAttrArray[i - (metaAttrCount + correlationAttrCount)] = data[i];
             }
         }
-        return new Event(streamDefinition.getStreamId(), timestamp, metaAttrArray, correlationAttrArray, payloadAttrArray);
+        return new Event(streamDefinition.getStreamId(), timestamp, metaAttrArray, correlationAttrArray, payloadAttrArray, arbitraryDataMap);
     }
 
     public static List<Event> getWso2Events(org.wso2.carbon.databridge.commons.StreamDefinition streamDefinition, org.wso2.siddhi.core.event.Event[] events) {

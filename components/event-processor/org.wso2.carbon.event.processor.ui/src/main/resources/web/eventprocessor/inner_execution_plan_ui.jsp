@@ -170,7 +170,10 @@
                             <td>
                                 <input type="text" id="importedStreamAs"/>
                             </td>
-
+                            <td class="col-small"><fmt:message key="property.arbitrary.data"/> :
+                            </td>
+                            <td><input id="isImportArbitraryId" type="checkbox" class="checkbox" value="true"/>
+                            </td>
                             <td><input type="button" class="button"
                                        value="<fmt:message key="import"/>"
                                        onclick="addImportedStreamDefinition()"/>
@@ -213,6 +216,11 @@
                                     %>
                                     <option value="createStreamDef">-- Create Stream Definition --</option>
                                 </select></td>
+                                </td>
+                                <td class="col-small"><fmt:message key="property.arbitrary.data"/> :
+                                </td>
+                                <td><input id="isExportArbitraryId" type="checkbox" class="checkbox" value="true"/>
+                                </td>
                                 <td><input type="button" class="button"
                                            value="<fmt:message key="export"/>"
                                            onclick="addExportedStreamDefinition()"/>

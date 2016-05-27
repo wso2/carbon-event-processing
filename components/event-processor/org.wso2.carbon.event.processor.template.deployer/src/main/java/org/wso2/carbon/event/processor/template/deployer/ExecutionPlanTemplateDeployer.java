@@ -17,26 +17,21 @@ package org.wso2.carbon.event.processor.template.deployer;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.wso2.carbon.databridge.commons.StreamDefinition;
-import org.wso2.carbon.databridge.commons.exception.MalformedStreamDefinitionException;
-import org.wso2.carbon.databridge.commons.utils.EventDefinitionConverterUtils;
 import org.wso2.carbon.event.execution.manager.core.DeployableTemplate;
 import org.wso2.carbon.event.execution.manager.core.TemplateDeployer;
 import org.wso2.carbon.event.execution.manager.core.TemplateDeploymentException;
-import org.wso2.carbon.event.processor.template.deployer.internal.ExecutionPlanDeployerConstants;
-import org.wso2.carbon.event.processor.template.deployer.internal.ExecutionPlanDeployerValueHolder;
 import org.wso2.carbon.event.processor.core.exception.ExecutionPlanConfigurationException;
 import org.wso2.carbon.event.processor.core.exception.ExecutionPlanDependencyValidationException;
 import org.wso2.carbon.event.processor.core.internal.util.EventProcessorConstants;
-import org.wso2.carbon.event.stream.core.exception.EventStreamConfigurationException;
-import org.wso2.carbon.event.stream.core.exception.StreamDefinitionAlreadyDefinedException;
+import org.wso2.carbon.event.processor.template.deployer.internal.ExecutionPlanDeployerConstants;
+import org.wso2.carbon.event.processor.template.deployer.internal.ExecutionPlanDeployerValueHolder;
 import org.wso2.siddhi.query.api.util.AnnotationHelper;
 import org.wso2.siddhi.query.compiler.SiddhiCompiler;
 import org.wso2.siddhi.query.compiler.exception.SiddhiParserException;
 
-public class ExecutionPlanDeployer implements TemplateDeployer {
+public class ExecutionPlanTemplateDeployer implements TemplateDeployer {
 
-    private static final Log log = LogFactory.getLog(ExecutionPlanDeployer.class);
+    private static final Log log = LogFactory.getLog(ExecutionPlanTemplateDeployer.class);
 
     @Override
     public String getType() {
@@ -48,18 +43,13 @@ public class ExecutionPlanDeployer implements TemplateDeployer {
     public void deployArtifact(DeployableTemplate template) throws TemplateDeploymentException {
 
         try {
-
-            String artifactId = template.getConfiguration().getFrom()
-                    + ExecutionPlanDeployerConstants.CONFIG_NAME_SEPARATOR + template.getConfiguration().getName();
-
-            undeployArtifact(artifactId);
-
-            deployStreams(template);
+            String planName = template.getArtifactId();
+            undeployArtifact(planName);
 
             // configuring plan name etc
-            String updatedExecutionPlan = template.getScript();
+            String updatedExecutionPlan = template.getArtifact();
             String executionPlanNameDefinition = ExecutionPlanDeployerConstants.EXECUTION_PLAN_NAME_ANNOTATION + "('"
-                    + template.getConfiguration().getFrom() + ExecutionPlanDeployerConstants.CONFIG_NAME_SEPARATOR + template.getConfiguration().getName() + "')";
+                    + planName + "')";
 
             if (AnnotationHelper.getAnnotationElement(
                     EventProcessorConstants.ANNOTATION_NAME_NAME, null,
@@ -82,39 +72,34 @@ public class ExecutionPlanDeployer implements TemplateDeployer {
         } catch (ExecutionPlanConfigurationException e) {
             throw new TemplateDeploymentException(
                     "Configuration exception occurred when adding Execution Plan of Template "
-                            + template.getConfiguration().getName() + " of Domain " + template.getConfiguration().getFrom(), e);
+                            + template.getConfiguration().getName() + " of Domain " + template.getConfiguration().getDomain(), e);
 
         } catch (ExecutionPlanDependencyValidationException e) {
             throw new TemplateDeploymentException(
                     "Validation exception occurred when adding Execution Plan of Template "
-                            + template.getConfiguration().getName() + " of Domain " + template.getConfiguration().getFrom(), e);
+                            + template.getConfiguration().getName() + " of Domain " + template.getConfiguration().getDomain(), e);
         } catch (SiddhiParserException e) {
             throw new TemplateDeploymentException(
                     "Validation exception occurred when parsing Execution Plan of Template "
-                            + template.getConfiguration().getName() + " of Domain " + template.getConfiguration().getFrom(), e);
+                            + template.getConfiguration().getName() + " of Domain " + template.getConfiguration().getDomain(), e);
         }
     }
 
 
-    public static void deployStreams(DeployableTemplate template) {
-        if (template.getStreams() != null) {
-            for (String stream : template.getStreams()) {
-                StreamDefinition streamDefinition = null;
-                try {
-                    streamDefinition = EventDefinitionConverterUtils.convertFromJson(stream);
-                    ExecutionPlanDeployerValueHolder.getEventStreamService().addEventStreamDefinition(streamDefinition);
-                } catch (MalformedStreamDefinitionException e) {
-                    log.error("Stream definition is incorrect in domain template " + stream, e);
-                } catch (EventStreamConfigurationException e) {
-                    log.error("Exception occurred when configuring stream " + streamDefinition.getName(), e);
-                } catch (StreamDefinitionAlreadyDefinedException e) {
-                    log.error("Same template stream name " + streamDefinition.getName()
-                            + " has been defined for another definition ", e);
-                    throw e;
-                }
+    @Override
+    public void deployIfNotDoneAlready(DeployableTemplate template) throws TemplateDeploymentException{
+        String planName = template.getArtifactId();
+        if (ExecutionPlanDeployerValueHolder.getEventProcessorService().
+                getAllActiveExecutionConfigurations().get(planName) == null) {
+            deployArtifact(template);
+        } else {
+            if(log.isDebugEnabled()) {
+                log.debug("Common Artifact: " + planName + " of Domain " + template.getConfiguration().getDomain()
+                          + " was not deployed as it is already being deployed.");
             }
         }
     }
+
 
     @Override
     public void undeployArtifact(String artifactId) throws TemplateDeploymentException {

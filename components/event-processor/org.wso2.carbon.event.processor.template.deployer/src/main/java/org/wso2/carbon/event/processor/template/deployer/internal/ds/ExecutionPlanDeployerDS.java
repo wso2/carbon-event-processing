@@ -19,7 +19,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.osgi.service.component.ComponentContext;
 import org.wso2.carbon.event.execution.manager.core.TemplateDeployer;
-import org.wso2.carbon.event.processor.template.deployer.ExecutionPlanDeployer;
+import org.wso2.carbon.event.processor.template.deployer.ExecutionPlanTemplateDeployer;
 import org.wso2.carbon.event.processor.template.deployer.internal.ExecutionPlanDeployerValueHolder;
 import org.wso2.carbon.event.processor.core.EventProcessorService;
 import org.wso2.carbon.event.stream.core.EventStreamService;
@@ -41,11 +41,11 @@ public class ExecutionPlanDeployerDS {
     protected void activate(ComponentContext context) {
 
         try {
-            ExecutionPlanDeployer deployer = new ExecutionPlanDeployer();
-            context.getBundleContext().registerService(TemplateDeployer.class.getName(), deployer, null);
+            ExecutionPlanTemplateDeployer templateDeployer = new ExecutionPlanTemplateDeployer();
+            context.getBundleContext().registerService(TemplateDeployer.class.getName(), templateDeployer, null);
 
         } catch (RuntimeException e) {
-            log.error("Couldn't register ExecutionPlanDeployer service", e);
+            log.error("Couldn't register ExecutionPlanTemplateDeployer service", e);
         }
     }
 
