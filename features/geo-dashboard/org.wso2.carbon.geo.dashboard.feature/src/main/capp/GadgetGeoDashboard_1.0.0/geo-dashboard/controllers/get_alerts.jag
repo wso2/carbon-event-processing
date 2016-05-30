@@ -67,9 +67,7 @@ function get(name){
 
         var result;
         try{
-            log.warn("------ this is get_alert.jag: " + name);
             var resource = dataStore.get("/geo/alerts/proximity/proximity.json");
-
             result={proximityDistance: resource.getProperty("proximityDistance"), proximityTime: resource.getProperty("proximityTime")};
         }catch(e){
             result = {'content': false};
