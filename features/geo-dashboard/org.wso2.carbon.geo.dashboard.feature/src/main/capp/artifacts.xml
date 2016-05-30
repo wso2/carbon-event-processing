@@ -29,17 +29,12 @@
         <dependency artifact="rawInputStream" version="1.0.0" include="true" serverRole="GeoDashboard"/>
         <dependency artifact="processedSpatialEvents" version="1.0.0" include="true" serverRole="GeoDashboard"/>
         <dependency artifact="AlertsNotifications" version="1.0.0" include="true" serverRole="GeoDashboard"/>
-        <dependency artifact="DefaultWebsocketOutputAdaptorOnTrafficStream" version="1.0.0" include="true" serverRole="GeoDashboard"/>
         <dependency artifact="pass_through" version="1.0.0" include="true" serverRole="GeoDashboard"/>
         <dependency artifact="GpsDataOverHttpSpatialObjectStream" version="1.0.0" include="true" serverRole="GeoDashboard"/>
-        <dependency artifact="processedGeoEvents" version="1.0.0" include="true" serverRole="GeoDashboard"/>
-        <dependency artifact="GpsDataOverHttpTrafficStream" version="1.0.0" include="true" serverRole="GeoDashboard"/>
         <dependency artifact="inputStandardizer" version="1.0.0" include="true" serverRole="GeoDashboard"/>
         <dependency artifact="DefaultWebsocketOutputAdaptor" version="1.0.0" include="true" serverRole="GeoDashboard"/>
-        <dependency artifact="rawGeoStream" version="1.0.0" include="true" serverRole="GeoDashboard"/>
         <dependency artifact="standardSpatialEvents" version="1.0.0" include="true" serverRole="GeoDashboard"/>
         <dependency artifact="RDBMSOutputAdapter" version="1.0.0" include="true" serverRole="GeoDashboard"/>
         <dependency artifact="fusedSpatialEvent" version="1.0.0" include="true" serverRole="GeoDashboard"/>
-        <dependency artifact="pass_through_london" version="1.0.0" include="true" serverRole="GeoDashboard"/>
     </artifact>
 </artifacts>
