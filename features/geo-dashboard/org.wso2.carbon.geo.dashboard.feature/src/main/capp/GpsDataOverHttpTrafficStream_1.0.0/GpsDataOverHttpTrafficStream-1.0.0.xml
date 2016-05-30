@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<eventReceiver name="GpsDataOverHttpTrafficStream" statistics="enable"
+    trace="enable" xmlns="http://wso2.org/carbon/eventreceiver">
+    <from eventAdapterType="http">
+        <property name="transports">all</property>
+    </from>
+    <mapping customMapping="enable" type="json">
+        <property>
+            <from jsonPath="$id"/>
+            <to default="0.0" name="id" type="string"/>
+        </property>
+        <property>
+            <from jsonPath="$properties.timeStamp"/>
+            <to name="timeStamp" type="long"/>
+        </property>
+        <property>
+            <from jsonPath="$properties.state"/>
+            <to name="state" type="string"/>
+        </property>
+        <property>
+            <from jsonPath="$geometry"/>
+            <to name="geometry" type="string"/>
+        </property>
+        <property>
+            <from jsonPath="$properties.information"/>
+            <to name="information" type="string"/>
+        </property>
+    </mapping>
+    <to streamName="rawGeoStream" version="1.0.0"/>
+</eventReceiver>

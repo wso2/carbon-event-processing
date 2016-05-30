@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<eventReceiver name="GpsDataOverHttpSpatialObjectStream"
+    statistics="disable" trace="disable" xmlns="http://wso2.org/carbon/eventreceiver">
+    <from eventAdapterType="http">
+        <property name="transports">all</property>
+    </from>
+    <mapping customMapping="enable" type="json">
+        <property>
+            <from jsonPath="$.id"/>
+            <to default="0.0" name="id" type="string"/>
+        </property>
+        <property>
+            <from jsonPath="$.timeStamp"/>
+            <to name="timeStamp" type="long"/>
+        </property>
+        <property>
+            <from jsonPath="$.lattitude"/>
+            <to name="latitude" type="double"/>
+        </property>
+        <property>
+            <from jsonPath="$.longitude"/>
+            <to name="longitude" type="double"/>
+        </property>
+        <property>
+            <from jsonPath="$.type"/>
+            <to default="VEHICLE" name="type" type="string"/>
+        </property>
+        <property>
+            <from jsonPath="$.speed"/>
+            <to name="speed" type="float"/>
+        </property>
+        <property>
+            <from jsonPath="$.angle"/>
+            <to name="heading" type="float"/>
+        </property>
+    </mapping>
+    <to streamName="rawInputStream" version="1.0.0"/>
+</eventReceiver>

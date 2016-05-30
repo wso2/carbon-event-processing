@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<eventPublisher name="DefaultWebsocketOutputAdaptorOnTrafficStream"
+  statistics="disable" trace="disable" xmlns="http://wso2.org/carbon/eventpublisher">
+  <from streamName="processedGeoEvents" version="1.0.0"/>
+  <mapping customMapping="enable" type="json">
+    <inline>
+{
+  "messageType" : "Traffic",
+  "type": "Feature",
+  "id": {{id}},
+  "properties": {
+        "state": {{state}},
+        "information": {{information}}
+      },
+  "geometry": {{geometry}}
+}
+    </inline>
+  </mapping>
+  <to eventAdapterType="websocket-local"/>
+</eventPublisher>
