@@ -39,6 +39,7 @@
         <module>components/event-simulator</module>
         <module>components/event-flow</module>
         <module>components/siddhi-tryit</module>
+        <module>components/geo-dashboard</module>
 
         <module>features/event-processor</module>
         <module>features/event-simulator</module>
@@ -364,6 +365,16 @@
             <dependency>
                 <groupId>org.wso2.carbon.event-processing</groupId>
                 <artifactId>org.wso2.carbon.siddhi.metrics.core</artifactId>
+                <version>${carbon.event.processing.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.wso2.carbon.event-processing</groupId>
+                <artifactId>org.wso2.carbon.siddhi.geo.event.fuser</artifactId>
+                <version>${carbon.event.processing.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.wso2.carbon.event-processing</groupId>
+                <artifactId>org.wso2.carbon.siddhi.geo.event.notifier</artifactId>
                 <version>${carbon.event.processing.version}</version>
             </dependency>
             <dependency>
@@ -705,7 +716,8 @@
                 <module>components/event-flow</module>
                 <module>components/event-processor</module>
                 <module>components/event-simulator</module>
-                <module>components/execution-manager</module>
+                <module>components/siddhi-tryit</module>
+                <module>components/geo-dashboard</module>
             </modules>
         </profile>
         <profile>

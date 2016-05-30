@@ -35,6 +35,16 @@
     <url>http://wso2.org</url>
     <description>This feature contains the geo dashboard gadget</description>
 
+    <dependencies>
+        <dependency>
+            <groupId>org.wso2.carbon.event-processing</groupId>
+            <artifactId>org.wso2.carbon.siddhi.geo.event.fuser</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.wso2.carbon.event-processing</groupId>
+            <artifactId>org.wso2.carbon.siddhi.geo.event.notifier</artifactId>
+        </dependency>
+    </dependencies>
     <build>
         <plugins>
             <plugin>
@@ -122,10 +132,18 @@
                             <propertiesFile>../feature.properties</propertiesFile>
                             <adviceFile>
                                 <properties>
-                                    <propertyDef>org.wso2.carbon.p2.category.type:server</propertyDef>
-                                    <propertyDef>org.eclipse.equinox.p2.type.group:true</propertyDef>
+                                    <propertyDef>org.eclipse.equinox.p2.type.group:true
+                                    </propertyDef>
                                 </properties>
                             </adviceFile>
+                            <bundles>
+                                <bundleDef>
+                                    org.wso2.carbon.event-processing:org.wso2.carbon.siddhi.geo.event.fuser:${carbon.event.processing.version}
+                                </bundleDef>
+                                <bundleDef>
+                                    org.wso2.carbon.event-processing:org.wso2.carbon.siddhi.geo.event.notifier:${carbon.event.processing.version}
+                                </bundleDef>
+                            </bundles>
                         </configuration>
                     </execution>
                 </executions>
