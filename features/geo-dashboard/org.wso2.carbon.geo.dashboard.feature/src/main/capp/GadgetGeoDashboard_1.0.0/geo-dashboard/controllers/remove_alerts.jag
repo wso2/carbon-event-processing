@@ -51,8 +51,6 @@ var queryName = request.getParameter('queryName');
 var cepAction = request.getParameter('cepAction'); // i.e 'deploy' new executionPlan , 'edit' executionPlan and etc..
 var type = request.getParameter('Type');
 
-log.warn("-------------- DELETING: "+executionPlanName);
-
 if (verb == "POST") {
     removeAlert(queryName, type);
     if (cepAction == "undeploy") {

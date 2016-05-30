@@ -1,0 +1,29 @@
+/* Enter a unique ExecutionPlan */
+@Plan:name('eventsFunionGenerateNotofications')
+
+/* Enter a unique description for ExecutionPlan */
+-- @Plan:description('ExecutionPlan')
+
+/* define streams/tables and write queries here ... */
+
+@Plan:trace('false')
+
+@Import('processedSpatialEvents:1.0.0')
+define stream dataIn (id string, latitude double, longitude double, timeStamp long, type string, speed float, heading float, eventId string, state string, information string );
+
+@Export('AlertsNotifications:1.0.0')
+define stream alertsOut ( id string, state string, information string, timeStamp long, latitude double, longitude double );
+
+@Export('fusedSpatialEvent:1.0.0')
+define stream dataOut ( id string, latitude double, longitude double, timeStamp long, type string, speed float, heading float, state string, information string, notify bool );
+
+from dataIn#window.geodashboard:eventsFusion(eventId, state, information)
+insert into innerStream;
+
+from innerStream
+select id, latitude, longitude, timeStamp, type, speed, heading, state , information, geodashboard:needToNotify(id,information) as notify
+insert into dataOut;
+
+from dataOut[notify == true]
+select id,state,information,timeStamp, latitude, longitude
+insert into alertsOut;

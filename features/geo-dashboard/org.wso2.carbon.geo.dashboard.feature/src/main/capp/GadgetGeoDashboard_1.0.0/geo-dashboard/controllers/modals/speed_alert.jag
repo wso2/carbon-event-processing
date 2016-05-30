@@ -24,7 +24,6 @@
 <%
 var log = new Log();
 var get = require('../get_alerts.jag').get;
-log.warn("--------------------------> speed_alert.jag");
 
 %>
 <div class="modal-header" style="cursor: move;background: #f9f9f9;-webkit-box-shadow: inset 0px 0px 14px 1px rgba(0,0,0,0.2);-moz-box-shadow: inset 0px 0px 14px 1px rgba(0,0,0,0.2);box-shadow: inset 0px 0px 14px 1px rgba(0,0,0,0.2);">

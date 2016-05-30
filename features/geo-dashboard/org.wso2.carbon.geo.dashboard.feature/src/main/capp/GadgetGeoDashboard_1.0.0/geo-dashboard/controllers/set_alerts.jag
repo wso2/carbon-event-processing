@@ -19,7 +19,6 @@
 
 /* Includes */
 var log = new Log();
-log.warn("------plan name: SOMETHING");
 
 var utils = require('/modules/utils.js');
 var carbon = require("carbon");

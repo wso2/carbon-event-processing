@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<eventPublisher name="DefaultWebsocketOutputAdaptorOnAlert"
+  statistics="disable" trace="disable" xmlns="http://wso2.org/carbon/eventpublisher">
+  <from streamName="AlertsNotifications" version="1.0.0"/>
+  <mapping customMapping="enable" type="json">
+    <inline>
+{
+    "messageType" : "Alert",
+    "type": "Feature",
+    "id": {{id}},
+    "state": {{state}},
+    "information": {{information}},
+    "longitude" : {{longitude}},
+    "latitude" : {{latitude}}
+}
+    </inline>
+  </mapping>
+  <to eventAdapterType="websocket-local"/>
+</eventPublisher>

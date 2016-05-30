@@ -1,0 +1,32 @@
+{
+  "name": "AlertsNotifications",
+  "version": "1.0.0",
+  "nickName": "",
+  "description": "Alerts which need to be notified to the user, output only when the alert information is changed.",
+  "payloadData": [
+    {
+      "name": "id",
+      "type": "STRING"
+    },
+    {
+      "name": "state",
+      "type": "STRING"
+    },
+    {
+      "name": "information",
+      "type": "STRING"
+    },
+    {
+      "name": "timeStamp",
+      "type": "LONG"
+    },
+    {
+      "name": "latitude",
+      "type": "DOUBLE"
+    },
+    {
+      "name": "longitude",
+      "type": "DOUBLE"
+    }
+  ]
+}
