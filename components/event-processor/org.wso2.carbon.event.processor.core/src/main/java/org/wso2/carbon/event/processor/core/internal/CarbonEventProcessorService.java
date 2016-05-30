@@ -135,6 +135,7 @@ public class CarbonEventProcessorService implements EventProcessorService {
     @Override
     public void undeployInactiveExecutionPlan(String filename)
             throws ExecutionPlanConfigurationException {
+        validateFilePath(filename);
         EventProcessorConfigurationFilesystemInvoker.delete(filename);
     }
 
@@ -174,6 +175,7 @@ public class CarbonEventProcessorService implements EventProcessorService {
 
     public void editInactiveExecutionPlan(String executionPlan, String filename)
             throws ExecutionPlanConfigurationException, ExecutionPlanDependencyValidationException {
+        validateFilePath(filename);
         EventProcessorHelper.validateExecutionPlan(executionPlan);
         org.wso2.siddhi.query.api.ExecutionPlan parsedExecutionPlan = SiddhiCompiler.parse(executionPlan);
         String newExecutionPlanName = AnnotationHelper.getAnnotationElement(EventProcessorConstants.ANNOTATION_NAME_NAME, null, parsedExecutionPlan.getAnnotations()).getValue();
@@ -609,6 +611,7 @@ public class CarbonEventProcessorService implements EventProcessorService {
 
     public String getInactiveExecutionPlan(String filename)
             throws ExecutionPlanConfigurationException {
+        validateFilePath(filename);
         return EventProcessorConfigurationFilesystemInvoker.readExecutionPlanConfigFile(filename);
     }
 
@@ -897,6 +900,12 @@ public class CarbonEventProcessorService implements EventProcessorService {
             }
         }
         log.info("Successfully shutdown ExecutionPlans");
+    }
+
+    private void validateFilePath(String file) throws ExecutionPlanConfigurationException {
+        if (file.contains("../") || file.contains("..\\")) {
+            throw new ExecutionPlanConfigurationException("File name contains restricted path elements. " + file);
+        }
     }
 
 }
