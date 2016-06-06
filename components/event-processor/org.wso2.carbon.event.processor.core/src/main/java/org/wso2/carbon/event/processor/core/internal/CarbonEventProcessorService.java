@@ -17,6 +17,7 @@ package org.wso2.carbon.event.processor.core.internal;
 
 import com.hazelcast.core.HazelcastInstance;
 import com.hazelcast.core.IMap;
+import com.lmax.disruptor.ExceptionHandler;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.wso2.carbon.context.PrivilegedCarbonContext;
@@ -305,6 +306,25 @@ public class CarbonEventProcessorService implements EventProcessorService {
 
         try {
             executionPlanRuntime = siddhiManager.createExecutionPlanRuntime(executionPlan);
+            executionPlanRuntime.handleExceptionWith(new ExceptionHandler<Object>() {
+                @Override
+                public void handleEventException(Throwable throwable, long l, Object o) {
+                    log.error(throwable.getMessage(), throwable);
+                    if(log.isDebugEnabled()){
+                        log.debug("Event dropped by distruptor due to exception : "+ o);
+                    }
+                }
+
+                @Override
+                public void handleOnStartException(Throwable throwable) {
+                    log.error("Exception when starting the distruptor process ", throwable);
+                }
+
+                @Override
+                public void handleOnShutdownException(Throwable throwable) {
+                    log.error("Exception when stopping the distruptor process ", throwable);
+                }
+            });
         } catch (Exception e) {
             throw new ExecutionPlanConfigurationException("Invalid query specified, " + e.getMessage(), e);
         }
