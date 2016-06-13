@@ -75,6 +75,11 @@ public class ExecutionPlanSubscriber extends StreamFunctionProcessor {
         return new ArrayList<Attribute>();
     }
 
+    @Override
+    protected List<Attribute> init(AbstractDefinition inputDefinition, ExpressionExecutor[] attributeExpressionExecutors, ExecutionPlanContext executionPlanContext) {
+        return init(inputDefinition, attributeExpressionExecutors, executionPlanContext, false);
+    }
+
     /**
      * This will be called only once and this can be used to acquire
      * required resources for the processing element.
@@ -112,7 +117,7 @@ public class ExecutionPlanSubscriber extends StreamFunctionProcessor {
      * the element to the same state as if was on a previous point of time.
      *
      * @param objects the stateful objects of the element as an array on
-     *              the same order provided by currentState().
+     *                the same order provided by currentState().
      */
     @Override
     public void restoreState(Object[] objects) {
