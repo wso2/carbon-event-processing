@@ -19,18 +19,22 @@ import com.google.gson.JsonArray;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import javax.servlet.ServletConfig;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 import java.util.List;
 
 public class ExecutionPlanFlow {
 
     private static final Log log = LogFactory.getLog(ExecutionPlanFlow.class);
 
-    public String getExecutionPlanFlow(String executionPlanString) {
+    public String getExecutionPlanFlow(String executionPlanString, ServletConfig config, HttpSession session,
+                                       HttpServletRequest request) {
 
         try {
             ExtractJsonValueImpl converter = new ExtractJsonValueImpl();
 
-            converter.setJsonValues(executionPlanString);
+            converter.setJsonValues(executionPlanString, config, session, request);
             StringBuilder executionPlanFlow = new StringBuilder(" '{ \"nodes\": [ ");
 
             List<String> streamId = converter.getStreamId();
