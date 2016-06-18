@@ -20,24 +20,41 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import org.apache.axis2.AxisFault;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.wso2.carbon.event.processor.ui.EventProcessorUIUtils;
 import org.wso2.carbon.event.processor.ui.executionPlan.flow.siddhi.visitor.SiddhiFlowCompiler;
+import org.wso2.carbon.ndatasource.common.DataSourceException;
+import org.wso2.carbon.ndatasource.common.spi.DataSourceReader;
+import org.wso2.carbon.ndatasource.rdbms.RDBMSDataSourceReader;
+import org.wso2.carbon.ndatasource.ui.stub.NDataSourceAdminDataSourceException;
+import org.wso2.carbon.ndatasource.ui.stub.NDataSourceAdminStub;
+import org.wso2.carbon.ndatasource.ui.stub.core.services.xsd.WSDataSourceInfo;
+import org.wso2.carbon.ndatasource.ui.stub.core.services.xsd.WSDataSourceMetaInfo;
 import org.wso2.siddhi.core.ExecutionPlanRuntime;
 import org.wso2.siddhi.core.SiddhiManager;
 import org.wso2.siddhi.query.api.definition.AbstractDefinition;
 import org.wso2.siddhi.query.api.definition.Attribute;
 
+import javax.servlet.ServletConfig;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
+import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
 public class ExtractJsonValueImpl {
+    private static final Log log = LogFactory.getLog(ExtractJsonValueImpl.class);
+
     private String executionPlanText;
     //stream
     private List<String> streamId = new ArrayList<String>();
     private List<String> streamAnno = new ArrayList<String>();
     private List<String> streamElement = new ArrayList<String>();
     private List<String> streamText = new ArrayList<String>();
-    private List<String> streamMapId = new ArrayList<String> ();
+    private List<String> streamMapId = new ArrayList<String>();
     private List<String> streamDefinition = new ArrayList<String>();
 
     //trigger
@@ -70,10 +87,11 @@ public class ExtractJsonValueImpl {
     private List<JsonArray> partitionWithCondition = new ArrayList<JsonArray>();
     private List<List<String>> partitionAttributeToolTip = new ArrayList<List<String>>();
 
-    public void setJsonValues(String executionPlan) {
+    public void setJsonValues(String executionPlan, ServletConfig config, HttpSession session,
+                              HttpServletRequest request) {
 
         StringBuilder executionPlan_String = SiddhiFlowCompiler.parseString(executionPlan);
-        createStreamDefinition(executionPlan);
+        createStreamDefinition(executionPlan, config, session, request);
 
         JsonElement jsonElement = new JsonParser().parse(executionPlan_String.toString());
         JsonObject jsonObject = jsonElement.getAsJsonObject();
@@ -115,11 +133,35 @@ public class ExtractJsonValueImpl {
             }
         }
     }
+
     //create stream definition
-    private void createStreamDefinition (String executionPlan) {
+    private void createStreamDefinition(String executionPlan, ServletConfig config, HttpSession session,
+                                        HttpServletRequest request) {
+
         SiddhiManager manager = new SiddhiManager();
+        try {
+            NDataSourceAdminStub stub = EventProcessorUIUtils.getNDataSourceAdminStub(config, session, request);
+            WSDataSourceInfo[] allDataSources = stub.getAllDataSources();
+            DataSourceReader dsReader = new RDBMSDataSourceReader();
+            for (WSDataSourceInfo info : allDataSources) {
+                WSDataSourceMetaInfo metaInfo = info.getDsMetaInfo();
+                Object dsObject = dsReader.createDataSource(metaInfo.getDefinition().getDsXMLConfiguration(), false);
+                if (dsObject instanceof javax.sql.DataSource) {
+                    manager.setDataSource(metaInfo.getName(), (javax.sql.DataSource) dsObject);
+                }
+            }
+        } catch (AxisFault axisFault) {
+            log.error("Error in getting data sources from NDataSourceAdminService", axisFault);
+        } catch (RemoteException e) {
+            log.error("Error in getting data sources from NDataSourceAdminService", e);
+        } catch (NDataSourceAdminDataSourceException e) {
+            log.error("Error in getting data sources from NDataSourceAdminService", e);
+        } catch (DataSourceException e) {
+            log.error("Error in getting data sources from NDataSourceAdminService", e);
+        }
+
         //Specially handle for events tables
-        String executionPlanCleaned=  executionPlan.replaceAll("@from\\(.*?\\)","");
+        String executionPlanCleaned = executionPlan.replaceAll("@from\\(.*?\\)", "");
         ExecutionPlanRuntime executionPlanRuntime = manager.createExecutionPlanRuntime(executionPlanCleaned);
 
         Map<String, AbstractDefinition> streamDefinitionMap = executionPlanRuntime.getStreamDefinitionMap();
@@ -130,11 +172,11 @@ public class ExtractJsonValueImpl {
             attributeList.add(ab.getAttributeList());
         }
 
-        for (int j=0; j<attributeList.size(); j++) {
+        for (int j = 0; j < attributeList.size(); j++) {
             StringBuilder stream = new StringBuilder();
             stream.append("\"define stream ").append(streamMapId.get(j)).append(" (");
-            for (int i=0; i<attributeList.get(j).size(); i++) {
-                stream.append(" ").append(attributeList.get(j).get(i).getName()).append(" ") .append(attributeList.get(j).get(i).getType().toString().toLowerCase()).append(",");
+            for (int i = 0; i < attributeList.get(j).size(); i++) {
+                stream.append(" ").append(attributeList.get(j).get(i).getName()).append(" ").append(attributeList.get(j).get(i).getType().toString().toLowerCase()).append(",");
             }
             stream = new StringBuilder(stream.substring(0, stream.length() - 1));
             stream.append(")\"");
@@ -357,7 +399,11 @@ public class ExtractJsonValueImpl {
         return partitionWithStream;
     }
 
-    public List<String> getStreamMapId() { return streamMapId; }
+    public List<String> getStreamMapId() {
+        return streamMapId;
+    }
 
-    public List<String> getStreamDefinition() { return streamDefinition; }
+    public List<String> getStreamDefinition() {
+        return streamDefinition;
+    }
 }

@@ -81,7 +81,7 @@
         String planFlow = configurationDto.getExecutionPlan();
 
         ExecutionPlanFlow exePlanFlow = new ExecutionPlanFlow();
-        String executionPlan_nodes = exePlanFlow.getExecutionPlanFlow(planFlow);
+        String executionPlan_nodes = exePlanFlow.getExecutionPlanFlow(planFlow, config, session, request);
     %>
 
     <script type="text/javascript">
