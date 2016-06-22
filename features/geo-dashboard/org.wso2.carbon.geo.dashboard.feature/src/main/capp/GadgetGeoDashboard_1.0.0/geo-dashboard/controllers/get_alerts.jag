@@ -1,0 +1,129 @@
+<%
+/*
+ ~ Copyright (c) 2016, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
+ ~
+ ~ WSO2 Inc. licenses this file to you under the Apache License,
+ ~ Version 2.0 (the "License"); you may not use this file except
+ ~ in compliance with the License.
+ ~ You may obtain a copy of the License at
+ ~
+ ~ http://www.apache.org/licenses/LICENSE-2.0
+ ~
+ ~ Unless required by applicable law or agreed to in writing,
+ ~ software distributed under the License is distributed on an
+ ~ "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ ~ KIND, either express or implied.  See the License for the
+ ~ specific language governing permissions and limitations
+ ~ under the License.
+ */
+var log = new Log();
+var dataStore = require('../include/commons.jag').dataStore;
+var verb = request.getMethod();
+var resourceName = request.getParameter('name');
+var webService = request.getParameter('service');
+
+
+if(webService) {
+    response.contentType = 'application/json';
+    response.characterEncoding = 'UTF-8';
+    response.content = { resource : get(resourceName) };
+}
+
+function get(name){
+    if(name == 'within'){
+        try{
+            var res = dataStore.get("geo/alerts/within/");
+        }
+        catch(e){
+            log.info(e.message);
+            return false;
+        }
+        var allFences = [];
+        for each (var resource in res.getChildren()) {
+            var fence = {};
+            try{
+                fence['geoJson'] = JSON.parse(dataStore.get(resource).content.replace(/'/g, '"'));
+                fence['queryName'] = dataStore.get(resource).getProperty('queryName');
+                fence['areaName'] = dataStore.get(resource).getProperty('areaName');
+                fence['createdTime'] = dataStore.get(resource).createdTime.toString();
+                allFences.push(fence);
+            }
+            catch(e){
+                log.info("Error: "+e+'\n');
+            }
+        }
+        return allFences;
+    } else if(name == 'speed'){
+        var resource;
+        try{
+            resource = dataStore.get(name+'.json');
+        }catch(e){
+            resource = {'content': false};
+        }
+        log.info("DEBUG:***** name = "+name);
+        log.info("DEBUG:***** resource.content = "+resource.content);
+        return JSON.parse(resource.content);
+    } else if(name == 'proximity'){
+
+        var result;
+        try{
+            var resource = dataStore.get("/geo/alerts/proximity/proximity.json");
+            result={proximityDistance: resource.getProperty("proximityDistance"), proximityTime: resource.getProperty("proximityTime")};
+        }catch(e){
+            result = {'content': false};
+        }
+        return result;
+    } else if(name == 'stationery'){
+        var res;
+        try{
+            res = dataStore.get("geo/alerts/stationery/");
+        }
+        catch(e){
+            log.info(e.message);
+            return false;
+        }
+        var allFences = [];
+        for each (var resource in res.getChildren()) {
+            var fence = {};
+            try{
+                fence['geoJson'] = JSON.parse(dataStore.get(resource).content.replace(/'/g, '"'));
+                fence['queryName'] = dataStore.get(resource).getProperty('queryName');
+                fence['areaName'] = dataStore.get(resource).getProperty('stationeryName');
+                fence['stationeryTime'] = dataStore.get(resource).getProperty('stationeryTime');
+                fence['fluctuationRadius'] = dataStore.get(resource).getProperty('fluctuationRadius');
+                fence['createdTime'] = dataStore.get(resource).createdTime.toString();
+                allFences.push(fence);
+            }
+            catch(e){
+                log.info("Error: "+e+'\n');
+            }
+        }
+        return allFences;
+    } else if( name == 'traffic'){
+        try{
+            var res = dataStore.get("geo/alerts/traffic/");
+        }
+        catch(e){
+            log.info(e.message);
+            return false;
+        }
+        var allFences = [];
+        for each (var resource in res.getChildren()) {
+            var fence = {};
+            try{
+                fence['geoJson'] = JSON.parse(dataStore.get(resource).content.replace(/'/g, '"'));
+                fence['queryName'] = dataStore.get(resource).getProperty('queryName');
+                fence['areaName'] = dataStore.get(resource).getProperty('areaName');
+                fence['createdTime'] = dataStore.get(resource).createdTime.toString();
+                allFences.push(fence);
+            }
+            catch(e){
+                log.info("Error: "+e+'\n');
+            }
+        }
+        return allFences;
+    }
+
+}
+
+%>

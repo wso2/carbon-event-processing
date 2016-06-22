@@ -17,6 +17,7 @@ package org.wso2.carbon.event.processor.core.internal;
 
 import com.hazelcast.core.HazelcastInstance;
 import com.hazelcast.core.IMap;
+import com.lmax.disruptor.ExceptionHandler;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.wso2.carbon.context.PrivilegedCarbonContext;
@@ -135,6 +136,7 @@ public class CarbonEventProcessorService implements EventProcessorService {
     @Override
     public void undeployInactiveExecutionPlan(String filename)
             throws ExecutionPlanConfigurationException {
+        validateFilePath(filename);
         EventProcessorConfigurationFilesystemInvoker.delete(filename);
     }
 
@@ -174,6 +176,7 @@ public class CarbonEventProcessorService implements EventProcessorService {
 
     public void editInactiveExecutionPlan(String executionPlan, String filename)
             throws ExecutionPlanConfigurationException, ExecutionPlanDependencyValidationException {
+        validateFilePath(filename);
         EventProcessorHelper.validateExecutionPlan(executionPlan);
         org.wso2.siddhi.query.api.ExecutionPlan parsedExecutionPlan = SiddhiCompiler.parse(executionPlan);
         String newExecutionPlanName = AnnotationHelper.getAnnotationElement(EventProcessorConstants.ANNOTATION_NAME_NAME, null, parsedExecutionPlan.getAnnotations()).getValue();
@@ -303,6 +306,25 @@ public class CarbonEventProcessorService implements EventProcessorService {
 
         try {
             executionPlanRuntime = siddhiManager.createExecutionPlanRuntime(executionPlan);
+            executionPlanRuntime.handleExceptionWith(new ExceptionHandler<Object>() {
+                @Override
+                public void handleEventException(Throwable throwable, long l, Object o) {
+                    log.error(throwable.getMessage(), throwable);
+                    if(log.isDebugEnabled()){
+                        log.debug("Event dropped by distruptor due to exception : "+ o);
+                    }
+                }
+
+                @Override
+                public void handleOnStartException(Throwable throwable) {
+                    log.error("Exception when starting the distruptor process ", throwable);
+                }
+
+                @Override
+                public void handleOnShutdownException(Throwable throwable) {
+                    log.error("Exception when stopping the distruptor process ", throwable);
+                }
+            });
         } catch (Exception e) {
             throw new ExecutionPlanConfigurationException("Invalid query specified, " + e.getMessage(), e);
         }
@@ -609,6 +631,7 @@ public class CarbonEventProcessorService implements EventProcessorService {
 
     public String getInactiveExecutionPlan(String filename)
             throws ExecutionPlanConfigurationException {
+        validateFilePath(filename);
         return EventProcessorConfigurationFilesystemInvoker.readExecutionPlanConfigFile(filename);
     }
 
@@ -897,6 +920,12 @@ public class CarbonEventProcessorService implements EventProcessorService {
             }
         }
         log.info("Successfully shutdown ExecutionPlans");
+    }
+
+    private void validateFilePath(String file) throws ExecutionPlanConfigurationException {
+        if (file.contains("../") || file.contains("..\\")) {
+            throw new ExecutionPlanConfigurationException("File name contains restricted path elements. " + file);
+        }
     }
 
 }

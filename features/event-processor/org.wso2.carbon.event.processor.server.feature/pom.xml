@@ -236,9 +236,6 @@
                                 <bundleDef>
                                     org.wso2.carbon.event-processing:org.wso2.carbon.event.processor.admin:${carbon.event.processing.version}
                                 </bundleDef>
-                                <!--<bundleDef>-->
-                                    <!--org.wso2.carbon.event-processing:org.wso2.carbon.event.processor.siddhi.extension:${carbon.event.processing.version}-->
-                                <!--</bundleDef>-->
                                 <bundleDef>
                                     org.wso2.siddhi:siddhi-core:${siddhi.version}
                                 </bundleDef>
@@ -260,9 +257,6 @@
                                 <bundleDef>
                                     org.wso2.orbit.com.lmax:disruptor:${disruptor.orbit.version}
                                 </bundleDef>
-                                <!--<bundleDef>-->
-                                    <!--org.hectorclient.wso2:hector-core:${hector.wso2.version}-->
-                                <!--</bundleDef>-->
                                 <bundleDef>
                                     org.yaml:snakeyaml:${snakeyaml.version}
                                 </bundleDef>
@@ -298,9 +292,6 @@
                                 <bundleDef>
                                     org.wso2.siddhi:siddhi-extension-geo:${siddhi.version}
                                 </bundleDef>
-                                <!--<bundleDef>-->
-                                <!--org.wso2.siddhi:siddhi-extension-ml:${siddhi.version}-->
-                                <!--</bundleDef>-->
                                 <bundleDef>
                                     org.wso2.siddhi:siddhi-extension-kalman-filter:${siddhi.version}
                                 </bundleDef>
@@ -317,37 +308,12 @@
                                 <bundleDef>
                                     org.apache.commons:commons-math3:${commons-math3.version}
                                 </bundleDef>
-                                <!--<bundleDef>-->
-                                    <!--org.wso2.carbon.ml:org.wso2.carbon.ml.core:${ml.version}-->
-                                <!--</bundleDef>-->
-                                <!--<bundleDef>-->
-                                    <!--org.wso2.carbon.ml:org.wso2.carbon.ml.commons:${ml.version}-->
-                                <!--</bundleDef>-->
-                                <!--<bundleDef>-->
-                                    <!--org.wso2.carbon.ml:org.wso2.carbon.ml.database:${ml.version}-->
-                                <!--</bundleDef>-->
                                 <bundleDef>
                                     org.apache.commons:commons-lang3:${commons-lang3.version}
-                                </bundleDef>
-                                <!--<bundleDef>-->
-                                    <!--com.google.code.geocoder-java:geocoder-java:${geocoder.version}-->
-                                <!--</bundleDef>-->
-                                <!--<bundleDef>-->
-                                    <!--com.googlecode.scalascriptengine:scalascriptengine_2.11:${scalascriptengine.version}-->
-                                <!--</bundleDef>-->
-                                <!--<bundleDef>-->
-                                    <!--org.scala-lang:scala-compiler:${scala.version}-->
-                                <!--</bundleDef>-->
-                                <!--<bundleDef>-->
-                                    <!--org.scala-lang:scala-reflect:${scala.version}-->
-                                <!--</bundleDef>-->
-                                <bundleDef>
-                                    org.apache.ws.commons.axiom.wso2:axiom:${orbit.version.axiom}
                                 </bundleDef>
                                 <bundleDef>
                                     org.json.wso2:json:${json.version}
                                 </bundleDef>
-
                                 <bundleDef>
                                     org.apache.servicemix.bundles:org.apache.servicemix.bundles.geocoder-java:${geocoder.version}
                                 </bundleDef>

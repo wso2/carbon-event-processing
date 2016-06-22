@@ -1,0 +1,2 @@
+subscribe=org.wso2.carbon.siddhi.geo.event.fuser.ExecutionPlanSubscriber
+eventsFusion=org.wso2.carbon.siddhi.geo.event.fuser.EventFusionProcessor

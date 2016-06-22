@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<eventPublisher name="RDBMSOutputAdapter" statistics="disable"
+  trace="disable" xmlns="http://wso2.org/carbon/eventpublisher">
+  <from streamName="AlertsNotifications" version="1.0.0"/>
+  <mapping customMapping="enable" type="map">
+    <property>
+      <from name="id"/>
+      <to name="id"/>
+    </property>
+    <property>
+      <from name="state"/>
+      <to name="state"/>
+    </property>
+    <property>
+      <from name="information"/>
+      <to name="information"/>
+    </property>
+    <property>
+      <from name="timeStamp"/>
+      <to name="timeStamp"/>
+    </property>
+    <property>
+      <from name="longitude"/>
+      <to name="longitude"/>
+    </property>
+    <property>
+      <from name="latitude"/>
+      <to name="latitude"/>
+    </property>
+  </mapping>
+  <to eventAdapterType="rdbms">
+    <property name="datasource.name">WSO2_GEO_DB</property>
+    <property name="table.name">alerts_history</property>
+    <property name="execution.mode">insert</property>
+    <property name="update.keys"/>
+  </to>
+</eventPublisher>
