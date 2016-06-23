@@ -72,7 +72,7 @@ public class ExecutionPlanTemplateDeployer implements TemplateDeployer {
             }
 
             int tenantId = PrivilegedCarbonContext.getThreadLocalCarbonContext().getTenantId();
-            saveExecutionPlanFile(planName, updatedExecutionPlan, tenantId);
+            saveExecutionPlan(planName, updatedExecutionPlan, tenantId);
 
         } catch (SiddhiParserException e) {
             throw new TemplateDeploymentException(
@@ -105,10 +105,10 @@ public class ExecutionPlanTemplateDeployer implements TemplateDeployer {
 
     @Override
     public void undeployArtifact(String artifactId) throws TemplateDeploymentException {
-        deleteExecutionPlanFile(PrivilegedCarbonContext.getThreadLocalCarbonContext().getTenantId(), artifactId);
+        deleteExecutionPlan(PrivilegedCarbonContext.getThreadLocalCarbonContext().getTenantId(), artifactId);
     }
 
-    private void saveExecutionPlanFile(String executionPlanName, String executionPlan, int tenantId)
+    private void saveExecutionPlan(String executionPlanName, String executionPlan, int tenantId)
             throws IOException {
         OutputStreamWriter writer = null;
         String filePath = MultitenantUtils.getAxis2RepositoryPath(tenantId) +
@@ -131,7 +131,7 @@ public class ExecutionPlanTemplateDeployer implements TemplateDeployer {
         }
     }
 
-    private void deleteExecutionPlanFile(int tenantId, String artifactId)
+    private void deleteExecutionPlan(int tenantId, String artifactId)
             throws TemplateDeploymentException {
         File executionPlanFile = new File(MultitenantUtils.getAxis2RepositoryPath(tenantId) +
                                       EventProcessorConstants.EP_ELE_DIRECTORY + File.separator + artifactId +
