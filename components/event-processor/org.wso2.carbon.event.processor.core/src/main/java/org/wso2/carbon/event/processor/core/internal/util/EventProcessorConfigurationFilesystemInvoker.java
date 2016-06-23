@@ -85,7 +85,7 @@ public class EventProcessorConfigurationFilesystemInvoker {
 //                String xmlContent = EventProcessorUtil.formatXml(executionPlan);
                 eventProcessorDeployer.getDeployedExecutionPlanFilePaths().add(filePath);
                 writer.write(executionPlan);
-                log.info("Execution plan configuration for " + executionPlanName + " saved in the filesystem");
+                log.info("Execution plan: " + executionPlanName + " saved in the filesystem");
             } finally {
                 if (writer != null) {
                     writer.flush();
