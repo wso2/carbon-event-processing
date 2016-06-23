@@ -17,17 +17,22 @@ package org.wso2.carbon.event.processor.template.deployer;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.wso2.carbon.context.PrivilegedCarbonContext;
 import org.wso2.carbon.event.execution.manager.core.DeployableTemplate;
 import org.wso2.carbon.event.execution.manager.core.TemplateDeployer;
 import org.wso2.carbon.event.execution.manager.core.TemplateDeploymentException;
-import org.wso2.carbon.event.processor.core.exception.ExecutionPlanConfigurationException;
-import org.wso2.carbon.event.processor.core.exception.ExecutionPlanDependencyValidationException;
 import org.wso2.carbon.event.processor.core.internal.util.EventProcessorConstants;
 import org.wso2.carbon.event.processor.template.deployer.internal.ExecutionPlanDeployerConstants;
 import org.wso2.carbon.event.processor.template.deployer.internal.ExecutionPlanDeployerValueHolder;
+import org.wso2.carbon.utils.multitenancy.MultitenantUtils;
 import org.wso2.siddhi.query.api.util.AnnotationHelper;
 import org.wso2.siddhi.query.compiler.SiddhiCompiler;
 import org.wso2.siddhi.query.compiler.exception.SiddhiParserException;
+
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStreamWriter;
 
 public class ExecutionPlanTemplateDeployer implements TemplateDeployer {
 
@@ -41,13 +46,12 @@ public class ExecutionPlanTemplateDeployer implements TemplateDeployer {
 
     @Override
     public void deployArtifact(DeployableTemplate template) throws TemplateDeploymentException {
-
+        String planName = null;
         try {
             if (template == null) {
                 throw new TemplateDeploymentException("No artifact received to be deployed.");
             }
-            String planName = template.getArtifactId();
-            undeployArtifact(planName);
+            planName = template.getArtifactId();
 
             // configuring plan name etc
             String updatedExecutionPlan = template.getArtifact();
@@ -67,24 +71,16 @@ public class ExecutionPlanTemplateDeployer implements TemplateDeployer {
                         executionPlanNameDefinition);
             }
 
+            int tenantId = PrivilegedCarbonContext.getThreadLocalCarbonContext().getTenantId();
+            saveExecutionPlanFile(planName, updatedExecutionPlan, tenantId);
 
-            //Get Template Execution plan, Tenant Id and deploy Execution Plan
-            ExecutionPlanDeployerValueHolder.getEventProcessorService()
-                    .deployExecutionPlan(updatedExecutionPlan);
-
-        } catch (ExecutionPlanConfigurationException e) {
-            throw new TemplateDeploymentException(
-                    "Configuration exception occurred when adding Execution Plan of Template "
-                            + template.getConfiguration().getName() + " of Domain " + template.getConfiguration().getDomain(), e);
-
-        } catch (ExecutionPlanDependencyValidationException e) {
-            throw new TemplateDeploymentException(
-                    "Validation exception occurred when adding Execution Plan of Template "
-                            + template.getConfiguration().getName() + " of Domain " + template.getConfiguration().getDomain(), e);
         } catch (SiddhiParserException e) {
             throw new TemplateDeploymentException(
                     "Validation exception occurred when parsing Execution Plan of Template "
                             + template.getConfiguration().getName() + " of Domain " + template.getConfiguration().getDomain(), e);
+        } catch (IOException e) {
+            throw new TemplateDeploymentException("Could not save Execution Plan: " + planName + " for Tenant: "
+                                                  + PrivilegedCarbonContext.getThreadLocalCarbonContext().getTenantDomain(true), e);
         }
     }
 
@@ -109,13 +105,41 @@ public class ExecutionPlanTemplateDeployer implements TemplateDeployer {
 
     @Override
     public void undeployArtifact(String artifactId) throws TemplateDeploymentException {
+        deleteExecutionPlanFile(PrivilegedCarbonContext.getThreadLocalCarbonContext().getTenantId(), artifactId);
+    }
 
-        if (ExecutionPlanDeployerValueHolder.getEventProcessorService()
-                .getAllActiveExecutionConfigurations().get(artifactId) != null) {
-            try {
-                ExecutionPlanDeployerValueHolder.getEventProcessorService().undeployActiveExecutionPlan(artifactId);
-            } catch (ExecutionPlanConfigurationException e) {
-                throw new TemplateDeploymentException("Couldn't undeploy the template " + artifactId);
+    private void saveExecutionPlanFile(String executionPlanName, String executionPlan, int tenantId)
+            throws IOException {
+        OutputStreamWriter writer = null;
+        String filePath = MultitenantUtils.getAxis2RepositoryPath(tenantId) +
+                          EventProcessorConstants.EP_ELE_DIRECTORY + File.separator + executionPlanName +
+                          EventProcessorConstants.SIDDHIQL_EXTENSION;
+        try {
+            /* save contents to .xml file */
+            File file = new File(filePath);
+
+            writer = new OutputStreamWriter(new FileOutputStream(file), "UTF-8");
+
+            // get the content in bytes
+            writer.write(executionPlan);
+            log.info("Execution plan: " + executionPlanName + " saved in the filesystem");
+        } finally {
+            if (writer != null) {
+                writer.flush();
+                writer.close();
+            }
+        }
+    }
+
+    private void deleteExecutionPlanFile(int tenantId, String artifactId)
+            throws TemplateDeploymentException {
+        File executionPlanFile = new File(MultitenantUtils.getAxis2RepositoryPath(tenantId) +
+                                      EventProcessorConstants.EP_ELE_DIRECTORY + File.separator + artifactId +
+                                      EventProcessorConstants.SIDDHIQL_EXTENSION);
+        if (executionPlanFile.exists()) {
+            if (!executionPlanFile.delete()) {
+                throw new TemplateDeploymentException("Unable to successfully delete Execution Plan File : " + executionPlanFile.getName() + " from File System, for tenant id : "
+                                                      + tenantId);
             }
         }
     }
