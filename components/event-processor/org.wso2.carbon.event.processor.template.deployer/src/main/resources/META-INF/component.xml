@@ -18,7 +18,7 @@
     <ManagementPermissions>
         <ManagementPermission>
             <DisplayName>Event processor template deploy</DisplayName>
-            <ResourceId>/permission/admin/manage/execution-manager</ResourceId>
+            <ResourceId>/permission/admin/manage/template-manager</ResourceId>
         </ManagementPermission>
     </ManagementPermissions>er
 
