@@ -40,6 +40,9 @@ public class SiddhiOutputStreamListener extends StreamCallback implements EventP
     protected final boolean statisticsEnabled;
     private final String streamId;
     private StreamDefinition streamDefinition;
+    private int metaAttributeCount;
+    private int correlationAttributeCount;
+    private int payloadAttributeCount;
     protected String tracerPrefix;
     private Counter eventCounter;
     protected EventProducerCallback eventProducerCallback;
@@ -51,6 +54,10 @@ public class SiddhiOutputStreamListener extends StreamCallback implements EventP
         this.streamId = streamId;
         this.tenantId = tenantId;
         this.streamDefinition = EventProcessorValueHolder.getEventStreamService().getStreamDefinition(streamId);
+        this.metaAttributeCount = streamDefinition.getMetaData() != null ? streamDefinition.getMetaData().size() : 0;
+        this.correlationAttributeCount = streamDefinition.getCorrelationData() != null ? streamDefinition.getCorrelationData().size() : 0;
+        this.payloadAttributeCount = streamDefinition.getPayloadData() != null ? streamDefinition.getPayloadData().size() : 0;
+
         this.siddhiStreamName = siddhiStreamName;
         this.traceEnabled = executionPlanConfiguration.isTracingEnabled();
         this.statisticsEnabled = executionPlanConfiguration.isStatisticsEnabled() &&
@@ -89,8 +96,9 @@ public class SiddhiOutputStreamListener extends StreamCallback implements EventP
             if (statisticsEnabled) {
                 eventCounter.inc(events.length);
             }
-            if(eventProducerCallback != null) {
-                eventProducerCallback.sendEvents(EventProcessorUtil.getWso2Events(this.streamDefinition, events));
+            if (eventProducerCallback != null) {
+                eventProducerCallback.sendEvents(EventProcessorUtil.getWso2Events(this.streamDefinition, metaAttributeCount,
+                        correlationAttributeCount, payloadAttributeCount, events));
             }
         } finally {
             PrivilegedCarbonContext.endTenantFlow();
@@ -114,9 +122,9 @@ public class SiddhiOutputStreamListener extends StreamCallback implements EventP
             if (statisticsEnabled) {
                 eventCounter.inc();
             }
-            if(eventProducerCallback != null) {
-                eventProducerCallback.sendEvent(EventProcessorUtil.getWso2Event(streamDefinition, event.getTimestamp(),
-                        event.getData()));
+            if (eventProducerCallback != null) {
+                eventProducerCallback.sendEvent(EventProcessorUtil.getWso2Event(streamDefinition, metaAttributeCount,
+                        correlationAttributeCount, payloadAttributeCount, event.getTimestamp(), event.getData()));
             }
         } finally {
             PrivilegedCarbonContext.endTenantFlow();
