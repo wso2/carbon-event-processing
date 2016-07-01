@@ -20,7 +20,6 @@ import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.xerces.impl.Constants;
-import org.apache.xerces.util.*;
 import org.apache.xerces.util.SecurityManager;
 import org.apache.xml.serialize.OutputFormat;
 import org.apache.xml.serialize.XMLSerializer;
@@ -342,10 +341,8 @@ public class EventProcessorUtil {
         return axisConfiguration;
     }
 
-    public static Event getWso2Event(org.wso2.carbon.databridge.commons.StreamDefinition streamDefinition, long timestamp, Object[] data) {
-        int metaAttrCount = streamDefinition.getMetaData() != null ? streamDefinition.getMetaData().size() : 0;
-        int correlationAttrCount = streamDefinition.getCorrelationData() != null ? streamDefinition.getCorrelationData().size() : 0;
-        int payloadAttrCount = streamDefinition.getPayloadData() != null ? streamDefinition.getPayloadData().size() : 0;
+    public static Event getWso2Event(org.wso2.carbon.databridge.commons.StreamDefinition streamDefinition, int metaAttrCount,
+                                     int correlationAttrCount, int payloadAttrCount, long timestamp, Object[] data) {
         int dataLength = data.length;
         Object[] metaAttrArray = new Object[metaAttrCount];
         Object[] correlationAttrArray = new Object[correlationAttrCount];
@@ -355,23 +352,29 @@ public class EventProcessorUtil {
             dataLength = data.length - 1;
             arbitraryDataMap = (Map<String, String>) data[dataLength];
         }
-        for (int i = 0; i < dataLength; i++) {
-            if (i < metaAttrCount) {
-                metaAttrArray[i] = data[i];
-            } else if (i < metaAttrCount + correlationAttrCount) {
-                correlationAttrArray[i - metaAttrCount] = data[i];
-            } else {
-                payloadAttrArray[i - (metaAttrCount + correlationAttrCount)] = data[i];
-            }
+        int attrIndex = 0;
+        for (int i = 0; i < metaAttrCount; i++) {
+            metaAttrArray[i] = data[attrIndex++];
         }
+        for (int j = 0; j < correlationAttrCount; j++) {
+            correlationAttrArray[j] = data[attrIndex++];
+        }
+        for (int k = 0; k < payloadAttrCount; k++) {
+            payloadAttrArray[k] = data[attrIndex++];
+        }
+
         return new Event(streamDefinition.getStreamId(), timestamp, metaAttrArray, correlationAttrArray, payloadAttrArray, arbitraryDataMap);
     }
 
-    public static List<Event> getWso2Events(org.wso2.carbon.databridge.commons.StreamDefinition streamDefinition, org.wso2.siddhi.core.event.Event[] events) {
+    public static List<Event> getWso2Events(org.wso2.carbon.databridge.commons.StreamDefinition streamDefinition,
+                                            int metaAttrCount, int correlationAttrCount, int payloadAttrCount,
+                                            org.wso2.siddhi.core.event.Event[] events) {
         List<Event> eventList = new ArrayList<>();
         for (org.wso2.siddhi.core.event.Event event : events) {
-            eventList.add(getWso2Event(streamDefinition, event.getTimestamp(), event.getData()));
+            eventList.add(getWso2Event(streamDefinition, metaAttrCount, correlationAttrCount, payloadAttrCount,
+                    event.getTimestamp(), event.getData()));
         }
+
         return eventList;
     }
 }
