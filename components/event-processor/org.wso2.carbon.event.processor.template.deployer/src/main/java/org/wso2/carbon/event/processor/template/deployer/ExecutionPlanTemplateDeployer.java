@@ -109,8 +109,9 @@ public class ExecutionPlanTemplateDeployer implements TemplateDeployer {
     }
 
     private void saveExecutionPlan(String executionPlanName, String executionPlan, int tenantId)
-            throws IOException {
+            throws IOException, TemplateDeploymentException {
         OutputStreamWriter writer = null;
+        validateFilePath(executionPlanName);
         String filePath = MultitenantUtils.getAxis2RepositoryPath(tenantId) +
                           EventProcessorConstants.EP_ELE_DIRECTORY + File.separator + executionPlanName +
                           EventProcessorConstants.SIDDHIQL_EXTENSION;
@@ -133,6 +134,8 @@ public class ExecutionPlanTemplateDeployer implements TemplateDeployer {
 
     private void deleteExecutionPlan(int tenantId, String artifactId)
             throws TemplateDeploymentException {
+
+        validateFilePath(artifactId);
         File executionPlanFile = new File(MultitenantUtils.getAxis2RepositoryPath(tenantId) +
                                       EventProcessorConstants.EP_ELE_DIRECTORY + File.separator + artifactId +
                                       EventProcessorConstants.SIDDHIQL_EXTENSION);
@@ -141,6 +144,12 @@ public class ExecutionPlanTemplateDeployer implements TemplateDeployer {
                 throw new TemplateDeploymentException("Unable to successfully delete Execution Plan File : " + executionPlanFile.getName() + " from File System, for tenant id : "
                                                       + tenantId);
             }
+        }
+    }
+
+    private void validateFilePath(String file) throws TemplateDeploymentException {
+        if (file.contains("../") || file.contains("..\\")) {
+            throw new TemplateDeploymentException("File name contains restricted path elements. " + file);
         }
     }
 
