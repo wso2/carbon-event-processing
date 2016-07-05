@@ -871,7 +871,7 @@
         <guava.version>19.0</guava.version>
         <snakeyaml.version>1.11</snakeyaml.version>
         <quartz.version>2.1.1.wso2v1</quartz.version>
-        <hadoop.client.version>2.6.0.wso2v3</hadoop.client.version>
+        <hadoop.client.version>2.7.2.wso2v1</hadoop.client.version>
         <ml.version>1.0.0</ml.version>
         <commons-math3.version>3.2</commons-math3.version>
         <scala.version>2.11.0</scala.version>
