@@ -32,7 +32,7 @@ This project contains compontents which implements realtime event processing fun
 #### carbon-event-processing repo contains following components.
 
 * event-processor      
-* execution-manager
+* template-manager
 * event-simulator
 * event-flow
 * siddhi-tryit
