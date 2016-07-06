@@ -28,7 +28,9 @@ function getAnnotationHints(cm, options) {
         'Import(\'\')',
         'Export(\'\')',
         'From(eventtable=\'\', )',
-        'IndexBy(\'\')'
+        'IndexBy(\'\')',
+        'name(\'\')',
+        'dist(parallel=\'\', execGroup=\'\')'
     ];
     return {
         list: result,
