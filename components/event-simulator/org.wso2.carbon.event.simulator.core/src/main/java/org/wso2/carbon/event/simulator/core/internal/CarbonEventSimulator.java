@@ -56,6 +56,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.*;
+import java.util.regex.Pattern;
 
 public class CarbonEventSimulator implements EventSimulator {
 
@@ -563,7 +564,13 @@ public class CarbonEventSimulator implements EventSimulator {
                         if (!isPaused) {
                             String eventValues = dis.readLine();
                             try {
-                                String[] attributeValueList = eventValues.split(fileInfo.getSeparateCharacter());
+                                /*
+                                 * Pattern.quote() returns a literal pattern String for the specified String. Therefore
+                                 * metacharacters or escape sequences in the input sequence will be given no special
+                                 * meaning.
+                                 */
+                                String[] attributeValueList = eventValues
+                                        .split(Pattern.quote(fileInfo.getSeparateCharacter()));
                                 Event event = new Event();
                                 event.setStreamDefinition(streamDefinition);
                                 event.setAttributeValues(attributeValueList);
