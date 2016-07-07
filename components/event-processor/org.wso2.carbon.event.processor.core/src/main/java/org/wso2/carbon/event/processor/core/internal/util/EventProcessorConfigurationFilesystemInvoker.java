@@ -42,6 +42,7 @@ public class EventProcessorConfigurationFilesystemInvoker {
             throws ExecutionPlanConfigurationException {
         EventProcessorDeployer eventProcessorDeployer = (EventProcessorDeployer) getDeployer(EventProcessorConstants.EP_ELE_DIRECTORY);
         String filePath = getFilePathFromFilename(fileName);
+        EventProcessorUtil.validateFilePath(filePath);
         try {
             OutputStreamWriter writer = null;
             try {
@@ -73,6 +74,7 @@ public class EventProcessorConfigurationFilesystemInvoker {
             throws ExecutionPlanConfigurationException {
         EventProcessorDeployer eventProcessorDeployer = (EventProcessorDeployer) getDeployer(EventProcessorConstants.EP_ELE_DIRECTORY);
         String filePath = getFilePathFromFilename(fileName);
+        EventProcessorUtil.validateFilePath(filePath);
         try {
             OutputStreamWriter writer = null;
             try {
@@ -104,6 +106,7 @@ public class EventProcessorConfigurationFilesystemInvoker {
             throws ExecutionPlanConfigurationException {
         try {
             String filePath = getFilePathFromFilename(fileName);
+            EventProcessorUtil.validateFilePath(filePath);
             File file = new File(filePath);
             if (file.exists()) {
                 EventProcessorDeployer deployer = (EventProcessorDeployer) getDeployer(EventProcessorConstants.EP_ELE_DIRECTORY);
@@ -149,6 +152,7 @@ public class EventProcessorConfigurationFilesystemInvoker {
         StringBuilder stringBuilder = new StringBuilder();
         try {
             String filePath = getFilePathFromFilename(fileName);
+            EventProcessorUtil.validateFilePath(filePath);
             bufferedReader = new BufferedReader(new FileReader(filePath));
             String line = null;
             while ((line = bufferedReader.readLine()) != null) {
