@@ -1,17 +1,19 @@
 /*
- * Copyright (c) 2015-2016, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
+ * Copyright (c) 2016, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
+ * WSO2 Inc. licenses this file to you under the Apache License,
+ * Version 2.0 (the "License"); you may not use this file except
+ * in compliance with the License.
  * You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ *   http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
  */
 package org.wso2.carbon.event.simulator.core.internal;
 
@@ -171,10 +173,13 @@ public class CarbonEventSimulator implements EventSimulator {
                 }
             }
         }
-
-        EventStreamProducer existingEventStreamProducer = EventSimulatorValueHolder.getEventProducerMap().get(streamDefinition.getStreamId());
+        int tenantID = PrivilegedCarbonContext.getThreadLocalCarbonContext().getTenantId();
+        if(null == EventSimulatorValueHolder.getEventProducerMap(tenantID)) {
+            EventSimulatorValueHolder.setEventProducerMap(tenantID);
+        }
+        EventStreamProducer existingEventStreamProducer = EventSimulatorValueHolder.getEventProducerMap(tenantID).get(streamDefinition.getStreamId());
         if (existingEventStreamProducer != null ) {
-            EventStreamProducer eventProducer = EventSimulatorValueHolder.getEventProducerMap().get(streamDefinition.getStreamId());
+            EventStreamProducer eventProducer = EventSimulatorValueHolder.getEventProducerMap(tenantID).get(streamDefinition.getStreamId());
             eventProducer.sendData(dataObjects);
         } else {
             EventStreamProducer eventStreamProducer = new EventStreamProducer();
@@ -185,7 +190,7 @@ public class CarbonEventSimulator implements EventSimulator {
                 log.error("Exception occurred when subscribing to Event Stream service", e);
             }
 
-            EventSimulatorValueHolder.getEventProducerMap().put(streamDefinition.getStreamId(), eventStreamProducer);
+            EventSimulatorValueHolder.getEventProducerMap(tenantID).put(streamDefinition.getStreamId(), eventStreamProducer);
             eventStreamProducer.sendData(dataObjects);
         }
     }
