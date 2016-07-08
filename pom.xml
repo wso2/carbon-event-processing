@@ -206,6 +206,11 @@
             </dependency>
             <dependency>
                 <groupId>org.wso2.carbon.analytics-common</groupId>
+                <artifactId>org.wso2.carbon.databridge.commons.thrift</artifactId>
+                <version>${carbon.analytics.common.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.wso2.carbon.analytics-common</groupId>
                 <artifactId>org.wso2.carbon.event.publisher.core</artifactId>
                 <version>${carbon.analytics.common.version}</version>
             </dependency>
@@ -839,16 +844,16 @@
 
     <properties>
         <!-- Carbon kernel version -->
-        <carbon.kernel.version>4.4.2</carbon.kernel.version>
+        <carbon.kernel.version>4.4.7</carbon.kernel.version>
 
-        <carbon.commons.version>4.4.8</carbon.commons.version>
+        <carbon.commons.version>4.5.4</carbon.commons.version>
         <carbon.p2.plugin.version>1.5.4</carbon.p2.plugin.version>
 
         <carbon.event.processing.version>2.1.0-SNAPSHOT</carbon.event.processing.version>
         <carbon.analytics.common.version>5.1.0-SNAPSHOT</carbon.analytics.common.version>
         <carbon.analytics.common.range>[5.0.7,6.0.0)</carbon.analytics.common.range>
         <siddhi.version>3.1.0-SNAPSHOT</siddhi.version>
-        <carbon.metrics.version>1.2.0</carbon.metrics.version>
+        <carbon.metrics.version>1.2.2-SNAPSHOT</carbon.metrics.version>
 
         <storm.orbit.version>0.9.5.wso2v1</storm.orbit.version>
         <orbit.version.axiom>1.2.11.wso2v10</orbit.version.axiom>
