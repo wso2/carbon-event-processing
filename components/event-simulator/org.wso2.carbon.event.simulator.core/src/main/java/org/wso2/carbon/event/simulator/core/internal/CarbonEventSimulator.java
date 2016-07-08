@@ -552,18 +552,17 @@ public class CarbonEventSimulator implements EventSimulator {
                 File file = new File(path);
                 FileInputStream fis = null;
                 BufferedInputStream bis = null;
-                BufferedReader br = null;
+                DataInputStream dis = null;
                 StreamDefinition streamDefinition = getStreamDefinition(fileInfo.getStreamID());
 
                 try {
                     fis = new FileInputStream(file);
                     bis = new BufferedInputStream(fis);
-                    br = new BufferedReader(new InputStreamReader(bis));
+                    dis = new DataInputStream(bis);
                     int rowNumber = 0;
-                    String eventValues;
-
-                    while ((eventValues = br.readLine()) != null) {
+                    while (dis.available() != 0) {
                         if (!isPaused) {
+                            String eventValues = dis.readLine();
                             try {
                                 /*
                                  * Pattern.quote() returns a literal pattern String for the specified String. Therefore
@@ -609,8 +608,8 @@ public class CarbonEventSimulator implements EventSimulator {
                         if (bis != null) {
                             bis.close();
                         }
-                        if (br != null) {
-                            br.close();
+                        if (dis != null) {
+                            dis.close();
                         }
                     } catch (IOException ex) {
                         log.error("Exception occurred when closing the file stream of the data file", ex);
