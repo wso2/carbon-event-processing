@@ -228,7 +228,7 @@ CodeMirror.defineMode("sql", function (config, parserConfig) {
     var sqlKeywordsWithoutSymbols = "all and as at begin by current define delete end events " +
         "every expired first for from full function group having in inner insert into is join last " +
         "left not of on or outer output plan partition raw return right select snapshot stream table trigger " +
-        "unidirectional update window with within";
+        "unidirectional update window with within overwrite ";
     var sqlKeywords = ", : ? # ( ) " + sqlKeywordsWithoutSymbols;
     var builtIn = "bool double float int long object string ";
     var atoms = "false true null ";

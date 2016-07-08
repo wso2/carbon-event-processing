@@ -45,10 +45,13 @@ import org.xml.sax.SAXException;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
+import java.io.File;
 import java.io.IOException;
 import java.io.StringReader;
 import java.io.StringWriter;
 import java.io.Writer;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -376,5 +379,16 @@ public class EventProcessorUtil {
         }
 
         return eventList;
+    }
+
+    public static void validateFilePath(String file) throws ExecutionPlanConfigurationException {
+
+        Path baseDirPath = Paths.get(EventProcessorUtil.getAxisConfiguration().getRepository().getPath() + File.separator + EventProcessorConstants.EP_ELE_DIRECTORY);
+        Path path = Paths.get(file);
+        Path resolvedPath = baseDirPath.resolve(path).normalize();
+
+        if (! resolvedPath.startsWith(baseDirPath)) {
+            throw new ExecutionPlanConfigurationException("File name contains restricted path elements. " + file);
+        }
     }
 }
