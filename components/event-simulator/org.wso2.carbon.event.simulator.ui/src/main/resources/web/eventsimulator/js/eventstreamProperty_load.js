@@ -24,11 +24,22 @@ function showEventProperties() {
         eventStreamTable.deleteRow(i);
     }
 
+    var xhr = window.XMLHttpRequest ? new window.XMLHttpRequest : new window.ActiveXObject("Microsoft.XMLHTTP");
+    xhr.open("POST", "/carbon/admin/js/csrfPrevention.js", false);
+    xhr.setRequestHeader("FETCH-CSRF-TOKEN", "1");
+    xhr.send(null);
+
+    var token_pair = xhr.responseText;
+    token_pair = token_pair.split(":");
+    var token_name = token_pair[0];
+    var token_value = token_pair[1];
+
     if(selected_id.localeCompare("select")){
         jQuery.ajax({
 
             type: "POST",
             url: "../eventsimulator/getProperties_ajaxprocessor.jsp?eventStreamId=" + selected_id + "",
+            beforeSend: function(xhr){xhr.setRequestHeader(token_name, token_value);},
             data: {},
             contentType: "application/json; charset=utf-8",
             dataType: "text",
@@ -170,11 +181,22 @@ function showEventPropertiesForSimulator() {
         eventStreamTable.deleteRow(i);
     }
 
+    var xhr = window.XMLHttpRequest ? new window.XMLHttpRequest : new window.ActiveXObject("Microsoft.XMLHTTP");
+    xhr.open("POST", "/carbon/admin/js/csrfPrevention.js", false);
+    xhr.setRequestHeader("FETCH-CSRF-TOKEN", "1");
+    xhr.send(null);
+
+    var token_pair = xhr.responseText;
+    token_pair = token_pair.split(":");
+    var token_name = token_pair[0];
+    var token_value = token_pair[1];
+
     if(selected_id.localeCompare("select")){
         jQuery.ajax({
 
             type: "POST",
             url: "../eventsimulator/getProperties_ajaxprocessor.jsp?eventStreamId=" + selected_id + "",
+            beforeSend: function(xhr){xhr.setRequestHeader(token_name, token_value);},
             data: {},
             contentType: "application/json; charset=utf-8",
             dataType: "text",
