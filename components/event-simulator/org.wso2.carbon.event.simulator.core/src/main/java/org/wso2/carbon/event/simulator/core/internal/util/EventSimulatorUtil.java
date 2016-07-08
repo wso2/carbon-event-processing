@@ -20,6 +20,10 @@ package org.wso2.carbon.event.simulator.core.internal.util;
 
 import org.wso2.carbon.databridge.commons.Event;
 import org.wso2.carbon.databridge.commons.StreamDefinition;
+import org.wso2.carbon.event.simulator.core.exception.EventSimulatorRuntimeException;
+
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 public class EventSimulatorUtil {
 
@@ -40,5 +44,20 @@ public class EventSimulatorUtil {
             }
         }
         return new Event(streamDefinition.getStreamId(), timestamp, metaAttrArray, correlationAttrArray, payloadAttrArray);
+    }
+
+
+    /**
+     * Validate the given file path is in the parent directory itself.
+     *
+     * @param parentDirectory
+     * @param filePath
+     */
+    public static void validatePath(String parentDirectory, String filePath) {
+        Path parentPath = Paths.get(parentDirectory);
+        Path subPath = Paths.get(filePath).normalize();
+        if (!subPath.normalize().startsWith(parentPath)) {
+            throw new EventSimulatorRuntimeException("File path is invalid: " + filePath);
+        }
     }
 }
