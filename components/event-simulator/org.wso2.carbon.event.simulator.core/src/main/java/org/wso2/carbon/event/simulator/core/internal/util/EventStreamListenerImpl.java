@@ -25,7 +25,9 @@ import org.wso2.carbon.event.stream.core.EventStreamListener;
 public class EventStreamListenerImpl implements EventStreamListener {
     @Override
     public void removedEventStream(int tenantId, String streamName, String streamVersion) {
-        EventSimulatorValueHolder.getEventProducerMap(tenantId).remove(DataBridgeCommonsUtils.generateStreamId(streamName, streamVersion));
+        if(null != EventSimulatorValueHolder.getEventProducerMap(tenantId)) {
+            EventSimulatorValueHolder.getEventProducerMap(tenantId).remove(DataBridgeCommonsUtils.generateStreamId(streamName, streamVersion));
+        }
     }
 
     @Override
