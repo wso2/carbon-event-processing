@@ -22,11 +22,14 @@ import org.apache.axis2.client.ServiceClient;
 import org.apache.axis2.context.ConfigurationContext;
 import org.wso2.carbon.CarbonConstants;
 import org.wso2.carbon.event.simulator.stub.EventSimulatorAdminServiceStub;
+import org.wso2.carbon.event.simulator.ui.exception.EventSimulatorUIException;
 import org.wso2.carbon.ui.CarbonUIUtil;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 
 public class EventSimulatorUIUtils {
@@ -50,5 +53,19 @@ public class EventSimulatorUIUtils {
         option.setProperty(org.apache.axis2.transport.http.HTTPConstants.COOKIE_STRING, cookie);
 
         return stub;
+    }
+
+    /**
+     * Validate the given file path is in the parent directory itself.
+     *
+     * @param parentDirectory
+     * @param filePath
+     */
+    public static void validatePath(String parentDirectory, String filePath) {
+        Path parentPath = Paths.get(parentDirectory);
+        Path subPath = Paths.get(filePath).normalize();
+        if (!subPath.normalize().startsWith(parentPath)) {
+            throw new EventSimulatorUIException("File path is invalid: " + filePath);
+        }
     }
 }

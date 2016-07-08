@@ -20,6 +20,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.wso2.carbon.CarbonConstants;
 import org.wso2.carbon.CarbonException;
+import org.wso2.carbon.event.simulator.ui.EventSimulatorUIUtils;
 import org.wso2.carbon.ui.CarbonUIMessage;
 import org.wso2.carbon.ui.transports.fileupload.AbstractFileUploadExecutor;
 import org.wso2.carbon.utils.CarbonUtils;
@@ -89,6 +90,7 @@ public class CSVUploadExecutor extends AbstractFileUploadExecutor {
 
                 if (fileData.getFileItem().getFieldName().equals("csvFileName")) {
                     uploadedTempFile = new File(CarbonUtils.getTmpDir(), fileName);
+                    EventSimulatorUIUtils.validatePath(CarbonUtils.getTmpDir(), uploadedTempFile.getAbsolutePath());
                     fileData.getFileItem().write(uploadedTempFile);
                     DataSource dataSource = new FileDataSource(uploadedTempFile);
                     uploaderClient.addUploadedFileItem(new DataHandler(dataSource), fileName, "csv");
