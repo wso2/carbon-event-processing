@@ -353,8 +353,19 @@ function sendEvent(form) {
 
         jsonString = jsonString + jsonAttribute + "]}"
 
+        var xhr = window.XMLHttpRequest ? new window.XMLHttpRequest : new window.ActiveXObject("Microsoft.XMLHTTP");
+        xhr.open("POST", "/carbon/admin/js/csrfPrevention.js", false);
+        xhr.setRequestHeader("FETCH-CSRF-TOKEN", "1");
+        xhr.send(null);
+
+        var token_pair = xhr.responseText;
+        token_pair = token_pair.split(":");
+        var token_name = token_pair[0];
+        var token_value = token_pair[1];
+
         jQuery.ajax({
             type: "POST",
+            beforeSend: function(xhr){xhr.setRequestHeader(token_name, token_value);},
             url: "../eventsimulator/sendEventstreams_ajaxprocessor.jsp?jsonData=" + jsonString + "",
             async: false,
 
