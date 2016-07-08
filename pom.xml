@@ -853,7 +853,7 @@
         <carbon.analytics.common.version>5.1.0-SNAPSHOT</carbon.analytics.common.version>
         <carbon.analytics.common.range>[5.0.7,6.0.0)</carbon.analytics.common.range>
         <siddhi.version>3.1.0-SNAPSHOT</siddhi.version>
-        <carbon.metrics.version>1.2.2-SNAPSHOT</carbon.metrics.version>
+        <carbon.metrics.version>1.2.2</carbon.metrics.version>
 
         <storm.orbit.version>0.9.5.wso2v1</storm.orbit.version>
         <orbit.version.axiom>1.2.11.wso2v10</orbit.version.axiom>
