@@ -28,7 +28,6 @@ import org.w3c.dom.NodeList;
 import org.wso2.carbon.event.simulator.core.CSVFileInfo;
 import org.wso2.carbon.event.simulator.core.DataSourceTableAndStreamInfo;
 import org.wso2.carbon.event.simulator.core.EventSimulatorConstant;
-import org.wso2.carbon.event.simulator.core.exception.EventSimulatorRuntimeException;
 import org.xml.sax.SAXException;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -36,8 +35,6 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 
 public class DeploymentHelper {
 
@@ -184,19 +181,5 @@ public class DeploymentHelper {
             log.error("Exception occurred when converting the datasource configuration file ", e);
         }
         return dataSourceTableAndStreamInfo;
-    }
-
-    /**
-     * Validate the given file path is in the parent directory itself.
-     *
-     * @param parentDirectory
-     * @param filePath
-     */
-    public static void validatePath(String parentDirectory, String filePath) {
-        Path parentPath = Paths.get(parentDirectory);
-        Path subPath = Paths.get(filePath).normalize();
-        if (!subPath.normalize().startsWith(parentPath)) {
-            throw new EventSimulatorRuntimeException("File path is invalid: " + filePath);
-        }
     }
 }
