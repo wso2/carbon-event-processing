@@ -154,19 +154,13 @@ function showEventProperties() {
                         }
                     }
 
-
                     var hiddenRow = streamAttributeTable.insertRow(streamAttributeTable.rows.length);
                     hiddenRow.innerHTML = '<tr><td colspan="2"><input type="hidden" id="formFields" value="' + index + '"> </td></tr>';
 
-
                 }
             }
-
-
         });
     }
-
-
 }
 
 function showEventPropertiesForSimulator() {
@@ -329,8 +323,6 @@ function showEventPropertiesForSimulator() {
 
         });
     }
-
-
 }
 
 function sendEvent(form) {
