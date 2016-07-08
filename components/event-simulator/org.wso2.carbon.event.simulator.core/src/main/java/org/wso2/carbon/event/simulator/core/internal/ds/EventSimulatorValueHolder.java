@@ -77,7 +77,7 @@ public class EventSimulatorValueHolder {
         return eventProducerMap.get(tenantID);
     }
 
-    public static void setEventProducerMap(int tenantID) {
+    public static void createEventProducerMapForTenant(int tenantID) {
         eventProducerMap.put(tenantID, new ConcurrentHashMap<String, EventStreamProducer>());
     }
 }

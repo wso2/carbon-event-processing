@@ -175,7 +175,7 @@ public class CarbonEventSimulator implements EventSimulator {
         }
         int tenantID = PrivilegedCarbonContext.getThreadLocalCarbonContext().getTenantId();
         if(null == EventSimulatorValueHolder.getEventProducerMap(tenantID)) {
-            EventSimulatorValueHolder.setEventProducerMap(tenantID);
+            EventSimulatorValueHolder.createEventProducerMapForTenant(tenantID);
         }
         EventStreamProducer existingEventStreamProducer = EventSimulatorValueHolder.getEventProducerMap(tenantID).get(streamDefinition.getStreamId());
         if (existingEventStreamProducer != null ) {
