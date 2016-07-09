@@ -21,6 +21,7 @@
 
 <%@ taglib uri="http://wso2.org/projects/carbon/taglibs/carbontags.jar" prefix="carbon" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+<%@ taglib uri="http://www.owasp.org/index.php/Category:OWASP_CSRFGuard_Project/Owasp.CsrfGuard.tld" prefix="csrf" %>
 
 <script type="text/javascript" src="../ajax/js/prototype.js"></script>
 <script type="text/javascript" src="../admin/js/breadcrumbs.js"></script>
@@ -199,7 +200,7 @@
 
 
 <div id="fileArea">
-    <form name="csvFileForm" id="csvFileForm" method="post" action="../../fileupload/csv" enctype="multipart/form-data"
+    <form name="csvFileForm" id="csvFileForm" method="post" action="../../fileupload/csv?<csrf:tokenname/>=<csrf:tokenvalue/>" enctype="multipart/form-data"
           target="_self">
 
         <table class="styledLeft">

@@ -113,9 +113,23 @@ function sendConfiguration(form){
     var jsonString="{\"FileName\":\""+fileName+"\",\"streamID\":\""+streamName+"\",\"seperateChar\":\""+seperateChar+"\"" +
         ",\"delayBetweenEventsInMilies\":"+delayBetweenEventsInMilies+"}";
 
+    var xhr = window.XMLHttpRequest ? new window.XMLHttpRequest : new window.ActiveXObject("Microsoft.XMLHTTP");
+    xhr.open("POST", "/carbon/admin/js/csrfPrevention.js", false);
+    xhr.setRequestHeader("FETCH-CSRF-TOKEN", "1");
+    xhr.send(null);
+
+    var token_pair = xhr.responseText;
+    token_pair = token_pair.split(":");
+    var token_name = token_pair[0];
+    var token_value = token_pair[1];
+
     jQuery.ajax({
         type: "POST",
         url: "../eventsimulator/sendConfigValues_ajaxprocessor.jsp?jsonData=" + jsonString + "",
+        beforeSend: function(xhr){xhr.setRequestHeader(token_name, token_value);},
+        data: {},
+        contentType: "application/json; charset=utf-8",
+        dataType: "text",
         async: false,
 
         success:function(msg){
