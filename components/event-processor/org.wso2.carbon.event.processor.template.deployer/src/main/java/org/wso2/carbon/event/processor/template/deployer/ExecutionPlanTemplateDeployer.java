@@ -52,6 +52,7 @@ public class ExecutionPlanTemplateDeployer implements TemplateDeployer {
                 throw new TemplateDeploymentException("No artifact received to be deployed.");
             }
             planName = template.getArtifactId();
+            planName = planName.replaceAll(" ", "_");
 
             // configuring plan name etc
             String updatedExecutionPlan = template.getArtifact();
@@ -91,6 +92,7 @@ public class ExecutionPlanTemplateDeployer implements TemplateDeployer {
             throw new TemplateDeploymentException("No artifact received to be deployed.");
         }
         String planName = template.getArtifactId();
+        planName = planName.replaceAll(" ", "_");
         if (ExecutionPlanDeployerValueHolder.getEventProcessorService().
                 getAllActiveExecutionConfigurations().get(planName) == null) {
             deployArtifact(template);
@@ -105,6 +107,7 @@ public class ExecutionPlanTemplateDeployer implements TemplateDeployer {
 
     @Override
     public void undeployArtifact(String artifactId) throws TemplateDeploymentException {
+        artifactId = artifactId.replaceAll(" ", "_");
         deleteExecutionPlan(PrivilegedCarbonContext.getThreadLocalCarbonContext().getTenantId(), artifactId);
     }
 
