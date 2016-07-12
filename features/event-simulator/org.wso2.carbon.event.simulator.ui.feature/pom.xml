@@ -77,6 +77,7 @@
                             <bundles>
                                 <bundleDef>org.wso2.carbon.event-processing:org.wso2.carbon.event.simulator.ui:${carbon.event.processing.version}</bundleDef>
                                 <bundleDef>org.wso2.carbon.event-processing:org.wso2.carbon.event.simulator.stub:${carbon.event.processing.version}</bundleDef>
+                                <bundleDef>org.wso2.orbit.org.owasp.encoder:encoder:${encoder.wso2.version}</bundleDef>
                             </bundles>
                             <importBundles>
                                 <importBundleDef>org.wso2.carbon:org.wso2.carbon.ui.menu.tools</importBundleDef>

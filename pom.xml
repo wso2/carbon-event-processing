@@ -402,6 +402,11 @@
                 <artifactId>org.wso2.carbon.ndatasource.rdbms</artifactId>
                 <version>${carbon.kernel.version}</version>
             </dependency>
+            <dependency>
+                <groupId>org.wso2.orbit.org.owasp.encoder</groupId>
+                <artifactId>encoder</artifactId>
+                <version>${encoder.wso2.version}</version>
+            </dependency>
             <!--carbon event processing dependencies stop-->
 
             <!--siddhi dependencies start-->
@@ -892,6 +897,7 @@
 
         <carbon-p2-plugin.version>1.5.3</carbon-p2-plugin.version>
         <maven-antrun-plugin.version>1.7</maven-antrun-plugin.version>
+        <encoder.wso2.version>1.2.0.wso2v1</encoder.wso2.version>
     </properties>
 
 </project>

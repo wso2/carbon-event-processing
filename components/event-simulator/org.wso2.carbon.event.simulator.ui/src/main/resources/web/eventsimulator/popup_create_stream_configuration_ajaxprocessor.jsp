@@ -17,6 +17,7 @@
 <%@ page import="org.wso2.carbon.event.simulator.ui.EventSimulatorUIUtils" %>
 <%@ taglib uri="http://wso2.org/projects/carbon/taglibs/carbontags.jar" prefix="carbon" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+<%@ page import="org.owasp.encoder.Encode" %>
 
 
 <script type="text/javascript" src="../ajax/js/prototype.js"></script>
@@ -52,7 +53,7 @@
         <tbody>
         <tr>
             <td class="leftCol-med">File name</td>
-            <td id="filename"><%=fileName%></td>
+            <td id="filename"><%=Encode.forHtmlContent(fileName)%></td>
         </tr>
         <tr>
             <td class="leftCol-med">Select the target event stream<span class="required">*</span></td>
