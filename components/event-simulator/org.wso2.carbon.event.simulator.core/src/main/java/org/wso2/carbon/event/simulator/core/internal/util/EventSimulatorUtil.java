@@ -21,6 +21,7 @@ package org.wso2.carbon.event.simulator.core.internal.util;
 import org.wso2.carbon.databridge.commons.Event;
 import org.wso2.carbon.databridge.commons.StreamDefinition;
 import org.wso2.carbon.event.simulator.core.exception.EventSimulatorRuntimeException;
+import org.wso2.carbon.utils.CarbonUtils;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -56,8 +57,12 @@ public class EventSimulatorUtil {
     public static void validatePath(String parentDirectory, String filePath) {
         Path parentPath = Paths.get(parentDirectory);
         Path subPath = Paths.get(filePath).normalize();
-        if (!subPath.normalize().startsWith(parentPath)) {
-            throw new EventSimulatorRuntimeException("File path is invalid: " + filePath);
+        if (!subPath.startsWith(parentPath)) {
+            // If not valid, test for tmp/carbonapps directory
+            parentPath = Paths.get(CarbonUtils.getTmpDir(), "carbonapps");
+            if (!subPath.startsWith(parentPath)) {
+                throw new EventSimulatorRuntimeException("File path is invalid: " + filePath);
+            }
         }
     }
 }

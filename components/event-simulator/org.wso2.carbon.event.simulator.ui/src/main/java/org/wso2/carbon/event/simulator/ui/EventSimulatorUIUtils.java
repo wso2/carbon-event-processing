@@ -24,6 +24,7 @@ import org.wso2.carbon.CarbonConstants;
 import org.wso2.carbon.event.simulator.stub.EventSimulatorAdminServiceStub;
 import org.wso2.carbon.event.simulator.ui.exception.EventSimulatorUIException;
 import org.wso2.carbon.ui.CarbonUIUtil;
+import org.wso2.carbon.utils.CarbonUtils;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.http.HttpServletRequest;
@@ -64,8 +65,12 @@ public class EventSimulatorUIUtils {
     public static void validatePath(String parentDirectory, String filePath) {
         Path parentPath = Paths.get(parentDirectory);
         Path subPath = Paths.get(filePath).normalize();
-        if (!subPath.normalize().startsWith(parentPath)) {
-            throw new EventSimulatorUIException("File path is invalid: " + filePath);
+        if (!subPath.startsWith(parentPath)) {
+            // If not valid, test for tmp/carbonapps directory
+            parentPath = Paths.get(CarbonUtils.getTmpDir(), "carbonapps");
+            if (!subPath.startsWith(parentPath)) {
+                throw new EventSimulatorUIException("File path is invalid: " + filePath);
+            }
         }
     }
 }

@@ -35,6 +35,7 @@ import org.wso2.carbon.event.processor.core.exception.ExcecutionPlanRuntimeExcep
 import org.wso2.carbon.event.processor.core.exception.ExecutionPlanConfigurationException;
 import org.wso2.carbon.event.processor.core.internal.ds.EventProcessorValueHolder;
 import org.wso2.carbon.event.stream.core.exception.EventStreamConfigurationException;
+import org.wso2.carbon.utils.CarbonUtils;
 import org.wso2.carbon.utils.multitenancy.MultitenantConstants;
 import org.wso2.siddhi.core.util.SiddhiConstants;
 import org.wso2.siddhi.query.api.definition.Attribute;
@@ -387,8 +388,12 @@ public class EventProcessorUtil {
         Path path = Paths.get(file);
         Path resolvedPath = baseDirPath.resolve(path).normalize();
 
-        if (! resolvedPath.startsWith(baseDirPath)) {
-            throw new ExecutionPlanConfigurationException("File name contains restricted path elements. " + file);
+        if (!resolvedPath.startsWith(baseDirPath)) {
+            // If not valid, test for tmp/carbonapps directory
+            baseDirPath = Paths.get(CarbonUtils.getTmpDir(), EventProcessorConstants.TEMP_CARBON_APPS_DIRECTORY);
+            if (!resolvedPath.startsWith(baseDirPath)) {
+                throw new ExecutionPlanConfigurationException("File name contains restricted path elements. " + file);
+            }
         }
     }
 }

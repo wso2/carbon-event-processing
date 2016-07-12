@@ -134,4 +134,5 @@ public class EventProcessorConstants {
     public static final String METRIC_NAME_INPUT_EVENTS = "InputEvents";
     public static final String METRIC_AGGREGATE_ANNOTATION = "[+]";
     public static final String METRIC_DELIMITER = ".";
+    public static final String TEMP_CARBON_APPS_DIRECTORY = "carbonapps";
 }
