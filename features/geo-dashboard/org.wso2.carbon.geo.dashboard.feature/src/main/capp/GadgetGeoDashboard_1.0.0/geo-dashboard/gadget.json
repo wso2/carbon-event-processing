@@ -1,7 +1,7 @@
 {
   "id": "geo-dashboard",
   "title": "Geo Dashboard",
-  "type": "gadget",
+  "type": "widget",
   "thumbnail": "gadget/geo-dashboard/img/thumbnail.png",
   "settings": {
     "personalize": true
