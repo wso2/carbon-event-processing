@@ -1,0 +1,50 @@
+body.dashboard {
+    padding-bottom: 38px;
+}
+
+.page-content {
+    padding-bottom: 0;
+}
+
+.gadgets-grid {
+    padding: 0;
+    margin: 0;
+}
+
+.grid-stack > .grid-stack-item > .grid-stack-item-content {
+    left: 0;
+    right: 0;
+}
+
+.sidebar-wrapper.sidebar-nav {
+    left: -260px !important;
+}
+
+.dashboard .page-content-wrapper {
+    padding-left: 0 !important;
+}
+
+.sidebar-toggle-button {
+    display: none;
+}
+
+#product-logo {
+    display: inline-block !important;
+}
+
+.dashboard .page-header .page-title > h1 {
+    padding: 15px 0 0 !important;
+}
+
+.grid-stack,
+.grid-stack > .grid-stack-item,
+.grid-stack .gadget-body.ues-component-body,
+.grid-stack .gadget-body.ues-component-body > div,
+.grid-stack .gadget-body.ues-component-body > div > span,
+.grid-stack .gadget-body.ues-component-body > div > span > iframe {
+    height: 100% !important;
+}
+
+.grid-stack > .grid-stack-item {
+    width: 100% !important;
+}
