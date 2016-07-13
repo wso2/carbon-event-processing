@@ -23,6 +23,8 @@
         <dependency artifact="GadgetGeoDashboard" version="1.0.0" include="true" serverRole="GeoDashboard"/>
         <!-- Dashboard -->
         <dependency artifact="Dashboard" version="1.0.0" include="true" serverRole="GeoDashboard"/>
+        <!-- Theme -->
+        <dependency artifact="ThemeGeoDashboard" version="1.0.0" include="true" serverRole="GeoDashboard"/>
         <!-- CEP Artifacts -->
         <dependency artifact="DefaultWebsocketOutputAdaptorOnAlert" version="1.0.0" include="true" serverRole="GeoDashboard"/>
         <dependency artifact="eventsFunionGenerateNotofications" version="1.0.0" include="true" serverRole="GeoDashboard"/>
