@@ -39,6 +39,7 @@ import org.wso2.carbon.utils.CarbonUtils;
 import org.wso2.carbon.utils.multitenancy.MultitenantConstants;
 import org.wso2.siddhi.core.util.SiddhiConstants;
 import org.wso2.siddhi.query.api.definition.Attribute;
+import org.wso2.siddhi.query.api.definition.TriggerDefinition;
 import org.wso2.siddhi.query.api.exception.DuplicateAttributeException;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
@@ -299,6 +300,26 @@ public class EventProcessorUtil {
         }
         builder.deleteCharAt(builder.length() - 2);         //remove last comma
         builder.append(EventProcessorConstants.CLOSING_BRACKETS);
+        return builder.toString();
+    }
+
+    public static String getTriggerDefinitionString(TriggerDefinition triggerDefinition){
+        StringBuilder builder = new StringBuilder();
+        builder.append(EventProcessorConstants.DEFINE_TRIGGER);
+        builder.append(triggerDefinition.getId());
+
+
+        Long atEvery = triggerDefinition.getAtEvery();
+        if (atEvery != null){
+            builder.append(EventProcessorConstants.TRIGGER_AT_EVERY);
+            builder.append(atEvery/1000); // All time units are in milliseconds in trigger definition object. Convert it into seconds
+            builder.append(EventProcessorConstants.SECOND);
+        } else{
+            builder.append(EventProcessorConstants.TRIGGER_AT);
+            builder.append("'" + triggerDefinition.getAt() + "'");
+        }
+
+        builder.append(EventProcessorConstants.SEMICOLEN);
         return builder.toString();
     }
 

@@ -72,12 +72,15 @@ public class EventProcessorConstants {
     public static final String OPENING_BRACKETS = " ( ";
     public static final String SPACE = " ";
     public static final String COMMA = ", ";
-    public static final String CLOSING_BRACKETS = ");";
+    public static final String SEMICOLEN = ";";
+    public static final String CLOSING_BRACKETS = ")" + SEMICOLEN;
     public static final String STORM_QUERY_PLAN = "storm-query-plan";
     public static final String INPUT_STREAMS = "input-streams";
     public static final String TABLE_DEFINITIONS = "table-definitions";
     public static final String OUTPUT_STREAMS = "output-streams";
+    public static final String OUTPUT_STREAM = "output-stream";
     public static final String EVENT_PROCESSOR_TAG = "event-processor";
+    public static final String TRIGGER_TAG = "trigger";
     public static final String SIDDHI_BOLT = "SiddhiBolt";
     public static final String QUERIES = "queries";
     public static final String EVENT_RECEIVER = "event-receiver";
@@ -85,8 +88,11 @@ public class EventProcessorConstants {
     public static final String STREAMS = "streams";
     public static final String STREAM = "stream";
     public static final String DEFINE_STREAM = "define stream ";
+    public static final String DEFINE_TRIGGER = "define trigger ";
     public static final String EVENT_PUBLISHER = "event-publisher";
+    public static final String TRIGGER_DEFINITION = "trigger-definition";
     public static final String EVENT_PUBLISHER_BOLT = "EventPublisherBolt";
+    public static final String TRIGGER_SPOUT = "TriggerSpout";
     public static final String PARALLEL = "parallel";
     public static final String RECEIVER_PARALLELISM = "receiverParallelism";
     public static final String PUBLISHER_PARALLELISM = "publisherParallelism";
@@ -95,6 +101,9 @@ public class EventProcessorConstants {
     public static final String DIST = "dist";
     public static final String EXEC_GROUP = "execGroup";
     public static final String ENFORCE_PARALLELISM = "enforceParallel";
+    public static final String TRIGGER_AT_EVERY = " at every ";
+    public static final String TRIGGER_AT= " at ";
+    public static final String SECOND = " sec";
 
     // Annotations, Annotation Names and relevant tokens.
     public static final String ANNOTATION_PLAN = "Plan";
