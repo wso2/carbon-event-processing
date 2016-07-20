@@ -77,31 +77,7 @@ public class SiddhiQLStormQuerySplitter extends SiddhiQLBaseVisitor {
 
         return eventTableList;
     }
-
-    public static List<String> getTriggerList(String source){
-        ANTLRInputStream input = new ANTLRInputStream(source);
-        SiddhiQLLexer lexer = new SiddhiQLLexer(input);
-        lexer.removeErrorListeners();
-        lexer.addErrorListener(SiddhiErrorListener.INSTANCE);
-
-        CommonTokenStream tokens = new CommonTokenStream(lexer);
-        SiddhiQLParser parser = new SiddhiQLParser(tokens);
-        parser.removeErrorListeners();
-        parser.addErrorListener(SiddhiErrorListener.INSTANCE);
-        ParseTree tree = parser.parse();
-
-        SiddhiQLVisitor eval = new SiddhiQLStormQuerySplitter();
-        List<String> triggerList = new ArrayList<>();
-        SiddhiQLParser.Execution_planContext ctx = (((SiddhiQLParser.ParseContext)tree).execution_plan());
-
-        for (SiddhiQLParser.Definition_triggerContext executionElementContext : ctx.definition_trigger()) {
-            String triggerDefinition =  (String) eval.visit(executionElementContext);
-            triggerList.add(triggerDefinition);
-        }
-
-        return triggerList;
-    }
-
+    
     /**
      * {@inheritDoc}
      * <p/>
