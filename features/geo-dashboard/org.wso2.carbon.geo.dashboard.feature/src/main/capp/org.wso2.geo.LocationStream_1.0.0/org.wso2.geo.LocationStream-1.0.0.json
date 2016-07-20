@@ -1,0 +1,36 @@
+{
+  "name": "org.wso2.geo.LocationStream",
+  "version": "1.0.0",
+  "nickName": "",
+  "description": "",
+  "payloadData": [
+    {
+      "name": "id",
+      "type": "STRING"
+    },
+    {
+      "name": "timeStamp",
+      "type": "LONG"
+    },
+    {
+      "name": "latitude",
+      "type": "DOUBLE"
+    },
+    {
+      "name": "longitude",
+      "type": "DOUBLE"
+    },
+    {
+      "name": "type",
+      "type": "STRING"
+    },
+    {
+      "name": "speed",
+      "type": "FLOAT"
+    },
+    {
+      "name": "heading",
+      "type": "FLOAT"
+    }
+  ]
+}

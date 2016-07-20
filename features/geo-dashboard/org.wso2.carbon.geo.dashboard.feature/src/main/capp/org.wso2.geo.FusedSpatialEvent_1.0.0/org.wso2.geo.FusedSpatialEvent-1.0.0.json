@@ -1,0 +1,48 @@
+{
+  "name": "org.wso2.geo.FusedSpatialEvent",
+  "version": "1.0.0",
+  "nickName": "",
+  "description": "",
+  "payloadData": [
+    {
+      "name": "id",
+      "type": "STRING"
+    },
+    {
+      "name": "latitude",
+      "type": "DOUBLE"
+    },
+    {
+      "name": "longitude",
+      "type": "DOUBLE"
+    },
+    {
+      "name": "timeStamp",
+      "type": "LONG"
+    },
+    {
+      "name": "type",
+      "type": "STRING"
+    },
+    {
+      "name": "speed",
+      "type": "FLOAT"
+    },
+    {
+      "name": "heading",
+      "type": "FLOAT"
+    },
+    {
+      "name": "state",
+      "type": "STRING"
+    },
+    {
+      "name": "information",
+      "type": "STRING"
+    },
+    {
+      "name": "notify",
+      "type": "BOOL"
+    }
+  ]
+}
