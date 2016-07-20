@@ -29,8 +29,8 @@ var ApplicationOptions = {
         }
     },
     constance:{
-        CEP_WEB_SOCKET_OUTPUT_ADAPTOR_NAME: 'DefaultWebsocketOutputAdaptor',
-        CEP_ON_ALERT_WEB_SOCKET_OUTPUT_ADAPTOR_NAME: 'DefaultWebsocketOutputAdaptorOnAlert',
+        CEP_WEB_SOCKET_OUTPUT_ADAPTOR_NAME: 'Geo-Publisher-WebSocketLocal-FusedSpacialEvent',
+        CEP_ON_ALERT_WEB_SOCKET_OUTPUT_ADAPTOR_NAME: 'Geo-Publisher-WebSocketLocal-GeoAlertNotifications',
         CEP_Traffic_STREAM_WEB_SOCKET_OUTPUT_ADAPTOR_NAME: 'DefaultWebsocketOutputAdaptorOnTrafficStream',
         CEP_WEB_SOCKET_OUTPUT_ADAPTOR_WEBAPP_NAME: 'outputwebsocket',
         TENANT_INDEX: 't',

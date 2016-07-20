@@ -59,8 +59,8 @@ function SpatialObject(json) {
 
     this.marker = this.geoJson.getLayers()[0];
     this.marker.options.title = this.id;
-    //TODO: VEHICLE for CEP traffic feed data
-    if (this.type == "DEVICE" || this.type == "VEHICLE") {
+    
+    if("stationary" != this.type.toLowerCase() || "stop" != this.type.toLowerCase()) {
         this.popupTemplate = $('#markerPopup');
     } else {
         this.popupTemplate = $('#markerPopupStop');
@@ -707,20 +707,11 @@ intializeWebsocketUrls();
 
 
 SpatialObject.prototype.stateIcon = function () {
-    // Performance of if-else, switch or map based conditioning http://stackoverflow.com/questions/8624939/performance-of-if-else-switch-or-map-based-conditioning
-    var iconUrl = "/portal/store/carbon.super/fs/gadget/geo-dashboard/img/markers/";
-
-    //TODO: remove this for IoT - for testing purposes
-    if("vehicle" == this.type.toLowerCase()){
-        this.type = "device";
-    } else if ("stop" == this.type.toLowerCase()) {
-        this.type = "stationary";
-    }
-
+    var iconUrl = "/portal/store/carbon.super/fs/gadget/geo-dashboard/img/markers/object-types/"  + this.type.toLowerCase();
     if(0 < this.speed && (-360 <= this.heading && 360 >= this.heading)) {
-        iconUrl = iconUrl + "moving/" + this.type.toLowerCase() + "-" + this.state.toLowerCase();
+        iconUrl = iconUrl + "/moving/" + this.state.toLowerCase();
     } else {
-        iconUrl = iconUrl + "non_moving/" + this.type.toLowerCase() + "-" + this.state.toLowerCase()
+        iconUrl = iconUrl + "/non-moving/" + this.state.toLowerCase();
     }
 
     return L.icon({

@@ -26,17 +26,16 @@
         <!-- Theme -->
         <dependency artifact="ThemeGeoDashboard" version="1.0.0" include="true" serverRole="GeoDashboard"/>
         <!-- CEP Artifacts -->
-        <dependency artifact="DefaultWebsocketOutputAdaptorOnAlert" version="1.0.0" include="true" serverRole="GeoDashboard"/>
-        <dependency artifact="eventsFunionGenerateNotofications" version="1.0.0" include="true" serverRole="GeoDashboard"/>
-        <dependency artifact="rawInputStream" version="1.0.0" include="true" serverRole="GeoDashboard"/>
-        <dependency artifact="processedSpatialEvents" version="1.0.0" include="true" serverRole="GeoDashboard"/>
-        <dependency artifact="AlertsNotifications" version="1.0.0" include="true" serverRole="GeoDashboard"/>
-        <dependency artifact="pass_through" version="1.0.0" include="true" serverRole="GeoDashboard"/>
-        <dependency artifact="GpsDataOverHttpSpatialObjectStream" version="1.0.0" include="true" serverRole="GeoDashboard"/>
-        <dependency artifact="inputStandardizer" version="1.0.0" include="true" serverRole="GeoDashboard"/>
-        <dependency artifact="DefaultWebsocketOutputAdaptor" version="1.0.0" include="true" serverRole="GeoDashboard"/>
-        <dependency artifact="standardSpatialEvents" version="1.0.0" include="true" serverRole="GeoDashboard"/>
-        <dependency artifact="RDBMSOutputAdapter" version="1.0.0" include="true" serverRole="GeoDashboard"/>
-        <dependency artifact="fusedSpatialEvent" version="1.0.0" include="true" serverRole="GeoDashboard"/>
+        <dependency artifact="Geo-ExecutionPlan-EventsFusionGenerateNotifications" version="1.0.0" include="true" serverRole="GeoDashboard"/>
+        <dependency artifact="Geo-ExecutionPlan-InputStandardizer" version="1.0.0" include="true" serverRole="GeoDashboard"/>
+        <dependency artifact="Geo-ExecutionPlan-Pass_through" version="1.0.0" include="true" serverRole="GeoDashboard"/>
+        <dependency artifact="Geo-Publisher-RDBMS-GeoAlertNotifications" version="1.0.0" include="true" serverRole="GeoDashboard"/>
+        <dependency artifact="Geo-Publisher-WebSocketLocal-FusedSpacialEvent" version="1.0.0" include="true" serverRole="GeoDashboard"/>
+        <dependency artifact="Geo-Publisher-WebSocketLocal-GeoAlertNotifications" version="1.0.0" include="true" serverRole="GeoDashboard"/>
+        <dependency artifact="org.wso2.geo.AlertsNotifications" version="1.0.0" include="true" serverRole="GeoDashboard"/>
+        <dependency artifact="org.wso2.geo.FusedSpatialEvent" version="1.0.0" include="true" serverRole="GeoDashboard"/>
+        <dependency artifact="org.wso2.geo.LocationStream" version="1.0.0" include="true" serverRole="GeoDashboard"/>
+        <dependency artifact="org.wso2.geo.ProcessedSpatialEvents" version="1.0.0" include="true" serverRole="GeoDashboard"/>
+        <dependency artifact="org.wso2.geo.StandardSpatialEvents" version="1.0.0" include="true" serverRole="GeoDashboard"/>
     </artifact>
 </artifacts>
