@@ -1,8 +1,8 @@
 {
-  "name": "standardSpatialEvents",
+  "name": "org.wso2.geo.ProcessedSpatialEvents",
   "version": "1.0.0",
   "nickName": "",
-  "description": "Standardized event by spatial InputStandardizer execution plan",
+  "description": "",
   "payloadData": [
     {
       "name": "id",
@@ -34,6 +34,14 @@
     },
     {
       "name": "eventId",
+      "type": "STRING"
+    },
+    {
+      "name": "state",
+      "type": "STRING"
+    },
+    {
+      "name": "information",
       "type": "STRING"
     }
   ]

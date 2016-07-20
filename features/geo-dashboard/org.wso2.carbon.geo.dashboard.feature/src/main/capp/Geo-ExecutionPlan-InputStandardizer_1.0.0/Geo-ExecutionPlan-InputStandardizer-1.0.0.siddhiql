@@ -1,0 +1,19 @@
+/* Enter a unique ExecutionPlan */
+@Plan:name('Geo-ExecutionPlan-InputStandardizer')
+
+/* Enter a unique description for ExecutionPlan */
+-- @Plan:description('ExecutionPlan')
+
+/* define streams/tables and write queries here ... */
+
+@Plan:trace('false')
+
+@Import('org.wso2.geo.LocationStream:1.0.0')
+define stream dataIn (id string, timeStamp long, latitude double, longitude double, type string, speed float, heading float );
+
+@Export('org.wso2.geo.StandardSpatialEvents:1.0.0')
+define stream dataOut ( id string, latitude double, longitude double, timeStamp long, type string, speed float, heading float, eventId string ); 
+
+from dataIn
+select id, latitude, longitude, timeStamp, type ,speed, heading, UUID() as eventId
+insert into dataOut
