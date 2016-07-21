@@ -41,8 +41,8 @@ public class EventProcessorConfigurationFilesystemInvoker {
     public static void saveOld(String executionPlan, String executionPlanName, String fileName)
             throws ExecutionPlanConfigurationException {
         EventProcessorDeployer eventProcessorDeployer = (EventProcessorDeployer) getDeployer(EventProcessorConstants.EP_ELE_DIRECTORY);
+        EventProcessorUtil.validatePath(fileName);
         String filePath = getFilePathFromFilename(fileName);
-        EventProcessorUtil.validatePath(filePath);
         try {
             OutputStreamWriter writer = null;
             try {
@@ -73,8 +73,8 @@ public class EventProcessorConfigurationFilesystemInvoker {
     public static void save(String executionPlan, String executionPlanName, String fileName)
             throws ExecutionPlanConfigurationException {
         EventProcessorDeployer eventProcessorDeployer = (EventProcessorDeployer) getDeployer(EventProcessorConstants.EP_ELE_DIRECTORY);
+        EventProcessorUtil.validatePath(fileName);
         String filePath = getFilePathFromFilename(fileName);
-        EventProcessorUtil.validatePath(filePath);
         try {
             OutputStreamWriter writer = null;
             try {
@@ -105,8 +105,8 @@ public class EventProcessorConfigurationFilesystemInvoker {
     public static void delete(String fileName)
             throws ExecutionPlanConfigurationException {
         try {
+            EventProcessorUtil.validatePath(fileName);
             String filePath = getFilePathFromFilename(fileName);
-            EventProcessorUtil.validatePath(filePath);
             File file = new File(filePath);
             if (file.exists()) {
                 EventProcessorDeployer deployer = (EventProcessorDeployer) getDeployer(EventProcessorConstants.EP_ELE_DIRECTORY);
@@ -151,8 +151,8 @@ public class EventProcessorConfigurationFilesystemInvoker {
         BufferedReader bufferedReader = null;
         StringBuilder stringBuilder = new StringBuilder();
         try {
+            EventProcessorUtil.validatePath(fileName);
             String filePath = getFilePathFromFilename(fileName);
-            EventProcessorUtil.validatePath(filePath);
             bufferedReader = new BufferedReader(new FileReader(filePath));
             String line = null;
             while ((line = bufferedReader.readLine()) != null) {
