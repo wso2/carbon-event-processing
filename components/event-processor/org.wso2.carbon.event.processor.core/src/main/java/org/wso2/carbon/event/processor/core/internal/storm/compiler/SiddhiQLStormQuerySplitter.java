@@ -74,9 +74,10 @@ public class SiddhiQLStormQuerySplitter extends SiddhiQLBaseVisitor {
             String query =  (String) eval.visit(executionElementContext);
             eventTableList.add(query);
         }
+
         return eventTableList;
     }
-
+    
     /**
      * {@inheritDoc}
      * <p/>
