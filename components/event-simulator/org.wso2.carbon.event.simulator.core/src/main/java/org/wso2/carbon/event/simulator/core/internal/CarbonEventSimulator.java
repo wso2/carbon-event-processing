@@ -288,11 +288,14 @@ public class CarbonEventSimulator implements EventSimulator {
             Transformer transformer = transformerFactory.newTransformer();
             DOMSource source = new DOMSource(doc);
 
-            String absolutePath = path + File.separator + fileName.substring(0, fileName.length() - 4) + EventSimulatorConstant.CONFIGURATION_XML_SUFFIX;
-            EventSimulatorUtil.validatePath(fileName);
-            StreamResult result = new StreamResult(new File(absolutePath));
+            String configFileName = fileName.substring(0, fileName.length() - 4) + EventSimulatorConstant.CONFIGURATION_XML_SUFFIX;
+            String absolutePath = path + File.separator + configFileName;
+            EventSimulatorUtil.validatePath(fileName); //validating, because this fileName is a user-input.
+            StringWriter sw = new StringWriter();
+            StreamResult result = new StreamResult(sw);
 
             transformer.transform(source, result);
+            saveConfigurationXML(sw.toString(), configFileName, absolutePath);
             addEventMappingConfiguration(fileName, streamId, separateChar, delayBetweenEventsInMillis);
 
         } catch (ParserConfigurationException e) {
@@ -525,6 +528,30 @@ public class CarbonEventSimulator implements EventSimulator {
             throw new AxisFault("Failed configuration of event stream in this file or file is corrupted ");
         }
         return true;
+    }
+
+    private void saveConfigurationXML(String xmlContent, String configFileName,
+                                             String filePath) {
+        try {
+            OutputStreamWriter writer = null;
+            try {
+                /* saveConfigurationXML contents to .xml file */
+                File file = new File(filePath);
+
+                writer = new OutputStreamWriter(new FileOutputStream(file), "UTF-8");
+
+                // get the content in bytes
+                writer.write(xmlContent);
+                log.info("Event Simulator configuration file: " + configFileName + " saved in the filesystem");
+            } finally {
+                if (writer != null) {
+                    writer.flush();
+                    writer.close();
+                }
+            }
+        } catch (IOException e) {
+            log.error("Error while saving " + configFileName, e);          //todo: throw proper exception
+        }
     }
 
 
