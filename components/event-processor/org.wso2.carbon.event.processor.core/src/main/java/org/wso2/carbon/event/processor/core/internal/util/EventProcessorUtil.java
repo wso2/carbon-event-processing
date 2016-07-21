@@ -382,18 +382,9 @@ public class EventProcessorUtil {
         return eventList;
     }
 
-    public static void validateFilePath(String file) throws ExecutionPlanConfigurationException {
-
-        Path baseDirPath = Paths.get(EventProcessorUtil.getAxisConfiguration().getRepository().getPath() + File.separator + EventProcessorConstants.EP_ELE_DIRECTORY);
-        Path path = Paths.get(file);
-        Path resolvedPath = baseDirPath.resolve(path).normalize();
-
-        if (!resolvedPath.startsWith(baseDirPath)) {
-            // If not valid, test for tmp/carbonapps directory
-            baseDirPath = Paths.get(CarbonUtils.getTmpDir(), EventProcessorConstants.TEMP_CARBON_APPS_DIRECTORY);
-            if (!resolvedPath.startsWith(baseDirPath)) {
-                throw new ExecutionPlanConfigurationException("File name contains restricted path elements. " + file);
-            }
+    public static void validatePath(String fileName) throws ExecutionPlanConfigurationException {
+        if (fileName.contains("../") || fileName.contains("..\\")) {
+            throw new ExecutionPlanConfigurationException("File name contains restricted path elements. " + fileName);
         }
     }
 }
