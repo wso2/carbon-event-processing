@@ -25,7 +25,7 @@ public class ComponentInfoHolder {
 
 
 
-    public enum ComponentType {EVENT_RECEIVER_SPOUT, SIDDHI_BOLT, EVENT_PUBLISHER_BOLT;}
+    public enum ComponentType {EVENT_RECEIVER_SPOUT, SIDDHI_BOLT, EVENT_PUBLISHER_BOLT, TRIGGER_SPOUT;}
 
     private ComponentType componentType;
     private String componentName = null;

@@ -25,6 +25,7 @@ import org.apache.log4j.Logger;
 import org.wso2.carbon.event.processor.common.storm.component.EventPublisherBolt;
 import org.wso2.carbon.event.processor.common.storm.component.EventReceiverSpout;
 import org.wso2.carbon.event.processor.common.storm.component.SiddhiBolt;
+import org.wso2.carbon.event.processor.common.storm.component.TriggerSpout;
 import org.wso2.carbon.event.processor.core.exception.StormQueryConstructionException;
 import org.wso2.carbon.event.processor.core.internal.storm.status.monitor.StormStatusHolderInitializer;
 import org.wso2.carbon.event.processor.core.internal.util.EventProcessorConstants;
@@ -164,6 +165,30 @@ public class StormTopologyConstructor {
             StormStatusHolderInitializer.initializeStatusHolder(executionPlanName, tenantId, parallel);
         }
 
+        /*
+        Triggers
+         */
+        iterator = queryPlanElement.getChildrenWithName(new QName(EventProcessorConstants.TRIGGER_TAG));
+        while (iterator.hasNext()) {
+            OMElement triggerElement = iterator.next();
+            String name = triggerElement.getAttributeValue(new QName(EventProcessorConstants.NAME));
+            ComponentInfoHolder componentInfoHolder = new ComponentInfoHolder(EventProcessorConstants.TRIGGER_SPOUT + "_" + name,
+                    ComponentInfoHolder.ComponentType.TRIGGER_SPOUT);
+
+            OMElement triggerDefinitionElement = triggerElement.getFirstChildWithName(new QName(EventProcessorConstants.TRIGGER_DEFINITION));
+            String triggerDefinition = triggerDefinitionElement.getText();
+
+            OMElement outputStreamElement = triggerElement.getFirstChildWithName(new QName(EventProcessorConstants.OUTPUT_STREAM));
+            String outputStream = outputStreamElement.getText();
+
+            componentInfoHolder.addOutputStream(outputStream);
+            componentInfoHolder.setDeclarer(builder.setSpout(EventProcessorConstants.TRIGGER_SPOUT + "_" + name
+                    , new TriggerSpout(name, triggerDefinition, executionPlanName, tenantId), 1));
+
+            topologyInfoHolder.addComponent(componentInfoHolder);
+
+        }
+
         topologyInfoHolder.indexComponents();
 
         /**
@@ -175,9 +200,10 @@ public class StormTopologyConstructor {
          */
         for (ComponentInfoHolder componentInfoHolder : topologyInfoHolder.getComponents()) {
 
-            if (componentInfoHolder.getComponentType() != ComponentInfoHolder.ComponentType.EVENT_RECEIVER_SPOUT) {
-                BoltDeclarer boltDeclarer = (BoltDeclarer) componentInfoHolder.getDeclarer();
+            if (componentInfoHolder.getComponentType() != ComponentInfoHolder.ComponentType.EVENT_RECEIVER_SPOUT &&
+                componentInfoHolder.getComponentType() != ComponentInfoHolder.ComponentType.TRIGGER_SPOUT) {
 
+                BoltDeclarer boltDeclarer = (BoltDeclarer) componentInfoHolder.getDeclarer();
                 for (String inputStreamId : componentInfoHolder.getInputStreamIds()) {
                     if (topologyInfoHolder.getPublishingComponents(inputStreamId) != null) {
                         for (ComponentInfoHolder pubComponent : topologyInfoHolder.getPublishingComponents(inputStreamId)) {
