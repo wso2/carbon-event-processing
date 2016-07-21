@@ -24,7 +24,6 @@ import org.wso2.carbon.event.processor.template.deployer.internal.ExecutionPlanD
 import org.wso2.carbon.event.template.manager.core.DeployableTemplate;
 import org.wso2.carbon.event.template.manager.core.TemplateDeployer;
 import org.wso2.carbon.event.template.manager.core.TemplateDeploymentException;
-import org.wso2.carbon.utils.CarbonUtils;
 import org.wso2.carbon.utils.multitenancy.MultitenantUtils;
 import org.wso2.siddhi.query.api.util.AnnotationHelper;
 import org.wso2.siddhi.query.compiler.SiddhiCompiler;
@@ -34,8 +33,6 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 
 public class ExecutionPlanTemplateDeployer implements TemplateDeployer {
 
@@ -121,7 +118,7 @@ public class ExecutionPlanTemplateDeployer implements TemplateDeployer {
         String filePath = MultitenantUtils.getAxis2RepositoryPath(tenantId) +
                           EventProcessorConstants.EP_ELE_DIRECTORY + File.separator + executionPlanName +
                           EventProcessorConstants.SIDDHIQL_EXTENSION;
-        validateFilePath(tenantId, filePath);
+        validatePath(executionPlanName);    //executionPlanName is derived from user input, hence validated here.
         try {
             /* save contents to .xml file */
             File file = new File(filePath);
@@ -146,7 +143,7 @@ public class ExecutionPlanTemplateDeployer implements TemplateDeployer {
         File executionPlanFile = new File(MultitenantUtils.getAxis2RepositoryPath(tenantId) +
                                       EventProcessorConstants.EP_ELE_DIRECTORY + File.separator + artifactId +
                                       EventProcessorConstants.SIDDHIQL_EXTENSION);
-        validateFilePath(tenantId, executionPlanFile.getAbsolutePath());
+        validatePath(artifactId);   //artifactId is derived from user input, hence validated.
         if (executionPlanFile.exists()) {
             if (!executionPlanFile.delete()) {
                 throw new TemplateDeploymentException("Unable to successfully delete Execution Plan File : " + executionPlanFile.getName() + " from File System, for tenant id : "
@@ -155,17 +152,9 @@ public class ExecutionPlanTemplateDeployer implements TemplateDeployer {
         }
     }
 
-    private void validateFilePath(int tenantId, String file) throws TemplateDeploymentException {
-        Path baseDirPath = Paths.get(MultitenantUtils.getAxis2RepositoryPath(tenantId) + File.separator + EventProcessorConstants.EP_ELE_DIRECTORY);
-        Path path = Paths.get(file);
-        Path resolvedPath = baseDirPath.resolve(path).normalize();
-
-        if (! resolvedPath.startsWith(baseDirPath)) {
-            // If not valid, test for tmp/carbonapps directory
-            baseDirPath = Paths.get(CarbonUtils.getTmpDir(), EventProcessorConstants.TEMP_CARBON_APPS_DIRECTORY);
-            if (!resolvedPath.startsWith(baseDirPath)) {
-                throw new TemplateDeploymentException("File name contains restricted path elements. " + file);
-            }
+    private void validatePath(String fileName) throws TemplateDeploymentException {
+        if (fileName.contains("../") || fileName.contains("..\\")) {
+            throw new TemplateDeploymentException("File name contains restricted path elements. " + fileName);
         }
     }
 
