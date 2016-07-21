@@ -57,20 +57,13 @@ public class EventSimulatorUIUtils {
     }
 
     /**
-     * Validate the given file path is in the parent directory itself.
+     * Validate the given filename for possible path traversals.
      *
-     * @param parentDirectory
-     * @param filePath
+     * @param fileName
      */
-    public static void validatePath(String parentDirectory, String filePath) {
-        Path parentPath = Paths.get(parentDirectory);
-        Path subPath = Paths.get(filePath).normalize();
-        if (!subPath.startsWith(parentPath)) {
-            // If not valid, test for tmp/carbonapps directory
-            parentPath = Paths.get(CarbonUtils.getTmpDir(), "carbonapps");
-            if (!subPath.startsWith(parentPath)) {
-                throw new EventSimulatorUIException("File path is invalid: " + filePath);
-            }
+    public static void validatePath(String fileName) {
+        if (fileName.contains("../") || fileName.contains("..\\")) {
+            throw new EventSimulatorUIException("File name contains restricted path elements. " + fileName);
         }
     }
 }

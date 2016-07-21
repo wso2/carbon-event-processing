@@ -289,7 +289,7 @@ public class CarbonEventSimulator implements EventSimulator {
             DOMSource source = new DOMSource(doc);
 
             String absolutePath = path + File.separator + fileName.substring(0, fileName.length() - 4) + EventSimulatorConstant.CONFIGURATION_XML_SUFFIX;
-            EventSimulatorUtil.validatePath(path, absolutePath);
+            EventSimulatorUtil.validatePath(fileName);
             StreamResult result = new StreamResult(new File(absolutePath));
 
             transformer.transform(source, result);
@@ -758,7 +758,7 @@ public class CarbonEventSimulator implements EventSimulator {
             DOMSource source = new DOMSource(doc);
 
             String absolutePath = path + File.separator + fileName + EventSimulatorConstant.DATA_SOURCE_CONFIGURATION_XML_SUFFIX;
-            EventSimulatorUtil.validatePath(path, absolutePath);
+            EventSimulatorUtil.validatePath(fileName);
             StreamResult result = new StreamResult(new File(absolutePath));
             uploadXMLFile(axisConfiguration);
             transformer.transform(source, result);
@@ -800,7 +800,7 @@ public class CarbonEventSimulator implements EventSimulator {
         String repo = axisConfiguration.getRepository().getPath();
         String path = repo + EventSimulatorConstant.DEPLOY_DIRECTORY_PATH;
         String xmlFilePath = path + File.separator + dataSourceTableAndStreamInfo.getFileName();
-        EventSimulatorUtil.validatePath(path, xmlFilePath);
+        EventSimulatorUtil.validatePath(fileName);
 
         File xmlFile = new File(xmlFilePath);
         if (xmlFile.exists()) {

@@ -21,10 +21,6 @@ package org.wso2.carbon.event.simulator.core.internal.util;
 import org.wso2.carbon.databridge.commons.Event;
 import org.wso2.carbon.databridge.commons.StreamDefinition;
 import org.wso2.carbon.event.simulator.core.exception.EventSimulatorRuntimeException;
-import org.wso2.carbon.utils.CarbonUtils;
-
-import java.nio.file.Path;
-import java.nio.file.Paths;
 
 public class EventSimulatorUtil {
 
@@ -49,20 +45,13 @@ public class EventSimulatorUtil {
 
 
     /**
-     * Validate the given file path is in the parent directory itself.
+     * Validate the given fileName path is in the parent directory itself.
      *
-     * @param parentDirectory
-     * @param filePath
+     * @param fileName File name which needs to be validated.
      */
-    public static void validatePath(String parentDirectory, String filePath) {
-        Path parentPath = Paths.get(parentDirectory);
-        Path subPath = Paths.get(filePath).normalize();
-        if (!subPath.startsWith(parentPath)) {
-            // If not valid, test for tmp/carbonapps directory
-            parentPath = Paths.get(CarbonUtils.getTmpDir(), "carbonapps");
-            if (!subPath.startsWith(parentPath)) {
-                throw new EventSimulatorRuntimeException("File path is invalid: " + filePath);
-            }
+    public static void validatePath(String fileName) {
+        if (fileName.contains("../") || fileName.contains("..\\")) {
+            throw new EventSimulatorRuntimeException("File name contains restricted path elements. " + fileName);
         }
     }
 }

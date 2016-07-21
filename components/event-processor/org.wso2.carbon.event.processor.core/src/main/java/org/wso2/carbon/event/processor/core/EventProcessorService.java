@@ -92,7 +92,7 @@ public interface EventProcessorService {
 
 
     /**
-     * Gets all available active execution plan configurations.
+     * Gets all available active execugtion plan configurations.
      *
      * @return a {@link Map} of execution plan name and {@link ExecutionPlanConfiguration} object of active execution plans.
      */

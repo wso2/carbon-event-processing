@@ -89,8 +89,8 @@ public class CSVUploadExecutor extends AbstractFileUploadExecutor {
                 }
 
                 if (fileData.getFileItem().getFieldName().equals("csvFileName")) {
+                    EventSimulatorUIUtils.validatePath(fileName);
                     uploadedTempFile = new File(CarbonUtils.getTmpDir(), fileName);
-                    EventSimulatorUIUtils.validatePath(CarbonUtils.getTmpDir(), uploadedTempFile.getAbsolutePath());
                     fileData.getFileItem().write(uploadedTempFile);
                     DataSource dataSource = new FileDataSource(uploadedTempFile);
                     uploaderClient.addUploadedFileItem(new DataHandler(dataSource), fileName, "csv");
