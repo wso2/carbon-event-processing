@@ -218,7 +218,7 @@ function setSpeedAlert() {
     } else{
         data = {
             'parseData': JSON.stringify({'speedAlertValue': speedAlertValue}), // parseKey : parseValue pair , this key pair is replace with the key in the template file
-            'executionPlan': 'speed',
+            'executionPlan': 'Speed',
             'customName': null,
             'cepAction': 'edit' // TODO: what if setting speed alert for the first time ?? that should be a deployment ? try 'edit' if fails 'deploy' , need to handle at the jaggery back end
         };
@@ -276,7 +276,7 @@ function setWithinAlert(leafletId) {
     } else {
         var data = {
             'parseData': JSON.stringify({'geoFenceGeoJSON': selectedAreaGeoJson, 'executionPlanName': createExecutionPlanName(queryName,"WithIn"), 'areaName': areaName}),
-            'executionPlan': 'within',
+            'executionPlan': 'Within',
             'customName': areaName, // TODO: fix , When template copies there can be two queryName and areaName id elements in the DOM
             'queryName': queryName,
             'cepAction': 'deploy'
@@ -347,7 +347,7 @@ function setStationeryAlert(leafletId) {
     } else {
         var data = {
             'parseData': JSON.stringify({'geoFenceGeoJSON': selectedProcessedAreaGeoJson, 'executionPlanName': createExecutionPlanName(queryName,"Stationery"), 'stationeryName': stationeryName , 'stationeryTime': time, 'fluctuationRadius': fluctuationRadius}),
-            'executionPlan': 'stationery',
+            'executionPlan': 'Stationery',
             'customName': stationeryName, // TODO: fix , When template copies there can be two queryName and areaName id elements in the DOM
             'queryName': queryName,
             'cepAction': 'deploy'
@@ -447,7 +447,7 @@ function setTrafficAlert(leafletId) {
     } else {
         var data = {
             'parseData': JSON.stringify({'geoFenceGeoJSON': selectedProcessedAreaGeoJson, 'executionPlanName': createExecutionPlanName(queryName,"Traffic"), 'areaName': areaName}),
-            'executionPlan': 'traffic',
+            'executionPlan': 'Traffic',
             'customName': areaName, // TODO: fix , When template copies there can be two queryName and areaName id elements in the DOM
             'queryName': queryName,
             'cepAction': 'deploy'
@@ -570,13 +570,13 @@ function setProximityAlert() {
 function createExecutionPlanName(queryName,id) {
 
     if(id=="WithIn"){
-        return 'geo_within' + (queryName ? '_' + queryName : '') + '_alert'; // TODO: value of the `queryName` can't be empty, because it will cause name conflicts in CEP, have to do validation(check not empty String)
+        return 'Geo-ExecutionPlan-Within' + (queryName ? '_' + queryName : '') + '_alert'; // TODO: value of the `queryName` can't be empty, because it will cause name conflicts in CEP, have to do validation(check not empty String)
     }
     else if(id=="Stationery"){
-        return 'geo_stationery' + (queryName ? '_' + queryName : '') + '_alert'; // TODO: value of the `queryName` can't be empty, because it will cause name conflicts in CEP, have to do validation(check not empty String)
+        return 'Geo-ExecutionPlan-Stationery' + (queryName ? '_' + queryName : '') + '_alert'; // TODO: value of the `queryName` can't be empty, because it will cause name conflicts in CEP, have to do validation(check not empty String)
     }
     else if(id=="Traffic"){
-        return 'geo_traffic' + (queryName ? '_' + queryName : '') + '_alert'; // TODO: value of the `queryName` can't be empty, because it will cause name conflicts in CEP, have to do validation(check not empty String)
+        return 'Geo-ExecutionPlan-Traffic' + (queryName ? '_' + queryName : '') + '_alert'; // TODO: value of the `queryName` can't be empty, because it will cause name conflicts in CEP, have to do validation(check not empty String)
     }
 
 }

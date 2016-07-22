@@ -25,7 +25,7 @@ var log = new Log();
 
 function store(parameterKeyName,resourceContents,executionPlan,optional) {
     log.info("DEBUG:*** resourceContents:"+resourceContents);
-    if(executionPlan == "speed"){
+    if(executionPlan == "Speed"){
         var currentLimit;
         try{
             currentLimit = dataStore.get("speed.json");
@@ -40,7 +40,7 @@ function store(parameterKeyName,resourceContents,executionPlan,optional) {
         dataStore.put("speed.json",currentLimit);
         log.info("DEBUG:*** Current speed limit set to:"+currentLimit.content);
     }
-    else if(executionPlan == "within"){
+    else if(executionPlan == "Within"){
         try{
             var res = dataStore.get("geo/alerts/within");
         }
@@ -61,7 +61,7 @@ function store(parameterKeyName,resourceContents,executionPlan,optional) {
         resource.mediaType = 'application/json';
         resource.content = String(resourceContents);
         dataStore.put(String("geo/alerts/within/"+optional.queryName+".json"), resource);
-    } else if(executionPlan == "proximity"){
+    } else if(executionPlan == "Proximity"){
 
         try{
             var res = dataStore.get("geo/alerts/proximity");
@@ -81,7 +81,7 @@ function store(parameterKeyName,resourceContents,executionPlan,optional) {
         resource.addProperty("proximityTime", resourceContents.proximityTime);
         dataStore.put(String("geo/alerts/proximity/"+optional.executionPlan+".json"), resource);
 
-    } else if(executionPlan == "stationery"){
+    } else if(executionPlan == "Stationery"){
 
         try{
             var res = dataStore.get("geo/alerts/stationery");
@@ -104,7 +104,7 @@ function store(parameterKeyName,resourceContents,executionPlan,optional) {
         resource.content = String(resourceContents.geoFenceGeoJSON);
         dataStore.put(String("geo/alerts/stationery/"+optional.queryName+".json"), resource);
 
-    } else if(executionPlan == "traffic"){
+    } else if(executionPlan == "Traffic"){
 
         try{
             var res = dataStore.get("geo/alerts/traffic");
