@@ -25,12 +25,20 @@ function getAnnotationHints(cm, options) {
         'Plan:description(\'\')',
         'Plan:trace(\'\')',
         'Plan:statistics(\'\')',
+        'Plan:dist(receiverParallelism=\'\')',
+        'Plan:dist(publisherParallelism=\'\')',
         'Import(\'\')',
         'Export(\'\')',
         'From(eventtable=\'\', )',
         'IndexBy(\'\')',
         'name(\'\')',
-        'dist(parallel=\'\', execGroup=\'\')'
+        'dist(parallel=\'\')',
+        'dist(execGroup=\'\')',
+        'dist(parallel=\'\', execGroup=\'\')',
+        'info(name = \'\')',
+        'plan:async',
+        'plan:async(bufferSize=\'\')',
+        'async(bufferSize=\'\')'
     ];
     return {
         list: result,
