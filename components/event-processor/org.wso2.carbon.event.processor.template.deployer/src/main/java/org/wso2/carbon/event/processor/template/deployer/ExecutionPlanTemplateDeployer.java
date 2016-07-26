@@ -18,6 +18,8 @@ package org.wso2.carbon.event.processor.template.deployer;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.wso2.carbon.context.PrivilegedCarbonContext;
+import org.wso2.carbon.event.processor.core.exception.ExecutionPlanConfigurationException;
+import org.wso2.carbon.event.processor.core.exception.ExecutionPlanDependencyValidationException;
 import org.wso2.carbon.event.processor.core.internal.util.EventProcessorConstants;
 import org.wso2.carbon.event.processor.template.deployer.internal.ExecutionPlanDeployerConstants;
 import org.wso2.carbon.event.processor.template.deployer.internal.ExecutionPlanDeployerValueHolder;
@@ -30,9 +32,6 @@ import org.wso2.siddhi.query.compiler.SiddhiCompiler;
 import org.wso2.siddhi.query.compiler.exception.SiddhiParserException;
 
 import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.OutputStreamWriter;
 
 public class ExecutionPlanTemplateDeployer implements TemplateDeployer {
 
@@ -72,19 +71,25 @@ public class ExecutionPlanTemplateDeployer implements TemplateDeployer {
                         executionPlanNameDefinition);
             }
 
-            int tenantId = PrivilegedCarbonContext.getThreadLocalCarbonContext().getTenantId();
-            saveExecutionPlan(planName, updatedExecutionPlan, tenantId);
+            //Get Template Execution plan, Tenant Id and deploy Execution Plan
+            ExecutionPlanDeployerValueHolder.getEventProcessorService()
+                    .deployExecutionPlan(updatedExecutionPlan);
 
         } catch (SiddhiParserException e) {
             throw new TemplateDeploymentException(
                     "Validation exception occurred when parsing Execution Plan of Template "
                             + template.getConfiguration().getName() + " of Domain " + template.getConfiguration().getDomain(), e);
-        } catch (IOException e) {
-            throw new TemplateDeploymentException("Could not save Execution Plan: " + planName + " for Tenant: "
-                                                  + PrivilegedCarbonContext.getThreadLocalCarbonContext().getTenantDomain(true), e);
+        } catch (ExecutionPlanConfigurationException e) {
+            throw new TemplateDeploymentException(
+                    "Configuration exception occurred when adding Execution Plan of Template "
+                    + template.getConfiguration().getName() + " of Domain " + template.getConfiguration().getDomain(), e);
+
+        } catch (ExecutionPlanDependencyValidationException e) {
+            throw new TemplateDeploymentException(
+                    "Validation exception occurred when adding Execution Plan of Template "
+                    + template.getConfiguration().getName() + " of Domain " + template.getConfiguration().getDomain(), e);
         }
     }
-
 
     @Override
     public void deployIfNotDoneAlready(DeployableTemplate template) throws TemplateDeploymentException{
@@ -104,36 +109,10 @@ public class ExecutionPlanTemplateDeployer implements TemplateDeployer {
         }
     }
 
-
     @Override
     public void undeployArtifact(String artifactId) throws TemplateDeploymentException {
         artifactId = artifactId.replaceAll(" ", "_");
         deleteExecutionPlan(PrivilegedCarbonContext.getThreadLocalCarbonContext().getTenantId(), artifactId);
-    }
-
-    private void saveExecutionPlan(String executionPlanName, String executionPlan, int tenantId)
-            throws IOException, TemplateDeploymentException {
-        OutputStreamWriter writer = null;
-
-        String filePath = MultitenantUtils.getAxis2RepositoryPath(tenantId) +
-                          EventProcessorConstants.EP_ELE_DIRECTORY + File.separator + executionPlanName +
-                          EventProcessorConstants.SIDDHIQL_EXTENSION;
-        validatePath(executionPlanName);    //executionPlanName is derived from user input, hence validated here.
-        try {
-            /* save contents to .xml file */
-            File file = new File(filePath);
-
-            writer = new OutputStreamWriter(new FileOutputStream(file), "UTF-8");
-
-            // get the content in bytes
-            writer.write(executionPlan);
-            log.info("Execution plan: " + executionPlanName + " saved in the filesystem");
-        } finally {
-            if (writer != null) {
-                writer.flush();
-                writer.close();
-            }
-        }
     }
 
     private void deleteExecutionPlan(int tenantId, String artifactId)
