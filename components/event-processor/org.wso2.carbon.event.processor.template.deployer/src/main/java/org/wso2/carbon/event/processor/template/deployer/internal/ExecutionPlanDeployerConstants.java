@@ -17,17 +17,7 @@ package org.wso2.carbon.event.processor.template.deployer.internal;
 
 public class ExecutionPlanDeployerConstants {
 
-    public static final String ANNOTATION_NAME_NAME = "name";
-
-    public static final String CONFIG_NAME_SEPARATOR = "-";
-
-    public static final String CONFIG_FILE_EXTENSION = ".xml";
-
-    public static final String DEFAULT_CHARSET = "UTF-8";
-
     public static final String EXECUTION_PLAN_NAME_ANNOTATION = "@Plan:name";
-
-    public static final String REGEX_NAME_VALUE = "\\$";
 
     public static final String REGEX_NAME_COMMENTED_VALUE = "\\(.*?\\)";
 
