@@ -63,7 +63,7 @@
                 <version>${maven-antrun-plugin.version}</version>
                 <executions>
                     <execution>
-                        <phase>process-resources</phase>
+                        <phase>generate-resources</phase>
                         <configuration>
                             <target>
                                 <ant antfile="build.xml" target="zip" />
@@ -95,7 +95,7 @@
                 <executions>
                     <execution>
                         <id>copy-resources</id>
-                        <phase>generate-resources</phase>
+                        <phase>process-resources</phase>
                         <goals>
                             <goal>copy-resources</goal>
                         </goals>
@@ -105,7 +105,7 @@
                                 <resource>
                                     <directory>resources</directory>
                                     <includes>
-                                        <include>org_wso2_carbon_geo.dashboard-1.0.0.car</include>
+                                        <include>org_wso2_carbon_geo_dashboard-1.0.0.car</include>
                                         <include>p2.inf</include>
                                         <include>geodashboard-datasources.xml</include>
                                         <include>build.properties</include>
