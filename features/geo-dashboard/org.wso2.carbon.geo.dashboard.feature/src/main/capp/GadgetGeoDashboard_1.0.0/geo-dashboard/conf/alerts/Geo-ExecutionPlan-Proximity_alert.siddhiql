@@ -101,7 +101,7 @@ select publishStream.id as id, publishStream.latitude as latitude, publishStream
 insert into innerStreamTwo;
 
 from publishStream[inAlertTable == false]
-delete ProximityTable on ProximityTable.id==publishStream.id;
+delete ProximityTable on ProximityTable.id==id;
 
 from publishStream[inAlertTable == false]
 select id , latitude, longitude,timeStamp, type, speed, heading ,eventId , "" as proximityInfo ,"false"  as isProximity
