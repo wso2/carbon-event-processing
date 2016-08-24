@@ -50,7 +50,7 @@ var ApplicationOptions = {
     },
     leaflet: {
         iconUrls: {
-            normalMovingIcon: '/portal/store/carbon.super/fs/gadget/geo-dashboard/img/markers/moving/arrow_normal.png',
+            normalMovingIcon: '/portal/store/carbon.super/fs/gadget/geo-dashboard/img/markers/object-types/default/moving/alerted.png',
             alertedMovingIcon: '/portal/store/carbon.super/fs/gadget/geo-dashboard/img/markers/moving/arrow_alerted.png',
             offlineMovingIcon: '/portal/store/carbon.super/fs/gadget/geo-dashboard/img/markers/moving/arrow_offline.png',
             warningMovingIcon: '/portal/store/carbon.super/fs/gadget/geo-dashboard/img/markers/moving/arrow_warning.png',

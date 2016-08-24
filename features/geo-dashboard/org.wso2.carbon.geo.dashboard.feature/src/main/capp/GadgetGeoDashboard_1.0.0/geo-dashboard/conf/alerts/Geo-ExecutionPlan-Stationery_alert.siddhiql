@@ -6,11 +6,11 @@
 
 /* define streams/tables and write queries here ... */
 
-@Import('standardSpatialEvents:1.0.0')
+@Import('org.wso2.geo.StandardSpatialEvents:1.0.0')
 define stream dataIn (id string, latitude double, longitude double, timeStamp long, type string ,speed float, heading float, eventId string);
 
 
-@Export('processedSpatialEvents:1.0.0')
+@Export('org.wso2.geo.ProcessedSpatialEvents:1.0.0')
 define stream dataOut (id string, latitude double, longitude double, timeStamp long, type string ,speed float, heading float, eventId string, state string, information string);
 
 @IndexBy('id')
@@ -24,7 +24,7 @@ select id, latitude, longitude, timeStamp, type, speed, heading, eventId,geo:wit
 insert into innerStreamOne;
 
 from innerStreamOne[isWithin == false]
-delete StationeryTable on StationeryTable.id==innerStreamOne.id;
+delete StationeryTable on StationeryTable.id==id;
 
 from innerStreamOne[isWithin == false]
 select id , latitude, longitude,timeStamp, type, speed, heading ,eventId , "false"  as isStationary
@@ -39,10 +39,10 @@ select innerStreamTwo.id, innerStreamTwo.stationary
 insert into AlertsTable;
 
 from innerStreamTwo[innerStreamTwo.stationary == false]
-delete AlertsTable on AlertsTable.id==innerStreamTwo.id;
+delete AlertsTable on AlertsTable.id==id;
 
 from innerStreamTwo[innerStreamTwo.stationary == false]
-delete StationeryTable on StationeryTable.id==innerStreamTwo.id;
+delete StationeryTable on StationeryTable.id==id;
 
 from innerStreamOne[isWithin == true AND not(AlertsTable.id == innerStreamOne.id in AlertsTable)]
 select id , latitude, longitude,timeStamp, type, speed, heading ,eventId , "false"  as isStationary

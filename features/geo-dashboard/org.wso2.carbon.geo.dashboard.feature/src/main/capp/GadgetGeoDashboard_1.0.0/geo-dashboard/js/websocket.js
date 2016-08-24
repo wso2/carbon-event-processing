@@ -725,7 +725,7 @@ SpatialObject.prototype.stateIcon = function () {
 
 
 var normalMovingIcon = L.icon({
-    iconUrl: ApplicationOptions.leaflet.iconUrls.normalIcon,
+    iconUrl: ApplicationOptions.leaflet.iconUrls.normalMovingIcon,
     shadowUrl: false,
     iconSize: [24, 24],
     iconAnchor: [+12, +12],

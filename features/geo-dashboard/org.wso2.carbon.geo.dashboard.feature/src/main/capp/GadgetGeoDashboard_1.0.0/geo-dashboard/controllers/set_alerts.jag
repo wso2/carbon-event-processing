@@ -55,7 +55,7 @@ var parseDataJson = JSON.parse(parseData);
 
 
 if(verb == "POST") {
-    var path = "../conf/alerts/geo_"+executionPlan+"_alert.siddhiql";
+    var path = "../conf/alerts/Geo-ExecutionPlan-"+executionPlan+"_alert.siddhiql";
     var file = new File(path);
     file.open("r");
     var template = "";
@@ -78,15 +78,15 @@ if(verb == "POST") {
 
     optionalArgs = {"queryName": queryName,"customName": customName,"executionPlan": executionPlan};
     // TODO: Inefficient if and else if blocks change it by using general keyword to resourceContents
-    if(executionPlan == 'within'){
+    if(executionPlan == 'Within'){
         var resourceContents = parseDataJson.geoFenceGeoJSON;
-    } else if(executionPlan == "stationery"){
+    } else if(executionPlan == "Stationery"){
         var resourceContents = parseDataJson;
-    } else if(executionPlan == 'speed'){
+    } else if(executionPlan == 'Speed'){
         var resourceContents = parseDataJson.speedAlertValue;
-    } else if(executionPlan == 'proximity'){
+    } else if(executionPlan == 'Proximity'){
         var resourceContents = parseDataJson
-    } else if(executionPlan == 'traffic'){
+    } else if(executionPlan == 'Traffic'){
         var resourceContents = parseDataJson.geoFenceGeoJSON;
     }
     storeAlerts(parseKey,resourceContents,executionPlan,optionalArgs);
@@ -98,7 +98,7 @@ if(verb == "POST") {
         var result = eventprocessorStub.validateExecutionPlan(payload);
         if (result.equals("success")) {
             try {
-                eventprocessorStub.editActiveExecutionPlan(payload, "geo_"+executionPlan+"_alert");
+                eventprocessorStub.editActiveExecutionPlan(payload, "Geo-ExecutionPlan-"+executionPlan+"_alert");
                 responseJson.status = "success";
                 responseJson.message = "Query deployed successfully";
             } catch (ex) {
