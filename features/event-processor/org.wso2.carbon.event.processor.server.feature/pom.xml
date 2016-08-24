@@ -142,6 +142,10 @@
             <groupId>org.wso2.siddhi</groupId>
             <artifactId>siddhi-extension-reorder</artifactId>
         </dependency>
+        <dependency>
+            <groupId>org.wso2.siddhi</groupId>
+            <artifactId>siddhi-extension-markov-models</artifactId>
+        </dependency>
 
         <dependency>
             <groupId>org.apache.commons</groupId>
@@ -308,6 +312,9 @@
                                 </bundleDef>
                                 <bundleDef>
                                     org.wso2.siddhi:siddhi-extension-reorder:${siddhi.version}
+                                </bundleDef>
+                                <bundleDef>
+                                    org.wso2.siddhi:siddhi-extension-markov-models:${siddhi.version}
                                 </bundleDef>
 
                                 <bundleDef>
