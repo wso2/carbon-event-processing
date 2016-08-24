@@ -548,6 +548,13 @@
                 <artifactId>scala-reflect</artifactId>
                 <version>${scala.version}</version>
             </dependency>
+
+            <!-- Siddhi Markov models extension -->
+            <dependency>
+                <groupId>org.wso2.siddhi</groupId>
+                <artifactId>siddhi-extension-markov-models</artifactId>
+                <version>${siddhi.version}</version>
+            </dependency>
             <!--siddhi dependencies stop-->
 
             <!--features start-->
