@@ -149,7 +149,7 @@ function addImportedStreamDefinition() {
     new Ajax.Request('../eventprocessor/get_stream_definition_ajaxprocessor.jsp', {
         method:'POST',
         asynchronous:false,
-        parameters:{streamId:propStreamId.value, streamAs:propAs.value, isArbitrary:propImportArbitrary },
+        parameters: {streamId: propStreamId.value, streamAs: propAs.value, isArbitrary: propImportArbitrary},
         onSuccess:function (eventStreamDefinition) {
             var definitions = eventStreamDefinition.responseText.trim().split("|=");
             var streamId = definitions[0].trim();
@@ -182,7 +182,7 @@ function addImportedStreamDefinition() {
                 }
             }
             var importStatement;
-            if(propImportArbitrary){
+            if (propImportArbitrary) {
                 importStatement = ANNOTATION_TOKEN_AT +
                     ANNOTATION_IMPORT +
                     ANNOTATION_TOKEN_OPENING_BRACKET +
@@ -195,7 +195,7 @@ function addImportedStreamDefinition() {
                     streamDefinition +
                     ANNOTATION_TOKEN_CLOSING_BRACKET +
                     SIDDHI_STATEMENT_DELIMETER;
-            }else{
+            } else {
                 importStatement = ANNOTATION_TOKEN_AT +
                     ANNOTATION_IMPORT +
                     ANNOTATION_TOKEN_OPENING_BRACKET +
@@ -240,7 +240,7 @@ function addExportedStreamDefinition() {
     new Ajax.Request('../eventprocessor/get_stream_definition_ajaxprocessor.jsp', {
         method:'POST',
         asynchronous:false,
-        parameters:{streamId:propStreamId.value, streamAs:propValueOf.value, isArbitrary:propExportArbitrary },
+        parameters: {streamId: propStreamId.value, streamAs: propValueOf.value, isArbitrary: propExportArbitrary},
         onSuccess:function (eventStreamDefinition) {
             var definitions = eventStreamDefinition.responseText.trim().split("|=");
             var streamId = definitions[0].trim();
@@ -280,18 +280,19 @@ function addExportedStreamDefinition() {
                 }
             }
             var exportStatement;
-            if(propExportArbitrary){
-                exportStatement= ANNOTATION_TOKEN_AT + ANNOTATION_EXPORT + ANNOTATION_TOKEN_OPENING_BRACKET +
-                    SIDDHI_SINGLE_QUOTE + streamId + SIDDHI_SINGLE_QUOTE+ INCLUDE_ARBITRARY_DATA + ANNOTATION_TOKEN_CLOSING_BRACKET +
-                    SIDDHI_LINE_BREAK + SIDDHI_LITERAL_DEFINE_STREAM + SIDDHI_SPACE_LITERAL + streamAs + SIDDHI_SPACE_LITERAL +
-                    ANNOTATION_TOKEN_OPENING_BRACKET + streamDefinition + ANNOTATION_TOKEN_CLOSING_BRACKET + SIDDHI_STATEMENT_DELIMETER;
-            }else{
-                exportStatement= ANNOTATION_TOKEN_AT + ANNOTATION_EXPORT + ANNOTATION_TOKEN_OPENING_BRACKET +
+            if (propExportArbitrary) {
+                exportStatement = ANNOTATION_TOKEN_AT + ANNOTATION_EXPORT + ANNOTATION_TOKEN_OPENING_BRACKET +
+                    SIDDHI_SINGLE_QUOTE + streamId + SIDDHI_SINGLE_QUOTE + INCLUDE_ARBITRARY_DATA +
+                    ANNOTATION_TOKEN_CLOSING_BRACKET + SIDDHI_LINE_BREAK + SIDDHI_LITERAL_DEFINE_STREAM +
+                    SIDDHI_SPACE_LITERAL + streamAs + SIDDHI_SPACE_LITERAL + ANNOTATION_TOKEN_OPENING_BRACKET +
+                    streamDefinition + ANNOTATION_TOKEN_CLOSING_BRACKET + SIDDHI_STATEMENT_DELIMETER;
+            } else {
+                exportStatement = ANNOTATION_TOKEN_AT + ANNOTATION_EXPORT + ANNOTATION_TOKEN_OPENING_BRACKET +
                     SIDDHI_SINGLE_QUOTE + streamId + SIDDHI_SINGLE_QUOTE + ANNOTATION_TOKEN_CLOSING_BRACKET +
-                    SIDDHI_LINE_BREAK + SIDDHI_LITERAL_DEFINE_STREAM + SIDDHI_SPACE_LITERAL + streamAs + SIDDHI_SPACE_LITERAL +
-                    ANNOTATION_TOKEN_OPENING_BRACKET + streamDefinition + ANNOTATION_TOKEN_CLOSING_BRACKET + SIDDHI_STATEMENT_DELIMETER;
+                    SIDDHI_LINE_BREAK + SIDDHI_LITERAL_DEFINE_STREAM + SIDDHI_SPACE_LITERAL + streamAs +
+                    SIDDHI_SPACE_LITERAL + ANNOTATION_TOKEN_OPENING_BRACKET + streamDefinition +
+                    ANNOTATION_TOKEN_CLOSING_BRACKET + SIDDHI_STATEMENT_DELIMETER;
             }
-
             window.queryEditor.setValue(executionPlanHeader + exportStatement + SIDDHI_LINE_BREAK + executionPlanBody);
             window.queryEditor.save();
         }
