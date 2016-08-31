@@ -97,7 +97,7 @@ public class CarbonEventProcessorService implements EventProcessorService {
             parsedExecutionPlan = SiddhiCompiler.parse(executionPlan);
             String executionPlanName = AnnotationHelper.getAnnotationElement(EventProcessorConstants.ANNOTATION_NAME_NAME, null, parsedExecutionPlan.getAnnotations()).getValue();
 
-            if (!(isExecutionPlanAlreadyExist(executionPlanName))) {
+            if (isExecutionPlanAlreadyExist(executionPlanName)) {
                 throw new ExecutionPlanConfigurationException(executionPlanName + " already registered as an execution in this tenant");
             }
 
@@ -152,7 +152,7 @@ public class CarbonEventProcessorService implements EventProcessorService {
         org.wso2.siddhi.query.api.ExecutionPlan parsedExecutionPlan = SiddhiCompiler.parse(executionPlan);
         String newExecutionPlanName = AnnotationHelper.getAnnotationElement(EventProcessorConstants.ANNOTATION_NAME_NAME, null, parsedExecutionPlan.getAnnotations()).getValue();
         if (!(newExecutionPlanName.equals(executionPlanName))) {
-            if (!(isExecutionPlanAlreadyExist(newExecutionPlanName))) {
+            if (isExecutionPlanAlreadyExist(newExecutionPlanName)) {
                 throw new ExecutionPlanConfigurationException(newExecutionPlanName + " " +
                         "already registered as an execution in this tenant");
             }
@@ -877,11 +877,11 @@ public class CarbonEventProcessorService implements EventProcessorService {
         if (executionPlanConfigurationMap != null) {
             for (String existingExecutionPlanName : executionPlanConfigurationMap.keySet()) {
                 if (executionPlanName.equalsIgnoreCase(existingExecutionPlanName)) {
-                    return false;
+                    return true;
                 }
             }
         }
-        return true;
+        return false;
     }
 
     public boolean isExecutionPlanFileAlreadyExist(String executionPlanFileName)
