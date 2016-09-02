@@ -58,7 +58,8 @@ public class EventProcessorHelper {
     public static String getExecutionPlanName(String executionPlanAsString) {
         String executionPlanName = null;
         ExecutionPlan executionPlan = SiddhiCompiler.parse(executionPlanAsString);
-        executionPlanName = AnnotationHelper.getAnnotationElement(EventProcessorConstants.ANNOTATION_NAME_NAME, null, executionPlan.getAnnotations()).getValue();
+        executionPlanName = AnnotationHelper.getAnnotationElement(EventProcessorConstants.ANNOTATION_NAME_NAME, null,
+                executionPlan.getAnnotations()).getValue();
         return executionPlanName;
     }
 
@@ -73,9 +74,11 @@ public class EventProcessorHelper {
         Pattern streamVersionPattern = Pattern.compile(EventProcessorConstants.STREAM_VER_REGEX);
 
         ExecutionPlan parsedExecPlan = SiddhiCompiler.parse(executionPlan);
-        Element element = AnnotationHelper.getAnnotationElement(EventProcessorConstants.ANNOTATION_NAME_NAME, null, parsedExecPlan.getAnnotations());
-        if (element == null) {                                                                        // check if plan name is given
-            throw new ExecutionPlanConfigurationException("Execution plan name is not given. Please specify execution plan name using the annotation " +
+        Element element = AnnotationHelper.getAnnotationElement(EventProcessorConstants.ANNOTATION_NAME_NAME, null,
+                parsedExecPlan.getAnnotations());
+        if (element == null) {      // check if plan name is given
+            throw new ExecutionPlanConfigurationException("Execution plan name is not given. " +
+                    "Please specify execution plan name using the annotation " +
                     "'" +
                     EventProcessorConstants.ANNOTATION_TOKEN_AT +
                     EventProcessorConstants.ANNOTATION_PLAN +
@@ -93,24 +96,28 @@ public class EventProcessorHelper {
             throw new ExecutionPlanConfigurationException("Execution plan name is empty. Hence the plan is invalid");
         }
         if (planName.trim().contains(" ")) {
-            throw new ExecutionPlanConfigurationException("Execution plan name '" + planName + "' contains whitespaces. Please remove whitespaces.");
+            throw new ExecutionPlanConfigurationException("Execution plan name '" + planName +
+                    "' contains whitespaces. Please remove whitespaces.");
         }
 
         Map<String, org.wso2.siddhi.query.api.definition.StreamDefinition> streamDefMap = parsedExecPlan.getStreamDefinitionMap();
         for (Map.Entry<String, org.wso2.siddhi.query.api.definition.StreamDefinition> entry : streamDefMap.entrySet()) {
-            Element importElement = AnnotationHelper.getAnnotationElement(EventProcessorConstants.ANNOTATION_IMPORT, null, entry.getValue().getAnnotations());
-            Element exportElement = AnnotationHelper.getAnnotationElement(EventProcessorConstants.ANNOTATION_EXPORT, null, entry.getValue().getAnnotations());
+            Element importElement = AnnotationHelper.getAnnotationElement(EventProcessorConstants.ANNOTATION_IMPORT, null,
+                    entry.getValue().getAnnotations());
+            Element exportElement = AnnotationHelper.getAnnotationElement(EventProcessorConstants.ANNOTATION_EXPORT, null,
+                    entry.getValue().getAnnotations());
             if (importElement != null && exportElement != null) {
-                throw new ExecutionPlanConfigurationException("Same stream definition has being imported and exported. Please correct " + i +
-                        "th of the " + parsedExecPlan.getStreamDefinitionMap().size() + "stream definition, with stream id '" + entry.getKey() + "'");
+                throw new ExecutionPlanConfigurationException("Same stream definition has being imported and exported. " +
+                        "Please correct " + i + "th of the " + parsedExecPlan.getStreamDefinitionMap().size() +
+                        "stream definition, with stream id '" +
+                        entry.getKey() + "'");
             }
             if (importElement != null) {  //Treating import & export cases separately to give more specific error messages.
                 String atImportLiteral = EventProcessorConstants.ANNOTATION_TOKEN_AT + EventProcessorConstants.ANNOTATION_IMPORT;
                 String importElementValue = importElement.getValue();
                 if (importElementValue == null || importElementValue.trim().isEmpty()) {
                     throw new ExecutionPlanConfigurationException("Imported stream cannot be empty as in '" +
-                            atImportLiteral +
-                            EventProcessorConstants.ANNOTATION_TOKEN_OPENING_BRACKET +
+                            atImportLiteral + EventProcessorConstants.ANNOTATION_TOKEN_OPENING_BRACKET +
                             EventProcessorConstants.SIDDHI_SINGLE_QUOTE + EventProcessorConstants.SIDDHI_SINGLE_QUOTE +
                             EventProcessorConstants.ANNOTATION_TOKEN_CLOSING_BRACKET +
                             "'. Please correct " + i + "th of the " + parsedExecPlan.getStreamDefinitionMap().size() +
@@ -126,20 +133,24 @@ public class EventProcessorHelper {
                             "streamName" + EventProcessorConstants.STREAM_SEPARATOR + "StreamVersion" +
                             EventProcessorConstants.SIDDHI_SINGLE_QUOTE +
                             EventProcessorConstants.ANNOTATION_TOKEN_CLOSING_BRACKET +
-                            "'. There should be a '" + EventProcessorConstants.STREAM_SEPARATOR + "' character, separating the streamName and its version");
+                            "'. There should be a '" + EventProcessorConstants.STREAM_SEPARATOR + "' character, " +
+                            "separating the streamName and its version");
                 }
                 if ((!databridgeStreamNamePattern.matcher(streamIdComponents[0].trim()).matches())) {
-                    throw new ExecutionPlanConfigurationException("Invalid imported stream name[" + streamIdComponents[0] + "] in execution plan:" + planName +
-                            ". Stream name should match the regex '" + EventProcessorConstants.DATABRIDGE_STREAM_REGEX + "'");
+                    throw new ExecutionPlanConfigurationException("Invalid imported stream name[" + streamIdComponents[0] +
+                            "] in execution plan:" + planName + ". Stream name should match the regex '" +
+                            EventProcessorConstants.DATABRIDGE_STREAM_REGEX + "'");
                 }
                 Matcher m = streamVersionPattern.matcher(streamIdComponents[1].trim());
                 if (!m.matches()) {
-                    throw new ExecutionPlanConfigurationException("Invalid stream version [" + streamIdComponents[1] + "] for stream name " + streamIdComponents[0] + " in execution plan: " + planName +
+                    throw new ExecutionPlanConfigurationException("Invalid stream version [" + streamIdComponents[1] +
+                            "] for stream name " + streamIdComponents[0] + " in execution plan: " + planName +
                             ". Stream version should match the regex '" + EventProcessorConstants.STREAM_VER_REGEX + "'");
                 }
                 validateSiddhiStreamWithDatabridgeStream(streamIdComponents[0], streamIdComponents[1], entry.getValue());
-                if (exportedStreams.contains(importElementValue)) {                                   // check if same stream has been imported and exported.
-                    throw new ExecutionPlanConfigurationException("Imported stream '" + importElementValue + "' is also among the exported streams. Hence the execution plan is invalid");
+                if (exportedStreams.contains(importElementValue)) { // check if same stream has been imported and exported.
+                    throw new ExecutionPlanConfigurationException("Imported stream '" + importElementValue +
+                            "' is also among the exported streams. Hence the execution plan is invalid");
                 }
                 importedStreams.add(importElementValue);
             }
@@ -157,28 +168,31 @@ public class EventProcessorHelper {
                 }
                 String[] streamIdComponents = exportElementValue.split(EventProcessorConstants.STREAM_SEPARATOR);
                 if (streamIdComponents.length != 2) {
-                    throw new ExecutionPlanConfigurationException("Found malformed " + atExportLiteral + " element '" + exportElementValue + "'. " + atExportLiteral +
-                            " annotation should take the form '" +
-                            atExportLiteral +
-                            EventProcessorConstants.ANNOTATION_TOKEN_OPENING_BRACKET +
-                            EventProcessorConstants.SIDDHI_SINGLE_QUOTE +
+                    throw new ExecutionPlanConfigurationException("Found malformed " + atExportLiteral + " element '" +
+                            exportElementValue + "'. " + atExportLiteral +
+                            " annotation should take the form '" + atExportLiteral + EventProcessorConstants
+                            .ANNOTATION_TOKEN_OPENING_BRACKET + EventProcessorConstants.SIDDHI_SINGLE_QUOTE +
                             "streamName" + EventProcessorConstants.STREAM_SEPARATOR + "StreamVersion" +
-                            EventProcessorConstants.SIDDHI_SINGLE_QUOTE +
-                            EventProcessorConstants.ANNOTATION_TOKEN_CLOSING_BRACKET +
-                            "'. There should be a '" + EventProcessorConstants.STREAM_SEPARATOR + "' character, separating the streamName and its version");
+                            EventProcessorConstants.SIDDHI_SINGLE_QUOTE + EventProcessorConstants
+                            .ANNOTATION_TOKEN_CLOSING_BRACKET +
+                            "'. There should be a '" + EventProcessorConstants.STREAM_SEPARATOR + "' character, " +
+                            "separating the streamName and its version");
                 }
                 if ((!databridgeStreamNamePattern.matcher(streamIdComponents[0].trim()).matches())) {
-                    throw new ExecutionPlanConfigurationException("Invalid exported stream name[" + streamIdComponents[0] + "] in execution plan:" + planName +
+                    throw new ExecutionPlanConfigurationException("Invalid exported stream name[" + streamIdComponents[0] +
+                            "] in execution plan:" + planName +
                             ". Stream name should match the regex '" + EventProcessorConstants.DATABRIDGE_STREAM_REGEX + "'");
                 }
                 Matcher m = streamVersionPattern.matcher(streamIdComponents[1].trim());
                 if (!m.matches()) {
-                    throw new ExecutionPlanConfigurationException("Invalid stream version [" + streamIdComponents[1] + "] for stream name " + streamIdComponents[0] + " in execution plan: " + planName +
+                    throw new ExecutionPlanConfigurationException("Invalid stream version [" + streamIdComponents[1] +
+                            "] for stream name " + streamIdComponents[0] + " in execution plan: " + planName +
                             ". Stream version should match the regex '" + EventProcessorConstants.STREAM_VER_REGEX + "'");
                 }
                 validateSiddhiStreamWithDatabridgeStream(streamIdComponents[0], streamIdComponents[1], entry.getValue());
                 if (importedStreams.contains(exportElementValue)) {
-                    throw new ExecutionPlanConfigurationException("Exported stream '" + exportElementValue + "' is also among the imported streams. Hence the execution plan is invalid");
+                    throw new ExecutionPlanConfigurationException("Exported stream '" + exportElementValue +
+                            "' is also among the imported streams. Hence the execution plan is invalid");
                 }
                 exportedStreams.add(exportElementValue);
             }
@@ -195,7 +209,8 @@ public class EventProcessorHelper {
     }
 
     private static boolean validateSiddhiStreamWithDatabridgeStream(String streamName, String streamVersion,
-                                                                    org.wso2.siddhi.query.api.definition.StreamDefinition siddhiStreamDefinition)
+                                                                    org.wso2.siddhi.query.api.definition
+                                                                            .StreamDefinition siddhiStreamDefinition)
             throws ExecutionPlanConfigurationException, ExecutionPlanDependencyValidationException {
         if (siddhiStreamDefinition == null) {
             throw new ExecutionPlanDependencyValidationException(streamName + EventProcessorConstants.STREAM_SEPARATOR
@@ -219,15 +234,20 @@ public class EventProcessorHelper {
                             EventProcessorConstants.ANNOTATION_INCLUDE_ARBITRARY, siddhiStreamDefinition.getAnnotations());
                 }
                 if (ArbitraryElement != null && ArbitraryElement.getValue().equals("true")) {
-                    if (!siddhiStreamDefinition.getAttributeList().get(siddhiStreamAttributeCount - 1).getName().equals(EventProcessorConstants.ARBITRARY_MAP)) {
+                    if (!siddhiStreamDefinition.getAttributeList().get(siddhiStreamAttributeCount - 1).getName()
+                            .equals(EventProcessorConstants.ARBITRARY_MAP)) {
                         //Arbitrary attribute is not giving or not in the last position of the siddhi stream definition attribute list
-                        throw new ExecutionPlanDependencyValidationException(streamName + EventProcessorConstants.STREAM_SEPARATOR
-                                + streamVersion, "Please specify " + EventProcessorConstants.ARBITRARY_MAP + " attribute name in stream "
+                        throw new ExecutionPlanDependencyValidationException(streamName +
+                                EventProcessorConstants.STREAM_SEPARATOR
+                                + streamVersion, "Please specify " + EventProcessorConstants.ARBITRARY_MAP +
+                                " attribute name in stream "
                                 + streamName + EventProcessorConstants.STREAM_SEPARATOR + streamVersion);
                     }
                 } else if (siddhiStreamAttributeCount != streamSize) {
-                    throw new ExecutionPlanDependencyValidationException(streamName + EventProcessorConstants.STREAM_SEPARATOR
-                            + streamVersion, "No of attributes in stream " + streamName + EventProcessorConstants.STREAM_SEPARATOR + streamVersion
+                    throw new ExecutionPlanDependencyValidationException(streamName +
+                            EventProcessorConstants.STREAM_SEPARATOR
+                            + streamVersion, "No of attributes in stream " + streamName +
+                            EventProcessorConstants.STREAM_SEPARATOR + streamVersion
                             + " do not match the no of attributes in Siddhi stream");
                 }
 
@@ -239,14 +259,16 @@ public class EventProcessorHelper {
                         // null check for type not required since an exception is thrown by Siddhi
                         // StreamDefinition.getAttributeType() method for non-existent attributes
                         if (siddhiStreamDefinition.getAttributePosition(siddhiAttributeName) != attributeCount++) {
-                            throw new ExecutionPlanDependencyValidationException(streamName + EventProcessorConstants.STREAM_SEPARATOR
-                                    + streamVersion, "Stream " + streamName + EventProcessorConstants.STREAM_SEPARATOR + streamVersion
-                                    + "; Attribute positions do not match for attribute: " + attribute.getName());
+                            throw new ExecutionPlanDependencyValidationException(streamName +
+                                    EventProcessorConstants.STREAM_SEPARATOR + streamVersion, "Stream " + streamName +
+                                    EventProcessorConstants.STREAM_SEPARATOR + streamVersion +
+                                    "; Attribute positions do not match for attribute: " + attribute.getName());
                         }
                         if (!isMatchingType(type, attribute.getType())) {
-                            throw new ExecutionPlanDependencyValidationException(streamName + EventProcessorConstants.STREAM_SEPARATOR
-                                    + streamVersion, "Stream " + streamName + EventProcessorConstants.STREAM_SEPARATOR + streamVersion
-                                    + "; Type mismatch for attribute: " + attribute.getName());
+                            throw new ExecutionPlanDependencyValidationException(streamName +
+                                    EventProcessorConstants.STREAM_SEPARATOR
+                                    + streamVersion, "Stream " + streamName + EventProcessorConstants.STREAM_SEPARATOR +
+                                    streamVersion + "; Type mismatch for attribute: " + attribute.getName());
                         }
                     }
                 }
@@ -258,14 +280,16 @@ public class EventProcessorHelper {
                         // null check for type not required since an exception is thrown by Siddhi
                         // StreamDefinition.getAttributeType() method for non-existent attributes
                         if (siddhiStreamDefinition.getAttributePosition(siddhiAttributeName) != attributeCount++) {
-                            throw new ExecutionPlanDependencyValidationException(streamName + EventProcessorConstants.STREAM_SEPARATOR
-                                    + streamVersion, "Stream " + streamName + EventProcessorConstants.STREAM_SEPARATOR + streamVersion
-                                    + "; Attribute positions do not match for attribute: " + attribute.getName());
+                            throw new ExecutionPlanDependencyValidationException(streamName +
+                                    EventProcessorConstants.STREAM_SEPARATOR
+                                    + streamVersion, "Stream " + streamName + EventProcessorConstants.STREAM_SEPARATOR +
+                                    streamVersion + "; Attribute positions do not match for attribute: " + attribute.getName());
                         }
                         if (!isMatchingType(type, attribute.getType())) {
-                            throw new ExecutionPlanDependencyValidationException(streamName + EventProcessorConstants.STREAM_SEPARATOR
-                                    + streamVersion, "Stream " + streamName + EventProcessorConstants.STREAM_SEPARATOR + streamVersion
-                                    + "; Type mismatch for attribute: " + attribute.getName());
+                            throw new ExecutionPlanDependencyValidationException(streamName +
+                                    EventProcessorConstants.STREAM_SEPARATOR
+                                    + streamVersion, "Stream " + streamName + EventProcessorConstants.STREAM_SEPARATOR +
+                                    streamVersion + "; Type mismatch for attribute: " + attribute.getName());
                         }
                     }
                 }
@@ -277,30 +301,37 @@ public class EventProcessorHelper {
                         // null check for type not required since an exception is thrown by Siddhi
                         // StreamDefinition.getAttributeType() method for non-existent attributes
                         if (siddhiStreamDefinition.getAttributePosition(siddhiAttributeName) != attributeCount++) {
-                            throw new ExecutionPlanDependencyValidationException(streamName + EventProcessorConstants.STREAM_SEPARATOR
-                                    + streamVersion, "Stream " + streamName + EventProcessorConstants.STREAM_SEPARATOR + streamVersion
-                                    + "; Attribute positions do not match for attribute: " + attribute.getName());
+                            throw new ExecutionPlanDependencyValidationException(streamName +
+                                    EventProcessorConstants.STREAM_SEPARATOR
+                                    + streamVersion, "Stream " + streamName + EventProcessorConstants.STREAM_SEPARATOR +
+                                    streamVersion + "; Attribute positions do not match for attribute: " + attribute
+                                    .getName());
                         }
                         if (!isMatchingType(type, attribute.getType())) {
-                            throw new ExecutionPlanDependencyValidationException(streamName + EventProcessorConstants.STREAM_SEPARATOR
-                                    + streamVersion, "Stream " + streamName + EventProcessorConstants.STREAM_SEPARATOR + streamVersion
-                                    + "; Type mismatch for attribute: " + attribute.getName());
+                            throw new ExecutionPlanDependencyValidationException(streamName +
+                                    EventProcessorConstants.STREAM_SEPARATOR
+                                    + streamVersion, "Stream " + streamName + EventProcessorConstants.STREAM_SEPARATOR +
+                                    streamVersion + "; Type mismatch for attribute: " + attribute.getName());
                         }
                     }
                 }
                 return true;
             }
         } catch (EventStreamConfigurationException e) {
-            throw new ExecutionPlanConfigurationException("Error while validating stream definition with store : " + e.getMessage(), e);
+            throw new ExecutionPlanConfigurationException("Error while validating stream definition with store : " +
+                    e.getMessage(), e);
         } catch (AttributeNotExistException e) {
-            throw new ExecutionPlanDependencyValidationException(streamName + EventProcessorConstants.STREAM_SEPARATOR + streamVersion,
+            throw new ExecutionPlanDependencyValidationException(streamName + EventProcessorConstants.STREAM_SEPARATOR +
+                    streamVersion,
                     e.getMessage());
         }
-        throw new ExecutionPlanDependencyValidationException(streamName + EventProcessorConstants.STREAM_SEPARATOR + streamVersion,
-                "Stream " + streamName + EventProcessorConstants.STREAM_SEPARATOR + streamVersion + " does not exist");
+        throw new ExecutionPlanDependencyValidationException(streamName + EventProcessorConstants.STREAM_SEPARATOR +
+                streamVersion, "Stream " + streamName + EventProcessorConstants.STREAM_SEPARATOR + streamVersion +
+                " does not exist");
     }
 
-    private static boolean isMatchingType(org.wso2.siddhi.query.api.definition.Attribute.Type siddhiType, AttributeType databridgeType) {
+    private static boolean isMatchingType(org.wso2.siddhi.query.api.definition.Attribute.Type siddhiType,
+                                          AttributeType databridgeType) {
         switch (siddhiType) {
             case BOOL:
                 return databridgeType == AttributeType.BOOL;
@@ -331,7 +362,8 @@ public class EventProcessorHelper {
      * @param isAnnotationNameTrue Whether the annotation name need to be set to true or false.
      * @return New execution plan with the given plan annotation name set to be true.
      */
-    public static String setExecutionPlanAnnotationName(String executionPlan, String annotationName, boolean isAnnotationNameTrue) {
+    public static String setExecutionPlanAnnotationName(String executionPlan, String annotationName,
+                                                        boolean isAnnotationNameTrue) {
         String newExecutionPlan = null;
         String planHeader = "";
         String planBody = "";
@@ -343,7 +375,8 @@ public class EventProcessorHelper {
                 EventProcessorConstants.ANNOTATION_TOKEN_COLON +
                 annotationName +
                 "\\" + EventProcessorConstants.ANNOTATION_TOKEN_OPENING_BRACKET +    //bracket is escaped, because the literal is meant.
-                EventProcessorConstants.SIDDHI_SINGLE_QUOTE + !isAnnotationNameTrue + EventProcessorConstants.SIDDHI_SINGLE_QUOTE +
+                EventProcessorConstants.SIDDHI_SINGLE_QUOTE + !isAnnotationNameTrue +
+                EventProcessorConstants.SIDDHI_SINGLE_QUOTE +
                 "\\" + EventProcessorConstants.ANNOTATION_TOKEN_CLOSING_BRACKET;     //bracket is escaped, because the literal is meant.
 
         String replacement = EventProcessorConstants.ANNOTATION_TOKEN_AT +
@@ -351,7 +384,8 @@ public class EventProcessorHelper {
                 EventProcessorConstants.ANNOTATION_TOKEN_COLON +
                 annotationName +
                 EventProcessorConstants.ANNOTATION_TOKEN_OPENING_BRACKET +
-                EventProcessorConstants.SIDDHI_SINGLE_QUOTE + isAnnotationNameTrue + EventProcessorConstants.SIDDHI_SINGLE_QUOTE +
+                EventProcessorConstants.SIDDHI_SINGLE_QUOTE + isAnnotationNameTrue +
+                EventProcessorConstants.SIDDHI_SINGLE_QUOTE +
                 EventProcessorConstants.ANNOTATION_TOKEN_CLOSING_BRACKET;
 
         Matcher matcher = Pattern.compile(regexToBeReplaced, Pattern.MULTILINE).matcher(executionPlan);
