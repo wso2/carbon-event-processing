@@ -53,12 +53,24 @@ import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
-import java.io.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.DataInputStream;
+import java.io.BufferedInputStream;
+import java.io.StringWriter;
+import java.io.OutputStreamWriter;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.HashMap;
+import java.util.Collection;
 import java.util.regex.Pattern;
 
 public class CarbonEventSimulator implements EventSimulator {
@@ -584,19 +596,19 @@ public class CarbonEventSimulator implements EventSimulator {
                 }
 
                 File file = new File(path);
-                FileInputStream fis = null;
-                BufferedInputStream bis = null;
-                DataInputStream dis = null;
+                FileInputStream fileInputStream = null;
+                BufferedInputStream bufferedInputStream = null;
+                DataInputStream dataInputStream = null;
                 StreamDefinition streamDefinition = getStreamDefinition(fileInfo.getStreamID());
 
                 try {
-                    fis = new FileInputStream(file);
-                    bis = new BufferedInputStream(fis);
-                    dis = new DataInputStream(bis);
+                    fileInputStream = new FileInputStream(file);
+                    bufferedInputStream = new BufferedInputStream(fileInputStream);
+                    dataInputStream = new DataInputStream(bufferedInputStream);
                     int rowNumber = 0;
-                    while (dis.available() != 0) {
+                    while (dataInputStream.available() != 0) {
                         if (!isPaused) {
-                            String eventValues = dis.readLine();
+                            String eventValues = dataInputStream.readLine();
                             try {
                                 /*
                                  * Pattern.quote() returns a literal pattern String for the specified String. Therefore
@@ -636,14 +648,14 @@ public class CarbonEventSimulator implements EventSimulator {
                     log.error("Exception occurred while reading the data file", e);
                 } finally {
                     try {
-                        if (fis != null) {
-                            fis.close();
+                        if (fileInputStream != null) {
+                            fileInputStream.close();
                         }
-                        if (bis != null) {
-                            bis.close();
+                        if (bufferedInputStream != null) {
+                            bufferedInputStream.close();
                         }
-                        if (dis != null) {
-                            dis.close();
+                        if (dataInputStream != null) {
+                            dataInputStream.close();
                         }
                     } catch (IOException ex) {
                         log.error("Exception occurred when closing the file stream of the data file", ex);
