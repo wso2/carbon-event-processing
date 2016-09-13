@@ -53,6 +53,7 @@ import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
+import java.io.Closeable;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -645,21 +646,9 @@ public class CarbonEventSimulator implements EventSimulator {
                     }
 
                 } catch (IOException e) {
-                    log.error("Exception occurred while reading the data file", e);
+                    log.error("Exception occurred while reading the data file: " + path, e);
                 } finally {
-                    try {
-                        if (fileInputStream != null) {
-                            fileInputStream.close();
-                        }
-                        if (bufferedInputStream != null) {
-                            bufferedInputStream.close();
-                        }
-                        if (dataInputStream != null) {
-                            dataInputStream.close();
-                        }
-                    } catch (IOException ex) {
-                        log.error("Exception occurred when closing the file stream of the data file", ex);
-                    }
+                    closedQuietly(path, dataInputStream, bufferedInputStream, fileInputStream);
                 }
             } finally {
                 PrivilegedCarbonContext.endTenantFlow();
@@ -669,6 +658,21 @@ public class CarbonEventSimulator implements EventSimulator {
                     if (csvFileInfo != null) {
                         csvFileInfo.setStatus(CSVFileInfo.Status.STOPPED);
                     }
+                }
+            }
+        }
+
+        private void closedQuietly(String closingFile, Closeable... closeables) {
+            if (closeables == null) {
+                return;
+            }
+            for (Closeable closeable : closeables) {
+                try {
+                    if (closeable != null) {
+                        closeable.close();
+                    }
+                } catch (IOException e) {
+                    log.error("Exception occurred while closing the stream related to data file: " + closingFile, e);
                 }
             }
         }
