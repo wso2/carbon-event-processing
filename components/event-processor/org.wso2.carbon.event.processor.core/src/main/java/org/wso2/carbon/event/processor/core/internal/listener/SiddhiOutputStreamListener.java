@@ -36,6 +36,7 @@ import java.util.Arrays;
 public class SiddhiOutputStreamListener extends StreamCallback implements EventProducer {
     protected final String siddhiStreamName;
     protected final int tenantId;
+    protected final String tenantDomain;
     protected final boolean traceEnabled;
     protected final boolean statisticsEnabled;
     private final String streamId;
@@ -53,6 +54,7 @@ public class SiddhiOutputStreamListener extends StreamCallback implements EventP
             throws EventStreamConfigurationException {
         this.streamId = streamId;
         this.tenantId = tenantId;
+        this.tenantDomain = PrivilegedCarbonContext.getThreadLocalCarbonContext().getTenantDomain();
         this.streamDefinition = EventProcessorValueHolder.getEventStreamService().getStreamDefinition(streamId);
         this.metaAttributeCount = streamDefinition.getMetaData() != null ? streamDefinition.getMetaData().size() : 0;
         this.correlationAttributeCount = streamDefinition.getCorrelationData() != null ? streamDefinition.getCorrelationData().size() : 0;
@@ -90,6 +92,7 @@ public class SiddhiOutputStreamListener extends StreamCallback implements EventP
             PrivilegedCarbonContext.startTenantFlow();
             PrivilegedCarbonContext privilegedCarbonContext = PrivilegedCarbonContext.getThreadLocalCarbonContext();
             privilegedCarbonContext.setTenantId(this.tenantId);
+            privilegedCarbonContext.setTenantDomain(this.tenantDomain);
             if (traceEnabled) {
                 trace.info(tracerPrefix + Arrays.deepToString(events));
             }
@@ -116,6 +119,7 @@ public class SiddhiOutputStreamListener extends StreamCallback implements EventP
             PrivilegedCarbonContext.startTenantFlow();
             PrivilegedCarbonContext privilegedCarbonContext = PrivilegedCarbonContext.getThreadLocalCarbonContext();
             privilegedCarbonContext.setTenantId(this.tenantId);
+            privilegedCarbonContext.setTenantDomain(this.tenantDomain);
             if (traceEnabled) {
                 trace.info(tracerPrefix + event);
             }
