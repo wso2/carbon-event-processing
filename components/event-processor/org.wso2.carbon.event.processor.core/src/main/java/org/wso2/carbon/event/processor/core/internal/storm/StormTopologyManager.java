@@ -16,14 +16,7 @@
 package org.wso2.carbon.event.processor.core.internal.storm;
 
 import backtype.storm.StormSubmitter;
-import backtype.storm.generated.AlreadyAliveException;
-import backtype.storm.generated.InvalidTopologyException;
-import backtype.storm.generated.KillOptions;
-import backtype.storm.generated.Nimbus;
-import backtype.storm.generated.NotAliveException;
-import backtype.storm.generated.StormTopology;
-import backtype.storm.generated.TopologyInitialStatus;
-import backtype.storm.generated.TopologySummary;
+import backtype.storm.generated.*;
 import backtype.storm.topology.TopologyBuilder;
 import backtype.storm.utils.NimbusClient;
 import backtype.storm.utils.Utils;
@@ -55,11 +48,7 @@ import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.InputStream;
-import java.io.StringWriter;
+import java.io.*;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -206,7 +195,9 @@ public class StormTopologyManager {
                             Nimbus.Client client = NimbusClient.getConfiguredClient(stormConfig).getClient();
                             client.killTopologyWithOpts(topologyName, options);
                             waitForTopologyToBeRemoved(jobPrefix);
-                        } catch (TException e) {
+                        } catch (NotAliveException e) {
+                            log.info(jobPrefix + "Topology '" + topologyName + "' is not alive to kill");
+                        } catch (TException  e) {
                             log.error(jobPrefix + "Error connecting to storm when trying to kill topology '" + topologyName + "'", e);
                             log.info(jobPrefix + "Retrying to kill topology '" + topologyName + "' in " + retryInterval + " ms");
                             try {
@@ -214,8 +205,6 @@ public class StormTopologyManager {
                             } catch (InterruptedException e1) {
                                 //ignore
                             }
-                        } catch (NotAliveException e) {
-                            log.info(jobPrefix + "Topology '" + topologyName + "' is not alive to kill");
                         }
                     } else {
                         updateExecutionPlanStatusInStorm(topologyName, DistributedModeConstants.TopologyState.DEPLOYING);
@@ -235,6 +224,11 @@ public class StormTopologyManager {
                                     return;
                                 }
                             }
+                        } catch (InvalidTopologyException e) {
+                            log.error(jobPrefix + "Cannot deploy, Invalid Storm topology '" + topologyName + "' found.", e);
+                            return;
+                        } catch (AlreadyAliveException e) {
+                            log.warn(jobPrefix + "Topology '" + topologyName + "' already existing. Trying to kill and re-submit", e);
                         } catch (TException e) {
                             log.error(jobPrefix + "Error connecting to storm when trying to submit topology '" + topologyName + "'", e);
                             log.info(jobPrefix + "Retrying to submit topology '" + topologyName + "' in " + retryInterval + " ms");
@@ -243,11 +237,6 @@ public class StormTopologyManager {
                             } catch (InterruptedException e1) {
                                 //ignore
                             }
-                        } catch (InvalidTopologyException e) {
-                            log.error(jobPrefix + "Cannot deploy, Invalid Storm topology '" + topologyName + "' found.", e);
-                            return;
-                        } catch (AlreadyAliveException e) {
-                            log.warn(jobPrefix + "Topology '" + topologyName + "' already existing. Trying to kill and re-submit", e);
                         }
                     }
                 } catch (ServerUnavailableException e) {

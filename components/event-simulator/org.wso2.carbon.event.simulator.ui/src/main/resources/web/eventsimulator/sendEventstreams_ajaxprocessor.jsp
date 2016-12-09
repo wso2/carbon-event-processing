@@ -18,7 +18,7 @@
 <%@ page import="org.wso2.carbon.event.simulator.stub.EventSimulatorAdminServiceStub" %>
 <%@ page import="org.wso2.carbon.event.simulator.stub.types.EventDto" %>
 <%@ page import="org.wso2.carbon.event.simulator.ui.EventSimulatorUIUtils" %>
-
+<%@ page import="org.owasp.encoder.Encode" %>
 <%
 
     String msg = null;
@@ -40,7 +40,7 @@
 
         for (int i = 0; i < attributes.length(); i++) {
 
-            attributeValues[i]=attributes.getJSONObject(i).getString("value");
+            attributeValues[i]=Encode.forJavaScriptBlock(attributes.getJSONObject(i).getString("value"));
 
         }
 
