@@ -68,10 +68,6 @@ public class ExecutionPlanSubscriber extends StreamFunctionProcessor {
      */
     @Override
     protected List<Attribute> init(AbstractDefinition inputDefinition, ExpressionExecutor[] attributeExpressionExecutors, ExecutionPlanContext executionPlanContext, boolean outputExpectsExpiredEvents) {
-        if (!initialized) {
-            upCount();
-            this.initialized = true;
-        }
         return new ArrayList<Attribute>();
     }
 
@@ -88,7 +84,10 @@ public class ExecutionPlanSubscriber extends StreamFunctionProcessor {
      */
     @Override
     public void start() {
-
+        if (!initialized) {
+            upCount();
+            this.initialized = true;
+        }
     }
 
     /**
