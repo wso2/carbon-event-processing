@@ -857,7 +857,7 @@
         <carbon.p2.plugin.version>1.5.4</carbon.p2.plugin.version>
 
         <carbon.event.processing.version>2.1.6-SNAPSHOT</carbon.event.processing.version>
-        <carbon.analytics.common.version>5.1.6</carbon.analytics.common.version>
+        <carbon.analytics.common.version>5.1.7-SNAPSHOT</carbon.analytics.common.version>
         <carbon.analytics.common.range>[5.0.7,6.0.0)</carbon.analytics.common.range>
         <siddhi.version>3.1.2</siddhi.version>
         <carbon.metrics.version>1.2.2</carbon.metrics.version>
@@ -886,7 +886,7 @@
         <geocoder.version>0.16_1</geocoder.version>
         <commons-lang3.version>3.3.2</commons-lang3.version>
         <json-simple.version>1.1.1</json-simple.version>
-        <json.version>2.0.0.wso2v1</json.version>
+        <json.version>3.0.0.wso2v1</json.version>
         <hadoop.common.version>2.6.0</hadoop.common.version>
         <jama.version>1.0.3</jama.version>
         <jdbc-pool.version>7.0.34.wso2v2</jdbc-pool.version>
