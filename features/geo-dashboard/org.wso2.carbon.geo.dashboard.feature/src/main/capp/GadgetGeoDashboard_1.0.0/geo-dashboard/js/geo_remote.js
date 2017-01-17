@@ -549,7 +549,7 @@ function setProximityAlert() {
 
         var data = {
             'parseData': JSON.stringify({'proximityTime': proximityTime, 'proximityDistance': proximityDistance}),
-            'executionPlan': 'proximity',
+            'executionPlan': 'Proximity',
             'customName': null,
             'cepAction': 'edit'
         };
