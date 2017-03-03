@@ -125,11 +125,9 @@ function sendConfiguration(form){
 
     jQuery.ajax({
         type: "POST",
-        url: "../eventsimulator/sendConfigValues_ajaxprocessor.jsp?jsonData=" + jsonString + "",
+        url: "../eventsimulator/sendConfigValues_ajaxprocessor.jsp",
         beforeSend: function(xhr){xhr.setRequestHeader(token_name, token_value);},
-        data: {},
-        contentType: "application/json; charset=utf-8",
-        dataType: "text",
+        data: {jsonData : jsonString},
         async: false,
 
         success:function(msg){
