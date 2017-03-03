@@ -58,9 +58,9 @@ function showEventProperties() {
                     var correlationData = new Array();
                     var payloadData = new Array();
 
-                    metaData = jsonObject.localMetaAttributes;
-                    correlationData = jsonObject.localCorrelationAttributes;
-                    payloadData = jsonObject.localPayloadAttributes;
+                    metaData = jsonObject.localMetaAttributes || [];
+                    correlationData = jsonObject.localCorrelationAttributes || [];
+                    payloadData = jsonObject.localPayloadAttributes || [];
 
 
                     var tableRow1 = eventStreamTable.insertRow(eventStreamTable.rows.length);
@@ -209,9 +209,9 @@ function showEventPropertiesForSimulator() {
                     var correlationData = new Array();
                     var payloadData = new Array();
 
-                    metaData = jsonObject.localMetaAttributes;
-                    correlationData = jsonObject.localCorrelationAttributes;
-                    payloadData = jsonObject.localPayloadAttributes;
+                    metaData = jsonObject.localMetaAttributes || [];
+                    correlationData = jsonObject.localCorrelationAttributes || [];
+                    payloadData = jsonObject.localPayloadAttributes || [];
 
 
                     var tableRow1 = eventStreamTable.insertRow(eventStreamTable.rows.length);
@@ -366,7 +366,8 @@ function sendEvent(form) {
         jQuery.ajax({
             type: "POST",
             beforeSend: function(xhr){xhr.setRequestHeader(token_name, token_value);},
-            url: "../eventsimulator/sendEventstreams_ajaxprocessor.jsp?jsonData=" + jsonString + "",
+            url: "../eventsimulator/sendEventstreams_ajaxprocessor.jsp",
+            data : {jsonData : jsonString},
             async: false,
 
             success: function (msg) {
