@@ -78,85 +78,65 @@ function showEventProperties() {
 
                     var streamAttributeTable = document.getElementById("streamAttributeTable");
 
-
-                    var index = 0;
-                    if (metaData[0] != null) {
-
-                        var tableRow4 = streamAttributeTable.insertRow(streamAttributeTable.rows.length);
-
-                        tableRow4.innerHTML = '<tr><td colspan="2"><h6>Meta Attributes</h6></td></tr>';
-                    }
-
-                    for (var i = 0; i < metaData.length; i++) {
-                        if (metaData[i] != null) {
-
-                            var tableRow = streamAttributeTable.insertRow(streamAttributeTable.rows.length);
-
-                            var attributeType = metaData[i].localAttributeType;
-                            var attributeName = metaData[i].localAttributeName;
-
-                            var stringNameTyp = attributeName + " (" + attributeType.toLowerCase() + ")";
-                            tableRow.innerHTML = '<tr><td class="leftCol-med">' + attributeName +
-                            '(<span style="color: grey"><i>' + attributeType.toLowerCase() + '</i></span>) ' +
-                            '<span class="required">*</span> </td><td><input type="text" name="' +
-                            metaData[i].localAttributeName + '" id="' + index + '" attributeType="' +
-                            metaData[i].localAttributeType + '" class="initE" style="width:75%"> </td></tr>';
-                            index++;
+                    if(null != eventName) {
+                        var index = 0;
+                        if (metaData[0] != null) {
+                            var tableRow4 = streamAttributeTable.insertRow(streamAttributeTable.rows.length);
+                            tableRow4.innerHTML = '<tr><td colspan="2"><h6>Meta Attributes</h6></td></tr>';
                         }
-                    }
-
-                    if (correlationData[0] != null) {
-
-                        var tableRow5 = streamAttributeTable.insertRow(streamAttributeTable.rows.length);
-
-                        tableRow5.innerHTML = '<tr><td colspan="2"><h6>Correlation Attributes</h6></td></tr>';
-                    }
-
-                    for (var j = 0; j < correlationData.length; j++) {
-                        if (correlationData[j] != null) {
-
-                            var tableRow = streamAttributeTable.insertRow(streamAttributeTable.rows.length);
-
-                            var attributeType = correlationData[j].localAttributeType;
-                            var attributeName = correlationData[j].localAttributeName;
-                            var stringNameTyp = attributeName + " (" + attributeType.toLowerCase() + ")";
-                            tableRow.innerHTML = '<tr><td class="leftCol-med">' + attributeName +
-                            '(<span style="color: grey"><i>' + attributeType.toLowerCase() + '</i></span>) ' +
-                            '<span class="required">*</span> </td><td><input type="text" name="' +
-                            correlationData[j].localAttributeName + '" id="' + index + '" attributeType="' +
-                            correlationData[j].localAttributeType + '" class="initE" style="width:75%"> </td></tr>';
-                            index++;
-
+                        for (var i = 0; i < metaData.length; i++) {
+                            if (metaData[i] != null) {
+                                var tableRow = streamAttributeTable.insertRow(streamAttributeTable.rows.length);
+                                var attributeType = metaData[i].localAttributeType;
+                                var attributeName = metaData[i].localAttributeName;
+                                var stringNameTyp = attributeName + " (" + attributeType.toLowerCase() + ")";
+                                tableRow.innerHTML = '<tr><td class="leftCol-med">' + attributeName +
+                                    '(<span style="color: grey"><i>' + attributeType.toLowerCase() + '</i></span>) ' +
+                                    '<span class="required">*</span> </td><td><input type="text" name="' +
+                                    metaData[i].localAttributeName + '" id="' + index + '" attributeType="' +
+                                    metaData[i].localAttributeType + '" class="initE" style="width:75%"> </td></tr>';
+                                index++;
+                            }
                         }
-                    }
-
-                    if (payloadData[0] != null) {
-
-                        var tableRow6 = streamAttributeTable.insertRow(streamAttributeTable.rows.length);
-
-                        tableRow6.innerHTML = '<tr><td colspan="2"><h6>Payload Attributes</h6></td></tr>';
-                    }
-
-                    for (var k = 0; k < payloadData.length; k++) {
-                        if (payloadData[k] != null) {
-
-                            var tableRow = streamAttributeTable.insertRow(streamAttributeTable.rows.length);
-
-                            var attributeType = payloadData[k].localAttributeType;
-                            var attributeName = payloadData[k].localAttributeName;
-                            var stringNameTyp = attributeName + " (" + attributeType.toLowerCase() + ")";
-                            tableRow.innerHTML = '<tr><td class="leftCol-med">' + attributeName +
-                            '(<span style="color: grey"><i>' + attributeType.toLowerCase() +
-                            '</i></span>) <span class="required">*</span>  </td><td><input type="text" name="' +
-                            payloadData[k].localAttributeName + '" id="' + index + '" attributeType="' +
-                            payloadData[k].localAttributeType + '" class="initE" style="width:75%"> </td></tr>';
-                            index++;
+                        if (correlationData[0] != null) {
+                            var tableRow5 = streamAttributeTable.insertRow(streamAttributeTable.rows.length);
+                            tableRow5.innerHTML = '<tr><td colspan="2"><h6>Correlation Attributes</h6></td></tr>';
                         }
+                        for (var j = 0; j < correlationData.length; j++) {
+                            if (correlationData[j] != null) {
+                                var tableRow = streamAttributeTable.insertRow(streamAttributeTable.rows.length);
+                                var attributeType = correlationData[j].localAttributeType;
+                                var attributeName = correlationData[j].localAttributeName;
+                                var stringNameTyp = attributeName + " (" + attributeType.toLowerCase() + ")";
+                                tableRow.innerHTML = '<tr><td class="leftCol-med">' + attributeName +
+                                    '(<span style="color: grey"><i>' + attributeType.toLowerCase() + '</i></span>) ' +
+                                    '<span class="required">*</span> </td><td><input type="text" name="' +
+                                    correlationData[j].localAttributeName + '" id="' + index + '" attributeType="' +
+                                    correlationData[j].localAttributeType + '" class="initE" style="width:75%"> </td></tr>';
+                                index++;
+                            }
+                        }
+                        if (payloadData[0] != null) {
+                            var tableRow6 = streamAttributeTable.insertRow(streamAttributeTable.rows.length);
+                            tableRow6.innerHTML = '<tr><td colspan="2"><h6>Payload Attributes</h6></td></tr>';
+                        }
+                        for (var k = 0; k < payloadData.length; k++) {
+                            if (payloadData[k] != null) {
+                                var tableRow = streamAttributeTable.insertRow(streamAttributeTable.rows.length);
+                                var attributeType = payloadData[k].localAttributeType;
+                                var attributeName = payloadData[k].localAttributeName;
+                                var stringNameTyp = attributeName + " (" + attributeType.toLowerCase() + ")";
+                                tableRow.innerHTML = '<tr><td class="leftCol-med">' + attributeName +
+                                    '(<span style="color: grey"><i>' + attributeType.toLowerCase() +
+                                    '</i></span>) <span class="required">*</span>  </td><td><input type="text" name="' +
+                                    payloadData[k].localAttributeName + '" id="' + index + '" attributeType="' +
+                                    payloadData[k].localAttributeType + '" class="initE" style="width:75%"> </td></tr>';
+                                index++;
+                            }
+                        }    
                     }
-
                     var hiddenRow = streamAttributeTable.insertRow(streamAttributeTable.rows.length);
                     hiddenRow.innerHTML = '<tr><td colspan="2"><input type="hidden" id="formFields" value="' + index + '"> </td></tr>';
-
                 }
             }
         });
@@ -366,24 +346,17 @@ function sendEvent(form) {
         jQuery.ajax({
             type: "POST",
             beforeSend: function(xhr){xhr.setRequestHeader(token_name, token_value);},
-            url: "../eventsimulator/sendEventstreams_ajaxprocessor.jsp?jsonData=" + jsonString + "",
+            url: "../eventsimulator/sendEventstreams_ajaxprocessor.jsp",
+            data:'jsonData=' + jsonString,
             async: false,
-
             success: function (msg) {
-
-
                 if (msg != null && msg.trim() == "Success") {
                     CARBON.showInfoDialog("Events is successfully sent");
-
                 }
                 else {
                     CARBON.showErrorDialog("Error sending event -"+"\n\n" + msg);
-
                 }
             }
-
-
-
         });
 
     }
@@ -552,9 +525,7 @@ function saveDBConfiguration(databaseType){
                     eventStreamAndDataSourceColumnNamesAndTypes: jsonString
                 },
                 onSuccess: function (data) {
-
                     var result = JSON.parse(data.responseText.trim());
-
                     if (result.success.localeCompare("fail") == 0) {
                         CARBON.showErrorDialog(result.message);
                     }else {
