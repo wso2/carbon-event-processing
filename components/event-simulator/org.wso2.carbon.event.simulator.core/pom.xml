@@ -94,8 +94,7 @@
                         </Export-Package>
                         <Import-Package>
                             javax.xml.namespace; version=0.0.0,
-                            org.wso2.carbon.databridge.commons.*;version="${carbon.analytics.common.range}",
-                            *;resolution:=optional
+                            org.wso2.carbon.databridge.commons.*;version="${carbon.analytics.common.range}"
                         </Import-Package>
                         <Axis2Deployer>CSVFileDeployer</Axis2Deployer>
                         <DynamicImport-Package>*</DynamicImport-Package>
