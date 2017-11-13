@@ -23,12 +23,17 @@ import org.wso2.siddhi.core.util.persistence.PersistenceStore;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.Map;
+import java.util.Queue;
 
 public class FileSystemPersistenceStore implements PersistenceStore {
     private static final Log log = LogFactory.getLog(FileSystemPersistenceStore.class);
     private static final String folderSeparator = File.separator;
     private static String folder = "repository" + folderSeparator + "cep_persistence";
+	private boolean purgeOldSnapshots = false;
+	private Map<String, Queue<String>> lastTwoRevisionsMap = new HashMap<>();
 
     @Override
     public void save(String queryPlanIdentifier, String revision, byte[] bytes) {
@@ -41,11 +46,39 @@ public class FileSystemPersistenceStore implements PersistenceStore {
             if (log.isDebugEnabled()) {
                 log.debug("Saved revision " + revision + " of ExecutionPlan:" + queryPlanIdentifier + " to the file system.");
             }
+	        if (purgeOldSnapshots) {
+		        deleteOldRevisions(revision, queryPlanIdentifier);
+	        }
         } catch (IOException e) {
             log.error("Cannot load the revision " + revision + " of ExecutionPlan:" + queryPlanIdentifier +
                     "from file system.", e);
         }
     }
+
+	private void deleteOldRevisions(String currentRevision, String queryPlanIdentifier){
+		Queue<String> latestTwoRevisions = lastTwoRevisionsMap.get(queryPlanIdentifier);
+		if (latestTwoRevisions == null) {
+			latestTwoRevisions = new LinkedList<>();
+			lastTwoRevisionsMap.put(queryPlanIdentifier, latestTwoRevisions);
+		}
+
+		if (latestTwoRevisions.size() < 2) {
+			latestTwoRevisions.add(currentRevision);
+		} else {
+			String revisionToDelete = latestTwoRevisions.remove();
+			latestTwoRevisions.add(currentRevision);
+
+			File fileToDelete = new File(folder + folderSeparator + getTenantId() + folderSeparator + queryPlanIdentifier + folderSeparator + revisionToDelete);
+			boolean isDeleted = fileToDelete.delete();
+			if (log.isDebugEnabled()) {
+				if (isDeleted) {
+					log.debug("Failed to delete persistence file " + fileToDelete.getAbsolutePath());
+				} else {
+					log.debug("Persistence file deleted successfully " + fileToDelete.getAbsolutePath());
+				}
+			}
+		}
+	}
 
     @Override
     public byte[] load(String queryPlanIdentifier, String revision) {
@@ -94,6 +127,10 @@ public class FileSystemPersistenceStore implements PersistenceStore {
     @Override
     public void setProperties(Map properties) {
         folder = (String) properties.get("persistenceLocation");
+	    Object purgeOldSnapshotsPropertyValue = properties.get("purgeOldSnapshots");
+	    if (purgeOldSnapshotsPropertyValue != null && !purgeOldSnapshotsPropertyValue.toString().isEmpty()){
+		    purgeOldSnapshots = purgeOldSnapshotsPropertyValue.toString().equalsIgnoreCase("true");
+	    }
     }
 
 }
