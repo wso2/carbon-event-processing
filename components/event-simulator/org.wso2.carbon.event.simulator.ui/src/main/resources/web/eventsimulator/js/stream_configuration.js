@@ -127,7 +127,7 @@ function sendConfiguration(form){
         type: "POST",
         url: "../eventsimulator/sendConfigValues_ajaxprocessor.jsp",
         beforeSend: function(xhr){xhr.setRequestHeader(token_name, token_value);},
-        data:'jsonData=' + jsonString,
+        data: {jsonData : jsonString},
         async: false,
         success:function(msg){
             if (msg != null && msg.trim() == "Sent"){
