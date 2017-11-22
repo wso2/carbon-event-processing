@@ -129,7 +129,6 @@ function sendConfiguration(form){
         beforeSend: function(xhr){xhr.setRequestHeader(token_name, token_value);},
         data: {jsonData : jsonString},
         async: false,
-
         success:function(msg){
             if (msg != null && msg.trim() == "Sent"){
                 CARBON.showInfoDialog(" File-stream mapping saved successfully",function(){
