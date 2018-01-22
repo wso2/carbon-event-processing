@@ -93,6 +93,9 @@ public class NotifyAlert extends FunctionExecutor{
             if (informationBuffer.containsKey(id) && !informationBuffer.get(id).equals(currentInformation)) {
                 returnValue = true;
             }
+            if (!informationBuffer.containsKey(id)) {
+                returnValue = true;
+            }
             informationBuffer.put(id, currentInformation);
         }
         if (data.length == 3) {
