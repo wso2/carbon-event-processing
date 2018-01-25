@@ -16,6 +16,7 @@
 
 package org.wso2.carbon.event.processor.core.internal.storm.status.monitor;
 
+import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import com.hazelcast.core.HazelcastInstance;
 import com.hazelcast.core.IMap;
 import org.apache.commons.logging.Log;
@@ -42,7 +43,7 @@ public class StormStatusMonitor implements ConnectionCallback {
     private final String stormTopologyName;
     private final String executionPlanName;
     private final String executionPlanStatusHolderKey;
-    private final ExecutorService executorService = Executors.newSingleThreadExecutor();
+    private final ExecutorService executorService;
     private final int lockTimeout;
     private final String tenantDomain;
     private String hostIp = null;
@@ -56,6 +57,9 @@ public class StormStatusMonitor implements ConnectionCallback {
             throw new DeploymentStatusMonitorException("Couldn't initialize Distributed Deployment Status monitor as" +
                                                        " the hazelcast instance is null. Enable clustering and restart the server");
         }
+        executorService = Executors.newSingleThreadExecutor(new ThreadFactoryBuilder().
+                setNameFormat("Thread pool- component - StormStatusMonitor.executorService;tenantId - " +
+                        tenantId + ";executionPlanName - " + executionPlanName).build());
         tenantDomain = PrivilegedCarbonContext.getThreadLocalCarbonContext().getTenantDomain();
         connectedCepReceiversCount = new AtomicInteger(0);
         connectedPublisherBoltsCount = new AtomicInteger(0);
