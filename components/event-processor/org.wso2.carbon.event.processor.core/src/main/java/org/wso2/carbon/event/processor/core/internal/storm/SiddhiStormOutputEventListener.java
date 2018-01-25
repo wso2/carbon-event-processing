@@ -15,6 +15,7 @@
  */
 package org.wso2.carbon.event.processor.core.internal.storm;
 
+import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import org.apache.log4j.Logger;
 import org.apache.thrift.protocol.TBinaryProtocol;
 import org.apache.thrift.protocol.TProtocol;
@@ -57,7 +58,7 @@ public class SiddhiStormOutputEventListener implements StreamCallback {
     private HashMap<String, SiddhiOutputStreamListener> streamNameToOutputStreamListenerMap = new HashMap<>();
     private TCPEventServer tcpEventServer;
     private String logPrefix = "";
-    private ExecutorService executorService = Executors.newSingleThreadExecutor();
+    private ExecutorService executorService;
     private int heartbeatInterval;
     private ThroughputProbe inputThroughputProbe;
 
@@ -70,6 +71,9 @@ public class SiddhiStormOutputEventListener implements StreamCallback {
         this.stormDeploymentConfig = stormDeploymentConfig;
         this.heartbeatInterval = stormDeploymentConfig.getManagementHeartbeatInterval();
         this.connectionCallback = connectionCallback;
+        this.executorService = Executors.newSingleThreadExecutor(new ThreadFactoryBuilder().
+                setNameFormat("Thread pool- component - SiddhiStormOutputEventListener.executorService;tenantId - " +
+                tenantId + ";executionPlanName - " + executionPlanConfiguration.getName()).build());
         init();
     }
 

@@ -15,6 +15,7 @@
  */
 package org.wso2.carbon.event.processor.core.internal.storm;
 
+import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.wso2.carbon.databridge.commons.StreamDefinition;
@@ -42,7 +43,7 @@ public class SiddhiStormInputEventDispatcher extends AbstractSiddhiInputEventDis
 
     private org.wso2.siddhi.query.api.definition.StreamDefinition siddhiStreamDefinition;
     private String logPrefix;
-    private ExecutorService executorService = Executors.newSingleThreadExecutor();
+    private ExecutorService executorService;
     private AsyncEventPublisher asyncEventPublisher;
     private final ConnectionCallback connectionCallback;
 
@@ -53,6 +54,10 @@ public class SiddhiStormInputEventDispatcher extends AbstractSiddhiInputEventDis
         super(streamDefinition.getStreamId(), siddhiStreamId, executionPlanConfiguration, tenantId);
         this.stormDeploymentConfig = stormDeploymentConfig;
         this.connectionCallback = connectionCallback;
+        this.executorService = Executors.newSingleThreadExecutor(new ThreadFactoryBuilder().
+                setNameFormat("Thread pool- component - SiddhiStormInputEventDispatcher.executorService;" +
+                "tenantId - " + tenantId + ";executionPlanName - " + executionPlanConfiguration.getName() +
+                ";streamDefinition - " + streamDefinition.getStreamId()).build());
         init(streamDefinition, siddhiStreamId, executionPlanConfiguration);
     }
 

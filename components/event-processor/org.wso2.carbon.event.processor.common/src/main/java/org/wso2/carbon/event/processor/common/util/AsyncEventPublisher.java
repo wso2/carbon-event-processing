@@ -16,6 +16,7 @@
 
 package org.wso2.carbon.event.processor.common.util;
 
+import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import com.lmax.disruptor.EventFactory;
 import com.lmax.disruptor.EventHandler;
 import com.lmax.disruptor.RingBuffer;
@@ -408,7 +409,9 @@ class AsynchronousEventBuffer<Type> {
             public DataHolder newInstance() {
                 return new DataHolder();
             }
-        }, bufferSize, Executors.newSingleThreadExecutor());
+
+            }, bufferSize, Executors.newSingleThreadExecutor(new ThreadFactoryBuilder().
+                setNameFormat("Thread pool- component - AsynchronousEventBuffer").build()));
 
         this.ringBuffer = disruptor.getRingBuffer();
 

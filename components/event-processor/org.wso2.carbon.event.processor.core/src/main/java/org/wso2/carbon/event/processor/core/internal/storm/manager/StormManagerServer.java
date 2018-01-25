@@ -16,6 +16,7 @@
 
 package org.wso2.carbon.event.processor.core.internal.storm.manager;
 
+import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import com.hazelcast.core.HazelcastInstance;
 import com.hazelcast.core.ILock;
 import com.hazelcast.core.IMap;
@@ -61,7 +62,8 @@ public class StormManagerServer {
             thread.start();
 
             log.info("CEP Storm Management Thrift Server started on " + hostName + ":" + port);
-            executorService = new ScheduledThreadPoolExecutor(3);
+            executorService = new ScheduledThreadPoolExecutor(3,new ThreadFactoryBuilder().
+                    setNameFormat("Thread pool- component - StormManagerServer.executorService").build());
         } catch (TTransportException e) {
             log.error("Cannot start Storm Manager Server on " + hostName + ":" + port, e);
         }
