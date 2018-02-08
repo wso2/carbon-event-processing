@@ -74,26 +74,27 @@ public class EventFusionProcessor extends WindowProcessor {
     protected void process(ComplexEventChunk<StreamEvent> streamEventChunk, Processor nextProcessor,
                            StreamEventCloner streamEventCloner) {
         while (streamEventChunk.hasNext()) {
-            StreamEvent streamEvent = streamEventChunk.next();
-            String eventId = (String) streamEvent.getOutputData()[eventIdPosition];
-            if (eventsBuffer.containsKey(eventId)) {
-                eventsBuffer.get(eventId).add(streamEvent);
-                if (eventsBuffer.get(eventId).size() == getDeployedExecutionPlansCount()) {
-                    // Do the fusion here and return combined event.
-                    fuseEvent(streamEvent);
-                    eventsBuffer.remove(eventId);
+            if (getDeployedExecutionPlansCount() == 1) {
+                //Here we don't need to fuse(combine) multiple events
+                break;
+            } else {
+                StreamEvent streamEvent = streamEventChunk.next();
+                String eventId = (String) streamEvent.getOutputData()[eventIdPosition];
+                if (eventsBuffer.containsKey(eventId)) {
+                    eventsBuffer.get(eventId).add(streamEvent);
+                    if (eventsBuffer.get(eventId).size() == getDeployedExecutionPlansCount()) {
+                        // Do the fusion here and return combined event.
+                        fuseEvent(streamEvent);
+                        eventsBuffer.remove(eventId);
+                    } else {
+                        streamEventChunk.remove();
+                    }
                 } else {
+                    List<StreamEvent> buffer = new ArrayList<StreamEvent>();
+                    buffer.add(streamEvent);
+                    eventsBuffer.put(eventId, buffer);
                     streamEventChunk.remove();
                 }
-            } else if (getDeployedExecutionPlansCount().equals(1)) {
-                // Here we do not need to fuse(combine) multiple events.
-                // Since we don't get multiple events, just pass through.
-                nextProcessor.process(streamEventChunk);
-            } else {
-                List<StreamEvent> buffer = new ArrayList<StreamEvent>();
-                buffer.add(streamEvent);
-                eventsBuffer.put(eventId, buffer);
-                streamEventChunk.remove();
             }
         }
         nextProcessor.process(streamEventChunk);
@@ -104,7 +105,7 @@ public class EventFusionProcessor extends WindowProcessor {
      *
      * @return number of deployed execution plans.
      */
-    public Integer getDeployedExecutionPlansCount() {
+    public int getDeployedExecutionPlansCount() {
         return ExecutionPlansCount.getNumberOfExecutionPlans();
     }
 
