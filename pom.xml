@@ -759,7 +759,8 @@
                 <module>components/event-flow</module>
                 <module>components/event-processor</module>
                 <module>components/event-simulator</module>
-                <module>components/template-manager</module>
+                <module>components/siddhi-tryit</module>
+                <module>components/geo-dashboard</module>
             </modules>
         </profile>
     </profiles>
