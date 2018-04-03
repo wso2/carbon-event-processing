@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8" standalone="no"?>
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
   ~ Copyright (c) 2015, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
   ~
   ~ Licensed under the Apache License, Version 2.0 (the "License");
@@ -14,14 +13,12 @@
   ~ See the License for the specific language governing permissions and
   ~ limitations under the License.
   --><project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-
     <parent>
         <groupId>org.wso2.carbon.event-processing</groupId>
         <artifactId>event-processor</artifactId>
         <version>2.1.24-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
-
     <modelVersion>4.0.0</modelVersion>
     <artifactId>org.wso2.carbon.event.processor.admin</artifactId>
     <packaging>bundle</packaging>
@@ -29,7 +26,6 @@
     <description>This provides the CEP admin functionalities
     </description>
     <url>http://wso2.org</url>
-
     <dependencies>
         <dependency>
             <groupId>org.wso2.carbon</groupId>
@@ -52,10 +48,8 @@
             <artifactId>org.wso2.carbon.databridge.commons</artifactId>
         </dependency>
     </dependencies>
-
     <build>
         <plugins>
-
             <plugin>
                 <groupId>org.apache.felix</groupId>
                 <artifactId>maven-scr-plugin</artifactId>
@@ -69,16 +63,8 @@
                 </executions>
             </plugin>
             <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-surefire-plugin</artifactId>
-            <configuration>
-          <argLine>${argLine}</argLine>
-        </configuration>
-      </plugin>
-            <plugin>
                 <groupId>org.apache.felix</groupId>
                 <artifactId>maven-bundle-plugin</artifactId>
-
                 <extensions>true</extensions>
                 <configuration>
                     <instructions>
@@ -103,11 +89,14 @@
                     </instructions>
                 </configuration>
             </plugin>
-        <plugin>
-	<groupId>org.jacoco</groupId>
-	<artifactId>jacoco-maven-plugin</artifactId>
-</plugin>
-    </plugins>
+            <plugin>
+                <groupId>org.jacoco</groupId>
+                <artifactId>jacoco-maven-plugin</artifactId>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+            </plugin>
+        </plugins>
     </build>
-
 </project>

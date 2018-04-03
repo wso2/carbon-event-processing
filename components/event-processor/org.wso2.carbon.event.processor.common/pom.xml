@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
   ~ Copyright (c) 2015, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
   ~
   ~ Licensed under the Apache License, Version 2.0 (the "License");
@@ -14,19 +13,16 @@
   ~ See the License for the specific language governing permissions and
   ~ limitations under the License.
   --><project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-
     <parent>
         <groupId>org.wso2.carbon.event-processing</groupId>
         <artifactId>event-processor</artifactId>
         <version>2.1.24-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
-
     <modelVersion>4.0.0</modelVersion>
     <artifactId>org.wso2.carbon.event.processor.common</artifactId>
     <name>WSO2 Carbon - Storm Common Modules</name>
     <packaging>bundle</packaging>
-
     <dependencies>
         <dependency>
             <groupId>org.wso2.orbit.org.apache.storm</groupId>
@@ -54,8 +50,8 @@
             <version>${disruptor.orbit.version}</version>
         </dependency>
         <!--<dependency>-->
-            <!--<groupId>slf4j.wso2</groupId>-->
-            <!--<artifactId>slf4j</artifactId>-->
+        <!--<groupId>slf4j.wso2</groupId>-->
+        <!--<artifactId>slf4j</artifactId>-->
         <!--</dependency>-->
         <dependency>
             <groupId>libthrift.wso2</groupId>
@@ -82,10 +78,8 @@
             <artifactId>commons-lang</artifactId>
         </dependency>
     </dependencies>
-
     <build>
         <plugins>
-
             <plugin>
                 <groupId>org.apache.felix</groupId>
                 <artifactId>maven-scr-plugin</artifactId>
@@ -98,13 +92,6 @@
                     </execution>
                 </executions>
             </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-surefire-plugin</artifactId>
-            <configuration>
-          <argLine>${argLine}</argLine>
-        </configuration>
-      </plugin>
             <plugin>
                 <groupId>org.apache.felix</groupId>
                 <artifactId>maven-bundle-plugin</artifactId>
@@ -127,10 +114,14 @@
                     </instructions>
                 </configuration>
             </plugin>
-        <plugin>
-	<groupId>org.jacoco</groupId>
-	<artifactId>jacoco-maven-plugin</artifactId>
-</plugin>
-    </plugins>
+            <plugin>
+                <groupId>org.jacoco</groupId>
+                <artifactId>jacoco-maven-plugin</artifactId>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+            </plugin>
+        </plugins>
     </build>
 </project>
