@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?><!--
+<!--
   ~ Copyright (c) 2016, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
   ~
   ~ WSO2 Inc. licenses this file to you under the Apache License,
@@ -14,12 +14,15 @@
   ~ KIND, either express or implied.  See the License for the
   ~ specific language governing permissions and limitations
   ~ under the License.
-  --><project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  -->
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
     <parent>
         <groupId>org.wso2</groupId>
         <artifactId>wso2</artifactId>
         <version>1</version>
     </parent>
+
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.wso2.carbon.event-processing</groupId>
     <artifactId>carbon-event-processing</artifactId>
@@ -27,6 +30,7 @@
     <version>2.1.24-SNAPSHOT</version>
     <name>WSO2 Carbon - Carbon Event Processing Aggregator Module</name>
     <url>http://wso2.org</url>
+
     <modules>
         <module>service-stubs</module>
         <module>components/siddhi-metrics</module>
@@ -35,12 +39,14 @@
         <module>components/event-flow</module>
         <module>components/siddhi-tryit</module>
         <module>components/geo-dashboard</module>
+
         <module>features/event-processor</module>
         <module>features/event-simulator</module>
         <module>features/event-flow</module>
         <module>features/siddhi-tryit</module>
         <module>features/geo-dashboard</module>
     </modules>
+
     <dependencyManagement>
         <dependencies>
             <!--orbit dependencies start-->
@@ -99,6 +105,7 @@
                 <artifactId>hadoop-client</artifactId>
                 <version>${hadoop.client.version}</version>
             </dependency>
+
             <!--<dependency>-->
             <!--<groupId>org.wso2.carbon.ml</groupId>-->
             <!--<artifactId>org.wso2.carbon.ml.core</artifactId>-->
@@ -134,6 +141,7 @@
             <!--<artifactId>scala-reflect</artifactId>-->
             <!--<version>${scala.version}</version>-->
             <!--</dependency>-->
+
             <!--<dependency>-->
             <!--<groupId>org.hectorclient.wso2</groupId>-->
             <!--<artifactId>hector-core</artifactId>-->
@@ -150,6 +158,7 @@
                 <version>${guava.version}</version>
             </dependency>
             <!--orbit dependencies end-->
+
             <!--carbon-kernel dependencies start-->
             <dependency>
                 <groupId>org.wso2.carbon</groupId>
@@ -187,6 +196,7 @@
                 <version>${carbon.kernel.version}</version>
             </dependency>
             <!--carbon-kernel dependencies end-->
+
             <!--analytics-common dependencies start-->
             <dependency>
                 <groupId>org.wso2.carbon.analytics-common</groupId>
@@ -254,6 +264,7 @@
                 <version>${carbon.analytics.common.version}</version>
             </dependency>
             <!--analytics-common dependencies end-->
+
             <!--third party dependencies start-->
             <dependency>
                 <groupId>com.google.code.gson</groupId>
@@ -272,6 +283,7 @@
                 <version>${antlr.version}</version>
             </dependency>
             <!--third party dependencies end-->
+
             <!--carbon event processing dependencies start-->
             <dependency>
                 <groupId>org.wso2.carbon.event-processing</groupId>
@@ -390,6 +402,7 @@
                 <version>${encoder.wso2.version}</version>
             </dependency>
             <!--carbon event processing dependencies stop-->
+
             <!--siddhi dependencies start-->
             <dependency>
                 <groupId>org.wso2.siddhi</groupId>
@@ -406,24 +419,28 @@
                 <artifactId>siddhi-query-compiler</artifactId>
                 <version>${siddhi.version}</version>
             </dependency>
+
             <!-- Siddhi Math extension-->
             <dependency>
                 <groupId>org.wso2.siddhi</groupId>
                 <artifactId>siddhi-extension-math</artifactId>
                 <version>${siddhi.version}</version>
             </dependency>
+
             <!-- Siddhi Regex extension -->
             <dependency>
                 <groupId>org.wso2.siddhi</groupId>
                 <artifactId>siddhi-extension-regex</artifactId>
                 <version>${siddhi.version}</version>
             </dependency>
+
             <!-- Siddhi String extension -->
             <dependency>
                 <groupId>org.wso2.siddhi</groupId>
                 <artifactId>siddhi-extension-string</artifactId>
                 <version>${siddhi.version}</version>
             </dependency>
+
             <!-- Siddhi Event Table extension -->
             <dependency>
                 <groupId>org.wso2.siddhi</groupId>
@@ -445,6 +462,7 @@
                 <artifactId>mysql-connector-java</artifactId>
                 <version>${mysql.connector.version}</version>
             </dependency>
+
             <!-- Siddhi Time extension -->
             <dependency>
                 <groupId>org.wso2.siddhi</groupId>
@@ -456,6 +474,7 @@
                 <artifactId>commons-lang3</artifactId>
                 <version>${commons-lang3.version}</version>
             </dependency>
+
             <!-- Siddhi Time-Series extension -->
             <dependency>
                 <groupId>org.wso2.siddhi</groupId>
@@ -467,6 +486,7 @@
                 <artifactId>commons-math3</artifactId>
                 <version>${commons-math3.version}</version>
             </dependency>
+
             <!-- Siddhi Geo extension -->
             <dependency>
                 <groupId>org.wso2.siddhi</groupId>
@@ -478,12 +498,14 @@
                 <artifactId>org.apache.servicemix.bundles.geocoder-java</artifactId>
                 <version>${geocoder.version}</version>
             </dependency>
+
             <!-- Siddhi Kalman filter extension -->
             <dependency>
                 <groupId>org.wso2.siddhi</groupId>
                 <artifactId>siddhi-extension-kalman-filter</artifactId>
                 <version>${siddhi.version}</version>
             </dependency>
+
             <!-- Siddhi Map extension -->
             <dependency>
                 <groupId>org.wso2.siddhi</groupId>
@@ -495,12 +517,14 @@
                 <artifactId>json</artifactId>
                 <version>${json.version}</version>
             </dependency>
+
             <!-- Siddhi Recorder extension -->
             <dependency>
                 <groupId>org.wso2.siddhi</groupId>
                 <artifactId>siddhi-extension-reorder</artifactId>
                 <version>${siddhi.version}</version>
             </dependency>
+
             <!-- Siddhi Eval-Script extension -->
             <!-- TODO Need to Add other related dependencies -->
             <dependency>
@@ -523,6 +547,7 @@
                 <artifactId>scala-reflect</artifactId>
                 <version>${scala.version}</version>
             </dependency>
+
             <!-- Siddhi Markov models extension -->
             <dependency>
                 <groupId>org.wso2.siddhi</groupId>
@@ -530,6 +555,7 @@
                 <version>${siddhi.version}</version>
             </dependency>
             <!--siddhi dependencies stop-->
+
             <!--features start-->
             <dependency>
                 <groupId>org.wso2.carbon.event-processing</groupId>
@@ -588,6 +614,8 @@
             <!--features end-->
         </dependencies>
     </dependencyManagement>
+
+
     <build>
         <extensions>
             <extension>
@@ -749,13 +777,15 @@
             </plugins>
         </pluginManagement>
     </build>
+
     <profiles>
         <profile>
             <id>default</id>
             <activation>
                 <activeByDefault>true</activeByDefault>
             </activation>
-            <modules/>
+            <modules>
+	    </modules>
         </profile>
         <profile>
             <id>builder</id>
@@ -790,12 +820,14 @@
             </modules>
         </profile>
     </profiles>
+
     <scm>
         <url>https://github.com/wso2/carbon-event-processing.git</url>
         <developerConnection>scm:git:https://github.com/wso2/carbon-event-processing.git</developerConnection>
         <connection>scm:git:https://github.com/wso2/carbon-event-processing.git</connection>
         <tag>HEAD</tag>
     </scm>
+
     <pluginRepositories>
         <pluginRepository>
             <id>wso2.releases</id>
@@ -830,6 +862,7 @@
             </releases>
         </pluginRepository>
     </pluginRepositories>
+
     <repositories>
         <repository>
             <id>wso2-nexus</id>
@@ -841,6 +874,7 @@
                 <checksumPolicy>ignore</checksumPolicy>
             </releases>
         </repository>
+
         <repository>
             <id>wso2.releases</id>
             <name>WSO2 internal Repository</name>
@@ -851,6 +885,7 @@
                 <checksumPolicy>ignore</checksumPolicy>
             </releases>
         </repository>
+
         <repository>
             <id>wso2.snapshots</id>
             <name>Apache Snapshot Repository</name>
@@ -863,21 +898,27 @@
                 <enabled>false</enabled>
             </releases>
         </repository>
+
         <repository>
             <id>spring-milestones</id>
             <url>http://repo.springsource.org/libs-milestone/</url>
         </repository>
+
     </repositories>
+
     <properties>
         <!-- Carbon kernel version -->
         <carbon.kernel.version>4.4.26</carbon.kernel.version>
+
         <carbon.commons.version>4.6.21</carbon.commons.version>
         <carbon.p2.plugin.version>1.5.4</carbon.p2.plugin.version>
+
         <carbon.event.processing.version>2.1.24-SNAPSHOT</carbon.event.processing.version>
         <carbon.analytics.common.version>5.1.37</carbon.analytics.common.version>
         <carbon.analytics.common.range>[5.1.37, 6.0.0)</carbon.analytics.common.range>
         <siddhi.version>3.2.3</siddhi.version>
         <carbon.metrics.version>1.2.3</carbon.metrics.version>
+
         <storm.orbit.version>0.10.1.wso2v1</storm.orbit.version>
         <orbit.version.axiom>1.2.11.wso2v10</orbit.version.axiom>
         <imp.pkg.version.range.axiom>[1.2.11.wso2v10, 1.3.0)</imp.pkg.version.range.axiom>
@@ -907,11 +948,14 @@
         <jama.version>1.0.3</jama.version>
         <jdbc-pool.version>7.0.34.wso2v2</jdbc-pool.version>
         <mysql.connector.version>5.1.6</mysql.connector.version>
+
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.scm.id>my-scm-server</project.scm.id>
         <xerces.xercesImpl.version>2.11.0</xerces.xercesImpl.version>
+
         <carbon-p2-plugin.version>1.5.3</carbon-p2-plugin.version>
         <maven-antrun-plugin.version>1.7</maven-antrun-plugin.version>
         <encoder.wso2.version>1.2.0.wso2v1</encoder.wso2.version>
     </properties>
+
 </project>
