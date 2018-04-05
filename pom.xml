@@ -33,6 +33,7 @@
 
     <modules>
         <module>service-stubs</module>
+
         <module>components/siddhi-metrics</module>
         <module>components/event-processor</module>
         <module>components/event-simulator</module>
@@ -785,7 +786,7 @@
                 <activeByDefault>true</activeByDefault>
             </activation>
             <modules>
-	    </modules>
+	     </modules>
         </profile>
         <profile>
             <id>builder</id>
