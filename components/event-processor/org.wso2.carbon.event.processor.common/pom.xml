@@ -56,8 +56,8 @@
             <version>${disruptor.orbit.version}</version>
         </dependency>
         <!--<dependency>-->
-            <!--<groupId>slf4j.wso2</groupId>-->
-            <!--<artifactId>slf4j</artifactId>-->
+	     <!--<groupId>slf4j.wso2</groupId>-->
+	     <!--<artifactId>slf4j</artifactId>-->
         <!--</dependency>-->
         <dependency>
             <groupId>libthrift.wso2</groupId>
@@ -101,10 +101,6 @@
                 </executions>
             </plugin>
             <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-surefire-plugin</artifactId>
-            </plugin>
-            <plugin>
                 <groupId>org.apache.felix</groupId>
                 <artifactId>maven-bundle-plugin</artifactId>
                 <extensions>true</extensions>
@@ -125,6 +121,14 @@
                         <DynamicImport-Package>*</DynamicImport-Package>
                     </instructions>
                 </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.jacoco</groupId>
+                <artifactId>jacoco-maven-plugin</artifactId>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
             </plugin>
         </plugins>
     </build>
