@@ -1043,12 +1043,8 @@ public class CarbonEventSimulator implements EventSimulator {
                 try {
                     carbonDataSource = EventSimulatorValueHolder.getDataSourceService().getDataSource(dataSourceName);
                     datasource = (DataSource) carbonDataSource.getDSObject();
-                    Connection con;
-                    Statement stmt;
 
-                    try {
-                        con = datasource.getConnection();
-                        stmt = con.createStatement();
+                    try (Connection con = datasource.getConnection(); Statement stmt = con.createStatement()) {
                         resultSet = stmt.executeQuery(preparedSelectStatement);
 
                     } catch (SQLException e) {
