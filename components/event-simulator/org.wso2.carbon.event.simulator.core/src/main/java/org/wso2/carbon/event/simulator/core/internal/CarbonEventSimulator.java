@@ -302,7 +302,7 @@ public class CarbonEventSimulator implements EventSimulator {
             TransformerFactory transformerFactory = TransformerFactory.newInstance();
             transformerFactory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
             Transformer transformer = transformerFactory.newTransformer();
-            transformer.setOutputProperty(OutputKeys.INDENT, "yes");
+            transformer.setOutputProperty(OutputKeys.INDENT, EventSimulatorConstant.TRANSFORMER_OUTPUT_PROPERTY);
             DOMSource source = new DOMSource(doc);
 
             String configFileName = fileName.substring(0, fileName.length() - 4) + EventSimulatorConstant.CONFIGURATION_XML_SUFFIX;
@@ -803,7 +803,7 @@ public class CarbonEventSimulator implements EventSimulator {
             TransformerFactory transformerFactory = TransformerFactory.newInstance();
             transformerFactory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
             Transformer transformer = transformerFactory.newTransformer();
-            transformer.setOutputProperty(OutputKeys.INDENT, "yes");
+            transformer.setOutputProperty(OutputKeys.INDENT, EventSimulatorConstant.TRANSFORMER_OUTPUT_PROPERTY);
             DOMSource source = new DOMSource(doc);
 
             String absolutePath = path + File.separator + fileName + EventSimulatorConstant.DATA_SOURCE_CONFIGURATION_XML_SUFFIX;
