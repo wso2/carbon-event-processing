@@ -53,5 +53,6 @@ public class EventSimulatorConstant {
     public static final String DATA_SOURCE_NOT_FOUND_FOR_DATA_SOURCE_NAME = "There is no any data source found named: ";
     public static final String CONNECTION_STRING_NOT_FOUND="Exception when getting connection string for : ";
     public static final String JSON_EXCEPTION="Json Exception occurred";
+    public static final String TRANSFORMER_OUTPUT_PROPERTY = "yes";
 
 }

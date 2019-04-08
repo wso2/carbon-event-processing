@@ -45,9 +45,11 @@ import org.wso2.carbon.utils.CarbonUtils;
 
 import javax.activation.DataHandler;
 import javax.sql.DataSource;
+import javax.xml.XMLConstants;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
@@ -298,7 +300,9 @@ public class CarbonEventSimulator implements EventSimulator {
             rootElement.appendChild(eventSendingDelayElement);
 
             TransformerFactory transformerFactory = TransformerFactory.newInstance();
+            transformerFactory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
             Transformer transformer = transformerFactory.newTransformer();
+            transformer.setOutputProperty(OutputKeys.INDENT, EventSimulatorConstant.TRANSFORMER_OUTPUT_PROPERTY);
             DOMSource source = new DOMSource(doc);
 
             String configFileName = fileName.substring(0, fileName.length() - 4) + EventSimulatorConstant.CONFIGURATION_XML_SUFFIX;
@@ -797,7 +801,9 @@ public class CarbonEventSimulator implements EventSimulator {
             rootElement.appendChild(columnMappings);
 
             TransformerFactory transformerFactory = TransformerFactory.newInstance();
+            transformerFactory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
             Transformer transformer = transformerFactory.newTransformer();
+            transformer.setOutputProperty(OutputKeys.INDENT, EventSimulatorConstant.TRANSFORMER_OUTPUT_PROPERTY);
             DOMSource source = new DOMSource(doc);
 
             String absolutePath = path + File.separator + fileName + EventSimulatorConstant.DATA_SOURCE_CONFIGURATION_XML_SUFFIX;
