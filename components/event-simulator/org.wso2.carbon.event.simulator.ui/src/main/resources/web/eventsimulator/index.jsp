@@ -1,5 +1,6 @@
 <%@ page import="org.wso2.carbon.event.simulator.stub.EventSimulatorAdminServiceStub" %>
 <%@ page import="org.wso2.carbon.event.simulator.ui.EventSimulatorUIUtils" %>
+<%@ page import="org.owasp.encoder.Encode" %>
 <%--
   ~ Copyright (c) 2015, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
   ~
@@ -237,7 +238,7 @@
             %>
 
             <tr>
-                <td><strong><%=csvFileInfoDtosArray[k].getFileName()%>
+                <td><strong><%=Encode.forHtml(csvFileInfoDtosArray[k].getFileName())%>
                 </strong></td>
 
                 <% if (csvFileInfoDtosArray[k].getStreamID() != null) {%>
@@ -264,66 +265,66 @@
 
                 <td>
                     <%if (csvFileInfoDtosArray[k].getStreamID() != null && csvFileInfoDtosArray[k].getStatus().equalsIgnoreCase("STOPPED")) {%>
-                    <span id="fileSimulationPlay<%= csvFileInfoDtosArray[k].getFileName()%>" >
+                    <span id="fileSimulationPlay<%= Encode.forJavaScript(csvFileInfoDtosArray[k].getFileName())%>" >
                         <input type="button" value="Play" onclick="sendFileDetails(
-                                '<%=csvFileInfoDtosArray[k].getFileName()%>')">
+                                '<%=Encode.forJavaScript(csvFileInfoDtosArray[k].getFileName())%>')">
                     </span>
-                    <span id="fileSimulationPause<%= csvFileInfoDtosArray[k].getFileName()%>" style="display:none;">
+                    <span id="fileSimulationPause<%= Encode.forJavaScript(csvFileInfoDtosArray[k].getFileName())%>" style="display:none;">
                         <input type="button" value="Pause" onclick="pauseEventsViaFile(
-                                '<%=csvFileInfoDtosArray[k].getFileName()%>')">
+                                '<%=Encode.forJavaScript(csvFileInfoDtosArray[k].getFileName())%>')">
                     </span>
-                    <span id="fileSimulationResume<%= csvFileInfoDtosArray[k].getFileName()%>" style="display:none;">
+                    <span id="fileSimulationResume<%= Encode.forJavaScript(csvFileInfoDtosArray[k].getFileName())%>" style="display:none;">
                         <input type="button" value="Resume" onclick="resumeEventsViaFile(
-                                '<%=csvFileInfoDtosArray[k].getFileName()%>')">
+                                '<%=Encode.forJavaScript(csvFileInfoDtosArray[k].getFileName())%>')">
                     </span>
-                    <span id="fileSimulationStop<%= csvFileInfoDtosArray[k].getFileName()%>" style="display:none;">
+                    <span id="fileSimulationStop<%= Encode.forJavaScript(csvFileInfoDtosArray[k].getFileName())%>" style="display:none;">
                         <input type="button" value="Stop" onclick="stopEventsViaFile(
-                                '<%=csvFileInfoDtosArray[k].getFileName()%>')">
+                                '<%=Encode.forJavaScript(csvFileInfoDtosArray[k].getFileName())%>')">
                     </span>
                     <%}%>
 
                     <%if (csvFileInfoDtosArray[k].getStreamID() != null && (csvFileInfoDtosArray[k].getStatus().equalsIgnoreCase("STARTED") || csvFileInfoDtosArray[k].getStatus().equalsIgnoreCase("RESUMED"))) {%>
-                    <span id="fileSimulationPlay<%= csvFileInfoDtosArray[k].getFileName()%>" style="display:none;">
+                    <span id="fileSimulationPlay<%= Encode.forJavaScript(csvFileInfoDtosArray[k].getFileName())%>" style="display:none;">
                         <input type="button" value="Play" onclick="sendFileDetails(
-                                '<%=csvFileInfoDtosArray[k].getFileName()%>')">
+                                '<%=Encode.forJavaScript(csvFileInfoDtosArray[k].getFileName())%>')">
                     </span
                             >
-                    <span id="fileSimulationPause<%= csvFileInfoDtosArray[k].getFileName()%>" >
+                    <span id="fileSimulationPause<%= Encode.forJavaScript(csvFileInfoDtosArray[k].getFileName())%>" >
                         <input type="button" value="Pause" onclick="pauseEventsViaFile(
-                                '<%=csvFileInfoDtosArray[k].getFileName()%>')">
+                                '<%=Encode.forJavaScript(csvFileInfoDtosArray[k].getFileName())%>')">
                     </span>
-                    <span id="fileSimulationResume<%= csvFileInfoDtosArray[k].getFileName()%>" style="display:none;">
+                    <span id="fileSimulationResume<%= Encode.forJavaScript(csvFileInfoDtosArray[k].getFileName())%>" style="display:none;">
                         <input type="button" value="Resume" onclick="resumeEventsViaFile(
-                                '<%=csvFileInfoDtosArray[k].getFileName()%>')">
+                                '<%=Encode.forJavaScript(csvFileInfoDtosArray[k].getFileName())%>')">
                     </span>
-                    <span id="fileSimulationStop<%= csvFileInfoDtosArray[k].getFileName()%>" >
+                    <span id="fileSimulationStop<%= Encode.forJavaScript(csvFileInfoDtosArray[k].getFileName())%>" >
                         <input type="button" value="Stop" onclick="stopEventsViaFile(
-                                '<%=csvFileInfoDtosArray[k].getFileName()%>')">
+                                '<%=Encode.forJavaScript(csvFileInfoDtosArray[k].getFileName())%>')">
                     </span>
                     <%}%>
 
                     <%if (csvFileInfoDtosArray[k].getStreamID() != null && csvFileInfoDtosArray[k].getStatus().equalsIgnoreCase("PAUSED")) {%>
-                    <span id="fileSimulationPlay<%= csvFileInfoDtosArray[k].getFileName()%>" style="display:none;">
+                    <span id="fileSimulationPlay<%= Encode.forJavaScript(csvFileInfoDtosArray[k].getFileName())%>" style="display:none;">
                         <input type="button" value="Play" onclick="sendFileDetails(
-                                '<%=csvFileInfoDtosArray[k].getFileName()%>')">
+                                '<%=Encode.forJavaScript(csvFileInfoDtosArray[k].getFileName())%>')">
                     </span>
-                    <span id="fileSimulationPause<%= csvFileInfoDtosArray[k].getFileName()%>" style="display:none;">
+                    <span id="fileSimulationPause<%= Encode.forJavaScript(csvFileInfoDtosArray[k].getFileName())%>" style="display:none;">
                         <input type="button" value="Pause" onclick="pauseEventsViaFile(
-                                '<%=csvFileInfoDtosArray[k].getFileName()%>')">
+                                '<%=Encode.forJavaScript(csvFileInfoDtosArray[k].getFileName())%>')">
                     </span>
-                    <span id="fileSimulationResume<%= csvFileInfoDtosArray[k].getFileName()%>" >
+                    <span id="fileSimulationResume<%= Encode.forJavaScript(csvFileInfoDtosArray[k].getFileName())%>" >
                         <input type="button" value="Resume" onclick="resumeEventsViaFile(
-                                '<%=csvFileInfoDtosArray[k].getFileName()%>')">
+                                '<%=Encode.forJavaScript(csvFileInfoDtosArray[k].getFileName())%>')">
                     </span>
-                    <span id="fileSimulationStop<%= csvFileInfoDtosArray[k].getFileName()%>" >
+                    <span id="fileSimulationStop<%= Encode.forJavaScript(csvFileInfoDtosArray[k].getFileName())%>" >
                         <input type="button" value="Stop" onclick="stopEventsViaFile(
-                                '<%=csvFileInfoDtosArray[k].getFileName()%>')">
+                                '<%=Encode.forJavaScript(csvFileInfoDtosArray[k].getFileName())%>')">
                     </span>
                     <%}%>
                     <input type="button" value="Configure" onclick="createPopupStreamConfigUI(
-                            '<%=csvFileInfoDtosArray[k].getFileName()%>')">
+                            '<%=Encode.forJavaScript(csvFileInfoDtosArray[k].getFileName())%>')">
                     <input type="button" value="Delete" onclick="deleteFile(
-                            '<%=csvFileInfoDtosArray[k].getFileName()%>')">
+                            '<%=Encode.forJavaScript(csvFileInfoDtosArray[k].getFileName())%>')">
                 </td>
             </tr>
             <%
@@ -443,64 +444,67 @@
                 <td>
 
                     <%if (dataSourceTableAndStreamInfoDtoArray[k].getStatus().equalsIgnoreCase("STOPPED")) {%>
-                    <span id="dbSimulationPlay<%= dataSourceTableAndStreamInfoDtoArray[k].getFileName()%>" >
+                    <span id="dbSimulationPlay<%=
+                    Encode.forJavaScript(dataSourceTableAndStreamInfoDtoArray[k].getFileName())%>" >
                         <input type="button" value="Play" onclick="sendDBConfigFileNameToSimulate(
-                                '<%=dataSourceTableAndStreamInfoDtoArray[k].getFileName()%>')">
+                                '<%=Encode.forJavaScript(dataSourceTableAndStreamInfoDtoArray[k].getFileName())%>')">
                     </span>
-                    <span id="dbSimulationPause<%= dataSourceTableAndStreamInfoDtoArray[k].getFileName()%>" style="display:none;">
+                    <span id="dbSimulationPause<%=
+                    Encode.forJavaScript(dataSourceTableAndStreamInfoDtoArray[k].getFileName())%>"
+                          style="display:none;">
                         <input type="button" value="Pause" onclick="pauseDBConfigFileNameToSimulate(
-                                '<%=dataSourceTableAndStreamInfoDtoArray[k].getFileName()%>')">
+                                '<%=Encode.forJavaScript(dataSourceTableAndStreamInfoDtoArray[k].getFileName())%>')">
                     </span>
                     <span id="dbSimulationResume<%= dataSourceTableAndStreamInfoDtoArray[k].getFileName()%>" style="display:none;">
                         <input type="button" value="Resume" onclick="resumeDBConfigFileNameToSimulate(
-                                '<%=dataSourceTableAndStreamInfoDtoArray[k].getFileName()%>')">
+                                '<%=Encode.forJavaScript(dataSourceTableAndStreamInfoDtoArray[k].getFileName())%>')">
                     </span>
                     <span id="dbSimulationStop<%= dataSourceTableAndStreamInfoDtoArray[k].getFileName()%>" style="display:none;">
                         <input type="button" value="Stop" onclick="stopDBConfigFileNameToSimulate(
-                                '<%=dataSourceTableAndStreamInfoDtoArray[k].getFileName()%>')">
+                                '<%=Encode.forJavaScript(dataSourceTableAndStreamInfoDtoArray[k].getFileName())%>')">
                     </span>
                     <%}%>
 
                     <%if ((dataSourceTableAndStreamInfoDtoArray[k].getStatus().equalsIgnoreCase("STARTED") || dataSourceTableAndStreamInfoDtoArray[k].getStatus().equalsIgnoreCase("RESUMED"))) {%>
                     <span id="dbSimulationPlay<%= dataSourceTableAndStreamInfoDtoArray[k].getFileName()%>" style="display:none;">
                         <input type="button" value="Play" onclick="sendDBConfigFileNameToSimulate(
-                                '<%=dataSourceTableAndStreamInfoDtoArray[k].getFileName()%>')">
+                                '<%=Encode.forJavaScript(dataSourceTableAndStreamInfoDtoArray[k].getFileName())%>')">
                     </span
                             >
                     <span id="dbSimulationPause<%= dataSourceTableAndStreamInfoDtoArray[k].getFileName()%>" >
                         <input type="button" value="Pause" onclick="pauseDBConfigFileNameToSimulate(
-                                '<%=dataSourceTableAndStreamInfoDtoArray[k].getFileName()%>')">
+                                '<%=Encode.forJavaScript(dataSourceTableAndStreamInfoDtoArray[k].getFileName())%>')">
                     </span>
                     <span id="dbSimulationResume<%= dataSourceTableAndStreamInfoDtoArray[k].getFileName()%>" style="display:none;">
                         <input type="button" value="Resume" onclick="resumeDBConfigFileNameToSimulate(
-                                '<%=dataSourceTableAndStreamInfoDtoArray[k].getFileName()%>')">
+                                '<%=Encode.forJavaScript(dataSourceTableAndStreamInfoDtoArray[k].getFileName())%>')">
                     </span>
                     <span id="dbSimulationStop<%= dataSourceTableAndStreamInfoDtoArray[k].getFileName()%>" >
                         <input type="button" value="Stop" onclick="stopDBConfigFileNameToSimulate(
-                                '<%=dataSourceTableAndStreamInfoDtoArray[k].getFileName()%>')">
+                                '<%=Encode.forJavaScript(dataSourceTableAndStreamInfoDtoArray[k].getFileName())%>')">
                     </span>
                     <%}%>
 
                     <%if (dataSourceTableAndStreamInfoDtoArray[k].getStatus().equalsIgnoreCase("PAUSED")) {%>
                     <span id="dbSimulationPlay<%= dataSourceTableAndStreamInfoDtoArray[k].getFileName()%>" style="display:none;">
                         <input type="button" value="Play" onclick="sendDBConfigFileNameToSimulate(
-                                '<%=dataSourceTableAndStreamInfoDtoArray[k].getFileName()%>')">
+                                '<%=Encode.forJavaScript(dataSourceTableAndStreamInfoDtoArray[k].getFileName())%>')">
                     </span>
                     <span id="dbSimulationPause<%= dataSourceTableAndStreamInfoDtoArray[k].getFileName()%>" style="display:none;">
                         <input type="button" value="Pause" onclick="pauseDBConfigFileNameToSimulate(
-                                '<%=dataSourceTableAndStreamInfoDtoArray[k].getFileName()%>')">
+                                '<%=Encode.forJavaScript(dataSourceTableAndStreamInfoDtoArray[k].getFileName())%>')">
                     </span>
                     <span id="dbSimulationResume<%= dataSourceTableAndStreamInfoDtoArray[k].getFileName()%>" >
                         <input type="button" value="Resume" onclick="resumeDBConfigFileNameToSimulate(
-                                '<%=dataSourceTableAndStreamInfoDtoArray[k].getFileName()%>')">
+                                '<%=Encode.forJavaScript(dataSourceTableAndStreamInfoDtoArray[k].getFileName())%>')">
                     </span>
                     <span id="dbSimulationStop<%= dataSourceTableAndStreamInfoDtoArray[k].getFileName()%>" >
                         <input type="button" value="Stop" onclick="stopDBConfigFileNameToSimulate(
-                                '<%=dataSourceTableAndStreamInfoDtoArray[k].getFileName()%>')">
+                                '<%=Encode.forJavaScript(dataSourceTableAndStreamInfoDtoArray[k].getFileName())%>')">
                     </span>
                     <%}%>
                     <input type="button" value="Delete" onclick="deleteDBConfigFile(
-                            '<%=dataSourceTableAndStreamInfoDtoArray[k].getFileName()%>')">
+                            '<%=Encode.forJavaScript(dataSourceTableAndStreamInfoDtoArray[k].getFileName())%>')">
                 </td>
             </tr>
             <%
