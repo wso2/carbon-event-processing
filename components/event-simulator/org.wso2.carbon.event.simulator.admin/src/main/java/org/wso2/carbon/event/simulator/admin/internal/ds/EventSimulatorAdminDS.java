@@ -15,43 +15,59 @@
  */
 package org.wso2.carbon.event.simulator.admin.internal.ds;
 
-
 import org.osgi.service.component.ComponentContext;
 import org.wso2.carbon.event.simulator.admin.internal.util.EventSimulatorAdminvalueHolder;
 import org.wso2.carbon.event.simulator.core.EventSimulator;
 import org.wso2.carbon.ndatasource.core.DataSourceService;
+import org.osgi.service.component.annotations.Activate;
+import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Deactivate;
+import org.osgi.service.component.annotations.Reference;
+import org.osgi.service.component.annotations.ReferenceCardinality;
+import org.osgi.service.component.annotations.ReferencePolicy;
 
 /**
  * This class is used to get the Event Simulator service.
- *
- * @scr.component name="eventSimulatorAdmin.component" immediate="true"
- * @scr.reference name="eventSimulatorService.component"
- * interface="org.wso2.carbon.event.simulator.core.EventSimulator" cardinality="1..1"
- * policy="dynamic" bind="setEventSimulatorService" unbind="unsetEventSimulatorService"
- * @scr.reference name="org.wso2.carbon.ndatasource" interface="org.wso2.carbon.ndatasource.core.DataSourceService"
- * cardinality="1..1" policy="dynamic" bind="setDataSourceService" unbind="unsetDataSourceService"
  */
-
+@Component(
+        name = "eventSimulatorAdmin.component",
+        immediate = true)
 public class EventSimulatorAdminDS {
 
+    @Activate
     protected void activate(ComponentContext context) {
 
     }
 
+    @Reference(
+            name = "eventSimulatorService.component",
+            service = org.wso2.carbon.event.simulator.core.EventSimulator.class,
+            cardinality = ReferenceCardinality.MANDATORY,
+            policy = ReferencePolicy.DYNAMIC,
+            unbind = "unsetEventSimulatorService")
     protected void setEventSimulatorService(EventSimulator eventSimulatorService) {
+
         EventSimulatorAdminvalueHolder.setEventSimulator(eventSimulatorService);
     }
 
     protected void unsetEventSimulatorService(EventSimulator eventSimulatorService) {
+
         EventSimulatorAdminvalueHolder.setEventSimulator(null);
     }
 
-
+    @Reference(
+            name = "org.wso2.carbon.ndatasource",
+            service = org.wso2.carbon.ndatasource.core.DataSourceService.class,
+            cardinality = ReferenceCardinality.MANDATORY,
+            policy = ReferencePolicy.DYNAMIC,
+            unbind = "unsetDataSourceService")
     protected void setDataSourceService(DataSourceService dataSourceService) {
+
         EventSimulatorAdminvalueHolder.setDataSourceService(dataSourceService);
     }
 
     protected void unsetDataSourceService(DataSourceService dataSourceService) {
+
         EventSimulatorAdminvalueHolder.setDataSourceService(null);
     }
 }

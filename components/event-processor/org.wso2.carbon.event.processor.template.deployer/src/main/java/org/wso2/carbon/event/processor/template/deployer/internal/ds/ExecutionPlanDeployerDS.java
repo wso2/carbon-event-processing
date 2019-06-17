@@ -23,45 +23,60 @@ import org.wso2.carbon.event.processor.template.deployer.ExecutionPlanTemplateDe
 import org.wso2.carbon.event.processor.template.deployer.internal.ExecutionPlanDeployerValueHolder;
 import org.wso2.carbon.event.processor.core.EventProcessorService;
 import org.wso2.carbon.event.stream.core.EventStreamService;
+import org.osgi.service.component.annotations.Activate;
+import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Deactivate;
+import org.osgi.service.component.annotations.Reference;
+import org.osgi.service.component.annotations.ReferenceCardinality;
+import org.osgi.service.component.annotations.ReferencePolicy;
 
-
-/**
- * @scr.component name="TemplateDeployer.realtime.component" immediate="true"
- * @scr.reference name="eventStreamService.service"
- * interface="org.wso2.carbon.event.stream.core.EventStreamService" cardinality="1..1"
- * policy="dynamic" bind="setEventStreamService" unbind="unsetEventStreamService"
- * @scr.reference name="eventProcessorService.service"
- * interface="org.wso2.carbon.event.processor.core.EventProcessorService" cardinality="1..1"
- * policy="dynamic" bind="setEventProcessorService" unbind="unsetEventProcessorService"
- */
+@Component(
+        name = "TemplateDeployer.realtime.component",
+        immediate = true)
 public class ExecutionPlanDeployerDS {
 
     private static final Log log = LogFactory.getLog(ExecutionPlanDeployerDS.class);
 
+    @Activate
     protected void activate(ComponentContext context) {
 
         try {
             ExecutionPlanTemplateDeployer templateDeployer = new ExecutionPlanTemplateDeployer();
             context.getBundleContext().registerService(TemplateDeployer.class.getName(), templateDeployer, null);
-
         } catch (RuntimeException e) {
             log.error("Couldn't register ExecutionPlanTemplateDeployer service", e);
         }
     }
 
+    @Reference(
+            name = "eventStreamService.service",
+            service = org.wso2.carbon.event.stream.core.EventStreamService.class,
+            cardinality = ReferenceCardinality.MANDATORY,
+            policy = ReferencePolicy.DYNAMIC,
+            unbind = "unsetEventStreamService")
     protected void setEventStreamService(EventStreamService eventStreamService) {
+
         ExecutionPlanDeployerValueHolder.setEventStreamService(eventStreamService);
     }
 
     protected void unsetEventStreamService(EventStreamService eventStreamService) {
+
         ExecutionPlanDeployerValueHolder.setEventStreamService(null);
     }
 
+    @Reference(
+            name = "eventProcessorService.service",
+            service = org.wso2.carbon.event.processor.core.EventProcessorService.class,
+            cardinality = ReferenceCardinality.MANDATORY,
+            policy = ReferencePolicy.DYNAMIC,
+            unbind = "unsetEventProcessorService")
     public void setEventProcessorService(EventProcessorService eventProcessorService) {
+
         ExecutionPlanDeployerValueHolder.setEventProcessorService(eventProcessorService);
     }
 
     public void unsetEventProcessorService(EventProcessorService eventProcessorService) {
+
         ExecutionPlanDeployerValueHolder.setEventProcessorService(null);
     }
 }

@@ -18,18 +18,31 @@
 package org.wso2.carbon.siddhi.tryit.ui.internal.ds;
 
 import org.wso2.carbon.ndatasource.core.DataSourceService;
+import org.osgi.service.component.annotations.Activate;
+import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Deactivate;
+import org.osgi.service.component.annotations.Reference;
+import org.osgi.service.component.annotations.ReferenceCardinality;
+import org.osgi.service.component.annotations.ReferencePolicy;
 
-/**
- * @scr.component name="siddhiTryItService.component" immediate="true"
- * @scr.reference name="org.wso2.carbon.ndatasource" interface="org.wso2.carbon.ndatasource.core.DataSourceService"
- * cardinality="1..1" policy="dynamic" bind="setDataSourceService" unbind="unsetDataSourceService"
- */
+@Component(
+        name = "siddhiTryItService.component",
+        immediate = true)
 public class SiddhiTryItServiceDS {
-	protected void setDataSourceService(DataSourceService dataSourceService) {
-		SiddhiTryItValueHolder.setDataSourceService(dataSourceService);
-	}
 
-	protected void unsetDataSourceService(DataSourceService dataSourceService) {
-		SiddhiTryItValueHolder.setDataSourceService(null);
-	}
+    @Reference(
+            name = "org.wso2.carbon.ndatasource",
+            service = org.wso2.carbon.ndatasource.core.DataSourceService.class,
+            cardinality = ReferenceCardinality.MANDATORY,
+            policy = ReferencePolicy.DYNAMIC,
+            unbind = "unsetDataSourceService")
+    protected void setDataSourceService(DataSourceService dataSourceService) {
+
+        SiddhiTryItValueHolder.setDataSourceService(dataSourceService);
+    }
+
+    protected void unsetDataSourceService(DataSourceService dataSourceService) {
+
+        SiddhiTryItValueHolder.setDataSourceService(null);
+    }
 }
