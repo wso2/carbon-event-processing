@@ -43,62 +43,50 @@ import org.wso2.carbon.utils.ConfigurationContextService;
 import org.wso2.siddhi.core.SiddhiManager;
 import org.wso2.siddhi.core.config.StatisticsConfiguration;
 import org.wso2.siddhi.core.util.persistence.PersistenceStore;
+import org.osgi.service.component.annotations.Activate;
+import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Deactivate;
+import org.osgi.service.component.annotations.Reference;
+import org.osgi.service.component.annotations.ReferenceCardinality;
+import org.osgi.service.component.annotations.ReferencePolicy;
 
-/**
- * @scr.component name="eventProcessorService.component" immediate="true"
- * @scr.reference name="eventStreamManager.service"
- * interface="org.wso2.carbon.event.stream.core.EventStreamService" cardinality="1..1"
- * policy="dynamic" bind="setEventStreamService" unbind="unsetEventStreamService"
- * @scr.reference name="eventManagement.service"
- * interface="org.wso2.carbon.event.processor.manager.core.EventManagementService" cardinality="1..1"
- * policy="dynamic" bind="setEventManagementService" unbind="unsetEventManagementService"
- * @scr.reference name="hazelcast.instance.service"
- * interface="com.hazelcast.core.HazelcastInstance" cardinality="0..1"
- * policy="dynamic" bind="setHazelcastInstance" unbind="unsetHazelcastInstance"
- * @scr.reference name="user.realm.delegating" interface="org.wso2.carbon.user.core.UserRealm"
- * cardinality="1..1" policy="dynamic" bind="setUserRealm" unbind="unsetUserRealm"
- * @scr.reference name="org.wso2.carbon.ndatasource" interface="org.wso2.carbon.ndatasource.core.DataSourceService"
- * cardinality="1..1" policy="dynamic" bind="setDataSourceService" unbind="unsetDataSourceService"
- * @scr.reference name="server.configuration"
- * interface="org.wso2.carbon.base.api.ServerConfigurationService"
- * cardinality="1..1" policy="dynamic"  bind="setServerConfiguration" unbind="unsetServerConfiguration"
- * @scr.reference name="configuration.context"
- * interface="org.wso2.carbon.utils.ConfigurationContextService"
- * cardinality="0..1" policy="dynamic"  bind="setConfigurationContext" unbind="unsetConfigurationContext"
- */
+@Component(
+        name = "eventProcessorService.component",
+        immediate = true)
 public class EventProcessorServiceDS {
+
     private static final Log log = LogFactory.getLog(EventProcessorServiceDS.class);
 
+    @Activate
     protected void activate(ComponentContext context) {
+
         try {
             checkIsStatsEnabled();
             CarbonEventProcessorService carbonEventProcessorService = new CarbonEventProcessorService();
             EventProcessorValueHolder.registerEventProcessorService(carbonEventProcessorService);
-
-            CarbonEventProcessorManagementService carbonEventReceiverManagementService =
-                    new CarbonEventProcessorManagementService();
+            CarbonEventProcessorManagementService carbonEventReceiverManagementService = new
+                    CarbonEventProcessorManagementService();
             EventProcessorValueHolder.registerProcessorManagementService(carbonEventReceiverManagementService);
-
             DistributedConfiguration stormDeploymentConfig = carbonEventProcessorService.getManagementInfo()
                     .getDistributedConfiguration();
             if (stormDeploymentConfig != null) {
                 EventProcessorValueHolder.registerStormDeploymentConfiguration(stormDeploymentConfig);
                 EventProcessorValueHolder.registerStormTopologyManager(new StormTopologyManager());
                 if (stormDeploymentConfig.isManagerNode()) {
-                    StormManagerServer stormManagerServer = new StormManagerServer(
-                            stormDeploymentConfig.getLocalManagerConfig().getHostName(),
-                            stormDeploymentConfig.getLocalManagerConfig().getPort());
+                    StormManagerServer stormManagerServer = new StormManagerServer(stormDeploymentConfig
+                            .getLocalManagerConfig().getHostName(), stormDeploymentConfig.getLocalManagerConfig()
+                            .getPort());
                     EventProcessorValueHolder.registerStormManagerServer(stormManagerServer);
                 }
             }
-
-            context.getBundleContext().registerService(EventProcessorService.class.getName(), carbonEventProcessorService, null);
-            context.getBundleContext().registerService(EventStreamListener.class.getName(), new EventStreamListenerImpl(), null);
-
+            context.getBundleContext().registerService(EventProcessorService.class.getName(),
+                    carbonEventProcessorService, null);
+            context.getBundleContext().registerService(EventStreamListener.class.getName(), new
+                    EventStreamListenerImpl(), null);
             SiddhiManager siddhiManager = new SiddhiManager();
             EventProcessorValueHolder.registerSiddhiManager(siddhiManager);
-
-            PersistenceConfiguration persistConfig = carbonEventProcessorService.getManagementInfo().getPersistenceConfiguration();
+            PersistenceConfiguration persistConfig = carbonEventProcessorService.getManagementInfo()
+                    .getPersistenceConfiguration();
             if (persistConfig != null) {
                 Class clazz = Class.forName(persistConfig.getPersistenceClass());
                 PersistenceStore persistenceStore = (PersistenceStore) clazz.newInstance();
@@ -106,22 +94,20 @@ public class EventProcessorServiceDS {
                 persistenceStore.setProperties(persistConfig.getPropertiesMap());
                 EventProcessorValueHolder.registerPersistenceConfiguration(persistConfig);
             }
-
-            StatisticsConfiguration statisticsConfiguration = new StatisticsConfiguration(new SiddhiMetricsFactory(
-                    EventProcessorValueHolder.isGlobalStatisticsEnabled()));
+            StatisticsConfiguration statisticsConfiguration = new StatisticsConfiguration(new SiddhiMetricsFactory
+                    (EventProcessorValueHolder.isGlobalStatisticsEnabled()));
             statisticsConfiguration.setMatricPrefix(EventProcessorConstants.METRIC_PREFIX);
             siddhiManager.setStatisticsConfiguration(statisticsConfiguration);
-
             if (log.isDebugEnabled()) {
                 log.debug("Successfully deployed EventProcessorService");
             }
         } catch (Throwable e) {
             log.error("Could not create EventProcessorService: " + e.getMessage(), e);
         }
-
     }
 
     protected void checkIsStatsEnabled() {
+
         ServerConfiguration config = ServerConfiguration.getInstance();
         String confStatisticsReporterDisabled = config.getFirstProperty("StatisticsReporterDisabled");
         if (!"".equals(confStatisticsReporterDisabled)) {
@@ -129,13 +115,13 @@ public class EventProcessorServiceDS {
             if (disabled) {
                 return;
             }
-
         }
         EventProcessorValueHolder.setGlobalStatisticsEnabled(true);
     }
 
-
+    @Deactivate
     protected void deactivate(ComponentContext context) {
+
         try {
             StormManagerServer stormManagerServer = EventProcessorValueHolder.getStormManagerServer();
             if (stormManagerServer != null) {
@@ -147,26 +133,41 @@ public class EventProcessorServiceDS {
         EventProcessorValueHolder.getEventProcessorService().shutdown();
     }
 
+    @Reference(
+            name = "eventStreamManager.service",
+            service = org.wso2.carbon.event.stream.core.EventStreamService.class,
+            cardinality = ReferenceCardinality.MANDATORY,
+            policy = ReferencePolicy.DYNAMIC,
+            unbind = "unsetEventStreamService")
     protected void setEventStreamService(EventStreamService eventStreamService) {
+
         EventProcessorValueHolder.registerEventStreamService(eventStreamService);
     }
 
     protected void unsetEventStreamService(EventStreamService eventStreamService) {
+
         EventProcessorValueHolder.registerEventStreamService(null);
     }
 
+    @Reference(
+            name = "hazelcast.instance.service",
+            service = com.hazelcast.core.HazelcastInstance.class,
+            cardinality = ReferenceCardinality.OPTIONAL,
+            policy = ReferencePolicy.DYNAMIC,
+            unbind = "unsetHazelcastInstance")
     protected void setHazelcastInstance(HazelcastInstance hazelcastInstance) {
-        EventProcessorValueHolder.registerHazelcastInstance(hazelcastInstance);
 
+        EventProcessorValueHolder.registerHazelcastInstance(hazelcastInstance);
         StormManagerServer stormManagerServer = EventProcessorValueHolder.getStormManagerServer();
         if (stormManagerServer != null) {
             stormManagerServer.setHzaelCastInstance(hazelcastInstance);
             stormManagerServer.tryBecomeCoordinator();
         }
-
         hazelcastInstance.getCluster().addMembershipListener(new MembershipListener() {
+
             @Override
             public void memberAdded(MembershipEvent membershipEvent) {
+
                 StormManagerServer stormManagerServer = EventProcessorValueHolder.getStormManagerServer();
                 if (stormManagerServer != null) {
                     stormManagerServer.verifyState();
@@ -175,6 +176,7 @@ public class EventProcessorServiceDS {
 
             @Override
             public void memberRemoved(MembershipEvent membershipEvent) {
+
                 StormManagerServer stormManagerServer = EventProcessorValueHolder.getStormManagerServer();
                 if (stormManagerServer != null) {
                     stormManagerServer.tryBecomeCoordinator();
@@ -185,54 +187,93 @@ public class EventProcessorServiceDS {
             public void memberAttributeChanged(MemberAttributeEvent memberAttributeEvent) {
 
             }
-
         });
-
-        EventProcessorValueHolder.getEventProcessorService().notifyServiceAvailability(EventProcessorConstants.HAZELCAST_INSTANCE);
+        EventProcessorValueHolder.getEventProcessorService().notifyServiceAvailability(EventProcessorConstants
+                .HAZELCAST_INSTANCE);
     }
 
     protected void unsetHazelcastInstance(HazelcastInstance hazelcastInstance) {
+
         EventProcessorValueHolder.registerHazelcastInstance(null);
     }
 
+    @Reference(
+            name = "user.realm.delegating",
+            service = org.wso2.carbon.user.core.UserRealm.class,
+            cardinality = ReferenceCardinality.MANDATORY,
+            policy = ReferencePolicy.DYNAMIC,
+            unbind = "unsetUserRealm")
     protected void setUserRealm(UserRealm userRealm) {
+
         EventProcessorValueHolder.setUserRealm(userRealm);
     }
 
     protected void unsetUserRealm(UserRealm userRealm) {
+
         EventProcessorValueHolder.setUserRealm(null);
     }
 
+    @Reference(
+            name = "org.wso2.carbon.ndatasource",
+            service = org.wso2.carbon.ndatasource.core.DataSourceService.class,
+            cardinality = ReferenceCardinality.MANDATORY,
+            policy = ReferencePolicy.DYNAMIC,
+            unbind = "unsetDataSourceService")
     protected void setDataSourceService(DataSourceService dataSourceService) {
+
         EventProcessorValueHolder.setDataSourceService(dataSourceService);
     }
 
     protected void unsetDataSourceService(DataSourceService dataSourceService) {
+
         EventProcessorValueHolder.setDataSourceService(null);
     }
 
+    @Reference(
+            name = "server.configuration",
+            service = org.wso2.carbon.base.api.ServerConfigurationService.class,
+            cardinality = ReferenceCardinality.MANDATORY,
+            policy = ReferencePolicy.DYNAMIC,
+            unbind = "unsetServerConfiguration")
     protected void setServerConfiguration(ServerConfigurationService serverConfiguration) {
+
         EventProcessorValueHolder.setServerConfiguration(serverConfiguration);
     }
 
     protected void unsetServerConfiguration(ServerConfigurationService serverConfiguration) {
+
         EventProcessorValueHolder.setServerConfiguration(null);
     }
 
+    @Reference(
+            name = "configuration.context",
+            service = org.wso2.carbon.utils.ConfigurationContextService.class,
+            cardinality = ReferenceCardinality.OPTIONAL,
+            policy = ReferencePolicy.DYNAMIC,
+            unbind = "unsetConfigurationContext")
     protected void setConfigurationContext(ConfigurationContextService configurationContext) {
+
         EventProcessorValueHolder.setConfigurationContext(configurationContext);
     }
 
     protected void unsetConfigurationContext(ConfigurationContextService configurationContext) {
+
         EventProcessorValueHolder.setConfigurationContext(null);
     }
 
+    @Reference(
+            name = "eventManagement.service",
+            service = org.wso2.carbon.event.processor.manager.core.EventManagementService.class,
+            cardinality = ReferenceCardinality.MANDATORY,
+            policy = ReferencePolicy.DYNAMIC,
+            unbind = "unsetEventManagementService")
     protected void setEventManagementService(EventManagementService eventManagementService) {
-        EventProcessorValueHolder.registerEventManagementService(eventManagementService);
 
+        EventProcessorValueHolder.registerEventManagementService(eventManagementService);
     }
 
     protected void unsetEventManagementService(EventManagementService eventManagementService) {
+
         EventProcessorValueHolder.registerEventManagementService(null);
     }
 }
