@@ -15,6 +15,7 @@
   --%>
 <%@ page import="org.wso2.carbon.event.processor.stub.EventProcessorAdminServiceStub" %>
 <%@ page import="org.wso2.carbon.event.processor.ui.EventProcessorUIUtils" %>
+<%@ page import="org.owasp.encoder.Encode" %>
 
 <%
     EventProcessorAdminServiceStub eventProcessorAdminServiceStub = EventProcessorUIUtils.getEventProcessorAdminService(config, session, request);
@@ -31,4 +32,4 @@
         resultString = e.getMessage();
     }
 %>
-<%=resultString%>
+<%=Encode.forHtml(resultString)%>
