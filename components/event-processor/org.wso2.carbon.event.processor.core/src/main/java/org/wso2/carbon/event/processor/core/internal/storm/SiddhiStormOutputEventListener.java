@@ -16,7 +16,8 @@
 package org.wso2.carbon.event.processor.core.internal.storm;
 
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
-import org.apache.log4j.Logger;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.apache.thrift.protocol.TBinaryProtocol;
 import org.apache.thrift.protocol.TProtocol;
 import org.apache.thrift.transport.TSocket;
@@ -49,7 +50,7 @@ import java.util.concurrent.Executors;
  * the event to the relevant output adaptor for the stream.
  */
 public class SiddhiStormOutputEventListener implements StreamCallback {
-    private static final Logger log = Logger.getLogger(SiddhiStormOutputEventListener.class);
+    private static final Log log = LogFactory.getLog(SiddhiStormOutputEventListener.class);
     private ExecutionPlanConfiguration executionPlanConfiguration;
     private int listeningPort;
     private int tenantId;

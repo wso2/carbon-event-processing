@@ -1,6 +1,7 @@
 package org.wso2.carbon.event.processor.common.util;
 
-import org.apache.log4j.Logger;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import java.text.DecimalFormat;
 import java.util.Timer;
@@ -11,7 +12,7 @@ import java.util.TimerTask;
  * and the call  update() for each message.
  */
 public class ThroughputProbe extends TimerTask {
-    private static Logger log = Logger.getLogger(ThroughputProbe.class);
+    private static Log log = LogFactory.getLog(ThroughputProbe.class);
     private long count = 0;
     private int sampleCount = 0;
     private long samplingRateInSeconds;

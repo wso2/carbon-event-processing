@@ -5,7 +5,8 @@ import backtype.storm.task.TopologyContext;
 import backtype.storm.topology.OutputFieldsDeclarer;
 import backtype.storm.topology.base.BaseRichSpout;
 import backtype.storm.tuple.Fields;
-import org.apache.log4j.Logger;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.wso2.siddhi.core.ExecutionPlanRuntime;
 import org.wso2.siddhi.core.SiddhiManager;
 import org.wso2.siddhi.core.event.Event;
@@ -27,7 +28,7 @@ public class TriggerSpout extends BaseRichSpout {
     SpoutOutputCollector outputCollector;
     private transient SiddhiManager siddhiManager;
     private transient ExecutionPlanRuntime executionPlanRuntime;
-    private static transient Logger log = Logger.getLogger(TriggerSpout.class);
+    private static transient Log log = LogFactory.getLog(TriggerSpout.class);
     String logPrefix;
 
     public  TriggerSpout(String triggerId, String triggerDefinition, String executionPlanName, int tenantId){

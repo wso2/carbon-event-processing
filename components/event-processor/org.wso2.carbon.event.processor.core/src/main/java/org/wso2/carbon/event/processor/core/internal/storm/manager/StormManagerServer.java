@@ -20,7 +20,8 @@ import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import com.hazelcast.core.HazelcastInstance;
 import com.hazelcast.core.ILock;
 import com.hazelcast.core.IMap;
-import org.apache.log4j.Logger;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.apache.thrift.server.TServer;
 import org.apache.thrift.server.TThreadPoolServer;
 import org.apache.thrift.transport.TServerSocket;
@@ -39,7 +40,7 @@ public class StormManagerServer {
     private static final String STORM_HZ_MAP_ACTIVE_MANAGER_KEY = "storm.hazelcast.map.active.manager.key";
     private static final String STORM_ROLE_TO_MEMBERSHIP_HZ_MAP = "storm.role.membership.hazelcast.map";
 
-    private static Logger log = Logger.getLogger(StormManagerServer.class);
+    private static Log log = LogFactory.getLog(StormManagerServer.class);
     private TThreadPoolServer stormManagerServer;
     private StormManagerServiceImpl stormManagerService;
     private IMap<String, String> roleToMembershipMap;

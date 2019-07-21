@@ -21,7 +21,7 @@
     <parent>
         <groupId>org.wso2</groupId>
         <artifactId>wso2</artifactId>
-        <version>1</version>
+        <version>1.2</version>
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
@@ -178,9 +178,9 @@
                 <version>${carbon.kernel.version}</version>
             </dependency>
             <dependency>
-                <groupId>org.wso2.carbon</groupId>
-                <artifactId>org.wso2.carbon.logging</artifactId>
-                <version>${carbon.kernel.version}</version>
+                <groupId>org.ops4j.pax.logging</groupId>
+                <artifactId>pax-logging-api</artifactId>
+                <version>${pax.logging.api.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.wso2.carbon</groupId>
@@ -679,12 +679,22 @@
             </plugin-->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
+                <artifactId>maven-javadoc-plugin</artifactId>
                 <configuration>
-                    <encoding>UTF-8</encoding>
-                    <source>1.7</source>
-                    <target>1.7</target>
+                    <source>1.8</source>
                 </configuration>
+                <executions>
+                    <execution>
+                        <id>attach-javadocs</id>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                        <configuration>
+                            <!--This parameter disables doclint-->
+                            <doclint>none</doclint>
+                        </configuration>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
         <pluginManagement>
@@ -903,16 +913,16 @@
 
     <properties>
         <!-- Carbon kernel version -->
-        <carbon.kernel.version>4.5.0-m1</carbon.kernel.version>
+        <carbon.kernel.version>4.5.0-m3</carbon.kernel.version>
 
-        <carbon.commons.version>4.7.0</carbon.commons.version>
+        <carbon.commons.version>4.7.2</carbon.commons.version>
         <carbon.p2.plugin.version>1.5.4</carbon.p2.plugin.version>
 
         <carbon.event.processing.version>2.2.1-SNAPSHOT</carbon.event.processing.version>
-        <carbon.analytics.common.version>5.2.0</carbon.analytics.common.version>
+        <carbon.analytics.common.version>5.2.2</carbon.analytics.common.version>
         <carbon.analytics.common.range>[5.2.0, 6.0.0)</carbon.analytics.common.range>
         <siddhi.version>3.2.4</siddhi.version>
-        <carbon.metrics.version>1.3.0</carbon.metrics.version>
+        <carbon.metrics.version>1.3.2</carbon.metrics.version>
 
         <storm.orbit.version>0.10.1.wso2v1</storm.orbit.version>
         <orbit.version.axiom>1.2.11-wso2v16</orbit.version.axiom>
@@ -953,6 +963,8 @@
         <encoder.wso2.version>1.2.0.wso2v1</encoder.wso2.version>
         <apache.felix.scr.ds.annotations.version>1.2.4</apache.felix.scr.ds.annotations.version>
         <maven.scr.plugin.version>1.26.0</maven.scr.plugin.version>
+        <pax.logging.api.version>1.10.1</pax.logging.api.version>
+        <import.package.version.commons.logging>[1.2.0,2.0.0)</import.package.version.commons.logging>
     </properties>
 
 </project>

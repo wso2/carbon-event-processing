@@ -22,7 +22,8 @@ import backtype.storm.topology.base.BaseBasicBolt;
 import backtype.storm.tuple.Fields;
 import backtype.storm.tuple.Tuple;
 import org.apache.commons.lang.ArrayUtils;
-import org.apache.log4j.Logger;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.wso2.carbon.event.processor.common.util.ThroughputProbe;
 import org.wso2.carbon.event.processor.manager.commons.utils.Utils;
 import org.wso2.siddhi.core.ExecutionPlanRuntime;
@@ -45,7 +46,7 @@ import java.util.Map;
 
 public class SiddhiBolt extends BaseBasicBolt {
     private final String name;
-    private transient Logger log = Logger.getLogger(SiddhiBolt.class);
+    private transient Log log = LogFactory.getLog(SiddhiBolt.class);
     private transient SiddhiManager siddhiManager;
 
     /**
@@ -90,7 +91,7 @@ public class SiddhiBolt extends BaseBasicBolt {
      * Bolt get saved and reloaded, this to redo the configurations.
      */
     private void init() {
-        log = Logger.getLogger(SiddhiBolt.class);
+        log = LogFactory.getLog(SiddhiBolt.class);
 
         inputThroughputProbe = new ThroughputProbe(logPrefix + "-IN", 10);
         emitThroughputProbe = new ThroughputProbe(logPrefix + " -EMIT", 10);

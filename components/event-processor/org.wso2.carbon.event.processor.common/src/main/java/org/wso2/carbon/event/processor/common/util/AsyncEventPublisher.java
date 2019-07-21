@@ -21,7 +21,8 @@ import com.lmax.disruptor.EventFactory;
 import com.lmax.disruptor.EventHandler;
 import com.lmax.disruptor.RingBuffer;
 import com.lmax.disruptor.dsl.Disruptor;
-import org.apache.log4j.Logger;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.apache.thrift.TException;
 import org.apache.thrift.protocol.TBinaryProtocol;
 import org.apache.thrift.protocol.TProtocol;
@@ -54,7 +55,7 @@ import java.util.concurrent.Executors;
 public class AsyncEventPublisher implements EventHandler<AsynchronousEventBuffer.DataHolder>, ConnectionFailureHandler {
     public enum DestinationType {STORM_RECEIVER, CEP_PUBLISHER}
 
-    private transient Logger log = Logger.getLogger(AsyncEventPublisher.class);
+    private transient Log log = LogFactory.getLog(AsyncEventPublisher.class);
     private String logPrefix;
 
     private String destinationTypeString;

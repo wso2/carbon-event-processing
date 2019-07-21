@@ -16,7 +16,8 @@
 
 package org.wso2.carbon.event.processor.core.internal.storm.manager;
 
-import org.apache.log4j.Logger;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.apache.thrift.TException;
 import org.wso2.carbon.event.processor.common.storm.manager.service.StormManagerService;
 import org.wso2.carbon.event.processor.common.storm.manager.service.exception.EndpointNotFoundException;
@@ -27,7 +28,7 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class StormManagerServiceImpl implements StormManagerService.Iface {
-    private static  Logger log = Logger.getLogger(StormManagerServiceImpl.class);
+    private static  Log log = LogFactory.getLog(StormManagerServiceImpl.class);
     public static final long MILLISECONDS_PER_MINUTE = 60000;
     private ConcurrentHashMap<String, Set<Endpoint>> stormReceivers = new ConcurrentHashMap<String, Set<Endpoint>>();
     private ConcurrentHashMap<String, Set<Endpoint>> cepPublishers = new ConcurrentHashMap<String, Set<Endpoint>>();

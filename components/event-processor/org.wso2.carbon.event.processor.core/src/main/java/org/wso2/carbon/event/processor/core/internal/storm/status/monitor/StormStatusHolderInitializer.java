@@ -18,7 +18,8 @@ package org.wso2.carbon.event.processor.core.internal.storm.status.monitor;
 
 import com.hazelcast.core.HazelcastInstance;
 import com.hazelcast.core.IMap;
-import org.apache.log4j.Logger;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.wso2.carbon.event.processor.core.internal.ds.EventProcessorValueHolder;
 import org.wso2.carbon.event.processor.core.internal.storm.StormTopologyManager;
 import org.wso2.carbon.event.processor.core.util.DistributedModeConstants;
@@ -28,7 +29,7 @@ import org.wso2.carbon.event.processor.core.util.ExecutionPlanStatusHolder;
  * Utility to initialize the statusHolder.
  */
 public class StormStatusHolderInitializer {
-    private static Logger log = Logger.getLogger(StormStatusHolderInitializer.class);
+    private static Log log = LogFactory.getLog(StormStatusHolderInitializer.class);
 
     public static void initializeStatusHolder(String executionPlanName, int tenantId,
                                               int parallel) {

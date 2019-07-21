@@ -15,7 +15,8 @@
  */
 package org.wso2.carbon.event.processor.core.internal.listener;
 
-import org.apache.log4j.Logger;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.wso2.carbon.context.PrivilegedCarbonContext;
 import org.wso2.carbon.databridge.commons.StreamDefinition;
 import org.wso2.carbon.event.processor.core.ExecutionPlanConfiguration;
@@ -47,7 +48,7 @@ public class SiddhiOutputStreamListener extends StreamCallback implements EventP
     protected String tracerPrefix;
     private Counter eventCounter;
     protected EventProducerCallback eventProducerCallback;
-    private Logger trace = Logger.getLogger(EventProcessorConstants.EVENT_TRACE_LOGGER);
+    private Log trace = LogFactory.getLog(EventProcessorConstants.EVENT_TRACE_LOGGER);
 
     public SiddhiOutputStreamListener(String siddhiStreamName, String streamId,
                                       ExecutionPlanConfiguration executionPlanConfiguration, int tenantId)

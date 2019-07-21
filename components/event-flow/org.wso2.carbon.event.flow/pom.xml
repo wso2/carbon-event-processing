@@ -48,9 +48,7 @@
                             org.wso2.carbon.event.flow.*
                         </Export-Package>
                         <Import-Package>
-                            org.apache.log4j; version="0.0.0",
-                            org.apache.log4j.spi; version="0.0.0",
-                            org.wso2.carbon.utils.logging.appenders; version="[4.3.0,5.0.0)",
+                            org.apache.commons.logging.*; version="${import.package.version.commons.logging}",
                             *;resolution:=optional
                         </Import-Package>
                         <DynamicImport-Package>*</DynamicImport-Package>
@@ -66,8 +64,8 @@
             <artifactId>org.wso2.carbon.utils</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.wso2.carbon</groupId>
-            <artifactId>org.wso2.carbon.logging</artifactId>
+            <groupId>org.ops4j.pax.logging</groupId>
+            <artifactId>pax-logging-api</artifactId>
         </dependency>
         <dependency>
             <groupId>commons-lang.wso2</groupId>
