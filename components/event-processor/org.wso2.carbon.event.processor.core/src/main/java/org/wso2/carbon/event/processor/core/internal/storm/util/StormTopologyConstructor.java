@@ -21,7 +21,8 @@ import backtype.storm.tuple.Fields;
 import org.apache.axiom.om.OMAttribute;
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.util.AXIOMUtil;
-import org.apache.log4j.Logger;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.wso2.carbon.event.processor.common.storm.component.EventPublisherBolt;
 import org.wso2.carbon.event.processor.common.storm.component.EventReceiverSpout;
 import org.wso2.carbon.event.processor.common.storm.component.SiddhiBolt;
@@ -45,7 +46,7 @@ import java.util.List;
  */
 public class StormTopologyConstructor {
 
-    private static Logger log = Logger.getLogger(StormTopologyConstructor.class);
+    private static Log log = LogFactory.getLog(StormTopologyConstructor.class);
 
     public static TopologyBuilder constructTopologyBuilder(String queryPlanString, String executionPlanName, int tenantId,
                                                            DistributedConfiguration stormDeploymentConfig)

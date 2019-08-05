@@ -21,7 +21,8 @@ import backtype.storm.topology.OutputFieldsDeclarer;
 import backtype.storm.topology.base.BaseBasicBolt;
 import backtype.storm.tuple.Tuple;
 import org.apache.commons.lang.ArrayUtils;
-import org.apache.log4j.Logger;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.wso2.carbon.event.processor.common.util.AsyncEventPublisher;
 import org.wso2.carbon.event.processor.manager.commons.utils.Utils;
 import org.wso2.carbon.event.processor.manager.core.config.DistributedConfiguration;
@@ -38,7 +39,7 @@ import java.util.*;
  * Publish events processed by Siddhi engine to CEP publisher
  */
 public class EventPublisherBolt extends BaseBasicBolt {
-    private transient Logger log = Logger.getLogger(EventPublisherBolt.class);
+    private transient Log log = LogFactory.getLog(EventPublisherBolt.class);
     /**
      * All stream definitions processed
      */
@@ -120,14 +121,14 @@ public class EventPublisherBolt extends BaseBasicBolt {
 
     private void init() {
         try {
-            log = Logger.getLogger(EventPublisherBolt.class);
+            log = LogFactory.getLog(EventPublisherBolt.class);
             initialized = true;
             //Adding functionality to support query execution at publisher level for future use cases.
             if (query != null && (!query.isEmpty())) {
                 siddhiManager = new SiddhiManager();
                 eventCount = 0;
                 batchStartTime = System.currentTimeMillis();
-                log = Logger.getLogger(SiddhiBolt.class);
+                log = LogFactory.getLog(SiddhiBolt.class);
 
                 String fullQueryExpression = Utils.constructQueryExpression(inputStreamDefinitions, outputStreamDefinitions,
                         query);

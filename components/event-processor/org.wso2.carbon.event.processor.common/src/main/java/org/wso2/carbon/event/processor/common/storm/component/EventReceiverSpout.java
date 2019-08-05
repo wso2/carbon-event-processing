@@ -20,7 +20,8 @@ import backtype.storm.task.TopologyContext;
 import backtype.storm.topology.OutputFieldsDeclarer;
 import backtype.storm.topology.base.BaseRichSpout;
 import backtype.storm.tuple.Fields;
-import org.apache.log4j.Logger;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.apache.thrift.protocol.TBinaryProtocol;
 import org.apache.thrift.protocol.TProtocol;
 import org.apache.thrift.transport.TSocket;
@@ -48,7 +49,7 @@ import java.util.concurrent.LinkedBlockingQueue;
  * the events as tuples to the connected component(i.e. Siddhi Bolt).
  */
 public class EventReceiverSpout extends BaseRichSpout implements StreamCallback {
-    private static transient Logger log = Logger.getLogger(EventReceiverSpout.class);
+    private static transient Log log = LogFactory.getLog(EventReceiverSpout.class);
     /**
      * Listening port of the thrift receiver
      */
