@@ -28,7 +28,7 @@
     <groupId>org.wso2.carbon.event-processing</groupId>
     <artifactId>carbon-event-processing</artifactId>
     <packaging>pom</packaging>
-    <version>2.2.2-SNAPSHOT</version>
+    <version>2.2.3</version>
     <name>WSO2 Carbon - Carbon Event Processing Aggregator Module</name>
     <url>http://wso2.org</url>
 
@@ -830,7 +830,7 @@
         <url>https://github.com/wso2/carbon-event-processing.git</url>
         <developerConnection>scm:git:https://github.com/wso2/carbon-event-processing.git</developerConnection>
         <connection>scm:git:https://github.com/wso2/carbon-event-processing.git</connection>
-        <tag>HEAD</tag>
+        <tag>v2.2.3</tag>
     </scm>
 
     <pluginRepositories>
@@ -919,7 +919,7 @@
         <carbon.commons.version>4.7.2</carbon.commons.version>
         <carbon.p2.plugin.version>1.5.4</carbon.p2.plugin.version>
 
-        <carbon.event.processing.version>2.2.2-SNAPSHOT</carbon.event.processing.version>
+        <carbon.event.processing.version>2.2.3</carbon.event.processing.version>
         <carbon.analytics.common.version>5.2.2</carbon.analytics.common.version>
         <carbon.analytics.common.range>[5.2.0, 6.0.0)</carbon.analytics.common.range>
         <siddhi.version>3.2.5</siddhi.version>
