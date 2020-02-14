@@ -41,6 +41,7 @@ import org.wso2.carbon.event.processor.manager.core.config.DistributedConfigurat
 import org.wso2.carbon.utils.CarbonUtils;
 import org.yaml.snakeyaml.Yaml;
 
+import javax.xml.XMLConstants;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Transformer;
@@ -151,7 +152,9 @@ public class StormTopologyManager {
     }
 
     private String getStringQueryPlan(Document document) throws TransformerException {
-        Transformer transformer = TransformerFactory.newInstance().newTransformer();
+        TransformerFactory transformerFactory = TransformerFactory.newInstance();
+        transformerFactory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
+        Transformer transformer = transformerFactory.newTransformer();
         transformer.setOutputProperty(OutputKeys.INDENT, "yes");
         StringWriter sw = new StringWriter();
         StreamResult result = new StreamResult(sw);
