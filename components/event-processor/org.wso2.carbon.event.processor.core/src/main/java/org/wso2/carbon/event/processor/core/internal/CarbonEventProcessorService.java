@@ -450,7 +450,8 @@ public class CarbonEventProcessorService implements EventProcessorService {
         }
 
         if (EventProcessorValueHolder.getPersistenceConfiguration() != null &&
-                managementInfo.getMode() == Mode.HA && managementInfo.getHaConfiguration().isActive()){
+                (managementInfo.getMode() == Mode.SingleNode ||
+                        managementInfo.getMode() == Mode.HA && managementInfo.getHaConfiguration().isActive())){
             executionPlanRuntime.restoreLastRevision();
         }
 
