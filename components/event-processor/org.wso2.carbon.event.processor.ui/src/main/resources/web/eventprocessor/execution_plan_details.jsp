@@ -39,7 +39,11 @@
     <script type="text/javascript" src="../ajax/js/prototype.js"></script>
 
     <link rel="stylesheet" href="../eventprocessor/css/exeFlow.css">
-    <script src="https://d3js.org/d3.v3.min.js" charset="utf-8"></script>
+    <script src="https://d3js.org/d3.v3.min.js"
+        charset="utf-8"
+        integrity="sha384-N8EP0Yml0jN7e0DcXlZ6rt+iqKU9Ck6f1ZQ+j2puxatnBq4k9E8Q6vqBcY34LNbn"
+        crossorigin="anonymous">
+    </script>
     <script src="../eventprocessor/js/dagre-d3.js"></script>
 
     <link type="text/css" href="../resources/css/registry.css" rel="stylesheet"/>
