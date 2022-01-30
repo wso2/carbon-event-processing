@@ -15,9 +15,6 @@
  */
 package org.wso2.carbon.event.processor.core;
 
-import org.wso2.carbon.event.processor.core.internal.storm.SiddhiStormOutputEventListener;
-import org.wso2.carbon.event.processor.core.internal.storm.status.monitor.StormStatusMapListener;
-import org.wso2.carbon.event.processor.core.internal.storm.status.monitor.StormStatusMonitor;
 import org.wso2.carbon.event.stream.core.EventProducer;
 import org.wso2.carbon.event.stream.core.SiddhiEventConsumer;
 import org.wso2.siddhi.core.ExecutionPlanRuntime;
@@ -32,9 +29,6 @@ public class ExecutionPlan {
     private String name;
     private List<EventProducer> eventProducers = new ArrayList<EventProducer>();
     private List<SiddhiEventConsumer> siddhiEventConsumers = new ArrayList<SiddhiEventConsumer>();
-    private SiddhiStormOutputEventListener stormOutputListener;
-    private StormStatusMonitor stormStatusMonitor;
-    private StormStatusMapListener stormStatusMapListener;
 
 
     public ExecutionPlan(String name, ExecutionPlanRuntime executionPlanRuntime,
@@ -69,27 +63,13 @@ public class ExecutionPlan {
         this.executionPlanConfiguration = executionPlanConfiguration;
     }
 
-    public void setStormStatusMonitor(StormStatusMonitor stormStatusMonitor) {
-        this.stormStatusMonitor = stormStatusMonitor;
-    }
 
-    public void setStormStatusMapListener(StormStatusMapListener stormStatusMapListener) {
-        this.stormStatusMapListener = stormStatusMapListener;
-    }
 
     public void shutdown() {
-        if (stormOutputListener != null) {
-            stormOutputListener.shutdown();
-        }
         for (SiddhiEventConsumer siddhiEventConsumer : siddhiEventConsumers) {
             siddhiEventConsumer.shutdown();
         }
-        if(stormStatusMonitor != null){
-            stormStatusMonitor.shutdown();
-        }
-        if(stormStatusMapListener != null){
-            stormStatusMapListener.removeEntryListener();
-        }
+
         executionPlanRuntime.shutdown();
     }
 
@@ -110,7 +90,4 @@ public class ExecutionPlan {
         return siddhiEventConsumers;
     }
 
-    public void addStormOutputListener(SiddhiStormOutputEventListener stormOutputListener) {
-        this.stormOutputListener = stormOutputListener;
-    }
 }
