@@ -15,7 +15,6 @@
  */
 package org.wso2.carbon.event.processor.core.internal.ds;
 
-import com.hazelcast.core.HazelcastInstance;
 import org.apache.axis2.context.ConfigurationContext;
 import org.wso2.carbon.base.api.ServerConfigurationService;
 import org.wso2.carbon.event.processor.core.internal.CarbonEventProcessorManagementService;
@@ -34,7 +33,6 @@ public class EventProcessorValueHolder {
     private static CarbonEventProcessorService eventProcessorService;
     private static EventManagementService eventManagementService;
     private static EventStreamService eventStreamService;
-    private static HazelcastInstance hazelcastInstance;
     private static UserRealm userRealm;
     private static DataSourceService dataSourceService;
     private static ServerConfigurationService serverConfiguration;
@@ -59,14 +57,6 @@ public class EventProcessorValueHolder {
 
     public static CarbonEventProcessorService getEventProcessorService() {
         return eventProcessorService;
-    }
-
-    public static void registerHazelcastInstance(HazelcastInstance hazelcastInstance) {
-        EventProcessorValueHolder.hazelcastInstance = hazelcastInstance;
-    }
-
-    public static HazelcastInstance getHazelcastInstance() {
-        return hazelcastInstance;
     }
 
 //    public static DataAccessService getDataAccessService() {
