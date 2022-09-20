@@ -104,10 +104,6 @@
         </dependency>
         <dependency>
             <groupId>org.wso2.siddhi</groupId>
-            <artifactId>siddhi-extension-event-table</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.wso2.siddhi</groupId>
             <artifactId>siddhi-extension-eval-script</artifactId>
         </dependency>
         <dependency>
@@ -164,10 +160,6 @@
             <artifactId>quartz</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.wso2.orbit.org.apache.hadoop</groupId>
-            <artifactId>hadoop-client</artifactId>
-        </dependency>
-        <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-lang3</artifactId>
         </dependency>
@@ -194,10 +186,6 @@
         <dependency>
             <groupId>org.json.wso2</groupId>
             <artifactId>json</artifactId>
-        </dependency>
-	    <dependency>
-            <groupId>org.apache.hadoop</groupId>
-            <artifactId>hadoop-common</artifactId>
         </dependency>
         <dependency>
             <groupId>org.apache.tomcat.wso2</groupId>
@@ -283,9 +271,6 @@
                                     org.wso2.siddhi:siddhi-extension-string:${siddhi.version}
                                 </bundleDef>
                                 <bundleDef>
-                                    org.wso2.siddhi:siddhi-extension-event-table:${siddhi.version}
-                                </bundleDef>
-                                <bundleDef>
                                     org.wso2.siddhi:siddhi-extension-eval-script:${siddhi.version}
                                 </bundleDef>
                                 <bundleDef>
@@ -308,10 +293,6 @@
                                 </bundleDef>
                                 <bundleDef>
                                     org.wso2.siddhi:siddhi-extension-markov-models:${siddhi.version}
-                                </bundleDef>
-
-                                <bundleDef>
-                                    org.wso2.orbit.org.apache.hadoop:hadoop-client:${hadoop.client.version}
                                 </bundleDef>
                                 <bundleDef>
                                     org.apache.commons:commons-math3:${commons-math3.version}
