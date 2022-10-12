@@ -455,18 +455,6 @@
                 <artifactId>siddhi-extension-string</artifactId>
                 <version>${siddhi.version}</version>
             </dependency>
-
-            <!-- Siddhi Event Table extension -->
-            <dependency>
-                <groupId>org.wso2.siddhi</groupId>
-                <artifactId>siddhi-extension-event-table</artifactId>
-                <version>${siddhi.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.hadoop</groupId>
-                <artifactId>hadoop-common</artifactId>
-                <version>${hadoop.common.version}</version>
-            </dependency>
             <dependency>
                 <groupId>org.apache.tomcat.wso2</groupId>
                 <artifactId>jdbc-pool</artifactId>
