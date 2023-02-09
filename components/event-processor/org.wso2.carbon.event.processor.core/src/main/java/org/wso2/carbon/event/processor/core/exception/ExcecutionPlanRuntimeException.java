@@ -16,6 +16,7 @@
 
 package org.wso2.carbon.event.processor.core.exception;
 
+
 public class ExcecutionPlanRuntimeException extends RuntimeException{
     public ExcecutionPlanRuntimeException() {
     }

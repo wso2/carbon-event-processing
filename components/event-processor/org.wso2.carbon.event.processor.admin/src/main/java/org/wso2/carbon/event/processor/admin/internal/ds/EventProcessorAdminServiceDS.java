@@ -24,6 +24,7 @@ import org.osgi.service.component.annotations.Reference;
 import org.osgi.service.component.annotations.ReferenceCardinality;
 import org.osgi.service.component.annotations.ReferencePolicy;
 
+
 /**
  * This class is used to get the EventProcessor service.
  */
