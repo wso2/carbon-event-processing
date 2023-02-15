@@ -28,11 +28,6 @@
 
     <dependencies>
         <dependency>
-            <groupId>org.wso2.orbit.org.apache.storm</groupId>
-            <artifactId>storm-core</artifactId>
-            <version>${storm.orbit.version}</version>
-        </dependency>
-        <dependency>
             <groupId>org.wso2.siddhi</groupId>
             <artifactId>siddhi-core</artifactId>
             <version>${siddhi.version}</version>

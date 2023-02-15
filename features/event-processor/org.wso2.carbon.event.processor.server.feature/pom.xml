@@ -58,10 +58,6 @@
             <artifactId>siddhi-query-compiler</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.wso2.orbit.org.apache.storm</groupId>
-            <artifactId>storm-core</artifactId>
-        </dependency>
-        <dependency>
             <groupId>org.wso2.carbon.event-processing</groupId>
             <artifactId>org.wso2.carbon.event.processor.common</artifactId>
         </dependency>
@@ -253,9 +249,6 @@
                                 </bundleDef>
                                 <bundleDef>
                                     org.wso2.siddhi:siddhi-query-compiler:${siddhi.version}
-                                </bundleDef>
-                                <bundleDef>
-                                    org.wso2.orbit.org.apache.storm:storm-core:${storm.orbit.version}
                                 </bundleDef>
                                 <bundleDef>
                                     org.wso2.carbon.event-processing:org.wso2.carbon.event.processor.common:${carbon.event.processing.version}
