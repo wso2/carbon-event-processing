@@ -159,25 +159,11 @@ public class EventProcessorAdminService extends AbstractAdmin {
                 ExecutionPlanConfigurationDto[] configurationDtos = new ExecutionPlanConfigurationDto[executionPlanConfigurations.size()];
 
                 int i = 0;
-                if (isDistributedProcessingEnabled()) {
-                    Map<String, String> executionPlanStatuses = eventProcessorService.getAllExecutionPlanStatusesInStorm();
-                    for (Map.Entry<String, ExecutionPlanConfiguration> entry : executionPlanConfigurations.entrySet()) {
-                        ExecutionPlanConfigurationDto dto = new ExecutionPlanConfigurationDto();
-                        String status = executionPlanStatuses.get(entry.getKey());
-                        if (status == null) {
-                            log.error("No distributed deployment status information available for execution plan " + entry.getKey());
-                        }
-                        copyConfigurationsToDto(entry.getValue(), dto, status);
-                        configurationDtos[i] = dto;
-                        i++;
-                    }
-                } else {
-                    for (ExecutionPlanConfiguration planConfiguration : executionPlanConfigurations.values()) {
-                        ExecutionPlanConfigurationDto dto = new ExecutionPlanConfigurationDto();
-                        copyConfigurationsToDto(planConfiguration, dto, null);
-                        configurationDtos[i] = dto;
-                        i++;
-                    }
+                for (ExecutionPlanConfiguration planConfiguration : executionPlanConfigurations.values()) {
+                    ExecutionPlanConfigurationDto dto = new ExecutionPlanConfigurationDto();
+                    copyConfigurationsToDto(planConfiguration, dto, null);
+                    configurationDtos[i] = dto;
+                    i++;
                 }
 
                 Arrays.sort(configurationDtos, new Comparator() {

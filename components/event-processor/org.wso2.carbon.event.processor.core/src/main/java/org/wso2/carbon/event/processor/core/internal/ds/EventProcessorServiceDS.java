@@ -28,11 +28,8 @@ import org.wso2.carbon.event.processor.core.EventProcessorService;
 import org.wso2.carbon.event.processor.core.internal.CarbonEventProcessorManagementService;
 import org.wso2.carbon.event.processor.core.internal.CarbonEventProcessorService;
 import org.wso2.carbon.event.processor.core.internal.listener.EventStreamListenerImpl;
-import org.wso2.carbon.event.processor.core.internal.storm.StormTopologyManager;
-import org.wso2.carbon.event.processor.core.internal.storm.manager.StormManagerServer;
 import org.wso2.carbon.event.processor.core.internal.util.EventProcessorConstants;
 import org.wso2.carbon.event.processor.manager.core.EventManagementService;
-import org.wso2.carbon.event.processor.manager.core.config.DistributedConfiguration;
 import org.wso2.carbon.event.processor.manager.core.config.PersistenceConfiguration;
 import org.wso2.carbon.event.stream.core.EventStreamListener;
 import org.wso2.carbon.event.stream.core.EventStreamService;
@@ -67,18 +64,6 @@ public class EventProcessorServiceDS {
             CarbonEventProcessorManagementService carbonEventReceiverManagementService = new
                     CarbonEventProcessorManagementService();
             EventProcessorValueHolder.registerProcessorManagementService(carbonEventReceiverManagementService);
-            DistributedConfiguration stormDeploymentConfig = carbonEventProcessorService.getManagementInfo()
-                    .getDistributedConfiguration();
-            if (stormDeploymentConfig != null) {
-                EventProcessorValueHolder.registerStormDeploymentConfiguration(stormDeploymentConfig);
-                EventProcessorValueHolder.registerStormTopologyManager(new StormTopologyManager());
-                if (stormDeploymentConfig.isManagerNode()) {
-                    StormManagerServer stormManagerServer = new StormManagerServer(stormDeploymentConfig
-                            .getLocalManagerConfig().getHostName(), stormDeploymentConfig.getLocalManagerConfig()
-                            .getPort());
-                    EventProcessorValueHolder.registerStormManagerServer(stormManagerServer);
-                }
-            }
             context.getBundleContext().registerService(EventProcessorService.class.getName(),
                     carbonEventProcessorService, null);
             context.getBundleContext().registerService(EventStreamListener.class.getName(), new
@@ -122,14 +107,6 @@ public class EventProcessorServiceDS {
     @Deactivate
     protected void deactivate(ComponentContext context) {
 
-        try {
-            StormManagerServer stormManagerServer = EventProcessorValueHolder.getStormManagerServer();
-            if (stormManagerServer != null) {
-                stormManagerServer.stop();
-            }
-        } catch (RuntimeException e) {
-            log.error("Error in stopping Storm Manager Service : " + e.getMessage(), e);
-        }
         EventProcessorValueHolder.getEventProcessorService().shutdown();
     }
 
@@ -158,29 +135,16 @@ public class EventProcessorServiceDS {
     protected void setHazelcastInstance(HazelcastInstance hazelcastInstance) {
 
         EventProcessorValueHolder.registerHazelcastInstance(hazelcastInstance);
-        StormManagerServer stormManagerServer = EventProcessorValueHolder.getStormManagerServer();
-        if (stormManagerServer != null) {
-            stormManagerServer.setHzaelCastInstance(hazelcastInstance);
-            stormManagerServer.tryBecomeCoordinator();
-        }
         hazelcastInstance.getCluster().addMembershipListener(new MembershipListener() {
 
             @Override
             public void memberAdded(MembershipEvent membershipEvent) {
 
-                StormManagerServer stormManagerServer = EventProcessorValueHolder.getStormManagerServer();
-                if (stormManagerServer != null) {
-                    stormManagerServer.verifyState();
-                }
             }
 
             @Override
             public void memberRemoved(MembershipEvent membershipEvent) {
 
-                StormManagerServer stormManagerServer = EventProcessorValueHolder.getStormManagerServer();
-                if (stormManagerServer != null) {
-                    stormManagerServer.tryBecomeCoordinator();
-                }
             }
 
             @Override

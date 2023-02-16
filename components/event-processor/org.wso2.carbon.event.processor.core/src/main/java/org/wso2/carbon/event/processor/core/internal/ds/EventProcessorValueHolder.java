@@ -20,10 +20,7 @@ import org.apache.axis2.context.ConfigurationContext;
 import org.wso2.carbon.base.api.ServerConfigurationService;
 import org.wso2.carbon.event.processor.core.internal.CarbonEventProcessorManagementService;
 import org.wso2.carbon.event.processor.core.internal.CarbonEventProcessorService;
-import org.wso2.carbon.event.processor.core.internal.storm.StormTopologyManager;
-import org.wso2.carbon.event.processor.core.internal.storm.manager.StormManagerServer;
 import org.wso2.carbon.event.processor.manager.core.EventManagementService;
-import org.wso2.carbon.event.processor.manager.core.config.DistributedConfiguration;
 import org.wso2.carbon.event.processor.manager.core.config.PersistenceConfiguration;
 import org.wso2.carbon.event.stream.core.EventStreamService;
 import org.wso2.carbon.ndatasource.core.DataSourceService;
@@ -42,12 +39,9 @@ public class EventProcessorValueHolder {
     private static DataSourceService dataSourceService;
     private static ServerConfigurationService serverConfiguration;
     private static ConfigurationContextService configurationContext;
-    private static StormManagerServer stormManagerServer;
-    private static DistributedConfiguration stormDeploymentConfiguration;
     private static PersistenceConfiguration persistenceConfiguration;
     private static CarbonEventProcessorManagementService carbonEventProcessorManagementService;
     private static SiddhiManager siddhiManager;
-    private static StormTopologyManager stormTopologyManager;
     private static ConcurrentHashMap<Integer, ConfigurationContext> tenantConfigs = new ConcurrentHashMap<>();
     private static boolean globalStatisticsEnabled;
 
@@ -130,30 +124,6 @@ public class EventProcessorValueHolder {
 
     public static void setConfigurationContext(ConfigurationContextService configurationContext) {
         EventProcessorValueHolder.configurationContext = configurationContext;
-    }
-
-    public static void registerStormManagerServer(StormManagerServer stormManagerServer) {
-        EventProcessorValueHolder.stormManagerServer = stormManagerServer;
-    }
-
-    public static StormManagerServer getStormManagerServer() {
-        return stormManagerServer;
-    }
-
-    public static void registerStormDeploymentConfiguration(DistributedConfiguration stormDeploymentConfig) {
-        EventProcessorValueHolder.stormDeploymentConfiguration = stormDeploymentConfig;
-    }
-
-    public static DistributedConfiguration getStormDeploymentConfiguration() {
-        return stormDeploymentConfiguration;
-    }
-
-    public static void registerStormTopologyManager(StormTopologyManager stormTopologyManager) {
-        EventProcessorValueHolder.stormTopologyManager = stormTopologyManager;
-    }
-
-    public static StormTopologyManager getStormTopologyManager() {
-        return stormTopologyManager;
     }
 
 
