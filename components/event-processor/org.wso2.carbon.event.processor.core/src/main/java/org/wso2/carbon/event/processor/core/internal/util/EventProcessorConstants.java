@@ -64,8 +64,6 @@ public class EventProcessorConstants {
     public static final String CORRELATION = "correlation";
     public static final String META_PREFIX = "meta_";
     public static final String CORRELATION_PREFIX = "correlation_";
-
-    public static final String HAZELCAST_INSTANCE = "hazelcast.instance";
     public static final String NO_DEPENDENCY_INFO_MSG = "No dependency information available for this event formatter";
 
     // For storm query plan builder.
