@@ -15,10 +15,6 @@
  */
 package org.wso2.carbon.event.processor.core.internal.ds;
 
-import com.hazelcast.core.HazelcastInstance;
-import com.hazelcast.core.MemberAttributeEvent;
-import com.hazelcast.core.MembershipEvent;
-import com.hazelcast.core.MembershipListener;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.osgi.service.component.ComponentContext;
@@ -124,41 +120,6 @@ public class EventProcessorServiceDS {
     protected void unsetEventStreamService(EventStreamService eventStreamService) {
 
         EventProcessorValueHolder.registerEventStreamService(null);
-    }
-
-    @Reference(
-            name = "hazelcast.instance.service",
-            service = com.hazelcast.core.HazelcastInstance.class,
-            cardinality = ReferenceCardinality.OPTIONAL,
-            policy = ReferencePolicy.DYNAMIC,
-            unbind = "unsetHazelcastInstance")
-    protected void setHazelcastInstance(HazelcastInstance hazelcastInstance) {
-
-        EventProcessorValueHolder.registerHazelcastInstance(hazelcastInstance);
-        hazelcastInstance.getCluster().addMembershipListener(new MembershipListener() {
-
-            @Override
-            public void memberAdded(MembershipEvent membershipEvent) {
-
-            }
-
-            @Override
-            public void memberRemoved(MembershipEvent membershipEvent) {
-
-            }
-
-            @Override
-            public void memberAttributeChanged(MemberAttributeEvent memberAttributeEvent) {
-
-            }
-        });
-        EventProcessorValueHolder.getEventProcessorService().notifyServiceAvailability(EventProcessorConstants
-                .HAZELCAST_INSTANCE);
-    }
-
-    protected void unsetHazelcastInstance(HazelcastInstance hazelcastInstance) {
-
-        EventProcessorValueHolder.registerHazelcastInstance(null);
     }
 
     @Reference(
