@@ -105,7 +105,7 @@
                 <version>${snakeyaml.version}</version>
             </dependency>
             <dependency>
-                <groupId>org.quartz-scheduler.wso2</groupId>
+                <groupId>org.wso2.orbit.org.quartz-scheduler</groupId>
                 <artifactId>quartz</artifactId>
                 <version>${quartz.version}</version>
             </dependency>
@@ -191,7 +191,7 @@
                 <version>${carbon.kernel.version}</version>
             </dependency>
             <dependency>
-                <groupId>org.ops4j.pax.logging</groupId>
+                <groupId>org.wso2.org.ops4j.pax.logging</groupId>
                 <artifactId>pax-logging-api</artifactId>
                 <version>${pax.logging.api.version}</version>
             </dependency>
@@ -428,6 +428,12 @@
                 <groupId>org.wso2.siddhi</groupId>
                 <artifactId>siddhi-core</artifactId>
                 <version>${siddhi.version}</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>commons-logging</groupId>
+                        <artifactId>commons-logging</artifactId>
+                    </exclusion>
+                </exclusions>
             </dependency>
             <dependency>
                 <groupId>org.wso2.siddhi</groupId>
@@ -923,7 +929,7 @@
         <carbon.event.processing.version>2.3.9-SNAPSHOT</carbon.event.processing.version>
         <carbon.analytics.common.version>5.3.6</carbon.analytics.common.version>
         <carbon.analytics.common.range>[5.2.0, 6.0.0)</carbon.analytics.common.range>
-        <siddhi.version>3.2.8</siddhi.version>
+        <siddhi.version>3.2.12</siddhi.version>
         <carbon.metrics.version>1.3.7</carbon.metrics.version>
 
         <orbit.version.axiom>1.2.11-wso2v16</orbit.version.axiom>
@@ -940,7 +946,7 @@
         <antlr.version>4.5</antlr.version>
         <guava.version>33.0.0-jre</guava.version>
         <snakeyaml.version>2.2</snakeyaml.version>
-        <quartz.version>2.1.1.wso2v1</quartz.version>
+        <quartz.version>2.3.2.wso2v1</quartz.version>
         <hadoop.client.version>2.7.2.wso2v1</hadoop.client.version>
         <ml.version>1.2.7</ml.version>
         <commons-math3.version>3.2</commons-math3.version>
@@ -964,7 +970,7 @@
         <encoder.wso2.version>1.2.0.wso2v1</encoder.wso2.version>
         <apache.felix.scr.ds.annotations.version>1.2.4</apache.felix.scr.ds.annotations.version>
         <maven.scr.plugin.version>1.26.0</maven.scr.plugin.version>
-        <pax.logging.api.version>1.10.1</pax.logging.api.version>
+        <pax.logging.api.version>2.2.1-wso2v2</pax.logging.api.version>
         <import.package.version.commons.logging>[1.2.0,2.0.0)</import.package.version.commons.logging>
     </properties>
 

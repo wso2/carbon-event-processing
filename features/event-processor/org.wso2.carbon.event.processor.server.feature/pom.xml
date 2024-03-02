@@ -156,7 +156,7 @@
             <!--<artifactId>org.wso2.carbon.ml.database</artifactId>-->
         <!--</dependency>-->
         <dependency>
-            <groupId>org.quartz-scheduler.wso2</groupId>
+            <groupId>org.wso2.orbit.org.quartz-scheduler</groupId>
             <artifactId>quartz</artifactId>
         </dependency>
         <dependency>
@@ -257,7 +257,7 @@
                                     org.antlr:antlr4-runtime:${antlr.version}
                                 </bundleDef>
                                 <bundleDef>
-                                    org.quartz-scheduler.wso2:quartz:${quartz.version}
+                                    org.wso2.orbit.org.quartz-scheduler:quartz:${quartz.version}
                                 </bundleDef>
 
                                 <!--siddhi extensions-->
