@@ -93,6 +93,11 @@
                         </Import-Package>
                         <Axis2Deployer>CSVFileDeployer</Axis2Deployer>
                         <DynamicImport-Package>*</DynamicImport-Package>
+                        <Provide-Capability>
+                            osgi.service;objectClass=org.wso2.carbon.event.stream.core.EventStreamService,
+                            osgi.service;objectClass=org.wso2.carbon.ndatasource.core.DataSourceService,
+                            osgi.service;objectClass=org.wso2.carbon.event.processor.manager.core.EventManagementService
+                        </Provide-Capability>
                     </instructions>
                 </configuration>
             </plugin>
