@@ -193,7 +193,7 @@ public class EventSimulatorDataSourceInfo {
                             log.error(tableName + " table does not contain data");
                             throw new AxisFault(tableName + " table does not contain data");
                         }
-                        cleanupConnections(stmt, con);
+                        cleanupConnections(stmt, con, rs);
                     } catch (SQLException e) {
                         log.error(tableName + " table does not exist or no data", e);
                         throw new AxisFault(tableName + " table does not exist or no data", e);
@@ -222,7 +222,7 @@ public class EventSimulatorDataSourceInfo {
      * @param stmt       object used for executing a static SQL statement
      * @param connection database connection
      */
-    private static void cleanupConnections(Statement stmt, Connection connection) {
+    private static void cleanupConnections(Statement stmt, Connection connection, ResultSet resultSet) {
         if (stmt != null) {
             try {
                 stmt.close();
@@ -235,6 +235,13 @@ public class EventSimulatorDataSourceInfo {
                 connection.close();
             } catch (SQLException e) {
                 log.error("unable to close connection", e);
+            }
+        }
+        if (resultSet != null) {
+            try {
+                resultSet.close();
+            } catch (SQLException e) {
+                log.error("unable to close result set", e);
             }
         }
     }
