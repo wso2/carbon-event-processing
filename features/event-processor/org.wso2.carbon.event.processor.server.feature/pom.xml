@@ -160,7 +160,7 @@
             <artifactId>quartz</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.apache.commons</groupId>
+            <groupId>org.wso2.orbit.org.apache.commons</groupId>
             <artifactId>commons-lang3</artifactId>
         </dependency>
         <!--<dependency>-->
@@ -298,7 +298,7 @@
                                     org.apache.commons:commons-math3:${commons-math3.version}
                                 </bundleDef>
                                 <bundleDef>
-                                    org.apache.commons:commons-lang3:${commons-lang3.version}
+                                    org.wso2.orbit.org.apache.commons:commons-lang3:${commons-lang3.version}
                                 </bundleDef>
                                 <bundleDef>
                                     org.json.wso2:json:${json.version}
