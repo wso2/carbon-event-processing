@@ -21,6 +21,8 @@ package org.wso2.carbon.event.simulator.core.internal.util;
 import org.wso2.carbon.databridge.commons.Event;
 import org.wso2.carbon.databridge.commons.StreamDefinition;
 import org.wso2.carbon.event.simulator.core.exception.EventSimulatorRuntimeException;
+import java.io.File;
+import java.io.IOException;
 
 public class EventSimulatorUtil {
 
@@ -53,5 +55,93 @@ public class EventSimulatorUtil {
         if (fileName.contains("../") || fileName.contains("..\\")) {
             throw new EventSimulatorRuntimeException("File name contains restricted path elements. " + fileName);
         }
+    }
+
+
+    /**
+     * Generic file validation method that combines all validation logic.
+     * Validates file name, extension, and path security.
+     *
+     * @param fileName File name to validate
+     * @param baseDirectory Base directory where files should be contained  
+     * @param allowedExtensions Array of allowed file extensions (without dot), e.g., {"csv", "xml"}
+     * @throws EventSimulatorRuntimeException if validation fails
+     */
+    public static void validateFile(String fileName, String baseDirectory, String[] allowedExtensions) {
+        // 1. Basic null/empty validation
+        if (fileName == null || fileName.trim().isEmpty()) {
+            throw new EventSimulatorRuntimeException("Invalid file name. File name is not available");
+        }
+
+        fileName = fileName.trim();
+
+        // 2. File extension validation
+        if (allowedExtensions != null && allowedExtensions.length > 0) {
+            boolean validExtension = false;
+            String lowerFileName = fileName.toLowerCase();
+            
+            for (String extension : allowedExtensions) {
+                if (lowerFileName.endsWith("." + extension.toLowerCase())) {
+                    validExtension = true;
+                    
+                    // Ensure filename has content before the extension
+                    int minLength = extension.length() + 1; // extension + dot
+                    if (fileName.length() <= minLength) {
+                        throw new EventSimulatorRuntimeException(
+                            "Invalid file name: filename cannot be just an extension. File: " + fileName);
+                    }
+                    break;
+                }
+            }
+            
+            if (!validExtension) {
+                String allowedExts = String.join(", ", allowedExtensions);
+                throw new EventSimulatorRuntimeException(
+                    "Invalid file type. Only " + allowedExts + " files are allowed. File: " + fileName);
+            }
+        }
+
+        // 3. Path validation
+        if (baseDirectory != null) {
+            try {
+                // Canonical path validation
+                File baseDir = new File(baseDirectory);
+                File targetFile = new File(baseDir, fileName);
+                
+                String baseDirCanonical = baseDir.getCanonicalPath();
+                String targetFileCanonical = targetFile.getCanonicalPath();
+                
+                // Ensure resolved path stays within base directory
+                if (!targetFileCanonical.startsWith(baseDirCanonical + File.separator) && 
+                    !targetFileCanonical.equals(baseDirCanonical)) {
+                    throw new EventSimulatorRuntimeException("File validation failed: Invalid file name: " + fileName);
+                }
+                
+            } catch (IOException e) {
+                throw new EventSimulatorRuntimeException("File validation failed: Invalid file name: " + fileName);
+            }
+        }
+    }
+
+    /**
+     * Convenience method for CSV file validation.
+     * 
+     * @param fileName CSV file name to validate
+     * @param baseDirectory Base directory where CSV files should be contained
+     * @throws EventSimulatorRuntimeException if validation fails
+     */
+    public static void validateCSVFile(String fileName, String baseDirectory) {
+        validateFile(fileName, baseDirectory, new String[]{"csv"});
+    }
+
+    /**
+     * Validate the given fileName and path.
+     *
+     * @param fileName File name which needs to be validated.
+     * @param baseDirectory Base directory where files should be contained
+     * @throws EventSimulatorRuntimeException if validation fails
+     */
+    public static void validatePath(String fileName, String baseDirectory) {
+        validateFile(fileName, baseDirectory, null);
     }
 }
