@@ -35,6 +35,7 @@ import org.wso2.carbon.event.processor.manager.core.EventManagementService;
 import org.wso2.carbon.event.processor.manager.core.config.DistributedConfiguration;
 import org.wso2.carbon.event.processor.manager.core.config.Mode;
 import org.wso2.carbon.event.simulator.core.*;
+import org.wso2.carbon.event.simulator.core.exception.EventSimulatorRuntimeException;
 import org.wso2.carbon.event.simulator.core.internal.ds.EventSimulatorValueHolder;
 import org.wso2.carbon.event.simulator.core.internal.util.EventSimulatorUtil;
 import org.wso2.carbon.event.stream.core.EventStreamService;
@@ -435,8 +436,12 @@ public class CarbonEventSimulator implements EventSimulator {
 
         for (UploadedFileItem uploadedFile : fileItems) {
             String fileName = uploadedFile.getFileName();
-            if (fileName == null || fileName.equals("")) {
-                throw new AxisFault("Invalid file name. File name is not available");
+            
+            try {
+                // validate file name
+                EventSimulatorUtil.validateCSVFile(fileName, csvDirectory);
+            } catch (EventSimulatorRuntimeException e) {
+                throw new AxisFault(e.getMessage(), e);
             }
 
             if (uploadedFile.getFileType().equals("csv")) {
