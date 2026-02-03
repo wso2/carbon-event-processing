@@ -152,6 +152,9 @@
                         </Import-Package>
                         <DynamicImport-Package>*</DynamicImport-Package>
                         <Axis2Deployer>EventProcessorDeployer</Axis2Deployer>
+                        <Provide-Capability>
+                            osgi.service;objectClass=org.wso2.carbon.event.processor.core.EventProcessorService
+                        </Provide-Capability>
                         <Axis2RequiredServices>
                             org.wso2.carbon.event.processor.core.EventProcessorService
                         </Axis2RequiredServices>
