@@ -626,6 +626,16 @@
                 <artifactId>org.apache.felix.scr.ds-annotations</artifactId>
                 <version>${apache.felix.scr.ds.annotations.version}</version>
             </dependency>
+            <dependency>
+                <groupId>javax.xml.bind</groupId>
+                <artifactId>jaxb-api</artifactId>
+                <version>${version.jaxb.api}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.glassfish.jaxb</groupId>
+                <artifactId>jaxb-runtime</artifactId>
+                <version>${version.jaxb.runtime}</version>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 
@@ -972,6 +982,8 @@
         <maven.scr.plugin.version>1.26.0</maven.scr.plugin.version>
         <pax.logging.api.version>2.2.1-wso2v2</pax.logging.api.version>
         <import.package.version.commons.logging>[1.2.0,2.0.0)</import.package.version.commons.logging>
+        <version.jaxb.api>2.4.0-b180830.0359</version.jaxb.api>
+        <version.jaxb.runtime>2.4.0-b180830.0438</version.jaxb.runtime>
     </properties>
 
 </project>
