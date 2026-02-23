@@ -937,7 +937,7 @@
         <carbon.p2.plugin.version>1.5.4</carbon.p2.plugin.version>
 
         <carbon.event.processing.version>2.3.21-SNAPSHOT</carbon.event.processing.version>
-        <carbon.analytics.common.version>5.3.24</carbon.analytics.common.version>
+        <carbon.analytics.common.version>5.4.1</carbon.analytics.common.version>
         <carbon.analytics.common.range>[5.2.0, 6.0.0)</carbon.analytics.common.range>
         <siddhi.version>3.2.15</siddhi.version>
         <carbon.metrics.version>1.3.7</carbon.metrics.version>
