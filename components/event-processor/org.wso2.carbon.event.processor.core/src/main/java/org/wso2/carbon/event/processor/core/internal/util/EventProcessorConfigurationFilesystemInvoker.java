@@ -42,6 +42,13 @@ public class EventProcessorConfigurationFilesystemInvoker {
             throws ExecutionPlanConfigurationException {
         EventProcessorDeployer eventProcessorDeployer = (EventProcessorDeployer) getDeployer(EventProcessorConstants.EP_ELE_DIRECTORY);
         EventProcessorUtil.validatePath(fileName);
+        // strip path components + enforce execution-plan extension allowlist
+        fileName = new File(fileName).getName();
+        if (!fileName.endsWith(EventProcessorConstants.SIDDHIQL_EXTENSION)
+                && !fileName.endsWith(EventProcessorConstants.EP_CONFIG_FILE_EXTENSION_WITH_DOT)) {
+            throw new ExecutionPlanConfigurationException("Invalid execution plan file name/extension: " + fileName);
+        }
+
         String filePath = getFilePathFromFilename(fileName);
         try {
             OutputStreamWriter writer = null;
